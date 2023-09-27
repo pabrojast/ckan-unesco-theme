@@ -1,0 +1,14 @@
+# theme_ejemplo-js:
+#   filter: rjsmin
+#   output: ckanext-theme_ejemplo/%(version)s-theme_ejemplo.js
+#   contents:
+#     - js/theme_ejemplo.js
+#   extra:
+#     preload:
+#       - base/main
+
+# theme_ejemplo-css:
+#   filter: cssrewrite
+#   output: ckanext-theme_ejemplo/%(version)s-theme_ejemplo.css
+#   contents:
+#     - css/theme_ejemplo.css
