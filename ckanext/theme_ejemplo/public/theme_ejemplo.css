@@ -139,13 +139,12 @@ border-radius: 0 0 3px 3px;
 	background-color: #fff !important;
 }
 }
-/* Title pages 
+/* Title pages */
 .toolbar .breadcrumb a {
     color: #fff !important;
 }
+
 .btn-primary {
-    color: #fff;
     background-color: #0069B4 !important;
     border-color: #000 !important;
 }
-*/
