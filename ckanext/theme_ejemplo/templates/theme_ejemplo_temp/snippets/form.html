@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 {#
 
     Show a form to become a Data Contributor
@@ -190,4 +191,198 @@ if (document.getElementById("group").value === "new_group" && !checkDuplicateGro
 }
 });
 
+=======
+{#
+
+    Show a form to become a Data Contributor
+    
+#}
+
+<div class="containerform">
+
+<h1>Become a Data Contributor for Your Organization</h1>
+<p>Welcome to the Data Upload Form. By completing this form, you have the opportunity to contribute datasets on behalf of your organization. Please provide the necessary information about the datasets you wish to upload to enhance our data resources for the benefit of your organization.</p>
+
+<p>Please be aware that your request will undergo a manual email verification process, which must be from your organization's official email address. This verification step ensures the security and authenticity of the data you submit.</p>
+
+<form method="POST" action="" id="data-contributor-form">
+    
+    <label for="fullname">Full Name (Optional)</label><br>
+    <input type="text" id="fullname" name="fullname" required><br><br>
+
+    <label for="wins_username">Username WINS *</label><br>
+    <small>Your username should consist solely of lowercase letters and numbers.</small><br>
+    <input type="text" id="wins_username" name="wins_username" pattern="[a-z0-9]*" minlength="4" maxlength="100" required><br><br>
+
+    <label for="password">Password *</label><br>
+    <small>Your password must be 8 characters or longer</small><br>
+    <input type="password" id="wins_password" name="wins_password" minlength="8" required><br><br>
+    <label for="confirm-password">Confirm password *</label><br>
+    <input type="password" id="confirm-password" name="confirm-password" minlength="8" required />
+    <p id="match-message"></p><br>
+
+    <label for="email">Email *</label><br>
+    <input type="email" id="email" name="email" required><br>
+    
+    <small style="display:block; margin-bottom: 10px;">
+        <h3>Categories and Groups</h3> 
+        An organization represents a larger entity like a company, institution, or NGO, with a broad scope of activities and objectives. Groups, on the other hand, are smaller, specialized teams or subdivisions within an organization, focused on specific projects or tasks. Organizing data by organizations and groups allows for streamlined management and targeted collaboration.
+    </small>
+
+    <label for="organization_name">Organization Name *</label><br>
+    <select name="organization_name"  id="organization_name"  onchange="toggleNewOrganizationField()" required>
+        <option value="" selected></option>
+		<option value="new" ><strong>Create New Organization</strong></option>
+        {% for item in organization_list %}
+        <option value="{{item['display_name']}}" >{{item['display_name']}}</option>       
+        {% endfor %}
+      </select><br><br>
+
+      <div id="newOrganizationField" style="display: none;">
+        <label for="new_organization_name">New Organization Name *</label><br>
+        <input type="text" id="new_organization_name" name="new_organization_name"><br><br>
+        <label for="new_organization_description">Organization Description</label><br>
+        <textarea id="new_organization_description" name="new_organization_description" rows="4" cols="50"></textarea>
+        <br><br>
+    </div>
+
+    <label for="group">Group Name *</label><br>
+    <select name="group" id="group" onchange="toggleNewGroupField()" required>
+        <option value="" selected></option>
+        <option value="new_group"><strong>Create New Group</strong></option>
+        {% for item in groups %}
+        <option value="{{item['display_name']}}">{{item['display_name']}}</option>
+        {% endfor %}
+    </select><br><br>
+
+    <div id="newGroupField" style="display: none;">
+        <label for="new_group_name">New Group Name *</label><br>
+        <input type="text" id="new_group_name" name="new_group_name"><br><br>
+        <label for="new_group_description">Group Description</label><br>
+        <textarea id="new_group_description" name="new_group_description" rows="4" cols="50"></textarea>
+        <br><br>
+    </div>
+
+    <label for="title_within_organization">Title Within Represented Organization *</label><br>
+    <input type="text" id="title_within_organization" name="title_within_organization" required><br><br>
+
+    <label for="estimated_space">Estimated Space to Use (GB) *</label><br>
+    <select name="estimated_space"  id="estimated_space" required>
+        <option value="1" selected>Less than 500MB</option>
+		<option value="2" >Less than 1GB</option>
+        <option value="3" >More than 1GB</option>       
+      </select><br><br>
+
+    <label>
+        <input type="checkbox" id="accept_guidelines" name="accept_guidelines" required>
+        Accept and acknowledge the responsibilities and guidelines that the authorized user must follow when uploading data on behalf of the organization.
+    </label><br><br>
+
+    <input type="submit" value="Submit">
+</form>
+</div>
+
+<script>
+
+    function toggleNewOrganizationField() {
+        var organizationSelect = document.getElementById("organization_name");
+        var newOrganizationField = document.getElementById("newOrganizationField");
+        var newOrganizationNameField = document.getElementById("new_organization_name");
+
+        if (organizationSelect.value === "new") {
+            newOrganizationField.style.display = "block";
+            newOrganizationNameField.required = true;
+        } else {
+            newOrganizationField.style.display = "none";
+            newOrganizationNameField.required = false;
+        }
+    }
+
+    function toggleNewGroupField() {
+        var groupSelect = document.getElementById("group");
+        var newGroupField = document.getElementById("newGroupField");
+        var newGroupNameField = document.getElementById("new_group_name");
+
+        if (groupSelect.value === "new_group") {
+            newGroupField.style.display = "block";
+            newGroupNameField.required = true;
+        } else {
+            newGroupField.style.display = "none";
+            newGroupNameField.required = false;
+        }
+    }
+
+    document.getElementById("wins_password").addEventListener("input", function () {
+        checkPasswordMatch();
+    });
+
+    document.getElementById("confirm-password").addEventListener("input", function () {
+        checkPasswordMatch();
+    });
+
+    function checkPasswordMatch() {
+        var password = document.getElementById("wins_password").value;
+        var confirmPassword = document.getElementById("confirm-password").value;
+        var matchMessage = document.getElementById("match-message");
+
+        if (password === confirmPassword) {
+            matchMessage.innerHTML = "Passwords match!";
+            matchMessage.style.color = "green";
+        } else {
+            matchMessage.innerHTML = "Passwords do not match";
+            matchMessage.style.color = "red";
+        }
+    }
+
+    // Function to check if the new organization name already exists in the dropdown
+    function checkDuplicateOrganization() {
+            var organizationSelect = document.getElementById("organization_name");
+            var newOrganizationNameField = document.getElementById("new_organization_name");
+
+            var existingOrganizations = Array.from(organizationSelect.options).map(function(option) {
+                return option.value;
+            });
+
+            var newOrganizationName = newOrganizationNameField.value;
+
+            if (existingOrganizations.includes(newOrganizationName)) {
+                alert("This organization already exists in the list.");
+                newOrganizationNameField.value = ""; // Clear the input
+                return false;
+            }
+
+            return true;
+        }
+
+// Función para verificar si el nuevo nombre de grupo ya existe en el menú desplegable
+function checkDuplicateGroup() {
+            var groupSelect = document.getElementById("group");
+            var newGroupNameField = document.getElementById("new_group_name");
+
+            var existingGroups = Array.from(groupSelect.options).map(function(option) {
+                return option.value;
+            });
+
+            var newGroupName = newGroupNameField.value;
+
+            if (existingGroups.includes(newGroupName)) {
+                alert("This group already exists in the list.");
+                newGroupNameField.value = ""; // Borrar el valor de entrada
+                return false;
+            }
+
+            return true;
+        }
+
+// Attach the checkDuplicateOrganization and checkDuplicateGroup function to the form submission event
+document.getElementById("data-contributor-form").addEventListener("submit", function(event) {
+if (document.getElementById("organization_name").value === "new" && !checkDuplicateOrganization()) {
+    event.preventDefault(); // Prevent form submission if the organization name is a duplicate
+}
+if (document.getElementById("group").value === "new_group" && !checkDuplicateGroup()) {
+    event.preventDefault(); // Evitar el envío del formulario si el nombre del grupo es un duplicado
+}
+});
+
+>>>>>>> 28b25b082277b4bded6be469a418d18f4215a296
 </script>
