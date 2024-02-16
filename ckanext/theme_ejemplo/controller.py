@@ -38,8 +38,9 @@ class MyLogica():
                 # # Convertir el resultado en una lista y imprimir
                 # nombres_grupos_hijo_de_grupo_papa = list(nombres_grupos_hijo_de_grupo_papa)
                 # print(nombres_grupos_hijo_de_grupo_papa)
-                print(grupos)
-                nombres_grupos_hijo_de_grupo_papa = grupos["result"]
+                #print(grupos)
+                nombres_grupos_hijo_de_grupo_papa = [item['name'] for item in grupos["groups"]]
+                #nombres_grupos_hijo_de_grupo_papa = grupos["result"]
                 page = h.get_page_number(request.params) or 1
                 items_per_page = 21
                 groups = toolkit.get_action('group_list')(
