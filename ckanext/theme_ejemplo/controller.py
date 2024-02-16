@@ -22,22 +22,30 @@ class MyLogica():
                 q = c.q = request.params.get('q', '')
                 sort_by = c.sort_by_selected = request.params.get('sort')
 
-                grupos = toolkit.get_action('group_list')(
-                data_dict={'q': q, 'include_dataset_count': True, 'all_fields': True, 'include_groups': True, 'limit' : 1000  })
-                # Función para verificar si un grupo pertenece al grupo-papa
-                def pertenece_a_grupo_papa(grupo):
-                    return any(g['name'] == 'member-states' for g in grupo['groups'])
+                # grupos = toolkit.get_action('group_list')(
+                # data_dict={'q': q, 'include_dataset_count': True, 'all_fields': True, 'include_groups': True, 'limit' : 1000  })
+                # # Función para verificar si un grupo pertenece al grupo-papa
+                grupos = toolkit.get_action('group_show')(
+                data_dict={'id': 'member-states', 'include_groups': True })
 
-                # Filtrar los grupos que pertenecen al grupo-papa y luego obtener solo sus nombres
-                nombres_grupos_hijo_de_grupo_papa = map(lambda grupo: grupo['name'], filter(pertenece_a_grupo_papa, grupos))
+                # print(grupos)
+                # def pertenece_a_grupo_papa(grupo):
+                #     return any(g['name'] == 'member-states' for g in grupo['groups'])
 
-                # Convertir el resultado en una lista y imprimir
-                nombres_grupos_hijo_de_grupo_papa = list(nombres_grupos_hijo_de_grupo_papa)
+                # # Filtrar los grupos que pertenecen al grupo-papa y luego obtener solo sus nombres
+                # nombres_grupos_hijo_de_grupo_papa = map(lambda grupo: grupo['name'], filter(pertenece_a_grupo_papa, grupos))
+
+                # # Convertir el resultado en una lista y imprimir
+                # nombres_grupos_hijo_de_grupo_papa = list(nombres_grupos_hijo_de_grupo_papa)
+                # print(nombres_grupos_hijo_de_grupo_papa)
+                #print(grupos)
+                nombres_grupos_hijo_de_grupo_papa = grupos["result"]
                 page = h.get_page_number(request.params) or 1
                 items_per_page = 21
                 groups = toolkit.get_action('group_list')(
                 data_dict={'include_dataset_count': True, 'all_fields': True, 'groups': nombres_grupos_hijo_de_grupo_papa, 'include_groups': True, 'limit' : 1000, 'offset' : items_per_page * (page - 1), 'sort': sort_by})
-                groupcount = len(groups)
+                print(groups)
+                groupcount = len(groups)+(page - 1)*items_per_page
                 c.page = h.Page(
                 collection=groups,
                 page=page,

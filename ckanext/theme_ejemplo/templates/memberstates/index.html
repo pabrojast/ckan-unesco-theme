@@ -23,6 +23,7 @@
     {% if groups or request.params %}
       {% if groups %}
         {% snippet "memberstates/snippets/group_list.html", groups=groups %}
+
       {% endif %}
     {% else %}
       <p class="empty">
