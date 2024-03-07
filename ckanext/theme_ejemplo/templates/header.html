@@ -89,10 +89,14 @@
             {% block header_site_navigation_tabs %}
 		{{ h.build_nav_main(
 		    ('dataset.search', _('Datasets')),
-		    ('organization.index', _('Organizations')),
-		    ('group.index', _('Groups')),
-		    ('home.about', _('About')) ) }}
+		    ('organization.index', _('Organizations'))
+
+		     ) }}
 	    {% endblock %}
+      <li><a href="/iniciatives">Iniciatives</a></li>
+      <li><a href="/memberstates">Member States</a></li>
+      <li><a href="/about">About</a></li>
+
         </ul>
       </nav>
       {% endblock %} {% block header_site_search %}

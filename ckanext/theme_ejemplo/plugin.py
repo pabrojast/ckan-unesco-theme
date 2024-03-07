@@ -35,4 +35,12 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin):
                 MyLogica.memberstates,
                 methods=['GET']
             )
+
+            blueprint.add_url_rule(
+                u'/iniciatives',
+                u'iniciatives',
+                MyLogica.iniciatives,
+                methods=['GET']
+            )
+
             return blueprint
