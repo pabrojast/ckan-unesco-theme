@@ -23,22 +23,13 @@ class MyLogica():
                 sort_by = c.sort_by_selected = request.params.get('sort')
 
                 # # Función para verificar si un grupo pertenece al grupo-papa
-                grupos = toolkit.get_action('group_show')(
-                data_dict={'id': 'member-states', 'include_groups': True })
-                nombres_grupos_hijo_de_grupo_papa = [item['name'] for item in grupos["groups"]]
-
-                #debug
-                grupos2 = toolkit.get_action('group_list')(
-                data_dict={'include_dataset_count': True, 'limit' : 1000, 'sort': sort_by})
-                nombres_grupos_hijo_de_grupo_papa2 = [item['name'] for item in grupos2["groups"]]
-
-
                 # grupos = toolkit.get_action('group_show')(
                 # data_dict={'id': 'member-states', 'include_groups': True })
-                print(grupos)
-                print(nombres_grupos_hijo_de_grupo_papa)
-                print(grupos2)
-                print(nombres_grupos_hijo_de_grupo_papa2)
+                # nombres_grupos_hijo_de_grupo_papa = [item['name'] for item in grupos["groups"]]
+                # print(nombres_grupos_hijo_de_grupo_papa)
+                # print(grupos)
+                
+
                 # def pertenece_a_grupo_papa(grupo):
                 #     return any(g['name'] == 'member-states' for g in grupo['groups'])
 
@@ -71,10 +62,10 @@ class MyLogica():
                 ####
                 #print(nombres_grupos)
                 global_result = toolkit.get_action('group_list')(
-                data_dict={'include_dataset_count': True, 'all_fields': True, 'groups': nombres_grupos, 'include_groups': True, 'limit' : 1000, 'sort': sort_by})
+                data_dict={'include_dataset_count': True, 'groups': nombres_grupos, 'include_groups': True, 'limit' : 1000, 'sort': sort_by})
 
                 groups = toolkit.get_action('group_list')(
-                data_dict={'include_dataset_count': True, 'all_fields': True, 'groups': nombres_grupos, 'include_groups': True, 'limit' : 1000, 'offset' : items_per_page * (page - 1), 'sort': sort_by})
+                data_dict={'include_dataset_count': True, 'all_fields': True, 'groups': nombres_grupos, 'include_groups': True, 'limit' : items_per_page, 'offset' : items_per_page * (page - 1), 'sort': sort_by})
 
 
                 groupcount = len(groups)+(page - 1)*items_per_page
@@ -127,7 +118,7 @@ class MyLogica():
                 page = h.get_page_number(request.params) or 1
                 items_per_page = 21
                 groups = toolkit.get_action('group_list')(
-                data_dict={'include_dataset_count': True, 'groups': nombres_grupos_hijo_de_grupo_papa, 'include_groups': True, 'limit' : 1000, 'offset' : items_per_page * (page - 1), 'sort': sort_by})
+                data_dict={'q': q, 'include_dataset_count': True, 'all_fields': True, 'include_dataset_count': True, 'groups': nombres_grupos_hijo_de_grupo_papa, 'include_groups': True, 'limit' : items_per_page , 'offset' : items_per_page * (page - 1), 'sort': sort_by})
                 #print(groups)
                 global_result = toolkit.get_action('group_list')(
                 data_dict={'include_dataset_count': True, 'groups': nombres_grupos_hijo_de_grupo_papa, 'include_groups': True, 'limit' : 1000})
