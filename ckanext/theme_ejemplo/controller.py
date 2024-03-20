@@ -43,12 +43,16 @@ class MyLogica():
                 #nombres_grupos_hijo_de_grupo_papa = grupos["result"]
                 page = h.get_page_number(request.params) or 1
                 items_per_page = 21
+                
+                groups = toolkit.get_action('group_list')(
+                data_dict={'include_dataset_count': True, 'sort': sort_by})
+                print(groups)
 
                 #obtenemos los grupos
-                groups = toolkit.get_action('group_list')(
-                data_dict={'include_dataset_count': True, 'all_fields': True, 'include_groups': True, 'limit' : 1000, 'sort': sort_by})
-                nombres_grupos_s = [item['name'] for item in groups]
-                #print(groups)
+                # groups = toolkit.get_action('group_list')(
+                # data_dict={'include_dataset_count': True, 'all_fields': True, 'include_groups': True, 'limit' : 500, 'sort': sort_by})
+                # nombres_grupos_s = [item['name'] for item in groups]
+                # #print(groups)
                 ##dev server
                 #nombres_grupos_hijo_de_grupo_papa = 'grupo-papa'
                 #nombres_grupos = [group['name'] for group in groups if not any(subgroup['name'] == nombres_grupos_hijo_de_grupo_papa for subgroup in group['groups'])]
@@ -57,6 +61,10 @@ class MyLogica():
                 #obtenemos los grupos a excluir
                 excluir = toolkit.get_action('group_show')(
                 data_dict={'id': 'member-states', 'include_groups': True })
+                print(excluir)
+                
+                nombres_grupos_s = [item['name'] for item in groups]
+
                 nombres_grupos_hijo_de_grupo_papa = [[item['name'] for item in excluir["groups"]]]
                 nombres_grupos = list(filter(lambda x: x not in nombres_grupos_hijo_de_grupo_papa, nombres_grupos_s))
                 ####
@@ -121,9 +129,9 @@ class MyLogica():
                 data_dict={'q': q, 'include_dataset_count': True, 'all_fields': True, 'include_dataset_count': True, 'groups': nombres_grupos_hijo_de_grupo_papa, 'include_groups': True, 'limit' : items_per_page , 'offset' : items_per_page * (page - 1), 'sort': sort_by})
                 #print(groups)
                 global_result = toolkit.get_action('group_list')(
-                data_dict={'include_dataset_count': True, 'groups': nombres_grupos_hijo_de_grupo_papa, 'include_groups': True, 'limit' : 1000})
+                data_dict={'q': q, 'include_dataset_count': True, 'groups': nombres_grupos_hijo_de_grupo_papa, 'include_groups': True, 'limit' : 1000})
 
-                groupcount = len(groups)+(page - 1)*items_per_page
+                groupcount = len(global_result)+(page - 1)*items_per_page
                 c.page = h.Page(
                 collection=global_result,
                 page=page,
