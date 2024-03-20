@@ -48,15 +48,15 @@ class MyLogica():
                 #nombres_grupos = [item['name'] for item in groups]
                 #print(groups)
                 ##dev server
-                nombres_grupos_hijo_de_grupo_papa = 'grupo-papa'
-                nombres_grupos = [group['name'] for group in groups if not any(subgroup['name'] == nombres_grupos_hijo_de_grupo_papa for subgroup in group['groups'])]
+                #nombres_grupos_hijo_de_grupo_papa = 'grupo-papa'
+                #nombres_grupos = [group['name'] for group in groups if not any(subgroup['name'] == nombres_grupos_hijo_de_grupo_papa for subgroup in group['groups'])]
                 ###
                 ##prod server
                 #obtenemos los grupos a excluir
-                #excluir = toolkit.get_action('group_show')(
-                #data_dict={'id': 'member-states', 'include_groups': True })
-                #nombres_grupos_hijo_de_grupo_papa = [[item['name'] for item in excluir["groups"]]]
-                #nombres_grupos = list(filter(lambda x: x not in nombres_grupos_hijo_de_grupo_papa, nombres_grupos))
+                excluir = toolkit.get_action('group_show')(
+                data_dict={'id': 'member-states', 'include_groups': True })
+                nombres_grupos_hijo_de_grupo_papa = [[item['name'] for item in excluir["groups"]]]
+                nombres_grupos = list(filter(lambda x: x not in nombres_grupos_hijo_de_grupo_papa, nombres_grupos))
                 ####
                 #print(nombres_grupos)
                 global_result = toolkit.get_action('group_list')(
@@ -100,18 +100,18 @@ class MyLogica():
                 # print(nombres_grupos_hijo_de_grupo_papa)
                 #print(grupos)
                 #prod
-                #grupos = toolkit.get_action('group_show')(
-                #data_dict={'id': 'member-states', 'include_groups': True })
-                #nombres_grupos_hijo_de_grupo_papa = [item['name'] for item in grupos["groups"]]
+                grupos = toolkit.get_action('group_show')(
+                data_dict={'id': 'member-states', 'include_groups': True })
+                nombres_grupos_hijo_de_grupo_papa = [item['name'] for item in grupos["groups"]]
                 #dev
-                grupos = toolkit.get_action('group_list')(
-                data_dict={'q': q, 'include_dataset_count': True, 'all_fields': True, 'include_groups': True, 'limit' : 1000  })
-                def pertenece_a_grupo_papa(grupo):
-                    return any(g['name'] == 'grupo-papa' for g in grupo['groups'])
+                #grupos = toolkit.get_action('group_list')(
+                #data_dict={'q': q, 'include_dataset_count': True, 'all_fields': True, 'include_groups': True, 'limit' : 1000  })
+                #def pertenece_a_grupo_papa(grupo):
+                #    return any(g['name'] == 'grupo-papa' for g in grupo['groups'])
                 # # Filtrar los grupos que pertenecen al grupo-papa y luego obtener solo sus nombres
-                nombres_grupos_hijo_de_grupo_papa = map(lambda grupo: grupo['name'], filter(pertenece_a_grupo_papa, grupos))
+                #nombres_grupos_hijo_de_grupo_papa = map(lambda grupo: grupo['name'], filter(pertenece_a_grupo_papa, grupos))
                 # # Convertir el resultado en una lista y imprimir
-                nombres_grupos_hijo_de_grupo_papa = list(nombres_grupos_hijo_de_grupo_papa)
+                #nombres_grupos_hijo_de_grupo_papa = list(nombres_grupos_hijo_de_grupo_papa)
                 
                 page = h.get_page_number(request.params) or 1
                 items_per_page = 21
