@@ -45,7 +45,7 @@ class MyLogica():
                 #obtenemos los grupos
                 groups = toolkit.get_action('group_list')(
                 data_dict={'include_dataset_count': True, 'all_fields': True, 'include_groups': True, 'limit' : 1000, 'sort': sort_by})
-                nombres_grupos = [item['name'] for item in groups]
+                nombres_grupos_s = [item['name'] for item in groups]
                 #print(groups)
                 ##dev server
                 #nombres_grupos_hijo_de_grupo_papa = 'grupo-papa'
@@ -56,7 +56,7 @@ class MyLogica():
                 excluir = toolkit.get_action('group_show')(
                 data_dict={'id': 'member-states', 'include_groups': True })
                 nombres_grupos_hijo_de_grupo_papa = [[item['name'] for item in excluir["groups"]]]
-                nombres_grupos = list(filter(lambda x: x not in nombres_grupos_hijo_de_grupo_papa, nombres_grupos))
+                nombres_grupos = list(filter(lambda x: x not in nombres_grupos_hijo_de_grupo_papa, nombres_grupos_s))
                 ####
                 #print(nombres_grupos)
                 global_result = toolkit.get_action('group_list')(
