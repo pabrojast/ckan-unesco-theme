@@ -64,7 +64,8 @@ class MyLogica():
                 #print(excluir)
                 
                 nombres_grupos_s = [item['name'] for item in excluir["groups"]]
-
+                #we add the main group
+                nombres_grupos_s.append('member-states')
 
                 set_difference = set(groups) - set(nombres_grupos_s)
                 list_difference_result = list(set_difference)
@@ -75,10 +76,10 @@ class MyLogica():
                 ####
                 #print(nombres_grupos)
                 global_result = toolkit.get_action('group_list')(
-                data_dict={'include_dataset_count': True, 'groups': list_difference_result, 'include_groups': True, 'limit' : 1000, 'sort': sort_by})
+                data_dict={'q': q,'include_dataset_count': True, 'groups': list_difference_result, 'include_groups': True, 'limit' : 1000, 'sort': sort_by})
 
                 groups = toolkit.get_action('group_list')(
-                data_dict={'include_dataset_count': True, 'all_fields': True, 'groups': list_difference_result, 'include_groups': True, 'limit' : items_per_page, 'offset' : items_per_page * (page - 1), 'sort': sort_by})
+                data_dict={'q': q,'include_dataset_count': True, 'all_fields': True, 'groups': list_difference_result, 'include_groups': True, 'limit' : items_per_page, 'offset' : items_per_page * (page - 1), 'sort': sort_by})
 
 
                 groupcount = len(global_result)
