@@ -1,0 +1,14 @@
+{% set posts = h.get_recent_blog_posts(number=5) %}
+
+
+
+<div class="inner">
+    <h3>News</h3>
+    <ul>
+        {% for post in posts %}
+            <li>
+                    <a href="{{ h.url_for('pages.blog_show', page='' + post.name) }}">{{ post.title or post.name }}</a>
+            </li>
+        {% endfor %}
+    </ul>
+</div>

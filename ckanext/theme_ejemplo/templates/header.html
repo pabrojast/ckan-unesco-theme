@@ -42,18 +42,22 @@
             <span class="text">{{ _('Log out') }}</span>
           </a>
         </li>
+        <li>
+          <a href="/blog" alt="Blog">Blog</a>
+        </li>
+        <li>
+          <a href="/colab/admin" alt="Blog">Colab Admin</a>
+        </li>
         {% endblock %} {% endblock %}
       </ul>
     </div>
     {% else %}
     <nav class="account not-authed" aria-label="{{ _('Account') }}">
       <ul class="list-unstyled">
-		<li><a href="https://data.dev-wins.com/pages/become-a-data-contributor" alt="become a data contributor">Become a data contributor</a></li>
+		<li><a href="/colab" alt="Enroll as a Data Contributor for Your Organization">Enroll as a Data Contributor for Your Organization</a></li>
         {% block header_account_notlogged %}
         <li>{% link_for _('Log in'), named_route='user.login' %}</li>
-        {% if h.check_access('user_create') %}
-        <li>{% link_for _('Register'), named_route='user.register', class_='sub' %}</li>
-        {% endif %} {% endblock %}
+        {% endblock %}
       </ul>
     </nav>
     {% endif %} {% endblock %}
@@ -93,7 +97,7 @@
 
 		     ) }}
 	    {% endblock %}
-      <li><a href="/iniciatives">Iniciatives</a></li>
+      <li><a href="/initiatives">Initiatives</a></li>
       <li><a href="/memberstates">Member States</a></li>
       <li><a href="/about">About</a></li>
 

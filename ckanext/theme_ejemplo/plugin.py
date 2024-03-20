@@ -36,11 +36,25 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin):
                 methods=['GET']
             )
 
+
             blueprint.add_url_rule(
-                u'/iniciatives',
-                u'iniciatives',
-                MyLogica.iniciatives,
+                u'/initiatives',
+                u'initiatives',
+                MyLogica.initiatives,
                 methods=['GET']
             )
+
+            blueprint.add_url_rule(
+                u'/memberstates/<name>',
+                u'redirect_paises',
+                MyLogica.redirect_to_group,
+                methods=['GET']
+    )
+            blueprint.add_url_rule(
+                u'/initiatives/<name>',
+                u'redirect_paises',
+                MyLogica.redirect_to_group,
+                methods=['GET']
+    )
 
             return blueprint

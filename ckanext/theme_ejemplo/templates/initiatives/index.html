@@ -1,9 +1,12 @@
 {% extends "page.html" %}
+{% block title %}
+Initiatives - {{ super() }}
+{% endblock %}
 
 {% block subtitle %}{{ _('Groups') }}{% endblock %}
 
 {% block breadcrumb_content %}
-  <li class="active"><a href="/iniciatives/">Iniciatives</a></li>
+  <li class="active"><a href="/initiatives/">Initiatives</a></li>
 {% endblock %}
 
 {% block page_header %}{% endblock %}
@@ -22,7 +25,7 @@
   {% block groups_list %}
     {% if groups or request.params %}
       {% if groups %}
-        {% snippet "iniciatives/snippets/group_list.html", groups=groups %}
+        {% snippet "initiatives/snippets/group_list.html", groups=groups %}
 
       {% endif %}
     {% else %}
@@ -40,5 +43,5 @@
 {% endblock %}
 
 {% block secondary_content %}
-  {% snippet "iniciatives/snippets/helper.html" %}
+  {% snippet "initiatives/snippets/helper.html" %}
 {% endblock %}
