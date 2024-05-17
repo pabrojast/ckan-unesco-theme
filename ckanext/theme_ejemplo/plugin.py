@@ -124,8 +124,8 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin):
                     org_id = dataset['organization']['id']
                     # Obtener la organización por ID
                     organization = toolkit.get_action('organization_show')(None, {'id': org_id})
-                    if organization and 'image_url' in organization:
-                        return organization['image_url']
+                    if organization and 'image_display_url' in organization:
+                        return organization['image_display_url']
                 return None
             except Exception as e:
                 toolkit.abort(500, str(e))
