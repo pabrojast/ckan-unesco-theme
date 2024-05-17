@@ -99,11 +99,11 @@ class MyLogica():
         def redirect_to_group(name):
             """Redirige /paises/<nombre> a /group/<nombre>."""
             return toolkit.redirect_to('/group/{}'.format(name))
-        
-        @staticmethod
-        def redirect_to_colab():
-            """Redirige user/register a /colab."""
-            return toolkit.redirect_to('/colab')
+#        Deshabilita el registro de usuarios
+#       @staticmethod
+#       def redirect_to_colab():
+#           """Redirige user/register a /colab."""
+#           return toolkit.redirect_to('/colab')
             
         def memberstates():
             

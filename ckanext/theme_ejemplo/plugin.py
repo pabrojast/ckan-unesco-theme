@@ -60,12 +60,13 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin):
                 MyLogica.redirect_to_group,
                 methods=['GET']
     )
-            blueprint.add_url_rule(
-                u'/user/register',
-                u'redirect_to_colab',
-                MyLogica.redirect_to_colab,
-                methods=['GET']
-    )
+# Deshabilita el registro de usuarios
+#            blueprint.add_url_rule(
+#                u'/user/register',
+#                u'redirect_to_colab',
+#                MyLogica.redirect_to_colab,
+#                methods=['GET']
+#    )
 
             return blueprint
         
