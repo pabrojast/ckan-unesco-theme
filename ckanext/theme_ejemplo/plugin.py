@@ -82,8 +82,11 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin):
         def get_latest_courses(self):
             try:
                 response = requests.get('https://openlearning.unesco.org/api/courses/v1/courses/?search_term=water')
-                courses = response.json().get('results', []) if response.status_code == 200 else []
-                return courses
+                if response.status_code == 200:
+                    courses = response.json().get('results', [])
+                    return courses[:8]  # Limitar a un máximo de 8 cursos
+                else:
+                    return []
             except requests.RequestException:
                 return []
             
