@@ -3,6 +3,7 @@
 <div class="module-content box">
   <div>
     {% if intro %}
+    <h1 class="page-heading">The IHP Water Information Network System</h1>
       {{ h.render_markdown(intro) }}
     {% else %}
       <h1 class="page-heading">{{ _("Welcome to CKAN") }}</h1>
@@ -17,9 +18,7 @@
   {% block home_image %}
     <section class="featured media-overlay hidden-xs">
       {% block home_image_content %}
-        <a class="media-image" href="#">
-          <img class="img-responsive" src="{{ h.url_for_static('/420x220.png') }}" alt="Placeholder" width="420" height="220" />
-        </a>
+
       {% endblock %}
     </section>
   {% endblock %}

@@ -8,24 +8,70 @@
   <div role="main">
     <div class="container">
       <div class="row row2">
-        <div class="col-md-6 col2">
+        <div class="col-md-12 col1">
           {% block promoted %}
             {% snippet 'home/snippets/promoted.html' %}
           {% endblock %}
         </div>
-        <div class="col-md-6 col1">
-          {% block stats %}
-            {% snippet 'home/snippets/stats.html' %}
+        <div class="col-md-12 col1">
+          {% block data %}
+            {% snippet 'home/snippets/data.html' %}
+          {% endblock %}
+        </div>
+        <div class="col-md-12 col1" >
+          {% block featureddata %}
+            {% snippet 'home/snippets/featureddata.html' %}
+          {% endblock %}
+        </div>
+        <div class="col-md-12 col1" style="border-top: 0 !important;">
+          {% block featureddatasnip %}
+            {% snippet 'home/snippets/featureddatasnip.html' %}
+          {% endblock %}
+        </div>
+        
+        <div class="col-md-12 col1">
+          {% block IHPViewers %}
+            {% snippet 'home/snippets/IHPViewers.html' %}
+          {% endblock %}
+        </div>
+        <div class="col-md-12 col1" style="border-top: 0 !important;">
+          {% block ThematicViewers %}
+            {% snippet 'home/snippets/ThematicViewers.html' %}
+          {% endblock %}
+        </div>
+        <div class="col-md-12 col1">
+          {% block IHPEducation %}
+            {% snippet 'home/snippets/IHPEducation.html' %}
+          {% endblock %}
+        </div>
+        <div class="col-md-12 col1" style="border-top: 0 !important;">
+          {% block IHPEducationdata %}
+            {% snippet 'home/snippets/IHPEducationdata.html' %}
+          {% endblock %}
+        </div>
+        <div class="col-md-12 col1">
+          {% block FeaturedPublications %}
+            {% snippet 'home/snippets/FeaturedPublications.html' %}
+          {% endblock %}
+        </div>
+        <div class="col-md-12 col1" style="border-top: 0 !important;">
+          {% block FeaturedPublicationsdata %}
+            {% snippet 'home/snippets/FeaturedPublicationsdata.html' %}
+          {% endblock %}
+        </div>
+        <div class="col-md-12 col1">
+          {% block IHPEvents %}
+            {% snippet 'home/snippets/IHPEvents.html' %}
+          {% endblock %}
+        </div>
+        <div class="col-md-12 col1" style="border-top: 0 !important;">
+          {% block IHPEventsdata %}
+            {% snippet 'home/snippets/IHPEventsdata.html' %}
           {% endblock %}
         </div>
 
-        <div class="col-md-6 col1">
-          <div class="box">
-                {% block news %}
-                  {% snippet 'home/snippets/news.html' %}
-                {% endblock %}
-          </div>
-        </div>
+
+
       </div>
     </div>
   </div>

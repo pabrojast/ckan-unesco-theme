@@ -2,41 +2,59 @@
   <div class="container">
     {% block footer_content %}
     <div class="row">
-      <div class="col-md-8 footer-links">
+      <div class="col-md-3 footer-links">
+        <a href="#" class="nav-link dropdown-toggle active-item" data-once="initReportMenu initHorizontalMenu">UNESCO</a>
         {% block footer_nav %}
-          <ul class="list-unstyled">
             {% block footer_links %}
-              <li><a href="{{ h.url_for(controller='home', action='about') }}">{{ _('About {0}').format(g.site_title) }}</a></li>
             {% endblock %}
-          </ul>
-          <ul class="list-unstyled">
+          <ul class="list-unstyled3">
             {% block footer_links_ckan %}
-              {% set api_url = 'http://docs.ckan.org/en/{0}/api/'.format(g.ckan_doc_version) %}
-              <li><a href="{{ api_url }}">{{ _('CKAN API') }}</a></li>
-			  <li><a target="_blank" href="https://en.unesco.org/this-site/disclaimer">Disclaimer of use</a></li>
-              <li><a target="_blank" href="https://en.unesco.org/this-site/access-to-information-policy">Access to Information Policy</a></li>
-              <li><a target="_blank" href="https://en.unesco.org/this-site/our-online-privacy-policy">Privacy Policy</a></li>
-              <li><a target="_blank" href="https://en.unesco.org/feedback/faq">FAQ</a></li>
-              <li><a target="_blank" href="https://en.unesco.org/logopatronage">UNESCO Name and Logoister</a></li>
-              <li><a target="_blank" href="https://unesdoc.unesco.org/ark:/48223/pf0000260723">Environmental and Social Policies</a></li>
-              <li><a target="_blank" href="https://en.unesco.org/about-us/procedure104">Protection of human rights : Procedure 104</a></li>
-              <li><a target="_blank" href="https://en.unesco.org/about-us/ios/report-fraud-corruption-abuse">Report fraud, abuse, misconduct</a></li>
-              <li><a target="_blank" href="https://en.unesco.org/scamalert">Scam alert</a></li>
-              <li><a target="_blank" href="https://opendata.unesco.org/">Transparency Portal</a></li>
-              <li><a target="_blank" href="https://en.unesco.org/">&#169; UNESCO 2023</a></li>
+
+              <li> <a href="https://www.unesco.org/en/newsroom" class="nav-link" data-drupal-link-system-path="node/701">Latest News</a></li>
+              <li> <a href="https://www.unesco.org/en/take-action" class="nav-link" data-drupal-link-system-path="node/998">Take Action</a></li>
+              <li> <a href="https://www.unesco.org/en/ideas-data" class="nav-link" data-drupal-link-system-path="node/745">Ideas &amp; Data</a></li>
+              <li> <a href="https://www.unesco.org/en/impact" class="nav-link" data-drupal-link-system-path="node/1063">Our Impact</a></li>
+              <li> <a href="https://www.unesco.org/en/our-expertise" class="nav-link" data-drupal-link-system-path="node/383">Our expertise</a></li>
+              <li> <a href="https://core.unesco.org" class="nav-link">Core Data Portal</a></li>
+              <li> <a href="http://eepurl.com/hA0MhX" class="nav-link" target="_blank">Subscribe to our Newsletter</a></li>
+      
+
+              
               <!-- <li><a href="http://www.ckan.org/">{{ _('CKAN Association') }}</a></li> 
               <li><a href="http://www.opendefinition.org/okd/"><img src="{{ h.url_for_static('/base/images/od_80x15_blue.png') }}" alt="Open Data"></a></li> -->
             {% endblock %}
           </ul>
         {% endblock %}
       </div>
-      <div class="col-md-4 attribution">
-        {% block footer_attribution %}
-          <p>{% trans %}<strong>Powered by</strong> <a class="hide-text ckan-footer-logo" href="http://ckan.org">CKAN</a>{% endtrans %}</p>
-        {% endblock %}
-        {% block footer_lang %}
-          {% snippet "snippets/language_selector.html" %}
-        {% endblock %}
+
+      <div class="col-md-3 footer-links">
+        <a href="#" class="nav-link dropdown-toggle active-item" data-once="initReportMenu initHorizontalMenu">Terms of use</a>
+        <ul class="list-unstyled3" style="display: block;">
+          <li> <a href="https://www.unesco.org/en/logo-patronage" class="nav-link" data-drupal-link-system-path="node/760">UNESCO Name &amp; Logo</a></li>
+          <li> <a href="https://www.unesco.org/en/faq" class="nav-link" data-drupal-link-system-path="node/67007">FAQ</a></li>
+          <li> <a href="https://www.unesco.org/en/ios/report-wrongdoing" class="nav-link" data-drupal-link-system-path="node/67612">Report fraud, abuse, misconduct</a></li>
+          <li> <a href="https://www.unesco.org/en/scamalert" class="text-danger font-weight-bolder nav-link" data-drupal-link-system-path="node/66770" style="color:#d8552c !important">Scam alert</a></li>
+        </ul>
+      </div>
+
+
+      <div class="col-md-3 footer-links">
+        <a href="#" class="nav-link dropdown-toggle active-item" data-once="initReportMenu initHorizontalMenu">Policies</a>
+        <ul class="list-unstyled3" style="display: block;">
+          <li> <a href="https://www.unesco.org/en/legal-affairs/cr-committee/104-procedure" class="nav-link" data-drupal-link-system-path="node/66639">Protection of human rights (Procedure 104)</a></li>
+          <li> <a href="https://www.unesco.org/en/privacy-notice" class="nav-link" data-drupal-link-system-path="node/66488">Privacy Notice</a></li>
+          <li> <a href="https://www.unesco.org/en/unesco-access-information-policy" class="nav-link" data-drupal-link-system-path="node/467">Access to Information</a></li>
+          <li> <a href="https://www.unesco.org/en/environmental-commitment-and-policy" class="nav-link" data-drupal-link-system-path="node/67139">Environmental and Social Policies</a></li>
+        </ul>
+      </div>
+
+      <div class="col-md-3 nav-social nav-social--wrapper block block-unesco-common block-unesco-common-footer-social-networks">
+        <a href="#" class="nav-link dropdown-toggle active-item" data-once="initReportMenu initHorizontalMenu">Follow us</a>
+
+        <div class="field field--name-field-social-networks field--type-entity-reference field--label-hidden field__items"><div class="field__item"><div class="social_network"><a href="https://www.facebook.com/unesco/" target="_blank" class="icon2-external"><span class="icon2-facebook icon2"></span><span>Facebook</span></a></div></div><div class="field__item"><div class="social_network"><a href="https://www.threads.net/@unesco" target="_blank" class="icon2-external"><span class="icon2-threads icon2"></span><span>Threads</span></a></div></div><div class="field__item"><div class="social_network"><a href="https://twitter.com/UNESCO?ref_src=twsrc%5Egoogle%7Ctwcamp%5Eserp%7Ctwgr%5Eauthor" target="_blank" class="icon2-external"><span class="icon2-twitter icon2"></span><span>Twitter</span></a></div></div><div class="field__item"><div class="social_network"><a href="https://www.youtube.com/UNESCO" target="_blank" class="icon2-external"><span class="icon2-youtube icon2"></span><span>YouTube</span></a></div></div><div class="field__item"><div class="social_network"><a href="https://www.tiktok.com/@unesco?lang=en" target="_blank" class="icon2-external"><span class="icon2-tiktok icon2"></span><span>TikTok</span></a></div></div><div class="field__item"><div class="social_network"><a href="https://www.instagram.com/unesco/?hl=en" target="_blank" class="icon2-external"><span class="icon2-instagram icon2"></span><span>Instagram</span></a></div></div><div class="field__item"><div class="social_network"><a href="https://whatsapp.com/channel/0029VaHUoHkAO7RCkmguOi1w" target="_blank" class="icon2-external"><span class="icon2-whatsapp icon2"></span><span>Whatsapp</span></a></div></div><div class="field__item"><div class="social_network"><a href="https://www.linkedin.com/company/unesco" target="_blank" class="icon2-external"><span class="icon2-linkedin icon2"></span><span>LinkedIn</span></a></div></div></div>
+        
+
+
       </div>
     </div>
     {% endblock %}

@@ -1,0 +1,6 @@
+{% set courses = h.get_latest_courses() %}
+{% for course in courses %}
+<div class="col-md-3 col4">
+<div class="col-small"><div class="cardsmall cardsmall-height-fixed cardsmall-cta cardsmall-hero"> <img class="cardsmall-img-top image-style-cardsmall-1-column" src="{{ course['media']['image']['raw'] }}" width="289" height="424" alt="" loading="lazy"><div class="cardsmall-body"><p>{{ course['org'] }}</p><div class="cardsmall-title"><a href="https://openlearning.unesco.org/courses/{{ course['course_id'] }}/about">{{ course['name'] }}</a></div><div class="cardsmall-text"><p>Start: {{ course['start_display'] }}</p></div></div></div></div>
+</div>
+{% endfor %}

@@ -1,5 +1,10 @@
-{% set tags = h.get_facet_items_dict('tags', c.search_facets, limit=3) %}
 {% set placeholder = _('E.g. environment') %}
+{% set stats = h.get_site_statistics() %}
+
+
+
+
+
 
 <div class="module module-search module-narrow module-shallow box">
   <form class="module-content search-form" method="get" action="{% url_for 'dataset.search' %}">
@@ -13,9 +18,16 @@
     </div>
   </form>
   <div class="tags">
-    <h3>{{ _('Popular tags') }}</h3>
-    {% for tag in tags %}
-      <a class="tag" href="{% url_for 'dataset.search', tags=tag.name %}">{{ h.truncate(tag.display_name, 22) }}</a>
-    {% endfor %}
+
+    <a class="stats" href="{{ h.url_for('dataset.search') }}">
+      <strong>{{ h.SI_number_span(stats.dataset_count) }}</strong>
+      {{ _('dataset') if stats.dataset_count == 1 else _('datasets') }}
+    </a>
+    <a class="stats" href="{{ h.url_for(controller='organization', action='index') }}">
+      <strong>{{ h.SI_number_span(stats.organization_count) }}</strong>
+      {{ _('organization') if stats.organization_count == 1 else _('organizations') }}
+    </a>
+
+
   </div>
 </div>

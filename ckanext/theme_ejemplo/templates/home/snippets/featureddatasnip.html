@@ -1,0 +1,15 @@
+{% set featured_datasets = h.get_featured_datasets_filtered(tag='FeaturedDataset', user='1ba0aed8-4e54-4be8-8e23-6f6472574cf7') %}
+{% for dataset in featured_datasets %}
+<div class="col-md-4 col3">
+<div class="col-small"><div class="cardsmall cardsmall-height-fixed cardsmall-cta cardsmall-hero"> 
+{% set org_image_url = h.get_organization_image_by_name(dataset['name']) %}
+{% if org_image_url %}
+<img class="cardsmall-img-top image-style-cardsmall-1-column" src="{{ org_image_url }}" width="289" height="424" alt="" loading="lazy"><div class="cardsmall-body">
+{% else %}
+<img class="cardsmall-img-top image-style-cardsmall-1-column" src="https://www.unesco.org/sites/default/files/styles/card_1_column/public/2023-11/Resilience%20Rating%20System%20cover.jpg?itok=lgXgMKiX" width="289" height="424" alt="" loading="lazy"><div class="cardsmall-body">
+{% endif %}
+        <div class="cardsmall-title">{{ dataset['title'] }}</div><div class="cardsmall-text">
+            <p>{{ dataset['notes'] }}</p></div><div class="field field--name-field-link field--type-link field--label-hidden field__item">
+        <a href="{{ h.url_for('dataset.read', id=dataset['name']) }}" class="btn btn-primary btn-arrow-right" target="_blank">Discover</a></div></div></div></div>
+</div>
+{% endfor %}

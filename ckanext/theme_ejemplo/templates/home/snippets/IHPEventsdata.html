@@ -1,0 +1,24 @@
+{% set posts = h.get_recent_blog_posts(number=5) %}
+{% for post in posts %}
+<div class="col-md-4 col3">
+<div class="col-small">
+    <div class="cardsmall cardsmall-height-fixed cardsmall-cta cardsmall-hero"> 
+        {% if post.image %}
+
+            <img class="cardsmall-img-top image-style-cardsmall-1-column" src="{{ post.image }}" width="289" height="424" alt="" loading="lazy"><div class="cardsmall-body">
+
+        {%else %}
+
+        <img class="cardsmall-img-top image-style-cardsmall-1-column" src="https://www.unesco.org/sites/default/files/styles/card_1_column/public/2023-11/Resilience%20Rating%20System%20cover.jpg?itok=lgXgMKiX" width="289" height="424" alt="" loading="lazy"><div class="cardsmall-body">
+
+        {% endif %}
+        
+            {% if post.publish_date %}<p> 
+                <small> {{ h.render_datetime(post.publish_date) }} </small>
+            </p>
+                {% endif %}
+        <div class="cardsmall-title">{{ post.title or post.name }}</div><div class="cardsmall-text">
+                <p>{{ h.markdown_extract(post.content) }}</p></div><div class="field field--name-field-link field--type-link field--label-hidden field__item">
+            <a href="{{ h.url_for('pages.blog_show', page='' + post.name) }}" class="btn btn-primary btn-arrow-right" target="_blank">Read more</a></div></div></div></div>
+</div>
+{% endfor %}

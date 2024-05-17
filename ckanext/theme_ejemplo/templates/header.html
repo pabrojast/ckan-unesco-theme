@@ -1,9 +1,10 @@
 {% block header_wrapper %} {% block header_account %}
+{% if c.userobj %}
 <div class="account-masthead">
   <div class="container">
     {% block header_account_container_content %} {% if c.userobj %}
     <div class="account avatar authed" data-module="me" data-me="{{ c.userobj.id }}">
-      <ul class="list-unstyled">
+      <ul class="list-unstyled2">
         {% block header_account_logged %} {% if c.userobj.sysadmin %}
         <li>
           <a href="{{ h.url_for(controller='admin', action='index') }}" title="{{ _('Sysadmin settings') }}">
@@ -42,29 +43,32 @@
             <span class="text">{{ _('Log out') }}</span>
           </a>
         </li>
+        {% if c.userobj.sysadmin %}
         <li>
           <a href="/blog" alt="Blog">Blog</a>
         </li>
         <li>
           <a href="/colab/admin" alt="Blog">Colab Admin</a>
         </li>
+        {% endif %}
         {% endblock %} {% endblock %}
       </ul>
     </div>
     {% else %}
-    <nav class="account not-authed" aria-label="{{ _('Account') }}">
-      <ul class="list-unstyled">
-		<li><a href="/colab" alt="Enroll as a Data Contributor for Your Organization">Enroll as a Data Contributor for Your Organization</a></li>
-        {% block header_account_notlogged %}
-        <li>{% link_for _('Log in'), named_route='user.login' %}</li>
-        {% endblock %}
-      </ul>
-    </nav>
+
     {% endif %} {% endblock %}
   </div>
 </div>
+{% endif %}
+
 {% endblock %}
-<header class="navbar navbar-static-top masthead">
+
+{% if h.current_url() == '/' %}
+{% set is_index = True %}
+{% else %}
+{% set is_index = False %}
+{% endif %}
+<header class="navbar navbar-static-top masthead" {{ '' if is_index else 'style="background-color: #0077d4 !important;"' | safe }} > 
   {% block header_debug %} {% if g.debug and not g.debug_supress_header %}
   <div class="debug">Controller : {{ c.controller }}<br/>Action : {{ c.action }}</div>
   {% endif %} {% endblock %}
@@ -85,6 +89,19 @@
       {% if g.site_description %}
       <h2>{{ g.site_description }}</h2>{% endif %} {% endif %} {% endblock %}
     </hgroup>
+    
+    <div class="topmenu">
+      <ul>
+        {% block header_account_notlogged %}</li>
+        {% if c.userobj %}
+        <li><a href="{{ h.url_for('/user/_logout') }}" title="{{ _('Log out') }}">{{ _('Log out') }}</a></li> 
+        {% else %}
+        <li>{% link_for _('Log in'), named_route='user.login' %}</li>
+        {% endif %}
+        {% endblock %}
+        <li><a href="/colab" alt="Enroll as a Data Contributor for Your Organization">Enroll as a Data Contributor for Your Organization</a></li>
+      </ul>
+    </div>
 
     <div class="collapse navbar-collapse" id="main-navigation-toggle">
       {% block header_site_navigation %}
