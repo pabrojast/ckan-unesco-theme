@@ -473,6 +473,13 @@ img {
 .cardsmall-text {
     line-height: 1.3;
 }
+
+.cardsmall-text p{
+    height: 60px !important;
+    overflow: clip !important;
+    overflow-clip-margin: 0px !important;
+}
+
 .col-small{
     position: relative;
     width: 100%;
