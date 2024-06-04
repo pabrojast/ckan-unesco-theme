@@ -1,0 +1,39 @@
+{
+  "catalog": [
+    {
+      "type": "ckan-group",
+      "name": "IHP WINS",
+      "url": "https://ihp-wins.unesco.org",
+      "filterQuery": [
+        {
+          "fq": "+(res_format:(wms OR WMS OR shapefile OR Shapefile OR \"zip (shp)\" OR shp OR SHP OR kmz OR GeoJSON OR geojson OR csv-geo-au OR aus-geo-csv))"
+        }
+      ],
+      "groupBy": "organization",
+      "supportedResourceFormats": [
+        {
+          "id": "WMS"
+        },
+        {
+          "id": "Kml"
+        },
+        {
+          "id": "Shapefile"
+        }
+      ],
+        "ungroupedTitle": "Organisation not declared",
+  "itemPropertiesByType": [
+    {
+      "type": "wms",
+      "itemProperties": {
+        "crs": "EPSG:3857"
+      }
+    }
+  ],
+  "resourceIdTemplate": "{{resource.name}}-{{resource.format}}",
+      "shareKeys": [
+        "Root Group"
+      ]
+    }
+  ]
+}

@@ -634,3 +634,8 @@ img {
 .icon2-linkedin::before {
     content: "";
 }
+.btn-terria {
+    color: #fff;
+    background-color: rgb(81, 154, 194);
+    border-color: #000;
+}

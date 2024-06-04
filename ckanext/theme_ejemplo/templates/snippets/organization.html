@@ -1,0 +1,140 @@
+{#
+Embeds a organization within the sidebar of a page.
+
+organization    - The organization dict.
+truncate - A max length for the organization description. If not provided the description
+           will be full length.
+has_context_title - Boolean for whether to display a module-heading for when
+                    this snippet appears within a non-organization template
+                    (e.g. dataset page sidebar)
+
+Example:
+
+    {% snippet 'snippets/organization, organization=c.group_dict %}
+
+#}
+
+{% set truncate = truncate or 0 %}
+{% set url = h.url_for(organization.type + '.read', id=organization.name, ) %}
+
+  {% block info %}
+  <div class="module module-narrow module-shallow context-info">
+    {% if has_context_title %}
+      <h2 class="module-heading"><i class="fa fa-building-o"></i> {{ _('Organization') }}</h2>
+    {% endif %}
+    <section class="module-content">
+      {% block inner %}
+      {% block image %}
+        <div class="image">
+          <a href="{{ url }}">
+            <img src="{{ organization.image_display_url or h.url_for_static('/base/images/placeholder-organization.png') }}" width="200" alt="{{ organization.name }}" />
+          </a>
+        </div>
+      {% endblock %}
+      {% block heading %}
+      <h1 class="heading">{{ organization.title or organization.name }}
+        {% if organization.state == 'deleted' %}
+          [{{ _('Deleted') }}]
+        {% endif %}
+      </h1>
+      {% endblock %}
+      {% block description %}
+      {% if organization.description %}
+        <p class="description">
+          {{ h.markdown_extract(organization.description, 180) }}
+        </p>
+        <p class="read-more">
+          {% link_for _('read more'), controller='organization', action='about', id=organization.name %}
+        </p>
+
+      {% else %}
+        <p class="empty">{{ _('There is no description for this organization') }}</p>
+      {% endif %}
+      {% endblock %}
+      {% if show_nums %}
+        {% block nums %}
+        <div class="nums">
+          <dl>
+            <dt>{{ _('Followers') }}</dt>
+            <dd data-module="followers-counter" data-module-id="{{ organization.id }}" data-module-num_followers="{{ organization.num_followers }}">{{ h.SI_number_span(organization.num_followers) }}</dd>
+          </dl>
+          <dl>
+            <dt>{{ _('Datasets') }}</dt>
+            <dd>{{ h.SI_number_span(organization.package_count) }}</dd>
+          </dl>
+        </div>
+        {% endblock %}
+        {% block follow %}
+        <div class="follow_button">
+          {{ h.follow_button('group', organization.id) }}
+        </div>
+        {% endblock %}
+        {% set site_url = config.get('ckan.site_url') %}
+
+        {% set config = { 
+          "version": "8.0.0",
+          "initSources": [
+            {
+              "catalog": [
+                {
+                  "type": "ckan-group",
+                  "name": organization.title or organization.name,
+                  "url": site_url,
+                  "isOpen": true,
+                  "filterQuery": [
+                    {
+                      "fq": "+(res_format:(wms OR WMS OR shapefile OR Shapefile OR \"zip (shp)\" OR shp OR SHP OR kmz OR GeoJSON OR geojson OR csv-geo-au OR aus-geo-csv)) AND organization:" ~ organization.name
+                    }
+                  ],
+                  "groupBy": "organization",
+                  "supportedResourceFormats": [
+                    {
+                      "id": "WMS"
+                    },
+                    {
+                      "id": "Kml"
+                    },
+                    {
+                      "id": "Shapefile"
+                    }
+                  ],
+                  "ungroupedTitle": "Organisation not declared",
+                  "itemPropertiesByType": [
+                    {
+                      "type": "wms",
+                      "itemProperties": {
+                        "crs": "EPSG:3857"
+                      }
+                    }
+                  ],
+                  "resourceIdTemplate": "{{resource.name}}-{{resource.format}}",
+                  "shareKeys": [
+                    "Root Group"
+                  ]
+                }
+              ],
+              "models": {
+                "//" ~ organization.title or organization.name: {
+                  "isOpen": true,
+                  "knownContainerUniqueIds": ["/"],
+                  "type": "ckan-group"
+                }
+              },
+              "previewedItemId": "//" ~ organization.title or organization.name
+            }
+          ]
+        } %}
+
+        {# Convert the config to a JSON string and URL encode it #}
+        {% set encoded_config = (config | tojson | urlencode) %}
+
+        {# Generate the Terria link #}
+        <a href="https://terria.dev-wins.com/#start={{ encoded_config }}" class="btn btn-terria">
+          <i class="fa fa-eye"></i> View in Terria
+        </a>
+
+      {% endif %}
+      {% endblock %}
+    </section>
+  </div>
+  {% endblock %}

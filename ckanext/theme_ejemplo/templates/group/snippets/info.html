@@ -1,0 +1,117 @@
+{% block info %}
+<div class="module context-info">
+  <section class="module-content">
+    {% block inner %}
+    {% block image %}
+    <div class="image">
+      <a href="{{ group.url }}">
+        <img src="{{ group.image_display_url or h.url_for_static('/base/images/placeholder-group.png') }}" width="190" height="118" alt="{{ group.name }}" />
+      </a>
+    </div>
+    {% endblock %}
+    {% block heading %}
+    <h1 class="heading">
+      {{ group.display_name }}
+      {% if group.state == 'deleted' %}
+        [{{ _('Deleted') }}]
+      {% endif %}
+    </h1>
+    {% endblock %}
+    {% block description %}
+    {% if group.description %}
+      <p class="description">
+        {{ h.markdown_extract(group.description, 180) }}
+      </p>
+      <p class="read-more">
+        {% link_for _('read more'), named_route='group.about', id=group.name %}
+      </p>
+    {% endif %}
+    {% endblock %}
+    {% if show_nums %}
+      {% block nums %}
+      <div class="nums">
+        <dl>
+          <dt>{{ _('Followers') }}</dt>
+          <dd data-module="followers-counter" data-module-id="{{ group.id }}" data-module-num_followers="{{ group.num_followers }}">{{ h.SI_number_span(group.num_followers) }}</dd>
+        </dl>
+        <dl>
+          <dt>{{ _('Datasets') }}</dt>
+          <dd>{{ h.SI_number_span(group.package_count) }}</dd>
+        </dl>
+      </div>
+      {% endblock %}
+      {% block follow %}
+      <div class="follow_button">
+        {{ h.follow_button('group', group.id) }}
+      </div>
+      {% endblock %}
+      {% set site_url = config.get('ckan.site_url') %}
+
+      {% set config = { 
+        "version": "8.0.0",
+        "initSources": [
+          {
+            "catalog": [
+              {
+                "type": "ckan-group",
+                "name": group.title or group.name,
+                "url": site_url,
+                "isOpen": true,
+                "filterQuery": [
+                  {
+                    "fq": "+(res_format:(wms OR WMS OR shapefile OR Shapefile OR \"zip (shp)\" OR shp OR SHP OR kmz OR GeoJSON OR geojson OR csv-geo-au OR aus-geo-csv)) AND group:" ~ group.name
+                  }
+                ],
+                "groupBy": "group",
+                "supportedResourceFormats": [
+                  {
+                    "id": "WMS"
+                  },
+                  {
+                    "id": "Kml"
+                  },
+                  {
+                    "id": "Shapefile"
+                  }
+                ],
+                "ungroupedTitle": "Group not declared",
+                "itemPropertiesByType": [
+                  {
+                    "type": "wms",
+                    "itemProperties": {
+                      "crs": "EPSG:3857"
+                    }
+                  }
+                ],
+                "resourceIdTemplate": "{{resource.name}}-{{resource.format}}",
+                "shareKeys": [
+                  "Root Group"
+                ]
+              }
+            ],
+            "models": {
+              "//" ~ group.title or group.name: {
+                "isOpen": true,
+                "knownContainerUniqueIds": ["/"],
+                "type": "ckan-group"
+              }
+            },
+            "previewedItemId": "//" ~ group.title or group.name
+          }
+        ]
+      } %}
+
+      {# Convert the config to a JSON string and URL encode it #}
+      {% set encoded_config = (config | tojson | urlencode) %}
+
+      {# Generate the Terria link #}
+      <a href="https://terria.dev-wins.com/#start={{ encoded_config }}" class="btn btn-terria">
+        <i class="fa fa-eye"></i> View in Terria
+      </a>
+
+
+    {% endif %}
+    {% endblock %}
+  </section>
+</div>
+{% endblock %}
