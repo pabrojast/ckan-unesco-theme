@@ -59,7 +59,7 @@
                 "isOpen": true,
                 "filterQuery": [
                   {
-                    "fq": "+(res_format:(wms OR WMS OR shapefile OR Shapefile OR \"zip (shp)\" OR shp OR SHP OR kmz OR GeoJSON OR geojson OR csv-geo-au OR aus-geo-csv)) AND group:" ~ group.name
+                    "fq": "+(res_format:(wms OR WMS OR shapefile OR Shapefile OR \"zip (shp)\" OR shp OR SHP OR kmz OR GeoJSON OR geojson OR csv-geo-au OR aus-geo-csv)) AND groups:" ~ (group.title or group.name)
                   }
                 ],
                 "groupBy": "group",
