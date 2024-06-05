@@ -54,7 +54,7 @@
             "catalog": [
               {
                 "type": "ckan-group",
-                "name": group.name,
+                "name": group.title,
                 "url": site_url,
                 "isOpen": true,
                 "filterQuery": [
@@ -89,13 +89,13 @@
               }
             ],
             "models": {
-              "//" ~ group.name: {
+              "//" ~ group.title: {
                 "isOpen": true,
                 "knownContainerUniqueIds": ["/"],
                 "type": "ckan-group"
               }
             },
-            "previewedItemId": "//" ~ group.name
+            "previewedItemId": "//" ~ group.title
           }
         ]
       } %}
