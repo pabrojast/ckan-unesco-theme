@@ -129,7 +129,15 @@ Example:
         {% set encoded_config = (config | tojson | urlencode) %}
 
         {# Generate the Terria link #}
-        <a href="https://terria.dev-wins.com/#start={{ encoded_config }}" class="btn btn-terria">
+
+        {# Determine the Terria URL based on the site URL #}
+        {% set terria_url = 'https://terria.dev-wins.com/#start=' ~ encoded_config %}
+        {% if 'ihp-wins.unesco.org' in site_url %}
+          {% set terria_url = 'https://ihp-wins.unesco.org/terria/#start=' ~ encoded_config %}
+        {% endif %}
+  
+        {# Generate the Terria link #}
+        <a href="{{ terria_url }}" class="btn btn-terria">
           <i class="fa fa-eye"></i> View in Terria
         </a>
 
