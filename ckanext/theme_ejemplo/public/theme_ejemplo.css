@@ -410,8 +410,8 @@ img {
 }
 
 .cardsmall-height-fixed {
-    min-height: 20rem;
-    max-height: 26.5rem;
+    height: 26.5rem;
+    min-height: 26.5rem;
 }
 
 
