@@ -19,6 +19,25 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin):
         plugins.implements(plugins.IConfigurer)
         plugins.implements(plugins.IBlueprint)
         plugins.implements(plugins.ITemplateHelpers)  # Implementar ITemplateHelpers
+        plugins.implements(plugins.IPackageController, inherit=True)
+
+        #this fix solr-bbox search
+        def before_dataset_index(self, dataset_dict):
+
+            # When using the default `solr-bbox` backend (based on bounding boxes), you need to
+            # include the following fields in the returned dataset_dict:
+
+            dataset_dict["minx"] = float(dataset_dict.get('xmin'))
+            dataset_dict["maxx"] = float(dataset_dict.get('xmax'))
+            dataset_dict["miny"] = float(dataset_dict.get('ymin'))
+            dataset_dict["maxy"] = float(dataset_dict.get('ymax'))
+
+            # When using the `solr-spatial-field` backend, you need to include the `spatial_geom`
+            # field in the returned dataset_dict. This should be a valid geometry in WKT format.
+            # Shapely can help you get the WKT representation of your gemetry if you have it in GeoJSON:
+
+
+            return dataset_dict
 
         def update_config(self, config):
             # Add this plugin's templates dir to CKAN's extra_template_paths, so
