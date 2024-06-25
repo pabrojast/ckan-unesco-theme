@@ -27,7 +27,7 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin):
             return self.before_dataset_index(dataset_dict)
         #for ckan v2.10
         def before_dataset_index(self, dataset_dict):
-
+            
             # When using the default `solr-bbox` backend (based on bounding boxes), you need to
             # include the following fields in the returned dataset_dict:
             xmin = dataset_dict.get('xmin')
@@ -35,13 +35,21 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin):
             ymin = dataset_dict.get('ymin')
             ymax = dataset_dict.get('ymax')
 
-            if xmin is not None and xmax is not None and ymin is not None and ymax is not None:
-                # Copiar los valores a los campos esperados por Solr
-                dataset_dict["minx"] = float(xmin)
-                dataset_dict["maxx"] = float(xmax)
-                dataset_dict["miny"] = float(ymin)
-                dataset_dict["maxy"] = float(ymax)
-            
+            if all(value is not None and value != '' for value in [xmin, xmax, ymin, ymax]):
+                try:
+                    # Copiar los valores a los campos esperados por Solr
+                    dataset_dict["minx"] = float(xmin)
+                    dataset_dict["maxx"] = float(xmax)
+                    dataset_dict["miny"] = float(ymin)
+                    dataset_dict["maxy"] = float(ymax)
+                except ValueError as e:
+                    # Log the error and handle it (e.g., skip this dataset or set default values)
+                    print(f"Error converting bounding box values to float: {e}")
+                    # Optionally, you can set default values or take other actions here
+                    dataset_dict["minx"] = None
+                    dataset_dict["maxx"] = None
+                    dataset_dict["miny"] = None
+                    dataset_dict["maxy"] = None
             # When using the `solr-spatial-field` backend, you need to include the `spatial_geom`
             # field in the returned dataset_dict. This should be a valid geometry in WKT format.
             # Shapely can help you get the WKT representation of your gemetry if you have it in GeoJSON:
