@@ -22,6 +22,10 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin):
         plugins.implements(plugins.IPackageController, inherit=True)
 
         #this fix solr-bbox search
+        #for ckan v2.9
+        def before_index(self, dataset_dict):
+            return self.before_dataset_index(dataset_dict)
+        #for ckan v2.10
         def before_dataset_index(self, dataset_dict):
 
             # When using the default `solr-bbox` backend (based on bounding boxes), you need to
