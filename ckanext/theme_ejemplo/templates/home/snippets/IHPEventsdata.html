@@ -19,6 +19,6 @@
                 {% endif %}
         <div class="cardsmall-title">{{ post.title or post.name }}</div><div class="cardsmall-text">
                 <p>{{ h.markdown_extract(post.content) }}</p></div><div class="field field--name-field-link field--type-link field--label-hidden field__item">
-            <a href="{{ h.url_for('pages.blog_show', page='' + post.name) }}" class="btn btn-primary btn-arrow-right" target="_blank">Read more</a></div></div></div></div>
+            <a href="{{ h.url_for('pages.blog_show', page='' + post.name) }}" class="btn btn-primary btn-arrow-right" target="_blank">{% trans %}Read more{% endtrans %}</a></div></div></div></div>
 </div>
 {% endfor %}

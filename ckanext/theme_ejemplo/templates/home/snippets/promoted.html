@@ -2,17 +2,17 @@
 
 <div class="module-content box">
   <div>
-    {% if intro %}
-    <h1 class="page-heading">The IHP Water Information Network System</h1>
-      {{ h.render_markdown(intro) }}
-    {% else %}
-      <h1 class="page-heading">{{ _("Welcome to CKAN") }}</h1>
-      <p>
-        {% trans %}This is a nice introductory paragraph about CKAN or the site
-        in general. We don't have any copy to go here yet but soon we will
-        {% endtrans %}
-      </p>
-    {% endif %}
+
+    <h1 class="page-heading">{% trans %}The IHP Water Information Network System{% endtrans %}</h1>
+    
+    {% trans %}
+    <p>The <strong>Intergovernmental Hydrological Programme's Water Information Network System (IHP-WINS)</strong> is designed to promote the <i>sharing and dissemination of water-related data and information</i> among countries, organizations, and stakeholders involved in water resources management, as part of the UNESCO IHP mandate.</p>
+    <p>The main objective of IHP-WINS is <strong>to enhance the availability, accessibility, and usability of water-related information, with a focus on supporting evidence-based decision-making and sustainable water resources management</strong>. It aims to facilitate the exchange of data, knowledge, and best practices among stakeholders at various levels, including national, regional, and global scales.</p>
+    <p>IHP-WINS provides a platform for integrating and harmonizing water-related data and information from diverse sources, such as monitoring networks, research institutions, government agencies, and international organizations. It promotes the use of standardized data formats and metadata to ensure compatibility and interoperability of information across different systems and platforms.</p>
+    <p>Through IHP-WINS, UNESCO's Intergovernmental Hydrological Programme aims to strengthen international cooperation, improve data availability, and enhance the understanding and management of water resources worldwide. The initiative contributes to the achievement of sustainable development goals related to water and supports countries in their efforts to address water-related challenges and promote integrated water resources management.</p>
+    <p>Overall, IHP-WINS plays a vital role in advancing water governance, supporting evidence-based decision-making, and fostering international cooperation for sustainable water resources management.</p>
+    {% endtrans %}
+
   </div>
 
   {% block home_image %}

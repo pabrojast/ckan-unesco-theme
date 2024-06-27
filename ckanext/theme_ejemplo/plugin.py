@@ -5,13 +5,15 @@
 '''
 import ckan.plugins as plugins
 import ckan.plugins.toolkit as toolkit
+from ckan.lib.plugins import DefaultTranslation
+
 import requests
 
 
 from flask import Blueprint
 from ckanext.theme_ejemplo.controller import MyLogica
 
-class ThemeEjemploPlugin(plugins.SingletonPlugin):
+class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
         '''An example theme plugin.
 
         '''
@@ -20,6 +22,7 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin):
         plugins.implements(plugins.IBlueprint)
         plugins.implements(plugins.ITemplateHelpers)  # Implementar ITemplateHelpers
         plugins.implements(plugins.IPackageController, inherit=True)
+        plugins.implements(plugins.ITranslation)  # Implementar ITemplateHelpers
 
         #this fix solr-bbox search
         #for ckan v2.9

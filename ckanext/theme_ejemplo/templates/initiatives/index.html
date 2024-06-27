@@ -1,12 +1,12 @@
 {% extends "page.html" %}
 {% block title %}
-Initiatives - {{ super() }}
+{% trans %}Initiatives{% endtrans %} - {{ super() }}
 {% endblock %}
 
 {% block subtitle %}{{ _('Groups') }}{% endblock %}
 
 {% block breadcrumb_content %}
-  <li class="active"><a href="/initiatives/">Initiatives</a></li>
+  <li class="active"><a href="/initiatives/">{% trans %}Initiatives{% endtrans %}</a></li>
 {% endblock %}
 
 {% block page_header %}{% endblock %}

@@ -1,0 +1,667 @@
+# Translations template for ckanext-theme-ejemplo.
+# Copyright (C) 2024 ORGANIZATION
+# This file is distributed under the same license as the ckanext-theme-ejemplo
+# project.
+# FIRST AUTHOR <EMAIL@ADDRESS>, 2024.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: ckanext-theme-ejemplo 0.0.1\n"
+"Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
+"POT-Creation-Date: 2024-06-26 15:30-0400\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Generated-By: Babel 2.7.0\n"
+
+#: ckanext/theme_ejemplo/templates/footer.html:13
+msgid "Latest News"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/footer.html:14
+msgid "Take Action"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/footer.html:15
+msgid "Ideas & Data"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/footer.html:16
+msgid "Our Impact"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/footer.html:17
+msgid "Our expertise"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/footer.html:18
+msgid "Core Data Portal"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/footer.html:19
+msgid "Subscribe to our Newsletter"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/footer.html:22
+msgid "CKAN Association"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/footer.html:30
+msgid "Terms of use"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/footer.html:34
+msgid "Report fraud, abuse, misconduct"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/footer.html:41
+msgid "Policies"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/footer.html:43
+msgid "Protection of human rights (Procedure 104)"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/footer.html:44
+msgid "Privacy Notice"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/footer.html:45
+msgid "Access to Information"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/footer.html:46
+msgid "Environmental and Social Policies"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/footer.html:51
+msgid "Follow us"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/header.html:10
+msgid "Sysadmin settings"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/header.html:12
+msgid "Admin"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/header.html:17
+msgid "View profile"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/header.html:24
+#, python-format
+msgid "Dashboard (%(num)d new item)"
+msgid_plural "Dashboard (%(num)d new items)"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ckanext/theme_ejemplo/templates/header.html:28
+msgid "Dashboard"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/header.html:34
+#: ckanext/theme_ejemplo/templates/header.html:36
+msgid "Profile settings"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/header.html:41
+#: ckanext/theme_ejemplo/templates/header.html:43
+#: ckanext/theme_ejemplo/templates/header.html:97
+msgid "Log out"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/header.html:78
+msgid "Toggle navigation"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/header.html:99
+msgid "Log in"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/header.html:102
+msgid "Enroll as a Data Contributor for Your Organization"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/group/snippets/info.html:38
+#: ckanext/theme_ejemplo/templates/header.html:115
+#: ckanext/theme_ejemplo/templates/initiatives/snippets/info.html:38
+#: ckanext/theme_ejemplo/templates/memberstates/snippets/info.html:38
+#: ckanext/theme_ejemplo/templates/snippets/organization.html:62
+msgid "Datasets"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/header.html:116
+msgid "Organizations"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/header.html:120
+#: ckanext/theme_ejemplo/templates/memberstates/index.html:9
+msgid "Member States"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/header.html:121
+#: ckanext/theme_ejemplo/templates/initiatives/index.html:3
+#: ckanext/theme_ejemplo/templates/initiatives/index.html:9
+msgid "Initiatives"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/header.html:122
+#: ckanext/theme_ejemplo/templates/home/about.html:3
+#: ckanext/theme_ejemplo/templates/home/about.html:6
+#: ckanext/theme_ejemplo/templates/home/about.html:16
+msgid "About"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/header.html:129
+msgid "Search Datasets"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/header.html:130
+#: ckanext/theme_ejemplo/templates/home/snippets/search.html:16
+msgid "Search"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/header.html:130
+#: ckanext/theme_ejemplo/templates/home/snippets/search.html:13
+msgid "Search datasets"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/header.html:131
+msgid "Submit"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/group/snippets/helper.html:4
+msgid "What are Groups?"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/group/snippets/helper.html:8
+msgid ""
+"You can use Groups to create and manage collections of datasets. This could "
+"be to catalogue datasets for a particular project or team, or on a particular"
+" theme, or as a very simple way to help people find and search your own "
+"published datasets."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/group/snippets/info.html:16
+#: ckanext/theme_ejemplo/templates/initiatives/snippets/info.html:16
+#: ckanext/theme_ejemplo/templates/memberstates/snippets/info.html:16
+#: ckanext/theme_ejemplo/templates/snippets/organization.html:37
+msgid "Deleted"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/group/snippets/info.html:26
+#: ckanext/theme_ejemplo/templates/initiatives/snippets/info.html:26
+#: ckanext/theme_ejemplo/templates/memberstates/snippets/info.html:26
+#: ckanext/theme_ejemplo/templates/snippets/organization.html:47
+msgid "read more"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/group/snippets/info.html:34
+#: ckanext/theme_ejemplo/templates/initiatives/snippets/info.html:34
+#: ckanext/theme_ejemplo/templates/memberstates/snippets/info.html:34
+#: ckanext/theme_ejemplo/templates/snippets/organization.html:58
+msgid "Followers"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/group/snippets/info.html:116
+#: ckanext/theme_ejemplo/templates/snippets/organization.html:141
+msgid "View in Terria"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/index.html:4
+msgid "Welcome"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/FeaturedPublications.html:4
+msgid "Featured Publications"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/FeaturedPublications.html:7
+msgid ""
+"Delve into our featured UNESDOC and Water Family publications for invaluable "
+"insights into water-related topics. These latest publications cover a wide "
+"range of subjects, from water governance to climate change adaptation, "
+"providing essential knowledge for researchers, policymakers, and "
+"practitioners alike. Explore these resources to stay informed and empowered "
+"in the realm of water management and conservation."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/FeaturedPublicationsdata.html:8
+#: ckanext/theme_ejemplo/templates/home/snippets/IHPViewers.html:14
+#: ckanext/theme_ejemplo/templates/home/snippets/featureddatasnip.html:13
+msgid "Discover"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/IHPEducation.html:4
+msgid "IHP Education"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/IHPEducation.html:7
+msgid ""
+"Our dedication to continuous learning is embodied in the IHP-WINS Open "
+"Learning Environment. This initiative serves as a hub for educational "
+"resources, fostering capacity building and research among stakeholders and "
+"researchers alike. It hosts water-related courses for and by researchers, "
+"policy-makers and scientist from around the globe."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/IHPEducation.html:8
+msgid "Featured Courses"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/IHPEducation.html:10
+msgid ""
+"Explore the latest open learning courses and enhance your expertise in "
+"various water-related topics. Join us on this journey of learning and "
+"discovery as we strive towards sustainable water management practices "
+"worldwide."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/IHPEducationdata.html:14
+msgid "Start:"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/IHPEvents.html:4
+msgid "IHP Events"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/IHPViewers.html:4
+msgid "IHP Viewers"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/IHPViewers.html:5
+msgid ""
+"<p> <strong>The Geospatial Catalogue Viewer</strong> within IHP-WINS serves "
+"as a powerful tool, enabling users to transform data from the catalogue into "
+"actionable insights, supporting the closing of the data-knowledge gap. </p> "
+"<p> <strong>The Thematic Viewers</strong> complement the multitude of "
+"visualization options available for our water-related data, offering a "
+"diverse array of tools tailored to the need of the specific theme. </p>"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/IHPViewers.html:14
+msgid "The Geospatial Catalogue Viewer"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/IHPViewers.html:14
+msgid ""
+"By overlaying datasets, stakeholders gain insights into water-related "
+"patterns and trends, facilitating informed decision-making and more. The "
+"variety of datasets and scales enable to uncover insights into both "
+"overarching global trends and finer-grained local patterns."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/ThematicViewers.html:4
+msgid ""
+"The Thematic Viewers</strong> complement the multitude of visualization "
+"options available for our water-related data, offering a diverse array of "
+"tools tailored to the need of the specific theme."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/about_text.html:1
+msgid ""
+"<p>CKAN is the world’s leading open-source data portal platform.</p> <p>CKAN "
+"is a complete out-of-the-box software solution that makes data accessible and"
+" usable – by providing tools to streamline publishing, sharing, finding and "
+"using data (including storage of data and provision of robust data APIs). "
+"CKAN is aimed at data publishers (national and regional governments, "
+"companies and organizations) wanting to make their data open and "
+"available.</p> <p>CKAN is used by governments and user groups worldwide and "
+"powers a variety of official and community data portals including portals for"
+" local, national and international government, such as the UK’s <a "
+"href=\"http://data.gov.uk\">data.gov.uk</a> and the European Union’s <a "
+"href=\"http://publicdata.eu/\">publicdata.eu</a>, the Brazilian <a "
+"href=\"http://dados.gov.br/\">dados.gov.br</a>, Dutch and Netherland "
+"government portals, as well as city and municipal sites in the US, UK, "
+"Argentina, Finland and elsewhere.</p> <p>CKAN: <a "
+"href=\"http://ckan.org/\">http://ckan.org/</a><br /> CKAN Tour: <a "
+"href=\"http://ckan.org/tour/\">http://ckan.org/tour/</a><br /> Features "
+"overview: <a "
+"href=\"http://ckan.org/features/\">http://ckan.org/features/</a></p>"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/data.html:7
+msgid ""
+"At UNESCO, we believe in the power of open collaboration and the principles "
+"of Open Science, leveraging open-source technology to provide a seamless "
+"experience for users. The platform's <strong> Data Catalogue and Management "
+"System </strong>stand as a testament to this commitment, offering a robust "
+"repository for all IHP-relevant datasets. UNESCO’s Water Family can "
+"contribute and access information in various formats, enabling a diverse and "
+"inclusive data-sharing environment. UNESCO believes in harnessing the power "
+"of data to advance global goals for a sustainable future."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/data.html:9
+msgid "Data Catalogue and Management System"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/data.html:9
+msgid ""
+"Offers a robust repository for all IHP-relevant datasets. Users can "
+"contribute and access information in various formats, enabling a diverse and "
+"inclusive data-sharing environment."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/data.html:9
+msgid "Discover Datasets"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featured_group.html:2
+msgid "Featured Groups"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featured_organization.html:2
+msgid "Featured Organizations"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featureddata.html:4
+msgid "Featured Datasets"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featureddata.html:7
+msgid ""
+"The featured datasets showcased have been recently uploaded by UNESCO’s Water"
+" Family. These datasets offer insights into various aspects of water "
+"resources, from historical datasets to the latest advancements in "
+"hydrological science."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/language_selector.html:3
+#: ckanext/theme_ejemplo/templates/snippets/language_selector.html:3
+msgid "Language"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/language_selector.html:11
+#: ckanext/theme_ejemplo/templates/snippets/language_selector.html:11
+msgid "Go"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/news.html:6
+msgid "News"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/promoted.html:6
+msgid "The IHP Water Information Network System"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/promoted.html:8
+msgid ""
+"<p>The <strong>Intergovernmental Hydrological Programme's Water Information "
+"Network System (IHP-WINS)</strong> is designed to promote the <i>sharing and "
+"dissemination of water-related data and information</i> among countries, "
+"organizations, and stakeholders involved in water resources management, as "
+"part of the UNESCO IHP mandate.</p> <p>The main objective of IHP-WINS is "
+"<strong>to enhance the availability, accessibility, and usability of water-"
+"related information, with a focus on supporting evidence-based decision-"
+"making and sustainable water resources management</strong>. It aims to "
+"facilitate the exchange of data, knowledge, and best practices among "
+"stakeholders at various levels, including national, regional, and global "
+"scales.</p> <p>IHP-WINS provides a platform for integrating and harmonizing "
+"water-related data and information from diverse sources, such as monitoring "
+"networks, research institutions, government agencies, and international "
+"organizations. It promotes the use of standardized data formats and metadata "
+"to ensure compatibility and interoperability of information across different "
+"systems and platforms.</p> <p>Through IHP-WINS, UNESCO's Intergovernmental "
+"Hydrological Programme aims to strengthen international cooperation, improve "
+"data availability, and enhance the understanding and management of water "
+"resources worldwide. The initiative contributes to the achievement of "
+"sustainable development goals related to water and supports countries in "
+"their efforts to address water-related challenges and promote integrated "
+"water resources management.</p> <p>Overall, IHP-WINS plays a vital role in "
+"advancing water governance, supporting evidence-based decision-making, and "
+"fostering international cooperation for sustainable water resources "
+"management.</p>"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/search.html:1
+msgid "E.g. environment"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/search.html:11
+msgid "Search data"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/search.html:24
+#: ckanext/theme_ejemplo/templates/home/snippets/stats.html:11
+msgid "dataset"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/search.html:24
+#: ckanext/theme_ejemplo/templates/home/snippets/stats.html:11
+msgid "datasets"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/search.html:28
+#: ckanext/theme_ejemplo/templates/home/snippets/stats.html:17
+msgid "organization"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/search.html:28
+#: ckanext/theme_ejemplo/templates/home/snippets/stats.html:17
+msgid "organizations"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/stats.html:5
+msgid "{0} statistics"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/stats.html:23
+msgid "group"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/stats.html:23
+msgid "groups"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/initiatives/index.html:6
+#: ckanext/theme_ejemplo/templates/initiatives/index.html:21
+#: ckanext/theme_ejemplo/templates/memberstates/index.html:6
+#: ckanext/theme_ejemplo/templates/memberstates/index.html:21
+#: ckanext/theme_ejemplo/templates/package/group_list.html:5
+msgid "Groups"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/initiatives/index.html:16
+#: ckanext/theme_ejemplo/templates/memberstates/index.html:16
+msgid "Add Group"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/initiatives/index.html:23
+#: ckanext/theme_ejemplo/templates/memberstates/index.html:23
+msgid "Search ..."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/initiatives/index.html:23
+#: ckanext/theme_ejemplo/templates/memberstates/index.html:23
+#: ckanext/theme_ejemplo/templates/package/search.html:30
+msgid "Name Ascending"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/initiatives/index.html:23
+#: ckanext/theme_ejemplo/templates/memberstates/index.html:23
+#: ckanext/theme_ejemplo/templates/package/search.html:31
+msgid "Name Descending"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/initiatives/index.html:33
+#: ckanext/theme_ejemplo/templates/memberstates/index.html:33
+msgid "There are currently no groups for this site"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/initiatives/index.html:35
+#: ckanext/theme_ejemplo/templates/memberstates/index.html:35
+msgid "How about creating one?"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/initiatives/snippets/feeds.html:2
+#: ckanext/theme_ejemplo/templates/memberstates/snippets/feeds.html:2
+msgid "Datasets in group: {group}"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/initiatives/snippets/group_form.html:10
+#: ckanext/theme_ejemplo/templates/memberstates/snippets/group_form.html:10
+msgid "Name"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/initiatives/snippets/group_form.html:10
+#: ckanext/theme_ejemplo/templates/memberstates/snippets/group_form.html:10
+msgid "My Group"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/initiatives/snippets/group_form.html:18
+#: ckanext/theme_ejemplo/templates/memberstates/snippets/group_form.html:18
+msgid "URL"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/initiatives/snippets/group_form.html:20
+#: ckanext/theme_ejemplo/templates/memberstates/snippets/group_form.html:20
+msgid "Description"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/initiatives/snippets/group_form.html:20
+#: ckanext/theme_ejemplo/templates/memberstates/snippets/group_form.html:20
+msgid "A little information about my group..."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/initiatives/snippets/group_form.html:38
+#: ckanext/theme_ejemplo/templates/memberstates/snippets/group_form.html:38
+msgid "Are you sure you want to delete this Group?"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/initiatives/snippets/group_form.html:38
+#: ckanext/theme_ejemplo/templates/memberstates/snippets/group_form.html:38
+msgid "Delete"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/initiatives/snippets/group_form.html:41
+#: ckanext/theme_ejemplo/templates/memberstates/snippets/group_form.html:41
+msgid "Save Group"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/initiatives/snippets/group_item.html:32
+#: ckanext/theme_ejemplo/templates/memberstates/snippets/group_item.html:32
+msgid "{num} Dataset"
+msgid_plural "{num} Datasets"
+msgstr[0] ""
+msgstr[1] ""
+
+#: ckanext/theme_ejemplo/templates/initiatives/snippets/group_item.html:34
+#: ckanext/theme_ejemplo/templates/memberstates/snippets/group_item.html:34
+msgid "0 Datasets"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/initiatives/snippets/group_item.html:39
+#: ckanext/theme_ejemplo/templates/initiatives/snippets/group_item.html:40
+#: ckanext/theme_ejemplo/templates/memberstates/snippets/group_item.html:39
+#: ckanext/theme_ejemplo/templates/memberstates/snippets/group_item.html:40
+msgid "View {name}"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/initiatives/snippets/group_item.html:44
+#: ckanext/theme_ejemplo/templates/memberstates/snippets/group_item.html:44
+msgid "Remove"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/initiatives/snippets/group_item.html:44
+#: ckanext/theme_ejemplo/templates/memberstates/snippets/group_item.html:44
+msgid "Remove dataset from this group"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/initiatives/snippets/helper.html:4
+msgid "What are Initiatives?"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/initiatives/snippets/helper.html:8
+msgid ""
+"Initiatives are projects or programs initiated by individuals, organizations,"
+" or governments aimed at achieving specific goals."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/memberstates/snippets/helper.html:4
+msgid "What are Member States?"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/memberstates/snippets/helper.html:8
+msgid ""
+"Member States are countries represented through detailed datasets, each "
+"illustrating unique national characteristics, policies, and statistics. These"
+" datasets serve as a crucial resource for research, policy analysis, and "
+"comparative studies."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/organization/snippets/helper.html:4
+msgid "What are Organizations?"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/organization/snippets/helper.html:8
+msgid ""
+"Organizations are used to create, manage and publish collections of datasets."
+" Users can have different roles within an Organization, depending on their "
+"level of authorisation to create, edit and publish."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/package/group_list.html:22
+msgid "Associate this group with this dataset"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/package/group_list.html:22
+msgid "Add to group"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/package/group_list.html:32
+msgid "There are no groups associated with this dataset"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/package/search.html:29
+msgid "Relevance"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/package/search.html:32
+msgid "Last Modified"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/package/search.html:33
+msgid "Popular"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/package/search.html:52
+msgid "API"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/package/search.html:53
+msgid "API Docs"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/package/search.html:55
+msgid "full {format} dump"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/package/search.html:56
+#, python-format
+msgid ""
+"You can also access this registry using the %(api_link)s (see "
+"%(api_doc_link)s) or download a %(dump_link)s."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/package/search.html:60
+#, python-format
+msgid ""
+"You can also access this registry using the %(api_link)s (see "
+"%(api_doc_link)s)."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/snippets/organization.html:23
+msgid "Organization"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/snippets/organization.html:51
+msgid "There is no description for this organization"
+msgstr ""
+

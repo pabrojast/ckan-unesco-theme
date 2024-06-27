@@ -409,11 +409,15 @@ img {
     flex-direction: column;
 }
 
+.cardsmall-height-thematic {
+    height: 21rem;
+    min-height: 21rem;
+}
+
 .cardsmall-height-fixed {
     height: 26.5rem;
     min-height: 26.5rem;
 }
-
 
 .cardsmall {
     position: relative;
@@ -655,4 +659,12 @@ img {
     color: #fff;
     background-color: rgb(81, 154, 194);
     border-color: #000;
+}
+@media (min-width: 992px) and (max-width:1200px) {
+    .container {
+        width: 980px !important;
+    }
+}
+.masthead .site-search input {
+    width: 100px !important;
 }
