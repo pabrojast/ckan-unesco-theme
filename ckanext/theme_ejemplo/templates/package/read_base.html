@@ -1,0 +1,36 @@
+{% ckan_extends %}
+{% block secondary_content %}
+  {{ super() }}
+
+  {% set xmin = h.get_pkg_dict_extra(c.pkg_dict, 'xmin') %}
+  {% set xmax = h.get_pkg_dict_extra(c.pkg_dict, 'xmax') %}
+  {% set ymin = h.get_pkg_dict_extra(c.pkg_dict, 'ymin') %}
+  {% set ymax = h.get_pkg_dict_extra(c.pkg_dict, 'ymax') %}
+
+  {% if xmin and xmax and ymin and ymax %}
+    {% set minx = xmin|float %}
+    {% set maxx = xmax|float %}
+    {% set miny = ymin|float %}
+    {% set maxy = ymax|float %}
+    
+    {% set dataset_extent = {
+        "type": "Polygon",
+        "coordinates": [
+            [
+                [minx, miny],
+                [minx, maxy],
+                [maxx, maxy],
+                [maxx, miny],
+                [minx, miny]
+            ]
+        ]
+    } %}
+  {% else %}
+    {% set dataset_extent = None %}
+  {% endif %}
+
+  {% if dataset_extent %}
+    {% snippet "spatial/snippets/dataset_map_sidebar.html", extent=dataset_extent %}
+  {% endif %}
+
+{% endblock %}

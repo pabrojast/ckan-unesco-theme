@@ -45,10 +45,10 @@
         </li>
         {% if c.userobj.sysadmin %}
         <li>
-          <a href="/blog" alt="Blog">Blog</a>
+          <a href="{{ h.url_for('/blog') }}" alt="Blog">Blog</a>
         </li>
         <li>
-          <a href="/colab/admin" alt="Blog">Colab Admin</a>
+          <a href="{{ h.url_for('/colab/admin') }}" alt="Blog">Colab Admin</a>
         </li>
         {% endif %}
         {% endblock %} {% endblock %}
@@ -103,7 +103,7 @@
         <li>{% link_for _('Log in'), named_route='user.login' %}</li>
         {% endif %}
         {% endblock %}
-        <li><a href="/colab" alt="Enroll as a Data Contributor for Your Organization">{% trans %}Enroll as a Data Contributor for Your Organization{% endtrans %}</a></li>
+        <li><a href="{{ h.url_for('/colab') }}" alt="Enroll as a Data Contributor for Your Organization">{% trans %}Enroll as a Data Contributor for Your Organization{% endtrans %}</a></li>
 
       </ul>
     </div>
@@ -119,9 +119,9 @@
 
 		     ) }}
 	    
-      <li><a href="/memberstates">{% trans %}Member States{% endtrans %}</a></li>
-      <li><a href="/initiatives">{% trans %}Initiatives{% endtrans %}</a></li>
-      <li><a href="/about">{{ _('About') }}</a></li>
+      <li><a href="{{ h.url_for('/memberstates') }}">{% trans %}Member States{% endtrans %}</a></li>
+      <li><a href="{{ h.url_for('/initiatives') }}">{% trans %}Initiatives{% endtrans %}</a></li>
+      <li><a href="{{ h.url_for('/about') }}">{{ _('About') }}</a></li>
       {% endblock %}
         </ul>
       </nav>

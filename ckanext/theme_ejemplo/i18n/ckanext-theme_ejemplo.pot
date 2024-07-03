@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ckanext-theme-ejemplo 0.0.1\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2024-06-26 15:30-0400\n"
+"POT-Creation-Date: 2024-07-02 14:38-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -112,7 +112,7 @@ msgstr ""
 
 #: ckanext/theme_ejemplo/templates/header.html:41
 #: ckanext/theme_ejemplo/templates/header.html:43
-#: ckanext/theme_ejemplo/templates/header.html:97
+#: ckanext/theme_ejemplo/templates/header.html:101
 msgid "Log out"
 msgstr ""
 
@@ -120,59 +120,59 @@ msgstr ""
 msgid "Toggle navigation"
 msgstr ""
 
-#: ckanext/theme_ejemplo/templates/header.html:99
+#: ckanext/theme_ejemplo/templates/header.html:103
 msgid "Log in"
 msgstr ""
 
-#: ckanext/theme_ejemplo/templates/header.html:102
+#: ckanext/theme_ejemplo/templates/header.html:106
 msgid "Enroll as a Data Contributor for Your Organization"
 msgstr ""
 
 #: ckanext/theme_ejemplo/templates/group/snippets/info.html:38
-#: ckanext/theme_ejemplo/templates/header.html:115
+#: ckanext/theme_ejemplo/templates/header.html:117
 #: ckanext/theme_ejemplo/templates/initiatives/snippets/info.html:38
 #: ckanext/theme_ejemplo/templates/memberstates/snippets/info.html:38
 #: ckanext/theme_ejemplo/templates/snippets/organization.html:62
 msgid "Datasets"
 msgstr ""
 
-#: ckanext/theme_ejemplo/templates/header.html:116
+#: ckanext/theme_ejemplo/templates/header.html:118
 msgid "Organizations"
 msgstr ""
 
-#: ckanext/theme_ejemplo/templates/header.html:120
+#: ckanext/theme_ejemplo/templates/header.html:122
 #: ckanext/theme_ejemplo/templates/memberstates/index.html:9
 msgid "Member States"
 msgstr ""
 
-#: ckanext/theme_ejemplo/templates/header.html:121
+#: ckanext/theme_ejemplo/templates/header.html:123
 #: ckanext/theme_ejemplo/templates/initiatives/index.html:3
 #: ckanext/theme_ejemplo/templates/initiatives/index.html:9
 msgid "Initiatives"
 msgstr ""
 
-#: ckanext/theme_ejemplo/templates/header.html:122
+#: ckanext/theme_ejemplo/templates/header.html:124
 #: ckanext/theme_ejemplo/templates/home/about.html:3
 #: ckanext/theme_ejemplo/templates/home/about.html:6
 #: ckanext/theme_ejemplo/templates/home/about.html:16
 msgid "About"
 msgstr ""
 
-#: ckanext/theme_ejemplo/templates/header.html:129
+#: ckanext/theme_ejemplo/templates/header.html:132
 msgid "Search Datasets"
 msgstr ""
 
-#: ckanext/theme_ejemplo/templates/header.html:130
+#: ckanext/theme_ejemplo/templates/header.html:133
 #: ckanext/theme_ejemplo/templates/home/snippets/search.html:16
 msgid "Search"
 msgstr ""
 
-#: ckanext/theme_ejemplo/templates/header.html:130
+#: ckanext/theme_ejemplo/templates/header.html:133
 #: ckanext/theme_ejemplo/templates/home/snippets/search.html:13
 msgid "Search datasets"
 msgstr ""
 
-#: ckanext/theme_ejemplo/templates/header.html:131
+#: ckanext/theme_ejemplo/templates/header.html:134
 msgid "Submit"
 msgstr ""
 
@@ -234,6 +234,12 @@ msgstr ""
 
 #: ckanext/theme_ejemplo/templates/home/snippets/FeaturedPublicationsdata.html:8
 #: ckanext/theme_ejemplo/templates/home/snippets/IHPViewers.html:14
+#: ckanext/theme_ejemplo/templates/home/snippets/ThematicViewers.html:8
+#: ckanext/theme_ejemplo/templates/home/snippets/ThematicViewers.html:12
+#: ckanext/theme_ejemplo/templates/home/snippets/ThematicViewers.html:16
+#: ckanext/theme_ejemplo/templates/home/snippets/ThematicViewers.html:20
+#: ckanext/theme_ejemplo/templates/home/snippets/ThematicViewers.html:24
+#: ckanext/theme_ejemplo/templates/home/snippets/ThematicViewers.html:28
 #: ckanext/theme_ejemplo/templates/home/snippets/featureddatasnip.html:13
 msgid "Discover"
 msgstr ""
@@ -271,6 +277,10 @@ msgstr ""
 msgid "IHP Events"
 msgstr ""
 
+#: ckanext/theme_ejemplo/templates/home/snippets/IHPEventsdata.html:22
+msgid "Read more"
+msgstr ""
+
 #: ckanext/theme_ejemplo/templates/home/snippets/IHPViewers.html:4
 msgid "IHP Viewers"
 msgstr ""
@@ -299,31 +309,62 @@ msgstr ""
 
 #: ckanext/theme_ejemplo/templates/home/snippets/ThematicViewers.html:4
 msgid ""
-"The Thematic Viewers</strong> complement the multitude of visualization "
+"<strong>The Thematic Viewers</strong> complement the multitude of visualization "
 "options available for our water-related data, offering a diverse array of "
 "tools tailored to the need of the specific theme."
 msgstr ""
 
 #: ckanext/theme_ejemplo/templates/home/snippets/about_text.html:1
 msgid ""
-"<p>CKAN is the world’s leading open-source data portal platform.</p> <p>CKAN "
-"is a complete out-of-the-box software solution that makes data accessible and"
-" usable – by providing tools to streamline publishing, sharing, finding and "
-"using data (including storage of data and provision of robust data APIs). "
-"CKAN is aimed at data publishers (national and regional governments, "
-"companies and organizations) wanting to make their data open and "
-"available.</p> <p>CKAN is used by governments and user groups worldwide and "
-"powers a variety of official and community data portals including portals for"
-" local, national and international government, such as the UK’s <a "
-"href=\"http://data.gov.uk\">data.gov.uk</a> and the European Union’s <a "
-"href=\"http://publicdata.eu/\">publicdata.eu</a>, the Brazilian <a "
-"href=\"http://dados.gov.br/\">dados.gov.br</a>, Dutch and Netherland "
-"government portals, as well as city and municipal sites in the US, UK, "
-"Argentina, Finland and elsewhere.</p> <p>CKAN: <a "
-"href=\"http://ckan.org/\">http://ckan.org/</a><br /> CKAN Tour: <a "
-"href=\"http://ckan.org/tour/\">http://ckan.org/tour/</a><br /> Features "
-"overview: <a "
-"href=\"http://ckan.org/features/\">http://ckan.org/features/</a></p>"
+"<h1>The IHP Water Information Network System (IHP-WINS)</h1> <p>The "
+"<strong>Intergovernmental Hydrological Programme's Water Information Network "
+"System (IHP-WINS)</strong> is designed to promote the <em>sharing and "
+"dissemination of water-related data and information</em> among countries, "
+"organizations, and stakeholders involved in water resources management, as "
+"part of the UNESCO IHP mandate.</p> <p>The main objective of IHP-WINS is "
+"<strong>to enhance the availability, accessibility, and usability of water-"
+"related information, with a focus on supporting evidence-based decision-"
+"making and sustainable water resources management</strong>. It aims to "
+"facilitate the exchange of data, knowledge, and best practices among "
+"stakeholders at various levels, including national, regional, and global "
+"scales.</p> <p>IHP-WINS provides a platform for integrating and harmonizing "
+"water-related data and information from diverse sources, such as monitoring "
+"networks, research institutions, government agencies, and international "
+"organizations. It promotes the use of standardized data formats and metadata "
+"to ensure compatibility and interoperability of information across different "
+"systems and platforms.</p> <h2>Key features of IHP-WINS include:</h2> <ul> "
+"<li><strong>Data Sharing:</strong> IHP-WINS facilitates the sharing of water-"
+"related data, including hydrological data, water quality data, and climate "
+"data. It provides a secure and centralized repository for storing and "
+"accessing these datasets, allowing users to contribute their data and access "
+"data shared by others.</li> <li><strong>Information Exchange:</strong> The "
+"platform promotes collaboration and knowledge exchange among water "
+"professionals, researchers, policymakers, and other stakeholders. It enables "
+"the sharing of research findings, reports, publications, and other relevant "
+"information related to water resources management.</li> <li><strong>Decision "
+"Support:</strong> IHP-WINS supports decision-making processes by providing "
+"tools and services for data visualization, analysis, and modeling. It helps "
+"stakeholders assess water availability, water quality, and water-related "
+"risks, contributing to informed decision-making for sustainable water "
+"management.</li> <li><strong>Capacity Building:</strong> The platform serves "
+"as a resource hub for capacity-building materials, training modules, and "
+"educational resources related to water resources management. It facilitates "
+"the dissemination of knowledge and best practices, fostering the development "
+"of technical skills and expertise in water-related disciplines.</li> "
+"<li><strong>Collaboration and Networking:</strong> IHP-WINS promotes "
+"collaboration and networking among water professionals and organizations "
+"through its community-based approach. It facilitates the establishment of "
+"partnerships, the exchange of experiences, and the creation of communities of"
+" practice focused on specific water management topics.</li> </ul> <p>Through "
+"IHP-WINS, UNESCO's Intergovernmental Hydrological Programme aims to "
+"strengthen international cooperation, improve data availability, and enhance "
+"the understanding and management of water resources worldwide. The initiative"
+" contributes to the achievement of sustainable development goals related to "
+"water and supports countries in their efforts to address water-related "
+"challenges and promote integrated water resources management.</p> <p>Overall,"
+" IHP-WINS plays a vital role in advancing water governance, supporting "
+"evidence-based decision-making, and fostering international cooperation for "
+"sustainable water resources management.</p>"
 msgstr ""
 
 #: ckanext/theme_ejemplo/templates/home/snippets/data.html:7
@@ -374,12 +415,10 @@ msgid ""
 msgstr ""
 
 #: ckanext/theme_ejemplo/templates/home/snippets/language_selector.html:3
-#: ckanext/theme_ejemplo/templates/snippets/language_selector.html:3
 msgid "Language"
 msgstr ""
 
 #: ckanext/theme_ejemplo/templates/home/snippets/language_selector.html:11
-#: ckanext/theme_ejemplo/templates/snippets/language_selector.html:11
 msgid "Go"
 msgstr ""
 
@@ -663,5 +702,29 @@ msgstr ""
 
 #: ckanext/theme_ejemplo/templates/snippets/organization.html:51
 msgid "There is no description for this organization"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/user/new.html:3
+msgid "Register"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/user/new.html:6
+msgid "Normal User Registration"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/user/new.html:14
+msgid "Register for a normal user account"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/user/new.html:26
+msgid "Why Sign Up?"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/user/new.html:28
+msgid ""
+"\"You should only use this form if <strong>your organization already has a "
+"registered user</strong> and you wish to become a member of that "
+"organization. With this user account, you will <strong>not</strong> be able "
+"to create datasets, groups, or other items.\""
 msgstr ""
 

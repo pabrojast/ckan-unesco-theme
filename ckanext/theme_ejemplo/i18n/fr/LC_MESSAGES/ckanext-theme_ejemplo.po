@@ -9,8 +9,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ckanext-theme-ejemplo 0.0.1\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2024-06-26 14:15-0400\n"
-"PO-Revision-Date: 2024-06-26 14:16-0400\n"
+"POT-Creation-Date: 2024-07-02 12:46-0400\n"
+"PO-Revision-Date: 2024-07-02 12:46-0400\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language: fr\n"
 "Language-Team: fr <LL@li.org>\n"
@@ -42,7 +42,7 @@ msgstr "Notre expertise"
 
 #: ckanext/theme_ejemplo/templates/footer.html:18
 msgid "Core Data Portal"
-msgstr "Portail de données principal"
+msgstr "Portail de données central"
 
 #: ckanext/theme_ejemplo/templates/footer.html:19
 msgid "Subscribe to our Newsletter"
@@ -58,7 +58,7 @@ msgstr "Conditions d'utilisation"
 
 #: ckanext/theme_ejemplo/templates/footer.html:34
 msgid "Report fraud, abuse, misconduct"
-msgstr "Signaler une fraude, un abus, une mauvaise conduite"
+msgstr "Signaler une fraude, un abus, une inconduite"
 
 #: ckanext/theme_ejemplo/templates/footer.html:41
 msgid "Policies"
@@ -66,7 +66,7 @@ msgstr "Politiques"
 
 #: ckanext/theme_ejemplo/templates/footer.html:43
 msgid "Protection of human rights (Procedure 104)"
-msgstr "Protection des droits de l'homme (Procédure 104)"
+msgstr "Protection des droits humains (Procédure 104)"
 
 #: ckanext/theme_ejemplo/templates/footer.html:44
 msgid "Privacy Notice"
@@ -114,7 +114,7 @@ msgstr "Paramètres du profil"
 
 #: ckanext/theme_ejemplo/templates/header.html:41
 #: ckanext/theme_ejemplo/templates/header.html:43
-#: ckanext/theme_ejemplo/templates/header.html:97
+#: ckanext/theme_ejemplo/templates/header.html:101
 msgid "Log out"
 msgstr "Déconnexion"
 
@@ -122,65 +122,65 @@ msgstr "Déconnexion"
 msgid "Toggle navigation"
 msgstr "Basculer la navigation"
 
-#: ckanext/theme_ejemplo/templates/header.html:99
+#: ckanext/theme_ejemplo/templates/header.html:103
 msgid "Log in"
 msgstr "Connexion"
 
-#: ckanext/theme_ejemplo/templates/header.html:102
+#: ckanext/theme_ejemplo/templates/header.html:106
 msgid "Enroll as a Data Contributor for Your Organization"
 msgstr "Inscrivez-vous en tant que contributeur de données pour votre organisation"
 
 #: ckanext/theme_ejemplo/templates/group/snippets/info.html:38
-#: ckanext/theme_ejemplo/templates/header.html:115
+#: ckanext/theme_ejemplo/templates/header.html:117
 #: ckanext/theme_ejemplo/templates/initiatives/snippets/info.html:38
 #: ckanext/theme_ejemplo/templates/memberstates/snippets/info.html:38
 #: ckanext/theme_ejemplo/templates/snippets/organization.html:62
 msgid "Datasets"
-msgstr "Jeux de données"
+msgstr "Ensembles de données"
 
-#: ckanext/theme_ejemplo/templates/header.html:116
+#: ckanext/theme_ejemplo/templates/header.html:118
 msgid "Organizations"
 msgstr "Organisations"
 
-#: ckanext/theme_ejemplo/templates/header.html:120
+#: ckanext/theme_ejemplo/templates/header.html:122
 #: ckanext/theme_ejemplo/templates/memberstates/index.html:9
 msgid "Member States"
 msgstr "États membres"
 
-#: ckanext/theme_ejemplo/templates/header.html:121
+#: ckanext/theme_ejemplo/templates/header.html:123
 #: ckanext/theme_ejemplo/templates/initiatives/index.html:3
 #: ckanext/theme_ejemplo/templates/initiatives/index.html:9
 msgid "Initiatives"
 msgstr "Initiatives"
 
-#: ckanext/theme_ejemplo/templates/header.html:122
+#: ckanext/theme_ejemplo/templates/header.html:124
 #: ckanext/theme_ejemplo/templates/home/about.html:3
 #: ckanext/theme_ejemplo/templates/home/about.html:6
 #: ckanext/theme_ejemplo/templates/home/about.html:16
 msgid "About"
 msgstr "À propos"
 
-#: ckanext/theme_ejemplo/templates/header.html:129
+#: ckanext/theme_ejemplo/templates/header.html:132
 msgid "Search Datasets"
-msgstr "Rechercher des jeux de données"
+msgstr "Rechercher des ensembles de données"
 
-#: ckanext/theme_ejemplo/templates/header.html:130
+#: ckanext/theme_ejemplo/templates/header.html:133
 #: ckanext/theme_ejemplo/templates/home/snippets/search.html:16
 msgid "Search"
 msgstr "Rechercher"
 
-#: ckanext/theme_ejemplo/templates/header.html:130
+#: ckanext/theme_ejemplo/templates/header.html:133
 #: ckanext/theme_ejemplo/templates/home/snippets/search.html:13
 msgid "Search datasets"
-msgstr "Rechercher des jeux de données"
+msgstr "Rechercher des ensembles de données"
 
-#: ckanext/theme_ejemplo/templates/header.html:131
+#: ckanext/theme_ejemplo/templates/header.html:134
 msgid "Submit"
 msgstr "Soumettre"
 
 #: ckanext/theme_ejemplo/templates/group/snippets/helper.html:4
 msgid "What are Groups?"
-msgstr "Qu'est-ce que les groupes?"
+msgstr "Que sont les groupes ?"
 
 #: ckanext/theme_ejemplo/templates/group/snippets/helper.html:8
 msgid ""
@@ -189,11 +189,11 @@ msgid ""
 "particular theme, or as a very simple way to help people find and search "
 "your own published datasets."
 msgstr ""
-"Vous pouvez utiliser des groupes pour créer et gérer des collections de "
-"jeux de données. Cela pourrait être pour cataloguer des jeux de données "
-"pour un projet ou une équipe particuliers, ou sur un thème particulier, "
-"ou comme un moyen très simple d'aider les gens à trouver et à rechercher "
-"vos propres jeux de données publiés."
+"Vous pouvez utiliser les groupes pour créer et gérer des collections "
+"d'ensembles de données. Cela pourrait être pour cataloguer des ensembles "
+"de données pour un projet ou une équipe particulière, ou sur un thème "
+"particulier, ou comme un moyen très simple d'aider les gens à trouver et à "
+"rechercher vos propres ensembles de données publiés."
 
 #: ckanext/theme_ejemplo/templates/group/snippets/info.html:16
 #: ckanext/theme_ejemplo/templates/initiatives/snippets/info.html:16
@@ -207,7 +207,7 @@ msgstr "Supprimé"
 #: ckanext/theme_ejemplo/templates/memberstates/snippets/info.html:26
 #: ckanext/theme_ejemplo/templates/snippets/organization.html:47
 msgid "read more"
-msgstr "lire la suite"
+msgstr "lire plus"
 
 #: ckanext/theme_ejemplo/templates/group/snippets/info.html:34
 #: ckanext/theme_ejemplo/templates/initiatives/snippets/info.html:34
@@ -238,16 +238,23 @@ msgid ""
 "and practitioners alike. Explore these resources to stay informed and "
 "empowered in the realm of water management and conservation."
 msgstr ""
-"Plongez dans nos publications UNESDOC et Water Family en vedette pour des "
-"perspectives inestimables sur des sujets liés à l'eau. Ces dernières "
-"publications couvrent une large gamme de sujets, de la gouvernance de l'eau "
-"à l'adaptation au changement climatique, fournissant des connaissances "
-"essentielles aux chercheurs, aux décideurs politiques et aux praticiens. "
-"Explorez ces ressources pour rester informé et habilité dans le domaine de "
-"la gestion et de la conservation de l'eau."
+"Plongez dans nos publications en vedette d'UNESDOC et de la Water Family "
+"pour des informations précieuses sur les sujets liés à l'eau. Ces "
+"dernières publications couvrent une large gamme de sujets, de la gestion "
+"de l'eau à l'adaptation au changement climatique, fournissant des "
+"connaissances essentielles pour les chercheurs, les décideurs politiques "
+"et les praticiens. Explorez ces ressources pour rester informé et "
+"empowered dans le domaine de la gestion et de la conservation de l'eau."
 
 #: ckanext/theme_ejemplo/templates/home/snippets/FeaturedPublicationsdata.html:8
 #: ckanext/theme_ejemplo/templates/home/snippets/IHPViewers.html:14
+#: ckanext/theme_ejemplo/templates/home/snippets/ThematicViewers.html:8
+#: ckanext/theme_ejemplo/templates/home/snippets/ThematicViewers.html:12
+#: ckanext/theme_ejemplo/templates/home/snippets/ThematicViewers.html:16
+#: ckanext/theme_ejemplo/templates/home/snippets/ThematicViewers.html:20
+#: ckanext/theme_ejemplo/templates/home/snippets/ThematicViewers.html:24
+#: ckanext/theme_ejemplo/templates/home/snippets/ThematicViewers.html:28
+#: ckanext/theme_ejemplo/templates/home/snippets/featureddatasnip.html:13
 msgid "Discover"
 msgstr "Découvrir"
 
@@ -263,12 +270,12 @@ msgid ""
 "and researchers alike. It hosts water-related courses for and by "
 "researchers, policy-makers and scientist from around the globe."
 msgstr ""
-"Notre dévouement à l'apprentissage continu se concrétise dans l'Environnement "
-"d'apprentissage ouvert IHP-WINS. Cette initiative sert de centre de "
-"ressources éducatives, favorisant le renforcement des capacités et la "
-"recherche parmi les parties prenantes et les chercheurs. Elle propose des "
-"cours liés à l'eau pour et par des chercheurs, des décideurs politiques et "
-"des scientifiques du monde entier."
+"Notre engagement envers l'apprentissage continu se reflète dans "
+"l'Environnement d'apprentissage ouvert IHP-WINS. Cette initiative sert de "
+"pôle pour les ressources éducatives, favorisant le renforcement des "
+"capacités et la recherche parmi les parties prenantes et les chercheurs. "
+"Elle propose des cours liés à l'eau pour et par des chercheurs, des "
+"décideurs politiques et des scientifiques du monde entier."
 
 #: ckanext/theme_ejemplo/templates/home/snippets/IHPEducation.html:8
 msgid "Featured Courses"
@@ -281,22 +288,26 @@ msgid ""
 "discovery as we strive towards sustainable water management practices "
 "worldwide."
 msgstr ""
-"Explorez les derniers cours d'apprentissage ouverts et améliorez votre expertise "
-"dans divers sujets liés à l'eau. Rejoignez-nous dans ce voyage d'apprentissage et "
-"de découverte alors que nous nous efforçons de mettre en œuvre des pratiques "
-"durables de gestion de l'eau dans le monde entier."
+"Explorez les derniers cours d'apprentissage ouverts et améliorez votre "
+"expertise sur divers sujets liés à l'eau. Rejoignez-nous dans ce voyage "
+"d'apprentissage et de découverte alors que nous nous efforçons vers des "
+"pratiques de gestion durable de l'eau à l'échelle mondiale."
 
 #: ckanext/theme_ejemplo/templates/home/snippets/IHPEducationdata.html:14
 msgid "Start:"
-msgstr "Commencer :"
+msgstr "Début :"
 
 #: ckanext/theme_ejemplo/templates/home/snippets/IHPEvents.html:4
 msgid "IHP Events"
 msgstr "Événements IHP"
 
+#: ckanext/theme_ejemplo/templates/home/snippets/IHPEventsdata.html:22
+msgid "Read more"
+msgstr "Lire plus"
+
 #: ckanext/theme_ejemplo/templates/home/snippets/IHPViewers.html:4
 msgid "IHP Viewers"
-msgstr "Visionneuses IHP"
+msgstr "Visualiseurs IHP"
 
 #: ckanext/theme_ejemplo/templates/home/snippets/IHPViewers.html:5
 msgid ""
@@ -308,17 +319,18 @@ msgid ""
 "data, offering a diverse array of tools tailored to the need of the "
 "specific theme. </p>"
 msgstr ""
-"<p> <strong>La visionneuse de catalogue géospatial</strong> au sein de IHP-WINS "
-"sert d'outil puissant, permettant aux utilisateurs de transformer les données "
-"du catalogue en informations exploitables, soutenant la réduction de l'écart "
-"entre les données et les connaissances. </p> <p> <strong>Les visionneuses "
-"thématiques</strong> complètent la multitude d'options de visualisation disponibles "
-"pour nos données liées à l'eau, offrant une gamme diversifiée d'outils adaptés aux "
-"besoins du thème spécifique. </p>"
+"<p> <strong>Le Visualiseur de catalogue géospatial</strong> au sein de "
+"IHP-WINS sert d'outil puissant, permettant aux utilisateurs de "
+"transformer les données du catalogue en informations exploitables, "
+"soutenant la réduction de l'écart entre les données et les connaissances. "
+"</p> <p> <strong>Les visualiseurs thématiques</strong> complètent la "
+"multitude d'options de visualisation disponibles pour nos données liées à "
+"l'eau, offrant une variété d'outils adaptés aux besoins du thème "
+"spécifique. </p>"
 
 #: ckanext/theme_ejemplo/templates/home/snippets/IHPViewers.html:14
 msgid "The Geospatial Catalogue Viewer"
-msgstr "La visionneuse de catalogue géospatial"
+msgstr "Le Visualiseur de catalogue géospatial"
 
 #: ckanext/theme_ejemplo/templates/home/snippets/IHPViewers.html:14
 msgid ""
@@ -327,58 +339,128 @@ msgid ""
 "variety of datasets and scales enable to uncover insights into both "
 "overarching global trends and finer-grained local patterns."
 msgstr ""
-"En superposant des jeux de données, les parties prenantes obtiennent des "
-"aperçus des tendances et des modèles liés à l'eau, facilitant la prise de décision "
-"informée et plus encore. La variété des jeux de données et des échelles permet de "
-"découvrir des aperçus des tendances globales et des modèles locaux plus fins."
+"En superposant des ensembles de données, les parties prenantes obtiennent "
+"des informations sur les modèles et les tendances liés à l'eau, "
+"facilitant ainsi la prise de décisions éclairées et plus encore. La "
+"variété des ensembles de données et des échelles permet de découvrir des "
+"insights sur les tendances mondiales globales et les modèles locaux plus "
+"détaillés."
 
 #: ckanext/theme_ejemplo/templates/home/snippets/ThematicViewers.html:4
 msgid ""
-"The Thematic Viewers</strong> complement the multitude of visualization "
+"<strong>The Thematic Viewers</strong> complement the multitude of visualization "
 "options available for our water-related data, offering a diverse array of"
 " tools tailored to the need of the specific theme."
 msgstr ""
-"Les visionneuses thématiques</strong> complètent la multitude d'options de visualisation "
-"disponibles pour nos données liées à l'eau, offrant une gamme diversifiée d'outils adaptés "
-"aux besoins du thème spécifique."
+"<strong>Les visualiseurs thématiques</strong> complètent la multitude d'options de"
+" visualisation disponibles pour nos données liées à l'eau, offrant une "
+"variété d'outils adaptés aux besoins du thème spécifique."
 
 #: ckanext/theme_ejemplo/templates/home/snippets/about_text.html:1
 msgid ""
-"<p>CKAN is the world’s leading open-source data portal platform.</p> "
-"<p>CKAN is a complete out-of-the-box software solution that makes data "
-"accessible and usable – by providing tools to streamline publishing, "
-"sharing, finding and using data (including storage of data and provision "
-"of robust data APIs). CKAN is aimed at data publishers (national and "
-"regional governments, companies and organizations) wanting to make their "
-"data open and available.</p> <p>CKAN is used by governments and user "
-"groups worldwide and powers a variety of official and community data "
-"portals including portals for local, national and international "
-"government, such as the UK’s <a "
-"href=\"http://data.gov.uk\">data.gov.uk</a> and the European Union’s <a "
-"href=\"http://publicdata.eu/\">publicdata.eu</a>, the Brazilian <a "
-"href=\"http://dados.gov.br/\">dados.gov.br</a>, Dutch and Netherland "
-"government portals, as well as city and municipal sites in the US, UK, "
-"Argentina, Finland and elsewhere.</p> <p>CKAN: <a "
-"href=\"http://ckan.org/\">http://ckan.org/</a><br /> CKAN Tour: <a "
-"href=\"http://ckan.org/tour/\">http://ckan.org/tour/</a><br /> Features "
-"overview: <a "
-"href=\"http://ckan.org/features/\">http://ckan.org/features/</a></p>"
+"<h1>The IHP Water Information Network System (IHP-WINS)</h1> <p>The "
+"<strong>Intergovernmental Hydrological Programme's Water Information "
+"Network System (IHP-WINS)</strong> is designed to promote the <em>sharing"
+" and dissemination of water-related data and information</em> among "
+"countries, organizations, and stakeholders involved in water resources "
+"management, as part of the UNESCO IHP mandate.</p> <p>The main objective "
+"of IHP-WINS is <strong>to enhance the availability, accessibility, and "
+"usability of water-related information, with a focus on supporting "
+"evidence-based decision-making and sustainable water resources "
+"management</strong>. It aims to facilitate the exchange of data, "
+"knowledge, and best practices among stakeholders at various levels, "
+"including national, regional, and global scales.</p> <p>IHP-WINS provides"
+" a platform for integrating and harmonizing water-related data and "
+"information from diverse sources, such as monitoring networks, research "
+"institutions, government agencies, and international organizations. It "
+"promotes the use of standardized data formats and metadata to ensure "
+"compatibility and interoperability of information across different "
+"systems and platforms.</p> <h2>Key features of IHP-WINS include:</h2> "
+"<ul> <li><strong>Data Sharing:</strong> IHP-WINS facilitates the sharing "
+"of water-related data, including hydrological data, water quality data, "
+"and climate data. It provides a secure and centralized repository for "
+"storing and accessing these datasets, allowing users to contribute their "
+"data and access data shared by others.</li> <li><strong>Information "
+"Exchange:</strong> The platform promotes collaboration and knowledge "
+"exchange among water professionals, researchers, policymakers, and other "
+"stakeholders. It enables the sharing of research findings, reports, "
+"publications, and other relevant information related to water resources "
+"management.</li> <li><strong>Decision Support:</strong> IHP-WINS supports"
+" decision-making processes by providing tools and services for data "
+"visualization, analysis, and modeling. It helps stakeholders assess water"
+" availability, water quality, and water-related risks, contributing to "
+"informed decision-making for sustainable water management.</li> "
+"<li><strong>Capacity Building:</strong> The platform serves as a resource"
+" hub for capacity-building materials, training modules, and educational "
+"resources related to water resources management. It facilitates the "
+"dissemination of knowledge and best practices, fostering the development "
+"of technical skills and expertise in water-related disciplines.</li> "
+"<li><strong>Collaboration and Networking:</strong> IHP-WINS promotes "
+"collaboration and networking among water professionals and organizations "
+"through its community-based approach. It facilitates the establishment of"
+" partnerships, the exchange of experiences, and the creation of "
+"communities of practice focused on specific water management topics.</li>"
+" </ul> <p>Through IHP-WINS, UNESCO's Intergovernmental Hydrological "
+"Programme aims to strengthen international cooperation, improve data "
+"availability, and enhance the understanding and management of water "
+"resources worldwide. The initiative contributes to the achievement of "
+"sustainable development goals related to water and supports countries in "
+"their efforts to address water-related challenges and promote integrated "
+"water resources management.</p> <p>Overall, IHP-WINS plays a vital role "
+"in advancing water governance, supporting evidence-based decision-making,"
+" and fostering international cooperation for sustainable water resources "
+"management.</p>"
 msgstr ""
-"<p>CKAN est la principale plateforme de portail de données open-source au monde.</p> "
-"<p>CKAN est une solution logicielle complète prête à l'emploi qui rend les données "
-"accessibles et utilisables - en fournissant des outils pour rationaliser la publication, "
-"le partage, la recherche et l'utilisation des données (y compris le stockage des données et "
-"la fourniture d'API de données robustes). CKAN est destiné aux éditeurs de données (gouvernements "
-"nationaux et régionaux, entreprises et organisations) souhaitant rendre leurs données ouvertes "
-"et disponibles.</p> <p>CKAN est utilisé par des gouvernements et des groupes d'utilisateurs dans le "
-"monde entier et alimente une variété de portails de données officiels et communautaires, y compris "
-"des portails pour les gouvernements locaux, nationaux et internationaux, tels que celui du Royaume-Uni "
-"<a href=\"http://data.gov.uk\">data.gov.uk</a> et celui de l'Union européenne <a "
-"href=\"http://publicdata.eu/\">publicdata.eu</a>, le portail brésilien <a href=\"http://dados.gov.br/\">dados.gov.br</a>, "
-"les portails gouvernementaux néerlandais, ainsi que des sites municipaux et de ville aux États-Unis, au Royaume-Uni, "
-"en Argentine, en Finlande et ailleurs.</p> <p>CKAN: <a href=\"http://ckan.org/\">http://ckan.org/</a><br /> "
-"CKAN Tour: <a href=\"http://ckan.org/tour/\">http://ckan.org/tour/</a><br /> Présentation des fonctionnalités: <a "
-"href=\"http://ckan.org/features/\">http://ckan.org/features/</a></p>"
+"<h1>Le Système d'Information sur l'Eau du Programme Hydrologique "
+"Intergouvernemental (IHP-WINS)</h1> <p>Le <strong>Système d'Information "
+"sur l'Eau du Programme Hydrologique Intergouvernemental (IHP-WINS)</strong>"
+" est conçu pour promouvoir le <em>partage et la diffusion de données et "
+"d'informations relatives à l'eau</em> entre les pays, les organisations et "
+"les parties prenantes impliquées dans la gestion des ressources en eau, "
+"dans le cadre du mandat de l'IHP de l'UNESCO.</p> <p>L'objectif principal "
+"de l'IHP-WINS est <strong>d'améliorer la disponibilité, l'accessibilité et "
+"l'utilisabilité des informations liées à l'eau, en mettant l'accent sur le "
+"soutien à la prise de décision fondée sur des preuves et à la gestion durable "
+"des ressources en eau</strong>. Il vise à faciliter l'échange de données, de "
+"connaissances et de bonnes pratiques parmi les parties prenantes à différents "
+"niveaux, y compris aux niveaux national, régional et mondial.</p> <p>IHP-WINS "
+"fournit une plate-forme pour intégrer et harmoniser les données et les "
+"informations liées à l'eau provenant de diverses sources, telles que les "
+"réseaux de surveillance, les institutions de recherche, les agences gouvernementales "
+"et les organisations internationales. Il promeut l'utilisation de formats de données "
+"standardisés et de métadonnées pour garantir la compatibilité et l'interopérabilité "
+"des informations sur différents systèmes et plates-formes.</p> <h2>Les principales "
+"caractéristiques de l'IHP-WINS incluent :</h2> <ul> <li><strong>Partage de "
+"données :</strong> IHP-WINS facilite le partage de données liées à l'eau, y "
+"compris les données hydrologiques, les données sur la qualité de l'eau et les "
+"données climatiques. Il fournit un dépôt centralisé et sécurisé pour stocker et "
+"accéder à ces ensembles de données, permettant aux utilisateurs de contribuer avec "
+"leurs données et d'accéder aux données partagées par d'autres.</li> <li><strong>"
+"Échange d'informations :</strong> La plate-forme promeut la collaboration et l'échange "
+"de connaissances entre les professionnels de l'eau, les chercheurs, les décideurs "
+"politiques et d'autres parties prenantes. Elle permet le partage de résultats de "
+"recherche, de rapports, de publications et d'autres informations pertinentes relatives "
+"à la gestion des ressources en eau.</li> <li><strong>Soutien à la prise de décision :</strong> "
+"IHP-WINS soutient les processus de prise de décision en fournissant des outils et des "
+"services pour la visualisation, l'analyse et la modélisation des données. Il aide les "
+"parties prenantes à évaluer la disponibilité de l'eau, la qualité de l'eau et les risques "
+"liés à l'eau, contribuant à une prise de décision éclairée pour une gestion durable de l'eau.</li> "
+"<li><strong>Renforcement des capacités :</strong> La plate-forme sert de centre de ressources "
+"pour les matériels de renforcement des capacités, les modules de formation et les ressources "
+"éducatives liées à la gestion des ressources en eau. Elle facilite la diffusion des connaissances "
+"et des bonnes pratiques, favorisant le développement des compétences techniques et de l'expertise "
+"dans les disciplines liées à l'eau.</li> <li><strong>Collaboration et mise en réseau :</strong> "
+"IHP-WINS promeut la collaboration et la mise en réseau entre les professionnels de l'eau et les "
+"organisations à travers son approche communautaire. Elle facilite l'établissement de partenariats, "
+"l'échange d'expériences et la création de communautés de pratique axées sur des sujets spécifiques "
+"de gestion de l'eau.</li> </ul> <p>Grâce à l'IHP-WINS, le Programme Hydrologique Intergouvernemental "
+"de l'UNESCO vise à renforcer la coopération internationale, à améliorer la disponibilité des données "
+"et à améliorer la compréhension et la gestion des ressources en eau à l'échelle mondiale. L'initiative "
+"contribue à la réalisation des objectifs de développement durable liés à l'eau et soutient les pays dans "
+"leurs efforts pour relever les défis liés à l'eau et promouvoir la gestion intégrée des ressources en eau.</p> "
+"<p>Globalement, l'IHP-WINS joue un rôle vital dans l'avancement de la gouvernance de l'eau, le soutien à la "
+"prise de décision fondée sur des preuves et la promotion de la coopération internationale pour une gestion durable "
+"des ressources en eau.</p>"
 
 #: ckanext/theme_ejemplo/templates/home/snippets/data.html:7
 msgid ""
@@ -392,18 +474,18 @@ msgid ""
 "believes in harnessing the power of data to advance global goals for a "
 "sustainable future."
 msgstr ""
-"À l'UNESCO, nous croyons au pouvoir de la collaboration ouverte et aux principes "
-"de la science ouverte, en tirant parti de la technologie open-source pour offrir une "
-"expérience transparente aux utilisateurs. Le <strong>système de catalogue et de gestion "
-"des données</strong> de la plateforme témoigne de cet engagement, offrant un référentiel "
-"robuste pour tous les jeux de données pertinents pour le PHI. La famille de l'eau de l'UNESCO "
-"peut contribuer et accéder aux informations sous divers formats, permettant un environnement de "
-"partage de données diversifié et inclusif. L'UNESCO croit en l'utilisation de la puissance des "
-"données pour faire progresser les objectifs mondiaux pour un avenir durable."
+"À l'UNESCO, nous croyons au pouvoir de la collaboration ouverte et aux "
+"principes de la science ouverte, en tirant parti de la technologie open-source "
+"pour offrir une expérience sans faille aux utilisateurs. Le <strong>Catalogue de "
+"données et système de gestion</strong> de la plate-forme témoigne de cet engagement, "
+"offrant un référentiel robuste pour tous les ensembles de données pertinents pour l'IHP. "
+"La famille de l'eau de l'UNESCO peut contribuer et accéder à des informations sous divers formats, "
+"permettant un environnement de partage de données diversifié et inclusif. L'UNESCO croit au pouvoir "
+"des données pour faire avancer les objectifs mondiaux pour un avenir durable."
 
 #: ckanext/theme_ejemplo/templates/home/snippets/data.html:9
 msgid "Data Catalogue and Management System"
-msgstr "Système de catalogue et de gestion des données"
+msgstr "Catalogue de données et système de gestion"
 
 #: ckanext/theme_ejemplo/templates/home/snippets/data.html:9
 msgid ""
@@ -411,13 +493,13 @@ msgid ""
 "contribute and access information in various formats, enabling a diverse "
 "and inclusive data-sharing environment."
 msgstr ""
-"Offre un référentiel robuste pour tous les jeux de données pertinents pour le PHI. "
-"Les utilisateurs peuvent contribuer et accéder aux informations sous divers formats, "
+"Offre un référentiel robuste pour tous les ensembles de données pertinents pour l'IHP. "
+"Les utilisateurs peuvent contribuer et accéder à des informations sous divers formats, "
 "permettant un environnement de partage de données diversifié et inclusif."
 
 #: ckanext/theme_ejemplo/templates/home/snippets/data.html:9
 msgid "Discover Datasets"
-msgstr "Découvrir les jeux de données"
+msgstr "Découvrir les ensembles de données"
 
 #: ckanext/theme_ejemplo/templates/home/snippets/featured_group.html:2
 msgid "Featured Groups"
@@ -429,7 +511,7 @@ msgstr "Organisations en vedette"
 
 #: ckanext/theme_ejemplo/templates/home/snippets/featureddata.html:4
 msgid "Featured Datasets"
-msgstr "Jeux de données en vedette"
+msgstr "Ensembles de données en vedette"
 
 #: ckanext/theme_ejemplo/templates/home/snippets/featureddata.html:7
 msgid ""
@@ -438,9 +520,10 @@ msgid ""
 " resources, from historical datasets to the latest advancements in "
 "hydrological science."
 msgstr ""
-"Les jeux de données en vedette présentés ont été récemment téléchargés par la famille "
-"de l'eau de l'UNESCO. Ces jeux de données offrent des perspectives sur divers aspects des "
-"ressources en eau, des jeux de données historiques aux dernières avancées en science hydrologique."
+"Les ensembles de données en vedette présentés ont été récemment téléchargés par la "
+"famille de l'eau de l'UNESCO. Ces ensembles de données offrent des insights sur divers "
+"aspects des ressources en eau, des ensembles de données historiques aux dernières avancées "
+"de la science hydrologique."
 
 #: ckanext/theme_ejemplo/templates/home/snippets/language_selector.html:3
 msgid "Language"
@@ -456,68 +539,62 @@ msgstr "Nouvelles"
 
 #: ckanext/theme_ejemplo/templates/home/snippets/promoted.html:6
 msgid "The IHP Water Information Network System"
-msgstr "Le système de réseau d'information sur l'eau du PHI"
+msgstr "Le Système d'Information sur l'Eau de l'IHP"
 
 #: ckanext/theme_ejemplo/templates/home/snippets/promoted.html:8
 msgid ""
-"<p>The <strong>Intergovernmental Hydrological Programme's Water Information "
-"Network System (IHP-WINS)</strong> is designed to promote the <i>sharing and "
-"dissemination of water-related data and information</i> among countries, "
-"organizations, and stakeholders involved in water resources management, as "
-"part of the UNESCO IHP mandate.</p> <p>The main objective of IHP-WINS is "
-"<strong>to enhance the availability, accessibility, and usability of water-"
-"related information, with a focus on supporting evidence-based decision-"
-"making and sustainable water resources management</strong>. It aims to "
-"facilitate the exchange of data, knowledge, and best practices among "
-"stakeholders at various levels, including national, regional, and global "
-"scales.</p> <p>IHP-WINS provides a platform for integrating and harmonizing "
-"water-related data and information from diverse sources, such as monitoring "
-"networks, research institutions, government agencies, and international "
-"organizations. It promotes the use of standardized data formats and metadata "
-"to ensure compatibility and interoperability of information across different "
-"systems and platforms.</p> <p>Through IHP-WINS, UNESCO's Intergovernmental "
-"Hydrological Programme aims to strengthen international cooperation, improve "
-"data availability, and enhance the understanding and management of water "
-"resources worldwide. The initiative contributes to the achievement of "
-"sustainable development goals related to water and supports countries in "
-"their efforts to address water-related challenges and promote integrated "
-"water resources management.</p> <p>Overall, IHP-WINS plays a vital role in "
-"advancing water governance, supporting evidence-based decision-making, and "
-"fostering international cooperation for sustainable water resources "
-"management.</p>"
+"<p>The <strong>Intergovernmental Hydrological Programme's Water "
+"Information Network System (IHP-WINS)</strong> is designed to promote the"
+" <i>sharing and dissemination of water-related data and information</i> "
+"among countries, organizations, and stakeholders involved in water "
+"resources management, as part of the UNESCO IHP mandate.</p> <p>The main "
+"objective of IHP-WINS is <strong>to enhance the availability, "
+"accessibility, and usability of water-related information, with a focus "
+"on supporting evidence-based decision-making and sustainable water "
+"resources management</strong>. It aims to facilitate the exchange of "
+"data, knowledge, and best practices among stakeholders at various levels,"
+" including national, regional, and global scales.</p> <p>IHP-WINS "
+"provides a platform for integrating and harmonizing water-related data "
+"and information from diverse sources, such as monitoring networks, "
+"research institutions, government agencies, and international "
+"organizations. It promotes the use of standardized data formats and "
+"metadata to ensure compatibility and interoperability of information "
+"across different systems and platforms.</p> <p>Through IHP-WINS, UNESCO's"
+" Intergovernmental Hydrological Programme aims to strengthen "
+"international cooperation, improve data availability, and enhance the "
+"understanding and management of water resources worldwide. The initiative"
+" contributes to the achievement of sustainable development goals related "
+"to water and supports countries in their efforts to address water-related"
+" challenges and promote integrated water resources management.</p> "
+"<p>Overall, IHP-WINS plays a vital role in advancing water governance, "
+"supporting evidence-based decision-making, and fostering international "
+"cooperation for sustainable water resources management.</p>"
 msgstr ""
-"<p>Le <strong>Système de Réseau d'Information sur l'Eau du Programme "
-"Hydrologique Intergouvernemental (IHP-WINS)</strong> est conçu pour promouvoir le "
-"<i>partage et la diffusion de données et d'informations liées à l'eau</i> entre "
-"les pays, les organisations et les parties prenantes impliquées dans la gestion "
-"des ressources en eau, dans le cadre du mandat du Programme Hydrologique "
-"Intergouvernemental de l'UNESCO.</p> <p>L'objectif principal de IHP-WINS est "
-"<strong>d'améliorer la disponibilité, l'accessibilité et la convivialité des "
-"informations liées à l'eau, en mettant l'accent sur le soutien à la prise de "
-"décisions basées sur des preuves et sur la gestion durable des ressources en "
-"eau</strong>. Il vise à faciliter l'échange de données, de connaissances et de "
-"bonnes pratiques entre les parties prenantes à différents niveaux, y compris aux "
-"échelles nationale, régionale et mondiale.</p> <p>IHP-WINS fournit une plate-forme "
-"pour intégrer et harmoniser les données et informations liées à l'eau provenant "
-"de diverses sources, telles que les réseaux de surveillance, les institutions de "
-"recherche, les agences gouvernementales et les organisations internationales. "
-"Il promeut l'utilisation de formats de données et de métadonnées standardisés pour "
-"assurer la compatibilité et l'interopérabilité des informations entre différents "
-"systèmes et plateformes.</p> <p>À travers IHP-WINS, le Programme Hydrologique "
-"Intergouvernemental de l'UNESCO vise à renforcer la coopération internationale, "
-"à améliorer la disponibilité des données et à renforcer la compréhension et la "
-"gestion des ressources en eau dans le monde entier. L'initiative contribue à la "
-"réalisation des objectifs de développement durable liés à l'eau et soutient les "
-"pays dans leurs efforts pour relever les défis liés à l'eau et promouvoir la "
-"gestion intégrée des ressources en eau.</p> <p>Dans l'ensemble, IHP-WINS joue un "
-"rôle vital dans l'avancement de la gouvernance de l'eau, en soutenant la prise de "
-"décisions basées sur des preuves et en favorisant la coopération internationale "
-"pour la gestion durable des ressources en eau.</p>"
-
+"<p>Le <strong>Système d'Information sur l'Eau du Programme Hydrologique "
+"Intergouvernemental (IHP-WINS)</strong> est conçu pour promouvoir le <i>partage et la "
+"diffusion de données et d'informations relatives à l'eau</i> entre les pays, les organisations "
+"et les parties prenantes impliquées dans la gestion des ressources en eau, dans le cadre du mandat "
+"de l'IHP de l'UNESCO.</p> <p>L'objectif principal de l'IHP-WINS est <strong>d'améliorer la "
+"disponibilité, l'accessibilité et l'utilisabilité des informations liées à l'eau, en mettant "
+"l'accent sur le soutien à la prise de décision fondée sur des preuves et à la gestion durable des "
+"ressources en eau</strong>. Il vise à faciliter l'échange de données, de connaissances et de bonnes "
+"pratiques parmi les parties prenantes à différents niveaux, y compris aux niveaux national, régional "
+"et mondial.</p> <p>IHP-WINS fournit une plate-forme pour intégrer et harmoniser les données et les "
+"informations liées à l'eau provenant de diverses sources, telles que les réseaux de surveillance, les "
+"institutions de recherche, les agences gouvernementales et les organisations internationales. Il promeut "
+"l'utilisation de formats de données standardisés et de métadonnées pour garantir la compatibilité et "
+"l'interopérabilité des informations sur différents systèmes et plates-formes.</p> <p>Grâce à l'IHP-WINS, "
+"le Programme Hydrologique Intergouvernemental de l'UNESCO vise à renforcer la coopération internationale, "
+"à améliorer la disponibilité des données et à améliorer la compréhension et la gestion des ressources en "
+"eau à l'échelle mondiale. L'initiative contribue à la réalisation des objectifs de développement durable "
+"liés à l'eau et soutient les pays dans leurs efforts pour relever les défis liés à l'eau et promouvoir la "
+"gestion intégrée des ressources en eau.</p> <p>Globalement, l'IHP-WINS joue un rôle vital dans l'avancement "
+"de la gouvernance de l'eau, le soutien à la prise de décision fondée sur des preuves et la promotion de la "
+"coopération internationale pour une gestion durable des ressources en eau.</p>"
 
 #: ckanext/theme_ejemplo/templates/home/snippets/search.html:1
 msgid "E.g. environment"
-msgstr "Par exemple : environnement"
+msgstr "Par ex. environnement"
 
 #: ckanext/theme_ejemplo/templates/home/snippets/search.html:11
 msgid "Search data"
@@ -526,12 +603,12 @@ msgstr "Rechercher des données"
 #: ckanext/theme_ejemplo/templates/home/snippets/search.html:24
 #: ckanext/theme_ejemplo/templates/home/snippets/stats.html:11
 msgid "dataset"
-msgstr "jeu de données"
+msgstr "ensemble de données"
 
 #: ckanext/theme_ejemplo/templates/home/snippets/search.html:24
 #: ckanext/theme_ejemplo/templates/home/snippets/stats.html:11
 msgid "datasets"
-msgstr "jeux de données"
+msgstr "ensembles de données"
 
 #: ckanext/theme_ejemplo/templates/home/snippets/search.html:28
 #: ckanext/theme_ejemplo/templates/home/snippets/stats.html:17
@@ -545,7 +622,7 @@ msgstr "organisations"
 
 #: ckanext/theme_ejemplo/templates/home/snippets/stats.html:5
 msgid "{0} statistics"
-msgstr "{0} statistiques"
+msgstr "Statistiques {0}"
 
 #: ckanext/theme_ejemplo/templates/home/snippets/stats.html:23
 msgid "group"
@@ -598,7 +675,7 @@ msgstr "Que diriez-vous d'en créer un ?"
 #: ckanext/theme_ejemplo/templates/initiatives/snippets/feeds.html:2
 #: ckanext/theme_ejemplo/templates/memberstates/snippets/feeds.html:2
 msgid "Datasets in group: {group}"
-msgstr "Jeux de données dans le groupe : {group}"
+msgstr "Ensembles de données dans le groupe : {group}"
 
 #: ckanext/theme_ejemplo/templates/initiatives/snippets/group_form.html:10
 #: ckanext/theme_ejemplo/templates/memberstates/snippets/group_form.html:10
@@ -608,7 +685,7 @@ msgstr "Nom"
 #: ckanext/theme_ejemplo/templates/initiatives/snippets/group_form.html:10
 #: ckanext/theme_ejemplo/templates/memberstates/snippets/group_form.html:10
 msgid "My Group"
-msgstr "Mon Groupe"
+msgstr "Mon groupe"
 
 #: ckanext/theme_ejemplo/templates/initiatives/snippets/group_form.html:18
 #: ckanext/theme_ejemplo/templates/memberstates/snippets/group_form.html:18
@@ -623,7 +700,7 @@ msgstr "Description"
 #: ckanext/theme_ejemplo/templates/initiatives/snippets/group_form.html:20
 #: ckanext/theme_ejemplo/templates/memberstates/snippets/group_form.html:20
 msgid "A little information about my group..."
-msgstr "Un peu d'information sur mon groupe..."
+msgstr "Un peu d'informations sur mon groupe..."
 
 #: ckanext/theme_ejemplo/templates/initiatives/snippets/group_form.html:38
 #: ckanext/theme_ejemplo/templates/memberstates/snippets/group_form.html:38
@@ -644,13 +721,13 @@ msgstr "Enregistrer le groupe"
 #: ckanext/theme_ejemplo/templates/memberstates/snippets/group_item.html:32
 msgid "{num} Dataset"
 msgid_plural "{num} Datasets"
-msgstr[0] "{num} Jeu de données"
-msgstr[1] "{num} Jeux de données"
+msgstr[0] "{num} ensemble de données"
+msgstr[1] "{num} ensembles de données"
 
 #: ckanext/theme_ejemplo/templates/initiatives/snippets/group_item.html:34
 #: ckanext/theme_ejemplo/templates/memberstates/snippets/group_item.html:34
 msgid "0 Datasets"
-msgstr "0 Jeux de données"
+msgstr "0 ensembles de données"
 
 #: ckanext/theme_ejemplo/templates/initiatives/snippets/group_item.html:39
 #: ckanext/theme_ejemplo/templates/initiatives/snippets/group_item.html:40
@@ -667,7 +744,7 @@ msgstr "Retirer"
 #: ckanext/theme_ejemplo/templates/initiatives/snippets/group_item.html:44
 #: ckanext/theme_ejemplo/templates/memberstates/snippets/group_item.html:44
 msgid "Remove dataset from this group"
-msgstr "Retirer le jeu de données de ce groupe"
+msgstr "Retirer l'ensemble de données de ce groupe"
 
 #: ckanext/theme_ejemplo/templates/initiatives/snippets/helper.html:4
 msgid "What are Initiatives?"
@@ -678,12 +755,12 @@ msgid ""
 "Initiatives are projects or programs initiated by individuals, "
 "organizations, or governments aimed at achieving specific goals."
 msgstr ""
-"Les initiatives sont des projets ou des programmes initiés par des individus, des "
-"organisations ou des gouvernements visant à atteindre des objectifs spécifiques."
+"Les initiatives sont des projets ou des programmes initiés par des individus, "
+"des organisations ou des gouvernements visant à atteindre des objectifs spécifiques."
 
 #: ckanext/theme_ejemplo/templates/memberstates/snippets/helper.html:4
 msgid "What are Member States?"
-msgstr "Qu'est-ce que les États membres ?"
+msgstr "Que sont les États membres ?"
 
 #: ckanext/theme_ejemplo/templates/memberstates/snippets/helper.html:8
 msgid ""
@@ -692,14 +769,14 @@ msgid ""
 "These datasets serve as a crucial resource for research, policy analysis,"
 " and comparative studies."
 msgstr ""
-"Les États membres sont des pays représentés par des jeux de données détaillés, chacun "
-"illustrant des caractéristiques nationales uniques, des politiques et des statistiques. "
-"Ces jeux de données constituent une ressource cruciale pour la recherche, l'analyse des politiques "
+"Les États membres sont des pays représentés à travers des ensembles de données détaillés, "
+"chacun illustrant des caractéristiques nationales uniques, des politiques et des statistiques. "
+"Ces ensembles de données servent de ressource cruciale pour la recherche, l'analyse des politiques "
 "et les études comparatives."
 
 #: ckanext/theme_ejemplo/templates/organization/snippets/helper.html:4
 msgid "What are Organizations?"
-msgstr "Qu'est-ce que les organisations ?"
+msgstr "Que sont les organisations ?"
 
 #: ckanext/theme_ejemplo/templates/organization/snippets/helper.html:8
 msgid ""
@@ -707,13 +784,13 @@ msgid ""
 "datasets. Users can have different roles within an Organization, "
 "depending on their level of authorisation to create, edit and publish."
 msgstr ""
-"Les organisations sont utilisées pour créer, gérer et publier des collections de "
-"jeux de données. Les utilisateurs peuvent avoir différents rôles au sein d'une organisation, "
-"en fonction de leur niveau d'autorisation pour créer, éditer et publier."
+"Les organisations sont utilisées pour créer, gérer et publier des collections "
+"d'ensembles de données. Les utilisateurs peuvent avoir différents rôles au sein "
+"d'une organisation, en fonction de leur niveau d'autorisation pour créer, éditer et publier."
 
 #: ckanext/theme_ejemplo/templates/package/group_list.html:22
 msgid "Associate this group with this dataset"
-msgstr "Associer ce groupe à ce jeu de données"
+msgstr "Associer ce groupe à cet ensemble de données"
 
 #: ckanext/theme_ejemplo/templates/package/group_list.html:22
 msgid "Add to group"
@@ -721,7 +798,7 @@ msgstr "Ajouter au groupe"
 
 #: ckanext/theme_ejemplo/templates/package/group_list.html:32
 msgid "There are no groups associated with this dataset"
-msgstr "Il n'y a aucun groupe associé à ce jeu de données"
+msgstr "Il n'y a aucun groupe associé à cet ensemble de données"
 
 #: ckanext/theme_ejemplo/templates/package/search.html:29
 msgid "Relevance"
@@ -745,7 +822,7 @@ msgstr "Docs API"
 
 #: ckanext/theme_ejemplo/templates/package/search.html:55
 msgid "full {format} dump"
-msgstr "dump complet {format}"
+msgstr "dump {format} complet"
 
 #: ckanext/theme_ejemplo/templates/package/search.html:56
 #, python-format
@@ -771,4 +848,32 @@ msgstr "Organisation"
 
 #: ckanext/theme_ejemplo/templates/snippets/organization.html:51
 msgid "There is no description for this organization"
-msgstr "Il n'y a aucune description pour cette organisation"
+msgstr "Il n'y a pas de description pour cette organisation"
+
+#: ckanext/theme_ejemplo/templates/user/new.html:3
+msgid "Register"
+msgstr "Inscription"
+
+#: ckanext/theme_ejemplo/templates/user/new.html:6
+msgid "Normal User Registration"
+msgstr "Inscription utilisateur normal"
+
+#: ckanext/theme_ejemplo/templates/user/new.html:14
+msgid "Register for a normal user account"
+msgstr "Inscrivez-vous pour un compte utilisateur normal"
+
+#: ckanext/theme_ejemplo/templates/user/new.html:26
+msgid "Why Sign Up?"
+msgstr "Pourquoi s'inscrire ?"
+
+#: ckanext/theme_ejemplo/templates/user/new.html:28
+msgid ""
+"\"You should only use this form if <strong>your organization already has "
+"a registered user</strong> and you wish to become a member of that "
+"organization. With this user account, you will <strong>not</strong> be "
+"able to create datasets, groups, or other items.\""
+msgstr ""
+"\"Vous ne devez utiliser ce formulaire que si <strong>votre organisation a déjà "
+"un utilisateur enregistré</strong> et que vous souhaitez devenir membre de cette "
+"organisation. Avec ce compte utilisateur, vous ne pourrez <strong>pas</strong> créer "
+"d'ensembles de données, de groupes ou d'autres éléments.\""

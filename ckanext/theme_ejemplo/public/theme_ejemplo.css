@@ -159,16 +159,6 @@ border-radius: 0 0 3px 3px;
         display: flex !important;
     }
 }
-@media (min-width: 992px){
-.masthead .site-search {
-      /* padding-top: 9rem !important; */
-}
-.masthead .navigation.section {
-    /*   padding-top: 9rem !important; */
-
-}
-}
-
   /* The "navigation pills" in the masthead (the links to Datasets,
    *    Organizations, etc) when the user's pointer hovers over them. */
 .masthead .navigation .nav-pills li a:hover {
@@ -409,9 +399,9 @@ img {
     flex-direction: column;
 }
 
-.cardsmall-height-thematic {
-    height: 21rem;
-    min-height: 21rem;
+.cardsmall-thematic {
+    height: 18.5rem;
+    min-height: 18.5rem;
 }
 
 .cardsmall-height-fixed {
@@ -600,7 +590,6 @@ img {
 }
 .icon2,.social-sharing-buttons>a,.icon2::before,.social-sharing-buttons>a::before {
     font-family: "unesco" !important;
-    speak: none;
     font-style: normal;
     font-weight: normal;
     font-variant: normal;
@@ -666,5 +655,5 @@ img {
     }
 }
 .masthead .site-search input {
-    width: 100px !important;
+    width: 150px !important;
 }
