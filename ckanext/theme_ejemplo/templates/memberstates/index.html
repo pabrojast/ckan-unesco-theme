@@ -6,7 +6,7 @@ Member States - {{ super() }}
 {% block subtitle %}{{ _('Groups') }}{% endblock %}
 
 {% block breadcrumb_content %}
-<li class="active"><a href="/memberstates/">{% trans %}Member States{% endtrans %}</a></li>
+<li class="active"><a href="{{ h.url_for('/memberstates/') }}">{% trans %}Member States{% endtrans %}</a></li>
 {% endblock %}
 
 {% block page_header %}{% endblock %}
