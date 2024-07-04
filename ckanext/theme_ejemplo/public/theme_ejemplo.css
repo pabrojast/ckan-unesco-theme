@@ -242,7 +242,8 @@ border-radius: 0 0 3px 3px;
     padding-left: 1rem;
 }
 .main {
-    padding-top: 9rem !important;
+    padding-top: 10rem !important;
+    z-index: 0;
 }
 h1 .page-heading {
     color: #212122 !important;

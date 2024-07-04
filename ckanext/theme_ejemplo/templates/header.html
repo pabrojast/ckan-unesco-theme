@@ -74,6 +74,11 @@
   {% endif %} {% endblock %}
   <div class="container">
     <div class="navbar-right">
+
+      <li class="navbar-toggle collapsed" style="list-style:none">
+      {% snippet "snippets/language_selector.html" %}
+      </li>
+
       <button data-target="#main-navigation-toggle" data-toggle="collapse" class="navbar-toggle collapsed" type="button" aria-label="expand or collapse" aria-expanded="false">
         <span class="sr-only">{{ _('Toggle navigation') }}</span>
         <span class="fa fa-bars"></span>
@@ -92,10 +97,11 @@
     
     <div class="topmenu">
       <ul>
+        <li>
         {% block footer_lang %}
         {% snippet "snippets/language_selector.html" %}
         {% endblock %}
-
+        </li>
         {% block header_account_notlogged %}
         {% if c.userobj %}
         <li><a href="{{ h.url_for('/user/_logout') }}" title="{{ _('Log out') }}">{{ _('Log out') }}</a></li> 

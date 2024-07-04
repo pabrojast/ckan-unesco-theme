@@ -1,5 +1,4 @@
 {% set current_lang = request.environ.CKAN_LANG %}
-<li>
   <form action="{% url_for 'util.internal_redirect' %}" method="POST">
     <select name="url" style="background-color: transparent; border: 0px solid #ccc; color: inherit;cursor: pointer; padding:0" onchange="this.form.submit()">
       {% for locale in h.get_available_locales() %}
@@ -10,4 +9,3 @@
     </select>
     <span style="content: '▼'; position: absolute; top: 50%; right: 10px; transform: translateY(-50%); pointer-events: none;"></span>
   </form>
-</li>
