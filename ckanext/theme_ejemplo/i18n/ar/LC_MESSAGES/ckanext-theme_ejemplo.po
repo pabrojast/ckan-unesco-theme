@@ -57,9 +57,22 @@ msgstr "جمعية CKAN"
 msgid "Terms of use"
 msgstr "شروط الاستخدام"
 
+#: ckanext/theme_ejemplo/templates/footer.html:32
+msgid "UNESCO Name &amp; Logo"
+msgstr "اسم وشعار اليونسكو"
+
+#: ckanext/theme_ejemplo/templates/footer.html:33
+msgid "FAQ"
+msgstr "الأسئلة الشائعة"
+
 #: ckanext/theme_ejemplo/templates/footer.html:34
 msgid "Report fraud, abuse, misconduct"
 msgstr "الإبلاغ عن الاحتيال أو الإساءة أو سوء السلوك"
+
+#: ckanext/theme_ejemplo/templates/footer.html:35
+msgid "Scam alert"
+msgstr "تنبيه احتيال"
+
 
 #: ckanext/theme_ejemplo/templates/footer.html:41
 msgid "Policies"

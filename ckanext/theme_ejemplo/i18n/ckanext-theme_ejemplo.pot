@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: ckanext-theme-ejemplo 0.0.1\n"
 "Report-Msgid-Bugs-To: EMAIL@ADDRESS\n"
-"POT-Creation-Date: 2024-07-02 14:38-0400\n"
+"POT-Creation-Date: 2024-07-10 09:35-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -54,8 +54,20 @@ msgstr ""
 msgid "Terms of use"
 msgstr ""
 
+#: ckanext/theme_ejemplo/templates/footer.html:32
+msgid "UNESCO Name &amp; Logo"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/footer.html:33
+msgid "FAQ"
+msgstr ""
+
 #: ckanext/theme_ejemplo/templates/footer.html:34
 msgid "Report fraud, abuse, misconduct"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/footer.html:35
+msgid "Scam alert"
 msgstr ""
 
 #: ckanext/theme_ejemplo/templates/footer.html:41
@@ -112,67 +124,67 @@ msgstr ""
 
 #: ckanext/theme_ejemplo/templates/header.html:41
 #: ckanext/theme_ejemplo/templates/header.html:43
-#: ckanext/theme_ejemplo/templates/header.html:101
+#: ckanext/theme_ejemplo/templates/header.html:107
 msgid "Log out"
 msgstr ""
 
-#: ckanext/theme_ejemplo/templates/header.html:78
+#: ckanext/theme_ejemplo/templates/header.html:83
 msgid "Toggle navigation"
 msgstr ""
 
-#: ckanext/theme_ejemplo/templates/header.html:103
+#: ckanext/theme_ejemplo/templates/header.html:109
 msgid "Log in"
 msgstr ""
 
-#: ckanext/theme_ejemplo/templates/header.html:106
+#: ckanext/theme_ejemplo/templates/header.html:112
 msgid "Enroll as a Data Contributor for Your Organization"
 msgstr ""
 
 #: ckanext/theme_ejemplo/templates/group/snippets/info.html:38
-#: ckanext/theme_ejemplo/templates/header.html:117
+#: ckanext/theme_ejemplo/templates/header.html:123
 #: ckanext/theme_ejemplo/templates/initiatives/snippets/info.html:38
 #: ckanext/theme_ejemplo/templates/memberstates/snippets/info.html:38
 #: ckanext/theme_ejemplo/templates/snippets/organization.html:62
 msgid "Datasets"
 msgstr ""
 
-#: ckanext/theme_ejemplo/templates/header.html:118
+#: ckanext/theme_ejemplo/templates/header.html:124
 msgid "Organizations"
 msgstr ""
 
-#: ckanext/theme_ejemplo/templates/header.html:122
+#: ckanext/theme_ejemplo/templates/header.html:128
 #: ckanext/theme_ejemplo/templates/memberstates/index.html:9
 msgid "Member States"
 msgstr ""
 
-#: ckanext/theme_ejemplo/templates/header.html:123
+#: ckanext/theme_ejemplo/templates/header.html:129
 #: ckanext/theme_ejemplo/templates/initiatives/index.html:3
 #: ckanext/theme_ejemplo/templates/initiatives/index.html:9
 msgid "Initiatives"
 msgstr ""
 
-#: ckanext/theme_ejemplo/templates/header.html:124
+#: ckanext/theme_ejemplo/templates/header.html:130
 #: ckanext/theme_ejemplo/templates/home/about.html:3
 #: ckanext/theme_ejemplo/templates/home/about.html:6
 #: ckanext/theme_ejemplo/templates/home/about.html:16
 msgid "About"
 msgstr ""
 
-#: ckanext/theme_ejemplo/templates/header.html:132
+#: ckanext/theme_ejemplo/templates/header.html:138
 msgid "Search Datasets"
 msgstr ""
 
-#: ckanext/theme_ejemplo/templates/header.html:133
+#: ckanext/theme_ejemplo/templates/header.html:139
 #: ckanext/theme_ejemplo/templates/home/snippets/search.html:16
 msgid "Search"
 msgstr ""
 
-#: ckanext/theme_ejemplo/templates/header.html:133
+#: ckanext/theme_ejemplo/templates/header.html:139
 #: ckanext/theme_ejemplo/templates/home/snippets/search.html:13
 msgid "Search datasets"
 msgstr ""
 
-#: ckanext/theme_ejemplo/templates/header.html:134
+#: ckanext/theme_ejemplo/templates/header.html:140
 msgid "Submit"
 msgstr ""
 
@@ -309,9 +321,9 @@ msgstr ""
 
 #: ckanext/theme_ejemplo/templates/home/snippets/ThematicViewers.html:4
 msgid ""
-"<strong>The Thematic Viewers</strong> complement the multitude of visualization "
-"options available for our water-related data, offering a diverse array of "
-"tools tailored to the need of the specific theme."
+"<strong>The Thematic Viewers</strong> complement the multitude of "
+"visualization options available for our water-related data, offering a "
+"diverse array of tools tailored to the need of the specific theme."
 msgstr ""
 
 #: ckanext/theme_ejemplo/templates/home/snippets/about_text.html:1

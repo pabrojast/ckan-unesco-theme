@@ -55,9 +55,21 @@ msgstr "Asociación CKAN"
 msgid "Terms of use"
 msgstr "Términos de Uso"
 
+#: ckanext/theme_ejemplo/templates/footer.html:32
+msgid "UNESCO Name &amp; Logo"
+msgstr "Nombre y logotipo de la UNESCO"
+
+#: ckanext/theme_ejemplo/templates/footer.html:33
+msgid "FAQ"
+msgstr "Preguntas Frecuentes"
+
 #: ckanext/theme_ejemplo/templates/footer.html:34
 msgid "Report fraud, abuse, misconduct"
-msgstr "Reportar fraude, abuso, mala conducta"
+msgstr "Reportar fraude, abuso, conducta indebida"
+
+#: ckanext/theme_ejemplo/templates/footer.html:35
+msgid "Scam alert"
+msgstr "Alerta de estafa"
 
 #: ckanext/theme_ejemplo/templates/footer.html:41
 msgid "Policies"
