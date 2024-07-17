@@ -6,7 +6,7 @@
 import ckan.plugins as plugins
 import ckan.plugins.toolkit as toolkit
 from ckan.lib.plugins import DefaultTranslation
-
+import shapely.geometry
 import requests
 
 
@@ -37,27 +37,48 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
             xmax = dataset_dict.get('xmax')
             ymin = dataset_dict.get('ymin')
             ymax = dataset_dict.get('ymax')
-
+            
             if all(value is not None and value != '' for value in [xmin, xmax, ymin, ymax]):
                 try:
                     # Copiar los valores a los campos esperados por Solr
-                    dataset_dict["minx"] = float(xmin)
-                    dataset_dict["maxx"] = float(xmax)
-                    dataset_dict["miny"] = float(ymin)
-                    dataset_dict["maxy"] = float(ymax)
+                    xmin = float(xmin)
+                    xmax = float(xmax)
+                    ymin = float(ymin)
+                    ymax = float(ymax)
                 except ValueError as e:
                     # Log the error and handle it (e.g., skip this dataset or set default values)
                     print(f"Error converting bounding box values to float: {e}")
-                    # Optionally, you can set default values or take other actions here
-                    dataset_dict["minx"] = None
-                    dataset_dict["maxx"] = None
-                    dataset_dict["miny"] = None
-                    dataset_dict["maxy"] = None
+                    #con el expect no hacemos nada
+                    return dataset_dict
+            
+            # deprectado
+            # if all(value is not None and value != '' for value in [xmin, xmax, ymin, ymax]):
+            #     try:
+            #         # Copiar los valores a los campos esperados por Solr
+            #         dataset_dict["minx"] = float(xmin)
+            #         dataset_dict["maxx"] = float(xmax)
+            #         dataset_dict["miny"] = float(ymin)
+            #         dataset_dict["maxy"] = float(ymax)
+            #     except ValueError as e:
+            #         # Log the error and handle it (e.g., skip this dataset or set default values)
+            #         print(f"Error converting bounding box values to float: {e}")
+            #         # Optionally, you can set default values or take other actions here
+            #         dataset_dict["minx"] = None
+            #         dataset_dict["maxx"] = None
+            #         dataset_dict["miny"] = None
+            #         dataset_dict["maxy"] = None
             # When using the `solr-spatial-field` backend, you need to include the `spatial_geom`
             # field in the returned dataset_dict. This should be a valid geometry in WKT format.
             # Shapely can help you get the WKT representation of your gemetry if you have it in GeoJSON:
+            #si existe el campo, no se deberia hacer nada -- POR HACER --
+            # Crear un polígono rectangular usando las coordenadas de la caja delimitadora
+            bbox = shapely.geometry.box(xmin, ymin, xmax, ymax)
+            wkt = bbox.wkt
 
+            # Incluir el campo `spatial_geom` en el dataset_dict
+            dataset_dict["spatial_geom"] = wkt
 
+            # No olvides devolver el dict
             return dataset_dict
 
         def update_config(self, config):
