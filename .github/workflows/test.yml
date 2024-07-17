@@ -33,6 +33,7 @@ jobs:
     - name: Install requirements
       # Install any extra requirements your extension has here (dev requirements, other extensions etc)
       run: |
+        apk add gcc libc-dev geos-dev geos 
         pip install -r requirements.txt
         pip install -r dev-requirements.txt
         pip install -e .
