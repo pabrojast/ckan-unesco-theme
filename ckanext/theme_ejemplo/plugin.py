@@ -38,6 +38,9 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
             ymin = dataset_dict.get('ymin')
             ymax = dataset_dict.get('ymax')
             
+            def is_within_valid_range(x, y):
+                return -180 <= x <= 180 and -90 <= y <= 90
+            
             if all(value is not None and value != '' for value in [xmin, xmax, ymin, ymax]):
                 try:
                     # Copiar los valores a los campos esperados por Solr
@@ -45,6 +48,17 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                     xmax = float(xmax)
                     ymin = float(ymin)
                     ymax = float(ymax)
+                
+                    # Verificar si las coordenadas están dentro del rango válido
+                    if is_within_valid_range(xmin, ymin) and is_within_valid_range(xmax, ymax):
+                        # Crear un polígono rectangular usando las coordenadas
+                        bbox = shapely.geometry.box(xmin, ymin, xmax, ymax)
+                        wkt = bbox.wkt
+                        # Incluir el campo `spatial_geom` en el dataset_dict
+                        dataset_dict['spatial_geom'] = wkt
+                    else:
+                        print("Coordenadas fuera de los límites válidos, omitiendo dataset.")
+                        return dataset_dict
                 except ValueError as e:
                     # Log the error and handle it (e.g., skip this dataset or set default values)
                     print(f"Error converting bounding box values to float: {e}")
@@ -71,13 +85,6 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
             # field in the returned dataset_dict. This should be a valid geometry in WKT format.
             # Shapely can help you get the WKT representation of your gemetry if you have it in GeoJSON:
             #si existe el campo, no se deberia hacer nada -- POR HACER --
-            # Crear un polígono rectangular usando las coordenadas de la caja delimitadora
-            bbox = shapely.geometry.box(xmin, ymin, xmax, ymax)
-            wkt = bbox.wkt
-
-            # Incluir el campo `spatial_geom` en el dataset_dict
-            dataset_dict["spatial_geom"] = wkt
-
             # No olvides devolver el dict
             return dataset_dict
 
