@@ -54,8 +54,11 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                         # Crear un polígono rectangular usando las coordenadas
                         bbox = shapely.geometry.box(xmin, ymin, xmax, ymax)
                         wkt = bbox.wkt
-                        # Incluir el campo `spatial_geom` en el dataset_dict
+                    
+                    # Solo establecer el campo `spatial_geom` si no existe o está vacío
+                    if 'spatial_geom' not in dataset_dict or not dataset_dict['spatial_geom']:
                         dataset_dict['spatial_geom'] = wkt
+
                     else:
                         print("Coordenadas fuera de los límites válidos, omitiendo dataset.")
                         return dataset_dict
