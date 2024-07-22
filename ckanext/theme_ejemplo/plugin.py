@@ -30,9 +30,12 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
             return self.before_dataset_index(dataset_dict)
         #for ckan v2.10
         def before_dataset_index(self, dataset_dict):
-            
             # When using the default `solr-bbox` backend (based on bounding boxes), you need to
             # include the following fields in the returned dataset_dict:
+            # Check if spatial exists and do nothing
+            if 'spatial' in dataset_dict and dataset_dict['spatial']:
+                return dataset_dict
+            
             xmin = dataset_dict.get('xmin')
             xmax = dataset_dict.get('xmax')
             ymin = dataset_dict.get('ymin')
@@ -55,13 +58,14 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                         bbox = shapely.geometry.box(xmin, ymin, xmax, ymax)
                         wkt = bbox.wkt
                     
-                    # Solo establecer el campo `spatial_geom` si no existe o está vacío
-                    if 'spatial_geom' not in dataset_dict or not dataset_dict['spatial_geom']:
-                        dataset_dict['spatial_geom'] = wkt
+                        # Solo establecer el campo `spatial_geom` si no existe o está vacío
+                        if 'spatial_geom' not in dataset_dict or not dataset_dict['spatial_geom']:
+                            dataset_dict['spatial_geom'] = wkt
 
                     else:
                         print("Coordenadas fuera de los límites válidos, omitiendo dataset.")
                         return dataset_dict
+                    
                 except ValueError as e:
                     # Log the error and handle it (e.g., skip this dataset or set default values)
                     print(f"Error converting bounding box values to float: {e}")
