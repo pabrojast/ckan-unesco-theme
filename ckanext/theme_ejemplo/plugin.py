@@ -33,6 +33,14 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
             # When using the default `solr-bbox` backend (based on bounding boxes), you need to
             # include the following fields in the returned dataset_dict:
             # Check if spatial exists and do nothing
+            package_id = dataset_dict.get('id')
+            sysadmin_context = {
+                'user': 'ckan.system',
+                'ignore_auth': True
+            }
+            package = toolkit.get_action('dataset_follower_list')(sysadmin_context, {'id': package_id })
+            print(package)
+            dataset_dict['followers'] = package
             if 'spatial' in dataset_dict and dataset_dict['spatial']:
                 return dataset_dict
             
@@ -177,22 +185,41 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
             except Exception as e:
                 toolkit.abort(500, str(e))
         
+        # def get_featured_datasets_filtered(self, tag='FeaturedDataset', user=None):
+        #     try:
+        #         query = 'tags:{tag}'.format(tag=tag)
+        #         if user:
+        #             # Modificamos la query para incluir el id del usuario como creador y
+        #             # también verificamos si el usuario sigue el conjunto de datos
+        #             query += ' AND (creator_user_id:"{user}" OR followers_user_id:"{user}")'.format(user=user)
+        #         data_dict = {
+        #             'fq': query,
+        #             'rows': 6  # Número de resultados que deseas obtener, ajusta según necesidad
+        #         }
+        #         search_result = toolkit.get_action('package_search')(None, data_dict)
+        #         return search_result['results']
+        #     except Exception as e:
+        #         toolkit.abort(500, str(e))
+                
         def get_featured_datasets_filtered(self, tag='FeaturedDataset', user=None):
             try:
-                query = 'tags:{tag}'.format(tag=tag)
+                # Obtener la lista de datasets seguidos por el usuario
+
                 if user:
-                    # Modificamos la query para incluir el id del usuario como creador y
-                    # también verificamos si el usuario sigue el conjunto de datos
-                    query += ' AND (creator_user_id:"{user}" OR followers_user_id:"{user}")'.format(user=user)
-                data_dict = {
-                    'fq': query,
-                    'rows': 6  # Número de resultados que deseas obtener, ajusta según necesidad
-                }
-                search_result = toolkit.get_action('package_search')(None, data_dict)
-                return search_result['results']
+                    # Construir la consulta para buscar datasets destacados
+                    query = 'followers:* AND tags:{tag} OR tags:{tag} AND creator_user_id:{user}'.format(tag=tag, user=user)
+                    data_dict = {
+                        'fq': query,
+                        'rows': 6  # Ajustar según sea necesario para obtener todos los datasets destacados
+                    }
+                    search_result = toolkit.get_action('package_search')(None, data_dict)
+                    # Limitar la cantidad de resultados a devolver
+                    return search_result.get('results', [])
+                
             except Exception as e:
-                toolkit.abort(500, str(e))
-        
+                print('Error in Featured Dataset')
+                search_result = []
+                return search_result
 
         def get_organization_image_by_name(self, dataset_name):
             try:
