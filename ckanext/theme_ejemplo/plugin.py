@@ -218,7 +218,7 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                     query = '( followers:yes AND tags:{tag} ) OR ( tags:{tag} AND creator_user_id:{user} )'.format(tag=tag, user=user)
                     print(query)
                     data_dict = {
-                        'fq': query,
+                        'q': query,
                         'rows': 6  # Ajustar según sea necesario para obtener todos los datasets destacados
                     }
                     search_result = toolkit.get_action('package_search')(None, data_dict)
