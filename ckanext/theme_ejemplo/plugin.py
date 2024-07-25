@@ -40,9 +40,12 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
             }
             package = toolkit.get_action('dataset_follower_list')(sysadmin_context, {'id': package_id })
             print(package)
-            is_sysadmin = any(user['sysadmin'] for user in package)
-            print(is_sysadmin)
-            dataset_dict['followers'] = is_sysadmin
+            if(any(user['sysadmin'] for user in package)):
+                featured_ = 'yes'
+            else:
+                featured_ = 'no'
+            
+            dataset_dict['followers'] = featured_
             if 'spatial' in dataset_dict and dataset_dict['spatial']:
                 return dataset_dict
             # Extraer todas las 'id'
@@ -211,7 +214,8 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
 
                 if user:
                     # Construir la consulta para buscar datasets destacados
-                    query = '( followers:true AND tags:{tag} ) OR ( tags:{tag} AND creator_user_id:{user} )'.format(tag=tag, user=user)
+                    
+                    query = '( followers:yes AND tags:{tag} ) OR ( tags:{tag} AND creator_user_id:{user} )'.format(tag=tag, user=user)
                     print(query)
                     data_dict = {
                         'fq': query,
