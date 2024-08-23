@@ -30,6 +30,25 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
             return self.before_dataset_index(dataset_dict)
         #for ckan v2.10
         def before_dataset_index(self, dataset_dict):
+
+            # When using the default `solr-bbox` backend (based on bounding boxes), you need to
+            # include the following fields in the returned dataset_dict:
+            # Check if spatial exists and do nothing
+            package_id = dataset_dict.get('id')
+            sysadmin_context = {
+                'user': 'ckan.system',
+                'ignore_auth': True
+            }
+            package = toolkit.get_action('dataset_follower_list')(sysadmin_context, {'id': package_id })
+            print(package)
+            if(any(user['sysadmin'] for user in package)):
+                featured_ = 'yes'
+            else:
+                featured_ = 'no'
+            
+            dataset_dict['followers'] = featured_
+            
+            
             """ from schemingdcat
             Processes the data dictionary before indexing.
             Iterates through each facet defined in the system's facets dictionary. For each facet present in the data dictionary, it attempts to parse its value as JSON. If the value is a valid JSON string, it replaces the original string value with the parsed JSON object. If the value cannot be parsed as JSON (e.g., because it's not a valid JSON string), it leaves the value unchanged. Facets present in the data dictionary but not containing any data are removed.
@@ -50,22 +69,8 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 else:
                     if facet in dataset_dict:
                         del dataset_dict[facet]
-            # When using the default `solr-bbox` backend (based on bounding boxes), you need to
-            # include the following fields in the returned dataset_dict:
-            # Check if spatial exists and do nothing
-            package_id = dataset_dict.get('id')
-            sysadmin_context = {
-                'user': 'ckan.system',
-                'ignore_auth': True
-            }
-            package = toolkit.get_action('dataset_follower_list')(sysadmin_context, {'id': package_id })
-            print(package)
-            if(any(user['sysadmin'] for user in package)):
-                featured_ = 'yes'
-            else:
-                featured_ = 'no'
-            
-            dataset_dict['followers'] = featured_
+                        
+                        
             if 'spatial' in dataset_dict and dataset_dict['spatial']:
                 return dataset_dict
             # Extraer todas las 'id'
