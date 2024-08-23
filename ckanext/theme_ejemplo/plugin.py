@@ -40,16 +40,52 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 'ignore_auth': True
             }
             package = toolkit.get_action('dataset_follower_list')(sysadmin_context, {'id': package_id })
-            print(package)
+
             if(any(user['sysadmin'] for user in package)):
-                print("Featured")
                 featured_ = 'yes'
             else:
                 featured_ = 'no'
             
             dataset_dict['followers'] = featured_
-            print("end Featured")
-            
+
+            if 'spatial' in dataset_dict and dataset_dict['spatial']:
+                pass
+            else:
+                # Extraer todas las 'id'      
+                xmin = dataset_dict.get('xmin')
+                xmax = dataset_dict.get('xmax')
+                ymin = dataset_dict.get('ymin')
+                ymax = dataset_dict.get('ymax')
+                
+                def is_within_valid_range(x, y):
+                    return -180 <= x <= 180 and -90 <= y <= 90
+                
+                if all(value is not None and value != '' for value in [xmin, xmax, ymin, ymax]):
+                    try:
+                        # Copiar los valores a los campos esperados por Solr
+                        xmin = float(xmin)
+                        xmax = float(xmax)
+                        ymin = float(ymin)
+                        ymax = float(ymax)
+                    
+                        # Verificar si las coordenadas están dentro del rango válido
+                        if is_within_valid_range(xmin, ymin) and is_within_valid_range(xmax, ymax):
+                            # Crear un polígono rectangular usando las coordenadas
+                            bbox = shapely.geometry.box(xmin, ymin, xmax, ymax)
+                            wkt = bbox.wkt
+                        
+                            # Solo establecer el campo `spatial_geom` si no existe o está vacío
+                            if 'spatial_geom' not in dataset_dict or not dataset_dict['spatial_geom']:
+                                dataset_dict['spatial_geom'] = wkt
+
+                        else:
+                            print("Coordenadas fuera de los límites válidos, omitiendo dataset.")
+                        
+                    except ValueError as e:
+                        # Log the error and handle it (e.g., skip this dataset or set default values)
+                        print(f"Error converting bounding box values to float: {e}")
+                        #con el expect no hacemos nada
+                        return dataset_dict
             """ from schemingdcat
             Processes the data dictionary before indexing.
             Iterates through each facet defined in the system's facets dictionary. For each facet present in the data dictionary, it attempts to parse its value as JSON. If the value is a valid JSON string, it replaces the original string value with the parsed JSON object. If the value cannot be parsed as JSON (e.g., because it's not a valid JSON string), it leaves the value unchanged. Facets present in the data dictionary but not containing any data are removed.
@@ -59,60 +95,21 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 dict: The processed data dictionary with JSON strings parsed into objects where applicable and empty facets removed.
             """
             for facet, label in utils.get_facets_dict().items():
-                data = dataset_dict.get(facet)
-                #log.debug("[before_index] Data ({1}) in facet: {0}".format(data, facet))
-                if data:
-                    if isinstance(data, str):
-                        try:
-                            dataset_dict[facet] = json.loads(data)
-                        except json.decoder.JSONDecodeError:
-                            dataset_dict[facet] = data
-                else:
-                    if facet in dataset_dict:
-                        del dataset_dict[facet]
-                        
-                        
-            if 'spatial' in dataset_dict and dataset_dict['spatial']:
-                return dataset_dict
-            # Extraer todas las 'id'
-            
-         
-            xmin = dataset_dict.get('xmin')
-            xmax = dataset_dict.get('xmax')
-            ymin = dataset_dict.get('ymin')
-            ymax = dataset_dict.get('ymax')
-            
-            def is_within_valid_range(x, y):
-                return -180 <= x <= 180 and -90 <= y <= 90
-            
-            if all(value is not None and value != '' for value in [xmin, xmax, ymin, ymax]):
-                try:
-                    # Copiar los valores a los campos esperados por Solr
-                    xmin = float(xmin)
-                    xmax = float(xmax)
-                    ymin = float(ymin)
-                    ymax = float(ymax)
-                
-                    # Verificar si las coordenadas están dentro del rango válido
-                    if is_within_valid_range(xmin, ymin) and is_within_valid_range(xmax, ymax):
-                        # Crear un polígono rectangular usando las coordenadas
-                        bbox = shapely.geometry.box(xmin, ymin, xmax, ymax)
-                        wkt = bbox.wkt
-                    
-                        # Solo establecer el campo `spatial_geom` si no existe o está vacío
-                        if 'spatial_geom' not in dataset_dict or not dataset_dict['spatial_geom']:
-                            dataset_dict['spatial_geom'] = wkt
-
+                    data = dataset_dict.get(facet)
+                    #log.debug("[before_index] Data ({1}) in facet: {0}".format(data, facet))
+                    if data:
+                        if isinstance(data, str):
+                            try:
+                                if(facet == "spatial"):
+                                    dataset_dict[facet] = json.dumps(data)
+                                else:
+                                    dataset_dict[facet] = json.loads(data)
+                            except json.decoder.JSONDecodeError:
+                                dataset_dict[facet] = data
                     else:
-                        print("Coordenadas fuera de los límites válidos, omitiendo dataset.")
-                        return dataset_dict
-                    
-                except ValueError as e:
-                    # Log the error and handle it (e.g., skip this dataset or set default values)
-                    print(f"Error converting bounding box values to float: {e}")
-                    #con el expect no hacemos nada
-                    return dataset_dict
-            
+                        if facet in dataset_dict:
+                            del dataset_dict[facet]
+
             # deprectado
             # if all(value is not None and value != '' for value in [xmin, xmax, ymin, ymax]):
             #     try:
