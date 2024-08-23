@@ -42,12 +42,13 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
             package = toolkit.get_action('dataset_follower_list')(sysadmin_context, {'id': package_id })
             print(package)
             if(any(user['sysadmin'] for user in package)):
+                print("Featured")
                 featured_ = 'yes'
             else:
                 featured_ = 'no'
             
             dataset_dict['followers'] = featured_
-            
+            print("end Featured")
             
             """ from schemingdcat
             Processes the data dictionary before indexing.
