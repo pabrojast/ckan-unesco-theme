@@ -8,8 +8,8 @@ import ckan.plugins.toolkit as toolkit
 from ckan.lib.plugins import DefaultTranslation
 import shapely.geometry
 import requests
-
-
+import json
+import ckanext.schemingdcat.utils as utils
 from flask import Blueprint
 from ckanext.theme_ejemplo.controller import MyLogica
 
@@ -30,6 +30,26 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
             return self.before_dataset_index(dataset_dict)
         #for ckan v2.10
         def before_dataset_index(self, dataset_dict):
+            """ from schemingdcat
+            Processes the data dictionary before indexing.
+            Iterates through each facet defined in the system's facets dictionary. For each facet present in the data dictionary, it attempts to parse its value as JSON. If the value is a valid JSON string, it replaces the original string value with the parsed JSON object. If the value cannot be parsed as JSON (e.g., because it's not a valid JSON string), it leaves the value unchanged. Facets present in the data dictionary but not containing any data are removed.
+            Args:
+                data_dict (dict): The data dictionary to be processed. It's expected to contain keys corresponding to facet names with their associated data as values.
+            Returns:
+                dict: The processed data dictionary with JSON strings parsed into objects where applicable and empty facets removed.
+            """
+            for facet, label in utils.get_facets_dict().items():
+                data = dataset_dict.get(facet)
+                #log.debug("[before_index] Data ({1}) in facet: {0}".format(data, facet))
+                if data:
+                    if isinstance(data, str):
+                        try:
+                            dataset_dict[facet] = json.loads(data)
+                        except json.decoder.JSONDecodeError:
+                            dataset_dict[facet] = data
+                else:
+                    if facet in dataset_dict:
+                        del dataset_dict[facet]
             # When using the default `solr-bbox` backend (based on bounding boxes), you need to
             # include the following fields in the returned dataset_dict:
             # Check if spatial exists and do nothing
@@ -109,6 +129,7 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
             #si existe el campo, no se deberia hacer nada -- POR HACER --
             # No olvides devolver el dict
             return dataset_dict
+
 
         def update_config(self, config):
             # Add this plugin's templates dir to CKAN's extra_template_paths, so

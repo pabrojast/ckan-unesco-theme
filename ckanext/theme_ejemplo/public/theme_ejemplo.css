@@ -658,3 +658,9 @@ img {
 .masthead .site-search input {
     width: 150px !important;
 }
+.d-flex {
+    display: flex !important;
+}
+.dataset-content {
+    flex: 0 1 80%;
+}
