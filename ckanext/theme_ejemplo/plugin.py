@@ -41,13 +41,19 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
             }
             package = toolkit.get_action('dataset_follower_list')(sysadmin_context, {'id': package_id })
 
+            #to define featured dataset
             if(any(user['sysadmin'] for user in package)):
                 featured_ = 'yes'
             else:
                 featured_ = 'no'
-            
             dataset_dict['followers'] = featured_
+            
 
+            #better compatibility    
+            if 'dcat_type' not in dataset_dict or not dataset_dict['dcat_type']:
+                dataset_dict['dcat_type'] = 'http://inspire.ec.europa.eu/metadata-codelist/ResourceType/dataset'
+
+            
             if 'spatial' in dataset_dict and dataset_dict['spatial']:
                 pass
             else:
