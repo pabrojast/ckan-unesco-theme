@@ -3,7 +3,7 @@
 
 {% block toolbar_templates %}
   {% if h.schemingdcat_get_show_metadata_templates_toolbar() %}
-    {% snippet 'schemingdcat/metadata_templates/header_metadata_templates.html' %}               
+
   {% endif %}
 {% endblock %}
 
@@ -12,6 +12,7 @@
     <div>
     {{ h.snippet('schemingdcat/snippets/facet_search_operator.html', title= _('Search config')) }}
        {% for facet in facet_titles %}
+       {% print(facet) %}
         {% if facet =='owner_org' %}
           {% set label_function = h.schemingdcat_organization_name %}
         {% else %}
