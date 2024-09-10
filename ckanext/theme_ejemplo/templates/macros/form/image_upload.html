@@ -20,7 +20,7 @@ Example
   {% set previous_upload = data['previous_upload'] %}
 
   {% if is_upload_enabled %}
-  <p style="margin-bottom: 25px;text-align: center;font-size: 0.9rem !important;opacity: 0.9969;font-weight: bold;">_('Provide a URL or upload a file.')</p>
+  <p style="margin-bottom: 25px;text-align: center;font-size: 0.9rem !important;opacity: 0.9969;font-weight: bold;">{{_('Provide a URL or upload a file.')}}</p>
 
   <div class="image-upload" {{ attributes(attrs) }}
        data-module="image-upload2"
