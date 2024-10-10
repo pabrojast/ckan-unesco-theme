@@ -148,6 +148,10 @@ msgstr "تسجيل الدخول"
 msgid "Enroll as a Data Contributor for Your Organization"
 msgstr "سجل كمساهم بيانات لمنظمتك"
 
+#: ckanext/theme_ejemplo/templates/header.html:117
+msgid "Home"
+msgstr "الرئيسية"
+
 #: ckanext/theme_ejemplo/templates/group/snippets/info.html:38
 #: ckanext/theme_ejemplo/templates/header.html:117
 #: ckanext/theme_ejemplo/templates/initiatives/snippets/info.html:38

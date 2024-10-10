@@ -154,6 +154,10 @@ msgid "Organizations"
 msgstr "Organizaciones"
 
 #: ckanext/theme_ejemplo/templates/header.html:122
+msgid "Home"
+msgstr "Inicio"
+
+#: ckanext/theme_ejemplo/templates/header.html:122
 #: ckanext/theme_ejemplo/templates/memberstates/index.html:9
 msgid "Member States"
 msgstr "Estados Miembros"

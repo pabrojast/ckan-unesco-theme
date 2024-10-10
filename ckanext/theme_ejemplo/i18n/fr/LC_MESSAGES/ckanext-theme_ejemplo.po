@@ -143,6 +143,10 @@ msgstr "Connexion"
 msgid "Enroll as a Data Contributor for Your Organization"
 msgstr "Inscrivez-vous en tant que contributeur de données pour votre organisation"
 
+#: ckanext/theme_ejemplo/templates/header.html:122
+msgid "Home"
+msgstr "Accueil"
+
 #: ckanext/theme_ejemplo/templates/group/snippets/info.html:38
 #: ckanext/theme_ejemplo/templates/header.html:117
 #: ckanext/theme_ejemplo/templates/initiatives/snippets/info.html:38
