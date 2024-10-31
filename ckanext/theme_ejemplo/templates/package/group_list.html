@@ -5,26 +5,54 @@
   <h2 class="hide-heading">{{ _('Groups') }}</h2>
 
   {% if h.check_access('package_update', {'id':c.pkg_dict.id }) %}
-    {% set groups = h.get_all_groups() %}
-  {% else %}
-    {% set groups = h.get_all_groups() %}
-  {% endif %}
+    {# Obtenemos todos los grupos disponibles #}
+    {% set all_groups = h.get_all_groups() %}
+    
+    {# Obtenemos los member states #}
+    {% set member_states = h.get_action('group_show', {'id': 'member-states'}).groups %}
+    {% set member_state_names = member_states|map(attribute='name')|list %}
+    member_state_names.append('member-states')
+    
+    {# Filtramos las initiatives (grupos que no son member states) #}
+    {% set initiatives = all_groups|reject('name', 'in', member_state_names)|list %}
 
-  {% if groups %}
+    {# Formulario para Member States #}
+    {% if member_states %}
+    <h3>{{ _('Add to Member States') }}</h3>
     <form class="add-to-group" method="post">
       <div class="form-group">
-        <select id="field-add_group" class="form-control" name="group_added">
-          {% for option in groups %}
-            <option value="{{ option[0] }}"> {{ option[1] }}</option>
+        <select id="field-add-member-state" class="form-control" name="group_added">
+          {% for state in member_states %}
+            <option value="{{ state.name }}">{{ state.display_name }}</option>
           {% endfor %}
         </select>
       </div>
-      <button type="submit" class="btn btn-primary" title="{{ _('Associate this group with this dataset') }}">{{ _('Add to group') }}</button>
+      <button type="submit" class="btn btn-primary" title="{{ _('Associate this member state with this dataset') }}">
+        {{ _('Add to Member States') }}
+      </button>
     </form>
+    {% endif %}
+
+    {# Formulario para Initiatives #}
+    {% if initiatives %}
+    <h3>{{ _('Add to Initiatives') }}</h3>
+    <form class="add-to-group" method="post">
+      <div class="form-group">
+        <select id="field-add-initiative" class="form-control" name="group_added">
+          {% for initiative in initiatives %}
+            <option value="{{ initiative[0] }}">{{ initiative[1] }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <button type="submit" class="btn btn-primary" title="{{ _('Associate this initiative with this dataset') }}">
+        {{ _('Add to Initiatives') }}
+      </button>
+    </form>
+    {% endif %}
   {% endif %}
 
+  {# Mostrar grupos actuales #}
   {% if c.pkg_dict.groups %}
-
     <form method="post">
       {% snippet 'group/snippets/group_list.html', groups=c.pkg_dict.groups %}
     </form>
