@@ -24,7 +24,7 @@
   {% endif %}
 
   {% if c.pkg_dict.groups %}
-  {% print(c.pkg_dict.groups) %}
+
     <form method="post">
       {% snippet 'group/snippets/group_list.html', groups=c.pkg_dict.groups %}
     </form>
