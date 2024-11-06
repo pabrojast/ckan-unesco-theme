@@ -655,6 +655,12 @@ img {
         width: 980px !important;
     }
 }
+@media (min-width: 1200px) {
+    .container {
+        width: 90vw !important;
+        max-width: 1920px !important;
+    }
+}
 .masthead .site-search input {
     width: 100px !important;
 }
