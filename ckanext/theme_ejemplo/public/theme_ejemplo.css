@@ -661,6 +661,21 @@ img {
         max-width: 1920px !important;
     }
 }
+
+.container.full-width {
+    width: 100% !important;
+    max-width: 100% !important;
+    padding-left: 15px !important;
+    padding-right: 15px !important;
+}
+
+@media (min-width: 1200px) {
+    .container.full-width {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+}
+
 .masthead .site-search input {
     width: 100px !important;
 }
