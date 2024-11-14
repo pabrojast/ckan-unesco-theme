@@ -76,8 +76,17 @@
         <script type="text/javascript">
           (function() {
             var organizationName = "{{ organization.name }}".toLowerCase();
+            var organizationTitle = "{{ organization.title or organization.name }}".toLowerCase();
             var terriaBaseUrl = 'https://ihp-wins.unesco.org/terria/#';
             var viewInTerriaText = '<i class="fa fa-eye"></i> {{ _("View in Terria") }}';
+  
+            // Function to normalize names: remove spaces, hyphens, underscores, etc.
+            function normalizeName(name) {
+              return name.replace(/[\s\-_]+/g, '').toLowerCase();
+            }
+  
+            var normalizedOrgName = normalizeName(organizationName);
+            var normalizedOrgTitle = normalizeName(organizationTitle);
   
             // API URL to get the package details
             var apiUrl = 'https://ihp-wins.unesco.org/api/3/action/package_show?id=terriajs-map-catalog-in-json-format';
@@ -90,11 +99,11 @@
                 if (data.success) {
                   var resources = data.result.resources;
                   var orgResource = resources.find(function(resource) {
-                    // Convert resource name to lowercase for comparison
-                    var resourceName = resource.name.toLowerCase();
-                    var expectedName = organizationName + '.json';
+                    // Normalize resource name for comparison
+                    var resourceName = normalizeName(resource.name.replace('.json', ''));
   
-                    return resourceName === expectedName;
+                    // Check if the normalized resource name matches the organization name or title
+                    return resourceName === normalizedOrgName || resourceName === normalizedOrgTitle;
                   });
                   if (orgResource) {
                     // Organization exists in packages
