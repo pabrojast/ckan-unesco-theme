@@ -1,22 +1,22 @@
 {#
-Embeds a organization within the sidebar of a page.
-
-organization    - The organization dict.
-truncate - A max length for the organization description. If not provided the description
-           will be full length.
-has_context_title - Boolean for whether to display a module-heading for when
-                    this snippet appears within a non-organization template
-                    (e.g. dataset page sidebar)
-
-Example:
-
-    {% snippet 'snippets/organization, organization=c.group_dict %}
-
-#}
-
-{% set truncate = truncate or 0 %}
-{% set url = h.url_for(organization.type + '.read', id=organization.name, ) %}
-
+  Embeds an organization within the sidebar of a page.
+  
+  organization    - The organization dict.
+  truncate - A max length for the organization description. If not provided the description
+             will be full length.
+  has_context_title - Boolean for whether to display a module-heading for when
+                      this snippet appears within a non-organization template
+                      (e.g. dataset page sidebar)
+  
+  Example:
+  
+      {% snippet 'snippets/organization', organization=c.group_dict %}
+  
+  #}
+  
+  {% set truncate = truncate or 0 %}
+  {% set url = h.url_for(organization.type + '.read', id=organization.name) %}
+  
   {% block info %}
   <div class="module module-narrow module-shallow context-info">
     {% if has_context_title %}
@@ -46,7 +46,6 @@ Example:
         <p class="read-more">
           {% link_for _('read more'), controller='organization', action='about', id=organization.name %}
         </p>
-
       {% else %}
         <p class="empty">{{ _('There is no description for this organization') }}</p>
       {% endif %}
@@ -69,80 +68,57 @@ Example:
           {{ h.follow_button('group', organization.id) }}
         </div>
         {% endblock %}
-        {% set site_url = config.get('ckan.site_url') %}
-
-        {% set config = { 
-          "version": "8.0.0",
-          "initSources": [
-            {
-              "catalog": [
-                {
-                  "type": "ckan-group",
-                  "name": organization.title or organization.name,
-                  "url": site_url,
-                  "isOpen": true,
-                  "filterQuery": [
-                    {
-                      "fq": "+(res_format:(wms OR WMS OR shapefile OR Shapefile OR \"zip (shp)\" OR shp OR SHP OR kmz OR GeoJSON OR geojson OR csv-geo-au OR aus-geo-csv)) AND organization:" ~ organization.name
-                    }
-                  ],
-                  "groupBy": "organization",
-                  "supportedResourceFormats": [
-                    {
-                      "id": "WMS"
-                    },
-                    {
-                      "id": "Kml"
-                    },
-                    {
-                      "id": "Shapefile"
-                    }
-                  ],
-                  "ungroupedTitle": "Organisation not declared",
-                  "itemPropertiesByType": [
-                    {
-                      "type": "wms",
-                      "itemProperties": {
-                        "crs": "EPSG:3857"
-                      }
-                    }
-                  ],
-                  "resourceIdTemplate": "{{resource.name}}-{{resource.format}}",
-                  "shareKeys": [
-                    "Root Group"
-                  ]
-                }
-              ],
-              "models": {
-                "//" ~ organization.title or organization.name: {
-                  "isOpen": true,
-                  "knownContainerUniqueIds": ["/"],
-                  "type": "ckan-group"
-                }
-              },
-              "previewedItemId": "//" ~ organization.title or organization.name
-            }
-          ]
-        } %}
-
-        {# Convert the config to a JSON string and URL encode it #}
-        {% set encoded_config = (config | tojson | urlencode) %}
-
-        {# Generate the Terria link #}
-
-        {# Determine the Terria URL based on the site URL #}
-        {% set terria_url = 'https://terria.dev-wins.com/#start=' ~ encoded_config %}
-        {% if 'ihp-wins.unesco.org' in site_url %}
-          {% set terria_url = 'https://ihp-wins.unesco.org/terria/#start=' ~ encoded_config %}
-        {% endif %}
   
-        {# Generate the Terria link #}
-        <a href="{{ terria_url }}" class="btn btn-terria">
-          <i class="fa fa-eye"></i> {% trans %}View in Terria{% endtrans %}
-        </a>
-
+        {# Placeholder for the TerriaJS button #}
+        <div id="terria-button-placeholder"></div>
+  
+        {# JavaScript to query the API and generate the TerriaJS button #}
+        <script type="text/javascript">
+          (function() {
+            var organizationName = "{{ organization.name }}".toLowerCase();
+            var terriaBaseUrl = 'https://ihp-wins.unesco.org/terria/#';
+            var viewInTerriaText = '<i class="fa fa-eye"></i> {{ _("View in Terria") }}';
+  
+            // API URL to get the package details
+            var apiUrl = 'https://ihp-wins.unesco.org/api/3/action/package_show?id=terriajs-map-catalog-in-json-format';
+  
+            fetch(apiUrl)
+              .then(function(response) {
+                return response.json();
+              })
+              .then(function(data) {
+                if (data.success) {
+                  var resources = data.result.resources;
+                  var orgResource = resources.find(function(resource) {
+                    // Convert resource name to lowercase for comparison
+                    var resourceName = resource.name.toLowerCase();
+                    var expectedName = organizationName + '.json';
+  
+                    return resourceName === expectedName;
+                  });
+                  if (orgResource) {
+                    // Organization exists in packages
+                    var terriaUrl = terriaBaseUrl + orgResource.url;
+  
+                    // Create the button and insert it into the placeholder
+                    var button = document.createElement('a');
+                    button.href = terriaUrl;
+                    button.className = 'btn btn-terria';
+                    button.innerHTML = viewInTerriaText;
+                    var placeholder = document.getElementById('terria-button-placeholder');
+                    placeholder.appendChild(button);
+                  }
+                }
+              })
+              .catch(function(error) {
+                console.error('Error fetching data:', error);
+              });
+          })();
+        </script>
+  
       {% endif %}
       {% endblock %}
     </section>
   </div>
   {% endblock %}
+  
