@@ -148,7 +148,8 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
             toolkit.add_template_directory(config, 'templates')
             #para el css y archivos necesarios
             toolkit.add_public_directory(config,'public')
-
+            #Assets
+            toolkit.add_resource('public', 'theme')
         def get_blueprint(self):
             
             blueprint = Blueprint(self.name, self.__module__)        
@@ -159,7 +160,13 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 MyLogica.memberstates,
                 methods=['GET']
             )
-
+            
+            blueprint.add_url_rule(
+                u'/thematicbuilder',
+                u'thematicbuilder',
+                MyLogica.thematicbuilder,
+                methods=['GET']
+            )
 
             blueprint.add_url_rule(
                 u'/initiatives',

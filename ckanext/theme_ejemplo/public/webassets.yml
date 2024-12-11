@@ -1,0 +1,13 @@
+# Define el bundle para JavaScript
+thematicbuilder-js:
+  output: theme/thematicbuilder/javascript/thematicbuilder.js
+  filters: rjsmin
+  contents:
+    - thematicbuilder/javascript/main.js
+
+# Define el bundle para CSS
+thematicbuilder-css:
+  output: theme/thematicbuilder/css/thematicbuilder.css
+  filters: cssrewrite,cssmin
+  contents:
+    - thematicbuilder/css/main.css
