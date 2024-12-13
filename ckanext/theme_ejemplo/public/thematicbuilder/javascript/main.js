@@ -95,16 +95,29 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function processJsonFile(data) {
     catalogData = data;
-    selectionMap = {}; // Reinicia el mapa de selección
+    selectionMap = {}; // Reiniciamos el mapa
+    
+    // Función recursiva para inicializar selectionMap
+    function initializeSelectionMap(items, parentIndex = "") {
+        items.forEach((item, index) => {
+            const currentIndex = parentIndex ? `${parentIndex}-${index}` : `${index}`;
+            selectionMap[currentIndex] = true; // Por defecto todo seleccionado
+            
+            if (item.members && Array.isArray(item.members)) {
+                initializeSelectionMap(item.members, currentIndex);
+            }
+        });
+    }
     
     const itemList = document.getElementById('thematicbuilder-item-list');
     itemList.innerHTML = '';
     
-    // Mostrar items del catálogo
     if (data.catalog) {
+        // Inicializamos el mapa de selección antes de renderizar
+        initializeSelectionMap(data.catalog);
         renderCatalogItems(data.catalog);
         document.getElementById('thematicbuilder-download-btn').style.display = 'block';
-        updateSelectedCount();
+        updateSelectedCount(); // Ahora debería mostrar el conteo correcto
     } else {
         console.error('Invalid catalog format');
     }
@@ -173,6 +186,9 @@ function renderCatalogItems(items, parentIndex = "") {
     if (items && Array.isArray(items)) {
         processGroup(items);
     }
+    
+    // Actualizar el contador después de renderizar los items
+    updateSelectedCount();
 }
 
 function hasChildrenMatching(items, term) {
@@ -194,7 +210,8 @@ function isItemSelected(indexPath) {
 }
 
 function updateSelectedCount() {
-    const selectedCount = Object.values(selectionMap).filter(Boolean).length;
+    // Contamos solo los elementos que están explícitamente marcados como true
+    const selectedCount = Object.entries(selectionMap).filter(([key, value]) => value === true).length;
     const countElement = document.getElementById('thematicbuilder-selected-count');
     if (countElement) {
         countElement.textContent = `Selected items: ${selectedCount}`;
