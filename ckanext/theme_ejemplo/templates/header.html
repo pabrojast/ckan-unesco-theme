@@ -114,6 +114,37 @@
         {% snippet "snippets/language_selector.html" %}
         {% endblock %}
         </li>
+        <li id="language-dropdown">
+          <a href="#" id="language-btn">LANGUAGE ▼</a>
+          <ul>
+            <li><a href="/en/">ENGLISH</a></li>
+            <li><a href="/es/">ESPAÑOL</a></li>
+            <li><a href="/fr/">FRANÇAIS</a></li>
+            <li><a href="/ar/">العربية</a></li>
+          </ul>
+        </li>
+        
+        <script>
+          // Seleccionamos el botón que abre/cierra el menú
+          const languageBtn = document.getElementById('language-btn');
+          const dropdownMenu = document.querySelector('#language-dropdown ul');
+      
+          // Al hacer click en el botón, alternamos la clase 'show' en el menú
+          languageBtn.addEventListener('click', (event) => {
+            event.preventDefault(); // Prevenir el comportamiento del enlace
+            dropdownMenu.classList.toggle('show');
+          });
+      
+          // Cerrar el menú si hacemos click fuera de él
+          document.addEventListener('click', (event) => {
+            const isClickInside = document.getElementById('language-dropdown').contains(event.target);
+            if (!isClickInside) {
+              dropdownMenu.classList.remove('show');
+            }
+          });
+        </script>
+
+
         {% block header_account_notlogged %}
         {% if c.userobj %}
         <li><a href="{{ h.url_for('/user/_logout') }}" title="{{ _('Log out') }}">{{ _('Log out') }}</a></li> 
