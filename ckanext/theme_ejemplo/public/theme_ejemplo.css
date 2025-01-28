@@ -736,3 +736,9 @@ img {
   .checkbox input[type=checkbox] {
     top: 26px !important;
   }
+  .field.field--name-field-link.field--type-link.field--label-hidden.field__item {
+    float: right;
+    width: 100%;
+    text-align: end;
+    padding: 5px;
+}

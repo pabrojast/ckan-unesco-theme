@@ -9,7 +9,7 @@
 <img class="cardsmall-img-top2 image-style-cardsmall-1-column" src="./Landing_page/Content/data_catalogue_button1.png" width="289" height="424" alt="" loading="lazy"><div class="cardsmall-body">
 {% endif %}
         <div class="cardsmall-title">{{ dataset['title'] }}</div><div class="cardsmall-text">
-            <p>{{ dataset['notes'] }}</p></div><div class="field field--name-field-link field--type-link field--label-hidden field__item">
-        <a href="{{ h.url_for('dataset.read', id=dataset['name']) }}" class="btn btn-primary btn-arrow-right" target="_blank">{{ _("Discover") }}</a></div></div></div></div>
+            <p>{{ dataset['notes'] }}</p></div></div><div class="field field--name-field-link field--type-link field--label-hidden field__item">
+                <a href="{{ h.url_for('dataset.read', id=dataset['name']) }}" class="btn btn-primary btn-arrow-right" target="_blank">{{ _("Discover") }}</a></div></div></div>
 </div>
 {% endfor %}
