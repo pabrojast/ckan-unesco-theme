@@ -401,13 +401,13 @@ img {
 }
 
 .cardsmall-thematic {
-    height: 18.5rem;
-    min-height: 18.5rem;
+    height: 19rem;
+    min-height: 19rem;
 }
 
 .cardsmall-height-fixed {
-    height: 26.5rem;
-    min-height: 26.5rem;
+    height: 100%;
+    min-height: 23.5rem;
 }
 
 .cardsmall {
@@ -487,9 +487,13 @@ img {
 }
 
 .cardsmall-text p{
-    height: 60px !important;
+    height: 90px !important;
     overflow: clip !important;
     overflow-clip-margin: 0px !important;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 3;
+    text-overflow: ellipsis;
 }
 
 .col-small{
