@@ -18,6 +18,11 @@
             {% snippet 'home/snippets/data.html' %}
           {% endblock %}
         </div>
+        <div class="col-md-12 col1">
+          {% block IHPEvents %}
+            {% snippet 'home/snippets/IHPEvents.html' %}
+          {% endblock %}
+        </div>
         {% comment %}
         <div class="col-md-12 col1" style="border-top: 0 !important;">
           {% block IHPIX %}
@@ -66,11 +71,7 @@
             {% snippet 'home/snippets/FeaturedPublicationsdata.html' %}
           {% endblock %}
         </div>
-        <div class="col-md-12 col1">
-          {% block IHPEvents %}
-            {% snippet 'home/snippets/IHPEvents.html' %}
-          {% endblock %}
-        </div>
+
         <div class="col-md-12 col1" style="border-top: 0 !important;">
           {% block IHPEventsdata %}
             {% snippet 'home/snippets/IHPEventsdata.html' %}
