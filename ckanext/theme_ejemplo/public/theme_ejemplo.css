@@ -746,3 +746,11 @@ img {
     text-align: end;
     padding: 5px;
 }
+a.heading.truncate {
+    display: inline-block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 80%;
+    vertical-align: middle;
+}
