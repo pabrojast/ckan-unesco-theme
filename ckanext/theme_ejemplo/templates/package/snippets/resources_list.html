@@ -21,26 +21,28 @@ Example:
           {% set current_page = request.args.get('page', 1) | int %}
           {% set start = (current_page - 1) * items_per_page %}
           {% set end = start + items_per_page %}
-          {% set total_resources = pkg.resources | length %}
-          {% set paged_resources = pkg.resources[start:end] %}
+          {% set total_resources = resources | length %}
+          {% set paged_resources = resources[start:end] %}
+          
           {% for res in paged_resources %}
             {% snippet 'package/snippets/resource_item.html', pkg=pkg, res=res, can_edit=can_edit, is_activity_archive=is_activity_archive %}
           {% endfor %}
+
+          {% if total_resources > items_per_page %}
+            <div class="pagination">
+              {% if current_page > 1 %}
+                <a href="{{ h.url_for(request.endpoint, id=pkg.name, page=current_page-1) }}" class="btn btn-default">&laquo; {{ _('Previous') }}</a>
+              {% endif %}
+              
+              <span class="page-info">{{ _('Page') }} {{ current_page }} {{ _('of') }} {{ (total_resources / items_per_page) | round(0, 'ceil') | int }}</span>
+              
+              {% if end < total_resources %}
+                <a href="{{ h.url_for(request.endpoint, id=pkg.name, page=current_page+1) }}" class="btn btn-default">{{ _('Next') }} &raquo;</a>
+              {% endif %}
+            </div>
+          {% endif %}
         {% endblock %}
       </ul>
-      {% if total_resources > items_per_page %}
-        <div class="pagination">
-          {% if current_page > 1 %}
-            <a href="{{ h.url_for(request.endpoint, id=pkg.name, page=current_page-1) }}" class="btn btn-default">&laquo; {{ _('Previous') }}</a>
-          {% endif %}
-          
-          <span class="page-info">{{ _('Page') }} {{ current_page }} {{ _('of') }} {{ (total_resources / items_per_page) | round(0, 'ceil') | int }}</span>
-          
-          {% if end < total_resources %}
-            <a href="{{ h.url_for(request.endpoint, id=pkg.name, page=current_page+1) }}" class="btn btn-default">{{ _('Next') }} &raquo;</a>
-          {% endif %}
-        </div>
-      {% endif %}
     {% else %}
       {% if h.check_access('resource_create', {'package_id': pkg['id']}) and not is_activity_archive %}
           {% trans url=h.url_for(pkg.type ~ '_resource.new', id=pkg.name) %}
