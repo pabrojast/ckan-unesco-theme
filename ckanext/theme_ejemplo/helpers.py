@@ -4,19 +4,27 @@ def get_paged_resources(package_id, page=1, items_per_page=10):
     """
     Get paginated resources for a package
     """
-    # Obtener el total de recursos
-    total = toolkit.get_action('resource_search')({}, {
-        'query': f'package_id:{package_id}',
-    })['count']
-    
-    # Obtener los recursos paginados
-    resources = toolkit.get_action('resource_search')({}, {
-        'query': f'package_id:{package_id}',
-        'offset': (page - 1) * items_per_page,
-        'limit': items_per_page,
-    })['results']
-    
-    return {
-        'resources': resources,
-        'total': total
-    }
+    try:
+        # Obtener el paquete completo
+        package = toolkit.get_action('package_show')({}, {'id': package_id})
+        
+        # Obtener todos los recursos
+        resources = package.get('resources', [])
+        total = len(resources)
+        
+        # Calcular el inicio y fin para la paginación
+        start = (page - 1) * items_per_page
+        end = start + items_per_page
+        
+        # Obtener solo los recursos de la página actual
+        paged_resources = resources[start:end]
+        
+        return {
+            'resources': paged_resources,
+            'total': total
+        }
+    except toolkit.ObjectNotFound:
+        return {
+            'resources': [],
+            'total': 0
+        }
