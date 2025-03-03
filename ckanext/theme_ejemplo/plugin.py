@@ -12,6 +12,7 @@ import json
 import ckanext.schemingdcat.utils as utils
 from flask import Blueprint
 from ckanext.theme_ejemplo.controller import MyLogica
+from . import helpers
 
 class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
         '''An example theme plugin.
@@ -203,7 +204,8 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                  'get_latest_courses': self.get_latest_courses,
                  'get_featured_datasets': self.get_featured_datasets,  # Nuevo helper añadido
                  'get_organization_image_by_name': self.get_organization_image_by_name,  # Cambio de nombre del helper
-                 'get_featured_datasets_filtered': self.get_featured_datasets_filtered
+                 'get_featured_datasets_filtered': self.get_featured_datasets_filtered,
+                 'theme_ejemplo_get_paged_resources': helpers.get_paged_resources
                  }
         
         def get_latest_courses(self):

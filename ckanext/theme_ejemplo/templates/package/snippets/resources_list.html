@@ -1,79 +1,56 @@
 {#
-  Renders a single resource with icons and view links.
+Renders a list of resources with icons and view links.
 
-  res - A resource dict to render
-  pkg - A package dict that the resource belongs to
-  can_edit - Whether the user is allowed to edit the resource
-  url_is_edit - Whether the link to the resource should be to editing it (set to False to make the link view the resource)
-  is_activity_archive - Whether this is an old version of the dataset (and therefore read-only)
+resources - A list of resources (dicts) to render
+pkg - A package dict that the resources belong to.
+is_activity_archive - Whether this is an old version of the dataset (and therefore read-only)
 
-  Example:
+Example:
 
-    {% snippet "package/snippets/resource_item.html", res=resource, pkg_dict=pkg_dict, can_edit=True, url_is_edit=False %}
+  {% snippet "package/snippets/resources_list.html", pkg=pkg, resources=pkg.resources %}
 
 #}
-{% set url_action = pkg.type ~ ('_resource.edit' if url_is_edit and can_edit else '_resource.read') %}
-{% set url = h.url_for(url_action, id=pkg.id if is_activity_archive else pkg.name, resource_id=res.id, **({'activity_id': request.args['activity_id']} if 'activity_id' in request.args else {})) %}
+<section id="dataset-resources" class="resources">
+  <h2>{{ _('Data and Resources') }}</h2>
+  {% block resource_list %}
+    {% if resources %}
+      <ul class="{% block resource_list_class %}resource-list{% endblock %}">
+        {% block resource_list_inner %}
+          {% set can_edit = h.check_access('package_update', {'id':pkg.id }) and not is_activity_archive %}
+          {% set items_per_page = 10 %}
+          {% set current_page = request.args.get('page', 1) | int %}
+          
+          {# Usar el nuevo helper para obtener recursos paginados #}
+          {% set paged_data = h.theme_ejemplo_get_paged_resources(pkg.id, current_page, items_per_page) %}
+          {% set total_resources = paged_data.total %}
+          
+          {% for res in paged_data.resources %}
+            {% snippet 'package/snippets/resource_item.html', pkg=pkg, res=res, can_edit=can_edit, is_activity_archive=is_activity_archive %}
+          {% endfor %}
 
-<li class="resource-item" data-id="{{ res.id }}">
-  {% block resource_item_title %}
-  <a class="heading truncate" href="{{ url }}" title="{{ res.name or res.description }}">
-    {{ h.resource_display_name(res) }}<span class="format-label" property="dc:format" data-format="{{ res.format.lower() or 'data' }}">{{ h.get_translated(res, 'format') }}</span>
-    {{ h.popular('views', res.tracking_summary.total, min=10) if res.tracking_summary }}
-  </a>
-  {% endblock %}
-  {% block resource_item_description %}
-    <p class="description">
-      {% if res.description %}
-        {{ h.markdown_extract(h.get_translated(res, 'description'), extract_length=80) }}
-      {% endif %}
-    </p>
-  {% endblock %}
-  {% block resource_item_explore %}
-  {% if not url_is_edit %}
-  <div class="dropdown btn-group">
-    <a href="#" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
-      <i class="fa fa-share"></i>
-      {{ _('Explore') }}
-      <span class="caret"></span>
-    </a>
-    <ul class="dropdown-menu">
-      {% block resource_item_explore_links %}
-      <li>
-        <a href="{{ url }}">
-          {% if not is_activity_archive and res.has_views %}
-            <i class="fa fa-bar-chart-o"></i>
-            {{ _('Preview') }}
-          {% else %}
-            <i class="fa fa-info-circle"></i>
-            {{ _('More information') }}
+          {% if total_resources > items_per_page %}
+            <div class="pagination">
+              {% if current_page > 1 %}
+                <a href="{{ h.url_for(request.endpoint, id=pkg.name, page=current_page-1) }}" class="btn btn-default">&laquo; {{ _('Previous') }}</a>
+              {% endif %}
+              
+              <span class="page-info">{{ _('Page') }} {{ current_page }} {{ _('of') }} {{ (total_resources / items_per_page) | round(0, 'ceil') | int }}</span>
+              
+              {% if current_page * items_per_page < total_resources %}
+                <a href="{{ h.url_for(request.endpoint, id=pkg.name, page=current_page+1) }}" class="btn btn-default">{{ _('Next') }} &raquo;</a>
+              {% endif %}
+            </div>
           {% endif %}
-        </a>
-      </li>
-      {% if res.url and h.is_url(res.url) %}
-      <li>
-        <a href="{{ res.url }}" class="resource-url-analytics" target="_blank">
-          {% if res.has_views or res.url_type == 'upload' %}
-            <i class="fa fa-arrow-circle-o-down"></i>
-            {{ _('Download') }}
-          {% else %}
-            <i class="fa fa-external-link"></i>
-            {{ _('Go to resource') }}
-          {% endif %}
-        </a>
-      </li>
+        {% endblock %}
+      </ul>
+    {% else %}
+      {% if h.check_access('resource_create', {'package_id': pkg['id']}) and not is_activity_archive %}
+          {% trans url=h.url_for(pkg.type ~ '_resource.new', id=pkg.name) %}
+            <p class="empty">This dataset has no data, <a href="{{ url }}">why not add some?</a></p>
+          {% endtrans %}
+      {% else %}
+          <p class="empty">{{ _('This dataset has no data') }}</p>
       {% endif %}
-      {% if can_edit %}
-      <li>
-        <a href="{{ h.url_for(pkg.type ~ '_resource.edit', id=pkg.name, resource_id=res.id) }}">
-          <i class="fa fa-pencil-square-o"></i>
-          {{ _('Edit') }}
-        </a>
-      </li>
-      {% endif %}
-      {% endblock %}
-    </ul>
-  </div>
-  {% endif %}
-  {% endblock %}
-</li>
+    {% endif %}
+    {% endblock %}
+</section>
