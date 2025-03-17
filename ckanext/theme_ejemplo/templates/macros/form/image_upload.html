@@ -81,7 +81,7 @@
       }
       
       /**
-       * Resetea el input file, para “limpiar” la subida.
+       * Resetea el input file, para "limpiar" la subida.
        */
       function clearFileInput(inputId) {
         const input = document.getElementById(inputId);
@@ -110,7 +110,7 @@
             <p style="margin: 0;">{{ _('Arrastra y suelta el archivo aquí, o haz clic para buscar') }}</p>
         </div>
 
-        {# --- Input file real, pero oculto (o casi oculto) --- #}
+        {# --- Input file real, pero oculto --- #}
         {{ input(
             field_upload,
             label=upload_label,
@@ -119,7 +119,7 @@
             value='',
             error='',
             classes=classes,
-            attrs=attrs|merge({'style': 'display:none;'})
+            attrs=dict(attrs, **{'style': 'display:none;'})
         ) }}
 
         {# --- Si ya hay un archivo subido, ofrecemos botón "Limpiar" --- #}
