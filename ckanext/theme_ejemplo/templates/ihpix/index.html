@@ -1,9 +1,9 @@
 {% extends "page.html" %}
 {% block title %}
-TerriaJS Catalog Processor - {{ super() }}
+{% trans %}IHP IX{% endtrans %} - {{ super() }}
 {% endblock %}
 
-{% block subtitle %}{{ _('TerriaJS Catalog Processor') }}{% endblock %}
+{% block subtitle %}{{ _('IHP IX') }}{% endblock %}
 
 {% block breadcrumb_content %}
 <li class="active"><a href="{{ h.url_for('/ihpix') }}">{% trans %}IHP IX{% endtrans %}</a></li>
@@ -14,42 +14,57 @@ TerriaJS Catalog Processor - {{ super() }}
   
   <div class="module-content box">
     <div>
-        <h2 class="page-heading">IHP IX: Priority Areas</h2>
-        <p>
-            {% trans %}The Operational Implementation Plan of the Intergovernmental Hydrological Programme is based on the Strategic Plan of IHP-IX. This Strategy has five interrelated and intertwined priority areas and 34 Outputs.{% endtrans %}
-        </p>
+      <h2 class="page-heading">{% trans %}IHP IX{% endtrans %}</h2>
+      <p>
+        {% trans %}The ninth phase of the Intergovernmental Hydrological Programme (IHP-IX) covering 2022-2029 identifies key water priority areas to support Members States to achieve the 2030 Agenda and the Sustainable Development Goals (SDGs). It represents a methodological response towards transdisciplinarity aimed to generate solutions.{% endtrans %}
+      </p>
+
+      <div class="col-md-4 col3">
+        <div class="col-small"><div class="cardsmall cardsmall-thematic cardsmall-cta cardsmall-hero"> <img class="cardsmall-img-top image-style-cardsmall-1-column" src="./Landing_page/Content/ihp_reporting.png" width="289" height="424" alt="" loading="lazy"><div class="cardsmall-body"><div class="cardsmall-title">{% trans %}IHP IX Reporting{% endtrans %}</div><div class="cardsmall-text"></div>
+        </div>            <div class="field field--name-field-link field--type-link field--label-hidden field__item"><a href="https://forms.office.com/Pages/ResponsePage.aspx?Host=Teams&lang={locale}&groupId={groupId}&tid={tid}&teamsTheme={theme}&upn={upn}&id=Uq5PHbM5-kuwswIpVrERlPV3XlCBEXFBjwvcm5ZTrWNUNlYxQTFQRUgxUjBSNUJNMUlJVTBBTDFBQSQlQCN0PWcu" class="btn btn-primary btn-arrow-right" target="_blank">{{ _("Access") }}</a></div>
+        </div></div>
+      </div>
+
+      <div class="col-md-4 col3">
+        <div class="col-small"><div class="cardsmall cardsmall-thematic cardsmall-cta cardsmall-hero"> <img class="cardsmall-img-top image-style-cardsmall-1-column" src="./Landing_page/Content/ihp_progress.png" width="289" height="424" alt="" loading="lazy"><div class="cardsmall-body"><div class="cardsmall-title">{% trans %}IHP IX Progress{% endtrans %}</div><div class="cardsmall-text"></div>
+        </div>            <div class="field field--name-field-link field--type-link field--label-hidden field__item"><a href="https://unesco.sharepoint.com/sites/IntergovernmentalHydrologicalProgrammeIHP/SitePages/IHP-IX-Implementation-Progress.aspx?OR=Teams-HL&CT=1736211052496&clickparams=eyJBcHBOYW1lIjoiVGVhbXMtRGVza3RvcCIsIkFwcFZlcnNpb24iOiI0OS8yNDEyMDEwMDIxMSJ9" class="btn btn-primary btn-arrow-right" target="_blank">{{ _("View") }}</a></div>
+        </div></div>
+      </div>
+
+      <h2 class="page-heading">{% trans %}IHP IX: Priority Areas{% endtrans %}</h2>
+      <p>
+        {% trans %}The Operational Implementation Plan of the Intergovernmental Hydrological Programme is based on the Strategic Plan of IHP-IX. This Strategy has five interrelated and intertwined priority areas and 34 Outputs.{% endtrans %}
+      </p>
         
-            <div class="col-md-4 col3">
-            <div class="col-small"><div class="cardsmall cardsmall-thematic cardsmall-cta cardsmall-hero"> <img class="cardsmall-img-top image-style-cardsmall-1-column" src="./Landing_page/Content/area_1.png" width="289" height="424" alt="" loading="lazy"><div class="cardsmall-body"><div class="cardsmall-title">Priority Area 1: Scientific Research and Innovation</div><div class="cardsmall-text"></div>
-            </div>            <div class="field field--name-field-link field--type-link field--label-hidden field__item"><a href="#" class="btn btn-primary btn-arrow-right" target="_blank">{{ _("Discover") }}</a></div>
+      <div class="col-md-4 col3">
+        <div class="col-small"><div class="cardsmall cardsmall-thematic cardsmall-cta cardsmall-hero"> <img class="cardsmall-img-top image-style-cardsmall-1-column" src="./Landing_page/Content/area_1.png" width="289" height="424" alt="" loading="lazy"><div class="cardsmall-body"><div class="cardsmall-title">{% trans %}Priority Area 1: Scientific Research and Innovation{% endtrans %}</div><div class="cardsmall-text"></div>
+        </div>            <div class="field field--name-field-link field--type-link field--label-hidden field__item"><a href="#" class="btn btn-primary btn-arrow-right" target="_blank">{{ _("Discover") }}</a></div>
         </div></div>
-            </div>
+      </div>
 
-            <div class="col-md-4 col3">
-            <div class="col-small"><div class="cardsmall cardsmall-thematic cardsmall-cta cardsmall-hero"> <img class="cardsmall-img-top image-style-cardsmall-1-column" src="./Landing_page/Content/priority_area_2_water_education_in_the_fourth_industrial_revolution.png" width="289" height="424" alt="" loading="lazy"><div class="cardsmall-body"><div class="cardsmall-title">Priority Area 2: Water Education in the Fourth Industrial Revolution including Sustainability</div><div class="cardsmall-text">
-
-            </div>            </div><div class="field field--name-field-link field--type-link field--label-hidden field__item"><a href="http://www.ecohydrology-ihp.org/demosites/" class="btn btn-primary btn-arrow-right" target="_blank">{{ _("Discover") }}</a></div>
+      <div class="col-md-4 col3">
+        <div class="col-small"><div class="cardsmall cardsmall-thematic cardsmall-cta cardsmall-hero"> <img class="cardsmall-img-top image-style-cardsmall-1-column" src="./Landing_page/Content/priority_area_2_water_education_in_the_fourth_industrial_revolution.png" width="289" height="424" alt="" loading="lazy"><div class="cardsmall-body"><div class="cardsmall-title">{% trans %}Priority Area 2: Water Education in the Fourth Industrial Revolution including Sustainability{% endtrans %}</div><div class="cardsmall-text">
+        </div>            </div><div class="field field--name-field-link field--type-link field--label-hidden field__item"><a href="http://www.ecohydrology-ihp.org/demosites/" class="btn btn-primary btn-arrow-right" target="_blank">{{ _("Discover") }}</a></div>
         </div></div>
-            </div>
+      </div>
 
-            <div class="col-md-4 col3">
-            <div class="col-small"><div class="cardsmall cardsmall-thematic cardsmall-cta cardsmall-hero"> <img class="cardsmall-img-top image-style-cardsmall-1-column" src="./Landing_page/Content/priority_area_3.png" width="289" height="424" alt="" loading="lazy"><div class="cardsmall-body"><div class="cardsmall-title">Priority Area 3: Bridging the Data-Knowledge Gap</div><div class="cardsmall-text"></div>
-            </div>            <div class="field field--name-field-link field--type-link field--label-hidden field__item"><a href="#" class="btn btn-primary btn-arrow-right" target="_blank">{{ _("Discover") }}</a></div>
+      <div class="col-md-4 col3">
+        <div class="col-small"><div class="cardsmall cardsmall-thematic cardsmall-cta cardsmall-hero"> <img class="cardsmall-img-top image-style-cardsmall-1-column" src="./Landing_page/Content/priority_area_3.png" width="289" height="424" alt="" loading="lazy"><div class="cardsmall-body"><div class="cardsmall-title">{% trans %}Priority Area 3: Bridging the Data-Knowledge Gap{% endtrans %}</div><div class="cardsmall-text"></div>
+        </div>            <div class="field field--name-field-link field--type-link field--label-hidden field__item"><a href="#" class="btn btn-primary btn-arrow-right" target="_blank">{{ _("Discover") }}</a></div>
         </div></div>
-            </div>  
+      </div>  
 
-            <div class="col-md-4 col3">
-            <div class="col-small"><div class="cardsmall cardsmall-thematic cardsmall-cta cardsmall-hero"> <img class="cardsmall-img-top image-style-cardsmall-1-column" src="./Landing_page/Content/area_4.png" width="289" height="424" alt="" loading="lazy"><div class="cardsmall-body"><div class="cardsmall-title">Priority Area 4: Integrated Water Resources Management under Conditions of Global Change</div><div class="cardsmall-text"></div>
-            </div>            <div class="field field--name-field-link field--type-link field--label-hidden field__item"><a href="#" class="btn btn-primary btn-arrow-right" target="_blank">{{ _("Discover") }}</a></div>
+      <div class="col-md-4 col3">
+        <div class="col-small"><div class="cardsmall cardsmall-thematic cardsmall-cta cardsmall-hero"> <img class="cardsmall-img-top image-style-cardsmall-1-column" src="./Landing_page/Content/area_4.png" width="289" height="424" alt="" loading="lazy"><div class="cardsmall-body"><div class="cardsmall-title">{% trans %}Priority Area 4: Integrated Water Resources Management under Conditions of Global Change{% endtrans %}</div><div class="cardsmall-text"></div>
+        </div>            <div class="field field--name-field-link field--type-link field--label-hidden field__item"><a href="#" class="btn btn-primary btn-arrow-right" target="_blank">{{ _("Discover") }}</a></div>
         </div></div>
-            </div>  
+      </div>  
 
-            <div class="col-md-4 col3">
-            <div class="col-small"><div class="cardsmall cardsmall-thematic cardsmall-cta cardsmall-hero"> <img class="cardsmall-img-top image-style-cardsmall-1-column" src="./Landing_page/Content/area_5.png" width="289" height="424" alt="" loading="lazy"><div class="cardsmall-body"><div class="cardsmall-title">Priority Area 5: Water Governance based on Science for Mitigation, Adaptation, and Resilience</div><div class="cardsmall-text"></div>
-            </div>            <div class="field field--name-field-link field--type-link field--label-hidden field__item"><a href="#" class="btn btn-primary btn-arrow-right" target="_blank">{{ _("Discover") }}</a></div>
+      <div class="col-md-4 col3">
+        <div class="col-small"><div class="cardsmall cardsmall-thematic cardsmall-cta cardsmall-hero"> <img class="cardsmall-img-top image-style-cardsmall-1-column" src="./Landing_page/Content/area_5.png" width="289" height="424" alt="" loading="lazy"><div class="cardsmall-body"><div class="cardsmall-title">{% trans %}Priority Area 5: Water Governance based on Science for Mitigation, Adaptation, and Resilience{% endtrans %}</div><div class="cardsmall-text"></div>
+        </div>            <div class="field field--name-field-link field--type-link field--label-hidden field__item"><a href="#" class="btn btn-primary btn-arrow-right" target="_blank">{{ _("Discover") }}</a></div>
         </div></div>
-            </div>   
-
+      </div>   
     </div>
   </div>
 
