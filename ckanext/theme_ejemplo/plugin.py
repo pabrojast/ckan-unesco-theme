@@ -170,6 +170,13 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
             )
 
             blueprint.add_url_rule(
+                u'/ihpix',
+                u'ihpix',
+                MyLogica.ihpix,
+                methods=['GET']
+            )
+
+            blueprint.add_url_rule(
                 u'/initiatives',
                 u'initiatives',
                 MyLogica.initiatives,
