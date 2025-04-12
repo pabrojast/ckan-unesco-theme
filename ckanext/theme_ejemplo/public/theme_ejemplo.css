@@ -921,7 +921,9 @@ a.heading.truncate {
   margin-top: 0.5rem;
   font-size: 1.1rem;
   max-width: 70%;
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+  text-shadow:
+  2px 2px 4px rgba(0, 0, 0, 0.4),
+  0 0 1px rgba(0, 0, 0, 0.2);
 }
 
 @media (max-width: 768px) {
@@ -934,7 +936,7 @@ a.heading.truncate {
   }
   
   .section-title-description {
-    font-size: 0.9rem;
     max-width: 90%;
+    color: #fff !important;
   }
 }
