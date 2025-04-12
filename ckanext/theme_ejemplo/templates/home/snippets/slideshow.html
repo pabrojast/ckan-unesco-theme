@@ -1,0 +1,123 @@
+{% set slideshow_items = [
+  {
+    'title': 'IHP-WINS: Empowering Open Science & Data-Driven Water Governance',
+    'image': '/Landing_page/Content/01IHP-WEB.jpg',
+    'link': '#',
+    'link_text': 'Learn More'
+  },
+  {
+    'title': 'Citizen Science',
+    'image': '/Landing_page/Content/02IHP-CITIZEN.jpg',
+    'link': 'https://opendata.unesco.org/',
+    'link_text': 'UNESCO Data Portal'
+  },
+  {
+    'title': 'Internet-of-Things',
+    'image': '/Landing_page/Content/03IHP-INTERNET.jpg',
+    'link': 'https://tb.ihp-wins.unesco.org/dashboard/4922c770-13c0-11f0-8913-cf831348fa91?publicId=260967b0-4e9c-11ef-b517-e7921ca0fba9',
+    'link_text': 'ThingsBoard'
+  },
+  {
+    'title': 'Open Learning',
+    'image': '/Landing_page/Content/04IHP-Open.jpg',
+    'link': 'https://openlearning.unesco.org/',
+    'link_text': 'UNESCO Open Learning'
+  },
+  {
+    'title': 'UNESCO Water Family News and Events',
+    'image': '/Landing_page/Content/05IHP-News.jpg',
+    'link': '#IHPEvents',
+    'link_text': 'View Events'
+  }
+] %}
+
+<div class="slideshow-container">
+  <div class="slideshow-wrapper">
+    {% for item in slideshow_items %}
+      <div class="slide">
+        <div class="slide-image" style="background-image: url('{{ item.image }}');">
+          <div class="slide-content">
+            <h2>{{ item.title }}</h2>
+            {% if item.link %}
+              <a href="{{ item.link }}" class="btn btn-primary slide-btn">{{ item.link_text }}</a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+  
+  <div class="slideshow-nav">
+    <button class="prev-btn" aria-label="Previous slide">&#10094;</button>
+    <div class="slideshow-dots">
+      {% for item in slideshow_items %}
+        <button class="dot {% if loop.first %}active{% endif %}" aria-label="Go to slide {{ loop.index }}"></button>
+      {% endfor %}
+    </div>
+    <button class="next-btn" aria-label="Next slide">&#10095;</button>
+  </div>
+</div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.slide');
+    const dots = document.querySelectorAll('.dot');
+    const totalSlides = slides.length;
+    
+    function showSlide(n) {
+      // Reset current slide
+      currentSlide = (n + totalSlides) % totalSlides;
+      
+      // Hide all slides
+      slides.forEach(slide => {
+        slide.style.display = 'none';
+      });
+      
+      // Remove active class from all dots
+      dots.forEach(dot => {
+        dot.classList.remove('active');
+      });
+      
+      // Show current slide and activate current dot
+      slides[currentSlide].style.display = 'block';
+      dots[currentSlide].classList.add('active');
+    }
+    
+    // Initialize the slideshow
+    showSlide(0);
+    
+    // Auto advance slides every 5 seconds
+    let slideInterval = setInterval(() => {
+      showSlide(currentSlide + 1);
+    }, 5000);
+    
+    // Event listeners for navigation
+    document.querySelector('.prev-btn').addEventListener('click', () => {
+      clearInterval(slideInterval);
+      showSlide(currentSlide - 1);
+      slideInterval = setInterval(() => {
+        showSlide(currentSlide + 1);
+      }, 5000);
+    });
+    
+    document.querySelector('.next-btn').addEventListener('click', () => {
+      clearInterval(slideInterval);
+      showSlide(currentSlide + 1);
+      slideInterval = setInterval(() => {
+        showSlide(currentSlide + 1);
+      }, 5000);
+    });
+    
+    // Event listeners for dots
+    dots.forEach((dot, index) => {
+      dot.addEventListener('click', () => {
+        clearInterval(slideInterval);
+        showSlide(index);
+        slideInterval = setInterval(() => {
+          showSlide(currentSlide + 1);
+        }, 5000);
+      });
+    });
+  });
+</script> 
