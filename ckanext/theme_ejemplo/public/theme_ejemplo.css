@@ -760,7 +760,7 @@ a.heading.truncate {
 .slideshow-container {
   position: relative;
   width: 100%;
-  margin: 0 auto 3rem;
+  margin: 5px auto 3rem;
   overflow: hidden;
   border-radius: 0.5rem;
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
