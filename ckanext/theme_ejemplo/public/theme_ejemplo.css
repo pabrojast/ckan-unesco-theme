@@ -917,10 +917,10 @@ a.heading.truncate {
 }
 
 .section-title-description {
-  color: #fff;
+  color: #fff !important;
   margin-top: 0.5rem;
   font-size: 1.1rem;
-  max-width: 70%;
+  max-width: 90%;
   text-shadow:
   2px 2px 4px rgba(0, 0, 0, 0.4),
   0 0 1px rgba(0, 0, 0, 0.2);
@@ -935,8 +935,4 @@ a.heading.truncate {
     font-size: 1.5rem;
   }
   
-  .section-title-description {
-    max-width: 90%;
-    color: #fff !important;
-  }
 }
