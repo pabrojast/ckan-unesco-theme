@@ -1062,6 +1062,15 @@ a.heading.truncate {
   font-size: 12px;
   font-weight: 600;
   box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+  color: white;
+}
+
+.members-badge {
+  background-color: rgba(0,0,0,0.7);
+}
+
+.coming-soon-badge {
+  background-color: #e63946;
 }
 
 /* Consistent button positioning */
@@ -1097,4 +1106,32 @@ a.heading.truncate {
   .cardsmall-text p {
     -webkit-line-clamp: 3;
   }
+}
+
+/* Fix heading alignment for section titles */
+h2.page-heading {
+  width: 100%;
+  text-align: left;
+  clear: both;
+  display: block;
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  font-size: 1.75rem;
+  font-weight: 600;
+  color: #212122;
+}
+
+/* Fix the container for priority areas section */
+.module-content .box > div {
+  display: flex;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+/* Add proper clearing after the top row of cards */
+.module-content .box > div:after {
+  content: "";
+  display: block;
+  clear: both;
+  width: 100%;
 }
