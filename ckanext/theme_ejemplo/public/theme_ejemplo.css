@@ -819,7 +819,7 @@ a.heading.truncate {
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-height: 5.5rem;
+  max-height: 6rem;
 }
 
 .slide-btn {
