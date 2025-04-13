@@ -39,7 +39,9 @@
           <div class="slide-content">
             <h2>{{ item.title }}</h2>
             {% if item.link %}
-              <a href="{{ item.link }}" class="btn btn-primary slide-btn">{{ item.link_text }}</a>
+              <div class="slide-btn-container">
+                <a href="{{ item.link }}" class="btn btn-primary slide-btn">{{ item.link_text }}</a>
+              </div>
             {% endif %}
           </div>
         </div>
