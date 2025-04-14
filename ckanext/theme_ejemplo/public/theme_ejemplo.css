@@ -1135,3 +1135,60 @@ h2.page-heading {
   clear: both;
   width: 100%;
 }
+
+/* Brochure Section Styles - Updated */
+.brochure-container {
+  margin: 2rem 0;
+}
+
+.brochure-container h3 {
+  color: #0069B4;
+  font-weight: 500;
+  margin-bottom: 1rem;
+  font-size: 1.3rem;
+}
+
+.brochure-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background-color: #f1f4f6;
+  border-radius: 0.5rem;
+  height: 100%;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.brochure-image {
+  max-width: 100%;
+  height: auto;
+  margin-bottom: 1rem;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  border-radius: 0.25rem;
+  transition: transform 0.3s ease;
+}
+
+.brochure-image:hover {
+  transform: scale(1.02);
+}
+
+.brochure-button {
+  width: 100%;
+  text-align: center;
+  margin-top: 0.5rem;
+  background-color: #0069B4 !important;
+  border-color: #0069B4 !important;
+}
+
+.brochure-button:hover {
+  background-color: #00518a !important;
+  border-color: #00518a !important;
+}
+
+@media (max-width: 768px) {
+  .brochure-container .col-md-8,
+  .brochure-container .col-md-4 {
+    margin-bottom: 1.5rem;
+  }
+}
