@@ -242,7 +242,7 @@ border-radius: 0 0 3px 3px;
     padding-left: 1rem;
 }
 .main {
-    padding-top: 10rem !important;
+    padding-top: 6rem !important;
     z-index: 0;
 }
 h1 .page-heading {
@@ -770,7 +770,7 @@ a.heading.truncate {
 .slideshow-container {
   position: relative;
   width: 100%;
-  margin: 5px auto 3rem;
+  margin: 5px auto 2rem;
   overflow: hidden;
   border-radius: 0.5rem;
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
@@ -888,7 +888,7 @@ a.heading.truncate {
 /* Updated Section Title Styles */
 .section-title {
   position: relative;
-  margin-bottom: 2rem;
+  margin-bottom: 1.5rem;
   border-radius: 0.5rem;
   overflow: hidden;
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
@@ -1134,4 +1134,34 @@ h2.page-heading {
   display: block;
   clear: both;
   width: 100%;
+}
+
+/* Reduce spacing between sections */
+.col-md-12.col1 {
+    margin-bottom: 1rem;
+}
+
+/* Adjust slideshow container margins */
+.slideshow-container {
+  margin: 5px auto 2rem;
+}
+
+/* Reduce section title margins */
+.section-title {
+  margin-bottom: 1.5rem;
+}
+
+/* Adjust spacing for row elements */
+.row.row2 {
+  margin-top: -1rem;
+}
+
+/* Reduce the space between the last card in a section and the next section title */
+.col-md-12.col1:not(:first-child) h2.page-heading {
+  margin-top: 1rem;
+}
+
+/* Tighten up featured dataset section specifically */
+.col-md-12.col1 + .col-md-12.col1[style="border-top: 0 !important;"] {
+  margin-top: -1rem;
 }
