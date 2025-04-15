@@ -217,7 +217,7 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
         
         def get_latest_courses(self):
             try:
-                response = requests.get('https://openlearning.unesco.org/api/courses/v1/courses/?search_term=water', timeout=3)
+                response = requests.get('https://openlearning.unesco.org/api/courses/v1/courses/?search_term=intergovernmental-hydrological-programme-ihp', timeout=3)
                 if response.status_code == 200:
                     courses = response.json().get('results', [])
                     return courses[:8]  # Limitar a un máximo de 8 cursos
