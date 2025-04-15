@@ -1,24 +1,84 @@
 {% set intro = g.site_intro_text %}
 <div id="IHPWINS"></div>
 <div class="module-content box">
-  <div>
-
-    <h1 class="page-heading">{% trans %}The IHP Water Information Network System{% endtrans %}</h1>
+  <div class="row">
+    <!-- Text column -->
+    <div class="col-md-7">
+      <h1 class="page-heading">{% trans %}The IHP Water Information Network System{% endtrans %}</h1>
+      
+      {% trans %}
+      <p>The <strong>Intergovernmental Hydrological Programme's Water Information Network System (IHP-WINS)</strong> is designed to promote the <i>sharing and dissemination of water-related data and information</i> among countries, organizations, and stakeholders involved in water resources management, as part of the UNESCO IHP mandate.</p>
+      <p>The main objective of IHP-WINS is <strong>to enhance the availability, accessibility, and usability of water-related information, with a focus on supporting evidence-based decision-making and sustainable water resources management</strong>. It aims to facilitate the exchange of data, knowledge, and best practices among stakeholders at various levels, including national, regional, and global scales.</p>
+      <p>IHP-WINS provides a platform for integrating and harmonizing water-related data and information from diverse sources, such as monitoring networks, research institutions, government agencies, and international organizations. It promotes the use of standardized data formats and metadata to ensure compatibility and interoperability of information across different systems and platforms.</p>
+      <p>Through IHP-WINS, UNESCO's Intergovernmental Hydrological Programme aims to strengthen international cooperation, improve data availability, and enhance the understanding and management of water resources worldwide.</p>
+      {% endtrans %}
+    </div>
     
-    {% trans %}
-    <p>The <strong>Intergovernmental Hydrological Programme's Water Information Network System (IHP-WINS)</strong> is designed to promote the <i>sharing and dissemination of water-related data and information</i> among countries, organizations, and stakeholders involved in water resources management, as part of the UNESCO IHP mandate.</p>
-    <p>The main objective of IHP-WINS is <strong>to enhance the availability, accessibility, and usability of water-related information, with a focus on supporting evidence-based decision-making and sustainable water resources management</strong>. It aims to facilitate the exchange of data, knowledge, and best practices among stakeholders at various levels, including national, regional, and global scales.</p>
-    <p>IHP-WINS provides a platform for integrating and harmonizing water-related data and information from diverse sources, such as monitoring networks, research institutions, government agencies, and international organizations. It promotes the use of standardized data formats and metadata to ensure compatibility and interoperability of information across different systems and platforms.</p>
-    <p>Through IHP-WINS, UNESCO's Intergovernmental Hydrological Programme aims to strengthen international cooperation, improve data availability, and enhance the understanding and management of water resources worldwide. The initiative contributes to the achievement of sustainable development goals related to water and supports countries in their efforts to address water-related challenges and promote integrated water resources management.</p>
-    <p>Overall, IHP-WINS plays a vital role in advancing water governance, supporting evidence-based decision-making, and fostering international cooperation for sustainable water resources management.</p>
-    {% endtrans %}
-
+    <!-- Brochure image and link column -->
+    <div class="col-md-5">
+      <div class="ihp-brochure-container">
+        <div class="ihp-brochure-image">
+          <img src="/brochure-cover.jpg" alt="IHP-WINS Brochure" class="img-responsive">
+        </div>
+        <div class="ihp-brochure-link">
+          <a href="#" class="btn btn-primary btn-arrow-right">{% trans %}Access Brochure{% endtrans %}</a>
+        </div>
+      </div>
+    </div>
   </div>
-  {% block home_image %}
-    <section class="featured media-overlay hidden-xs">
-      {% block home_image_content %}
-
-      {% endblock %}
-    </section>
-  {% endblock %}
 </div>
+
+<!-- Add styles for the brochure section -->
+<style>
+  .ihp-brochure-container {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    margin-top: 2rem;
+    background-color: #f1f4f6;
+    border-radius: 0.5rem;
+    overflow: hidden;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  }
+  
+  .ihp-brochure-image {
+    flex: 1;
+    overflow: hidden;
+  }
+  
+  .ihp-brochure-image img {
+    width: 100%;
+    height: auto;
+    display: block;
+    transition: transform 0.3s ease;
+  }
+  
+  .ihp-brochure-image img:hover {
+    transform: scale(1.02);
+  }
+  
+  .ihp-brochure-link {
+    padding: 1.5rem;
+    text-align: center;
+    background-color: white;
+  }
+  
+  .ihp-brochure-link .btn {
+    font-weight: 600;
+    padding: 0.75rem 1.5rem;
+  }
+  
+  @media (max-width: 768px) {
+    .ihp-brochure-container {
+      margin-top: 1rem;
+      margin-bottom: 2rem;
+    }
+  }
+</style>
+
+{% block home_image %}
+  <section class="featured media-overlay hidden-xs">
+    {% block home_image_content %}
+    {% endblock %}
+  </section>
+{% endblock %}
