@@ -217,7 +217,7 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
         
         def get_latest_courses(self):
             try:
-                response = requests.get('https://openlearning.unesco.org/api/courses/v1/courses/?search_term=intergovernmental-hydrological-programme-ihp', timeout=3)
+                response = requests.get('https://openlearning.unesco.org/api/courses/v1/courses/?search_term=water', timeout=3)
                 if response.status_code == 200:
                     courses = response.json().get('results', [])
                     return courses[:8]  # Limitar a un máximo de 8 cursos
@@ -231,7 +231,7 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
             try:
                 data_dict = {
                     'fq': 'tags:FeaturedDataset',  # Filtro por el tag 'FeaturedDataset'
-                    'rows': 6  # Número de resultados que deseas obtener, ajusta según necesidad
+                    'rows': 12  # Número de resultados que deseas obtener, ajusta según necesidad
                 }
                 search_result = toolkit.get_action('package_search')(None, data_dict)
                 return search_result['results']
@@ -265,7 +265,7 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
 
                     data_dict = {
                         'q': query,
-                        'rows': 6  # Ajustar según sea necesario para obtener todos los datasets destacados
+                        'rows': 12  # Ajustar según sea necesario para obtener todos los datasets destacados
                     }
                     search_result = toolkit.get_action('package_search')(None, data_dict)
 
