@@ -44,13 +44,15 @@
   .ihp-brochure-image {
     flex: 1;
     overflow: hidden;
+    max-height: 400px;
   }
   
   .ihp-brochure-image img {
     width: 100%;
-    height: auto;
+    height: 100%;
     display: block;
     transition: transform 0.3s ease;
+    object-fit: cover;
   }
   
   .ihp-brochure-image img:hover {
