@@ -1,25 +1,27 @@
 {% set featured_datasets = h.get_featured_datasets_filtered('UNESDOC', '8ad64841-340c-49dc-8716-c6b61ea4b111') %}
 
-<div class="row">
+<div class="row row-eq-height">
   {% for dataset in featured_datasets %}
-  {% set imagen_unesdoc = dataset['image'] | default(dataset['unesdocimage']) | default('/Landing_page/Content/data_catalogue_button1.png') %}
-  {% set url_unesdoc = dataset['unesdocurl'] | default(dataset['url']) | default('https://unesdoc.unesco.org/') %}
+    {% set imagen_unesdoc = dataset['image'] | default(dataset['unesdocimage']) | default('/Landing_page/Content/data_catalogue_button1.png') %}
+    {% set url_unesdoc = dataset['unesdocurl'] | default(dataset['url']) | default('https://unesdoc.unesco.org/') %}
 
-  <div class="col-md-4 col3">
-    <div class="col-small">
-      <div class="cardsmall cardsmall-height-fixed cardsmall-cta cardsmall-hero"> 
-        <img class="cardsmall-img-top image-style-cardsmall-1-column" src="{{ imagen_unesdoc }}" width="289" height="424" alt="" loading="lazy">
-        <div class="cardsmall-body">
+    <div class="col-md-4 mb-4">
+      <div class="cardsmall cardsmall-height-fixed cardsmall-cta cardsmall-hero h-100"> 
+        <img class="cardsmall-img-top image-style-cardsmall-1-column" src="{{ imagen_unesdoc }}" width="289" height="180" alt="" loading="lazy">
+        <div class="cardsmall-body d-flex flex-column">
           <div class="cardsmall-title">{{ dataset['title'] }}</div>
-          <div class="cardsmall-text">
+          <div class="cardsmall-text flex-grow-1">
             <p>{{ dataset['notes'] }}</p>
           </div>
-        </div>
-        <div class="field field--name-field-link field--type-link field--label-hidden field__item">
-          <a href="{{ url_unesdoc }}" class="btn btn-primary btn-arrow-right" target="_blank">{{ _("Discover") }}</a>
+          <div class="field field--name-field-link field--type-link field--label-hidden field__item mt-auto">
+            <a href="{{ url_unesdoc }}" class="btn btn-primary btn-arrow-right" target="_blank">{{ _("Discover") }}</a>
+          </div>
         </div>
       </div>
     </div>
-  </div>
+    
+    {% if loop.index is divisibleby 3 and not loop.last %}
+      </div><div class="row row-eq-height">
+    {% endif %}
   {% endfor %}
 </div>
