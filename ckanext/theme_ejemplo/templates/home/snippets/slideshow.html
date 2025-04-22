@@ -39,7 +39,7 @@
           <div class="slide-content">
             <h2>{{ item.title }}</h2>
             {% if item.link %}
-              <a href="{{ item.link }}" class="btn btn-primary slide-btn">{{ item.link_text }}</a>
+              <a href="{{ item.link }}" class="btn btn-primary slide-btn" {% if not item.link.startswith('#') %}target="_blank" rel="noopener"{% endif %}>{{ item.link_text }}</a>
             {% endif %}
           </div>
         </div>
