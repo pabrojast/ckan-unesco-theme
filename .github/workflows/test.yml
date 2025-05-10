@@ -34,6 +34,8 @@ jobs:
       # Install any extra requirements your extension has here (dev requirements, other extensions etc)
       run: |
         apk add gcc libc-dev geos-dev geos 
+        pip install --upgrade numpy
+        pip install shapely
         pip install -e git+https://github.com/pabrojast/ckanext-spatial.git@ihp2#egg=ckanext-spatial
         pip install -e git+https://github.com/pabrojast/ckanext-dcat.git#egg=ckanext-dcat
         pip install -r requirements.txt
