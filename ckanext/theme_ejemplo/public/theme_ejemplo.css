@@ -1165,3 +1165,37 @@ h2.page-heading {
 .col-md-12.col1 + .col-md-12.col1[style="border-top: 0 !important;"] {
   margin-top: -1rem;
 }
+/* icons extended*/
+.format-label[data-format=shp],
+.format-label[data-format*=shp] {
+  width: 60px;
+  height: 65px;
+  background-position: -2320px -220px;
+  transform: scale(0.53);
+  margin: -14px 0 0 -14px;
+}
+
+.format-label[data-format=tiff],
+.format-label[data-format*=tiff] {
+  width: 60px;
+  height: 65px;
+  background-position: -2420px -220px;
+  transform: scale(0.53);
+  margin: -14px 0 0 -14px;
+}
+.format-label[data-format=tif],
+.format-label[data-format*=tif] {
+  width: 60px;
+  height: 65px;
+  background-position: -2420px -220px;
+  transform: scale(0.53);
+  margin: -14px 0 0 -14px;
+}
+.format-label[data-format=cog],
+.format-label[data-format*=cog] {
+  width: 60px;
+  height: 65px;
+  background-position: -2420px -220px;
+  transform: scale(0.53);
+  margin: -14px 0 0 -14px;
+}
