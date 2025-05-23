@@ -1199,3 +1199,27 @@ h2.page-heading {
   transform: scale(0.53);
   margin: -14px 0 0 -14px;
 }
+.format-label[data-format=ppt],
+.format-label[data-format*=ppt] {
+  width: 60px;
+  height: 65px;
+  background-position: -2520px -220px;
+  transform: scale(0.53);
+  margin: -14px 0 0 -14px;
+}
+.format-label[data-format=pptx],
+.format-label[data-format*=pptx] {
+  width: 60px;
+  height: 65px;
+  background-position: -2520px -220px;
+  transform: scale(0.53);
+  margin: -14px 0 0 -14px;
+}
+.format-label[data-format=mp4],
+.format-label[data-format*=mp4] {
+  width: 60px;
+  height: 65px;
+  background-position: -2620px -220px;
+  transform: scale(0.53);
+  margin: -14px 0 0 -14px;
+}
