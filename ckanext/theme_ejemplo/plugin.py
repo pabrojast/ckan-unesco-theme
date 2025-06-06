@@ -177,6 +177,13 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
             )
 
             blueprint.add_url_rule(
+                u'/iot-portal',
+                u'iot_portal',
+                MyLogica.iot_portal,
+                methods=['GET']
+            )
+
+            blueprint.add_url_rule(
                 u'/initiatives',
                 u'initiatives',
                 MyLogica.initiatives,

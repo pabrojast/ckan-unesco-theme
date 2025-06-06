@@ -168,3 +168,8 @@ class MyLogica():
             
             if request.method == 'GET':
                 return render_template("ihpix/index.html")
+
+        def iot_portal():
+            
+            if request.method == 'GET':
+                return render_template("iot_portal/index.html")
