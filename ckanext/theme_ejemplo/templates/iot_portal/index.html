@@ -12,24 +12,24 @@
 
 {% block content %}
 <div role="main">
+  <div class="container full-width">
+    <!-- Banner with overlay text using same structure as FeaturedPublications -->
+    <section class="module module-narrow module-shallow">
+      <div class="section-title" style="margin-bottom: 2rem;">
+        <div class="section-title-bg" style="background-image: url('./Landing_page/Content/03IHP-INTERNET.jpg');"></div>
+        <div class="section-title-overlay"></div>
+        <div class="section-title-content">
+          <h2>{{ _('Internet-of-Things Portal') }}</h2>
+          <p class="section-title-description">{{ _('Flood and Drought Monitoring and Early Warning Systems') }}</p>
+          <p style="margin-top: 1rem;">{{ _('In support of hazard early warning these monitors provide operational near real-time monitoring and forecasting of flood and drought conditions.') }}</p>
+        </div>
+      </div>
+    </section>
+  </div>
+
   <div class="container">
     <div class="row">
       <div class="col-md-12">
-        <h1>{{ _('Internet-of-Things Portal') }}</h1>
-        
-        <!-- Banner with overlay text using same structure as FeaturedPublications -->
-        <section class="module module-narrow module-shallow">
-          <div class="section-title" style="margin-bottom: 2rem;">
-            <div class="section-title-bg" style="background-image: url('./Landing_page/Content/03IHP-INTERNET.jpg');"></div>
-            <div class="section-title-overlay"></div>
-            <div class="section-title-content">
-              <h2>{{ _('Internet-of-Things Portal') }}</h2>
-              <p class="section-title-description">{{ _('Flood and Drought Monitoring and Early Warning Systems') }}</p>
-              <p style="margin-top: 1rem;">{{ _('In support of hazard early warning these monitors provide operational near real-time monitoring and forecasting of flood and drought conditions.') }}</p>
-            </div>
-          </div>
-        </section>
-
         <!-- What are IoT Systems section -->
         <div style="margin-bottom: 3rem;">
           <h3>{% trans %}What are IoT Systems?{% endtrans %}</h3>
@@ -100,24 +100,7 @@
           </div>
         </div>
 
-        <!-- Optional Quick Links section for better UX -->
-        <div style="margin-top: 3rem; padding: 1rem; background-color: #f8f9fa; border-radius: 5px;">
-          <h4 style="margin-bottom: 1rem;">{% trans %}Quick Links{% endtrans %}</h4>
-          <div class="row">
-            <div class="col-md-3">
-              <a href="#">{% trans %}IoT Data Portal{% endtrans %}</a>
-            </div>
-            <div class="col-md-3">
-              <a href="#">{% trans %}Monitoring Systems{% endtrans %}</a>
-            </div>
-            <div class="col-md-3">
-              <a href="#">{% trans %}Early Warning{% endtrans %}</a>
-            </div>
-            <div class="col-md-3">
-              <a href="#">{% trans %}Technical Documentation{% endtrans %}</a>
-            </div>
-          </div>
-        </div>
+
       </div>
     </div>
   </div>
