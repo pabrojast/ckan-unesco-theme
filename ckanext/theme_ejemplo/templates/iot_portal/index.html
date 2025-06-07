@@ -3,121 +3,127 @@
 {% trans %}Internet-of-Things Portal{% endtrans %} - {{ super() }}
 {% endblock %}
 
-
 {% block breadcrumb_content %}
 <li class="active"><a href="{{ h.url_for('/iot-portal') }}">{% trans %}Internet-of-Things Portal{% endtrans %}</a></li>
 {% endblock %}
 
-{% block primary_content_inner %}
-  <h1>{{ _('Internet-of-Things Portal') }}</h1>
-  
-  <div class="module-content box">
-    <div>
-      <!-- Banner Image -->
-      <div class="banner-image" style="margin-bottom: 2rem;">
-        <img src="./Landing_page/Content/03IHP-INTERNET.jpg" alt="Internet of Things Portal Banner" style="width: 100%; height: auto;" loading="lazy">
-      </div>
+{% block maintag %}{% endblock %}
+{% block toolbar %}{% endblock %}
 
-      <!-- Main Description -->
-      <div style="margin-bottom: 2rem;">
-        <h2>{% trans %}Flood and Drought Monitoring and Early Warning Systems{% endtrans %}</h2>
-        <p>
-          {% trans %}In support of hazard early warning these monitors provide operational near real-time monitoring and forecasting of flood and drought conditions.{% endtrans %}
-        </p>
-      </div>
-
-      <!-- What are IoT Systems section -->
-      <div style="margin-bottom: 3rem;">
-        <h3>{% trans %}What are IoT Systems?{% endtrans %}</h3>
-        <p>{% trans %}IoT systems use connected sensors to automatically collect real-time data on water and climate conditions. These systems transmit data wirelessly to central platforms, supporting faster response and better decisions for flood and drought management.{% endtrans %}</p>
+{% block content %}
+<div role="main">
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+        <h1>{{ _('Internet-of-Things Portal') }}</h1>
         
-        <p><strong>{% trans %}Deployed at various scales, they monitor key parameters such as:{% endtrans %}</strong></p>
-        
-        <ul>
-          <li>{% trans %}Water level{% endtrans %}</li>
-          <li>{% trans %}Rainfall{% endtrans %}</li>
-          <li>{% trans %}Soil moisture{% endtrans %}</li>
-          <li>{% trans %}Temperature, humidity and air pressure{% endtrans %}</li>
-          <li>{% trans %}Wind Speed{% endtrans %}</li>
-        </ul>
-      </div>
-
-      <!-- Portal Cards Section -->
-      <div class="row">
-        <div class="col-md-4">
-          <div class="col-small">
-            <div class="cardsmall cardsmall-thematic cardsmall-cta cardsmall-hero"> 
-              <img class="cardsmall-img-top image-style-cardsmall-1-column" src="./Landing_page/Content/unesco_global_iot.png" alt="" loading="lazy">
-              <div class="cardsmall-body">
-                <h3 class="cardsmall-title">{% trans %}UNESCO Global Internet-of-Things Portal{% endtrans %}</h3>
-                <div class="cardsmall-text">
-                  <p>{% trans %}Access comprehensive IoT data and monitoring systems for water resource management globally.{% endtrans %}</p>
-                </div>
-                <div class="field field--name-field-link field--type-link field--label-hidden field__item">
-                  <a href="#" class="btn btn-primary btn-arrow-right">{{ _("Access") }}</a>
-                </div>
-              </div>
+        <!-- Banner with overlay text using same structure as FeaturedPublications -->
+        <section class="module module-narrow module-shallow">
+          <div class="section-title" style="margin-bottom: 2rem;">
+            <div class="section-title-bg" style="background-image: url('./Landing_page/Content/03IHP-INTERNET.jpg');"></div>
+            <div class="section-title-overlay"></div>
+            <div class="section-title-content">
+              <h2>{{ _('Internet-of-Things Portal') }}</h2>
+              <p class="section-title-description">{{ _('Flood and Drought Monitoring and Early Warning Systems') }}</p>
+              <p style="margin-top: 1rem;">{{ _('In support of hazard early warning these monitors provide operational near real-time monitoring and forecasting of flood and drought conditions.') }}</p>
             </div>
           </div>
+        </section>
+
+        <!-- What are IoT Systems section -->
+        <div style="margin-bottom: 3rem;">
+          <h3>{% trans %}What are IoT Systems?{% endtrans %}</h3>
+          <p>{% trans %}IoT systems use connected sensors to automatically collect real-time data on water and climate conditions. These systems transmit data wirelessly to central platforms, supporting faster response and better decisions for flood and drought management.{% endtrans %}</p>
+          
+          <p><strong>{% trans %}Deployed at various scales, they monitor key parameters such as:{% endtrans %}</strong></p>
+          
+          <ul>
+            <li>{% trans %}Water level{% endtrans %}</li>
+            <li>{% trans %}Rainfall{% endtrans %}</li>
+            <li>{% trans %}Soil moisture{% endtrans %}</li>
+            <li>{% trans %}Temperature, humidity and air pressure{% endtrans %}</li>
+            <li>{% trans %}Wind Speed{% endtrans %}</li>
+          </ul>
         </div>
 
-        <div class="col-md-4">
-          <div class="col-small">
-            <div class="cardsmall cardsmall-thematic cardsmall-cta cardsmall-hero"> 
-              <img class="cardsmall-img-top image-style-cardsmall-1-column" src="./Landing_page/Content/be_resilient_southern_africa.png" alt="" loading="lazy">
-              <div class="cardsmall-body">
-                <h3 class="cardsmall-title">{% trans %}Be-Resilient Southern African Biosphere Reserves Portal{% endtrans %}</h3>
-                <div class="cardsmall-text">
-                  <p>{% trans %}Monitoring and early warning systems for Southern African biosphere reserves.{% endtrans %}</p>
-                </div>
-                <div class="field field--name-field-link field--type-link field--label-hidden field__item">
-                  <a href="#" class="btn btn-primary btn-arrow-right">{{ _("Access") }}</a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-md-4">
-          <div class="col-small">
-            <div class="cardsmall cardsmall-thematic cardsmall-cta cardsmall-hero"> 
-              <img class="cardsmall-img-top image-style-cardsmall-1-column" src="./Landing_page/Content/be_resilient_bupusa.png" alt="" loading="lazy">
-              <div class="cardsmall-body">
-                <h3 class="cardsmall-title">{% trans %}Be-Resilient BuPuSa Portal (Mozambique and Zimbabwe){% endtrans %}</h3>
-                <div class="cardsmall-text">
-                  <p>{% trans %}Regional monitoring portal for Mozambique and Zimbabwe water systems.{% endtrans %}</p>
-                </div>
-                <div class="field field--name-field-link field--type-link field--label-hidden field__item">
-                  <a href="#" class="btn btn-primary btn-arrow-right">{{ _("Access") }}</a>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Optional Quick Links section for better UX -->
-      <div style="margin-top: 3rem; padding: 1rem; background-color: #f8f9fa; border-radius: 5px;">
-        <h4 style="margin-bottom: 1rem;">{% trans %}Quick Links{% endtrans %}</h4>
+        <!-- Portal Cards Section -->
         <div class="row">
-          <div class="col-md-3">
-            <a href="#">{% trans %}IoT Data Portal{% endtrans %}</a>
+          <div class="col-md-4">
+            <div class="col-small">
+              <div class="cardsmall cardsmall-thematic cardsmall-cta cardsmall-hero"> 
+                <img class="cardsmall-img-top image-style-cardsmall-1-column" src="./Landing_page/Content/unesco_global_iot.png" alt="" loading="lazy">
+                <div class="cardsmall-body">
+                  <h3 class="cardsmall-title">{% trans %}UNESCO Global Internet-of-Things Portal{% endtrans %}</h3>
+                  <div class="cardsmall-text">
+                    <p>{% trans %}Access comprehensive IoT data and monitoring systems for water resource management globally.{% endtrans %}</p>
+                  </div>
+                  <div class="field field--name-field-link field--type-link field--label-hidden field__item">
+                    <a href="#" class="btn btn-primary btn-arrow-right">{{ _("Access") }}</a>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="col-md-3">
-            <a href="#">{% trans %}Monitoring Systems{% endtrans %}</a>
+
+          <div class="col-md-4">
+            <div class="col-small">
+              <div class="cardsmall cardsmall-thematic cardsmall-cta cardsmall-hero"> 
+                <img class="cardsmall-img-top image-style-cardsmall-1-column" src="./Landing_page/Content/be_resilient_southern_africa.png" alt="" loading="lazy">
+                <div class="cardsmall-body">
+                  <h3 class="cardsmall-title">{% trans %}Be-Resilient Southern African Biosphere Reserves Portal{% endtrans %}</h3>
+                  <div class="cardsmall-text">
+                    <p>{% trans %}Monitoring and early warning systems for Southern African biosphere reserves.{% endtrans %}</p>
+                  </div>
+                  <div class="field field--name-field-link field--type-link field--label-hidden field__item">
+                    <a href="#" class="btn btn-primary btn-arrow-right">{{ _("Access") }}</a>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="col-md-3">
-            <a href="#">{% trans %}Early Warning{% endtrans %}</a>
+
+          <div class="col-md-4">
+            <div class="col-small">
+              <div class="cardsmall cardsmall-thematic cardsmall-cta cardsmall-hero"> 
+                <img class="cardsmall-img-top image-style-cardsmall-1-column" src="./Landing_page/Content/be_resilient_bupusa.png" alt="" loading="lazy">
+                <div class="cardsmall-body">
+                  <h3 class="cardsmall-title">{% trans %}Be-Resilient BuPuSa Portal (Mozambique and Zimbabwe){% endtrans %}</h3>
+                  <div class="cardsmall-text">
+                    <p>{% trans %}Regional monitoring portal for Mozambique and Zimbabwe water systems.{% endtrans %}</p>
+                  </div>
+                  <div class="field field--name-field-link field--type-link field--label-hidden field__item">
+                    <a href="#" class="btn btn-primary btn-arrow-right">{{ _("Access") }}</a>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
-          <div class="col-md-3">
-            <a href="#">{% trans %}Technical Documentation{% endtrans %}</a>
+        </div>
+
+        <!-- Optional Quick Links section for better UX -->
+        <div style="margin-top: 3rem; padding: 1rem; background-color: #f8f9fa; border-radius: 5px;">
+          <h4 style="margin-bottom: 1rem;">{% trans %}Quick Links{% endtrans %}</h4>
+          <div class="row">
+            <div class="col-md-3">
+              <a href="#">{% trans %}IoT Data Portal{% endtrans %}</a>
+            </div>
+            <div class="col-md-3">
+              <a href="#">{% trans %}Monitoring Systems{% endtrans %}</a>
+            </div>
+            <div class="col-md-3">
+              <a href="#">{% trans %}Early Warning{% endtrans %}</a>
+            </div>
+            <div class="col-md-3">
+              <a href="#">{% trans %}Technical Documentation{% endtrans %}</a>
+            </div>
           </div>
         </div>
       </div>
     </div>
   </div>
+</div>
 
-  {# Incluir el código JavaScript y CSS #}
-  {% asset 'theme/thematicbuilder-js' %}
-  {% asset 'theme/thematicbuilder-css' %}
+{# Incluir el código JavaScript y CSS #}
+{% asset 'theme/thematicbuilder-js' %}
+{% asset 'theme/thematicbuilder-css' %}
 {% endblock %} 
