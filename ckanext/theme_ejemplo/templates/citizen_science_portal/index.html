@@ -1,0 +1,109 @@
+{% extends "page.html" %}
+{% block title %}
+{% trans %}Citizen Science Portal{% endtrans %} - {{ super() }}
+{% endblock %}
+
+
+{% block content %}
+
+
+<div class="homepage layout-{{ homepage_style }}">
+    <div id="content" class="container">
+      {{ self.flash() }}
+    </div>
+    {% block primary_content %}
+
+    <div class="main">
+
+        <div class="container">
+            
+            <div class="toolbar" role="navigation" aria-label="Breadcrumb">
+                <ol class="breadcrumb">                 
+                    <li class="home"><a href="/" aria-label="Home"><i class="fa fa-home"></i><span> Home</span></a></li>
+                    <li class="active"><a href="{{ h.url_for('/citizen-science-portal') }}">{% trans %}Citizen Science Portal{% endtrans %}</a></li>
+                </ol>
+            </div>
+
+            <!-- Banner with overlay text using same structure as FeaturedPublications -->
+            <section class="module module-narrow module-shallow">
+              <div class="section-title" style="margin-bottom: 2rem;">
+                <div class="section-title-bg" style="background-image: url('./Landing_page/Content/02IHP-CITIZEN.jpg');"></div>
+                <div class="section-title-overlay"></div>
+                <div class="section-title-content">
+                  <h2>{{ _('Citizen Science Portal') }}</h2>
+                  <p class="section-title-description">{{ _('Citizen Science for Water Management: engaging communities in research to protect our water and ecosystems.') }}</p>
+                </div>
+              </div>
+            </section>
+          </div>
+        
+          <div class="container">
+            <div class="row">
+              <div class="col-md-12">
+                <!-- What is Citizen Science section -->
+                <div style="margin-bottom: 3rem;">
+                  <p>{{ _('Citizen Science involves public participation in scientific research, promoting collaboration between scientists and society. In water management, it empowers communities to collect and analyze hydrological and environmental data, enhancing both scientific understanding and informed local decision-making.') }}</p>
+                  
+                  <p>{{ _('UNESCO supports Citizen Science for water management through IHP IX and dedicated tools:') }}</p>
+                  
+                  <h3>{% trans %}Key principles of Citizen Science:{% endtrans %}</h3>
+                  
+                  <ul>
+                    <li>{% trans %}Active involvement of citizens{% endtrans %}</li>
+                    <li>{% trans %}Generating scientific knowledge{% endtrans %}</li>
+                    <li>{% trans %}Educational capacity-building{% endtrans %}</li>
+                  </ul>
+                </div>
+        
+                <!-- Portal Cards Section -->
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="col-small">
+                      <div class="cardsmall cardsmall-thematic cardsmall-cta cardsmall-hero"> 
+                        <img class="cardsmall-img-top image-style-cardsmall-1-column" src="./Landing_page/Content/Citizen4Water_platform.png" alt="" loading="lazy">
+                        <div class="cardsmall-body">
+                          <h3 class="cardsmall-title">{% trans %}Citizens4Water platform{% endtrans %}</h3>
+                          <div class="cardsmall-text">
+                            <p>{% trans %}Centralized digital database with citizen scientist initiatives for water management around the world.{% endtrans %}</p>
+                          </div>
+                          <div class="field field--name-field-link field--type-link field--label-hidden field__item">
+                            <a href="#" class="btn btn-primary btn-arrow-right">{{ _("Access") }}</a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+        
+                  <div class="col-md-6">
+                    <div class="col-small">
+                      <div class="cardsmall cardsmall-thematic cardsmall-cta cardsmall-hero"> 
+                        <img class="cardsmall-img-top image-style-cardsmall-1-column" src="./Landing_page/Content/Citizen_Science_toolbox.png" alt="" loading="lazy">
+                        <div class="cardsmall-body">
+                          <h3 class="cardsmall-title">{% trans %}Citizen Science toolbox{% endtrans %}</h3>
+                          <div class="cardsmall-text">
+                            <p>{% trans %}Mobile application and data portal for citizen science data collection and open access data visualization.{% endtrans %}</p>
+                          </div>
+                          <div class="field field--name-field-link field--type-link field--label-hidden field__item">
+                            <a href="#" class="btn btn-primary btn-arrow-right">{{ _("Access") }}</a>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+        
+        
+              </div>
+            </div>
+          </div>
+
+    
+    </div>
+    </div>
+    {% endblock %}
+  </div>
+
+
+
+
+{% endblock %} 

@@ -178,3 +178,8 @@ class MyLogica():
             
             if request.method == 'GET':
                 return render_template("flood_drought_portal/index.html")
+
+        def citizen_science_portal():
+            
+            if request.method == 'GET':
+                return render_template("citizen_science_portal/index.html")
