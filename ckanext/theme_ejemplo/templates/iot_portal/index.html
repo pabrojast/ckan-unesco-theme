@@ -3,12 +3,13 @@
 {% trans %}Internet-of-Things Portal{% endtrans %} - {{ super() }}
 {% endblock %}
 
+
 {% block breadcrumb_content %}
 <li class="active"><a href="{{ h.url_for('/iot-portal') }}">{% trans %}Internet-of-Things Portal{% endtrans %}</a></li>
 {% endblock %}
 
 {% block maintag %}{% endblock %}
-{% block toolbar %}{% endblock %}
+
 
 {% block content %}
 
@@ -18,14 +19,8 @@
       {{ self.flash() }}
     </div>
     {% block primary_content %}
-    <div role="main" class="hero">
-        <div class="container">
-          {% block search %}
-            {% snippet 'home/snippets/search.html' %}
-          {% endblock %}
-        </div>
-      </div>
-    <div role="main">
+
+    <div class="main">
 
         <div class="container full-width">
             <!-- Banner with overlay text using same structure as FeaturedPublications -->
