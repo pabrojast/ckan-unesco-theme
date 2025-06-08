@@ -4,9 +4,9 @@
 {% endblock %}
 
 
-
-
-{% block maintag %}{% endblock %}
+{% block breadcrumb_content %}
+<li class="active"><a href="{{ h.url_for('/iot_portal') }}">{% trans %}Internet of Things Portal{% endtrans %}</a></li>
+{% endblock %}
 
 
 {% block content %}
@@ -21,15 +21,14 @@
     <div class="main">
 
         <div class="container">
-            
-            <li class="active"><a href="{{ h.url_for('/iot-portal') }}">{% trans %}Internet-of-Things Portal{% endtrans %}</a></li>
+
             <!-- Banner with overlay text using same structure as FeaturedPublications -->
             <section class="module module-narrow module-shallow">
               <div class="section-title" style="margin-bottom: 2rem;">
                 <div class="section-title-bg" style="background-image: url('./Landing_page/Content/03IHP-INTERNET.jpg');"></div>
                 <div class="section-title-overlay"></div>
                 <div class="section-title-content">
-                  <h2>{{ _('Internet-of-Things Portal') }}</h2>
+                  <h2>{{ _('Internet of Things Portal') }}</h2>
                   <p class="section-title-description">{{ _('Flood and Drought Monitoring and Early Warning Systems') }}</p>
                 </div>
               </div>
