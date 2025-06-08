@@ -21,6 +21,7 @@
     <div class="main">
 
         <div class="container">
+            
             <li class="active"><a href="{{ h.url_for('/iot-portal') }}">{% trans %}Internet-of-Things Portal{% endtrans %}</a></li>
             <!-- Banner with overlay text using same structure as FeaturedPublications -->
             <section class="module module-narrow module-shallow">
@@ -30,7 +31,6 @@
                 <div class="section-title-content">
                   <h2>{{ _('Internet-of-Things Portal') }}</h2>
                   <p class="section-title-description">{{ _('Flood and Drought Monitoring and Early Warning Systems') }}</p>
-                  <p style="margin-top: 1rem;">{{ _('In support of hazard early warning these monitors provide operational near real-time monitoring and forecasting of flood and drought conditions.') }}</p>
                 </div>
               </div>
             </section>
@@ -41,6 +41,7 @@
               <div class="col-md-12">
                 <!-- What are IoT Systems section -->
                 <div style="margin-bottom: 3rem;">
+                  <p>{{ _('In support of hazard early warning these monitors provide operational near real-time monitoring and forecasting of flood and drought conditions.') }}</p>
                   <h3>{% trans %}What are IoT Systems?{% endtrans %}</h3>
                   <p>{% trans %}IoT systems use connected sensors to automatically collect real-time data on water and climate conditions. These systems transmit data wirelessly to central platforms, supporting faster response and better decisions for flood and drought management.{% endtrans %}</p>
                   
