@@ -173,3 +173,8 @@ class MyLogica():
             
             if request.method == 'GET':
                 return render_template("iot_portal/index.html")
+
+        def flood_drought_portal():
+            
+            if request.method == 'GET':
+                return render_template("flood_drought_portal/index.html")

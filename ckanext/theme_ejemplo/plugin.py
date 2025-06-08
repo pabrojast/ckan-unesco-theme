@@ -184,6 +184,13 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
             )
 
             blueprint.add_url_rule(
+                u'/flood-drought-portal',
+                u'flood_drought_portal',
+                MyLogica.flood_drought_portal,
+                methods=['GET']
+            )
+
+            blueprint.add_url_rule(
                 u'/initiatives',
                 u'initiatives',
                 MyLogica.initiatives,
