@@ -191,6 +191,13 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
             )
 
             blueprint.add_url_rule(
+                u'/citizen-science-portal',
+                u'citizen_science_portal',
+                MyLogica.citizen_science_portal,
+                methods=['GET']
+            )
+
+            blueprint.add_url_rule(
                 u'/initiatives',
                 u'initiatives',
                 MyLogica.initiatives,
