@@ -37,8 +37,8 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
         plugins.implements(plugins.IPackageController, inherit=True)
         plugins.implements(plugins.ITranslation)  # Implementar ITemplateHelpers
 
-        def __init__(self):
-            super().__init__()
+        def __init__(self, name=None):
+            super().__init__(name=name)
             # Cache para mejorar rendimiento
             self._organization_cache = {}
         
