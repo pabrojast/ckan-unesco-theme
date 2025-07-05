@@ -112,7 +112,7 @@ class MyLogica():
                                 'q': q,
                                 'include_dataset_count': True,
                                 'groups': initiatives_groups,
-                                'limit': 1000
+                                'limit': 500
                             }
                         )
                         groupcount = len(total_result)
@@ -212,7 +212,7 @@ class MyLogica():
                                 'q': q,
                                 'include_dataset_count': True,
                                 'groups': member_states_only,
-                                'limit': 1000
+                                'limit': 500
                             }
                         )
                         groupcount = len(total_result)
