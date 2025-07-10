@@ -1,84 +1,112 @@
 {% set intro = g.site_intro_text %}
-<div id="IHPWINS"></div>
-<div class="module-content box">
-  <div class="row">
-    <!-- Text column -->
-    <div class="col-md-7">
-      <h1 class="page-heading">{% trans %}The IHP Water Information Network System{% endtrans %}</h1>
-      
-      {% trans %}
-      <p>The <strong>Intergovernmental Hydrological Programme's Water Information Network System (IHP-WINS)</strong> is designed to promote the <i>sharing and dissemination of water-related data and information</i> among countries, organizations, and stakeholders involved in water resources management, as part of the UNESCO IHP mandate.</p>
-      <p>The main objective of IHP-WINS is <strong>to enhance the availability, accessibility, and usability of water-related information, with a focus on supporting evidence-based decision-making and sustainable water resources management</strong>. It aims to facilitate the exchange of data, knowledge, and best practices among stakeholders at various levels, including national, regional, and global scales.</p>
-      <p>IHP-WINS provides a platform for integrating and harmonizing water-related data and information from diverse sources, such as monitoring networks, research institutions, government agencies, and international organizations. It promotes the use of standardized data formats and metadata to ensure compatibility and interoperability of information across different systems and platforms.</p>
-      <p>Through IHP-WINS, UNESCO's Intergovernmental Hydrological Programme aims to strengthen international cooperation, improve data availability, and enhance the understanding and management of water resources worldwide.</p>
-      {% endtrans %}
-    </div>
-    
-    <!-- Brochure image and link column -->
-    <div class="col-md-5">
-      <div class="ihp-brochure-container">
-        <div class="ihp-brochure-image">
-          <img src="/brochure-cover.jpg" alt="IHP-WINS Brochure" style="max-height:450px;">
+<section class="promoted-content-section" aria-labelledby="promoted-heading">
+  <div class="container">
+    <div class="promoted-content-wrapper">
+      <div class="row align-items-center">
+        <!-- Text Content Column -->
+        <div class="col-lg-7 col-md-12">
+          <div class="promoted-text-content">
+            <h1 id="promoted-heading" class="promoted-title">
+              {% trans %}The IHP Water Information Network System{% endtrans %}
+            </h1>
+            
+            <div class="promoted-description">
+              {% trans %}
+              <p class="lead">The <strong>Intergovernmental Hydrological Programme's Water Information Network System (IHP-WINS)</strong> is designed to promote the <em>sharing and dissemination of water-related data and information</em> among countries, organizations, and stakeholders involved in water resources management, as part of the UNESCO IHP mandate.</p>
+              
+              <p>The main objective of IHP-WINS is <strong>to enhance the availability, accessibility, and usability of water-related information, with a focus on supporting evidence-based decision-making and sustainable water resources management</strong>. It aims to facilitate the exchange of data, knowledge, and best practices among stakeholders at various levels, including national, regional, and global scales.</p>
+              
+              <p>IHP-WINS provides a platform for integrating and harmonizing water-related data and information from diverse sources, such as monitoring networks, research institutions, government agencies, and international organizations. It promotes the use of standardized data formats and metadata to ensure compatibility and interoperability of information across different systems and platforms.</p>
+              
+              <p class="conclusion">Through IHP-WINS, UNESCO's Intergovernmental Hydrological Programme aims to strengthen international cooperation, improve data availability, and enhance the understanding and management of water resources worldwide.</p>
+              {% endtrans %}
+            </div>
+            
+            <!-- Key Features -->
+            <div class="key-features">
+              <h3 class="features-title">{{ _("Key Features") }}</h3>
+              <div class="features-grid">
+                <div class="feature-item">
+                  <div class="feature-icon">
+                    <i class="fa fa-share-alt"></i>
+                  </div>
+                  <div class="feature-content">
+                    <h4>{{ _("Data Sharing") }}</h4>
+                    <p>{{ _("Facilitate global water data exchange") }}</p>
+                  </div>
+                </div>
+                <div class="feature-item">
+                  <div class="feature-icon">
+                    <i class="fa fa-cogs"></i>
+                  </div>
+                  <div class="feature-content">
+                    <h4>{{ _("Standardization") }}</h4>
+                    <p>{{ _("Promote interoperable data formats") }}</p>
+                  </div>
+                </div>
+                <div class="feature-item">
+                  <div class="feature-icon">
+                    <i class="fa fa-users"></i>
+                  </div>
+                  <div class="feature-content">
+                    <h4>{{ _("Collaboration") }}</h4>
+                    <p>{{ _("Connect water experts globally") }}</p>
+                  </div>
+                </div>
+                <div class="feature-item">
+                  <div class="feature-icon">
+                    <i class="fa fa-lightbulb-o"></i>
+                  </div>
+                  <div class="feature-content">
+                    <h4>{{ _("Innovation") }}</h4>
+                    <p>{{ _("Support evidence-based decisions") }}</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <div class="ihp-brochure-link">
-          <a href="https://unesdoc.unesco.org/ark:/48223/pf0000393465" class="btn btn-primary btn-arrow-right">{% trans %}Access Brochure{% endtrans %}</a>
+        
+        <!-- Brochure Column -->
+        <div class="col-lg-5 col-md-12">
+          <div class="brochure-container">
+            <div class="brochure-card">
+              <div class="brochure-image-wrapper">
+                <img src="/brochure-cover.jpg" alt="{{ _('IHP-WINS Brochure Cover') }}" class="brochure-image" loading="lazy">
+                <div class="brochure-overlay">
+                  <div class="brochure-badge">
+                    <i class="fa fa-file-pdf-o"></i>
+                    <span>{{ _("PDF Brochure") }}</span>
+                  </div>
+                </div>
+              </div>
+              <div class="brochure-content">
+                <h3 class="brochure-title">{{ _("IHP-WINS Overview") }}</h3>
+                <p class="brochure-description">{{ _("Learn more about the comprehensive water information network system and its global impact.") }}</p>
+                <div class="brochure-actions">
+                  <a href="https://unesdoc.unesco.org/ark:/48223/pf0000393465" 
+                     class="btn btn-primary btn-lg brochure-btn" 
+                     target="_blank" 
+                     rel="noopener noreferrer">
+                    <i class="fa fa-download"></i>
+                    <span>{% trans %}Download Brochure{% endtrans %}</span>
+                  </a>
+                  <a href="https://unesdoc.unesco.org/ark:/48223/pf0000393465" 
+                     class="btn btn-outline-secondary btn-lg brochure-btn" 
+                     target="_blank" 
+                     rel="noopener noreferrer">
+                    <i class="fa fa-eye"></i>
+                    <span>{% trans %}View Online{% endtrans %}</span>
+                  </a>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </div>
-</div>
-
-<!-- Add styles for the brochure section -->
-<style>
-  .ihp-brochure-container {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    min-height: 450px;
-    margin-top: 2rem;
-    background-color: #f1f4f6;
-    border-radius: 0.5rem;
-    overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-  }
-  
-  .ihp-brochure-image {
-    flex: 1;
-    overflow: hidden;
-    min-height: 350px;
-    max-height: none;
-  }
-  
-  .ihp-brochure-image img {
-    width: 100%;
-    height: 100%;
-    display: block;
-    transition: transform 0.3s ease;
-    object-fit: cover;
-  }
-  
-  .ihp-brochure-image img:hover {
-    transform: scale(1.02);
-  }
-  
-  .ihp-brochure-link {
-    padding: 1.5rem;
-    text-align: center;
-    background-color: white;
-  }
-  
-  .ihp-brochure-link .btn {
-    font-weight: 600;
-    padding: 0.75rem 1.5rem;
-  }
-  
-  @media (max-width: 768px) {
-    .ihp-brochure-container {
-      margin-top: 1rem;
-      margin-bottom: 2rem;
-    }
-  }
-</style>
+</section>
 
 {% block home_image %}
   <section class="featured media-overlay hidden-xs">
@@ -86,3 +114,502 @@
     {% endblock %}
   </section>
 {% endblock %}
+
+<!-- Enhanced Promoted Content Styles -->
+<style>
+/* Promoted Content Section */
+.promoted-content-section {
+  padding: 4rem 0;
+  background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+.promoted-content-section::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent 0%, var(--unesco-blue, #0069B4) 50%, transparent 100%);
+}
+
+.promoted-content-wrapper {
+  position: relative;
+  z-index: 2;
+}
+
+/* Text Content Styling */
+.promoted-text-content {
+  padding-right: 2rem;
+}
+
+.promoted-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: var(--unesco-blue, #0069B4);
+  margin-bottom: 2rem;
+  line-height: 1.2;
+  position: relative;
+}
+
+.promoted-title::after {
+  content: '';
+  position: absolute;
+  bottom: -0.5rem;
+  left: 0;
+  width: 80px;
+  height: 4px;
+  background: linear-gradient(90deg, var(--unesco-blue, #0069B4) 0%, var(--unesco-blue-light, #009EE0) 100%);
+  border-radius: 2px;
+}
+
+.promoted-description {
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: #495057;
+  margin-bottom: 2.5rem;
+}
+
+.promoted-description .lead {
+  font-size: 1.25rem;
+  font-weight: 500;
+  color: #212529;
+  margin-bottom: 1.5rem;
+  padding: 1.5rem;
+  background: linear-gradient(135deg, rgba(0, 105, 180, 0.05) 0%, rgba(227, 242, 253, 0.3) 100%);
+  border-left: 4px solid var(--unesco-blue, #0069B4);
+  border-radius: 0 0.5rem 0.5rem 0;
+}
+
+.promoted-description p {
+  margin-bottom: 1.5rem;
+  text-align: justify;
+}
+
+.promoted-description .conclusion {
+  font-weight: 500;
+  color: #212529;
+  background: rgba(0, 105, 180, 0.05);
+  padding: 1rem 1.5rem;
+  border-radius: 0.5rem;
+  border: 1px solid rgba(0, 105, 180, 0.1);
+}
+
+.promoted-description strong {
+  color: var(--unesco-blue, #0069B4);
+  font-weight: 600;
+}
+
+.promoted-description em {
+  color: var(--unesco-blue-dark, #005A9C);
+  font-style: italic;
+}
+
+/* Key Features Section */
+.key-features {
+  margin-top: 2.5rem;
+  padding: 2rem;
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 1rem;
+  box-shadow: 0 4px 15px rgba(0, 105, 180, 0.08);
+  border: 1px solid rgba(0, 105, 180, 0.1);
+}
+
+.features-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--unesco-blue, #0069B4);
+  margin-bottom: 1.5rem;
+  text-align: center;
+}
+
+.features-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1.5rem;
+}
+
+.feature-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem;
+  background: rgba(255, 255, 255, 0.9);
+  border-radius: 0.5rem;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(0, 105, 180, 0.1);
+}
+
+.feature-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 105, 180, 0.15);
+  border-color: var(--unesco-blue-pale, #E3F2FD);
+}
+
+.feature-icon {
+  width: 3rem;
+  height: 3rem;
+  background: linear-gradient(135deg, var(--unesco-blue, #0069B4) 0%, var(--unesco-blue-dark, #005A9C) 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.feature-content h4 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #212529;
+  margin-bottom: 0.5rem;
+}
+
+.feature-content p {
+  font-size: 0.9rem;
+  color: #6c757d;
+  margin: 0;
+  line-height: 1.4;
+}
+
+/* Brochure Container */
+.brochure-container {
+  padding-left: 2rem;
+  height: 100%;
+  display: flex;
+  align-items: center;
+}
+
+.brochure-card {
+  background: rgba(255, 255, 255, 0.95);
+  border-radius: 1.5rem;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0, 105, 180, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+  width: 100%;
+  max-width: 400px;
+}
+
+.brochure-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 12px 40px rgba(0, 105, 180, 0.18);
+}
+
+.brochure-image-wrapper {
+  position: relative;
+  height: 300px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.brochure-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.brochure-card:hover .brochure-image {
+  transform: scale(1.05);
+}
+
+.brochure-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(0, 105, 180, 0.1) 0%, rgba(0, 0, 0, 0.2) 100%);
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.brochure-card:hover .brochure-overlay {
+  opacity: 1;
+}
+
+.brochure-badge {
+  background: rgba(255, 255, 255, 0.95);
+  color: var(--unesco-blue, #0069B4);
+  padding: 0.75rem 1.5rem;
+  border-radius: 2rem;
+  font-weight: 600;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.brochure-content {
+  padding: 2rem;
+}
+
+.brochure-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--unesco-blue, #0069B4);
+  margin-bottom: 1rem;
+}
+
+.brochure-description {
+  font-size: 1rem;
+  color: #6c757d;
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+
+.brochure-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.brochure-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  font-size: 0.95rem;
+  text-align: center;
+}
+
+.brochure-btn.btn-primary {
+  background: linear-gradient(135deg, var(--unesco-blue, #0069B4) 0%, var(--unesco-blue-dark, #005A9C) 100%);
+  border: none;
+  color: white;
+}
+
+.brochure-btn.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 105, 180, 0.3);
+  color: white;
+  text-decoration: none;
+}
+
+.brochure-btn.btn-outline-secondary {
+  background: rgba(255, 255, 255, 0.8);
+  border: 2px solid #dee2e6;
+  color: #495057;
+}
+
+.brochure-btn.btn-outline-secondary:hover {
+  background: var(--unesco-blue-pale, #E3F2FD);
+  border-color: var(--unesco-blue, #0069B4);
+  color: var(--unesco-blue, #0069B4);
+  transform: translateY(-2px);
+  text-decoration: none;
+}
+
+/* Responsive Design */
+@media (max-width: 992px) {
+  .promoted-text-content {
+    padding-right: 0;
+    margin-bottom: 3rem;
+  }
+  
+  .brochure-container {
+    padding-left: 0;
+  }
+  
+  .promoted-title {
+    font-size: 2.25rem;
+  }
+  
+  .features-grid {
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+  }
+  
+  .feature-item {
+    flex-direction: column;
+    text-align: center;
+    padding: 1.5rem 1rem;
+  }
+  
+  .brochure-actions {
+    flex-direction: row;
+  }
+}
+
+@media (max-width: 768px) {
+  .promoted-content-section {
+    padding: 3rem 0;
+  }
+  
+  .promoted-title {
+    font-size: 2rem;
+  }
+  
+  .promoted-description {
+    font-size: 1rem;
+  }
+  
+  .promoted-description .lead {
+    font-size: 1.1rem;
+    padding: 1rem;
+  }
+  
+  .key-features {
+    padding: 1.5rem;
+  }
+  
+  .features-grid {
+    grid-template-columns: 1fr;
+  }
+  
+  .brochure-image-wrapper {
+    height: 250px;
+  }
+  
+  .brochure-content {
+    padding: 1.5rem;
+  }
+  
+  .brochure-actions {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 576px) {
+  .promoted-title {
+    font-size: 1.75rem;
+  }
+  
+  .promoted-description {
+    font-size: 0.95rem;
+  }
+  
+  .feature-item {
+    padding: 1rem;
+  }
+  
+  .feature-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 1rem;
+  }
+  
+  .brochure-image-wrapper {
+    height: 200px;
+  }
+  
+  .brochure-content {
+    padding: 1rem;
+  }
+  
+  .brochure-title {
+    font-size: 1.25rem;
+  }
+  
+  .brochure-btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* Animation for enhanced user experience */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.promoted-text-content,
+.brochure-container {
+  animation: fadeInUp 0.6s ease forwards;
+}
+
+.brochure-container {
+  animation-delay: 0.3s;
+}
+
+/* Print-friendly styles */
+@media print {
+  .promoted-content-section {
+    background: white;
+    box-shadow: none;
+  }
+  
+  .brochure-card {
+    box-shadow: none;
+    border: 1px solid #ddd;
+  }
+  
+  .brochure-overlay {
+    display: none;
+  }
+  
+  .brochure-actions {
+    display: none;
+  }
+}
+</style>
+
+<!-- JavaScript for Enhanced Interactions -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Add smooth loading animation
+  const observerOptions = {
+    threshold: 0.1,
+    rootMargin: '0px 0px -100px 0px'
+  };
+  
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('animate-in');
+      }
+    });
+  }, observerOptions);
+  
+  // Observe promoted content elements
+  const promotedElements = document.querySelectorAll('.promoted-text-content, .brochure-container');
+  promotedElements.forEach(el => observer.observe(el));
+  
+  // Add loading states for brochure buttons
+  const brochureButtons = document.querySelectorAll('.brochure-btn');
+  brochureButtons.forEach(button => {
+    button.addEventListener('click', function() {
+      const icon = this.querySelector('i');
+      const originalClass = icon.className;
+      
+      // Add loading state
+      icon.className = 'fa fa-spinner fa-spin';
+      
+      // Reset after a short delay (for visual feedback)
+      setTimeout(() => {
+        icon.className = originalClass;
+      }, 1000);
+    });
+  });
+  
+  // Add subtle parallax effect to brochure image
+  const brochureImage = document.querySelector('.brochure-image');
+  if (brochureImage) {
+    window.addEventListener('scroll', function() {
+      const scrolled = window.pageYOffset;
+      const parallax = scrolled * 0.1;
+      brochureImage.style.transform = `translateY(${parallax}px)`;
+    });
+  }
+});
+</script>

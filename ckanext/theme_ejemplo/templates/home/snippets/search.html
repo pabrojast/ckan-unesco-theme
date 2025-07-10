@@ -1,33 +1,562 @@
-{% set placeholder = _('E.g. environment') %}
+{% set placeholder = _('Search water datasets, research, and publications...') %}
 {% set stats = h.get_site_statistics() %}
 
-
-
-
-
-
-<div class="module module-search module-narrow module-shallow box">
-  <form class="module-content search-form" method="get" action="{% url_for 'dataset.search' %}">
-    <h3 class="heading">{{ _("Search data") }}</h3>
-    <div class="search-input form-group search-giant">
-      <input aria-label="{% block header_site_search_label %}{{ _('Search datasets') }}{% endblock %}" id="field-main-search" type="text" class="form-control" name="q" value="" autocomplete="off" placeholder="{% block search_placeholder %}{{ placeholder }}{% endblock %}" />
-      <button type="submit" aria-labelledby="search-label">
-        <i class="fa fa-search"></i>
-        <span class="sr-only" id="search-label">{{ _('Search') }}</span>
-      </button>
+<div class="hero-search-container">
+  <div class="hero-search-content">
+    <!-- Hero Title and Description -->
+    <div class="hero-text">
+      <h1 class="hero-title">{{ _("IHP Water Information Network System") }}</h1>
+      <p class="hero-subtitle">{{ _("Discover, access, and share water-related data and information from UNESCO's global network of water experts and institutions.") }}</p>
     </div>
-  </form>
-  <div class="tags">
-
-    <a class="stats" href="{{ h.url_for('dataset.search') }}">
-      <strong>{{ h.SI_number_span(stats.dataset_count) }}</strong>
-      {{ _('dataset') if stats.dataset_count == 1 else _('datasets') }}
-    </a>
-    <a class="stats" href="{{ h.url_for(controller='organization', action='index') }}">
-      <strong>{{ h.SI_number_span(stats.organization_count) }}</strong>
-      {{ _('organization') if stats.organization_count == 1 else _('organizations') }}
-    </a>
-
-
+    
+    <!-- Enhanced Search Form -->
+    <div class="hero-search-form">
+      <form class="search-form-modern" method="get" action="{% url_for 'dataset.search' %}" role="search">
+        <div class="search-input-group">
+          <div class="search-input-wrapper">
+            <i class="fa fa-search search-icon"></i>
+            <input 
+              aria-label="{% block header_site_search_label %}{{ _('Search datasets') }}{% endblock %}" 
+              id="field-main-search" 
+              type="text" 
+              class="form-control search-input-modern" 
+              name="q" 
+              value="" 
+              autocomplete="off" 
+              placeholder="{% block search_placeholder %}{{ placeholder }}{% endblock %}" 
+              aria-describedby="search-help"
+            />
+            <button type="submit" class="search-button-modern" aria-label="{{ _('Search') }}">
+              <i class="fa fa-arrow-right"></i>
+              <span class="button-text">{{ _('Search') }}</span>
+            </button>
+          </div>
+          <div id="search-help" class="search-help-text">
+            {{ _('Try searching for: water quality, climate change, hydrology, or UNESCO water programs') }}
+          </div>
+        </div>
+      </form>
+    </div>
+    
+    <!-- Statistics Cards -->
+    <div class="hero-stats">
+      <div class="stats-grid">
+        <div class="stat-card">
+          <a href="{{ h.url_for('dataset.search') }}" class="stat-link">
+            <div class="stat-icon">
+              <i class="fa fa-database"></i>
+            </div>
+            <div class="stat-content">
+              <div class="stat-number">{{ h.SI_number_span(stats.dataset_count) }}</div>
+              <div class="stat-label">{{ _('Dataset') if stats.dataset_count == 1 else _('Datasets') }}</div>
+            </div>
+          </a>
+        </div>
+        
+        <div class="stat-card">
+          <a href="{{ h.url_for(controller='organization', action='index') }}" class="stat-link">
+            <div class="stat-icon">
+              <i class="fa fa-building-o"></i>
+            </div>
+            <div class="stat-content">
+              <div class="stat-number">{{ h.SI_number_span(stats.organization_count) }}</div>
+              <div class="stat-label">{{ _('Organization') if stats.organization_count == 1 else _('Organizations') }}</div>
+            </div>
+          </a>
+        </div>
+        
+        {% if stats.group_count %}
+        <div class="stat-card">
+          <a href="{{ h.url_for('group.index') }}" class="stat-link">
+            <div class="stat-icon">
+              <i class="fa fa-users"></i>
+            </div>
+            <div class="stat-content">
+              <div class="stat-number">{{ h.SI_number_span(stats.group_count) }}</div>
+              <div class="stat-label">{{ _('Group') if stats.group_count == 1 else _('Groups') }}</div>
+            </div>
+          </a>
+        </div>
+        {% endif %}
+        
+        <div class="stat-card">
+          <div class="stat-icon">
+            <i class="fa fa-globe"></i>
+          </div>
+          <div class="stat-content">
+            <div class="stat-number">195</div>
+            <div class="stat-label">{{ _('Member States') }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Quick Access Links -->
+    <div class="hero-quick-links">
+      <div class="quick-links-title">{{ _('Quick Access:') }}</div>
+      <div class="quick-links-grid">
+        <a href="{{ h.url_for('dataset.search', tags='water-quality') }}" class="quick-link">
+          <i class="fa fa-tint"></i>
+          <span>{{ _('Water Quality') }}</span>
+        </a>
+        <a href="{{ h.url_for('dataset.search', tags='climate-change') }}" class="quick-link">
+          <i class="fa fa-cloud"></i>
+          <span>{{ _('Climate Change') }}</span>
+        </a>
+        <a href="{{ h.url_for('dataset.search', tags='hydrology') }}" class="quick-link">
+          <i class="fa fa-filter"></i>
+          <span>{{ _('Hydrology') }}</span>
+        </a>
+        <a href="{{ h.url_for('dataset.search', tags='water-resources') }}" class="quick-link">
+          <i class="fa fa-legal"></i>
+          <span>{{ _('Water Resources') }}</span>
+        </a>
+      </div>
+    </div>
   </div>
 </div>
+
+<!-- Enhanced Hero Search Styles -->
+<style>
+/* Hero Search Container */
+.hero-search-container {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 1.5rem;
+  padding: 3rem 2rem;
+  box-shadow: 0 8px 32px rgba(0, 105, 180, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  max-width: 900px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+/* Hero Text */
+.hero-title {
+  font-size: 3rem;
+  font-weight: 700;
+  color: var(--unesco-blue, #0069B4);
+  margin-bottom: 1rem;
+  line-height: 1.2;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.hero-subtitle {
+  font-size: 1.25rem;
+  color: #495057;
+  margin-bottom: 2.5rem;
+  line-height: 1.6;
+  max-width: 700px;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* Modern Search Form */
+.hero-search-form {
+  margin-bottom: 2.5rem;
+}
+
+.search-form-modern {
+  width: 100%;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.search-input-group {
+  position: relative;
+  width: 100%;
+}
+
+.search-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  background: white;
+  border-radius: 3rem;
+  border: 3px solid transparent;
+  box-shadow: 0 4px 20px rgba(0, 105, 180, 0.15);
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+.search-input-wrapper:hover {
+  border-color: var(--unesco-blue-pale, #E3F2FD);
+  box-shadow: 0 6px 25px rgba(0, 105, 180, 0.2);
+}
+
+.search-input-wrapper:focus-within {
+  border-color: var(--unesco-blue, #0069B4);
+  box-shadow: 0 6px 25px rgba(0, 105, 180, 0.25);
+}
+
+.search-icon {
+  position: absolute;
+  left: 1.5rem;
+  color: var(--unesco-blue, #0069B4);
+  font-size: 1.2rem;
+  z-index: 2;
+}
+
+.search-input-modern {
+  width: 100%;
+  padding: 1.25rem 1.5rem 1.25rem 3.5rem;
+  border: none;
+  background: transparent;
+  font-size: 1.1rem;
+  color: #495057;
+  outline: none;
+  font-weight: 500;
+}
+
+.search-input-modern::placeholder {
+  color: #6c757d;
+  font-weight: 400;
+}
+
+.search-button-modern {
+  position: absolute;
+  right: 0.5rem;
+  top: 50%;
+  transform: translateY(-50%);
+  background: linear-gradient(135deg, var(--unesco-blue, #0069B4) 0%, var(--unesco-blue-dark, #005A9C) 100%);
+  color: white;
+  border: none;
+  border-radius: 2rem;
+  padding: 0.75rem 2rem;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  z-index: 3;
+}
+
+.search-button-modern:hover {
+  background: linear-gradient(135deg, var(--unesco-blue-dark, #005A9C) 0%, var(--unesco-blue, #0069B4) 100%);
+  transform: translateY(-50%) scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 105, 180, 0.3);
+}
+
+.search-help-text {
+  font-size: 0.9rem;
+  color: #6c757d;
+  margin-top: 0.75rem;
+  font-style: italic;
+}
+
+/* Statistics Grid */
+.hero-stats {
+  margin-bottom: 2rem;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.stat-card {
+  background: rgba(255, 255, 255, 0.8);
+  border-radius: 1rem;
+  padding: 1.5rem;
+  box-shadow: 0 4px 15px rgba(0, 105, 180, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 25px rgba(0, 105, 180, 0.15);
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.stat-link {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  text-decoration: none;
+  color: inherit;
+}
+
+.stat-icon {
+  width: 3rem;
+  height: 3rem;
+  background: linear-gradient(135deg, var(--unesco-blue, #0069B4) 0%, var(--unesco-blue-dark, #005A9C) 100%);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-size: 1.25rem;
+  flex-shrink: 0;
+}
+
+.stat-content {
+  flex: 1;
+  text-align: left;
+}
+
+.stat-number {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--unesco-blue, #0069B4);
+  line-height: 1;
+  margin-bottom: 0.25rem;
+}
+
+.stat-label {
+  font-size: 0.9rem;
+  color: #6c757d;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+/* Quick Links */
+.hero-quick-links {
+  border-top: 1px solid rgba(0, 105, 180, 0.1);
+  padding-top: 2rem;
+}
+
+.quick-links-title {
+  font-size: 0.95rem;
+  color: #6c757d;
+  margin-bottom: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.quick-links-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  justify-content: center;
+}
+
+.quick-link {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: rgba(0, 105, 180, 0.1);
+  color: var(--unesco-blue, #0069B4);
+  text-decoration: none;
+  border-radius: 2rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(0, 105, 180, 0.2);
+}
+
+.quick-link:hover {
+  background: var(--unesco-blue, #0069B4);
+  color: white;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 105, 180, 0.3);
+  text-decoration: none;
+}
+
+.quick-link i {
+  font-size: 0.8rem;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .hero-search-container {
+    padding: 2rem 1.5rem;
+    margin: 0 1rem;
+  }
+  
+  .hero-title {
+    font-size: 2.5rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 1.1rem;
+    margin-bottom: 2rem;
+  }
+  
+  .search-input-wrapper {
+    flex-direction: column;
+    align-items: stretch;
+    border-radius: 1rem;
+  }
+  
+  .search-input-modern {
+    padding: 1rem 1rem 1rem 3rem;
+    font-size: 1rem;
+  }
+  
+  .search-button-modern {
+    position: static;
+    transform: none;
+    border-radius: 0 0 1rem 1rem;
+    padding: 1rem;
+    margin-top: 1px;
+  }
+  
+  .search-button-modern:hover {
+    transform: none;
+  }
+  
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .stat-card {
+    padding: 1rem;
+  }
+  
+  .stat-number {
+    font-size: 1.5rem;
+  }
+  
+  .quick-links-grid {
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .quick-link {
+    width: 100%;
+    max-width: 200px;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .hero-title {
+    font-size: 2rem;
+  }
+  
+  .hero-subtitle {
+    font-size: 1rem;
+  }
+  
+  .search-input-modern {
+    padding: 0.875rem 0.875rem 0.875rem 2.5rem;
+    font-size: 0.95rem;
+  }
+  
+  .search-icon {
+    left: 1rem;
+    font-size: 1rem;
+  }
+  
+  .stat-icon {
+    width: 2.5rem;
+    height: 2.5rem;
+    font-size: 1rem;
+  }
+  
+  .stat-number {
+    font-size: 1.25rem;
+  }
+  
+  .stat-label {
+    font-size: 0.8rem;
+  }
+}
+
+/* Animation for loading state */
+@keyframes searchPulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+.search-button-modern.loading {
+  animation: searchPulse 1s infinite;
+}
+
+/* Focus states for accessibility */
+.search-input-modern:focus {
+  outline: 2px solid var(--unesco-blue, #0069B4);
+  outline-offset: 2px;
+}
+
+.search-button-modern:focus {
+  outline: 2px solid white;
+  outline-offset: 2px;
+}
+
+.quick-link:focus {
+  outline: 2px solid var(--unesco-blue, #0069B4);
+  outline-offset: 2px;
+}
+</style>
+
+<!-- JavaScript for Enhanced Search Experience -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  const searchForm = document.querySelector('.search-form-modern');
+  const searchInput = document.querySelector('.search-input-modern');
+  const searchButton = document.querySelector('.search-button-modern');
+  
+  // Add loading state to search button
+  if (searchForm) {
+    searchForm.addEventListener('submit', function() {
+      searchButton.classList.add('loading');
+      searchButton.innerHTML = '<i class="fa fa-spinner fa-spin"></i><span class="button-text">{{ _("Searching...") }}</span>';
+    });
+  }
+  
+  // Enhanced search suggestions (could be extended with actual API)
+  const searchSuggestions = [
+    '{{ _("water quality") }}',
+    '{{ _("climate change") }}',
+    '{{ _("hydrology") }}',
+    '{{ _("water resources") }}',
+    '{{ _("groundwater") }}',
+    '{{ _("water management") }}',
+    '{{ _("flood monitoring") }}',
+    '{{ _("drought assessment") }}'
+  ];
+  
+  // Simple search input enhancement
+  if (searchInput) {
+    let currentSuggestionIndex = 0;
+    
+    searchInput.addEventListener('focus', function() {
+      this.parentElement.style.borderColor = 'var(--unesco-blue, #0069B4)';
+    });
+    
+    searchInput.addEventListener('blur', function() {
+      this.parentElement.style.borderColor = 'transparent';
+    });
+    
+    // Rotate placeholder suggestions
+    function rotatePlaceholder() {
+      if (searchInput.value === '') {
+        searchInput.placeholder = `{{ _("Search water datasets, research, and publications...") }} ${searchSuggestions[currentSuggestionIndex]}`;
+        currentSuggestionIndex = (currentSuggestionIndex + 1) % searchSuggestions.length;
+      }
+    }
+    
+    setInterval(rotatePlaceholder, 3000);
+  }
+  
+  // Add subtle animations to stats cards
+  const statCards = document.querySelectorAll('.stat-card');
+  statCards.forEach((card, index) => {
+    card.style.animationDelay = `${index * 0.1}s`;
+  });
+  
+  // Smooth scroll for quick links
+  const quickLinks = document.querySelectorAll('.quick-link');
+  quickLinks.forEach(link => {
+    link.addEventListener('click', function(e) {
+      // Add a brief visual feedback
+      this.style.transform = 'translateY(-2px) scale(0.95)';
+      setTimeout(() => {
+        this.style.transform = 'translateY(-2px)';
+      }, 150);
+    });
+  });
+});
+</script>

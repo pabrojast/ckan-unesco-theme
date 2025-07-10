@@ -1,168 +1,497 @@
-{% block header_wrapper %} {% block header_account %}
-{% if c.userobj %}
-<div class="account-masthead">
-  <div class="container">
-    {% block header_account_container_content %} {% if c.userobj %}
-    <div class="account avatar authed" data-module="me" data-me="{{ c.user }}">
-      <ul class="list-unstyled2">
-        {% block header_account_logged %} {% if c.userobj and c.userobj.sysadmin %}
-        <li>
-          <a href="{{ h.url_for(controller='admin', action='index') }}" title="{{ _('Sysadmin settings') }}">
-            <i class="fa fa-gavel" aria-hidden="true"></i>
-            <span class="text">{{ _('Admin') }}</span>
-          </a>
-        </li>
-        <li>
-          <a href="#" title="{{ _('Approval Workflow') }}">
-            <i class="fa fa-list"></i>
-          </a>
-        </li>
-        <li>
-          <a href="/harvest" title="harvest">
-            <span class="text">{{ _('Harvest') }}</span>  </a>
-        </li>
+{% ckan_extends %}
+
+{% block header_account %}
+  <header class="account-masthead" role="banner">
+    <div class="container">
+      <nav class="account-navigation" role="navigation" aria-label="{{ _('Account navigation') }}">
+        {% block header_account_container_content %}
+          {% if c.userobj %}
+            <div class="account account-logged-in">
+              {{ h.build_nav_main(
+                ('user.read', _('View profile'), c.userobj.name, 'icon-user'),
+                ('user.edit', _('Edit profile'), c.userobj.name, 'icon-cog'),
+                ('user.logout', _('Logout'))
+              ) }}
+            </div>
+          {% else %}
+            <div class="account account-not-logged-in">
+              {{ h.build_nav_main(
+                ('user.login', _('Login')),
+                ('user.register', _('Register'))
+              ) }}
+            </div>
+          {% endif %}
+        {% endblock %}
+        
+        <!-- Language selector with improved accessibility -->
+        {% set current_lang_code = h.lang() %}
+        {% set current_lang_name = h.get_lang_name(current_lang_code) %}
+        {% if h.get_available_locales() %}
+          <div class="lang-select" role="group" aria-label="{{ _('Language selection') }}">
+            <label for="lang-select-dropdown" class="sr-only">{{ _('Select language') }}</label>
+            <select id="lang-select-dropdown" name="locale" onchange="this.form.submit()" 
+                    aria-label="{{ _('Change language') }}"
+                    title="{{ _('Current language: {lang}').format(lang=current_lang_name) }}">
+              {% for locale in h.get_available_locales() %}
+                <option value="{{ locale }}" {% if locale == current_lang_code %}selected="selected"{% endif %}>
+                  {{ h.get_lang_name(locale) }}
+                </option>
+              {% endfor %}
+            </select>
+          </div>
         {% endif %}
-        <li>
-          <a href="{{ h.url_for('user.read', id=c.user) }}" class="image" title="{{ _('View profile') }}">
-                  {{ h.user_image((c.user if c and c.user else ''), size=22) }}
-                  <span class="username">{{ c.userobj.display_name if c.userobj else c.user }}</span>
-                </a>
-        </li>
-        {% set new_activities = h.new_activities() %}
-        <li class="notifications {% if new_activities > 0 %}notifications-important{% endif %}">
-          {% set notifications_tooltip = ngettext('Dashboard (%(num)d new item)', 'Dashboard (%(num)d new items)', new_activities)
-          %}
-          <a href="{{ h.url_for('dashboard.index') }}" title="{{ notifications_tooltip }}">
-            <i class="fa fa-tachometer" aria-hidden="true"></i>
-            <span class="text">{{ _('Dashboard') }}</span>
-            <span class="badge">{{ new_activities }}</span>
-          </a>
-        </li>
-        {% block header_account_settings_link %}
-        <li>
-          <a href="{{ h.url_for('user.edit', id=c.user) }}" title="{{ _('Profile settings') }}">
-            <i class="fa fa-cog" aria-hidden="true"></i>
-            <span class="text">{{ _('Profile settings') }}</span>
-          </a>
-        </li>
-        {% endblock %} {% block header_account_log_out_link %}
-        <li>
-          <a href="{{ h.url_for('/user/_logout') }}" title="{{ _('Log out') }}">
-            <i class="fa fa-sign-out" aria-hidden="true"></i>
-            <span class="text">{{ _('Log out') }}</span>
-          </a>
-        </li>
-        {% if c.userobj and c.userobj.sysadmin %}
-        <li>
-          <a href="{{ h.url_for('/blog') }}" alt="Blog">Blog</a>
-        </li>
-        <li>
-          <a href="{{ h.url_for('/colab/admin') }}" alt="Blog">Colab Admin</a>
-        </li>
-        <li>
-          <a href="{{ h.url_for('/pages') }}" alt="Blog">Pages</a>
-        </li>
-        {% endif %}
-        {% endblock %} {% endblock %}
-      </ul>
+      </nav>
     </div>
-    {% else %}
-
-    {% endif %} {% endblock %}
-  </div>
-</div>
-{% endif %}
-
+  </header>
 {% endblock %}
 
-{% if h.current_url() == '/' %}
-{% set is_index = True %}
-{% else %}
-{% set is_index = False %}
-{% endif %}
-<header class="navbar navbar-static-top masthead" {{ '' if is_index else 'style="background-color: #0077d4 !important;"' | safe }} > 
-  {% block header_debug %} {% if g.debug and not g.debug_supress_header %}
-  <div class="debug">Controller : {{ c.controller }}<br/>Action : {{ c.action }}</div>
-  {% endif %} {% endblock %}
-  <div class="container">
-    <div class="navbar-right">
+{% block header_logo %}
+  <div class="masthead" role="banner">
+    <div class="container">
+      <!-- Skip to main content link for screen readers -->
+      <a href="#main-content" class="sr-only sr-only-focusable skip-link">
+        {{ _('Skip to main content') }}
+      </a>
+      
+      <div class="row">
+        <div class="col-sm-8 col-xs-12">
+          <div class="logo">
+            <a href="{{ h.url_for('home.index') }}" 
+               aria-label="{{ _('UNESCO IHP-WINS Home') }}"
+               title="{{ _('Return to homepage') }}">
+              {% block header_logo_image %}
+                <img src="{{ h.url_for_static('/base/images/ckan-logo.png') }}" 
+                     alt="{{ _('UNESCO IHP-WINS Logo') }}" 
+                     title="{{ g.site_title }}">
+              {% endblock %}
+            </a>
+          </div>
+        </div>
+        
+        <div class="col-sm-4 col-xs-12">
+          {% block header_site_search %}
+            <form class="site-search" action="{% url_for 'dataset.search' %}" method="get" role="search">
+              <label for="field-site-search" class="sr-only">{{ _('Search datasets') }}</label>
+              <input id="field-site-search" 
+                     type="text" 
+                     class="form-control" 
+                     name="q" 
+                     placeholder="{{ _('Search') }}" 
+                     autocomplete="off"
+                     aria-label="{{ _('Search datasets and resources') }}">
+              <button class="btn-search" type="submit" 
+                      aria-label="{{ _('Submit search') }}"
+                      title="{{ _('Search') }}">
+                <i class="fa fa-search" aria-hidden="true"></i>
+                <span class="sr-only">{{ _('Search') }}</span>
+              </button>
+            </form>
+          {% endblock %}
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
 
-      <li class="navbar-toggle collapsed" style="list-style:none">
-      {% snippet "snippets/language_selector.html" %}
-      </li>
-
-      <button data-target="#main-navigation-toggle" data-toggle="collapse" class="navbar-toggle collapsed" type="button" aria-label="expand or collapse" aria-expanded="false">
+{% block header_site_navigation %}
+  <div class="masthead-navigation" role="navigation" aria-label="{{ _('Main navigation') }}">
+    <div class="container">
+      <!-- Mobile navigation toggle -->
+      <button id="main-navigation-toggle" 
+              class="navbar-toggle" 
+              type="button" 
+              aria-expanded="false" 
+              aria-controls="main-navigation"
+              aria-label="{{ _('Toggle navigation menu') }}">
         <span class="sr-only">{{ _('Toggle navigation') }}</span>
-        <span class="fa fa-bars"></span>
+        <span class="icon-bar" aria-hidden="true"></span>
+        <span class="icon-bar" aria-hidden="true"></span>
+        <span class="icon-bar" aria-hidden="true"></span>
       </button>
-    </div>
-    <hgroup class="{{ g.header_class }} navbar-left">
-      {% block header_logo %} {% if g.site_logo %}
-      <a class="logo" href="{{ h.url_for('/') }}"><img src="{{ h.url_for_static_or_external(g.site_logo) }}" alt="{{ g.site_title }}" title="{{ g.site_title }}" /></a>
-      {% else %}
-      <h1>
-        <a href="{{ h.url_for('/') }}">{{ g.site_title }}</a>
-      </h1>
-      {% if g.site_description %}
-      <h2>{{ g.site_description }}</h2>{% endif %} {% endif %} {% endblock %}
-    </hgroup>
-    
-    <div class="topmenu">
-      <ul>
-        <li>
-        {% block footer_lang %}
-        {% snippet "snippets/language_selector.html" %}
-        {% endblock %}
-        </li>
-        <li>
-        {% snippet "snippets/IHPIX.html" %}
-        </li>
-        {% block header_account_notlogged %}
-        {% if c.userobj %}
 
-        <li><a href="{{ h.url_for('/user/_logout') }}" title="{{ _('Log out') }}">{{ _('Log out') }}</a></li> 
-        {% else %}
-        <li>{% link_for _('Log in'), named_route='user.login' %}</li>
-        {% endif %}
-        {% endblock %}
-        <li><a href="{{ h.url_for('/colab') }}" alt="Enroll as a Data Contributor for Your Organization">{% trans %}Enroll as a Data Contributor for Your Organization{% endtrans %}</a></li>
-        <li><a href="https://www.unesco.org/en/" alt="UNESCO Portal">UNESCO</a></li>
-
-      </ul>
-    </div>
-
-    <div class="collapse navbar-collapse" id="main-navigation-toggle">
-      {% block header_site_navigation %}
-      <nav class="section navigation">
-        <ul class="nav nav-pills">
-    {% block header_site_navigation_tabs %}
-    <li><a href="{{ h.url_for('/') }}">{% trans %}Home{% endtrans %}</a></li>
-
-		    {{ h.build_nav_main(
-		    ('dataset.search', _('Datasets')),
-		    ('organization.index', _('Organizations'))
-
-		     ) }}
-	    
-      <li><a href="{{ h.url_for('/memberstates') }}">{% trans %}Member States{% endtrans %}</a></li>
-      <li><a href="{{ h.url_for('/initiatives') }}">{% trans %}Initiatives{% endtrans %}</a></li>
-      <li><a href="https://www.unesco.org/en/ihp">{{ _('About') }} IHP</a></li>
-      {% endblock %}
+      <!-- Main navigation -->
+      <nav id="main-navigation" class="navigation section" role="navigation">
+        <ul class="nav nav-pills" role="menubar">
+          {% block header_site_navigation_tabs %}
+            {{ h.build_nav_main(
+              ('dataset.search', _('Datasets')),
+              ('organization.index', _('Organizations')),
+              ('group.index', _('Groups')),
+              ('pages.open_source_software_index', _('Open Source Tools')),
+              ('home.about', _('About'))
+            ) }}
+          {% endblock %}
+          
+          <!-- Additional accessible menu items -->
+          <li role="menuitem">
+            <a href="{{ h.url_for('dataset.search', tags='featured') }}" 
+               role="menuitem"
+               aria-label="{{ _('Browse featured datasets') }}">
+              {{ _('Featured') }}
+            </a>
+          </li>
+          
+          {% if h.check_access('package_create') %}
+            <li role="menuitem">
+              <a href="{{ h.url_for('dataset.new') }}" 
+                 class="btn btn-primary"
+                 role="menuitem"
+                 aria-label="{{ _('Add new dataset') }}">
+                <i class="fa fa-plus" aria-hidden="true"></i>
+                {{ _('Add Dataset') }}
+              </a>
+            </li>
+          {% endif %}
         </ul>
       </nav>
-
-      {% block header_site_search %}
-      <form class="section site-search simple-input" action="{% url_for 'dataset.search' %}" method="get">
-        <div class="field">
-          <label for="field-sitewide-search">{% block header_site_search_label %}{{ _('Search Datasets') }}{% endblock %}</label>
-          <input id="field-sitewide-search" type="text" class="form-control" name="q" placeholder="{{ _('Search') }}" aria-label="{{ _('Search datasets') }}"/>
-          <button class="btn-search" type="submit" aria-label="{{ _('Submit') }}"><i class="fa fa-search"></i></button>
-        </div>
-      </form>
-      {% endblock %}
-      
-      {% endblock %} 
     </div>
   </div>
-</header>
 {% endblock %}
+
+<!-- Enhanced Accessibility Styles -->
+<style>
+/* Skip link for screen readers */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 6px;
+  background: var(--unesco-blue, #0069B4);
+  color: white;
+  padding: 8px;
+  border-radius: 4px;
+  text-decoration: none;
+  z-index: 1000;
+  font-weight: 600;
+}
+
+.skip-link:focus {
+  top: 6px;
+}
+
+/* Screen reader only content */
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+.sr-only-focusable:focus,
+.sr-only-focusable:active {
+  position: static !important;
+  width: auto !important;
+  height: auto !important;
+  padding: inherit !important;
+  margin: inherit !important;
+  overflow: visible !important;
+  clip: auto !important;
+  white-space: inherit !important;
+}
+
+/* Enhanced focus states */
+a:focus,
+button:focus,
+input:focus,
+select:focus,
+textarea:focus,
+[tabindex]:focus {
+  outline: 3px solid var(--unesco-blue, #0069B4);
+  outline-offset: 2px;
+  box-shadow: 0 0 0 3px rgba(0, 105, 180, 0.3);
+  transition: all 0.2s ease;
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .masthead {
+    background: #000;
+    color: #fff;
+  }
+  
+  .nav-pills li a {
+    border: 2px solid #fff;
+    margin: 2px;
+  }
+  
+  .btn {
+    border: 2px solid currentColor;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .masthead {
+    background: var(--unesco-blue-dark, #005A9C);
+  }
+  
+  .account-masthead {
+    background: #1a1a1a;
+    color: #fff;
+  }
+  
+  .site-search input {
+    background: #333;
+    color: #fff;
+    border-color: #555;
+  }
+}
+
+/* Mobile navigation improvements */
+.navbar-toggle {
+  background: transparent;
+  border: 2px solid var(--unesco-blue, #0069B4);
+  padding: 0.5rem;
+  border-radius: 0.375rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.navbar-toggle:hover,
+.navbar-toggle:focus {
+  background: var(--unesco-blue-pale, #E3F2FD);
+  border-color: var(--unesco-blue-dark, #005A9C);
+}
+
+.navbar-toggle .icon-bar {
+  display: block;
+  width: 22px;
+  height: 2px;
+  background: var(--unesco-blue, #0069B4);
+  border-radius: 1px;
+  transition: 0.3s;
+}
+
+.navbar-toggle .icon-bar + .icon-bar {
+  margin-top: 4px;
+}
+
+/* Animate navigation toggle */
+.navbar-toggle[aria-expanded="true"] .icon-bar:nth-child(2) {
+  transform: rotate(45deg) translate(5px, 5px);
+}
+
+.navbar-toggle[aria-expanded="true"] .icon-bar:nth-child(3) {
+  opacity: 0;
+}
+
+.navbar-toggle[aria-expanded="true"] .icon-bar:nth-child(4) {
+  transform: rotate(-45deg) translate(7px, -6px);
+}
+
+/* Language selector improvements */
+.lang-select select {
+  background: white;
+  border: 2px solid var(--unesco-blue, #0069B4);
+  border-radius: 0.375rem;
+  padding: 0.25rem 0.5rem;
+  color: var(--unesco-blue, #0069B4);
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.lang-select select:hover,
+.lang-select select:focus {
+  background: var(--unesco-blue-pale, #E3F2FD);
+  border-color: var(--unesco-blue-dark, #005A9C);
+}
+
+/* Site search improvements */
+.site-search {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.site-search input {
+  flex: 1;
+  padding: 0.5rem 2.5rem 0.5rem 0.75rem;
+  border: 2px solid #e9ecef;
+  border-radius: 1.5rem;
+  font-size: 0.875rem;
+  transition: all 0.3s ease;
+}
+
+.site-search input:focus {
+  border-color: var(--unesco-blue, #0069B4);
+  background: white;
+}
+
+.site-search .btn-search {
+  position: absolute;
+  right: 0.5rem;
+  background: none;
+  border: none;
+  color: var(--unesco-blue, #0069B4);
+  padding: 0.25rem;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.site-search .btn-search:hover,
+.site-search .btn-search:focus {
+  background: var(--unesco-blue-pale, #E3F2FD);
+  color: var(--unesco-blue-dark, #005A9C);
+}
+
+/* Responsive navigation */
+@media (max-width: 768px) {
+  .navigation {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(10px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    border-radius: 0 0 1rem 1rem;
+    z-index: 1000;
+  }
+  
+  .navigation.show {
+    display: block;
+  }
+  
+  .nav-pills {
+    flex-direction: column;
+    padding: 1rem;
+  }
+  
+  .nav-pills li {
+    margin-bottom: 0.5rem;
+    width: 100%;
+  }
+  
+  .nav-pills li a {
+    display: block;
+    padding: 0.75rem 1rem;
+    background: rgba(0, 105, 180, 0.1);
+    border-radius: 0.5rem;
+    text-align: center;
+    border: 2px solid transparent;
+  }
+  
+  .nav-pills li a:hover,
+  .nav-pills li a:focus {
+    background: var(--unesco-blue, #0069B4);
+    color: white;
+    border-color: var(--unesco-blue-dark, #005A9C);
+  }
+}
+
+/* Print styles for accessibility */
+@media print {
+  .skip-link,
+  .navbar-toggle,
+  .site-search,
+  .lang-select {
+    display: none !important;
+  }
+  
+  .nav-pills li a:after {
+    content: " (" attr(href) ")";
+    font-size: 0.8em;
+    color: #666;
+  }
+}
+</style>
+
+<!-- JavaScript for enhanced accessibility -->
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  // Enhanced keyboard navigation
+  function initKeyboardNavigation() {
+    const navItems = document.querySelectorAll('.nav-pills li a');
+    
+    navItems.forEach((item, index) => {
+      item.addEventListener('keydown', function(e) {
+        switch(e.key) {
+          case 'ArrowRight':
+          case 'ArrowDown':
+            e.preventDefault();
+            const nextItem = navItems[index + 1] || navItems[0];
+            nextItem.focus();
+            break;
+          case 'ArrowLeft':
+          case 'ArrowUp':
+            e.preventDefault();
+            const prevItem = navItems[index - 1] || navItems[navItems.length - 1];
+            prevItem.focus();
+            break;
+          case 'Home':
+            e.preventDefault();
+            navItems[0].focus();
+            break;
+          case 'End':
+            e.preventDefault();
+            navItems[navItems.length - 1].focus();
+            break;
+        }
+      });
+    });
+  }
+  
+  // ARIA live region for dynamic content updates
+  function createLiveRegion() {
+    const liveRegion = document.createElement('div');
+    liveRegion.setAttribute('aria-live', 'polite');
+    liveRegion.setAttribute('aria-atomic', 'true');
+    liveRegion.setAttribute('class', 'sr-only');
+    liveRegion.setAttribute('id', 'live-region');
+    document.body.appendChild(liveRegion);
+    
+    return liveRegion;
+  }
+  
+  // Announce page changes to screen readers
+  function announcePageChange(message) {
+    const liveRegion = document.getElementById('live-region') || createLiveRegion();
+    liveRegion.textContent = message;
+  }
+  
+  // Form validation announcements
+  function initFormAccessibility() {
+    const forms = document.querySelectorAll('form');
+    forms.forEach(form => {
+      form.addEventListener('submit', function(e) {
+        const requiredFields = form.querySelectorAll('[required]:invalid');
+        if (requiredFields.length > 0) {
+          e.preventDefault();
+          announcePageChange('{{ _("Please fill in all required fields") }}');
+          requiredFields[0].focus();
+        }
+      });
+    });
+  }
+  
+  // Initialize accessibility features
+  initKeyboardNavigation();
+  createLiveRegion();
+  initFormAccessibility();
+  
+  // Announce navigation changes
+  const navLinks = document.querySelectorAll('.nav-pills a');
+  navLinks.forEach(link => {
+    link.addEventListener('click', function() {
+      announcePageChange('{{ _("Navigating to") }} ' + this.textContent);
+    });
+  });
+});
+</script>

@@ -1,15 +1,531 @@
 {% set featured_datasets = h.get_featured_datasets_filtered(tag='FeaturedDataset', user='8ad64841-340c-49dc-8716-c6b61ea4b111') %}
-{% for dataset in featured_datasets %}
-<div class="col-md-4 col3">
-<div class="col-small"><div class="cardsmall cardsmall-height-fixed cardsmall-cta cardsmall-hero"> 
-{% set org_image_url = h.get_organization_image_by_name(dataset['name']) %}
-{% if org_image_url %}
-<img class="cardsmall-img-top2 image-style-cardsmall-1-column" src="{{ org_image_url }}" width="289" height="424" alt="" loading="lazy"><div class="cardsmall-body">
-{% else %}
-<img class="cardsmall-img-top2 image-style-cardsmall-1-column" src="./Landing_page/Content/data_catalogue_button1.png" width="289" height="424" alt="" loading="lazy"><div class="cardsmall-body">
-{% endif %}
-        <div class="cardsmall-title">{{ dataset['title'] }}</div><div class="cardsmall-text">
-            <p>{{ dataset['notes'] }}</p></div></div><div class="field field--name-field-link field--type-link field--label-hidden field__item">
-                <a href="{{ h.url_for('dataset.read', id=dataset['name']) }}" class="btn btn-primary btn-arrow-right" target="_blank">{{ _("Discover") }}</a></div></div></div>
+{% if featured_datasets %}
+<div class="featured-datasets-grid">
+  {% for dataset in featured_datasets %}
+  <div class="col-md-4 col-sm-6 col-xs-12">
+    <div class="featured-dataset-card">
+      <article class="cardsmall cardsmall-height-fixed cardsmall-hero">
+        <!-- Card Header with Organization Image -->
+        <div class="card-image-container">
+          {% set org_image_url = h.get_organization_image_by_name(dataset['name']) %}
+          {% if org_image_url %}
+            <img class="cardsmall-img-top2" src="{{ org_image_url }}" alt="{{ dataset['title'] }}" loading="lazy">
+          {% else %}
+            <img class="cardsmall-img-top2" src="/Landing_page/Content/data_catalogue_button1.png" alt="{{ dataset['title'] }}" loading="lazy">
+          {% endif %}
+          
+          <!-- Dataset Type Badge -->
+          {% if dataset.get('type') %}
+            <span class="dataset-type-badge">{{ dataset['type']|title }}</span>
+          {% endif %}
+        </div>
+        
+        <!-- Card Body -->
+        <div class="cardsmall-body">
+          <!-- Dataset Title -->
+          <h3 class="cardsmall-title">
+            <a href="{{ h.url_for('dataset.read', id=dataset['name']) }}" class="dataset-title-link">
+              {{ dataset['title'] }}
+            </a>
+          </h3>
+          
+          <!-- Dataset Metadata -->
+          <div class="dataset-metadata">
+            {% if dataset.get('organization') %}
+              <span class="metadata-item">
+                <i class="fa fa-building-o"></i>
+                <span>{{ dataset['organization']['title'] }}</span>
+              </span>
+            {% endif %}
+            {% if dataset.get('metadata_created') %}
+              <span class="metadata-item">
+                <i class="fa fa-calendar"></i>
+                <span>{{ h.time_ago_in_words_from_str(dataset['metadata_created']) }}</span>
+              </span>
+            {% endif %}
+            {% if dataset.get('num_resources') %}
+              <span class="metadata-item">
+                <i class="fa fa-file-o"></i>
+                <span>{{ dataset['num_resources'] }} {{ _('resource') if dataset['num_resources'] == 1 else _('resources') }}</span>
+              </span>
+            {% endif %}
+          </div>
+          
+          <!-- Dataset Description -->
+          <div class="cardsmall-text">
+            {% if dataset['notes'] %}
+              {% set description = dataset['notes']|striptags %}
+              <div class="dataset-description">
+                <p class="excerpt-preview">
+                  {{ description[:180] }}{% if description|length > 180 %}...{% endif %}
+                </p>
+                {% if description|length > 180 %}
+                  <p class="excerpt-full" style="display: none;">
+                    {{ description }}
+                  </p>
+                  <button type="button" class="read-more-btn" onclick="toggleDatasetDescription(this)">
+                    <i class="fa fa-plus"></i>
+                    <span class="btn-text">{{ _("Read more") }}</span>
+                  </button>
+                {% endif %}
+              </div>
+            {% else %}
+              <p class="no-description">{{ _("No description available") }}</p>
+            {% endif %}
+          </div>
+          
+          <!-- Tags -->
+          {% if dataset.get('tags') %}
+            <div class="dataset-tags">
+              {% for tag in dataset['tags'][:3] %}
+                <span class="tag-badge">{{ tag['name'] }}</span>
+              {% endfor %}
+              {% if dataset['tags']|length > 3 %}
+                <span class="tag-badge tag-more">+{{ dataset['tags']|length - 3 }} {{ _('more') }}</span>
+              {% endif %}
+            </div>
+          {% endif %}
+          
+          <!-- Card Actions -->
+          <div class="card-actions">
+            <a href="{{ h.url_for('dataset.read', id=dataset['name']) }}" 
+               class="btn btn-primary btn-sm dataset-action-btn">
+              <i class="fa fa-eye"></i>
+              <span>{{ _("Discover") }}</span>
+            </a>
+            {% if dataset.get('num_resources') and dataset['num_resources'] > 0 %}
+              <a href="{{ h.url_for('dataset.read', id=dataset['name']) }}#dataset-resources" 
+                 class="btn btn-outline-secondary btn-sm dataset-action-btn">
+                <i class="fa fa-download"></i>
+                <span>{{ _("Download") }}</span>
+              </a>
+            {% endif %}
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+  {% endfor %}
 </div>
-{% endfor %}
+{% else %}
+<!-- Empty State -->
+<div class="featured-datasets-empty">
+  <div class="empty-state-content">
+    <i class="fa fa-database fa-3x"></i>
+    <h3>{{ _("No Featured Datasets Available") }}</h3>
+    <p>{{ _("Check back later for featured datasets from UNESCO's Water Family.") }}</p>
+  </div>
+</div>
+{% endif %}
+
+<!-- Enhanced Styles for Featured Dataset Cards -->
+<style>
+/* Featured Datasets Grid */
+.featured-datasets-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.5rem;
+  margin: 0 -0.75rem;
+}
+
+.featured-datasets-grid > div {
+  flex: 1;
+  min-width: 300px;
+  max-width: 400px;
+}
+
+.featured-dataset-card {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Enhanced Card Styling */
+.featured-dataset-card .cardsmall {
+  height: 100%;
+  min-height: 450px;
+  transition: all 0.3s ease;
+  border: 1px solid #e9ecef;
+  border-radius: 1rem;
+  overflow: hidden;
+  box-shadow: 0 2px 12px rgba(0, 105, 180, 0.08);
+  background: #ffffff;
+}
+
+.featured-dataset-card .cardsmall:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 8px 32px rgba(0, 105, 180, 0.16);
+  border-color: var(--unesco-blue-pale, #E3F2FD);
+}
+
+/* Card Image Container */
+.card-image-container {
+  position: relative;
+  height: 180px;
+  overflow: hidden;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+}
+
+.cardsmall-img-top2 {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  padding: 1rem;
+  transition: transform 0.3s ease;
+  background: white;
+}
+
+.featured-dataset-card:hover .cardsmall-img-top2 {
+  transform: scale(1.05);
+}
+
+/* Dataset Type Badge */
+.dataset-type-badge {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  background: var(--unesco-blue, #0069B4);
+  color: white;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Card Body */
+.featured-dataset-card .cardsmall-body {
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  gap: 1rem;
+}
+
+/* Dataset Title */
+.cardsmall-title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: 700;
+  line-height: 1.3;
+  color: #212529;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  min-height: 2.6rem;
+}
+
+.dataset-title-link {
+  color: var(--unesco-blue, #0069B4);
+  text-decoration: none;
+  transition: color 0.3s ease;
+}
+
+.dataset-title-link:hover {
+  color: var(--unesco-blue-dark, #005A9C);
+  text-decoration: none;
+}
+
+/* Dataset Metadata */
+.dataset-metadata {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.75rem 0;
+  border-top: 1px solid #f0f0f0;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.metadata-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: #6c757d;
+}
+
+.metadata-item i {
+  color: var(--unesco-blue, #0069B4);
+  width: 14px;
+  text-align: center;
+  font-size: 0.8rem;
+}
+
+/* Dataset Description */
+.dataset-description {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.dataset-description p {
+  margin: 0 0 0.5rem 0;
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #495057;
+}
+
+.no-description {
+  color: #6c757d;
+  font-style: italic;
+  margin: 0;
+}
+
+/* Read More Button */
+.read-more-btn {
+  align-self: flex-start;
+  background: none;
+  border: none;
+  color: var(--unesco-blue, #0069B4);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  border-radius: 0.375rem;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.read-more-btn:hover {
+  background: var(--unesco-blue-pale, #E3F2FD);
+  color: var(--unesco-blue-dark, #005A9C);
+}
+
+.read-more-btn i {
+  font-size: 0.75rem;
+  transition: transform 0.3s ease;
+}
+
+.read-more-btn.expanded i {
+  transform: rotate(45deg);
+}
+
+/* Tags */
+.dataset-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.tag-badge {
+  background: var(--unesco-blue-pale, #E3F2FD);
+  color: var(--unesco-blue, #0069B4);
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border: 1px solid rgba(0, 105, 180, 0.1);
+}
+
+.tag-more {
+  background: #f8f9fa;
+  color: #6c757d;
+  border-color: #e9ecef;
+}
+
+/* Card Actions */
+.card-actions {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: auto;
+  padding-top: 1rem;
+}
+
+.dataset-action-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.3s ease;
+  font-size: 0.875rem;
+}
+
+.dataset-action-btn.btn-primary {
+  background: linear-gradient(135deg, var(--unesco-blue, #0069B4) 0%, var(--unesco-blue-dark, #005A9C) 100%);
+  border: none;
+  color: white;
+}
+
+.dataset-action-btn.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 105, 180, 0.3);
+  color: white;
+}
+
+.dataset-action-btn.btn-outline-secondary {
+  background: white;
+  border: 2px solid #dee2e6;
+  color: #495057;
+}
+
+.dataset-action-btn.btn-outline-secondary:hover {
+  background: var(--unesco-blue-pale, #E3F2FD);
+  border-color: var(--unesco-blue, #0069B4);
+  color: var(--unesco-blue, #0069B4);
+  transform: translateY(-1px);
+}
+
+/* Empty State */
+.featured-datasets-empty {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: #6c757d;
+}
+
+.empty-state-content i {
+  color: var(--unesco-blue, #0069B4);
+  margin-bottom: 1.5rem;
+  opacity: 0.7;
+}
+
+.empty-state-content h3 {
+  font-size: 1.5rem;
+  color: #495057;
+  margin-bottom: 1rem;
+}
+
+.empty-state-content p {
+  font-size: 1rem;
+  margin: 0;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .featured-datasets-grid {
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .featured-datasets-grid > div {
+    max-width: 100%;
+    min-width: 100%;
+  }
+  
+  .featured-dataset-card .cardsmall {
+    min-height: 400px;
+  }
+  
+  .card-image-container {
+    height: 150px;
+  }
+  
+  .featured-dataset-card .cardsmall-body {
+    padding: 1rem;
+    gap: 0.75rem;
+  }
+  
+  .cardsmall-title {
+    font-size: 1.125rem;
+  }
+  
+  .dataset-metadata {
+    gap: 0.25rem;
+  }
+  
+  .card-actions {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .dataset-action-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 480px) {
+  .featured-dataset-card .cardsmall {
+    min-height: 350px;
+  }
+  
+  .card-image-container {
+    height: 120px;
+  }
+  
+  .cardsmall-title {
+    font-size: 1rem;
+  }
+  
+  .dataset-action-btn {
+    padding: 0.5rem 0.75rem;
+    font-size: 0.8rem;
+  }
+}
+</style>
+
+<!-- JavaScript for Enhanced Functionality -->
+<script>
+// Enhanced toggle function for dataset descriptions
+function toggleDatasetDescription(button) {
+  const description = button.closest('.dataset-description');
+  const preview = description.querySelector('.excerpt-preview');
+  const full = description.querySelector('.excerpt-full');
+  const icon = button.querySelector('i');
+  const text = button.querySelector('.btn-text');
+  
+  if (full.style.display === 'none') {
+    // Show full description
+    preview.style.display = 'none';
+    full.style.display = 'block';
+    icon.className = 'fa fa-minus';
+    text.textContent = '{{ _("Read less") }}';
+    button.classList.add('expanded');
+  } else {
+    // Show preview
+    preview.style.display = 'block';
+    full.style.display = 'none';
+    icon.className = 'fa fa-plus';
+    text.textContent = '{{ _("Read more") }}';
+    button.classList.remove('expanded');
+  }
+}
+
+// Add loading states for action buttons
+document.addEventListener('DOMContentLoaded', function() {
+  const actionButtons = document.querySelectorAll('.dataset-action-btn');
+  
+  actionButtons.forEach(button => {
+    button.addEventListener('click', function() {
+      if (!this.classList.contains('btn-outline-secondary')) {
+        const icon = this.querySelector('i');
+        const originalClass = icon.className;
+        icon.className = 'fa fa-spinner fa-spin';
+        
+        setTimeout(() => {
+          icon.className = originalClass;
+        }, 1000);
+      }
+    });
+  });
+});
+
+// Implement intersection observer for lazy loading improvements
+if ('IntersectionObserver' in window) {
+  const imageObserver = new IntersectionObserver((entries, observer) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const img = entry.target;
+        img.classList.add('loaded');
+        observer.unobserve(img);
+      }
+    });
+  });
+  
+  document.querySelectorAll('.cardsmall-img-top2').forEach(img => {
+    imageObserver.observe(img);
+  });
+}
+</script>
