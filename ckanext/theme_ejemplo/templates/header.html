@@ -8,8 +8,8 @@
           {% if c.userobj %}
             <div class="account account-logged-in">
               {{ h.build_nav_main(
-                ('user.read', _('View profile'), {'id': c.userobj.name}),
-                ('user.edit', _('Edit profile'), {'id': c.userobj.name}),
+                ('user.read', _('View profile'), {'id': c.userobj.name}, 'icon-user'),
+                ('user.edit', _('Edit profile'), {'id': c.userobj.name}, 'icon-cog'),
                 ('user.logout', _('Logout'))
               ) }}
             </div>
