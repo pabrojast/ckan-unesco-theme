@@ -20,6 +20,7 @@ from ckanext.theme_ejemplo.controller import MyLogica
 from . import helpers
 import logging
 from functools import lru_cache
+from babel import Locale
 
 # Configurar logging
 log = logging.getLogger(__name__)
@@ -265,7 +266,9 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                  'get_featured_datasets': self.get_featured_datasets,  # Nuevo helper añadido
                  'get_organization_image_by_name': self.get_organization_image_by_name,  # Cambio de nombre del helper
                  'get_featured_datasets_filtered': self.get_featured_datasets_filtered,
-                 'theme_ejemplo_get_paged_resources': helpers.get_paged_resources
+                 'theme_ejemplo_get_paged_resources': helpers.get_paged_resources,
+                 # Devuelve el nombre legible de un código de idioma, p.ej. 'es' -> 'Español'
+                 'get_lang_name': self._get_lang_name
                  }
         
         @lru_cache(maxsize=32)  # Cache para evitar llamadas repetidas
@@ -377,3 +380,14 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
             except Exception as e:
                 log.error(f"Error getting organization image for {dataset_name}: {e}")
                 return None
+
+        def _get_lang_name(self, lang_code):
+            """Devuelve un nombre descriptivo para un código de idioma.
+            Si Babel no reconoce el código, devuelve el código tal cual.
+            """
+            try:
+                locale = Locale.parse(lang_code)
+                # get_display_name devuelve nombre en minúsculas; capitalizar primera letra
+                return locale.get_display_name(lang_code).capitalize()
+            except Exception:
+                return lang_code
