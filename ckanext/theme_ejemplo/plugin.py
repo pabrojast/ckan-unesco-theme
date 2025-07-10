@@ -42,8 +42,17 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
         plugins.implements(plugins.IPackageController, inherit=True)
         plugins.implements(plugins.ITranslation)  # Implementar ITemplateHelpers
 
-        def __init__(self):
-            super().__init__()
+        def __init__(self, *args, name=None, **kwargs):
+            """Inicializa el plugin.
+
+            Acepta el parámetro ``name`` (añadido por CKAN >=2.10) para
+            garantizar compatibilidad. Se propaga cualquier argumento extra a
+            la clase base.
+            """
+            # Llamar al inicializador de la clase base (SingletonPlugin)         
+            super().__init__(*args, **kwargs)
+            # Guardar el nombre que CKAN inyecta al instanciar el plugin
+            self.name = name or getattr(self, "name", None)
             # Cache para mejorar rendimiento
             self._organization_cache = {}
         
