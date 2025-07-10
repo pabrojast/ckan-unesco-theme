@@ -1,7 +1,7 @@
 <div class="module-content box">
   <div>
     <section class="module module-narrow module-shallow">
-      <div class="section-title" style="margin-bottom: 0.5rem;">
+      <div class="section-title section-title-enhanced" style="margin-bottom: 0.5rem;">
         <div class="section-title-bg" style="background-image: url('/Landing_page/Content/IHPTITLE01MANAGEMENT.jpg');"></div>
         <div class="section-title-overlay"></div>
         <div class="section-title-content">
@@ -11,7 +11,36 @@
       </div>
     </section>
 
-      <div class="col-lg-6"><div class="card card-height-fixed card-cta card-hero"> <img class="card-img-top image-style-card-1-column" src="./Landing_page/Content/data_catalogue_button1.png" width="289" height="424" alt="" loading="lazy"><div class="card-body"><div class="card-text"><p>{% trans %}At UNESCO, we believe in the power of open collaboration and the principles of Open Science, leveraging open-source technology to provide a seamless experience for users. The platform's Data Catalogue and Management System stand as a testament to this commitment, offering a robust repository for all IHP-relevant datasets. UNESCO's Water Family can contribute and access information in various formats, enabling a diverse and inclusive data-sharing environment. UNESCO believes in harnessing the power of data to advance global goals for a sustainable future.{% endtrans %}</p></div><div class="field field--name-field-link field--type-link field--label-hidden field__item"><a href="/dataset/" class="btn btn-primary btn-arrow-right" target="_blank">{% trans %}Discover Datasets{% endtrans %}</a></div></div></div></div>
+    <div class="col-lg-6">
+      <div class="card card-enhanced card-height-fixed card-cta card-hero content-wrapper-enhanced hover-lift"> 
+        <img class="card-img-enhanced image-style-card-1-column" src="./Landing_page/Content/data_catalogue_button1.png" width="289" height="424" alt="{{ _('Data Catalogue and Management System') }}" loading="lazy">
+        <div class="card-body content-body-enhanced">
+          <div class="card-text-enhanced">
+            <div class="text-content">
+              {% set description_text = _('At UNESCO, we believe in the power of open collaboration and the principles of Open Science, leveraging open-source technology to provide a seamless experience for users. The platform\'s Data Catalogue and Management System stand as a testament to this commitment, offering a robust repository for all IHP-relevant datasets. UNESCO\'s Water Family can contribute and access information in various formats, enabling a diverse and inclusive data-sharing environment. UNESCO believes in harnessing the power of data to advance global goals for a sustainable future.') %}
+              {% if description_text|length > 300 %}
+                <div class="text-preview">{{ description_text[:300] }}...</div>
+                <div class="text-full">{{ description_text }}</div>
+                <button type="button" class="read-more-btn" onclick="toggleReadMore(this)">
+                  <i class="fa fa-plus"></i>
+                  <span class="read-more-text">{{ _("Leer más") }}</span>
+                </button>
+              {% else %}
+                <p>{{ description_text }}</p>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+        <div class="content-footer-enhanced">
+          <div class="field field--name-field-link field--type-link field--label-hidden field__item">
+            <a href="/dataset/" class="btn btn-primary-enhanced btn-arrow-right" target="_blank">
+              <i class="fa fa-database"></i>
+              {{ _('Discover Datasets') }}
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
 
   </div>
 </div>

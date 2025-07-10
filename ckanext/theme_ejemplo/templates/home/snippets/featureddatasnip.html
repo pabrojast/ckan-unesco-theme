@@ -1,15 +1,45 @@
 {% set featured_datasets = h.get_featured_datasets_filtered(tag='FeaturedDataset', user='8ad64841-340c-49dc-8716-c6b61ea4b111') %}
 {% for dataset in featured_datasets %}
-<div class="col-md-4 col3">
-<div class="col-small"><div class="cardsmall cardsmall-height-fixed cardsmall-cta cardsmall-hero"> 
-{% set org_image_url = h.get_organization_image_by_name(dataset['name']) %}
-{% if org_image_url %}
-<img class="cardsmall-img-top2 image-style-cardsmall-1-column" src="{{ org_image_url }}" width="289" height="424" alt="" loading="lazy"><div class="cardsmall-body">
-{% else %}
-<img class="cardsmall-img-top2 image-style-cardsmall-1-column" src="./Landing_page/Content/data_catalogue_button1.png" width="289" height="424" alt="" loading="lazy"><div class="cardsmall-body">
-{% endif %}
-        <div class="cardsmall-title">{{ dataset['title'] }}</div><div class="cardsmall-text">
-            <p>{{ dataset['notes'] }}</p></div></div><div class="field field--name-field-link field--type-link field--label-hidden field__item">
-                <a href="{{ h.url_for('dataset.read', id=dataset['name']) }}" class="btn btn-primary btn-arrow-right" target="_blank">{{ _("Discover") }}</a></div></div></div>
+<div class="col-md-4 col3 col-enhanced">
+  <div class="col-small">
+    <div class="cardsmall cardsmall-enhanced cardsmall-height-fixed cardsmall-cta cardsmall-hero content-wrapper-enhanced hover-lift"> 
+      {% set org_image_url = h.get_organization_image_by_name(dataset['name']) %}
+      {% if org_image_url %}
+        <img class="cardsmall-img-top2-enhanced image-style-cardsmall-1-column" src="{{ org_image_url }}" width="289" height="424" alt="{{ dataset['title'] }}" loading="lazy">
+      {% else %}
+        <img class="cardsmall-img-top2-enhanced image-style-cardsmall-1-column" src="./Landing_page/Content/data_catalogue_button1.png" width="289" height="424" alt="{{ dataset['title'] }}" loading="lazy">
+      {% endif %}
+      
+      <div class="cardsmall-body-enhanced content-body-enhanced">
+        <div class="cardsmall-title-enhanced">
+          <a href="{{ h.url_for('dataset.read', id=dataset['name']) }}" title="{{ dataset['title'] }}">{{ dataset['title'] }}</a>
+        </div>
+        
+        <div class="cardsmall-text-enhanced">
+          <div class="text-content">
+            {% if dataset['notes'] and dataset['notes']|length > 200 %}
+              <div class="text-preview">{{ dataset['notes'][:200] }}{% if dataset['notes']|length > 200 %}...{% endif %}</div>
+              <div class="text-full">{{ dataset['notes'] }}</div>
+              <button type="button" class="read-more-btn" onclick="toggleReadMore(this)">
+                <i class="fa fa-plus"></i>
+                <span class="read-more-text">{{ _("Leer más") }}</span>
+              </button>
+            {% else %}
+              <p>{{ dataset['notes'] or _("Sin descripción disponible") }}</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      
+      <div class="content-footer-enhanced">
+        <div class="field field--name-field-link field--type-link field--label-hidden field__item">
+          <a href="{{ h.url_for('dataset.read', id=dataset['name']) }}" class="btn btn-primary-enhanced btn-arrow-right" target="_blank">
+            <i class="fa fa-eye"></i>
+            {{ _("Descubrir") }}
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 {% endfor %}

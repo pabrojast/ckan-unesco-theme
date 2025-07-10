@@ -1,17 +1,42 @@
 {% set courses = h.get_latest_courses() %}
 {% if courses %}
     {% for course in courses %}
-    <div class="col-md-3 col4">
+    <div class="col-md-3 col4 col-enhanced">
         <div class="col-small">
-            <div class="cardsmall cardsmall-height-fixed cardsmall-cta cardsmall-hero">
-                <img class="cardsmall-img-top image-style-cardsmall-1-column" src="{{ course['media']['image']['raw'] }}" width="289" height="424" alt="" loading="lazy">
-                <div class="cardsmall-body">
-                    <p>{{ course['org'] }}</p>
-                    <div class="cardsmall-title">
-                        <a href="https://openlearning.unesco.org/courses/{{ course['course_id'] }}/about">{{ course['name'] }}</a>
+            <div class="cardsmall cardsmall-enhanced cardsmall-height-fixed cardsmall-cta cardsmall-hero content-wrapper-enhanced hover-lift">
+                <img class="cardsmall-img-enhanced image-style-cardsmall-1-column" src="{{ course['media']['image']['raw'] }}" width="289" height="424" alt="{{ course['name'] }}" loading="lazy">
+                <div class="cardsmall-body-enhanced content-body-enhanced">
+                    <p class="text-muted-enhanced" style="margin-bottom: 0.5rem; font-size: 0.9rem;">{{ course['org'] }}</p>
+                    <div class="cardsmall-title-enhanced">
+                        <a href="https://openlearning.unesco.org/courses/{{ course['course_id'] }}/about" title="{{ course['name'] }}" target="_blank">{{ course['name'] }}</a>
                     </div>
-                    <div class="cardsmall-text">
-                        <p>{% trans %}Start:{% endtrans %} {{ course['start_display'] }}</p>
+                    <div class="cardsmall-text-enhanced">
+                        <div class="text-content">
+                            {% if course['description'] and course['description']|length > 150 %}
+                                <div class="text-preview">{{ course['description'][:150] }}{% if course['description']|length > 150 %}...{% endif %}</div>
+                                <div class="text-full">{{ course['description'] }}</div>
+                                <button type="button" class="read-more-btn" onclick="toggleReadMore(this)">
+                                    <i class="fa fa-plus"></i>
+                                    <span class="read-more-text">{{ _("Leer más") }}</span>
+                                </button>
+                            {% else %}
+                                <p style="margin-bottom: 0.5rem;">
+                                    <i class="fa fa-calendar text-unesco-blue"></i>
+                                    <strong>{% trans %}Inicio:{% endtrans %}</strong> {{ course['start_display'] }}
+                                </p>
+                                {% if course['description'] %}
+                                    <p>{{ course['description'] }}</p>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+                <div class="content-footer-enhanced">
+                    <div class="field field--name-field-link field--type-link field--label-hidden field__item">
+                        <a href="https://openlearning.unesco.org/courses/{{ course['course_id'] }}/about" class="btn btn-primary-enhanced" target="_blank">
+                            <i class="fa fa-graduation-cap"></i>
+                            {{ _("Ver Curso") }}
+                        </a>
                     </div>
                 </div>
             </div>
