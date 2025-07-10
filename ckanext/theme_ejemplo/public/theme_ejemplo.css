@@ -1496,28 +1496,117 @@ h2.page-heading {
 .section-title-enhanced {
   position: relative;
   margin-bottom: 2rem;
-  border-radius: var(--border-radius);
+  border-radius: 16px;
   overflow: hidden;
-  box-shadow: var(--shadow-medium);
-  height: 180px;
+  box-shadow: 0 4px 16px rgba(0, 114, 188, 0.12);
+  height: 200px;
   display: flex;
   align-items: center;
-  transition: var(--transition);
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  cursor: pointer;
 }
 
-.section-title-enhanced:hover {
-  box-shadow: var(--shadow-strong);
+/* Soporte para preferencias de movimiento reducido */
+@media (prefers-reduced-motion: reduce) {
+  .section-title-enhanced,
+  .section-title-enhanced .section-title-bg,
+  .section-title-enhanced .section-title-overlay,
+  .section-title-enhanced .section-title-content {
+    transition: none;
+  }
+  
+  .section-title-enhanced:hover,
+  .section-title-enhanced:focus-within {
+    transform: none;
+  }
+  
+  .section-title-enhanced:hover .section-title-bg,
+  .section-title-enhanced:hover .section-title-content {
+    transform: none;
+  }
+}
+
+/* Efectos de presión táctil para dispositivos móviles */
+@media (hover: none) and (pointer: coarse) {
+  .section-title-enhanced:active {
+    transform: scale(0.98);
+  }
+  
+  .section-title-enhanced:active .section-title-content {
+    transform: scale(0.98);
+  }
+}
+
+.section-title-enhanced:hover,
+.section-title-enhanced:focus-within {
+  box-shadow: 0 8px 32px rgba(0, 114, 188, 0.16);
+  transform: translateY(-2px);
+}
+
+.section-title-enhanced:focus-within {
+  outline: 2px solid rgba(255, 255, 255, 0.5);
+  outline-offset: 2px;
+}
+
+.section-title-enhanced .section-title-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: brightness(0.8);
+  transition: transform 0.3s ease;
+}
+
+.section-title-enhanced:hover .section-title-bg {
+  transform: scale(1.02);
+}
+
+.section-title-enhanced .section-title-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(0, 114, 188, 0.9) 0%, rgba(0, 158, 224, 0.8) 100%);
+  backdrop-filter: blur(2px);
+  transition: opacity 0.3s ease;
+}
+
+.section-title-enhanced:hover .section-title-overlay {
+  opacity: 0.95;
 }
 
 .section-title-enhanced .section-title-content {
+  position: relative;
+  z-index: 10;
   padding: 2rem 2.5rem;
+  color: white;
+  text-align: center;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100%;
+  transition: transform 0.3s ease;
+}
+
+.section-title-enhanced:hover .section-title-content {
+  transform: scale(1.02);
 }
 
 .section-title-enhanced h2 {
-  font-size: 2.25rem;
+  font-size: 2.5rem;
   font-weight: 700;
-  margin-bottom: 0.75rem;
-  text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+  margin-bottom: 1rem;
+  text-shadow: 2px 2px 8px rgba(0,0,0,0.4);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
 }
 
 .section-title-enhanced .section-title-description {
@@ -1525,7 +1614,9 @@ h2.page-heading {
   font-weight: 300;
   opacity: 0.95;
   max-width: 85%;
-  text-shadow: 1px 1px 2px rgba(0,0,0,0.3);
+  margin: 0 auto;
+  text-shadow: 1px 1px 4px rgba(0,0,0,0.4);
+  line-height: 1.4;
 }
 
 /* ===== MEJORAS EN BADGES ===== */
@@ -1638,15 +1729,19 @@ h2.page-heading {
 
 @media (max-width: 768px) {
   .section-title-enhanced {
-    height: 160px;
+    height: 180px;
   }
   
   .section-title-enhanced h2 {
-    font-size: 1.75rem;
+    font-size: 2rem;
   }
   
   .section-title-enhanced .section-title-description {
-    font-size: 1rem;
+    font-size: 1.1rem;
+  }
+  
+  .section-title-enhanced .section-title-content {
+    padding: 1.5rem 2rem;
   }
   
   .cardsmall-title-enhanced {
@@ -1669,15 +1764,15 @@ h2.page-heading {
 
 @media (max-width: 576px) {
   .section-title-enhanced {
-    height: 140px;
+    height: 160px;
   }
   
   .section-title-enhanced h2 {
-    font-size: 1.5rem;
+    font-size: 1.8rem;
   }
   
   .section-title-enhanced .section-title-description {
-    font-size: 0.9rem;
+    font-size: 1rem;
   }
   
   .cardsmall-body-enhanced {
