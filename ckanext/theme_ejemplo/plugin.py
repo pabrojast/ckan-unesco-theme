@@ -9,7 +9,12 @@ from ckan.lib.plugins import DefaultTranslation
 import shapely.geometry
 import requests
 import json
-import ckanext.schemingdcat.utils as utils
+try:
+    import ckanext.schemingdcat.utils as utils
+    SCHEMINGDCAT_AVAILABLE = True
+except ImportError:
+    SCHEMINGDCAT_AVAILABLE = False
+    utils = None
 from flask import Blueprint
 from ckanext.theme_ejemplo.controller import MyLogica
 from . import helpers
@@ -37,8 +42,8 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
         plugins.implements(plugins.IPackageController, inherit=True)
         plugins.implements(plugins.ITranslation)  # Implementar ITemplateHelpers
 
-        def __init__(self, name=None):
-            super().__init__(name=name)
+        def __init__(self):
+            super().__init__()
             # Cache para mejorar rendimiento
             self._organization_cache = {}
         
@@ -137,6 +142,9 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
 
         def _process_facets(self, dataset_dict):
             """Procesamiento optimizado de facetas"""
+            if not SCHEMINGDCAT_AVAILABLE or not utils:
+                return
+                
             try:
                 facets_dict = utils.get_facets_dict()
                 for facet, label in facets_dict.items():
