@@ -23,7 +23,7 @@ function toggleReadMore(button) {
             textFull.classList.remove('show');
             textPreview.classList.remove('hide');
             icon.className = 'fa fa-plus';
-            textSpan.textContent = textSpan.getAttribute('data-more-text') || 'Leer más';
+            textSpan.textContent = textSpan.getAttribute('data-more-text') || 'Read more';
             button.classList.remove('expanded');
             
             // Animación suave al colapsar
@@ -38,7 +38,7 @@ function toggleReadMore(button) {
             textPreview.classList.add('hide');
             textFull.classList.add('show');
             icon.className = 'fa fa-minus';
-            textSpan.textContent = textSpan.getAttribute('data-less-text') || 'Leer menos';
+            textSpan.textContent = textSpan.getAttribute('data-less-text') || 'Read less';
             button.classList.add('expanded');
             
             // Animación suave al expandir
@@ -150,12 +150,12 @@ function toggleExpandableContent(element) {
             content.classList.remove('collapsed');
             content.classList.add('expanded');
             if (overlay) overlay.style.opacity = '0';
-            element.textContent = 'Mostrar menos';
+            element.textContent = 'Show less';
         } else {
             content.classList.remove('expanded');
             content.classList.add('collapsed');
             if (overlay) overlay.style.opacity = '1';
-            element.textContent = 'Mostrar más';
+            element.textContent = 'Show more';
         }
     } catch (error) {
         console.error('Error en toggleExpandableContent:', error);

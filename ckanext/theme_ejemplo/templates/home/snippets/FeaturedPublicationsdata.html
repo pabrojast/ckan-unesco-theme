@@ -5,15 +5,26 @@
     {% set imagen_unesdoc = dataset['image'] | default(dataset['unesdocimage']) | default('/Landing_page/Content/data_catalogue_button1.png') %}
     {% set url_unesdoc = dataset['unesdocurl'] | default(dataset['url']) | default('https://unesdoc.unesco.org/') %}
 
-    <div class="col-md-4 mb-4">
-      <div class="cardsmall cardsmall-height-fixed cardsmall-cta cardsmall-hero h-100"> 
-        <img class="cardsmall-img-top image-style-cardsmall-1-column" src="{{ imagen_unesdoc }}" width="289" height="180" alt="" loading="lazy">
-        <div class="cardsmall-body d-flex flex-column">
-          <div class="cardsmall-title">{{ dataset['title'] }}</div>
-          <div class="cardsmall-text flex-grow-1">
-            <p>{{ dataset['notes'] }}</p>
+    <div class="col-md-4 mb-4 col-enhanced">
+      <div class="cardsmall cardsmall-enhanced cardsmall-height-fixed cardsmall-cta cardsmall-hero h-100 content-wrapper-enhanced hover-lift"> 
+        <img class="cardsmall-img-enhanced image-style-cardsmall-1-column" src="{{ imagen_unesdoc }}" width="289" height="180" alt="{{ dataset['title'] }}" loading="lazy">
+        <div class="cardsmall-body-enhanced content-body-enhanced d-flex flex-column">
+          <div class="cardsmall-title-enhanced">{{ dataset['title'] }}</div>
+          <div class="cardsmall-text-enhanced flex-grow-1">
+            <div class="text-content">
+              {% if dataset['notes'] and dataset['notes']|length > 200 %}
+                <div class="text-preview">{{ dataset['notes'][:200] }}{% if dataset['notes']|length > 200 %}...{% endif %}</div>
+                <div class="text-full">{{ dataset['notes'] }}</div>
+                <button type="button" class="read-more-btn" onclick="toggleReadMore(this)">
+                  <i class="fa fa-plus"></i>
+                  <span class="read-more-text">{{ _("Read more") }}</span>
+                </button>
+              {% else %}
+                <p>{{ dataset['notes'] or _("No description available") }}</p>
+              {% endif %}
+            </div>
           </div>
-          <div class="field field--name-field-link field--type-link field--label-hidden field__item mt-auto">
+          <div class="content-footer-enhanced field field--name-field-link field--type-link field--label-hidden field__item mt-auto">
             <a href="{{ url_unesdoc }}" class="btn btn-primary btn-arrow-right" target="_blank">{{ _("Discover") }}</a>
           </div>
         </div>

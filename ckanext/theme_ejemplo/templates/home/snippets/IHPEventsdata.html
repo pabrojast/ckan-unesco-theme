@@ -1,24 +1,47 @@
 {% set posts = h.get_recent_blog_posts(number=6) %}
 {% for post in posts %}
-<div class="col-md-4 col3">
-<div class="col-small">
-    <div class="cardsmall cardsmall-height-fixed cardsmall-cta cardsmall-hero"> 
-        {% if post.image %}
-
-            <img class="cardsmall-img-top image-style-cardsmall-1-column" src="{{ post.image }}" width="289" height="424" alt="" loading="lazy"><div class="cardsmall-body">
-
-        {%else %}
-
-        <img class="cardsmall-img-top image-style-cardsmall-1-column" src="./Landing_page/Content/data_catalogue_button1.png" width="289" height="424" alt="" loading="lazy"><div class="cardsmall-body">
-
+<div class="col-md-4 col3 col-enhanced">
+  <div class="col-small">
+    <div class="cardsmall cardsmall-enhanced cardsmall-height-fixed cardsmall-cta cardsmall-hero content-wrapper-enhanced hover-lift"> 
+      {% if post.image %}
+        <img class="cardsmall-img-enhanced image-style-cardsmall-1-column" src="{{ post.image }}" width="289" height="424" alt="{{ post.title or post.name }}" loading="lazy">
+      {% else %}
+        <img class="cardsmall-img-enhanced image-style-cardsmall-1-column" src="./Landing_page/Content/data_catalogue_button1.png" width="289" height="424" alt="{{ post.title or post.name }}" loading="lazy">
+      {% endif %}
+      
+      <div class="cardsmall-body-enhanced content-body-enhanced">
+        {% if post.publish_date %}
+          <p class="text-muted-enhanced" style="margin-bottom: 0.5rem; font-size: 0.9rem;">
+            <i class="fa fa-calendar text-unesco-blue"></i>
+            <small>{{ h.render_datetime(post.publish_date) }}</small>
+          </p>
         {% endif %}
         
-            {% if post.publish_date %}<p> 
-                <small> {{ h.render_datetime(post.publish_date) }} </small>
-            </p>
-                {% endif %}
-        <div class="cardsmall-title">{{ post.title or post.name }}</div><div class="cardsmall-text">
-                <p>{{ h.markdown_extract(post.content) }}</p></div><div class="field field--name-field-link field--type-link field--label-hidden field__item">
-            <a href="{{ h.url_for('pages.blog_show', page='' + post.name) }}" class="btn btn-primary btn-arrow-right" target="_blank">{% trans %}Read more{% endtrans %}</a></div></div></div></div>
+        <div class="cardsmall-title-enhanced">{{ post.title or post.name }}</div>
+        
+        <div class="cardsmall-text-enhanced">
+          <div class="text-content">
+            {% set content_text = h.markdown_extract(post.content) %}
+            {% if content_text and content_text|length > 200 %}
+              <div class="text-preview">{{ content_text[:200] }}{% if content_text|length > 200 %}...{% endif %}</div>
+              <div class="text-full">{{ content_text }}</div>
+              <button type="button" class="read-more-btn" onclick="toggleReadMore(this)">
+                <i class="fa fa-plus"></i>
+                <span class="read-more-text">{{ _("Read more") }}</span>
+              </button>
+            {% else %}
+              <p>{{ content_text or _("No content available") }}</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      
+      <div class="content-footer-enhanced">
+        <div class="field field--name-field-link field--type-link field--label-hidden field__item">
+          <a href="{{ h.url_for('pages.blog_show', page='' + post.name) }}" class="btn btn-primary btn-arrow-right" target="_blank">{% trans %}Read full article{% endtrans %}</a>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 {% endfor %}
