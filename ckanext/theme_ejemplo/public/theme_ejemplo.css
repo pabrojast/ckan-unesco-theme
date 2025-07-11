@@ -1491,6 +1491,21 @@ h2.page-heading {
   transform: scale(1.02);
 }
 
+/* Clase específica para imágenes de Thematic Viewers */
+.cardsmall-img-thematic-enhanced {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  padding: 0;
+  background: white;
+  border-radius: var(--border-radius) var(--border-radius) 0 0;
+  transition: var(--transition);
+}
+
+.cardsmall-enhanced:hover .cardsmall-img-thematic-enhanced {
+  transform: scale(1.05);
+}
+
 /* ===== MEJORAS EN SECCIÓN DE TÍTULO ===== */
 
 .section-title-enhanced {
