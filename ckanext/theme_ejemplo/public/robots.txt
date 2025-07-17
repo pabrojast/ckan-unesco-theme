@@ -1,4 +1,8 @@
 User-agent: *
-Crawl-delay: 10
+Crawl-delay: 20
 Disallow: /dataset/?  # bloquea facetadas
 Allow: /dataset/*/    # permite páginas de cada dataset
+Disallow: /dataset/rate/
+Disallow: /revision/
+Disallow: /dataset/*/history
+Disallow: /api/
