@@ -1,5 +1,23 @@
-// Bootstrap 3.3.7
-@import "bootstrap.less";
+// Bootstrap 5.3.3 - Importado como CSS compilado
+// CKAN Theme Bootstrap 5 Integration
 
-// CKAN
+// Importar Bootstrap 5 CSS compilado
+@import (inline) "../vendor/bootstrap/css/bootstrap.css";
+
+// Importar estilos específicos de CKAN
 @import "ckan.less";
+
+// Variables y overrides personalizados
+@import "variables.less";
+
+// Componentes personalizados del theme
+@import "components.less";
+
+// Responsive overrides
+@import "responsive.less";
+
+// Utilidades adicionales
+@import "utilities.less";
+
+// Theme específico UNESCO
+@import "theme-unesco.less";

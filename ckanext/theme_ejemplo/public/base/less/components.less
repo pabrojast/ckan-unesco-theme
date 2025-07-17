@@ -1,0 +1,70 @@
+// Componentes personalizados para Bootstrap 5
+// Overrides específicos para CKAN con Bootstrap 5
+
+// Formularios - Compatibilidad con Bootstrap 5
+.form-group {
+  margin-bottom: 1rem;
+}
+
+// Botones - Mantener compatibilidad
+.btn-default {
+  @extend .btn-secondary;
+}
+
+// Paneles convertidos a Cards
+.panel {
+  @extend .card;
+}
+
+.panel-heading {
+  @extend .card-header;
+}
+
+.panel-body {
+  @extend .card-body;
+}
+
+.panel-footer {
+  @extend .card-footer;
+}
+
+// Compatibilidad con clases de texto
+.text-left {
+  text-align: left !important;
+}
+
+.text-right {
+  text-align: right !important;
+}
+
+.pull-left {
+  float: left !important;
+}
+
+.pull-right {
+  float: right !important;
+}
+
+// Grid system compatibility
+.col-xs-1, .col-xs-2, .col-xs-3, .col-xs-4, .col-xs-5, .col-xs-6,
+.col-xs-7, .col-xs-8, .col-xs-9, .col-xs-10, .col-xs-11, .col-xs-12 {
+  position: relative;
+  min-height: 1px;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+@media (min-width: 576px) {
+  .col-xs-1 { width: 8.33333333%; }
+  .col-xs-2 { width: 16.66666667%; }
+  .col-xs-3 { width: 25%; }
+  .col-xs-4 { width: 33.33333333%; }
+  .col-xs-5 { width: 41.66666667%; }
+  .col-xs-6 { width: 50%; }
+  .col-xs-7 { width: 58.33333333%; }
+  .col-xs-8 { width: 66.66666667%; }
+  .col-xs-9 { width: 75%; }
+  .col-xs-10 { width: 83.33333333%; }
+  .col-xs-11 { width: 91.66666667%; }
+  .col-xs-12 { width: 100%; }
+}

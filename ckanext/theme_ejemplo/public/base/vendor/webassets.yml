@@ -49,6 +49,7 @@ bootstrap:
       - vendor/font-awesome
       - vendor/jquery
       - vendor/bootstrap-css
+      - vendor/bootstrap-css
   contents:
     - bootstrap.js
 
