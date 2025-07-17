@@ -1,0 +1,56 @@
+{% extends "page.html" %}
+{% block title %}
+TerriaJS Catalog Processor - {{ super() }}
+{% endblock %}
+
+{% block subtitle %}{{ _('TerriaJS Catalog Processor') }}{% endblock %}
+
+{% block breadcrumb_content %}
+<li class="active"><a href="{{ h.url_for('/thematicbuilder') }}">{% trans %}Thematic Builder Processor{% endtrans %}</a></li>
+{% endblock %}
+
+{% block primary_content_inner %}
+  <h1>{{ _('Thematic Builder') }}</h1>
+  
+  <div class="thematicbuilder-container">
+    <div class="input-selection-container">
+      <div class="input-option">
+        <h3>{{ _('Option 1: Upload File') }}</h3>
+        <input type="file" id="thematicbuilder-file-input" accept=".json" class="form-control">
+      </div>
+      
+      <div class="input-option">
+        <h3>{{ _('Option 2: Select Existing File') }}</h3>
+        <div class="file-select-container">
+          <div class="tag-filter">
+            <input type="checkbox" id="include-tags" checked>
+            <label for="include-tags">Include tag files</label>
+          </div>
+          <select id="thematicbuilder-file-select" class="form-control">
+            <option value="">{{ _('Select a file...') }}</option>
+          </select>
+        </div>
+      </div>
+    </div>
+    
+    <div class="thematicbuilder-search form-group">
+      <input type="text" id="thematicbuilder-search-input" placeholder="{{ _('Search by title...') }}" class="form-control">
+    </div>
+    
+    <div id="thematicbuilder-selected-count" class="alert alert-info">{{ _('Selected items:') }} 0</div>
+    
+    <ul id="thematicbuilder-item-list" class="thematicbuilder-list"></ul>
+    
+    <button id="thematicbuilder-download-btn" class="btn btn-success" style="display: none;">
+      {{ _('Download Modified JSON') }}
+    </button>
+  </div>
+
+  {# Incluir el código JavaScript y CSS #}
+  {% asset 'theme/thematicbuilder-js' %}
+  {% asset 'theme/thematicbuilder-css' %}
+{% endblock %}
+
+{% block secondary_content %}
+  {% snippet "thematicbuilder/snippets/helper.html" %}
+{% endblock %}

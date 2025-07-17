@@ -15,7 +15,7 @@ values      - A tuple of values for the (key, value, delete) fields. If delete
 is truthy the checkbox will be checked.
 placeholder - A tuple of placeholder text for the (key, value) fields.
 error       - A list of error strings for the field or just true to highlight the field.
-classes     - An array of classes to apply to the form-group.
+classes     - An array of classes to apply to the mb-3.
 is_required - Boolean of whether this input is requred for the form to validate
 
 Examples:
@@ -45,7 +45,7 @@ error=''
     </div>
     <div class="col-md-6">
     {% if values[0] or values[1] or error %}
-    <label class="checkbox pull-right" for="{{ id or names[2] }}-remove">
+    <label class="checkbox float-end" for="{{ id or names[2] }}-remove">
         <input type="checkbox" id="{{ id or names[2] }}-remove" name="{{ names[2] }}"{% if values[2] %} checked{% endif %} />
         <span class="btn btn-danger"><span class="fa fa-trash"></span><span class="sr-only">{{ _('Remove') }}</span></span>
     </label>

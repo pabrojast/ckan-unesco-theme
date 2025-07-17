@@ -9,7 +9,7 @@ label       - The human readable label.
 value       - The value of the input.
 checked     - If true the checkbox will be checked
 error       - An error string for the field or just true to highlight the field.
-classes     - An array of classes to apply to the form-group.
+classes     - An array of classes to apply to the mb-3.
 is_required - Boolean of whether this input is requred for the form to validate
 
 Example:
@@ -20,7 +20,7 @@ Example:
 #}
 {% macro checkbox(name, id='', label='', value='', checked=false, placeholder='', error="", classes=[], attrs={}, is_required=false) %}
 {%- set extra_html = caller() if caller -%}
-<div class="form-group{{ " " ~ classes | join(" ") }}{% if error %} error{% endif %}">
+<div class="mb-3{{ " " ~ classes | join(" ") }}{% if error %} error{% endif %}">
 <div class="controls">
     <label class="checkbox" for="{{ id or name }}">
     <input id="{{ id or name }}" type="checkbox" name="{{ name }}" value="{{ value | empty_and_escape }}" {{ "checked " if checked }} {{ attributes(attrs) }} />

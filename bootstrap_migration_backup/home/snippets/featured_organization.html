@@ -1,0 +1,8 @@
+{% set organizations = h.get_featured_organizations() %}
+<h3>{% trans %}Featured Organizations{% endtrans %}</h3>
+
+{% for organization in organizations %}
+  <div class="box">
+    {% snippet 'snippets/organization_item.html', organization=organization, truncate=50, truncate_title=35 %}
+  </div>
+{% endfor %}
