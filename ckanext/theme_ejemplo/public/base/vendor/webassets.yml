@@ -35,6 +35,12 @@ vendor:
     - select2/select2.js
     - qs.js
 
+bootstrap-css:
+  output: vendor/%(version)s_bootstrap.css
+  filters: cssrewrite
+  contents:
+    - bootstrap/css/bootstrap.css
+
 bootstrap:
   filters: rjsmin
   output: vendor/%(version)s_bootstrap.js
@@ -42,6 +48,7 @@ bootstrap:
     preload:
       - vendor/font-awesome
       - vendor/jquery
+      - vendor/bootstrap-css
   contents:
     - bootstrap.js
 
