@@ -21,7 +21,7 @@
         
         <div class="cardsmall-text-enhanced">
           <div class="text-content">
-            {% set content_text = h.markdown_extract(post.content) %}
+            {% set content_text = h.theme_ejemplo_markdown_excerpt(post.content) %}
             {% if content_text and content_text|length > 200 %}
               <div class="text-preview">{{ content_text[:200] }}{% if content_text|length > 200 %}...{% endif %}</div>
               <div class="text-full">{{ content_text }}</div>

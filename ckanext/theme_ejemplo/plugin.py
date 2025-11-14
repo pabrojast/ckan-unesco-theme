@@ -248,7 +248,8 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                  'get_featured_datasets': self.get_featured_datasets,  # Nuevo helper añadido
                  'get_organization_image_by_name': self.get_organization_image_by_name,  # Cambio de nombre del helper
                  'get_featured_datasets_filtered': self.get_featured_datasets_filtered,
-                 'theme_ejemplo_get_paged_resources': helpers.get_paged_resources
+                 'theme_ejemplo_get_paged_resources': helpers.get_paged_resources,
+                 'theme_ejemplo_markdown_excerpt': helpers.markdown_excerpt
                  }
         
         @lru_cache(maxsize=32)  # Cache para evitar llamadas repetidas

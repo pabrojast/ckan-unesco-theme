@@ -1,5 +1,5 @@
 from random import random
-from flask import render_template, request, abort
+from flask import render_template, abort
 import ckan.plugins.toolkit as toolkit
 import ckan.model as model
 import ckan.logic as logic
@@ -76,9 +76,9 @@ class MyLogica():
             if request.method == 'GET':
                 try:
                     # Obtener parámetros
-                    q = c.q = request.params.get('q', '')
-                    sort_by = c.sort_by_selected = request.params.get('sort')
-                    page = h.get_page_number(request.params) or 1
+                    q = c.q = request.args.get('q', '')
+                    sort_by = c.sort_by_selected = request.args.get('sort')
+                    page = h.get_page_number(request.args) or 1
                     items_per_page = 21
                     
                     # Obtener grupos de member-states desde cache
@@ -180,9 +180,9 @@ class MyLogica():
             if request.method == 'GET':
                 try:
                     # Obtener parámetros
-                    q = c.q = request.params.get('q', '')
-                    sort_by = c.sort_by_selected = request.params.get('sort')
-                    page = h.get_page_number(request.params) or 1
+                    q = c.q = request.args.get('q', '')
+                    sort_by = c.sort_by_selected = request.args.get('sort')
+                    page = h.get_page_number(request.args) or 1
                     items_per_page = 21
                     
                     # Obtener grupos de member-states desde cache (sin incluir el principal)

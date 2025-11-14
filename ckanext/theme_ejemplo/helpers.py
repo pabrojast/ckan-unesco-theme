@@ -1,4 +1,6 @@
 from ckan.plugins import toolkit
+from jinja2.filters import do_truncate
+from markupsafe import Markup
 
 def get_paged_resources(package_id, page=1, items_per_page=10):
     """
@@ -28,3 +30,14 @@ def get_paged_resources(package_id, page=1, items_per_page=10):
             'resources': [],
             'total': 0
         }
+
+def markdown_excerpt(text, length=180, killwords=False, end='...'):
+    """
+    Render markdown and return a plain-text excerpt without relying on deprecated helpers.
+    """
+    if not text:
+        return ''
+
+    rendered = toolkit.render_markdown(text)
+    plain_text = Markup(rendered).striptags()
+    return do_truncate(plain_text, length=length, killwords=killwords, end=end)

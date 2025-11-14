@@ -25,7 +25,7 @@
   {% block resource_item_description %}
     <p class="description">
       {% if res.description %}
-        {{ h.markdown_extract(h.get_translated(res, 'description'), extract_length=80) }}
+        {{ h.theme_ejemplo_markdown_excerpt(h.get_translated(res, 'description'), 80) }}
       {% endif %}
     </p>
   {% endblock %}
