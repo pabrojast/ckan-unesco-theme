@@ -41,4 +41,4 @@ def markdown_excerpt(text, length=180, killwords=False, end='...'):
 
     rendered = core_helpers.render_markdown(text)
     plain_text = Markup(rendered).striptags()
-    return do_truncate(plain_text, length=length, killwords=killwords, end=end)
+    return do_truncate(None, plain_text, length=length, killwords=killwords, end=end)
