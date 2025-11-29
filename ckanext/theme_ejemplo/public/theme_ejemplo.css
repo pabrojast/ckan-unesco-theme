@@ -156,7 +156,7 @@ border-radius: 0 0 3px 3px;
 }
 @media (min-width: 768px) {
     #main-navigation-toggle {
-        display: flex !important;
+        display: block !important;
     }
 }
   /* The "navigation pills" in the masthead (the links to Datasets,
