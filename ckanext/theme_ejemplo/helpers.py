@@ -1,5 +1,4 @@
 from ckan.plugins import toolkit
-from jinja2.filters import do_truncate
 from markupsafe import Markup
 from ckan.lib import helpers as core_helpers
 
@@ -41,4 +40,18 @@ def markdown_excerpt(text, length=180, killwords=False, end='...'):
 
     rendered = core_helpers.render_markdown(text)
     plain_text = Markup(rendered).striptags()
-    return do_truncate(None, plain_text, length=length, killwords=killwords, end=end)
+    
+    # Simple truncation without using Jinja2's do_truncate
+    if len(plain_text) <= length:
+        return plain_text
+    
+    if killwords:
+        truncated = plain_text[:length]
+    else:
+        # Find the last space before the limit
+        truncated = plain_text[:length]
+        last_space = truncated.rfind(' ')
+        if last_space > 0:
+            truncated = truncated[:last_space]
+    
+    return truncated + end
