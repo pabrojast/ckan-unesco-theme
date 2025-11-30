@@ -43,6 +43,7 @@ color: #fff !important;
 background: rgba(0, 0, 0, 0) !important;
 position: absolute !important;
 width: 100% !important;
+z-index: 1000 !important;
 }
 .masthead .logo img {
     width: 300px !important;
@@ -50,9 +51,22 @@ width: 100% !important;
 /*    max-width: 9.375rem !important; */
     padding: 15px 0;
     max-width: 16.375rem;
+    display: block !important;
+    visibility: visible !important;
 }
 .masthead .section {
     position: relative !important;
+}
+
+/* Asegurar que la navegación sea visible */
+.masthead .navigation .nav-pills {
+    display: flex !important;
+    visibility: visible !important;
+}
+
+.masthead .navbar-collapse {
+    display: block !important;
+    visibility: visible !important;
 }
 /* footer */
 .site-footer {
@@ -157,6 +171,11 @@ border-radius: 0 0 3px 3px;
 @media (min-width: 768px) {
     #main-navigation-toggle {
         display: block !important;
+    }
+    
+    .masthead .navbar-collapse {
+        display: block !important;
+        visibility: visible !important;
     }
 }
   /* The "navigation pills" in the masthead (the links to Datasets,
