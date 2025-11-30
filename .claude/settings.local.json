@@ -2,7 +2,8 @@
   "permissions": {
     "allow": [
       "Bash(find:*)",
-      "WebFetch(domain:data210.dev-wins.com)"
+      "WebFetch(domain:data210.dev-wins.com)",
+      "WebFetch(domain:data.dev-wins.com)"
     ],
     "deny": [],
     "ask": []

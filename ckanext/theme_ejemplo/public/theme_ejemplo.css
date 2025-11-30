@@ -45,7 +45,9 @@ position: absolute !important;
 width: 100% !important;
 z-index: 1000 !important;
 }
-.masthead .logo img {
+.masthead .logo img,
+header.masthead .logo img,
+.navbar.masthead .logo img {
     width: 300px !important;
 	max-height: none !important;
 /*    max-width: 9.375rem !important; */
@@ -53,20 +55,32 @@ z-index: 1000 !important;
     max-width: 16.375rem;
     display: block !important;
     visibility: visible !important;
+    opacity: 1 !important;
 }
 .masthead .section {
     position: relative !important;
 }
 
 /* Asegurar que la navegación sea visible */
-.masthead .navigation .nav-pills {
+.masthead .navigation .nav-pills,
+.masthead .section.navigation .nav-pills {
     display: flex !important;
     visibility: visible !important;
 }
 
-.masthead .navbar-collapse {
+.masthead .navbar-collapse,
+.masthead #main-navigation-toggle {
     display: block !important;
     visibility: visible !important;
+}
+
+/* Compatibility fixes for CKAN 2.10 */
+header.masthead,
+.navbar.masthead {
+    position: absolute !important;
+    z-index: 1000 !important;
+    width: 100% !important;
+    background: rgba(0, 0, 0, 0) !important;
 }
 /* footer */
 .site-footer {
