@@ -49,26 +49,29 @@ width: 100% !important;
 z-index: 1000 !important;
 }
 .masthead .container {
-    display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    justify-content: space-between;
+    position: relative;
 }
+
 .masthead .masthead-bar {
     display: flex;
     align-items: center;
-    width: 100%;
     justify-content: space-between;
+    width: 100%;
+    min-height: 80px;
 }
+
 .masthead .masthead-brand {
-    margin: 0;
     flex-shrink: 0;
 }
+
+.masthead .masthead-brand .logo {
+    display: block;
+}
 .masthead .logo img {
-    width: 300px !important;
+    height: 50px !important;
+    width: auto !important;
     max-height: none !important;
     padding: 15px 0;
-    max-width: 16.375rem;
     display: block !important;
     visibility: visible !important;
 }
@@ -104,11 +107,34 @@ z-index: 1000 !important;
 .masthead .masthead-topmenu ul li a {
     color: #fff;
     text-decoration: none;
-    padding: 8px 12px;
+    padding: 4px 8px;
     font-size: 12px;
+    white-space: nowrap;
+}
+
+.masthead .masthead-topmenu ul li a:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
 }
 .masthead .masthead-nav {
     width: 100%;
+    margin-top: 0;
+}
+
+.masthead .masthead-nav .navigation {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.masthead .masthead-nav .navigation .nav-pills {
+    margin: 0;
+    flex: 1;
+}
+
+.masthead .site-search {
+    margin-left: auto;
+    max-width: 300px;
 }
 .masthead .section {
     position: relative !important;
@@ -182,18 +208,25 @@ border-radius: 0 0 3px 3px;
 
 @media (max-width: 768px){
     .masthead .logo img {
-        width: 200px !important;
-        max-width: 9.375rem !important;
+        height: 40px !important;
+        width: auto !important;
     }
+    
     .topmenu,
     .masthead-topmenu{
         display: none !important;
     }
+    
     .masthead .masthead-lang-mobile{
         display: block;
     }
+    
     .masthead .masthead-actions{
         margin-left: auto;
+    }
+    
+    .masthead .site-search {
+        display: none !important;
     }
 }
 
@@ -275,22 +308,27 @@ border-radius: 0 0 3px 3px;
   }
 }
 @media (min-width: 992px) {
-    #main-navigation-toggle {
-        display: block !important;
-    }
-    
     .masthead .navbar-collapse {
         display: flex !important;
         align-items: center;
-        justify-content: space-between;
         visibility: visible !important;
     }
+    
     .masthead .masthead-lang-mobile{
         display: none;
     }
+    
     .masthead .navbar-toggle,
     .masthead .navbar-toggler{
         display: none !important;
+    }
+    
+    .masthead .masthead-nav {
+        margin-top: 10px;
+    }
+    
+    .masthead .site-search {
+        display: block !important;
     }
 }
   /* The "navigation pills" in the masthead (the links to Datasets,
