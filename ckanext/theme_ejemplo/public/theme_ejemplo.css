@@ -50,10 +50,10 @@ z-index: 1000 !important;
 }
 /* Estructura básica sin flexbox complicado */
 .masthead .logo img {
-    height: 50px !important;
+    height: 60px !important;
     width: auto !important;
-    max-width: 300px !important;
-    padding: 15px 0;
+    max-width: 350px !important;
+    padding: 10px 0;
     display: block !important;
     visibility: visible !important;
 }
@@ -66,7 +66,8 @@ z-index: 1000 !important;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 10px 0;
+    padding: 5px 0;
+    min-height: 70px;
 }
 
 .masthead .masthead-brand {
@@ -75,7 +76,7 @@ z-index: 1000 !important;
 
 .masthead .masthead-topmenu {
     margin-left: auto;
-    margin-right: 15px;
+    margin-right: 20px;
 }
 
 .masthead .masthead-actions {
@@ -90,7 +91,8 @@ z-index: 1000 !important;
     margin: 0;
     padding: 0;
     list-style: none;
-    gap: 15px;
+    gap: 20px;
+    align-items: center;
 }
 
 .masthead .masthead-topmenu li {
@@ -100,8 +102,9 @@ z-index: 1000 !important;
 .masthead .masthead-topmenu a {
     color: #fff;
     text-decoration: none;
-    font-size: 12px;
-    padding: 5px 8px;
+    font-size: 13px;
+    padding: 6px 10px;
+    font-weight: 500;
 }
 
 .masthead .masthead-topmenu a:hover {
@@ -123,12 +126,18 @@ z-index: 1000 !important;
 .masthead .masthead-nav .navigation {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-start;
+    gap: 30px;
 }
 
 .masthead .site-search {
     margin-left: auto;
     max-width: 300px;
+    flex-shrink: 0;
+}
+
+.masthead .site-search .form-control {
+    min-width: 250px;
 }
 
 /* Toggle button para mobile */
@@ -164,16 +173,21 @@ z-index: 1000 !important;
 /* Navegación básica - solo lo esencial */
 .masthead .navigation .nav-pills {
     display: flex !important;
+    margin: 0;
+    flex: 1;
 }
 
 .masthead .navigation .nav-pills li a {
     color: #fff !important;
-    padding: 8px 12px !important;
+    padding: 8px 15px !important;
+    font-weight: 500;
+    font-size: 14px;
 }
 
 .masthead .navbar-collapse {
-    display: block !important;
+    display: flex !important;
     visibility: visible !important;
+    align-items: center;
 }
 /* footer */
 .site-footer {
@@ -206,8 +220,8 @@ border-radius: 0 0 3px 3px;
 
 @media (max-width: 768px){
     .masthead .logo img {
-        height: 35px !important;
-        max-width: 200px !important;
+        height: 40px !important;
+        max-width: 250px !important;
     }
     
     .masthead .masthead-topmenu {
@@ -220,11 +234,23 @@ border-radius: 0 0 3px 3px;
     
     .masthead .masthead-bar {
         justify-content: space-between;
+        padding: 10px 0;
     }
     
     .masthead .navbar-toggle,
     .masthead .navbar-toggler {
         display: block !important;
+    }
+    
+    .masthead .navbar-collapse {
+        display: none !important;
+    }
+    
+    .masthead .navbar-collapse.collapse.in,
+    .masthead .navbar-collapse.collapse.show {
+        display: block !important;
+        width: 100%;
+        margin-top: 15px;
     }
 }
 
