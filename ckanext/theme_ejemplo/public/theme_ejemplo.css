@@ -50,14 +50,112 @@ z-index: 1000 !important;
 }
 /* Estructura básica sin flexbox complicado */
 .masthead .logo img {
-    width: 300px !important;
-    max-height: none !important;
+    height: 50px !important;
+    width: auto !important;
+    max-width: 300px !important;
     padding: 15px 0;
-    max-width: 16.375rem;
     display: block !important;
     visibility: visible !important;
 }
-/* CSS simplificado para evitar conflictos con CKAN 2.10 */
+/* Estructura específica del header personalizado */
+.masthead .masthead-container {
+    position: relative;
+}
+
+.masthead .masthead-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+}
+
+.masthead .masthead-brand {
+    flex-shrink: 0;
+}
+
+.masthead .masthead-topmenu {
+    margin-left: auto;
+    margin-right: 15px;
+}
+
+.masthead .masthead-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* Estilos para el topmenu */
+.masthead .masthead-topmenu ul {
+    display: flex;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    gap: 15px;
+}
+
+.masthead .masthead-topmenu li {
+    margin: 0;
+}
+
+.masthead .masthead-topmenu a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 12px;
+    padding: 5px 8px;
+}
+
+.masthead .masthead-topmenu a:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 3px;
+}
+
+/* Elementos mobile */
+.masthead .masthead-lang-mobile {
+    display: none;
+}
+
+/* Navegación colapsable */
+.masthead .masthead-nav {
+    width: 100%;
+    margin-top: 10px;
+}
+
+.masthead .masthead-nav .navigation {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.masthead .site-search {
+    margin-left: auto;
+    max-width: 300px;
+}
+
+/* Toggle button para mobile */
+.masthead .navbar-toggle,
+.masthead .navbar-toggler {
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    background: transparent;
+    color: #fff;
+    padding: 6px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.masthead .navbar-toggle .fa,
+.masthead .navbar-toggler .fa {
+    font-size: 16px;
+}
+
+/* Bootstrap collapse functionality */
+.masthead .navbar-collapse.collapse {
+    display: none;
+}
+
+.masthead .navbar-collapse.collapse.in,
+.masthead .navbar-collapse.collapse.show {
+    display: block;
+}
 /* Navegación simple */
 .masthead .section {
     position: relative !important;
@@ -108,10 +206,25 @@ border-radius: 0 0 3px 3px;
 
 @media (max-width: 768px){
     .masthead .logo img {
-        max-width: 9.375rem !important;
+        height: 35px !important;
+        max-width: 200px !important;
     }
-    .topmenu{
+    
+    .masthead .masthead-topmenu {
         display: none !important;
+    }
+    
+    .masthead .masthead-lang-mobile {
+        display: block;
+    }
+    
+    .masthead .masthead-bar {
+        justify-content: space-between;
+    }
+    
+    .masthead .navbar-toggle,
+    .masthead .navbar-toggler {
+        display: block !important;
     }
 }
 
@@ -176,10 +289,23 @@ border-radius: 0 0 3px 3px;
         display:none !important;
   }
 }
-@media (min-width: 768px) {
+@media (min-width: 769px) {
     .masthead .navbar-collapse {
         display: block !important;
         visibility: visible !important;
+    }
+    
+    .masthead .masthead-lang-mobile {
+        display: none;
+    }
+    
+    .masthead .masthead-topmenu {
+        display: flex;
+    }
+    
+    .masthead .navbar-toggle,
+    .masthead .navbar-toggler {
+        display: none !important;
     }
 }
   /* The "navigation pills" in the masthead (the links to Datasets,
