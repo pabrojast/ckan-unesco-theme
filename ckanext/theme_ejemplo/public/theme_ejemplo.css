@@ -1,20 +1,20 @@
 /* background before footer */
 html {
-font-family: sans-serif !important;
-font-size: 16px !important;
-line-height: 1.15 !important;
--webkit-text-size-adjust: 100% !important;
--webkit-font-smoothing: antialiased !important;
--moz-osx-font-smoothing: grayscale !important;
-width: 100% !important;
-overflow-x: hidden !important;
-scroll-behavior: smooth !important;
-scroll-padding-top: 3.5rem !important;  
+font-family: sans-serif;
+font-size: 16px;
+line-height: 1.15;
+-webkit-text-size-adjust: 100%;
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
+width: 100%;
+overflow-x: hidden;
+scroll-behavior: smooth;
+scroll-padding-top: 3.5rem;  
 }
 body {
-background: #fff !important;
-font-family: "Inter", sans-serif !important;
-font-size: 16px !important;
+background: #fff;
+font-family: "Inter", sans-serif;
+font-size: 16px;
 }
 header::after{
     display: block;
@@ -45,9 +45,7 @@ position: absolute !important;
 width: 100% !important;
 z-index: 1000 !important;
 }
-.masthead .logo img,
-header.masthead .logo img,
-.navbar.masthead .logo img {
+.masthead .logo img {
     width: 300px !important;
 	max-height: none !important;
 /*    max-width: 9.375rem !important; */
@@ -55,32 +53,20 @@ header.masthead .logo img,
     max-width: 16.375rem;
     display: block !important;
     visibility: visible !important;
-    opacity: 1 !important;
 }
 .masthead .section {
     position: relative !important;
 }
 
 /* Asegurar que la navegación sea visible */
-.masthead .navigation .nav-pills,
-.masthead .section.navigation .nav-pills {
+.masthead .navigation .nav-pills {
     display: flex !important;
     visibility: visible !important;
 }
 
-.masthead .navbar-collapse,
-.masthead #main-navigation-toggle {
+.masthead .navbar-collapse {
     display: block !important;
     visibility: visible !important;
-}
-
-/* Compatibility fixes for CKAN 2.10 */
-header.masthead,
-.navbar.masthead {
-    position: absolute !important;
-    z-index: 1000 !important;
-    width: 100% !important;
-    background: rgba(0, 0, 0, 0) !important;
 }
 /* footer */
 .site-footer {

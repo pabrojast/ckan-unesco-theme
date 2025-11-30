@@ -1,12 +1,12 @@
 {% ckan_extends %}
 {% block styles %}
   {{ super() }}
-{% asset 'theme/theme_ejemplo.css' %}
+<link rel="stylesheet" href="{{ h.url_for_static('/theme_ejemplo.css') }}" />
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
 
 {% endblock %}
 
 {% block scripts %}
   {{ super() }}
-{% asset 'theme/theme_ejemplo_enhanced.js' %}
+  <script src="{{ h.url_for_static('/theme_ejemplo_enhanced.js') }}"></script>
 {% endblock %}
