@@ -48,134 +48,34 @@ position: absolute !important;
 width: 100% !important;
 z-index: 1000 !important;
 }
-.masthead .container {
-    position: relative;
-}
-
-.masthead .masthead-bar {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    min-height: 80px;
-}
-
-.masthead .masthead-brand {
-    flex-shrink: 0;
-}
-
-.masthead .masthead-brand .logo {
-    display: block;
-}
+/* Estructura básica sin flexbox complicado */
 .masthead .logo img {
-    height: 50px !important;
-    width: auto !important;
+    width: 300px !important;
     max-height: none !important;
     padding: 15px 0;
+    max-width: 16.375rem;
     display: block !important;
     visibility: visible !important;
 }
-.masthead .masthead-actions {
-    margin-left: auto;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-}
-.masthead .masthead-lang-mobile {
-    display: none;
-}
-.masthead .masthead-topmenu {
-    margin-left: auto;
-    display: flex;
-    align-items: center;
-}
-
-.masthead .masthead-topmenu ul {
-    display: flex;
-    align-items: center;
-    margin: 0;
-    padding: 0;
-    list-style: none;
-    gap: 1rem;
-}
-
-.masthead .masthead-topmenu ul li {
-    float: none;
-    padding: 0;
-}
-
-.masthead .masthead-topmenu ul li a {
-    color: #fff;
-    text-decoration: none;
-    padding: 4px 8px;
-    font-size: 12px;
-    white-space: nowrap;
-}
-
-.masthead .masthead-topmenu ul li a:hover {
-    background-color: rgba(255, 255, 255, 0.1);
-    border-radius: 3px;
-}
-.masthead .masthead-nav {
-    width: 100%;
-    margin-top: 0;
-}
-
-.masthead .masthead-nav .navigation {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.masthead .masthead-nav .navigation .nav-pills {
-    margin: 0;
-    flex: 1;
-}
-
-.masthead .site-search {
-    margin-left: auto;
-    max-width: 300px;
-}
+/* CSS simplificado para evitar conflictos con CKAN 2.10 */
+/* Navegación simple */
 .masthead .section {
     position: relative !important;
 }
 
-/* Asegurar que la navegación sea visible */
+/* Navegación básica - solo lo esencial */
 .masthead .navigation .nav-pills {
     display: flex !important;
-    flex-wrap: wrap;
 }
 
 .masthead .navigation .nav-pills li a {
     color: #fff !important;
     padding: 8px 12px !important;
-    text-decoration: none !important;
 }
 
-.masthead .navigation .nav-pills li a:hover {
-    background-color: rgba(255, 255, 255, 0.1) !important;
-}
-/* Compatibilidad de colapso BS3/BS5 */
 .masthead .navbar-collapse {
-    width: 100%;
-}
-.masthead .navbar-collapse.collapse.in,
-.masthead .navbar-collapse.collapse.show {
     display: block !important;
-}
-/* Compatibilidad con toggler Bootstrap 3/5 */
-.masthead .navbar-toggle,
-.masthead .navbar-toggler {
-    border: 1px solid rgba(255, 255, 255, 0.6);
-    padding: 6px 10px;
-    background: transparent;
-    color: #fff;
-    border-radius: 4px;
-    line-height: 1;
-}
-.masthead .navbar-toggle .fa,
-.masthead .navbar-toggler .fa {
-    font-size: 18px;
+    visibility: visible !important;
 }
 /* footer */
 .site-footer {
@@ -208,45 +108,14 @@ border-radius: 0 0 3px 3px;
 
 @media (max-width: 768px){
     .masthead .logo img {
-        height: 40px !important;
-        width: auto !important;
+        max-width: 9.375rem !important;
     }
-    
-    .topmenu,
-    .masthead-topmenu{
-        display: none !important;
-    }
-    
-    .masthead .masthead-lang-mobile{
-        display: block;
-    }
-    
-    .masthead .masthead-actions{
-        margin-left: auto;
-    }
-    
-    .masthead .site-search {
+    .topmenu{
         display: none !important;
     }
 }
 
-@media (max-width: 991px){
-    .masthead .masthead-nav{
-        width: 100%;
-        margin-top: 10px;
-    }
-    .masthead .navigation .nav-pills {
-        display: block !important;
-    }
-    .masthead .navigation .nav-pills > li {
-        float: none !important;
-        width: 100%;
-    }
-    .masthead .navigation .nav-pills > li > a {
-        display: block;
-        width: 100%;
-    }
-}
+/* Eliminado - causaba conflictos */
 
 
 @media (min-width: 993px){
@@ -307,28 +176,10 @@ border-radius: 0 0 3px 3px;
         display:none !important;
   }
 }
-@media (min-width: 992px) {
+@media (min-width: 768px) {
     .masthead .navbar-collapse {
-        display: flex !important;
-        align-items: center;
-        visibility: visible !important;
-    }
-    
-    .masthead .masthead-lang-mobile{
-        display: none;
-    }
-    
-    .masthead .navbar-toggle,
-    .masthead .navbar-toggler{
-        display: none !important;
-    }
-    
-    .masthead .masthead-nav {
-        margin-top: 10px;
-    }
-    
-    .masthead .site-search {
         display: block !important;
+        visibility: visible !important;
     }
 }
   /* The "navigation pills" in the masthead (the links to Datasets,
