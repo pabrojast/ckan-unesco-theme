@@ -48,6 +48,23 @@ position: absolute !important;
 width: 100% !important;
 z-index: 1000 !important;
 }
+.masthead .masthead-container {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.masthead .masthead-bar {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: 15px;
+}
+.masthead .masthead-brand {
+    margin: 0;
+    display: flex;
+    align-items: center;
+}
 .masthead .logo img {
     height: auto !important;
     max-width: 300px !important;
@@ -56,6 +73,21 @@ z-index: 1000 !important;
     display: block !important;
     visibility: visible !important;
 }
+.masthead .masthead-actions {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.masthead .masthead-lang-mobile {
+    display: none;
+}
+.masthead .masthead-topmenu {
+    margin-left: auto;
+}
+.masthead .masthead-nav {
+    width: 100%;
+}
 .masthead .section {
     position: relative !important;
 }
@@ -63,13 +95,7 @@ z-index: 1000 !important;
 /* Asegurar que la navegación sea visible */
 .masthead .navigation .nav-pills {
     display: flex !important;
-    visibility: visible !important;
     flex-wrap: wrap;
-}
-
-.masthead .navbar-collapse {
-    display: block !important;
-    visibility: visible !important;
 }
 
 .masthead .navigation .nav-pills li a {
@@ -80,6 +106,20 @@ z-index: 1000 !important;
 
 .masthead .navigation .nav-pills li a:hover {
     background-color: rgba(255, 255, 255, 0.1) !important;
+}
+/* Compatibilidad con toggler Bootstrap 3/5 */
+.masthead .navbar-toggle,
+.masthead .navbar-toggler {
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    padding: 6px 10px;
+    background: transparent;
+    color: #fff;
+    border-radius: 4px;
+    line-height: 1;
+}
+.masthead .navbar-toggle .fa,
+.masthead .navbar-toggler .fa {
+    font-size: 18px;
 }
 /* footer */
 .site-footer {
@@ -115,8 +155,21 @@ border-radius: 0 0 3px 3px;
         max-width: 200px !important;
         max-height: 40px !important;
     }
-    .topmenu{
+    .topmenu,
+    .masthead-topmenu{
         display: none !important;
+    }
+    .masthead .masthead-lang-mobile{
+        display: block;
+    }
+    .masthead .masthead-actions{
+        margin-left: auto;
+    }
+}
+
+@media (max-width: 991px){
+    .masthead .masthead-nav{
+        width: 100%;
     }
 }
 
@@ -174,22 +227,28 @@ border-radius: 0 0 3px 3px;
         /* padding-top: 9rem !important; */
 
 	}
-    .navbar-collapse.collapse {
-        display: flex !important;
-    }
     .masthead .site-search {
         /* padding-top: 9rem !important; */
         display:none !important;
   }
 }
-@media (min-width: 769px) {
+@media (min-width: 992px) {
     #main-navigation-toggle {
         display: block !important;
     }
     
     .masthead .navbar-collapse {
-        display: block !important;
+        display: flex !important;
+        align-items: center;
+        justify-content: space-between;
         visibility: visible !important;
+    }
+    .masthead .masthead-lang-mobile{
+        display: none;
+    }
+    .masthead .navbar-toggle,
+    .masthead .navbar-toggler{
+        display: none !important;
     }
 }
   /* The "navigation pills" in the masthead (the links to Datasets,
