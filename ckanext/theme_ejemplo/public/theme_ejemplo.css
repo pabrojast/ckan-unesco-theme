@@ -107,6 +107,14 @@ z-index: 1000 !important;
 .masthead .navigation .nav-pills li a:hover {
     background-color: rgba(255, 255, 255, 0.1) !important;
 }
+/* Compatibilidad de colapso BS3/BS5 */
+.masthead .navbar-collapse {
+    width: 100%;
+}
+.masthead .navbar-collapse.collapse.in,
+.masthead .navbar-collapse.collapse.show {
+    display: block !important;
+}
 /* Compatibilidad con toggler Bootstrap 3/5 */
 .masthead .navbar-toggle,
 .masthead .navbar-toggler {
@@ -169,6 +177,18 @@ border-radius: 0 0 3px 3px;
 
 @media (max-width: 991px){
     .masthead .masthead-nav{
+        width: 100%;
+        margin-top: 10px;
+    }
+    .masthead .navigation .nav-pills {
+        display: block !important;
+    }
+    .masthead .navigation .nav-pills > li {
+        float: none !important;
+        width: 100%;
+    }
+    .masthead .navigation .nav-pills > li > a {
+        display: block;
         width: 100%;
     }
 }
