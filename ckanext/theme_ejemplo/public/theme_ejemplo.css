@@ -70,10 +70,11 @@ z-index: 1000 !important;
 }
 
 .masthead .masthead-nav .masthead-topmenu {
-    display: flex;
+    display: flex !important;
     align-items: center;
     flex-shrink: 0;
     margin-right: 15px;
+    visibility: visible !important;
 }
 
 .masthead .masthead-nav .masthead-actions {
@@ -123,13 +124,34 @@ z-index: 1000 !important;
 .masthead .masthead-nav {
     width: 100%;
     margin: 0;
-    display: flex;
+    display: flex !important;
     align-items: center;
     justify-content: flex-start;
     padding: 8px 0;
     flex-wrap: nowrap;
     min-height: 70px;
     position: relative;
+    visibility: visible !important;
+    opacity: 1 !important;
+    height: auto !important;
+    overflow: visible !important;
+}
+
+/* Force desktop visibility - override any Bootstrap collapse rules */
+@media (min-width: 768px) {
+    .masthead .masthead-nav {
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        height: auto !important;
+    }
+    
+    .masthead .masthead-nav .navigation,
+    .masthead .masthead-nav .masthead-topmenu,
+    .masthead .masthead-nav .site-search {
+        display: flex !important;
+        visibility: visible !important;
+    }
 }
 
 /* El logo ahora está dentro de masthead-nav */
@@ -142,11 +164,12 @@ z-index: 1000 !important;
 }
 
 .masthead .masthead-nav .navigation {
-    display: flex;
+    display: flex !important;
     align-items: center;
     justify-content: flex-start;
     flex-shrink: 0;
     margin-right: 15px;
+    visibility: visible !important;
 }
 
 .masthead .masthead-nav .navigation .nav {
@@ -183,6 +206,8 @@ z-index: 1000 !important;
     max-width: 250px;
     flex-shrink: 0;
     width: 200px;
+    display: block !important;
+    visibility: visible !important;
 }
 
 .masthead .masthead-nav .site-search .form-control {
