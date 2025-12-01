@@ -50,10 +50,10 @@ z-index: 1000 !important;
 }
 /* Estructura básica sin flexbox complicado */
 .masthead .logo img {
-    height: 60px !important;
+    height: 70px !important;
     width: auto !important;
-    max-width: 350px !important;
-    padding: 10px 0;
+    max-width: 400px !important;
+    padding: 8px 0;
     display: block !important;
     visibility: visible !important;
 }
@@ -66,8 +66,8 @@ z-index: 1000 !important;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 5px 0;
-    min-height: 70px;
+    padding: 0;
+    min-height: 80px;
 }
 
 .masthead .masthead-brand {
@@ -76,7 +76,7 @@ z-index: 1000 !important;
 
 .masthead .masthead-topmenu {
     margin-left: auto;
-    margin-right: 20px;
+    margin-right: 10px;
 }
 
 .masthead .masthead-actions {
@@ -103,8 +103,9 @@ z-index: 1000 !important;
     color: #fff;
     text-decoration: none;
     font-size: 13px;
-    padding: 6px 10px;
+    padding: 5px 8px;
     font-weight: 500;
+    white-space: nowrap;
 }
 
 .masthead .masthead-topmenu a:hover {
@@ -120,7 +121,7 @@ z-index: 1000 !important;
 /* Navegación colapsable */
 .masthead .masthead-nav {
     width: 100%;
-    margin-top: 10px;
+    margin-top: 15px;
 }
 
 .masthead .masthead-nav .navigation {
