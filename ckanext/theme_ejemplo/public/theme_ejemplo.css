@@ -57,68 +57,61 @@ z-index: 1000 !important;
     display: block !important;
     visibility: visible !important;
 }
-/* Estructura específica del header personalizado */
+/* Estructura específica del header personalizado - Single Line Layout */
 .masthead .masthead-container {
-    display: grid;
-    grid-template-rows: auto auto;
-    gap: 5px;
-}
-
-/* Primera fila: Solo topmenu */
-.masthead .masthead-bar {
-    display: flex;
-    align-items: center;
-    justify-content: flex-end;
-    padding: 8px 0;
-    min-height: 35px;
-    grid-row: 1;
-    background: transparent;
+    padding: 0 15px;
+    /* Remove grid layout for single-line approach */
 }
 
 .masthead .masthead-nav .masthead-brand {
     flex-shrink: 0;
-    margin-right: 25px;
+    margin-right: 20px;
+    margin-bottom: 0;
 }
 
-.masthead .masthead-topmenu {
+.masthead .masthead-nav .masthead-topmenu {
     display: flex;
     align-items: center;
+    flex-shrink: 0;
+    margin-right: 15px;
 }
 
-.masthead .masthead-actions {
+.masthead .masthead-nav .masthead-actions {
     display: flex;
     align-items: center;
     gap: 10px;
     margin-left: 15px;
+    flex-shrink: 0;
 }
 
 /* Estilos para el topmenu */
-.masthead .masthead-topmenu ul {
+.masthead .masthead-nav .masthead-topmenu ul {
     display: flex;
     margin: 0;
     padding: 0;
     list-style: none;
-    gap: 20px;
     align-items: center;
     background: transparent;
 }
 
-.masthead .masthead-topmenu li {
-    margin: 0;
-}
-
-.masthead .masthead-topmenu a {
-    color: #fff;
-    text-decoration: none;
-    font-size: 13px;
-    padding: 5px 8px;
-    font-weight: 500;
+.masthead .masthead-nav .masthead-topmenu li {
+    margin-right: 8px;
     white-space: nowrap;
 }
 
-.masthead .masthead-topmenu a:hover {
-    background-color: rgba(255, 255, 255, 0.1);
+.masthead .masthead-nav .masthead-topmenu a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 12px;
+    padding: 4px 8px;
+    font-weight: 500;
     border-radius: 3px;
+    transition: background-color 0.2s;
+    white-space: nowrap;
+}
+
+.masthead .masthead-nav .masthead-topmenu a:hover {
+    background-color: rgba(255, 255, 255, 0.1);
 }
 
 /* Elementos mobile */
@@ -126,43 +119,75 @@ z-index: 1000 !important;
     display: none;
 }
 
-/* Navegación colapsable */
+/* Navegación colapsable - Single Line Layout */
 .masthead .masthead-nav {
     width: 100%;
-    margin-top: 0;
+    margin: 0;
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    padding: 5px 0 10px 0;
-    grid-row: 2;
+    padding: 8px 0;
+    flex-wrap: nowrap;
+    min-height: 70px;
     position: relative;
 }
 
 /* El logo ahora está dentro de masthead-nav */
 .masthead .masthead-nav .masthead-brand .logo img {
-    height: 60px !important;
+    height: 55px !important;
     width: auto !important;
-    max-width: 350px !important;
+    max-width: 320px !important;
     padding: 0;
+    margin: 0;
 }
 
 .masthead .masthead-nav .navigation {
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    gap: 25px;
-    flex: 1;
-    margin-left: 10px;
-}
-
-.masthead .site-search {
-    margin-left: auto;
-    max-width: 300px;
     flex-shrink: 0;
+    margin-right: 15px;
 }
 
-.masthead .site-search .form-control {
-    min-width: 250px;
+.masthead .masthead-nav .navigation .nav {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: flex-start;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+}
+
+.masthead .masthead-nav .navigation .nav li {
+    list-style: none;
+    margin-right: 12px;
+    white-space: nowrap;
+}
+
+.masthead .masthead-nav .navigation .nav li a {
+    color: white;
+    text-decoration: none;
+    font-size: 13px;
+    padding: 6px 10px;
+    border-radius: 3px;
+    transition: background-color 0.2s;
+}
+
+.masthead .masthead-nav .navigation .nav li a:hover,
+.masthead .masthead-nav .navigation .nav li.active a {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+.masthead .masthead-nav .site-search {
+    margin-left: auto;
+    max-width: 250px;
+    flex-shrink: 0;
+    width: 200px;
+}
+
+.masthead .masthead-nav .site-search .form-control {
+    min-width: 180px;
+    width: 180px;
 }
 
 /* Toggle button para mobile */
@@ -427,6 +452,7 @@ border-radius: 0 0 3px 3px;
 .lang-select label, .lang-select select, .lang-select .lang-container {
     max-width: 300px !important;
 }
+/* Old topmenu styles - disabled for single-line layout
 .topmenu{
     padding-left: 0;
     margin-bottom: 0;
@@ -443,6 +469,7 @@ border-radius: 0 0 3px 3px;
     padding-right: 1rem;
     padding-left: 1rem;
 }
+*/
 .main {
     padding-top: 9rem !important;
     z-index: 0;

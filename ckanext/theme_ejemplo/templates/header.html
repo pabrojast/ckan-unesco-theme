@@ -85,42 +85,6 @@
   <div class="debug">Controller : {{ c.controller }}<br/>Action : {{ c.action }}</div>
   {% endif %} {% endblock %}
   <div class="container masthead-container">
-    <div class="masthead-bar">      
-      <div class="topmenu masthead-topmenu">
-        <ul>
-          <li>
-          {% block footer_lang %}
-          {% snippet "snippets/language_selector.html" %}
-          {% endblock %}
-          </li>
-          <li>
-          {% snippet "snippets/IHPIX.html" %}
-          </li>
-          {% block header_account_notlogged %}
-          {% if c.userobj %}
-
-          <li><a href="{{ h.url_for('user.logout') }}" title="{{ _('Log out') }}">{{ _('Log out') }}</a></li> 
-          {% else %}
-          <li>{% link_for _('Log in'), named_route='user.login' %}</li>
-          {% endif %}
-          {% endblock %}
-          <li><a href="/colab" alt="Enroll as a Data Contributor for Your Organization">{% trans %}Enroll as a Data Contributor for Your Organization{% endtrans %}</a></li>
-          <li><a href="https://www.unesco.org/en/" alt="UNESCO Portal">UNESCO</a></li>
-  
-        </ul>
-      </div>
-
-      <div class="masthead-actions">
-        <div class="masthead-lang-mobile">
-          {% snippet "snippets/language_selector.html" %}
-        </div>
-        <button data-target="#main-navigation-toggle" data-toggle="collapse" data-bs-target="#main-navigation-toggle" data-bs-toggle="collapse" class="navbar-toggle navbar-toggler collapsed" type="button" aria-label="expand or collapse" aria-controls="main-navigation-toggle" aria-expanded="false">
-          <span class="sr-only">{{ _('Toggle navigation') }}</span>
-          <span class="fa fa-bars"></span>
-        </button>
-      </div>
-    </div>
-
     <div class="collapse navbar-collapse masthead-nav" id="main-navigation-toggle">
       <hgroup class="{{ g.header_class }} navbar-left masthead-brand">
         {% block header_logo %} {% if g.site_logo %}
@@ -150,6 +114,30 @@
       </nav>
       {% endblock %}
 
+      <div class="topmenu masthead-topmenu">
+        <ul>
+          <li>
+          {% block footer_lang %}
+          {% snippet "snippets/language_selector.html" %}
+          {% endblock %}
+          </li>
+          <li>
+          {% snippet "snippets/IHPIX.html" %}
+          </li>
+          {% block header_account_notlogged %}
+          {% if c.userobj %}
+
+          <li><a href="{{ h.url_for('user.logout') }}" title="{{ _('Log out') }}">{{ _('Log out') }}</a></li> 
+          {% else %}
+          <li>{% link_for _('Log in'), named_route='user.login' %}</li>
+          {% endif %}
+          {% endblock %}
+          <li><a href="/colab" alt="Enroll as a Data Contributor for Your Organization">{% trans %}Enroll as a Data Contributor for Your Organization{% endtrans %}</a></li>
+          <li><a href="https://www.unesco.org/en/" alt="UNESCO Portal">UNESCO</a></li>
+  
+        </ul>
+      </div>
+
       {% block header_site_search %}
       <form class="section site-search simple-input" action="{% url_for 'dataset.search' %}" method="get">
         <div class="field">
@@ -159,6 +147,16 @@
         </div>
       </form>
       {% endblock %}
+
+      <div class="masthead-actions">
+        <div class="masthead-lang-mobile">
+          {% snippet "snippets/language_selector.html" %}
+        </div>
+        <button data-target="#main-navigation-toggle" data-toggle="collapse" data-bs-target="#main-navigation-toggle" data-bs-toggle="collapse" class="navbar-toggle navbar-toggler collapsed" type="button" aria-label="expand or collapse" aria-controls="main-navigation-toggle" aria-expanded="false">
+          <span class="sr-only">{{ _('Toggle navigation') }}</span>
+          <span class="fa fa-bars"></span>
+        </button>
+      </div>
       
     </div>
   </div>
