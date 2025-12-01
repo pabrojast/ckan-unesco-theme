@@ -69,14 +69,15 @@ z-index: 1000 !important;
     display: flex;
     align-items: center;
     justify-content: flex-end;
-    padding: 5px 0;
+    padding: 8px 0;
     min-height: 35px;
     grid-row: 1;
+    background: transparent;
 }
 
-.masthead .masthead-brand {
+.masthead .masthead-nav .masthead-brand {
     flex-shrink: 0;
-    margin-right: 30px;
+    margin-right: 25px;
 }
 
 .masthead .masthead-topmenu {
@@ -99,6 +100,7 @@ z-index: 1000 !important;
     list-style: none;
     gap: 20px;
     align-items: center;
+    background: transparent;
 }
 
 .masthead .masthead-topmenu li {
@@ -131,7 +133,7 @@ z-index: 1000 !important;
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    padding: 10px 0;
+    padding: 5px 0 10px 0;
     grid-row: 2;
     position: relative;
 }
@@ -148,8 +150,9 @@ z-index: 1000 !important;
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    gap: 20px;
+    gap: 25px;
     flex: 1;
+    margin-left: 10px;
 }
 
 .masthead .site-search {
@@ -197,13 +200,15 @@ z-index: 1000 !important;
     display: flex !important;
     margin: 0;
     flex: 1;
+    gap: 5px;
 }
 
 .masthead .navigation .nav-pills li a {
     color: #fff !important;
-    padding: 8px 15px !important;
+    padding: 8px 12px !important;
     font-weight: 500;
     font-size: 14px;
+    border-radius: 3px;
 }
 
 .masthead .navbar-collapse {
