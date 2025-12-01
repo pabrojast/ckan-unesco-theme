@@ -59,30 +59,36 @@ z-index: 1000 !important;
 }
 /* Estructura específica del header personalizado */
 .masthead .masthead-container {
-    position: relative;
+    display: grid;
+    grid-template-rows: auto auto;
+    gap: 5px;
 }
 
+/* Primera fila: Solo topmenu */
 .masthead .masthead-bar {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    padding: 0;
-    min-height: 80px;
+    justify-content: flex-end;
+    padding: 5px 0;
+    min-height: 35px;
+    grid-row: 1;
 }
 
 .masthead .masthead-brand {
     flex-shrink: 0;
+    margin-right: 30px;
 }
 
 .masthead .masthead-topmenu {
-    margin-left: auto;
-    margin-right: 10px;
+    display: flex;
+    align-items: center;
 }
 
 .masthead .masthead-actions {
     display: flex;
     align-items: center;
     gap: 10px;
+    margin-left: 15px;
 }
 
 /* Estilos para el topmenu */
@@ -121,14 +127,29 @@ z-index: 1000 !important;
 /* Navegación colapsable */
 .masthead .masthead-nav {
     width: 100%;
-    margin-top: 15px;
+    margin-top: 0;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 10px 0;
+    grid-row: 2;
+    position: relative;
+}
+
+/* El logo ahora está dentro de masthead-nav */
+.masthead .masthead-nav .masthead-brand .logo img {
+    height: 60px !important;
+    width: auto !important;
+    max-width: 350px !important;
+    padding: 0;
 }
 
 .masthead .masthead-nav .navigation {
     display: flex;
     align-items: center;
     justify-content: flex-start;
-    gap: 30px;
+    gap: 20px;
+    flex: 1;
 }
 
 .masthead .site-search {

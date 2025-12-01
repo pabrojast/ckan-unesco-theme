@@ -85,18 +85,7 @@
   <div class="debug">Controller : {{ c.controller }}<br/>Action : {{ c.action }}</div>
   {% endif %} {% endblock %}
   <div class="container masthead-container">
-    <div class="masthead-bar">
-      <hgroup class="{{ g.header_class }} navbar-left masthead-brand">
-        {% block header_logo %} {% if g.site_logo %}
-        <a class="logo" href="{{ h.url_for('/') }}"><img src="{{ h.url_for_static_or_external(g.site_logo) }}" alt="{{ g.site_title }}" title="{{ g.site_title }}" /></a>
-        {% else %}
-        <h1>
-          <a href="{{ h.url_for('/') }}">{{ g.site_title }}</a>
-        </h1>
-        {% if g.site_description %}
-        <h2>{{ g.site_description }}</h2>{% endif %} {% endif %} {% endblock %}
-      </hgroup>
-      
+    <div class="masthead-bar">      
       <div class="topmenu masthead-topmenu">
         <ul>
           <li>
@@ -133,6 +122,17 @@
     </div>
 
     <div class="collapse navbar-collapse masthead-nav" id="main-navigation-toggle">
+      <hgroup class="{{ g.header_class }} navbar-left masthead-brand">
+        {% block header_logo %} {% if g.site_logo %}
+        <a class="logo" href="{{ h.url_for('/') }}"><img src="{{ h.url_for_static_or_external(g.site_logo) }}" alt="{{ g.site_title }}" title="{{ g.site_title }}" /></a>
+        {% else %}
+        <h1>
+          <a href="{{ h.url_for('/') }}">{{ g.site_title }}</a>
+        </h1>
+        {% if g.site_description %}
+        <h2>{{ g.site_description }}</h2>{% endif %} {% endif %} {% endblock %}
+      </hgroup>
+      
       {% block header_site_navigation %}
       <nav class="section navigation">
         <ul class="nav nav-pills">
@@ -148,6 +148,7 @@
       {% endblock %}
         </ul>
       </nav>
+      {% endblock %}
 
       {% block header_site_search %}
       <form class="section site-search simple-input" action="{% url_for 'dataset.search' %}" method="get">
@@ -159,7 +160,6 @@
       </form>
       {% endblock %}
       
-      {% endblock %} 
     </div>
   </div>
 </header>
