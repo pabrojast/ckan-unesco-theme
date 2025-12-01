@@ -85,6 +85,32 @@
   <div class="debug">Controller : {{ c.controller }}<br/>Action : {{ c.action }}</div>
   {% endif %} {% endblock %}
   <div class="container masthead-container">
+    <!-- PRIMERA FILA: Solo top menu alineado a la derecha -->
+    <div class="masthead-top-bar">
+      <div class="topmenu masthead-topmenu">
+        <ul>
+          <li><a href="https://www.unesco.org/en/" alt="UNESCO Portal">UNESCO</a></li>
+          <li><a href="/colab" alt="Enroll as a Data Contributor for Your Organization">{% trans %}Enroll as a Data Contributor for Your Organization{% endtrans %}</a></li>
+          {% block header_account_notlogged %}
+          {% if c.userobj %}
+          <li><a href="{{ h.url_for('user.logout') }}" title="{{ _('Log out') }}">{{ _('Log out') }}</a></li> 
+          {% else %}
+          <li>{% link_for _('Log in'), named_route='user.login' %}</li>
+          {% endif %}
+          {% endblock %}
+          <li>
+          {% snippet "snippets/IHPIX.html" %}
+          </li>
+          <li>
+          {% block footer_lang %}
+          {% snippet "snippets/language_selector.html" %}
+          {% endblock %}
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- SEGUNDA FILA: Logo + menú principal + search -->
     <div class="masthead-nav" id="main-navigation-toggle">
       <hgroup class="{{ g.header_class }} navbar-left masthead-brand">
         {% block header_logo %} {% if g.site_logo %}
@@ -113,30 +139,6 @@
         </ul>
       </nav>
       {% endblock %}
-
-      <div class="topmenu masthead-topmenu">
-        <ul>
-          <li>
-          {% block footer_lang %}
-          {% snippet "snippets/language_selector.html" %}
-          {% endblock %}
-          </li>
-          <li>
-          {% snippet "snippets/IHPIX.html" %}
-          </li>
-          {% block header_account_notlogged %}
-          {% if c.userobj %}
-
-          <li><a href="{{ h.url_for('user.logout') }}" title="{{ _('Log out') }}">{{ _('Log out') }}</a></li> 
-          {% else %}
-          <li>{% link_for _('Log in'), named_route='user.login' %}</li>
-          {% endif %}
-          {% endblock %}
-          <li><a href="/colab" alt="Enroll as a Data Contributor for Your Organization">{% trans %}Enroll as a Data Contributor for Your Organization{% endtrans %}</a></li>
-          <li><a href="https://www.unesco.org/en/" alt="UNESCO Portal">UNESCO</a></li>
-  
-        </ul>
-      </div>
 
       {% block header_site_search %}
       <form class="section site-search simple-input" action="{% url_for 'dataset.search' %}" method="get">

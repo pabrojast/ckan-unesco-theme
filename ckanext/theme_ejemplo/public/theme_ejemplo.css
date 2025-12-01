@@ -57,10 +57,20 @@ z-index: 1000 !important;
     display: block !important;
     visibility: visible !important;
 }
-/* Estructura específica del header personalizado - Single Line Layout */
+/* Estructura específica del header personalizado - Two Row Layout */
 .masthead .masthead-container {
     padding: 0 15px;
-    /* Remove grid layout for single-line approach */
+    display: flex;
+    flex-direction: column;
+}
+
+/* Primera fila: Top menu alineado a la derecha */
+.masthead .masthead-top-bar {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 5px 0;
+    min-height: 35px;
 }
 
 .masthead .masthead-nav .masthead-brand {
@@ -69,12 +79,10 @@ z-index: 1000 !important;
     margin-bottom: 0;
 }
 
-.masthead .masthead-nav .masthead-topmenu {
+/* Top menu en la primera fila */
+.masthead .masthead-top-bar .masthead-topmenu {
     display: flex !important;
     align-items: center;
-    flex-shrink: 0;
-    margin-right: 25px;
-    margin-left: 20px;
     visibility: visible !important;
 }
 
@@ -86,8 +94,8 @@ z-index: 1000 !important;
     flex-shrink: 0;
 }
 
-/* Estilos para el topmenu */
-.masthead .masthead-nav .masthead-topmenu ul {
+/* Estilos para el topmenu en la primera fila */
+.masthead .masthead-top-bar .masthead-topmenu ul {
     display: flex;
     margin: 0;
     padding: 0;
@@ -96,12 +104,12 @@ z-index: 1000 !important;
     background: transparent;
 }
 
-.masthead .masthead-nav .masthead-topmenu li {
+.masthead .masthead-top-bar .masthead-topmenu li {
     margin-right: 15px;
     white-space: nowrap;
 }
 
-.masthead .masthead-nav .masthead-topmenu a {
+.masthead .masthead-top-bar .masthead-topmenu a {
     color: #fff;
     text-decoration: none;
     font-size: 12px;
@@ -112,7 +120,7 @@ z-index: 1000 !important;
     white-space: nowrap;
 }
 
-.masthead .masthead-nav .masthead-topmenu a:hover {
+.masthead .masthead-top-bar .masthead-topmenu a:hover {
     background-color: rgba(255, 255, 255, 0.1);
 }
 
@@ -121,16 +129,16 @@ z-index: 1000 !important;
     display: none;
 }
 
-/* Navegación colapsable - Single Line Layout */
+/* Segunda fila: Logo + Navigation + Search */
 .masthead .masthead-nav {
     width: 100%;
     margin: 0;
     display: flex !important;
     align-items: center;
     justify-content: flex-start;
-    padding: 12px 0;
+    padding: 8px 0;
     flex-wrap: nowrap;
-    min-height: 75px;
+    min-height: 60px;
     position: relative;
     visibility: visible !important;
     opacity: 1 !important;
@@ -148,8 +156,12 @@ z-index: 1000 !important;
     }
     
     .masthead .masthead-nav .navigation,
-    .masthead .masthead-nav .masthead-topmenu,
     .masthead .masthead-nav .site-search {
+        display: flex !important;
+        visibility: visible !important;
+    }
+    
+    .masthead .masthead-top-bar .masthead-topmenu {
         display: flex !important;
         visibility: visible !important;
     }
@@ -168,8 +180,8 @@ z-index: 1000 !important;
     display: flex !important;
     align-items: center;
     justify-content: flex-start;
-    flex-shrink: 0;
-    margin-right: 35px;
+    flex: 1;
+    margin-right: 20px;
     visibility: visible !important;
 }
 
