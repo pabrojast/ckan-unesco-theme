@@ -336,6 +336,56 @@ function enhanceSearch() {
     }
 }
 
+// Función para manejar el toggle del menú mobile
+function initializeMobileNavigation() {
+    try {
+        const toggleButtons = document.querySelectorAll('.navbar-toggle, .navbar-toggler');
+        const navContainer = document.querySelector('.masthead-nav');
+        
+        toggleButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                
+                if (navContainer) {
+                    // Toggle las clases para mostrar/ocultar el menú
+                    navContainer.classList.toggle('show');
+                    navContainer.classList.toggle('in');
+                    
+                    // Actualizar aria-expanded
+                    const isExpanded = navContainer.classList.contains('show') || navContainer.classList.contains('in');
+                    this.setAttribute('aria-expanded', isExpanded.toString());
+                }
+            });
+        });
+        
+        // Cerrar menú mobile al hacer click en un link
+        const mobileNavLinks = document.querySelectorAll('.masthead-nav .navigation .nav a');
+        mobileNavLinks.forEach(link => {
+            link.addEventListener('click', function() {
+                if (navContainer && window.innerWidth <= 768) {
+                    navContainer.classList.remove('show', 'in');
+                    toggleButtons.forEach(btn => {
+                        btn.setAttribute('aria-expanded', 'false');
+                    });
+                }
+            });
+        });
+        
+        // Cerrar menú mobile al cambiar tamaño de ventana
+        window.addEventListener('resize', function() {
+            if (window.innerWidth > 768 && navContainer) {
+                navContainer.classList.remove('show', 'in');
+                toggleButtons.forEach(btn => {
+                    btn.setAttribute('aria-expanded', 'false');
+                });
+            }
+        });
+        
+    } catch (error) {
+        console.error('Error inicializando navegación móvil:', error);
+    }
+}
+
 // Inicialización cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', function() {
     initializeEnhancements();
@@ -343,6 +393,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initializeLazyLoading();
     enhanceForms();
     enhanceSearch();
+    initializeMobileNavigation();
 });
 
 // Inicialización adicional cuando la página esté completamente cargada
@@ -365,5 +416,6 @@ window.themeEnhanced = {
     initializeSlideshow,
     initializeLazyLoading,
     enhanceForms,
-    enhanceSearch
+    enhanceSearch,
+    initializeMobileNavigation
 }; 
