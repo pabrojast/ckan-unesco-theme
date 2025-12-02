@@ -1469,16 +1469,31 @@ a.heading.truncate {
   margin-bottom: 30px;
 }
 
-/* Responsive behavior for Thematic Viewers */
+/* Support for 4-column layout (IHP Education) */
+.module-content .row .col-md-3 {
+  flex: 0 0 25%;
+  max-width: 25%;
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-bottom: 30px;
+}
+
+/* Responsive behavior for all grid layouts */
 @media (max-width: 991px) {
   .module-content .row .col-md-4 {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+  
+  .module-content .row .col-md-3 {
     flex: 0 0 50%;
     max-width: 50%;
   }
 }
 
 @media (max-width: 767px) {
-  .module-content .row .col-md-4 {
+  .module-content .row .col-md-4,
+  .module-content .row .col-md-3 {
     flex: 0 0 100%;
     max-width: 100%;
   }

@@ -1,4 +1,5 @@
 {% set featured_datasets = h.get_featured_datasets_filtered(tag='FeaturedDataset', user='8ad64841-340c-49dc-8716-c6b61ea4b111') %}
+<div class="row">
 {% for dataset in featured_datasets %}
 <div class="col-md-4 col3 col-enhanced">
   <div class="col-small">
@@ -42,3 +43,4 @@
   </div>
 </div>
 {% endfor %}
+</div>
