@@ -233,8 +233,13 @@ z-index: 1000 !important;
 }
 
 .masthead .masthead-nav .site-search .form-control {
-    min-width: 200px;
+    min-width: 180px;
     width: 200px;
+    transition: width 0.3s ease;
+}
+
+.masthead .masthead-nav .site-search .form-control:focus {
+    width: 220px;
 }
 
 /* Toggle button para mobile */
@@ -486,24 +491,141 @@ border-radius: 0 0 3px 3px;
 
 
 
-/* padding fix */
-@media (max-width: 1200px) {
-    .masthead .site-search {
-        /* padding-top: 9rem !important; */
-        display:none !important;
-  }
-  
-}
-@media (min-width: 768px) and (max-width: 991px){
-	.masthead .navigation.section {
-		float: right;
-        /* padding-top: 9rem !important; */
+/* Improved responsive behavior for header */
 
-	}
+/* Large screens - show everything */
+@media (min-width: 1200px) {
     .masthead .site-search {
-        /* padding-top: 9rem !important; */
-        display:none !important;
-  }
+        display: block !important;
+        max-width: 280px;
+    }
+    
+    .masthead .masthead-nav .navigation .nav li {
+        margin-right: 20px;
+    }
+    
+    .masthead .masthead-nav .navigation .nav li a {
+        font-size: 14px;
+        padding: 6px 12px;
+    }
+}
+
+/* Medium-large screens - reduce search, adjust spacing */
+@media (min-width: 992px) and (max-width: 1199px) {
+    .masthead .site-search {
+        display: block !important;
+        max-width: 200px;
+    }
+    
+    .masthead .site-search .form-control {
+        width: 160px;
+        min-width: 160px;
+    }
+    
+    .masthead .masthead-nav .navigation .nav li {
+        margin-right: 15px;
+    }
+    
+    .masthead .masthead-nav .navigation .nav li a {
+        font-size: 13px;
+        padding: 5px 8px;
+    }
+}
+
+/* Medium screens - hide search, compact menu */
+@media (min-width: 768px) and (max-width: 991px) {
+    .masthead .site-search {
+        display: none !important;
+    }
+    
+    .masthead .masthead-nav .navigation {
+        margin-right: 0;
+    }
+    
+    .masthead .masthead-nav .navigation .nav li {
+        margin-right: 10px;
+    }
+    
+    .masthead .masthead-nav .navigation .nav li a {
+        font-size: 12px;
+        padding: 4px 6px;
+    }
+    
+    /* Hide longer menu items on medium screens if needed */
+    .masthead .masthead-top-bar .masthead-topmenu li:first-child {
+        display: none;
+    }
+}
+
+/* Small-medium screens - further compact */
+@media (min-width: 600px) and (max-width: 767px) {
+    .masthead .masthead-top-bar {
+        display: none !important;
+    }
+    
+    .masthead .masthead-nav .navigation .nav li {
+        margin-right: 8px;
+    }
+    
+    .masthead .masthead-nav .navigation .nav li a {
+        font-size: 11px;
+        padding: 3px 5px;
+    }
+    
+    /* Hide some less critical nav items */
+    .masthead .masthead-nav .navigation .nav li:last-child {
+        display: none;
+    }
+}
+
+/* Critical fix for problematic resolutions like in the image */
+@media (min-width: 768px) and (max-width: 850px) {
+    .masthead .masthead-nav .navigation .nav li a {
+        font-size: 11px !important;
+        padding: 3px 4px !important;
+    }
+    
+    .masthead .masthead-nav .navigation .nav li {
+        margin-right: 6px !important;
+    }
+    
+    /* Hide "About IHP" link in tight spaces */
+    .masthead .masthead-nav .navigation .nav li:last-child {
+        display: none !important;
+    }
+}
+
+/* Very tight spaces - aggressive compacting */
+@media (min-width: 768px) and (max-width: 820px) {
+    .masthead .masthead-nav .navigation .nav li:nth-last-child(2) {
+        display: none !important;
+    }
+}
+
+/* Emergency fallback for extremely tight spaces */
+@media (min-width: 768px) and (max-width: 800px) {
+    .masthead .masthead-nav .navigation {
+        display: none !important;
+    }
+    
+    .masthead .masthead-nav .navbar-toggle,
+    .masthead .masthead-nav .navbar-toggler {
+        display: block !important;
+    }
+    
+    .masthead .masthead-nav.show .navigation,
+    .masthead .masthead-nav.in .navigation {
+        display: flex !important;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: rgba(0, 119, 212, 0.95);
+        flex-direction: column;
+        padding: 15px;
+        z-index: 1000;
+        border-radius: 0 0 8px 8px;
+    }
 }
 @media (min-width: 769px) {
     .masthead .navbar-collapse {
@@ -1058,8 +1180,43 @@ img {
     }
 }
 
+/* Search field improvements */
 .masthead .site-search input {
-    width: 100px !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    color: white !important;
+    border-radius: 4px !important;
+    padding: 8px 40px 8px 12px !important;
+}
+
+.masthead .site-search input::placeholder {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.masthead .site-search input:focus {
+    background: rgba(255, 255, 255, 0.2) !important;
+    border-color: rgba(255, 255, 255, 0.5) !important;
+    outline: none !important;
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.3) !important;
+}
+
+.masthead .site-search .btn-search {
+    border: none !important;
+    background: transparent !important;
+    color: rgba(255, 255, 255, 0.8) !important;
+    position: absolute !important;
+    right: 8px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    padding: 4px !important;
+}
+
+.masthead .site-search .btn-search:hover {
+    color: white !important;
+}
+
+.masthead .site-search .field {
+    position: relative !important;
 }
 .d-flex {
     display: flex !important;
