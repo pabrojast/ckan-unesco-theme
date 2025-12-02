@@ -337,9 +337,11 @@ border-radius: 0 0 3px 3px;
     .masthead .masthead-nav {
         flex-direction: row;
         justify-content: space-between;
-        align-items: center;
+        align-items: flex-start;
         padding: 10px 0;
         flex-wrap: wrap;
+        position: relative;
+        z-index: 1000;
     }
     
     /* Ocultar navegación principal en mobile por defecto */
@@ -348,6 +350,9 @@ border-radius: 0 0 3px 3px;
         width: 100%;
         margin-top: 15px;
         order: 3;
+        opacity: 0;
+        transform: translateY(-10px);
+        transition: all 0.3s ease;
     }
     
     /* Ocultar search en mobile */
@@ -372,20 +377,70 @@ border-radius: 0 0 3px 3px;
     .masthead .masthead-nav.in .navigation {
         display: flex !important;
         flex-direction: column;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
         width: 100%;
-        margin-top: 15px;
+        margin-top: 0;
+        background-color: #0077d4;
+        border-radius: 0 0 8px 8px;
+        padding: 20px 15px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        z-index: 9999;
+        opacity: 1 !important;
+        transform: translateY(0) !important;
+        animation: slideDown 0.3s ease;
+    }
+    
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
     }
     
     .masthead .masthead-nav.show .navigation .nav,
     .masthead .masthead-nav.in .navigation .nav {
         flex-direction: column;
         width: 100%;
+        margin: 0;
+        padding: 0;
     }
     
     .masthead .masthead-nav.show .navigation .nav li,
     .masthead .masthead-nav.in .navigation .nav li {
-        margin-bottom: 10px;
+        margin-bottom: 8px;
         margin-right: 0;
+        width: 100%;
+        text-align: left;
+    }
+    
+    .masthead .masthead-nav.show .navigation .nav li a,
+    .masthead .masthead-nav.in .navigation .nav li a {
+        display: block;
+        width: 100%;
+        padding: 15px 20px;
+        background-color: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 6px;
+        color: white !important;
+        text-decoration: none;
+        font-size: 15px;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        box-sizing: border-box;
+    }
+    
+    .masthead .masthead-nav.show .navigation .nav li a:hover,
+    .masthead .masthead-nav.in .navigation .nav li a:hover {
+        background-color: rgba(255, 255, 255, 0.15);
+        border-color: rgba(255, 255, 255, 0.2);
+        transform: translateY(-1px);
     }
 }
 

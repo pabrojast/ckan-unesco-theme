@@ -342,17 +342,30 @@ function initializeMobileNavigation() {
         const toggleButtons = document.querySelectorAll('.navbar-toggle, .navbar-toggler');
         const navContainer = document.querySelector('.masthead-nav');
         
+        console.log('Inicializando navegación mobile:', {
+            toggleButtons: toggleButtons.length,
+            navContainer: !!navContainer
+        });
+        
         toggleButtons.forEach(button => {
             button.addEventListener('click', function(e) {
                 e.preventDefault();
+                console.log('Toggle button clicked');
                 
                 if (navContainer) {
-                    // Toggle las clases para mostrar/ocultar el menú
-                    navContainer.classList.toggle('show');
-                    navContainer.classList.toggle('in');
+                    // Simple toggle de la clase show
+                    const isCurrentlyShown = navContainer.classList.contains('show');
+                    
+                    if (isCurrentlyShown) {
+                        navContainer.classList.remove('show', 'in');
+                        console.log('Menú cerrado');
+                    } else {
+                        navContainer.classList.add('show', 'in');
+                        console.log('Menú abierto');
+                    }
                     
                     // Actualizar aria-expanded
-                    const isExpanded = navContainer.classList.contains('show') || navContainer.classList.contains('in');
+                    const isExpanded = navContainer.classList.contains('show');
                     this.setAttribute('aria-expanded', isExpanded.toString());
                 }
             });
@@ -367,6 +380,7 @@ function initializeMobileNavigation() {
                     toggleButtons.forEach(btn => {
                         btn.setAttribute('aria-expanded', 'false');
                     });
+                    console.log('Menú cerrado por click en link');
                 }
             });
         });
@@ -378,6 +392,7 @@ function initializeMobileNavigation() {
                 toggleButtons.forEach(btn => {
                     btn.setAttribute('aria-expanded', 'false');
                 });
+                console.log('Menú cerrado por resize');
             }
         });
         
