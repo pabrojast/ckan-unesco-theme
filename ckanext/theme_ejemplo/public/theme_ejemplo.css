@@ -64,10 +64,10 @@ z-index: 1000 !important;
     flex-direction: column;
 }
 
-/* Primera fila: Top menu alineado a la izquierda */
+/* Primera fila: Top menu alineado a la derecha */
 .masthead .masthead-top-bar {
     display: flex;
-    justify-content: flex-start;
+    justify-content: flex-end;
     align-items: center;
     padding: 5px 0;
     min-height: 35px;
@@ -87,7 +87,7 @@ z-index: 1000 !important;
     align-items: center;
     visibility: visible !important;
     width: 100%;
-    justify-content: flex-start;
+    justify-content: flex-end;
 }
 
 .masthead .masthead-nav .masthead-actions {
@@ -188,7 +188,7 @@ z-index: 1000 !important;
 .masthead .masthead-nav .navigation {
     display: flex !important;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: flex-end;
     flex: 1;
     margin-right: 20px;
     visibility: visible !important;
@@ -197,7 +197,7 @@ z-index: 1000 !important;
 .masthead .masthead-nav .navigation .nav {
     display: flex;
     flex-wrap: nowrap;
-    justify-content: flex-start;
+    justify-content: flex-end;
     align-items: center;
     margin: 0;
     padding: 0;
