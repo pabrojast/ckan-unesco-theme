@@ -1,4 +1,5 @@
 {% set posts = h.get_recent_blog_posts(number=6) %}
+<div class="row">
 {% for post in posts %}
 <div class="col-md-4 col3 col-enhanced">
   <div class="col-small">
@@ -45,3 +46,4 @@
   </div>
 </div>
 {% endfor %}
+</div>
