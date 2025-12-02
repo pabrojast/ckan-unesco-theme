@@ -71,6 +71,8 @@ z-index: 1000 !important;
     align-items: center;
     padding: 5px 0;
     min-height: 35px;
+    width: 100%;
+    text-align: left;
 }
 
 .masthead .masthead-nav .masthead-brand {
@@ -84,6 +86,8 @@ z-index: 1000 !important;
     display: flex !important;
     align-items: center;
     visibility: visible !important;
+    width: 100%;
+    justify-content: flex-start;
 }
 
 .masthead .masthead-nav .masthead-actions {
@@ -102,11 +106,16 @@ z-index: 1000 !important;
     list-style: none;
     align-items: center;
     background: transparent;
+    justify-content: flex-start;
 }
 
 .masthead .masthead-top-bar .masthead-topmenu li {
     margin-right: 15px;
     white-space: nowrap;
+}
+
+.masthead .masthead-top-bar .masthead-topmenu li:first-child {
+    margin-left: 0;
 }
 
 .masthead .masthead-top-bar .masthead-topmenu a {
