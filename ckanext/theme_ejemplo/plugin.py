@@ -84,6 +84,9 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 # Procesamiento de facetas optimizado
                 self._process_facets(dataset_dict)
                 
+                # Sanitizar campos para evitar problemas con atomic updates de Solr
+                self._sanitize_solr_fields(dataset_dict)
+                
                 return dataset_dict
             
             except Exception as e:
@@ -136,7 +139,7 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
             return -180 <= x <= 180 and -90 <= y <= 90
 
         def _process_facets(self, dataset_dict):
-            """Procesamiento optimizado de facetas"""
+            """Procesamiento optimizado de facetas con mejor manejo de campos multiidioma"""
             try:
                 facets_dict = utils.get_facets_dict()
                 for facet, label in facets_dict.items():
@@ -147,13 +150,109 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                                 if facet == "spatial":
                                     dataset_dict[facet] = json.dumps(data)
                                 else:
-                                    dataset_dict[facet] = json.loads(data)
+                                    # Verificar si es JSON válido antes de procesar
+                                    parsed_data = json.loads(data)
+                                    
+                                    # Manejo especial para campos multiidioma
+                                    if isinstance(parsed_data, dict):
+                                        # Si es un diccionario con códigos de idioma como claves
+                                        if self._contains_language_codes(parsed_data):
+                                            # Serializar como JSON string para evitar problemas de atomic update
+                                            dataset_dict[facet] = json.dumps(parsed_data)
+                                        else:
+                                            dataset_dict[facet] = parsed_data
+                                    elif isinstance(parsed_data, list):
+                                        # Manejar listas que pueden contener objetos con códigos de idioma
+                                        dataset_dict[facet] = self._sanitize_list_for_solr(parsed_data)
+                                    else:
+                                        dataset_dict[facet] = parsed_data
+                                        
                             except json.JSONDecodeError:
+                                # Si no es JSON válido, mantener como string
+                                dataset_dict[facet] = data
+                            except Exception as e:
+                                log.warning(f"Error processing facet {facet}: {e}")
                                 dataset_dict[facet] = data
                     else:
                         dataset_dict.pop(facet, None)  # Más eficiente que 'del'
             except Exception as e:
                 log.error(f"Error processing facets: {e}")
+        
+        def _contains_language_codes(self, data_dict):
+            """Verificar si el diccionario contiene códigos de idioma como claves"""
+            language_codes = ['en', 'es', 'fr', 'de', 'it', 'pt', 'ar', 'zh', 'ja', 'ru']
+            if isinstance(data_dict, dict):
+                return any(key in language_codes for key in data_dict.keys())
+            return False
+        
+        def _sanitize_list_for_solr(self, data_list):
+            """Sanitizar listas para evitar problemas con Solr atomic updates"""
+            try:
+                sanitized = []
+                for item in data_list:
+                    if isinstance(item, dict) and self._contains_language_codes(item):
+                        # Convertir dictionaries con códigos de idioma a JSON string
+                        sanitized.append(json.dumps(item))
+                    else:
+                        sanitized.append(item)
+                return sanitized
+            except Exception as e:
+                log.warning(f"Error sanitizing list for Solr: {e}")
+                return data_list
+        
+        def _sanitize_solr_fields(self, dataset_dict):
+            """
+            Sanitizar todos los campos del dataset para evitar problemas con Solr atomic updates.
+            Especialmente importante para campos que pueden contener códigos de idioma como 'fr'
+            """
+            try:
+                # Campos que frecuentemente causan problemas con atomic updates
+                problematic_fields = [
+                    'title', 'description', 'notes', 'title_translated', 'notes_translated',
+                    'theme', 'theme_eu', 'language', 'alternate_identifier', 'theme_inspire',
+                    'keywords', 'tags', 'extras', 'resources'
+                ]
+                
+                for field in problematic_fields:
+                    if field in dataset_dict:
+                        value = dataset_dict[field]
+                        dataset_dict[field] = self._sanitize_field_value(value, field)
+                
+                # Buscar y sanitizar cualquier campo que contenga diccionarios con códigos de idioma
+                for key, value in list(dataset_dict.items()):
+                    if isinstance(value, dict) and self._contains_language_codes(value):
+                        dataset_dict[key] = json.dumps(value)
+                        log.debug(f"Sanitized field {key} containing language codes")
+                        
+            except Exception as e:
+                log.error(f"Error sanitizing Solr fields: {e}")
+        
+        def _sanitize_field_value(self, value, field_name):
+            """Sanitizar un valor específico de campo"""
+            try:
+                if isinstance(value, str):
+                    # Intentar parsear como JSON
+                    try:
+                        parsed = json.loads(value)
+                        if isinstance(parsed, dict) and self._contains_language_codes(parsed):
+                            return json.dumps(parsed)  # Re-serialize para asegurar formato correcto
+                        return value
+                    except json.JSONDecodeError:
+                        return value
+                        
+                elif isinstance(value, dict):
+                    if self._contains_language_codes(value):
+                        return json.dumps(value)
+                    return value
+                    
+                elif isinstance(value, list):
+                    return self._sanitize_list_for_solr(value)
+                    
+                return value
+                
+            except Exception as e:
+                log.warning(f"Error sanitizing field {field_name}: {e}")
+                return value
 
         def update_config(self, config):
             # Add this plugin's templates dir to CKAN's extra_template_paths, so
