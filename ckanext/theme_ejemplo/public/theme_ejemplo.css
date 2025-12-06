@@ -2507,3 +2507,227 @@ h2.page-heading {
 .content-expandable.expanded .content-fade-overlay {
   opacity: 0;
 }
+
+/* ===== CKAN TAG AND LABEL STYLES (Fixed for CKAN 2.10) ===== */
+
+/* Basic tag/label styling */
+.tag, .label {
+  display: inline-block;
+  padding: 3px 8px;
+  margin: 2px 4px 2px 0;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 14px;
+  color: #ffffff;
+  text-decoration: none;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: 3px;
+  background-color: #999999;
+  transition: all 0.2s ease;
+}
+
+.tag:hover, .label:hover {
+  text-decoration: none;
+  background-color: #777777;
+}
+
+/* Tag list container */
+.tag-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.tag-list li {
+  display: inline-block;
+  margin: 0 5px 5px 0;
+}
+
+.tag-list .tag {
+  background-color: var(--unesco-blue);
+  color: white;
+  text-decoration: none;
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  display: inline-block;
+  transition: all 0.3s ease;
+}
+
+.tag-list .tag:hover {
+  background-color: var(--unesco-blue-dark);
+  text-decoration: none;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* Different label colors/types */
+.label-default {
+  background-color: #999999;
+}
+
+.label-primary {
+  background-color: var(--unesco-blue);
+}
+
+.label-success {
+  background-color: #5cb85c;
+}
+
+.label-info {
+  background-color: #5bc0de;
+}
+
+.label-warning {
+  background-color: #f0ad4e;
+}
+
+.label-danger {
+  background-color: #d9534f;
+}
+
+/* Format labels for resources */
+.resource-item .format-label {
+  background-color: #aaa;
+  color: #fff;
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 600;
+  line-height: 1;
+  margin-left: auto;
+  padding: 2px 8px 3px;
+  position: relative;
+  text-align: center;
+  text-transform: uppercase;
+  text-shadow: 0 -1px rgba(0, 0, 0, 0.2);
+  border-radius: 2px;
+}
+
+/* CSV tags */
+.format-label[data-format=csv],
+.format-label[data-format*=csv] {
+  background-color: #3c763d;
+}
+
+/* JSON tags */
+.format-label[data-format=json],
+.format-label[data-format*=json] {
+  background-color: #31708f;
+}
+
+/* XML tags */
+.format-label[data-format=xml],
+.format-label[data-format*=xml] {
+  background-color: #8a6d3b;
+}
+
+/* PDF tags */
+.format-label[data-format=pdf],
+.format-label[data-format*=pdf] {
+  background-color: #a94442;
+}
+
+/* XLS/XLSX tags */
+.format-label[data-format=xls],
+.format-label[data-format*=xls],
+.format-label[data-format=xlsx],
+.format-label[data-format*=xlsx] {
+  background-color: #269abc;
+}
+
+/* ZIP tags */
+.format-label[data-format=zip],
+.format-label[data-format*=zip] {
+  background-color: #5a5a5a;
+}
+
+/* API tags */
+.format-label[data-format=api],
+.format-label[data-format*=api] {
+  background-color: #f57c00;
+}
+
+/* Popular tags styling */
+.popular-tags {
+  margin: 15px 0;
+}
+
+.popular-tags .tag {
+  margin: 3px 6px 3px 0;
+  padding: 5px 10px;
+  font-size: 13px;
+  background-color: #f8f9fa;
+  color: var(--text-primary);
+  border: 1px solid #e9ecef;
+  border-radius: 15px;
+}
+
+.popular-tags .tag:hover {
+  background-color: var(--unesco-blue-pale);
+  border-color: var(--unesco-blue);
+  color: var(--unesco-blue-dark);
+}
+
+/* Tags in search results */
+.dataset-tags {
+  margin-top: 8px;
+}
+
+.dataset-tags .tag {
+  background-color: #f0f0f0;
+  color: #666;
+  font-size: 11px;
+  padding: 3px 8px;
+  margin-right: 5px;
+  border-radius: 10px;
+}
+
+.dataset-tags .tag:hover {
+  background-color: var(--unesco-blue);
+  color: white;
+}
+
+/* Tags in facet lists */
+.facet-list .nav-item .tag {
+  float: right;
+  background-color: #e9ecef;
+  color: #6c757d;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 8px;
+}
+
+/* Tags in home page search section */
+.homepage .module-search .tags .tag {
+  background-color: var(--unesco-blue);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 12px;
+  margin: 5px 10px 5px 0;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.homepage .module-search .tags .tag:hover {
+  background-color: var(--unesco-blue-dark);
+  text-decoration: none;
+}
+
+/* Responsive adjustments for tags */
+@media (max-width: 768px) {
+  .tag, .label {
+    font-size: 10px;
+    padding: 2px 6px;
+  }
+  
+  .tag-list .tag {
+    font-size: 11px;
+    padding: 3px 8px;
+  }
+  
+  .format-label {
+    font-size: 8px;
+    padding: 2px 6px;
+  }
+}
