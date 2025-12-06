@@ -2508,28 +2508,50 @@ h2.page-heading {
   opacity: 0;
 }
 
-/* ===== CKAN TAG AND LABEL STYLES (Fixed for CKAN 2.10 + SchemingDCAT) ===== */
+/* ===== CKAN TAG AND LABEL STYLES (CKAN 2.10 Compatible with SchemingDCAT) ===== */
 
-/* Basic tag/label styling - includes schemingdcat badge-label class */
-.tag, .label, .badge-label {
-  display: inline-block;
-  padding: 3px 8px;
-  margin: 2px 4px 2px 0;
-  font-size: 11px;
-  font-weight: 500;
-  line-height: 14px;
-  color: #ffffff;
-  text-decoration: none;
-  white-space: nowrap;
-  vertical-align: baseline;
-  border-radius: 3px;
-  background-color: #999999;
-  transition: all 0.2s ease;
+/* Force tag/label styling with high specificity - CKAN 2.10 Override */
+body .tag, 
+body .label, 
+body .badge-label,
+.dataset-item .tag,
+.dataset-item .label,
+.dataset-item .badge-label,
+.dataset-resources .tag,
+.dataset-resources .label,
+.dataset-resources .badge-label,
+ul.dataset-resources li .tag,
+ul.dataset-resources li .label,
+ul.dataset-resources li .badge-label {
+  display: inline-block !important;
+  padding: 3px 8px !important;
+  margin: 2px 4px 2px 0 !important;
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  line-height: 14px !important;
+  color: #ffffff !important;
+  text-decoration: none !important;
+  white-space: nowrap !important;
+  vertical-align: baseline !important;
+  border-radius: 3px !important;
+  background-color: #999999 !important;
+  transition: all 0.2s ease !important;
+  border: none !important;
+  text-transform: uppercase !important;
 }
 
-.tag:hover, .label:hover, .badge-label:hover {
-  text-decoration: none;
-  background-color: #777777;
+body .tag:hover, 
+body .label:hover, 
+body .badge-label:hover,
+.dataset-item .tag:hover,
+.dataset-item .label:hover,
+.dataset-item .badge-label:hover,
+.dataset-resources .tag:hover,
+.dataset-resources .label:hover,
+.dataset-resources .badge-label:hover {
+  text-decoration: none !important;
+  background-color: #777777 !important;
+  color: #ffffff !important;
 }
 
 /* SchemingDCAT specific badges */
@@ -2654,80 +2676,196 @@ h2.page-heading {
   margin-right: 4px;
 }
 
-/* CSV tags - Compatible with both format-label and badge-label */
-.format-label[data-format=csv],
-.format-label[data-format*=csv],
-.label[data-format=csv],
-.label[data-format*=csv],
-.badge-label[data-format=csv],
-.badge-label[data-format*=csv] {
+/* CSV tags - High specificity for CKAN 2.10 override */
+body .format-label[data-format=csv],
+body .format-label[data-format*=csv],
+body .label[data-format=csv],
+body .label[data-format*=csv],
+body .badge-label[data-format=csv],
+body .badge-label[data-format*=csv],
+.dataset-resources .format-label[data-format=csv],
+.dataset-resources .format-label[data-format*=csv],
+.dataset-resources .label[data-format=csv],
+.dataset-resources .label[data-format*=csv],
+.dataset-resources .badge-label[data-format=csv],
+.dataset-resources .badge-label[data-format*=csv] {
   background-color: #3c763d !important;
 }
 
 /* JSON tags */
-.format-label[data-format=json],
-.format-label[data-format*=json],
-.label[data-format=json],
-.label[data-format*=json],
-.badge-label[data-format=json],
-.badge-label[data-format*=json] {
+body .format-label[data-format=json],
+body .format-label[data-format*=json],
+body .label[data-format=json],
+body .label[data-format*=json],
+body .badge-label[data-format=json],
+body .badge-label[data-format*=json],
+.dataset-resources .format-label[data-format=json],
+.dataset-resources .format-label[data-format*=json],
+.dataset-resources .label[data-format=json],
+.dataset-resources .label[data-format*=json],
+.dataset-resources .badge-label[data-format=json],
+.dataset-resources .badge-label[data-format*=json] {
   background-color: #31708f !important;
 }
 
 /* XML tags */
-.format-label[data-format=xml],
-.format-label[data-format*=xml],
-.label[data-format=xml],
-.label[data-format*=xml],
-.badge-label[data-format=xml],
-.badge-label[data-format*=xml] {
+body .format-label[data-format=xml],
+body .format-label[data-format*=xml],
+body .label[data-format=xml],
+body .label[data-format*=xml],
+body .badge-label[data-format=xml],
+body .badge-label[data-format*=xml],
+.dataset-resources .format-label[data-format=xml],
+.dataset-resources .format-label[data-format*=xml],
+.dataset-resources .label[data-format=xml],
+.dataset-resources .label[data-format*=xml],
+.dataset-resources .badge-label[data-format=xml],
+.dataset-resources .badge-label[data-format*=xml] {
   background-color: #8a6d3b !important;
 }
 
 /* PDF tags */
-.format-label[data-format=pdf],
-.format-label[data-format*=pdf],
-.label[data-format=pdf],
-.label[data-format*=pdf],
-.badge-label[data-format=pdf],
-.badge-label[data-format*=pdf] {
+body .format-label[data-format=pdf],
+body .format-label[data-format*=pdf],
+body .label[data-format=pdf],
+body .label[data-format*=pdf],
+body .badge-label[data-format=pdf],
+body .badge-label[data-format*=pdf],
+.dataset-resources .format-label[data-format=pdf],
+.dataset-resources .format-label[data-format*=pdf],
+.dataset-resources .label[data-format=pdf],
+.dataset-resources .label[data-format*=pdf],
+.dataset-resources .badge-label[data-format=pdf],
+.dataset-resources .badge-label[data-format*=pdf] {
   background-color: #a94442 !important;
 }
 
 /* XLS/XLSX tags */
-.format-label[data-format=xls],
-.format-label[data-format*=xls],
-.format-label[data-format=xlsx],
-.format-label[data-format*=xlsx],
-.label[data-format=xls],
-.label[data-format*=xls],
-.label[data-format=xlsx],
-.label[data-format*=xlsx],
-.badge-label[data-format=xls],
-.badge-label[data-format*=xls],
-.badge-label[data-format=xlsx],
-.badge-label[data-format*=xlsx] {
+body .format-label[data-format=xls],
+body .format-label[data-format*=xls],
+body .format-label[data-format=xlsx],
+body .format-label[data-format*=xlsx],
+body .label[data-format=xls],
+body .label[data-format*=xls],
+body .label[data-format=xlsx],
+body .label[data-format*=xlsx],
+body .badge-label[data-format=xls],
+body .badge-label[data-format*=xls],
+body .badge-label[data-format=xlsx],
+body .badge-label[data-format*=xlsx],
+.dataset-resources .format-label[data-format=xls],
+.dataset-resources .format-label[data-format*=xls],
+.dataset-resources .format-label[data-format=xlsx],
+.dataset-resources .format-label[data-format*=xlsx],
+.dataset-resources .label[data-format=xls],
+.dataset-resources .label[data-format*=xls],
+.dataset-resources .label[data-format=xlsx],
+.dataset-resources .label[data-format*=xlsx],
+.dataset-resources .badge-label[data-format=xls],
+.dataset-resources .badge-label[data-format*=xls],
+.dataset-resources .badge-label[data-format=xlsx],
+.dataset-resources .badge-label[data-format*=xlsx] {
   background-color: #269abc !important;
 }
 
 /* ZIP tags */
-.format-label[data-format=zip],
-.format-label[data-format*=zip],
-.label[data-format=zip],
-.label[data-format*=zip],
-.badge-label[data-format=zip],
-.badge-label[data-format*=zip] {
+body .format-label[data-format=zip],
+body .format-label[data-format*=zip],
+body .label[data-format=zip],
+body .label[data-format*=zip],
+body .badge-label[data-format=zip],
+body .badge-label[data-format*=zip],
+.dataset-resources .format-label[data-format=zip],
+.dataset-resources .format-label[data-format*=zip],
+.dataset-resources .label[data-format=zip],
+.dataset-resources .label[data-format*=zip],
+.dataset-resources .badge-label[data-format=zip],
+.dataset-resources .badge-label[data-format*=zip] {
   background-color: #5a5a5a !important;
 }
 
 /* API tags */
-.format-label[data-format=api],
-.format-label[data-format*=api],
-.label[data-format=api],
-.label[data-format*=api],
-.badge-label[data-format=api],
-.badge-label[data-format*=api] {
+body .format-label[data-format=api],
+body .format-label[data-format*=api],
+body .label[data-format=api],
+body .label[data-format*=api],
+body .badge-label[data-format=api],
+body .badge-label[data-format*=api],
+.dataset-resources .format-label[data-format=api],
+.dataset-resources .format-label[data-format*=api],
+.dataset-resources .label[data-format=api],
+.dataset-resources .label[data-format*=api],
+.dataset-resources .badge-label[data-format=api],
+.dataset-resources .badge-label[data-format*=api] {
   background-color: #f57c00 !important;
+}
+
+/* Additional format tags from schemingdcat extension - CKAN 2.10 Override */
+body .format-label[data-format=shp],
+body .format-label[data-format*=shp],
+body .label[data-format=shp],
+body .label[data-format*=shp],
+body .badge-label[data-format=shp],
+body .badge-label[data-format*=shp] {
+  background-color: #36849a !important;
+}
+
+body .format-label[data-format=tiff],
+body .format-label[data-format*=tiff],
+body .format-label[data-format=tif],
+body .format-label[data-format*=tif],
+body .label[data-format=tiff],
+body .label[data-format*=tiff],
+body .label[data-format=tif],
+body .label[data-format*=tif],
+body .badge-label[data-format=tiff],
+body .badge-label[data-format*=tiff],
+body .badge-label[data-format=tif],
+body .badge-label[data-format*=tif] {
+  background-color: #ff5364 !important;
+}
+
+body .format-label[data-format=png],
+body .format-label[data-format*=png],
+body .label[data-format=png],
+body .label[data-format*=png],
+body .badge-label[data-format=png],
+body .badge-label[data-format*=png] {
+  background-color: #659c35 !important;
+}
+
+body .format-label[data-format=geojson],
+body .format-label[data-format*=geojson],
+body .label[data-format=geojson],
+body .label[data-format*=geojson],
+body .badge-label[data-format=geojson],
+body .badge-label[data-format*=geojson] {
+  background-color: #eeaf4b !important;
+}
+
+/* Fallback for any format tags that might not have specific styling */
+body a.label[data-format],
+body a.badge-label[data-format],
+.dataset-resources a.label[data-format],
+.dataset-resources a.badge-label[data-format] {
+  background-color: #999999 !important;
+  color: #ffffff !important;
+  text-decoration: none !important;
+  padding: 3px 8px !important;
+  border-radius: 3px !important;
+  font-size: 11px !important;
+  text-transform: uppercase !important;
+  display: inline-block !important;
+  margin: 2px 4px 2px 0 !important;
+}
+
+body a.label[data-format]:hover,
+body a.badge-label[data-format]:hover,
+.dataset-resources a.label[data-format]:hover,
+.dataset-resources a.badge-label[data-format]:hover {
+  background-color: #777777 !important;
+  color: #ffffff !important;
+  text-decoration: none !important;
 }
 
 /* Popular tags styling */
