@@ -2508,10 +2508,10 @@ h2.page-heading {
   opacity: 0;
 }
 
-/* ===== CKAN TAG AND LABEL STYLES (Fixed for CKAN 2.10) ===== */
+/* ===== CKAN TAG AND LABEL STYLES (Fixed for CKAN 2.10 + SchemingDCAT) ===== */
 
-/* Basic tag/label styling */
-.tag, .label {
+/* Basic tag/label styling - includes schemingdcat badge-label class */
+.tag, .label, .badge-label {
   display: inline-block;
   padding: 3px 8px;
   margin: 2px 4px 2px 0;
@@ -2527,9 +2527,50 @@ h2.page-heading {
   transition: all 0.2s ease;
 }
 
-.tag:hover, .label:hover {
+.tag:hover, .label:hover, .badge-label:hover {
   text-decoration: none;
   background-color: #777777;
+}
+
+/* SchemingDCAT specific badges */
+.badge {
+  display: inline-block;
+  padding: 3px 8px;
+  margin: 2px 4px 2px 0;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 14px;
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: 3px;
+  color: #ffffff;
+  transition: all 0.2s ease;
+}
+
+.badge-info {
+  background-color: #5bc0de;
+}
+
+.badge-info:hover {
+  background-color: #46b8da;
+}
+
+.badge-danger {
+  background-color: #d9534f;
+}
+
+.badge-danger:hover {
+  background-color: #c9302c;
+}
+
+.badge.bg-secondary {
+  background-color: #6c757d !important;
+}
+
+.badge.bg-secondary:hover {
+  background-color: #5a6268 !important;
 }
 
 /* Tag list container */
@@ -2587,8 +2628,10 @@ h2.page-heading {
   background-color: #d9534f;
 }
 
-/* Format labels for resources */
-.resource-item .format-label {
+/* Format labels for resources - Compatible with schemingdcat */
+.resource-item .format-label,
+.dataset-resources .label,
+.dataset-resources .badge-label {
   background-color: #aaa;
   color: #fff;
   display: inline-block;
@@ -2604,48 +2647,87 @@ h2.page-heading {
   border-radius: 2px;
 }
 
-/* CSV tags */
+/* Override schemingdcat format styles to work with existing format icons */
+.dataset-resources .label[data-format],
+.dataset-resources .badge-label[data-format] {
+  margin-left: 0;
+  margin-right: 4px;
+}
+
+/* CSV tags - Compatible with both format-label and badge-label */
 .format-label[data-format=csv],
-.format-label[data-format*=csv] {
-  background-color: #3c763d;
+.format-label[data-format*=csv],
+.label[data-format=csv],
+.label[data-format*=csv],
+.badge-label[data-format=csv],
+.badge-label[data-format*=csv] {
+  background-color: #3c763d !important;
 }
 
 /* JSON tags */
 .format-label[data-format=json],
-.format-label[data-format*=json] {
-  background-color: #31708f;
+.format-label[data-format*=json],
+.label[data-format=json],
+.label[data-format*=json],
+.badge-label[data-format=json],
+.badge-label[data-format*=json] {
+  background-color: #31708f !important;
 }
 
 /* XML tags */
 .format-label[data-format=xml],
-.format-label[data-format*=xml] {
-  background-color: #8a6d3b;
+.format-label[data-format*=xml],
+.label[data-format=xml],
+.label[data-format*=xml],
+.badge-label[data-format=xml],
+.badge-label[data-format*=xml] {
+  background-color: #8a6d3b !important;
 }
 
 /* PDF tags */
 .format-label[data-format=pdf],
-.format-label[data-format*=pdf] {
-  background-color: #a94442;
+.format-label[data-format*=pdf],
+.label[data-format=pdf],
+.label[data-format*=pdf],
+.badge-label[data-format=pdf],
+.badge-label[data-format*=pdf] {
+  background-color: #a94442 !important;
 }
 
 /* XLS/XLSX tags */
 .format-label[data-format=xls],
 .format-label[data-format*=xls],
 .format-label[data-format=xlsx],
-.format-label[data-format*=xlsx] {
-  background-color: #269abc;
+.format-label[data-format*=xlsx],
+.label[data-format=xls],
+.label[data-format*=xls],
+.label[data-format=xlsx],
+.label[data-format*=xlsx],
+.badge-label[data-format=xls],
+.badge-label[data-format*=xls],
+.badge-label[data-format=xlsx],
+.badge-label[data-format*=xlsx] {
+  background-color: #269abc !important;
 }
 
 /* ZIP tags */
 .format-label[data-format=zip],
-.format-label[data-format*=zip] {
-  background-color: #5a5a5a;
+.format-label[data-format*=zip],
+.label[data-format=zip],
+.label[data-format*=zip],
+.badge-label[data-format=zip],
+.badge-label[data-format*=zip] {
+  background-color: #5a5a5a !important;
 }
 
 /* API tags */
 .format-label[data-format=api],
-.format-label[data-format*=api] {
-  background-color: #f57c00;
+.format-label[data-format*=api],
+.label[data-format=api],
+.label[data-format*=api],
+.badge-label[data-format=api],
+.badge-label[data-format*=api] {
+  background-color: #f57c00 !important;
 }
 
 /* Popular tags styling */
