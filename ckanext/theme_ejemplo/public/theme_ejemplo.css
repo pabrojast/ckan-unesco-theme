@@ -2951,3 +2951,506 @@ body a.badge-label[data-format]:hover,
     padding: 2px 6px;
   }
 }
+
+/* ===== DATASET PAGE STYLING FIXES FOR CKAN 2.10 + SCHEMINGDCAT ===== */
+
+/* Fix metadata section styling */
+.additional-info {
+  margin-top: 30px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  overflow: hidden;
+}
+
+.additional-info header {
+  background: linear-gradient(135deg, var(--unesco-blue) 0%, var(--unesco-blue-dark) 100%);
+  padding: 20px 25px;
+  margin-bottom: 0;
+}
+
+.additional-info header h2 {
+  color: white !important;
+  margin: 0 !important;
+  font-size: 24px !important;
+  font-weight: 600 !important;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.additional-info header h2 .btn-group {
+  margin-left: 15px;
+}
+
+/* Fix metadata tables */
+.additional-info .table {
+  margin-bottom: 0 !important;
+  background-color: #fff !important;
+  border: none !important;
+}
+
+.additional-info .table-bordered {
+  border: 1px solid #e9ecef !important;
+  margin-bottom: 20px !important;
+  border-radius: 6px !important;
+  overflow: hidden !important;
+}
+
+.additional-info .table-bordered:last-child {
+  margin-bottom: 0 !important;
+}
+
+/* Fix table headers */
+.additional-info .thead-normal_table td {
+  background-color: #f8f9fa !important;
+  color: #495057 !important;
+  font-weight: 600 !important;
+  padding: 15px 20px !important;
+  border-bottom: 2px solid #dee2e6 !important;
+  font-size: 16px !important;
+  text-align: left !important;
+}
+
+/* Fix table rows */
+.additional-info .table tbody tr {
+  border-bottom: 1px solid #f8f9fa !important;
+}
+
+.additional-info .table tbody tr:last-child {
+  border-bottom: none !important;
+}
+
+.additional-info .table tbody tr:hover {
+  background-color: #f8f9fa !important;
+}
+
+/* Fix dataset labels and details */
+.additional-info .dataset-label {
+  background-color: #fff !important;
+  color: #495057 !important;
+  font-weight: 600 !important;
+  padding: 15px 20px !important;
+  border-right: 1px solid #f0f0f0 !important;
+  width: 30% !important;
+  vertical-align: top !important;
+  font-size: 14px !important;
+}
+
+.additional-info .dataset-details {
+  background-color: #fff !important;
+  color: #212529 !important;
+  padding: 15px 20px !important;
+  vertical-align: top !important;
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+}
+
+.additional-info .dataset-details a {
+  color: var(--unesco-blue) !important;
+  text-decoration: none !important;
+}
+
+.additional-info .dataset-details a:hover {
+  color: var(--unesco-blue-dark) !important;
+  text-decoration: underline !important;
+}
+
+/* Fix DOI label styling */
+.dataset-private.label.label-inverse {
+  background-color: #6c757d !important;
+  color: white !important;
+  padding: 4px 8px !important;
+  border-radius: 3px !important;
+  font-size: 11px !important;
+  margin-left: 10px !important;
+  display: inline-block !important;
+}
+
+/* Fix collapsible table rows */
+.additional-info .toggle-more {
+  display: none;
+}
+
+.additional-info .table[data-show-more="true"] .toggle-more {
+  display: table-row;
+}
+
+.additional-info .toggle-show-more {
+  background-color: #f8f9fa !important;
+  text-align: center !important;
+  padding: 10px !important;
+  border-top: 1px solid #dee2e6 !important;
+  cursor: pointer !important;
+}
+
+.additional-info .toggle-show-more:hover {
+  background-color: #e9ecef !important;
+}
+
+.additional-info .toggle-show-more a {
+  color: var(--unesco-blue) !important;
+  text-decoration: none !important;
+  font-weight: 600 !important;
+}
+
+.additional-info .toggle-show-more a:hover {
+  color: var(--unesco-blue-dark) !important;
+  text-decoration: underline !important;
+}
+
+/* Fix dataset badges */
+.dataset-badges {
+  margin-bottom: 20px;
+}
+
+.dataset-badges .badge {
+  background-color: #6c757d !important;
+  color: white !important;
+  padding: 8px 12px !important;
+  border-radius: 4px !important;
+  font-size: 12px !important;
+  margin-right: 10px !important;
+  display: inline-block !important;
+}
+
+.dataset-badges .dataset-private.badge {
+  background-color: #dc3545 !important;
+}
+
+.dataset-badges .dataset-draft.badge {
+  background-color: #ffc107 !important;
+  color: #212529 !important;
+}
+
+.dataset-badges .dataset-delete.badge {
+  background-color: #dc3545 !important;
+}
+
+/* Fix package notes */
+.notes.embedded-content.package_notes {
+  background: #f8f9fa;
+  border-left: 4px solid var(--unesco-blue);
+  padding: 20px;
+  margin: 20px 0;
+  border-radius: 0 6px 6px 0;
+}
+
+.notes.embedded-content.package_notes p {
+  margin-bottom: 10px;
+  color: #495057 !important;
+  line-height: 1.6 !important;
+}
+
+.notes.embedded-content.package_notes p:last-child {
+  margin-bottom: 0;
+}
+
+/* Fix resource list styling */
+.resource-list {
+  margin-top: 20px;
+}
+
+.resource-item {
+  background: #fff;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  margin-bottom: 15px;
+  padding: 20px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.resource-item:hover {
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  transform: translateY(-1px);
+}
+
+.resource-item .heading {
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  color: #495057 !important;
+  margin-bottom: 10px !important;
+}
+
+.resource-item .heading a {
+  color: var(--unesco-blue) !important;
+  text-decoration: none !important;
+}
+
+.resource-item .heading a:hover {
+  color: var(--unesco-blue-dark) !important;
+  text-decoration: underline !important;
+}
+
+/* Responsive fixes for dataset page */
+@media (max-width: 768px) {
+  .additional-info .dataset-label,
+  .additional-info .dataset-details {
+    display: block !important;
+    width: 100% !important;
+    border-right: none !important;
+  }
+  
+  .additional-info .dataset-label {
+    background-color: #f8f9fa !important;
+    border-bottom: 1px solid #dee2e6 !important;
+    padding: 12px 15px 8px 15px !important;
+    font-weight: 700 !important;
+  }
+  
+  .additional-info .dataset-details {
+    padding: 8px 15px 12px 15px !important;
+    border-bottom: 1px solid #f0f0f0 !important;
+  }
+  
+  .additional-info header h2 {
+    font-size: 20px !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+  
+  .additional-info header h2 .btn-group {
+    margin-left: 0 !important;
+    margin-top: 10px !important;
+  }
+}
+
+/* ===== ADDITIONAL DATASET PAGE IMPROVEMENTS ===== */
+
+/* Fix page title and dataset title */
+.dataset-heading {
+  font-size: 28px !important;
+  font-weight: 600 !important;
+  color: #212529 !important;
+  margin: 20px 0 !important;
+  line-height: 1.3 !important;
+}
+
+.dataset-heading a {
+  color: #212529 !important;
+  text-decoration: none !important;
+}
+
+.dataset-heading a:hover {
+  color: var(--unesco-blue) !important;
+  text-decoration: none !important;
+}
+
+/* Fix starred dataset icon */
+.dataset-featured-icon {
+  color: #ffc107 !important;
+  margin-left: 10px !important;
+  font-size: 20px !important;
+}
+
+/* Fix page layout */
+.wrapper {
+  background: #f8f9fa !important;
+  min-height: 100vh !important;
+}
+
+.primary {
+  background: transparent !important;
+  padding: 20px 0 !important;
+}
+
+/* Fix sidebar styling */
+.secondary {
+  background: transparent !important;
+  padding: 20px 0 !important;
+}
+
+.module {
+  background: #fff !important;
+  border-radius: 8px !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+  margin-bottom: 20px !important;
+  overflow: hidden !important;
+}
+
+.module-content {
+  padding: 20px !important;
+}
+
+.module-heading {
+  background: #f8f9fa !important;
+  color: #495057 !important;
+  font-weight: 600 !important;
+  padding: 15px 20px !important;
+  margin: 0 !important;
+  border-bottom: 1px solid #dee2e6 !important;
+  font-size: 16px !important;
+}
+
+/* Fix social media section */
+.module .social_network {
+  padding: 0 !important;
+}
+
+.module .social_network a {
+  display: flex !important;
+  align-items: center !important;
+  padding: 10px 0 !important;
+  color: #495057 !important;
+  text-decoration: none !important;
+  border-bottom: 1px solid #f0f0f0 !important;
+  transition: all 0.3s ease !important;
+}
+
+.module .social_network a:last-child {
+  border-bottom: none !important;
+}
+
+.module .social_network a:hover {
+  background-color: #f8f9fa !important;
+  color: var(--unesco-blue) !important;
+}
+
+.module .social_network a .icon2 {
+  margin-right: 10px !important;
+  background-color: #e9ecef !important;
+  color: #6c757d !important;
+}
+
+.module .social_network a:hover .icon2 {
+  background-color: var(--unesco-blue) !important;
+  color: white !important;
+}
+
+/* Fix URIRef section */
+.module .permanav {
+  padding: 15px 0 !important;
+  border-bottom: 1px solid #f0f0f0 !important;
+}
+
+.module .permanav:last-child {
+  border-bottom: none !important;
+}
+
+.permalink-label {
+  background-color: #f8f9fa !important;
+  margin: 0 !important;
+  padding: 10px 15px !important;
+  border-radius: 4px !important;
+  transition: all 0.3s ease !important;
+}
+
+.permalink-label:hover {
+  background-color: #e9ecef !important;
+}
+
+.permalink-input {
+  background: #fff !important;
+  border: 1px solid #dee2e6 !important;
+  border-radius: 4px !important;
+  padding: 8px 12px !important;
+  font-family: monospace !important;
+  font-size: 12px !important;
+}
+
+/* Fix followers section */
+.followers {
+  text-align: center !important;
+  padding: 20px 0 !important;
+}
+
+.followers .num {
+  font-size: 36px !important;
+  font-weight: 700 !important;
+  color: var(--unesco-blue) !important;
+  display: block !important;
+  margin-bottom: 5px !important;
+}
+
+.followers .action {
+  font-size: 14px !important;
+  color: #6c757d !important;
+}
+
+.btn.btn-success {
+  background-color: #28a745 !important;
+  border-color: #28a745 !important;
+  color: white !important;
+  padding: 10px 20px !important;
+  border-radius: 4px !important;
+  font-weight: 600 !important;
+  transition: all 0.3s ease !important;
+}
+
+.btn.btn-success:hover {
+  background-color: #218838 !important;
+  border-color: #1e7e34 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2) !important;
+}
+
+/* Fix breadcrumb navigation */
+.toolbar .breadcrumb {
+  background: transparent !important;
+  border: none !important;
+  padding: 10px 0 !important;
+  margin: 0 !important;
+}
+
+.toolbar .breadcrumb li {
+  color: #6c757d !important;
+}
+
+.toolbar .breadcrumb li.active {
+  color: #495057 !important;
+  font-weight: 600 !important;
+}
+
+/* Fix page actions (buttons) */
+.page-header .content_action {
+  margin-top: 0 !important;
+  display: flex !important;
+  gap: 10px !important;
+  align-items: center !important;
+  flex-wrap: wrap !important;
+}
+
+.page-header .content_action .btn {
+  margin-bottom: 0 !important;
+}
+
+/* Fix action buttons */
+.btn-primary {
+  background-color: var(--unesco-blue) !important;
+  border-color: var(--unesco-blue) !important;
+  color: white !important;
+  padding: 10px 20px !important;
+  border-radius: 4px !important;
+  font-weight: 600 !important;
+  transition: all 0.3s ease !important;
+}
+
+.btn-primary:hover {
+  background-color: var(--unesco-blue-dark) !important;
+  border-color: var(--unesco-blue-dark) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2) !important;
+}
+
+/* Mobile responsive fixes for dataset page */
+@media (max-width: 768px) {
+  .dataset-heading {
+    font-size: 24px !important;
+    margin: 15px 0 !important;
+  }
+  
+  .page-header .content_action {
+    justify-content: flex-start !important;
+    margin-top: 15px !important;
+  }
+  
+  .module-content {
+    padding: 15px !important;
+  }
+  
+  .module-heading {
+    padding: 12px 15px !important;
+    font-size: 15px !important;
+  }
+}
