@@ -3736,11 +3736,8 @@ body a.badge-label[data-format]:hover,
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
   padding: 0;
   margin-bottom: 20px;
-  overflow: hidden;
-  position: sticky;
-  top: 120px;
-  max-height: calc(100vh - 140px);
-  overflow-y: auto;
+  overflow: visible;
+  position: static;
 }
 
 .filters .module {
@@ -3853,11 +3850,11 @@ body a.badge-label[data-format]:hover,
 .dataset-item {
   background: #fff;
   border: 1px solid #e9ecef;
-  border-radius: 16px;
-  margin-bottom: 24px;
+  border-radius: 12px;
+  margin-bottom: 20px;
   padding: 0;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
   overflow: hidden;
   position: relative;
 }
@@ -3876,9 +3873,11 @@ body a.badge-label[data-format]:hover,
 }
 
 .dataset-item .col-md-12 {
-  padding: 24px 28px;
+  padding: 20px 24px;
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  align-items: flex-start;
+  gap: 16px;
 }
 
 /* Improve dataset content */
@@ -3886,6 +3885,37 @@ body a.badge-label[data-format]:hover,
   flex: 1;
   display: flex;
   flex-direction: column;
+  min-width: 0;
+}
+
+/* Fix dataset categories positioning */
+.dataset-item .dataset-categories {
+  flex-shrink: 0;
+  width: auto !important;
+  min-width: 60px !important;
+  max-width: none !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.dataset-categories a[class^="category-"] {
+  display: inline-block !important;
+  width: 48px !important;
+  height: 48px !important;
+  background-size: contain !important;
+  background-repeat: no-repeat !important;
+  background-position: center !important;
+  border-radius: 8px !important;
+  transition: all 0.3s ease !important;
+  opacity: 0.8 !important;
+}
+
+.dataset-categories a[class^="category-"]:hover {
+  opacity: 1 !important;
+  transform: scale(1.05) !important;
 }
 
 .dataset-item .dataset-heading {
@@ -3928,11 +3958,11 @@ body a.badge-label[data-format]:hover,
   color: #6c757d;
   font-size: 15px;
   display: -webkit-box;
-  -webkit-line-clamp: 4; /* Increased from 3 to 4 lines */
+  -webkit-line-clamp: 5; /* Increased from 4 to 5 lines for more text */
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-height: 96px; /* 4 lines at 24px line-height */
+  max-height: 120px; /* 5 lines at 24px line-height */
 }
 
 .dataset-item .dataset-content > div p {
@@ -4234,6 +4264,14 @@ body a.badge-label[data-format]:hover,
 @media (max-width: 768px) {
   .dataset-item .col-md-12 {
     padding: 16px;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .dataset-item .dataset-categories {
+    order: -1;
+    align-self: flex-end;
+    margin-bottom: 8px;
   }
   
   .filters .module-content {
