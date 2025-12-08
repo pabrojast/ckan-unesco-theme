@@ -2918,6 +2918,66 @@ body a.badge-label[data-format]:hover,
   border-radius: 8px;
 }
 
+/* Homepage Search Bar Styling */
+.homepage .module-search .search-input {
+  position: relative !important;
+  margin-bottom: 20px !important;
+}
+
+.homepage .module-search .search-giant input.form-control {
+  width: 100% !important;
+  padding: 15px 60px 15px 20px !important;
+  border: none !important;
+  border-radius: 50px !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(10px) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15) !important;
+  font-size: 16px !important;
+  color: #333 !important;
+  transition: all 0.3s ease !important;
+  border: 2px solid transparent !important;
+}
+
+.homepage .module-search .search-giant input.form-control:focus {
+  background: rgba(255, 255, 255, 1) !important;
+  border-color: var(--unesco-blue) !important;
+  box-shadow: 0 8px 32px rgba(0, 86, 163, 0.2) !important;
+  outline: none !important;
+}
+
+.homepage .module-search .search-giant input.form-control::placeholder {
+  color: #888 !important;
+  font-style: italic !important;
+}
+
+.homepage .module-search .search-giant button {
+  position: absolute !important;
+  right: 8px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  background: var(--unesco-blue) !important;
+  color: white !important;
+  border: none !important;
+  border-radius: 50% !important;
+  width: 40px !important;
+  height: 40px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  transition: all 0.3s ease !important;
+  z-index: 10 !important;
+}
+
+.homepage .module-search .search-giant button:hover {
+  background: var(--unesco-blue-dark) !important;
+  transform: translateY(-50%) scale(1.05) !important;
+  box-shadow: 0 4px 12px rgba(0, 86, 163, 0.3) !important;
+}
+
+.homepage .module-search .search-giant button i {
+  font-size: 16px !important;
+}
+
 /* Tags in home page search section */
 .homepage .module-search .tags .tag {
   background-color: var(--unesco-blue);
@@ -2934,8 +2994,23 @@ body a.badge-label[data-format]:hover,
   text-decoration: none;
 }
 
-/* Responsive adjustments for tags */
+/* Responsive adjustments for home search */
 @media (max-width: 768px) {
+  .homepage .module-search .search-giant input.form-control {
+    padding: 12px 50px 12px 16px !important;
+    font-size: 14px !important;
+  }
+
+  .homepage .module-search .search-giant button {
+    width: 35px !important;
+    height: 35px !important;
+    right: 6px !important;
+  }
+
+  .homepage .module-search .search-giant button i {
+    font-size: 14px !important;
+  }
+
   .tag, .label {
     font-size: 10px;
     padding: 2px 6px;
