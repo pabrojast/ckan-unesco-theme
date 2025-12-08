@@ -2919,6 +2919,30 @@ body a.badge-label[data-format]:hover,
 }
 
 /* Homepage Search Bar Styling */
+.homepage .module-search {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-radius: 16px !important;
+  padding: 2rem !important;
+  backdrop-filter: blur(15px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15) !important;
+}
+
+.homepage .module-search .module-content {
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+}
+
+.homepage .module-search .heading {
+  color: #fff !important;
+  font-size: 1.75rem !important;
+  font-weight: 600 !important;
+  margin-bottom: 1.5rem !important;
+  text-align: center !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+}
+
 .homepage .module-search .search-input {
   position: relative !important;
   margin-bottom: 20px !important;
@@ -2929,25 +2953,28 @@ body a.badge-label[data-format]:hover,
   padding: 15px 60px 15px 20px !important;
   border: none !important;
   border-radius: 50px !important;
-  background: rgba(255, 255, 255, 0.95) !important;
+  background: rgba(255, 255, 255, 0.85) !important;
   backdrop-filter: blur(10px) !important;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15) !important;
   font-size: 16px !important;
-  color: #333 !important;
+  color: #2c3e50 !important;
   transition: all 0.3s ease !important;
-  border: 2px solid transparent !important;
+  border: 2px solid rgba(255, 255, 255, 0.3) !important;
+  font-weight: 500 !important;
 }
 
 .homepage .module-search .search-giant input.form-control:focus {
-  background: rgba(255, 255, 255, 1) !important;
+  background: rgba(255, 255, 255, 0.95) !important;
   border-color: var(--unesco-blue) !important;
-  box-shadow: 0 8px 32px rgba(0, 86, 163, 0.2) !important;
+  box-shadow: 0 8px 32px rgba(0, 86, 163, 0.25), inset 0 2px 4px rgba(0, 0, 0, 0.05) !important;
   outline: none !important;
+  color: #1a252f !important;
 }
 
 .homepage .module-search .search-giant input.form-control::placeholder {
-  color: #888 !important;
-  font-style: italic !important;
+  color: #6c757d !important;
+  font-style: normal !important;
+  font-weight: 400 !important;
 }
 
 .homepage .module-search .search-giant button {
@@ -2978,6 +3005,45 @@ body a.badge-label[data-format]:hover,
   font-size: 16px !important;
 }
 
+/* Homepage search stats and tags */
+.homepage .module-search .tags {
+  background: transparent !important;
+  border: none !important;
+  padding: 1rem 0 0 0 !important;
+  border-radius: 0 !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  gap: 2rem !important;
+  flex-wrap: wrap !important;
+}
+
+.homepage .module-search .tags .stats {
+  background: rgba(255, 255, 255, 0.15) !important;
+  color: white !important;
+  padding: 8px 16px !important;
+  border-radius: 25px !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  text-decoration: none !important;
+  transition: all 0.3s ease !important;
+  backdrop-filter: blur(5px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+.homepage .module-search .tags .stats:hover {
+  background: rgba(255, 255, 255, 0.25) !important;
+  color: white !important;
+  text-decoration: none !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+.homepage .module-search .tags .stats strong {
+  font-weight: 700 !important;
+  margin-right: 4px !important;
+}
+
 /* Tags in home page search section */
 .homepage .module-search .tags .tag {
   background-color: var(--unesco-blue);
@@ -2996,6 +3062,16 @@ body a.badge-label[data-format]:hover,
 
 /* Responsive adjustments for home search */
 @media (max-width: 768px) {
+  .homepage .module-search {
+    padding: 1.5rem !important;
+    margin: 0 15px !important;
+  }
+
+  .homepage .module-search .heading {
+    font-size: 1.5rem !important;
+    margin-bottom: 1rem !important;
+  }
+
   .homepage .module-search .search-giant input.form-control {
     padding: 12px 50px 12px 16px !important;
     font-size: 14px !important;
@@ -3009,6 +3085,15 @@ body a.badge-label[data-format]:hover,
 
   .homepage .module-search .search-giant button i {
     font-size: 14px !important;
+  }
+
+  .homepage .module-search .tags {
+    gap: 1rem !important;
+  }
+
+  .homepage .module-search .tags .stats {
+    font-size: 12px !important;
+    padding: 6px 12px !important;
   }
 
   .tag, .label {
@@ -3748,7 +3833,7 @@ body a.badge-label[data-format]:hover,
 }
 
 .filters .module:not(:last-child) {
-  border-bottom: 1px solid #f0f0f0;
+  border-bottom: none;
 }
 
 .filters .module-heading {
@@ -3756,9 +3841,9 @@ body a.badge-label[data-format]:hover,
   color: #495057;
   font-weight: 700;
   font-size: 16px;
-  padding: 20px;
+  padding: 18px 24px;
   margin: 0;
-  border-bottom: 1px solid #dee2e6;
+  border-bottom: 2px solid rgba(0, 86, 163, 0.1);
   cursor: pointer;
   transition: all 0.3s ease;
 }
@@ -3769,8 +3854,9 @@ body a.badge-label[data-format]:hover,
 }
 
 .filters .module-content {
-  padding: 20px;
+  padding: 24px;
   background: #fff;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
 }
 
 /* Improve map and location filter */
@@ -3807,11 +3893,12 @@ body a.badge-label[data-format]:hover,
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 12px 0;
+  padding: 14px 0;
   color: #495057;
   text-decoration: none;
   font-weight: 500;
   transition: all 0.3s ease;
+  line-height: 1.4;
 }
 
 .filters .nav.nav-simple li a:hover {
@@ -3873,11 +3960,12 @@ body a.badge-label[data-format]:hover,
 }
 
 .dataset-item .col-md-12 {
-  padding: 20px 24px;
+  padding: 22px 26px;
   display: flex;
   flex-direction: row;
   align-items: flex-start;
-  gap: 16px;
+  gap: 18px;
+  min-height: 180px;
 }
 
 /* Improve dataset content */
@@ -3954,15 +4042,17 @@ body a.badge-label[data-format]:hover,
 .dataset-item .dataset-content > div {
   flex: 1;
   margin: 0 0 16px 0;
-  line-height: 1.6;
+  line-height: 1.5;
   color: #6c757d;
   font-size: 15px;
   display: -webkit-box;
-  -webkit-line-clamp: 5; /* Increased from 4 to 5 lines for more text */
+  -webkit-line-clamp: 6; /* Increased to 6 lines for more text */
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-height: 120px; /* 5 lines at 24px line-height */
+  max-height: 135px; /* 6 lines at 22.5px line-height */
+  word-break: break-word;
+  hyphens: auto;
 }
 
 .dataset-item .dataset-content > div p {
@@ -4018,11 +4108,18 @@ body a.badge-label[data-format]:hover,
 }
 
 /* Format-specific colors for dataset resources - High Priority Override */
-.dataset-resources .label[data-format*="csv"],
-.dataset-resources .badge-label[data-format*="csv"],
-.dataset-resources .label[data-format="csv"],
-.dataset-resources .badge-label[data-format="csv"] {
+/* Enhanced format colors with higher specificity */
+.dataset-item .dataset-resources .label[data-format*="csv"],
+.dataset-item .dataset-resources .badge-label[data-format*="csv"],
+.dataset-item .dataset-resources .label[data-format="csv"],
+.dataset-item .dataset-resources .badge-label[data-format="csv"],
+ul.dataset-resources li .label[data-format*="csv"],
+ul.dataset-resources li .badge-label[data-format*="csv"],
+ul.dataset-resources li .label[data-format="csv"],
+ul.dataset-resources li .badge-label[data-format="csv"] {
   background-color: #28a745 !important; /* Green for CSV */
+  color: white !important;
+  border: none !important;
 }
 
 .dataset-resources .label[data-format*="json"],
@@ -4248,8 +4345,9 @@ body a.badge-label[data-format]:hover,
   }
   
   .dataset-item .dataset-content > div {
-    -webkit-line-clamp: 3;
-    max-height: 72px;
+    -webkit-line-clamp: 4;
+    max-height: 90px;
+    font-size: 14px;
   }
   
   .search-results-header {
@@ -4515,4 +4613,85 @@ select.form-control:focus {
   .dataset-featured-icon {
     animation: none !important;
   }
+}
+
+/* ===== SCHEMINGDCAT FORMAT COLORS OVERRIDE ===== */
+/* High priority format colors for schemingdcat compatibility */
+
+/* CSV - Green */
+body .dataset-item .dataset-resources a[data-format*="csv"],
+body .dataset-item .dataset-resources .badge[data-format*="csv"],
+body ul.dataset-resources li a[data-format*="csv"],
+body ul.dataset-resources li .badge[data-format*="csv"],
+body .dataset-resources .badge-label[data-format*="csv"],
+body .dataset-resources .label[data-format*="csv"] {
+  background-color: #28a745 !important;
+  color: white !important;
+  border-color: #28a745 !important;
+}
+
+/* JSON - Orange */
+body .dataset-item .dataset-resources a[data-format*="json"],
+body .dataset-item .dataset-resources .badge[data-format*="json"],
+body ul.dataset-resources li a[data-format*="json"],
+body ul.dataset-resources li .badge[data-format*="json"],
+body .dataset-resources .badge-label[data-format*="json"],
+body .dataset-resources .label[data-format*="json"] {
+  background-color: #fd7e14 !important;
+  color: white !important;
+  border-color: #fd7e14 !important;
+}
+
+/* PDF - Red */
+body .dataset-item .dataset-resources a[data-format*="pdf"],
+body .dataset-item .dataset-resources .badge[data-format*="pdf"],
+body ul.dataset-resources li a[data-format*="pdf"],
+body ul.dataset-resources li .badge[data-format*="pdf"],
+body .dataset-resources .badge-label[data-format*="pdf"],
+body .dataset-resources .label[data-format*="pdf"] {
+  background-color: #dc3545 !important;
+  color: white !important;
+  border-color: #dc3545 !important;
+}
+
+/* Excel - Teal */
+body .dataset-item .dataset-resources a[data-format*="xls"],
+body .dataset-item .dataset-resources .badge[data-format*="xls"],
+body .dataset-item .dataset-resources a[data-format*="xlsx"],
+body .dataset-item .dataset-resources .badge[data-format*="xlsx"],
+body ul.dataset-resources li a[data-format*="xls"],
+body ul.dataset-resources li .badge[data-format*="xls"],
+body ul.dataset-resources li a[data-format*="xlsx"],
+body ul.dataset-resources li .badge[data-format*="xlsx"],
+body .dataset-resources .badge-label[data-format*="xls"],
+body .dataset-resources .label[data-format*="xls"],
+body .dataset-resources .badge-label[data-format*="xlsx"],
+body .dataset-resources .label[data-format*="xlsx"] {
+  background-color: #17a2b8 !important;
+  color: white !important;
+  border-color: #17a2b8 !important;
+}
+
+/* XML - Purple */
+body .dataset-item .dataset-resources a[data-format*="xml"],
+body .dataset-item .dataset-resources .badge[data-format*="xml"],
+body ul.dataset-resources li a[data-format*="xml"],
+body ul.dataset-resources li .badge[data-format*="xml"],
+body .dataset-resources .badge-label[data-format*="xml"],
+body .dataset-resources .label[data-format*="xml"] {
+  background-color: #6f42c1 !important;
+  color: white !important;
+  border-color: #6f42c1 !important;
+}
+
+/* ZIP - Dark Blue */
+body .dataset-item .dataset-resources a[data-format*="zip"],
+body .dataset-item .dataset-resources .badge[data-format*="zip"],
+body ul.dataset-resources li a[data-format*="zip"],
+body ul.dataset-resources li .badge[data-format*="zip"],
+body .dataset-resources .badge-label[data-format*="zip"],
+body .dataset-resources .label[data-format*="zip"] {
+  background-color: #0056a3 !important;
+  color: white !important;
+  border-color: #0056a3 !important;
 }
