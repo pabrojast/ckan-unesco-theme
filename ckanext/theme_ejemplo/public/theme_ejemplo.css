@@ -349,25 +349,27 @@ background: #f1f4f6 !important;
 padding: 20px 0;
 }
 /* search background */
+/* Homepage search base styles - see main section for complete styling */
 .homepage .module-search .module-content {
-border-radius: 3px 3px 0 0;
-background-color: transparent !important;
-border-bottom: none;
+  border-radius: 0;
+  background-color: transparent !important;
+  border-bottom: none;
 }
-/*search margin */
+
+/* search margin */
 .homepage .module-search {
-    margin-top: 5px;
-    margin-bottom: 40px;
+  margin-top: 0;
+  margin-bottom: 0;
 }
+
 /* title search data color */
 .homepage .module-search .module-content .heading {
-    color: #fff !important;
+  color: #fff !important;
 }
+
 /* tag background */
 .homepage .module-search .tags {
-padding: 5px 10px 10px 10px;
-background-color: transparent !important;
-border-radius: 0 0 3px 3px;
+  background-color: transparent !important;
 }
 
 /* Mobile responsive styles */
@@ -785,8 +787,9 @@ h1 .page-heading {
 h2 .page-heading {
     color: #212122 !important;
 }
+/* Removed border-top from .col-md-12 to fix dataset search page layout */
 .col-md-12 {
-    border-top: .0625rem solid #d5dadd !important;
+    border-top: none !important;
 }
 p {
     font-size: 1.125rem !important;
@@ -3010,184 +3013,206 @@ body a.badge-label[data-format]:hover,
   border-radius: 8px;
 }
 
-/* Homepage Search Bar Styling */
+/* Homepage Search Bar Styling - Modern Transparent Design */
 .homepage .module-search {
-  background: rgba(255, 255, 255, 0.95) !important;
-  border-radius: 16px !important;
-  padding: 2rem !important;
-  border: 1px solid rgba(255, 255, 255, 0.8) !important;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15) !important;
+  background: transparent !important;
+  border-radius: 0 !important;
+  padding: 2.5rem 0 !important;
+  border: none !important;
+  box-shadow: none !important;
+  width: 100% !important;
+  max-width: 100% !important;
 }
 
 .homepage .module-search .module-content {
   background: transparent !important;
   border: none !important;
   padding: 0 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 1.5rem !important;
 }
 
+/* Header row with title */
 .homepage .module-search .heading {
-  color: var(--unesco-blue) !important;
-  font-size: 1.75rem !important;
-  font-weight: 600 !important;
-  margin-bottom: 1.5rem !important;
-  text-align: center !important;
-  text-shadow: none !important;
+  color: #fff !important;
+  font-size: 2.5rem !important;
+  font-weight: 700 !important;
+  margin: 0 !important;
+  text-align: left !important;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+  letter-spacing: -0.02em !important;
 }
 
 .homepage .module-search .search-input {
   position: relative !important;
-  margin-bottom: 20px !important;
+  margin-bottom: 0 !important;
+  width: 100% !important;
 }
 
+/* Modern search input with glass effect */
 .homepage .module-search .search-giant input.form-control {
   width: 100% !important;
-  padding: 15px 60px 15px 20px !important;
-  border-radius: 50px !important;
-  background: #ffffff !important;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1) !important;
-  font-size: 16px !important;
-  color: #2c3e50 !important;
-  transition: all 0.3s ease !important;
-  border: 2px solid #e9ecef !important;
+  padding: 18px 65px 18px 25px !important;
+  border-radius: 12px !important;
+  background: rgba(255, 255, 255, 0.95) !important;
+  backdrop-filter: blur(10px) !important;
+  -webkit-backdrop-filter: blur(10px) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15), inset 0 0 0 1px rgba(255, 255, 255, 0.2) !important;
+  font-size: 17px !important;
+  color: #1a252f !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  border: none !important;
   font-weight: 500 !important;
 }
 
 .homepage .module-search .search-giant input.form-control:focus {
   background: #ffffff !important;
-  border-color: var(--unesco-blue) !important;
-  box-shadow: 0 4px 20px rgba(0, 86, 163, 0.2) !important;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2), 0 0 0 3px rgba(0, 119, 180, 0.3) !important;
   outline: none !important;
-  color: #1a252f !important;
+  transform: translateY(-2px) !important;
 }
 
 .homepage .module-search .search-giant input.form-control::placeholder {
-  color: #6c757d !important;
+  color: #8898aa !important;
   font-style: normal !important;
   font-weight: 400 !important;
 }
 
+/* Search button styling */
 .homepage .module-search .search-giant button {
   position: absolute !important;
-  right: 6px !important;
+  right: 8px !important;
   top: 50% !important;
   transform: translateY(-50%) !important;
-  background: var(--unesco-blue) !important;
+  background: linear-gradient(135deg, var(--unesco-blue) 0%, var(--unesco-blue-dark) 100%) !important;
   color: white !important;
   border: none !important;
-  border-radius: 50% !important;
-  width: 42px !important;
-  height: 42px !important;
+  border-radius: 10px !important;
+  width: 48px !important;
+  height: 48px !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
-  transition: all 0.3s ease !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
   z-index: 10 !important;
   cursor: pointer !important;
+  box-shadow: 0 4px 12px rgba(0, 86, 163, 0.35) !important;
 }
 
 .homepage .module-search .search-giant button:hover {
-  background: var(--unesco-blue-dark) !important;
+  background: linear-gradient(135deg, var(--unesco-blue-dark) 0%, #003366 100%) !important;
   transform: translateY(-50%) scale(1.05) !important;
-  box-shadow: 0 4px 12px rgba(0, 86, 163, 0.3) !important;
+  box-shadow: 0 6px 20px rgba(0, 86, 163, 0.45) !important;
 }
 
 .homepage .module-search .search-giant button i {
-  font-size: 18px !important;
+  font-size: 20px !important;
   line-height: 1 !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
 }
 
-/* Homepage search stats and tags */
+/* Homepage search stats */
 .homepage .module-search .tags {
   background: transparent !important;
   border: none !important;
-  padding: 1rem 0 0 0 !important;
+  padding: 0.5rem 0 0 0 !important;
   border-radius: 0 !important;
   display: flex !important;
-  justify-content: center !important;
+  justify-content: flex-start !important;
   align-items: center !important;
-  gap: 2rem !important;
+  gap: 1rem !important;
   flex-wrap: wrap !important;
 }
 
 .homepage .module-search .tags .stats {
-  background: var(--unesco-blue) !important;
+  background: rgba(255, 255, 255, 0.2) !important;
+  backdrop-filter: blur(8px) !important;
+  -webkit-backdrop-filter: blur(8px) !important;
   color: white !important;
-  padding: 8px 16px !important;
-  border-radius: 25px !important;
-  font-size: 14px !important;
+  padding: 10px 20px !important;
+  border-radius: 50px !important;
+  font-size: 15px !important;
   font-weight: 500 !important;
   text-decoration: none !important;
-  transition: all 0.3s ease !important;
-  border: 2px solid var(--unesco-blue) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  border: 1px solid rgba(255, 255, 255, 0.3) !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
 }
 
 .homepage .module-search .tags .stats:hover {
-  background: var(--unesco-blue-dark) !important;
-  border-color: var(--unesco-blue-dark) !important;
+  background: rgba(255, 255, 255, 0.35) !important;
+  border-color: rgba(255, 255, 255, 0.5) !important;
   color: white !important;
   text-decoration: none !important;
-  transform: translateY(-1px) !important;
-  box-shadow: 0 4px 12px rgba(0, 86, 163, 0.25) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2) !important;
 }
 
 .homepage .module-search .tags .stats strong {
   font-weight: 700 !important;
-  margin-right: 4px !important;
+  font-size: 16px !important;
 }
 
 /* Tags in home page search section */
 .homepage .module-search .tags .tag {
-  background-color: var(--unesco-blue);
-  color: white;
-  padding: 4px 12px;
-  border-radius: 12px;
-  margin: 5px 10px 5px 0;
-  font-size: 12px;
-  font-weight: 500;
+  background: rgba(255, 255, 255, 0.2) !important;
+  backdrop-filter: blur(8px) !important;
+  color: white !important;
+  padding: 6px 14px !important;
+  border-radius: 20px !important;
+  margin: 0 !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  border: 1px solid rgba(255, 255, 255, 0.25) !important;
+  transition: all 0.3s ease !important;
 }
 
 .homepage .module-search .tags .tag:hover {
-  background-color: var(--unesco-blue-dark);
-  text-decoration: none;
+  background: rgba(255, 255, 255, 0.35) !important;
+  text-decoration: none !important;
 }
 
 /* Responsive adjustments for home search */
 @media (max-width: 768px) {
   .homepage .module-search {
-    padding: 1.5rem !important;
-    margin: 0 15px !important;
+    padding: 2rem 0 !important;
   }
 
   .homepage .module-search .heading {
-    font-size: 1.5rem !important;
-    margin-bottom: 1rem !important;
+    font-size: 1.75rem !important;
+    text-align: center !important;
   }
 
   .homepage .module-search .search-giant input.form-control {
-    padding: 12px 50px 12px 16px !important;
-    font-size: 14px !important;
+    padding: 14px 55px 14px 18px !important;
+    font-size: 15px !important;
+    border-radius: 10px !important;
   }
 
   .homepage .module-search .search-giant button {
-    width: 35px !important;
-    height: 35px !important;
+    width: 40px !important;
+    height: 40px !important;
     right: 6px !important;
+    border-radius: 8px !important;
   }
 
   .homepage .module-search .search-giant button i {
-    font-size: 14px !important;
+    font-size: 16px !important;
   }
 
   .homepage .module-search .tags {
-    gap: 1rem !important;
+    justify-content: center !important;
+    gap: 0.75rem !important;
   }
 
   .homepage .module-search .tags .stats {
-    font-size: 12px !important;
-    padding: 6px 12px !important;
+    font-size: 13px !important;
+    padding: 8px 14px !important;
   }
 
   .tag, .label {
@@ -3682,7 +3707,7 @@ body a.badge-label[data-format]:hover,
 
 /* Fix page layout */
 .wrapper {
-  background: #f8f9fa !important;
+  background: #f5f7fa !important;
   min-height: 100vh !important;
 }
 
@@ -3697,26 +3722,48 @@ body a.badge-label[data-format]:hover,
   padding: 20px 0 !important;
 }
 
-.module {
+/* Module styling - sidebar modules only */
+.secondary .module,
+aside .module,
+.filters .module {
   background: #fff !important;
-  border-radius: 8px !important;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
-  margin-bottom: 20px !important;
+  border-radius: 12px !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
+  margin-bottom: 1rem !important;
   overflow: hidden !important;
+  border: 1px solid #e9ecef !important;
 }
 
-.module-content {
-  padding: 20px !important;
+/* Primary content modules should be transparent */
+.primary > .module,
+.primary > .module-content {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
 
-.module-heading {
-  background: #f8f9fa !important;
+/* Module content for sidebar */
+.secondary .module-content,
+aside .module-content,
+.filters .module-content {
+  padding: 16px !important;
+  background: #fff !important;
+}
+
+/* Module heading for sidebar */
+.secondary .module-heading,
+aside .module-heading,
+.filters .module-heading {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
   color: #495057 !important;
   font-weight: 600 !important;
-  padding: 15px 20px !important;
+  padding: 14px 18px !important;
   margin: 0 !important;
-  border-bottom: 1px solid #dee2e6 !important;
-  font-size: 16px !important;
+  border-bottom: 1px solid #e9ecef !important;
+  font-size: 14px !important;
 }
 
 /* Fix social media section */
@@ -3894,41 +3941,48 @@ body a.badge-label[data-format]:hover,
 /* ===== SEARCH PAGE UI/UX IMPROVEMENTS ===== */
 
 /* Fix main layout and sidebar positioning */
-.search-page .row {
+.search-page .row,
+body.controller-package .row,
+body[class*="package"] .row {
   display: flex;
   flex-wrap: wrap;
   margin: 0 -15px;
   min-height: calc(100vh - 300px);
 }
 
-.search-page .primary {
+.search-page .primary,
+body.controller-package .primary,
+body[class*="package"] .primary {
   flex: 1 1 70%;
   max-width: 70%;
   padding: 0 15px;
-  background: transparent;
+  background: transparent !important;
 }
 
-.search-page .secondary {
+.search-page .secondary,
+body.controller-package .secondary,
+body[class*="package"] .secondary {
   flex: 1 1 30%;
   max-width: 30%;
   padding: 0 15px;
-  background: transparent;
+  background: transparent !important;
 }
 
 /* Fix filters sidebar */
 .filters {
-  background: #fff;
-  border-radius: 12px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
-  padding: 0;
-  margin-bottom: 20px;
-  overflow: visible;
-  position: static;
+  background: #fff !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important;
+  padding: 0 !important;
+  margin-bottom: 20px !important;
+  overflow: hidden !important;
+  position: static !important;
+  border: 1px solid #e9ecef !important;
 }
 
 .filters .module {
-  margin-bottom: 0;
-  box-shadow: none;
+  margin-bottom: 0 !important;
+  box-shadow: none !important;
   border-radius: 0;
   border: none;
 }
@@ -5252,4 +5306,350 @@ section.additional-info > h3 {
 .additional-info .toggle-show-more a:hover {
   color: var(--unesco-blue-dark);
   text-decoration: underline;
+}
+
+/* ===== DATASET SEARCH PAGE - COMPLETE REDESIGN ===== */
+
+/* Main page container - remove background misalignment */
+.page_primary_action,
+.primary .page_primary_action {
+  margin-bottom: 0 !important;
+  padding: 0 !important;
+}
+
+/* Dataset search header area - unified design */
+.primary > .module-content:first-child,
+.primary .page_primary_action + .module-content {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Modern search header with count */
+.form-select-inline,
+.search-input-group,
+.search-form-wrapper {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  gap: 1rem !important;
+  margin-bottom: 1.5rem !important;
+}
+
+/* Add Dataset button styling */
+.page_primary_action .btn-primary,
+.content_action .btn-primary,
+a.btn.btn-primary[href*="new"] {
+  background: linear-gradient(135deg, var(--unesco-blue) 0%, var(--unesco-blue-dark) 100%) !important;
+  border: none !important;
+  border-radius: 8px !important;
+  padding: 12px 20px !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  box-shadow: 0 4px 12px rgba(0, 86, 163, 0.25) !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  text-decoration: none !important;
+}
+
+.page_primary_action .btn-primary:hover,
+.content_action .btn-primary:hover,
+a.btn.btn-primary[href*="new"]:hover {
+  background: linear-gradient(135deg, var(--unesco-blue-dark) 0%, #003366 100%) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 20px rgba(0, 86, 163, 0.35) !important;
+}
+
+/* Dataset search input - prominent design */
+.dataset-search-input,
+.primary .search-form,
+.primary form[action*="dataset"] .search-input-group,
+.primary form[action*="search"] {
+  background: #fff !important;
+  border: 2px solid #e9ecef !important;
+  border-radius: 12px !important;
+  padding: 0 !important;
+  margin-bottom: 1.5rem !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important;
+  transition: all 0.3s ease !important;
+  display: flex !important;
+  align-items: center !important;
+  overflow: hidden !important;
+}
+
+.primary .search-form:focus-within,
+.primary form[action*="dataset"]:focus-within,
+.primary form[action*="search"]:focus-within {
+  border-color: var(--unesco-blue) !important;
+  box-shadow: 0 4px 20px rgba(0, 86, 163, 0.15), 0 0 0 3px rgba(0, 119, 180, 0.1) !important;
+}
+
+/* Search input field */
+.primary .search-form input[type="text"],
+.primary .search-form input[type="search"],
+.primary form .search-input input,
+.primary input#field-giant-search,
+input#field-giant-search,
+.search-giant input.form-control {
+  border: none !important;
+  background: transparent !important;
+  padding: 16px 20px !important;
+  font-size: 16px !important;
+  color: #212529 !important;
+  flex: 1 !important;
+  min-width: 0 !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+.primary .search-form input::placeholder,
+.primary form .search-input input::placeholder,
+input#field-giant-search::placeholder,
+.search-giant input.form-control::placeholder {
+  color: #8898aa !important;
+  font-weight: 400 !important;
+}
+
+/* Search button */
+.primary .search-form button[type="submit"],
+.primary form .search-submit,
+.search-giant button,
+.search-input-group .btn {
+  background: linear-gradient(135deg, var(--unesco-blue) 0%, var(--unesco-blue-dark) 100%) !important;
+  border: none !important;
+  color: white !important;
+  padding: 14px 20px !important;
+  margin: 6px !important;
+  border-radius: 8px !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 48px !important;
+  height: 48px !important;
+}
+
+.primary .search-form button[type="submit"]:hover,
+.primary form .search-submit:hover,
+.search-giant button:hover,
+.search-input-group .btn:hover {
+  background: linear-gradient(135deg, var(--unesco-blue-dark) 0%, #003366 100%) !important;
+  transform: scale(1.02) !important;
+}
+
+/* Dataset count badge - modern styling */
+.page-heading,
+h1.page-heading,
+.search-results-count {
+  display: flex !important;
+  align-items: center !important;
+  gap: 1rem !important;
+  flex-wrap: wrap !important;
+}
+
+/* Count number styling */
+.result-count,
+.search-results-count span,
+.page-heading .count,
+span.count {
+  background: linear-gradient(135deg, var(--unesco-blue) 0%, var(--unesco-blue-dark) 100%) !important;
+  color: white !important;
+  padding: 8px 16px !important;
+  border-radius: 20px !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 4px !important;
+  box-shadow: 0 2px 8px rgba(0, 86, 163, 0.25) !important;
+}
+
+/* Order by / sorting section */
+.form-select-control,
+.search-ordering,
+.sorting_heading,
+.order-by-section,
+select.form-control,
+.form-select {
+  background: #fff !important;
+  border: 2px solid #e9ecef !important;
+  border-radius: 8px !important;
+  padding: 10px 16px !important;
+  font-size: 14px !important;
+  color: #495057 !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  min-width: 150px !important;
+}
+
+select.form-control:focus,
+.form-select:focus {
+  border-color: var(--unesco-blue) !important;
+  box-shadow: 0 0 0 3px rgba(0, 119, 180, 0.1) !important;
+  outline: none !important;
+}
+
+/* Search form row - align items properly */
+.search-form-row,
+.form-group-row,
+.primary .module-content > form {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  gap: 1rem !important;
+  margin-bottom: 1.5rem !important;
+}
+
+/* Hide ugly label text inside search input */
+.search-form label.sr-only,
+.search-input-group label {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  border: 0 !important;
+}
+
+/* Filters sidebar - clean design */
+.secondary .module,
+.filters .module {
+  background: #fff !important;
+  border-radius: 12px !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.06) !important;
+  border: 1px solid #e9ecef !important;
+  margin-bottom: 1rem !important;
+  overflow: hidden !important;
+}
+
+.secondary .module-heading,
+.filters .module-heading {
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
+  color: #495057 !important;
+  font-weight: 700 !important;
+  font-size: 14px !important;
+  padding: 14px 18px !important;
+  margin: 0 !important;
+  border-bottom: 1px solid #e9ecef !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+.secondary .module-heading i,
+.filters .module-heading i {
+  color: var(--unesco-blue) !important;
+}
+
+.secondary .module-content,
+.filters .module-content {
+  padding: 16px !important;
+  background: #fff !important;
+}
+
+/* Dataset cards - modern look */
+.dataset-list .dataset-item,
+ul.dataset-list > li {
+  background: #fff !important;
+  border: 1px solid #e9ecef !important;
+  border-radius: 12px !important;
+  margin-bottom: 1rem !important;
+  padding: 0 !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06) !important;
+  overflow: hidden !important;
+}
+
+.dataset-list .dataset-item:hover,
+ul.dataset-list > li:hover {
+  transform: translateY(-3px) !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1) !important;
+  border-color: rgba(0, 119, 180, 0.2) !important;
+}
+
+/* Fix rounded corner issues */
+.primary .module,
+.primary .module-content,
+.primary > section,
+.secondary .module,
+.secondary .module-content {
+  border-radius: 12px !important;
+  overflow: hidden !important;
+}
+
+/* Remove conflicting backgrounds */
+.primary .module-content,
+section.module-content {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+}
+
+/* Fix wrapper background */
+.wrapper,
+.main.wrapper {
+  background: #f5f7fa !important;
+  min-height: 100vh !important;
+}
+
+/* Container max width */
+.primary.col-md-9,
+.primary.col-lg-9 {
+  background: transparent !important;
+}
+
+/* Breadcrumb styling */
+.toolbar .breadcrumb {
+  background: transparent !important;
+  padding: 0 !important;
+  margin: 0 0 1.5rem 0 !important;
+}
+
+.toolbar .breadcrumb li a {
+  color: var(--unesco-blue) !important;
+  text-decoration: none !important;
+}
+
+.toolbar .breadcrumb li.active {
+  color: #6c757d !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 991px) {
+  .primary .search-form,
+  .primary form[action*="dataset"] {
+    flex-direction: column !important;
+  }
+  
+  .primary .search-form input[type="text"],
+  .primary form .search-input input {
+    width: 100% !important;
+  }
+  
+  .primary .search-form button[type="submit"],
+  .search-giant button {
+    width: 100% !important;
+    margin: 0 6px 6px 6px !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .page-heading,
+  h1.page-heading {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+    gap: 0.75rem !important;
+  }
+  
+  .result-count,
+  span.count {
+    font-size: 12px !important;
+    padding: 6px 12px !important;
+  }
 }
