@@ -3221,39 +3221,46 @@ body a.badge-label[data-format]:hover,
 }
 
 .additional-info header {
-  background: linear-gradient(135deg, var(--unesco-blue) 0%, var(--unesco-blue-dark) 100%) !important;
-  padding: 1.75rem 2rem !important;
-  margin-bottom: 0 !important;
-  position: relative !important;
-  overflow: hidden !important;
-  border-bottom: 3px solid rgba(255, 255, 255, 0.2) !important;
+  background: linear-gradient(135deg, var(--unesco-blue) 0%, var(--unesco-blue-dark) 100%);
+  padding: 1.75rem 2rem;
+  margin-bottom: 0;
+  position: relative;
+  overflow: hidden;
+  border-bottom: 3px solid rgba(255, 255, 255, 0.2);
 }
 
 .additional-info header::before {
-  content: "" !important;
-  position: absolute !important;
-  top: 0 !important;
-  left: 0 !important;
-  right: 0 !important;
-  bottom: 0 !important;
-  background: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='rgba(255,255,255,0.03)' fill-rule='evenodd'%3E%3Cpath d='m0 40h40v-40h-40z'/%3E%3C/g%3E%3C/svg%3E") !important;
-  pointer-events: none !important;
-  z-index: 0 !important;
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: url("data:image/svg+xml,%3Csvg width='40' height='40' viewBox='0 0 40 40' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='rgba(255,255,255,0.03)' fill-rule='evenodd'%3E%3Cpath d='m0 40h40v-40h-40z'/%3E%3C/g%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
 }
 
 .additional-info header h2 {
+  color: white;
+  margin: 0;
+  font-size: 24px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  flex-wrap: wrap;
+  position: relative;
+  z-index: 1;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2);
+  background: transparent;
+}
+
+/* Override for h2 with inline background style (metadata section) */
+.additional-info header h2.inline[style*="background-color"] {
+  background: transparent !important;
   color: white !important;
-  margin: 0 !important;
-  font-size: 24px !important;
-  font-weight: 600 !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-  width: 100% !important;
-  flex-wrap: wrap !important;
-  position: relative !important;
-  z-index: 1 !important;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2) !important;
 }
 
 .additional-info header h2 .btn-group {
@@ -5040,4 +5047,209 @@ body .dataset-resources .label[data-format*="wfs"] {
   background-color: #0891b2 !important;
   color: white !important;
   border-color: #0891b2 !important;
+}
+
+/* ===== FIX DATASET MAP EXTENT ===== */
+.dataset-map {
+  background: #f8f9fa !important;
+  min-height: 200px;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.dataset-map #dataset-map-container {
+  min-height: 200px;
+  background: #e9ecef;
+}
+
+.additional_info_map {
+  background: #fff !important;
+  border: 1px solid #e3e3e3 !important;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-bottom: 20px;
+}
+
+/* Fix dataset extent module */
+.module.module-narrow.dataset-map {
+  background: #fff !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
+}
+
+.module.module-narrow.dataset-map h2 {
+  background: #f8f9fa !important;
+  color: #495057 !important;
+  padding: 15px 20px !important;
+  margin: 0 !important;
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  border-bottom: 1px solid #dee2e6 !important;
+}
+
+/* Fix empty containers with blue background */
+.primary > section:empty,
+.primary > div:empty {
+  display: none;
+}
+
+/* Ensure map containers have proper styling */
+.leaflet-container {
+  background: #e9ecef !important;
+}
+
+/* ===== FIX CITATION SECTION STYLES ===== */
+/* Citation section using additional-info class */
+.additional-info .citation-container {
+  border: 1px solid #e9ecef !important;
+  border-radius: 8px !important;
+  background-color: #fff !important;
+  margin-top: 0 !important;
+}
+
+.additional-info h3 {
+  background: linear-gradient(135deg, var(--unesco-blue) 0%, var(--unesco-blue-dark) 100%) !important;
+  color: white !important;
+  padding: 1rem 1.5rem !important;
+  margin: 0 0 1rem 0 !important;
+  font-size: 18px !important;
+  font-weight: 600 !important;
+  border-radius: 8px 8px 0 0 !important;
+}
+
+.additional-info .doi-bar {
+  display: flex !important;
+  align-items: center !important;
+  padding: 12px 15px !important;
+  background-color: #fff !important;
+  border-bottom: 1px solid #e9ecef !important;
+  border-radius: 0 !important;
+}
+
+.additional-info .citation-text {
+  padding: 15px !important;
+  background: #fff !important;
+}
+
+.additional-info .citation-string {
+  font-size: 14px !important;
+  line-height: 1.6 !important;
+  color: #495057 !important;
+}
+
+.additional-info .citation-export {
+  padding: 0 15px 15px !important;
+  background: #fff !important;
+}
+
+.additional-info .citation-export .btn-default {
+  background: #f8f9fa !important;
+  border: 1px solid #dee2e6 !important;
+  color: #495057 !important;
+  border-radius: 6px !important;
+}
+
+.additional-info .citation-export .btn-default:hover {
+  background: #e9ecef !important;
+  color: #212529 !important;
+}
+
+.additional-info .citation-export .dropdown-menu {
+  border-radius: 6px !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+  border: 1px solid #e9ecef !important;
+}
+
+.additional-info .publication-details {
+  padding: 12px 15px !important;
+  background-color: #f8f9fa !important;
+  border-top: 1px solid #e9ecef !important;
+  border-radius: 0 0 8px 8px !important;
+}
+
+/* Ensure the additional-info section citation doesn't have blue header background issue */
+section.additional-info > h3:first-child {
+  margin-bottom: 0 !important;
+}
+
+section.additional-info > .citation-container {
+  border-radius: 0 0 8px 8px !important;
+  margin-top: 0 !important;
+}
+
+/* ===== FIX EMPTY BLUE CONTAINERS ===== */
+/* Hide empty headers and containers */
+.additional-info header:empty,
+.additional-info header h2:empty {
+  display: none !important;
+}
+
+/* Fix for citation container that might show empty blue area */
+section.additional-info {
+  overflow: visible !important;
+}
+
+/* Ensure citation section header has proper margins */
+section.additional-info > h3 {
+  border-radius: 12px 12px 0 0 !important;
+}
+
+/* Fix any textarea or input that might have wrong background */
+.additional-info textarea,
+.additional-info input[type="text"] {
+  background: #fff !important;
+  border: 1px solid #dee2e6 !important;
+}
+
+/* Fix potential iframe or embed with blue background */
+.additional-info iframe,
+.additional-info embed,
+.additional-info object {
+  background: #f8f9fa !important;
+}
+
+/* ===== ADDITIONAL FIXES FOR METADATA DISPLAY ===== */
+/* Fix metadata header with inline style */
+.additional-info header h2[style] {
+  background: transparent !important;
+}
+
+/* Ensure metadata tables display correctly */
+.additional-info .table tbody tr th.dataset-label,
+.additional-info .table tbody tr td.dataset-details {
+  border: none;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+/* Fix empty table cells */
+.additional-info .table tbody tr td.dataset-details:empty::before {
+  content: '-';
+  color: #adb5bd;
+}
+
+/* Fix toggle-more rows visibility */
+.additional-info .table .toggle-more {
+  display: none;
+}
+
+.additional-info .table[data-show-more="true"] .toggle-more {
+  display: table-row;
+}
+
+/* Fix toggle-show-more button styling */
+.additional-info .toggle-show-more {
+  background: #f8f9fa;
+  text-align: center;
+  padding: 12px;
+  border-top: 1px solid #e9ecef;
+}
+
+.additional-info .toggle-show-more a {
+  color: var(--unesco-blue);
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.additional-info .toggle-show-more a:hover {
+  color: var(--unesco-blue-dark);
+  text-decoration: underline;
 }
