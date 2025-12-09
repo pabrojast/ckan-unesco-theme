@@ -50,13 +50,13 @@
         </li>
         {% if c.userobj and c.userobj.sysadmin %}
         <li>
-          <a href="{{ h.url_for('blog.index') }}" alt="Blog">Blog</a>
+          <a href="/blog" alt="Blog">Blog</a>
         </li>
         <li>
-          <a href="{{ h.url_for('/colab/admin') }}" alt="Blog">Colab Admin</a>
+          <a href="/colab/admin" alt="Colab Admin">Colab Admin</a>
         </li>
         <li>
-          <a href="{{ h.url_for('pages.index') }}" alt="Pages">Pages</a>
+          <a href="/pages" alt="Pages">Pages</a>
         </li>
         {% endif %}
         {% endblock %} {% endblock %}
