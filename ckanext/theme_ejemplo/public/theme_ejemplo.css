@@ -1180,13 +1180,45 @@ img {
     }
 }
 
-/* Search field improvements */
-.masthead .site-search input {
+/* Search field improvements - Clean minimal design */
+.masthead .site-search {
+    display: flex !important;
+    align-items: center !important;
+}
+
+.masthead .site-search .field {
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+    background: rgba(255, 255, 255, 0.15) !important;
     border: 1px solid rgba(255, 255, 255, 0.3) !important;
-    background: rgba(255, 255, 255, 0.1) !important;
-    color: white !important;
     border-radius: 4px !important;
-    padding: 8px 40px 8px 12px !important;
+    transition: all 0.2s ease !important;
+    overflow: hidden !important;
+}
+
+.masthead .site-search .field:hover,
+.masthead .site-search .field:focus-within {
+    background: rgba(255, 255, 255, 0.25) !important;
+    border-color: rgba(255, 255, 255, 0.5) !important;
+}
+
+.masthead .site-search .field label {
+    display: none !important;
+}
+
+.masthead .site-search input {
+    border: none !important;
+    background: transparent !important;
+    color: white !important;
+    padding: 6px 8px 6px 12px !important;
+    font-size: 13px !important;
+    line-height: 1.4 !important;
+    height: auto !important;
+    min-height: 32px !important;
+    box-shadow: none !important;
+    outline: none !important;
+    flex: 1 !important;
 }
 
 .masthead .site-search input::placeholder {
@@ -1194,29 +1226,35 @@ img {
 }
 
 .masthead .site-search input:focus {
-    background: rgba(255, 255, 255, 0.2) !important;
-    border-color: rgba(255, 255, 255, 0.5) !important;
     outline: none !important;
-    box-shadow: 0 0 5px rgba(255, 255, 255, 0.3) !important;
+    box-shadow: none !important;
 }
 
 .masthead .site-search .btn-search {
     border: none !important;
     background: transparent !important;
     color: rgba(255, 255, 255, 0.8) !important;
-    position: absolute !important;
-    right: 8px !important;
-    top: 50% !important;
-    transform: translateY(-50%) !important;
-    padding: 4px !important;
+    padding: 6px 10px !important;
+    margin: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    cursor: pointer !important;
+    transition: color 0.2s ease !important;
+    position: static !important;
+    transform: none !important;
+    height: 32px !important;
+    width: 32px !important;
+    flex-shrink: 0 !important;
 }
 
 .masthead .site-search .btn-search:hover {
     color: white !important;
 }
 
-.masthead .site-search .field {
-    position: relative !important;
+.masthead .site-search .btn-search i {
+    font-size: 14px !important;
+    line-height: 1 !important;
 }
 .d-flex {
     display: flex !important;
