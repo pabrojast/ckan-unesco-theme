@@ -3885,25 +3885,28 @@ body a.badge-label[data-format]:hover,
   border-bottom: none;
 }
 
-.filters .nav.nav-simple li:hover {
-  background-color: #f8f9fa;
+.filters .nav.nav-simple li {
+  background: transparent;
 }
 
 .filters .nav.nav-simple li a {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 14px 0;
+  padding: 12px 8px;
   color: #495057;
   text-decoration: none;
   font-weight: 500;
   transition: all 0.3s ease;
   line-height: 1.4;
+  border-radius: 6px;
 }
 
-.filters .nav.nav-simple li a:hover {
+.filters .nav.nav-simple li a:hover,
+.filters .nav.nav-simple li:hover a {
   color: var(--unesco-blue);
   text-decoration: none;
+  background-color: #f8f9fa;
 }
 
 .filters .nav.nav-simple li.active a {
@@ -4694,4 +4697,202 @@ body .dataset-resources .label[data-format*="zip"] {
   background-color: #0056a3 !important;
   color: white !important;
   border-color: #0056a3 !important;
+}
+
+/* TXT/Text - Gray */
+body .dataset-item .dataset-resources a[data-format*="txt"],
+body .dataset-item .dataset-resources .badge[data-format*="txt"],
+body .dataset-item .dataset-resources a[data-format*="text"],
+body .dataset-item .dataset-resources .badge[data-format*="text"],
+body ul.dataset-resources li a[data-format*="txt"],
+body ul.dataset-resources li .badge[data-format*="txt"],
+body ul.dataset-resources li a[data-format*="text"],
+body ul.dataset-resources li .badge[data-format*="text"],
+body .dataset-resources .badge-label[data-format*="txt"],
+body .dataset-resources .label[data-format*="txt"],
+body .dataset-resources .badge-label[data-format*="text"],
+body .dataset-resources .label[data-format*="text"] {
+  background-color: #6c757d !important;
+  color: white !important;
+  border-color: #6c757d !important;
+}
+
+/* DOC/DOCX - Blue */
+body .dataset-item .dataset-resources a[data-format*="doc"],
+body .dataset-item .dataset-resources .badge[data-format*="doc"],
+body .dataset-item .dataset-resources a[data-format*="docx"],
+body .dataset-item .dataset-resources .badge[data-format*="docx"],
+body ul.dataset-resources li a[data-format*="doc"],
+body ul.dataset-resources li .badge[data-format*="doc"],
+body ul.dataset-resources li a[data-format*="docx"],
+body ul.dataset-resources li .badge[data-format*="docx"],
+body .dataset-resources .badge-label[data-format*="doc"],
+body .dataset-resources .label[data-format*="doc"],
+body .dataset-resources .badge-label[data-format*="docx"],
+body .dataset-resources .label[data-format*="docx"] {
+  background-color: #2b579a !important;
+  color: white !important;
+  border-color: #2b579a !important;
+}
+
+/* PPT/PPTX - Orange Red */
+body .dataset-item .dataset-resources a[data-format*="ppt"],
+body .dataset-item .dataset-resources .badge[data-format*="ppt"],
+body .dataset-item .dataset-resources a[data-format*="pptx"],
+body .dataset-item .dataset-resources .badge[data-format*="pptx"],
+body ul.dataset-resources li a[data-format*="ppt"],
+body ul.dataset-resources li .badge[data-format*="ppt"],
+body ul.dataset-resources li a[data-format*="pptx"],
+body ul.dataset-resources li .badge[data-format*="pptx"],
+body .dataset-resources .badge-label[data-format*="ppt"],
+body .dataset-resources .label[data-format*="ppt"],
+body .dataset-resources .badge-label[data-format*="pptx"],
+body .dataset-resources .label[data-format*="pptx"] {
+  background-color: #d24726 !important;
+  color: white !important;
+  border-color: #d24726 !important;
+}
+
+/* SHP/Shapefiles - Green */
+body .dataset-item .dataset-resources a[data-format*="shp"],
+body .dataset-item .dataset-resources .badge[data-format*="shp"],
+body .dataset-item .dataset-resources a[data-format*="shapefile"],
+body .dataset-item .dataset-resources .badge[data-format*="shapefile"],
+body ul.dataset-resources li a[data-format*="shp"],
+body ul.dataset-resources li .badge[data-format*="shp"],
+body ul.dataset-resources li a[data-format*="shapefile"],
+body ul.dataset-resources li .badge[data-format*="shapefile"],
+body .dataset-resources .badge-label[data-format*="shp"],
+body .dataset-resources .label[data-format*="shp"],
+body .dataset-resources .badge-label[data-format*="shapefile"],
+body .dataset-resources .label[data-format*="shapefile"] {
+  background-color: #198754 !important;
+  color: white !important;
+  border-color: #198754 !important;
+}
+
+/* GeoJSON - Dark Green */
+body .dataset-item .dataset-resources a[data-format*="geojson"],
+body .dataset-item .dataset-resources .badge[data-format*="geojson"],
+body ul.dataset-resources li a[data-format*="geojson"],
+body ul.dataset-resources li .badge[data-format*="geojson"],
+body .dataset-resources .badge-label[data-format*="geojson"],
+body .dataset-resources .label[data-format*="geojson"] {
+  background-color: #0d5d31 !important;
+  color: white !important;
+  border-color: #0d5d31 !important;
+}
+
+/* KML/KMZ - Earth Brown */
+body .dataset-item .dataset-resources a[data-format*="kml"],
+body .dataset-item .dataset-resources .badge[data-format*="kml"],
+body .dataset-item .dataset-resources a[data-format*="kmz"],
+body .dataset-item .dataset-resources .badge[data-format*="kmz"],
+body ul.dataset-resources li a[data-format*="kml"],
+body ul.dataset-resources li .badge[data-format*="kml"],
+body ul.dataset-resources li a[data-format*="kmz"],
+body ul.dataset-resources li .badge[data-format*="kmz"],
+body .dataset-resources .badge-label[data-format*="kml"],
+body .dataset-resources .label[data-format*="kml"],
+body .dataset-resources .badge-label[data-format*="kmz"],
+body .dataset-resources .label[data-format*="kmz"] {
+  background-color: #8b4513 !important;
+  color: white !important;
+  border-color: #8b4513 !important;
+}
+
+/* TIFF/TIF - Orange */
+body .dataset-item .dataset-resources a[data-format*="tiff"],
+body .dataset-item .dataset-resources .badge[data-format*="tiff"],
+body .dataset-item .dataset-resources a[data-format*="tif"],
+body .dataset-item .dataset-resources .badge[data-format*="tif"],
+body ul.dataset-resources li a[data-format*="tiff"],
+body ul.dataset-resources li .badge[data-format*="tiff"],
+body ul.dataset-resources li a[data-format*="tif"],
+body ul.dataset-resources li .badge[data-format*="tif"],
+body .dataset-resources .badge-label[data-format*="tiff"],
+body .dataset-resources .label[data-format*="tiff"],
+body .dataset-resources .badge-label[data-format*="tif"],
+body .dataset-resources .label[data-format*="tif"] {
+  background-color: #ff8c00 !important;
+  color: white !important;
+  border-color: #ff8c00 !important;
+}
+
+/* PNG/JPG/JPEG - Pink */
+body .dataset-item .dataset-resources a[data-format*="png"],
+body .dataset-item .dataset-resources .badge[data-format*="png"],
+body .dataset-item .dataset-resources a[data-format*="jpg"],
+body .dataset-item .dataset-resources .badge[data-format*="jpg"],
+body .dataset-item .dataset-resources a[data-format*="jpeg"],
+body .dataset-item .dataset-resources .badge[data-format*="jpeg"],
+body ul.dataset-resources li a[data-format*="png"],
+body ul.dataset-resources li .badge[data-format*="png"],
+body ul.dataset-resources li a[data-format*="jpg"],
+body ul.dataset-resources li .badge[data-format*="jpg"],
+body ul.dataset-resources li a[data-format*="jpeg"],
+body ul.dataset-resources li .badge[data-format*="jpeg"],
+body .dataset-resources .badge-label[data-format*="png"],
+body .dataset-resources .label[data-format*="png"],
+body .dataset-resources .badge-label[data-format*="jpg"],
+body .dataset-resources .label[data-format*="jpg"],
+body .dataset-resources .badge-label[data-format*="jpeg"],
+body .dataset-resources .label[data-format*="jpeg"] {
+  background-color: #e83e8c !important;
+  color: white !important;
+  border-color: #e83e8c !important;
+}
+
+/* HTML - Orange Dark */
+body .dataset-item .dataset-resources a[data-format*="html"],
+body .dataset-item .dataset-resources .badge[data-format*="html"],
+body .dataset-item .dataset-resources a[data-format*="htm"],
+body .dataset-item .dataset-resources .badge[data-format*="htm"],
+body ul.dataset-resources li a[data-format*="html"],
+body ul.dataset-resources li .badge[data-format*="html"],
+body ul.dataset-resources li a[data-format*="htm"],
+body ul.dataset-resources li .badge[data-format*="htm"],
+body .dataset-resources .badge-label[data-format*="html"],
+body .dataset-resources .label[data-format*="html"],
+body .dataset-resources .badge-label[data-format*="htm"],
+body .dataset-resources .label[data-format*="htm"] {
+  background-color: #ff6b35 !important;
+  color: white !important;
+  border-color: #ff6b35 !important;
+}
+
+/* API/REST - Cyan */
+body .dataset-item .dataset-resources a[data-format*="api"],
+body .dataset-item .dataset-resources .badge[data-format*="api"],
+body .dataset-item .dataset-resources a[data-format*="rest"],
+body .dataset-item .dataset-resources .badge[data-format*="rest"],
+body ul.dataset-resources li a[data-format*="api"],
+body ul.dataset-resources li .badge[data-format*="api"],
+body ul.dataset-resources li a[data-format*="rest"],
+body ul.dataset-resources li .badge[data-format*="rest"],
+body .dataset-resources .badge-label[data-format*="api"],
+body .dataset-resources .label[data-format*="api"],
+body .dataset-resources .badge-label[data-format*="rest"],
+body .dataset-resources .label[data-format*="rest"] {
+  background-color: #20c997 !important;
+  color: white !important;
+  border-color: #20c997 !important;
+}
+
+/* WMS/WFS - Dark Cyan */
+body .dataset-item .dataset-resources a[data-format*="wms"],
+body .dataset-item .dataset-resources .badge[data-format*="wms"],
+body .dataset-item .dataset-resources a[data-format*="wfs"],
+body .dataset-item .dataset-resources .badge[data-format*="wfs"],
+body ul.dataset-resources li a[data-format*="wms"],
+body ul.dataset-resources li .badge[data-format*="wms"],
+body ul.dataset-resources li a[data-format*="wfs"],
+body ul.dataset-resources li .badge[data-format*="wfs"],
+body .dataset-resources .badge-label[data-format*="wms"],
+body .dataset-resources .label[data-format*="wms"],
+body .dataset-resources .badge-label[data-format*="wfs"],
+body .dataset-resources .label[data-format*="wfs"] {
+  background-color: #0891b2 !important;
+  color: white !important;
+  border-color: #0891b2 !important;
 }
