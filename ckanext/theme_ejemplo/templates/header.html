@@ -29,7 +29,7 @@
                 </a>
         </li>
         <li class="notifications">
-          <a href="{{ h.url_for('dashboard.index') }}" title="{{ _('Dashboard') }}">
+          <a href="{{ h.url_for('user.read', id=c.user) }}" title="{{ _('Dashboard') }}">
             <i class="fa fa-tachometer" aria-hidden="true"></i>
             <span class="text">{{ _('Dashboard') }}</span>
           </a>
