@@ -2920,12 +2920,11 @@ body a.badge-label[data-format]:hover,
 
 /* Homepage Search Bar Styling */
 .homepage .module-search {
-  background: rgba(255, 255, 255, 0.1) !important;
+  background: rgba(255, 255, 255, 0.95) !important;
   border-radius: 16px !important;
   padding: 2rem !important;
-  backdrop-filter: blur(15px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
-  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15) !important;
+  border: 1px solid rgba(255, 255, 255, 0.8) !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15) !important;
 }
 
 .homepage .module-search .module-content {
@@ -2935,12 +2934,12 @@ body a.badge-label[data-format]:hover,
 }
 
 .homepage .module-search .heading {
-  color: #fff !important;
+  color: var(--unesco-blue) !important;
   font-size: 1.75rem !important;
   font-weight: 600 !important;
   margin-bottom: 1.5rem !important;
   text-align: center !important;
-  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3) !important;
+  text-shadow: none !important;
 }
 
 .homepage .module-search .search-input {
@@ -2951,22 +2950,20 @@ body a.badge-label[data-format]:hover,
 .homepage .module-search .search-giant input.form-control {
   width: 100% !important;
   padding: 15px 60px 15px 20px !important;
-  border: none !important;
   border-radius: 50px !important;
-  background: rgba(255, 255, 255, 0.85) !important;
-  backdrop-filter: blur(10px) !important;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.15) !important;
+  background: #ffffff !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1) !important;
   font-size: 16px !important;
   color: #2c3e50 !important;
   transition: all 0.3s ease !important;
-  border: 2px solid rgba(255, 255, 255, 0.3) !important;
+  border: 2px solid #e9ecef !important;
   font-weight: 500 !important;
 }
 
 .homepage .module-search .search-giant input.form-control:focus {
-  background: rgba(255, 255, 255, 0.95) !important;
+  background: #ffffff !important;
   border-color: var(--unesco-blue) !important;
-  box-shadow: 0 8px 32px rgba(0, 86, 163, 0.25), inset 0 2px 4px rgba(0, 0, 0, 0.05) !important;
+  box-shadow: 0 4px 20px rgba(0, 86, 163, 0.2) !important;
   outline: none !important;
   color: #1a252f !important;
 }
@@ -2979,20 +2976,21 @@ body a.badge-label[data-format]:hover,
 
 .homepage .module-search .search-giant button {
   position: absolute !important;
-  right: 8px !important;
+  right: 6px !important;
   top: 50% !important;
   transform: translateY(-50%) !important;
   background: var(--unesco-blue) !important;
   color: white !important;
   border: none !important;
   border-radius: 50% !important;
-  width: 40px !important;
-  height: 40px !important;
+  width: 42px !important;
+  height: 42px !important;
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
   transition: all 0.3s ease !important;
   z-index: 10 !important;
+  cursor: pointer !important;
 }
 
 .homepage .module-search .search-giant button:hover {
@@ -3002,7 +3000,11 @@ body a.badge-label[data-format]:hover,
 }
 
 .homepage .module-search .search-giant button i {
-  font-size: 16px !important;
+  font-size: 18px !important;
+  line-height: 1 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
 }
 
 /* Homepage search stats and tags */
@@ -3019,7 +3021,7 @@ body a.badge-label[data-format]:hover,
 }
 
 .homepage .module-search .tags .stats {
-  background: rgba(255, 255, 255, 0.15) !important;
+  background: var(--unesco-blue) !important;
   color: white !important;
   padding: 8px 16px !important;
   border-radius: 25px !important;
@@ -3027,16 +3029,16 @@ body a.badge-label[data-format]:hover,
   font-weight: 500 !important;
   text-decoration: none !important;
   transition: all 0.3s ease !important;
-  backdrop-filter: blur(5px) !important;
-  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border: 2px solid var(--unesco-blue) !important;
 }
 
 .homepage .module-search .tags .stats:hover {
-  background: rgba(255, 255, 255, 0.25) !important;
+  background: var(--unesco-blue-dark) !important;
+  border-color: var(--unesco-blue-dark) !important;
   color: white !important;
   text-decoration: none !important;
   transform: translateY(-1px) !important;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  box-shadow: 0 4px 12px rgba(0, 86, 163, 0.25) !important;
 }
 
 .homepage .module-search .tags .stats strong {
