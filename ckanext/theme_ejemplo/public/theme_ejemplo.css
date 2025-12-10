@@ -5653,3 +5653,414 @@ section.module-content {
     padding: 6px 12px !important;
   }
 }
+
+/* ===== DATASET SEARCH PAGE - ENHANCED UX DESIGN ===== */
+/* Based on expert analysis from UX, Visual Design, Accessibility, and Data specialists */
+
+/* Search Header Container - Clean unified design */
+.primary .page_primary_action {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  gap: 1rem !important;
+  margin-bottom: 1.5rem !important;
+  padding: 0 !important;
+}
+
+/* Add Dataset Button - Secondary action, less prominent */
+.primary .page_primary_action .btn-primary {
+  order: 3 !important;
+  background: linear-gradient(135deg, var(--unesco-blue) 0%, var(--unesco-blue-dark) 100%) !important;
+  border: none !important;
+  border-radius: 8px !important;
+  padding: 10px 18px !important;
+  font-weight: 600 !important;
+  font-size: 13px !important;
+  white-space: nowrap !important;
+  box-shadow: 0 2px 8px rgba(0, 86, 163, 0.2) !important;
+}
+
+/* Search Form Container - Primary visual element */
+.primary .search-form,
+.primary form.search-form,
+form.dataset-search {
+  background: #ffffff !important;
+  border: 2px solid #e0e5eb !important;
+  border-radius: 12px !important;
+  padding: 0 !important;
+  margin-bottom: 1.5rem !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08) !important;
+  display: flex !important;
+  align-items: stretch !important;
+  overflow: hidden !important;
+  flex: 1 !important;
+  min-width: 280px !important;
+  position: relative !important;
+}
+
+/* Search icon inside input - visual hint */
+.primary .search-form::before,
+form.dataset-search::before {
+  content: "\f002" !important;
+  font-family: "FontAwesome", "Font Awesome 5 Free" !important;
+  font-weight: 900 !important;
+  position: absolute !important;
+  left: 16px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  color: #adb5bd !important;
+  font-size: 16px !important;
+  z-index: 1 !important;
+  pointer-events: none !important;
+}
+
+/* Search input - prominent with icon space */
+.primary .search-form input[type="text"],
+.primary .search-form input[type="search"],
+.primary .search-form input.form-control,
+input#field-giant-search {
+  border: none !important;
+  background: transparent !important;
+  padding: 14px 16px 14px 44px !important;
+  font-size: 15px !important;
+  color: #212529 !important;
+  flex: 1 !important;
+  min-width: 0 !important;
+  outline: none !important;
+  box-shadow: none !important;
+  height: auto !important;
+}
+
+.primary .search-form input::placeholder,
+input#field-giant-search::placeholder {
+  color: #8898aa !important;
+  font-weight: 400 !important;
+}
+
+/* Focus state for search */
+.primary .search-form:focus-within,
+form.dataset-search:focus-within {
+  border-color: var(--unesco-blue) !important;
+  box-shadow: 0 4px 24px rgba(0, 86, 163, 0.12), 0 0 0 3px rgba(0, 119, 180, 0.08) !important;
+}
+
+/* Search submit button */
+.primary .search-form button[type="submit"],
+.primary .search-form .btn-search,
+form.dataset-search button[type="submit"] {
+  background: linear-gradient(135deg, var(--unesco-blue) 0%, var(--unesco-blue-dark) 100%) !important;
+  border: none !important;
+  color: white !important;
+  padding: 0 20px !important;
+  margin: 0 !important;
+  border-radius: 0 10px 10px 0 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 52px !important;
+}
+
+.primary .search-form button[type="submit"]:hover,
+form.dataset-search button[type="submit"]:hover {
+  background: linear-gradient(135deg, var(--unesco-blue-dark) 0%, #003d7a 100%) !important;
+}
+
+/* Results header - Count and Order by */
+.search-results-header,
+.form-row,
+.primary .module-content > form + div,
+.dataset-search-header {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 1rem !important;
+  padding: 16px 20px !important;
+  background: linear-gradient(135deg, #f8f9fc 0%, #eef1f5 100%) !important;
+  border-radius: 10px !important;
+  margin-bottom: 1.5rem !important;
+  border: 1px solid #e5e9f0 !important;
+}
+
+/* Dataset count - Prominent KPI display */
+.result-count,
+.datasets-count,
+h1.page-heading,
+.search-results-count {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 0.5rem !important;
+  font-size: 18px !important;
+  font-weight: 700 !important;
+  color: #212529 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+/* Count number styling - Highlighted */
+h1.page-heading strong,
+.result-count strong,
+.datasets-count strong,
+span.count,
+.page-heading .count {
+  background: linear-gradient(135deg, var(--unesco-blue) 0%, var(--unesco-blue-dark) 100%) !important;
+  color: white !important;
+  padding: 6px 14px !important;
+  border-radius: 20px !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  box-shadow: 0 2px 6px rgba(0, 86, 163, 0.25) !important;
+  margin-right: 8px !important;
+}
+
+/* Order by section - Clear interactive control */
+.order-by-control,
+.form-select-control,
+.search-ordering,
+.sorting_heading {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  background: #fff !important;
+  padding: 8px 12px !important;
+  border-radius: 8px !important;
+  border: 1px solid #dce0e5 !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+}
+
+.order-by-control label,
+.sorting_heading label,
+.search-ordering label {
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: #495057 !important;
+  margin: 0 !important;
+  white-space: nowrap !important;
+}
+
+/* Order by select dropdown */
+.order-by-control select,
+.sorting_heading select,
+.search-ordering select,
+select[name="sort"],
+select.form-control {
+  background: #fff !important;
+  border: 1px solid #d0d5dc !important;
+  border-radius: 6px !important;
+  padding: 8px 32px 8px 12px !important;
+  font-size: 13px !important;
+  color: #212529 !important;
+  cursor: pointer !important;
+  min-width: 140px !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23495057' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 10px center !important;
+  transition: all 0.2s ease !important;
+}
+
+select[name="sort"]:hover,
+select.form-control:hover {
+  border-color: var(--unesco-blue) !important;
+}
+
+select[name="sort"]:focus,
+select.form-control:focus {
+  border-color: var(--unesco-blue) !important;
+  box-shadow: 0 0 0 3px rgba(0, 119, 180, 0.1) !important;
+  outline: none !important;
+}
+
+/* Sidebar filters - Cleaner design */
+.secondary .filters,
+.filters {
+  background: #fff !important;
+  border-radius: 12px !important;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06) !important;
+  border: 1px solid #e5e9f0 !important;
+  overflow: hidden !important;
+  margin-bottom: 1rem !important;
+}
+
+.filters .module {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+}
+
+.filters .module:not(:last-child) {
+  border-bottom: 1px solid #eef1f5 !important;
+}
+
+.filters .module-heading {
+  background: transparent !important;
+  color: #495057 !important;
+  font-weight: 700 !important;
+  font-size: 13px !important;
+  padding: 14px 16px !important;
+  margin: 0 !important;
+  border-bottom: none !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+.filters .module-heading i,
+.filters .module-heading .fa {
+  color: var(--unesco-blue) !important;
+  font-size: 14px !important;
+}
+
+.filters .module-content {
+  padding: 0 16px 16px 16px !important;
+  background: transparent !important;
+}
+
+/* Filter items - cleaner list */
+.filters .nav-item,
+.filters .nav.nav-simple li {
+  border-bottom: none !important;
+  margin-bottom: 2px !important;
+}
+
+.filters .nav.nav-simple li a {
+  padding: 8px 10px !important;
+  border-radius: 6px !important;
+  font-size: 13px !important;
+  color: #495057 !important;
+  transition: all 0.2s ease !important;
+}
+
+.filters .nav.nav-simple li a:hover {
+  background: #f0f4f8 !important;
+  color: var(--unesco-blue) !important;
+}
+
+.filters .nav.nav-simple li.active a {
+  background: rgba(0, 105, 180, 0.08) !important;
+  color: var(--unesco-blue) !important;
+  font-weight: 600 !important;
+}
+
+/* Filter count badges */
+.filters .nav.nav-simple li a .count,
+.filters .count {
+  background: #e9ecef !important;
+  color: #6c757d !important;
+  padding: 2px 8px !important;
+  border-radius: 10px !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+}
+
+.filters .nav.nav-simple li.active a .count,
+.filters .nav.nav-simple li a:hover .count {
+  background: var(--unesco-blue) !important;
+  color: white !important;
+}
+
+/* Show more links in filters */
+.filters .nav-item-show-more a,
+.filters a[href*="show_more"],
+.show-more-link {
+  color: var(--unesco-blue) !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  text-decoration: none !important;
+  padding: 8px 10px !important;
+  display: block !important;
+}
+
+.filters .nav-item-show-more a:hover,
+.filters a[href*="show_more"]:hover {
+  text-decoration: underline !important;
+}
+
+/* Dataset cards - improved spacing */
+.dataset-list .dataset-item,
+ul.dataset-list > li {
+  margin-bottom: 1rem !important;
+  border-radius: 10px !important;
+  border: 1px solid #e5e9f0 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+}
+
+.dataset-list .dataset-item:hover,
+ul.dataset-list > li:hover {
+  border-color: rgba(0, 105, 180, 0.3) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08) !important;
+}
+
+/* Map filter styling */
+.filters .map,
+#dataset-map-container {
+  border-radius: 8px !important;
+  overflow: hidden !important;
+  margin: 0 0 8px 0 !important;
+}
+
+/* Clear filter link */
+.filters a.clear,
+a[href*="clear"] {
+  color: #dc3545 !important;
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  text-decoration: none !important;
+}
+
+.filters a.clear:hover {
+  text-decoration: underline !important;
+}
+
+/* Responsive improvements */
+@media (max-width: 991px) {
+  .primary .page_primary_action {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+  
+  .primary .search-form,
+  form.dataset-search {
+    width: 100% !important;
+    min-width: 0 !important;
+  }
+  
+  .search-results-header,
+  .dataset-search-header {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+}
+
+@media (max-width: 768px) {
+  .filters .module-heading {
+    font-size: 12px !important;
+    padding: 12px 14px !important;
+  }
+  
+  .filters .nav.nav-simple li a {
+    font-size: 12px !important;
+    padding: 6px 8px !important;
+  }
+  
+  h1.page-heading {
+    font-size: 16px !important;
+  }
+  
+  h1.page-heading strong,
+  span.count {
+    font-size: 12px !important;
+    padding: 4px 10px !important;
+  }
+}
