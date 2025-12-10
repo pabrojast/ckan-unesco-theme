@@ -3977,14 +3977,14 @@ body[class*="package"] .row {
 body.controller-package .primary,
 body[class*="package"] .primary {
   background: #fff !important;
-  padding: 15px !important;
+  padding: 10px !important;
 }
 
 .search-page .secondary,
 body.controller-package .secondary,
 body[class*="package"] .secondary {
   background: #fff !important;
-  padding: 15px !important;
+  padding: 10px !important;
 }
 
 /* Simple page header */
@@ -3995,13 +3995,14 @@ body[class*="package"] .secondary {
   margin-bottom: 20px !important;
 }
 
-/* Simple dataset count and controls */
+/* Compact dataset count and controls */
 .search-form-row {
   background: #f8f9fa !important;
   border: 1px solid #dee2e6 !important;
-  padding: 10px 15px !important;
-  margin-bottom: 15px !important;
+  padding: 5px 10px !important;
+  margin-bottom: 10px !important;
   border-radius: 3px !important;
+  font-size: 12px !important;
 }
 
 /* Add dataset button simple style */
@@ -4014,11 +4015,11 @@ body[class*="package"] .secondary {
   border-radius: 3px !important;
 }
 
-/* Simple filters sidebar */
+/* Compact filters sidebar */
 .filters {
   background: #fff !important;
   border: 1px solid #dee2e6 !important;
-  margin-bottom: 20px !important;
+  margin-bottom: 15px !important;
 }
 
 .filters .module {
@@ -4031,18 +4032,18 @@ body[class*="package"] .secondary {
   background: #f8f9fa !important;
   color: #333 !important;
   font-weight: 600 !important;
-  font-size: 14px !important;
-  padding: 12px 15px !important;
+  font-size: 13px !important;
+  padding: 8px 12px !important;
   margin: 0 !important;
   border-bottom: 1px solid #dee2e6 !important;
 }
 
 .filters .module-content {
-  padding: 15px !important;
+  padding: 8px 12px !important;
   background: #fff !important;
 }
 
-/* Simple facet lists */
+/* Compact facet lists */
 .filters .nav.nav-simple {
   list-style: none !important;
   padding: 0 !important;
@@ -4051,6 +4052,7 @@ body[class*="package"] .secondary {
 
 .filters .nav.nav-simple li {
   border-bottom: 1px solid #f0f0f0 !important;
+  margin-bottom: 0 !important;
 }
 
 .filters .nav.nav-simple li:last-child {
@@ -4058,11 +4060,14 @@ body[class*="package"] .secondary {
 }
 
 .filters .nav.nav-simple li a {
-  display: block !important;
-  padding: 8px 0 !important;
+  display: flex !important;
+  justify-content: space-between !important;
+  align-items: center !important;
+  padding: 4px 0 !important;
   color: #333 !important;
   text-decoration: none !important;
-  font-size: 13px !important;
+  font-size: 12px !important;
+  line-height: 1.3 !important;
 }
 
 .filters .nav.nav-simple li a:hover {
@@ -4078,7 +4083,7 @@ body[class*="package"] .secondary {
 .filters .nav.nav-simple li a .count {
   background: #e9ecef !important;
   color: #666 !important;
-  padding: 2px 6px !important;
+  padding: 1px 4px !important;
   border-radius: 12px;
   font-size: 11px;
   font-weight: 600;
@@ -4098,13 +4103,13 @@ body[class*="package"] .secondary {
   padding: 0;
 }
 
-/* Simple dataset item */
+/* Compact dataset item */
 .dataset-item {
   background: #fff !important;
   border: 1px solid #e0e0e0 !important;
-  margin-bottom: 10px !important;
-  padding: 15px !important;
-  border-radius: 3px !important;
+  margin-bottom: 5px !important;
+  padding: 10px !important;
+  border-radius: 0 !important;
 }
 
 .dataset-item:hover {
@@ -4113,6 +4118,36 @@ body[class*="package"] .secondary {
 
 .dataset-item .dataset-content {
   padding: 0 !important;
+}
+
+.dataset-item .dataset-heading {
+  margin-bottom: 8px !important;
+}
+
+.dataset-item .dataset-heading h2 {
+  font-size: 16px !important;
+  margin-bottom: 5px !important;
+  line-height: 1.3 !important;
+}
+
+.dataset-item .notes,
+.dataset-item p {
+  font-size: 13px !important;
+  line-height: 1.4 !important;
+  margin-bottom: 8px !important;
+}
+
+.dataset-item .dataset-resources {
+  margin-top: 8px !important;
+}
+
+.dataset-item .dataset-resources .label,
+.dataset-item .dataset-resources .badge-label {
+  font-size: 11px !important;
+  padding: 2px 6px !important;
+  margin-right: 4px !important;
+  margin-bottom: 2px !important;
+  border-radius: 3px !important;
 }
 
 .dataset-categories a[class^="category-"] {
@@ -4381,34 +4416,38 @@ ul.dataset-resources li .badge-label[data-format="csv"] {
   font-weight: 500;
 }
 
-/* Simple search form */
+/* Compact search form */
 .search-form {
   background: #fff !important;
   border: 1px solid #ccc !important;
-  padding: 8px !important;
-  margin-bottom: 20px !important;
+  padding: 5px !important;
+  margin-bottom: 15px !important;
+  border-radius: 3px !important;
 }
 
 .search-form .form-control {
   border: 1px solid #ccc !important;
-  padding: 8px 12px !important;
-  font-size: 14px !important;
+  padding: 4px 8px !important;
+  font-size: 13px !important;
   width: 70% !important;
   display: inline-block !important;
+  border-radius: 3px !important;
 }
 
 .search-form .form-control:focus {
   border-color: var(--unesco-blue) !important;
-  box-shadow: 0 0 5px rgba(0, 86, 163, 0.3) !important;
+  box-shadow: 0 0 3px rgba(0, 86, 163, 0.3) !important;
 }
 
 .search-form .btn {
   background: var(--unesco-blue) !important;
   border-color: var(--unesco-blue) !important;
   color: white !important;
-  padding: 8px 16px !important;
-  margin-left: 8px !important;
+  padding: 4px 12px !important;
+  margin-left: 5px !important;
   display: inline-block !important;
+  font-size: 13px !important;
+  border-radius: 3px !important;
 }
 
 .search-form .btn,
