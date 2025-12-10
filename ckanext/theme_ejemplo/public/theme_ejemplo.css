@@ -6118,68 +6118,37 @@ body[class*="dataset"] .masthead .site-search:hover {
   border-bottom: 2px solid #e9ecef !important;
 }
 
-/* 4. Mejorar separación visual entre tarjetas de dataset */
+/* 4. Mejorar separación visual entre tarjetas de dataset - SUBTLE */
 .dataset-list .dataset-item {
   margin-bottom: 1.25rem !important;
   border: 1px solid #e5e9f0 !important;
-  border-left: 4px solid var(--unesco-blue) !important;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  transition: all 0.2s ease !important;
 }
 
 .dataset-list .dataset-item:hover {
-  border-left-color: var(--unesco-blue-dark) !important;
-  transform: translateX(4px) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
 }
 
-/* 5. Mejorar visibilidad de "Show more" en filtros */
-.filters .nav-item-show-more,
-.filters a.nav-facet,
-.filters a[href*="facet"],
-.secondary .module a[href*="_show_more"] {
-  display: block !important;
-  text-align: center !important;
-  padding: 10px 12px !important;
-  margin-top: 8px !important;
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
-  border-radius: 6px !important;
+/* 5. Mejorar visibilidad de "Show more" en filtros - SIMPLE */
+.filters p.module-footer a,
+.filters .nav-facet.nav-item-show-more a {
   color: var(--unesco-blue) !important;
   font-weight: 600 !important;
   font-size: 12px !important;
   text-decoration: none !important;
-  transition: all 0.2s ease !important;
-  border: 1px solid #dee2e6 !important;
 }
 
-.filters .nav-item-show-more:hover,
-.filters a.nav-facet:hover,
-.secondary .module a[href*="_show_more"]:hover {
-  background: var(--unesco-blue) !important;
-  color: white !important;
-  border-color: var(--unesco-blue) !important;
+.filters p.module-footer a:hover,
+.filters .nav-facet.nav-item-show-more a:hover {
+  text-decoration: underline !important;
 }
 
-/* 6. Mejorar indicadores de filtros activos */
-.filters .nav.nav-simple li.active {
-  position: relative !important;
-}
-
-.filters .nav.nav-simple li.active::before {
-  content: "" !important;
-  position: absolute !important;
-  left: 0 !important;
-  top: 50% !important;
-  transform: translateY(-50%) !important;
-  width: 4px !important;
-  height: 70% !important;
-  background: var(--unesco-blue) !important;
-  border-radius: 0 4px 4px 0 !important;
-}
-
+/* 6. Mejorar indicadores de filtros activos - SIMPLE */
 .filters .nav.nav-simple li.active a {
   background: rgba(0, 105, 180, 0.1) !important;
   color: var(--unesco-blue) !important;
-  font-weight: 700 !important;
-  padding-left: 14px !important;
+  font-weight: 600 !important;
+  border-radius: 4px !important;
 }
 
 /* 7. Mejorar el selector "Order by" */
@@ -6484,31 +6453,14 @@ form[action*="dataset"] .search-input-group {
   font-size: 13px !important;
 }
 
-/* 11. Animación suave para filtros colapsables */
+/* 11. Animación suave para filtros - SIMPLE */
 .filters .module-heading {
   cursor: pointer !important;
-  user-select: none !important;
   transition: background 0.2s ease !important;
 }
 
 .filters .module-heading:hover {
-  background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%) !important;
-}
-
-.filters .module-heading::after {
-  content: "" !important;
-  display: inline-block !important;
-  width: 0 !important;
-  height: 0 !important;
-  border-left: 5px solid transparent !important;
-  border-right: 5px solid transparent !important;
-  border-top: 6px solid #6c757d !important;
-  margin-left: auto !important;
-  transition: transform 0.2s ease !important;
-}
-
-.filters .module.collapsed .module-heading::after {
-  transform: rotate(-90deg) !important;
+  background: #f0f2f5 !important;
 }
 
 /* 12. Skeleton loading placeholder (preparación para carga) */
@@ -6523,38 +6475,17 @@ form[action*="dataset"] .search-input-group {
   100% { background-position: -200% 0; }
 }
 
-/* 13. Tooltips para badges de formato */
+/* 13. Estilos básicos para badges de formato - SIN TOOLTIPS */
 .dataset-resources .label[data-format],
 .dataset-resources .badge-label[data-format],
 .dataset-resources a[data-format] {
-  position: relative !important;
-}
-
-.dataset-resources .label[data-format]::after,
-.dataset-resources .badge-label[data-format]::after {
-  content: attr(data-format) " file" !important;
-  position: absolute !important;
-  bottom: 100% !important;
-  left: 50% !important;
-  transform: translateX(-50%) !important;
-  background: #212529 !important;
-  color: white !important;
-  padding: 4px 8px !important;
-  border-radius: 4px !important;
-  font-size: 10px !important;
-  white-space: nowrap !important;
-  opacity: 0 !important;
-  visibility: hidden !important;
   transition: all 0.2s ease !important;
-  pointer-events: none !important;
-  z-index: 100 !important;
 }
 
-.dataset-resources .label[data-format]:hover::after,
-.dataset-resources .badge-label[data-format]:hover::after {
-  opacity: 1 !important;
-  visibility: visible !important;
-  bottom: calc(100% + 5px) !important;
+.dataset-resources .label[data-format]:hover,
+.dataset-resources .badge-label[data-format]:hover,
+.dataset-resources a[data-format]:hover {
+  filter: brightness(1.1) !important;
 }
 
 /* 14. Mejoras de paginación */
