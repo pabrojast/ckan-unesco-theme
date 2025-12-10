@@ -6080,43 +6080,7 @@ a[href*="clear"] {
 }
 
 /* ===== FASE 1: CORRECCIONES CRÍTICAS - PÁGINA DATASET ===== */
-
-/* 1. Ocultar búsqueda del header en página de datasets para evitar confusión */
-body.controller-package .masthead .site-search,
-body[class*="dataset"] .masthead .site-search {
-  opacity: 0.5 !important;
-  pointer-events: none !important;
-  transform: scale(0.9) !important;
-}
-
-body.controller-package .masthead .site-search:hover,
-body[class*="dataset"] .masthead .site-search:hover {
-  opacity: 1 !important;
-  pointer-events: auto !important;
-  transform: scale(1) !important;
-}
-
-/* 2. Mejorar la visibilidad del encabezado de resultados */
-.primary .module-content > form:first-of-type {
-  background: #fff !important;
-  border-radius: 12px !important;
-  padding: 20px 24px !important;
-  margin-bottom: 1.5rem !important;
-  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06) !important;
-  border: 1px solid #e9ecef !important;
-}
-
-/* 3. Estilo mejorado para el header de "X datasets found" */
-.page-heading.with-tabs,
-.primary h1.page-heading {
-  display: flex !important;
-  align-items: center !important;
-  flex-wrap: wrap !important;
-  gap: 1rem !important;
-  padding: 16px 0 !important;
-  margin-bottom: 1rem !important;
-  border-bottom: 2px solid #e9ecef !important;
-}
+/* NOTA: Estilos movidos a la sección "FINAL FIX (v2)" al final del archivo */
 
 /* 4. Mejorar separación visual entre tarjetas de dataset - SUBTLE */
 .dataset-list .dataset-item {
@@ -6614,5 +6578,533 @@ form[action*="dataset"] .search-input-group {
   .pagination li a,
   .pagination li span {
     border: 2px solid #000 !important;
+  }
+}
+
+/* ===== DATASET SEARCH PAGE - FINAL FIX (v2) ===== */
+/* Correcciones finales para /dataset basadas en análisis visual */
+
+/* 1. FONDO DE PÁGINA - Color suave que contraste con las tarjetas */
+body.controller-package .main,
+body[class*="dataset"] .main {
+  background: #f0f4f8 !important;
+}
+
+body.controller-package .wrapper,
+body[class*="dataset"] .wrapper {
+  background: #f0f4f8 !important;
+}
+
+/* 2. CONTENEDOR PRINCIPAL - Eliminar bordes problemáticos */
+body.controller-package .primary,
+body[class*="dataset"] .primary {
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* 3. ADD DATASET BUTTON - Separación adecuada */
+body.controller-package .page_primary_action,
+body[class*="dataset"] .page_primary_action {
+  margin-bottom: 24px !important;
+  padding: 0 !important;
+  display: flex !important;
+  justify-content: flex-end !important;
+}
+
+body.controller-package .page_primary_action .btn-primary,
+body[class*="dataset"] .page_primary_action .btn-primary {
+  margin: 0 !important;
+  padding: 12px 24px !important;
+  border-radius: 8px !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  background: #0069B4 !important;
+  border: none !important;
+  box-shadow: 0 2px 8px rgba(0, 105, 180, 0.3) !important;
+}
+
+/* 4. SEARCH FORM CONTAINER - Caja clara y definida */
+body.controller-package .primary .module-content > form,
+body[class*="dataset"] .primary .module-content > form {
+  background: #fff !important;
+  border-radius: 12px !important;
+  padding: 20px 24px !important;
+  margin-bottom: 20px !important;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08) !important;
+  border: 1px solid #e0e5eb !important;
+}
+
+/* 5. SEARCH INPUT - Barra de búsqueda clara */
+body.controller-package .search-form,
+body[class*="dataset"] .search-form,
+body.controller-package .search-input-group,
+body[class*="dataset"] .search-input-group {
+  background: #f8fafc !important;
+  border: 2px solid #dce3eb !important;
+  border-radius: 10px !important;
+  overflow: hidden !important;
+  display: flex !important;
+  align-items: stretch !important;
+  margin-bottom: 16px !important;
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.06) !important;
+}
+
+body.controller-package .search-form:focus-within,
+body[class*="dataset"] .search-form:focus-within {
+  border-color: #0069B4 !important;
+  box-shadow: 0 0 0 3px rgba(0, 105, 180, 0.12) !important;
+}
+
+body.controller-package .search-form input[type="text"],
+body[class*="dataset"] .search-form input[type="text"],
+body.controller-package input#field-giant-search,
+body[class*="dataset"] input#field-giant-search {
+  background: transparent !important;
+  border: none !important;
+  padding: 14px 18px !important;
+  font-size: 15px !important;
+  flex: 1 !important;
+  color: #212529 !important;
+}
+
+body.controller-package .search-form button[type="submit"],
+body[class*="dataset"] .search-form button[type="submit"] {
+  background: #0069B4 !important;
+  border: none !important;
+  color: white !important;
+  padding: 0 20px !important;
+  margin: 0 !important;
+  border-radius: 0 8px 8px 0 !important;
+  cursor: pointer !important;
+  min-width: 50px !important;
+}
+
+/* 6. RESULTS HEADER - Número de datasets y Order by separados */
+body.controller-package .form-select-control,
+body[class*="dataset"] .form-select-control,
+body.controller-package .form-inline,
+body[class*="dataset"] .form-inline {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 16px !important;
+  padding: 14px 0 !important;
+  margin: 0 !important;
+  border-top: 1px solid #e9ecef !important;
+}
+
+/* 7. DATASET COUNT - Badge prominente */
+body.controller-package h1.page-heading,
+body[class*="dataset"] h1.page-heading {
+  font-size: 18px !important;
+  font-weight: 600 !important;
+  color: #212529 !important;
+  margin: 0 0 16px 0 !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+body.controller-package h1.page-heading strong,
+body[class*="dataset"] h1.page-heading strong {
+  background: #0069B4 !important;
+  color: white !important;
+  padding: 6px 14px !important;
+  border-radius: 20px !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  box-shadow: 0 2px 6px rgba(0, 105, 180, 0.25) !important;
+}
+
+/* 8. ORDER BY SELECT - Claramente separado */
+body.controller-package select[name="sort"],
+body[class*="dataset"] select[name="sort"],
+body.controller-package .form-select,
+body[class*="dataset"] .form-select {
+  background: #fff !important;
+  border: 2px solid #dce3eb !important;
+  border-radius: 8px !important;
+  padding: 10px 36px 10px 14px !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  color: #495057 !important;
+  cursor: pointer !important;
+  min-width: 160px !important;
+  appearance: none !important;
+  -webkit-appearance: none !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%23495057' viewBox='0 0 16 16'%3E%3Cpath d='M7.247 11.14 2.451 5.658C1.885 5.013 2.345 4 3.204 4h9.592a1 1 0 0 1 .753 1.659l-4.796 5.48a1 1 0 0 1-1.506 0z'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important;
+  background-position: right 12px center !important;
+}
+
+body.controller-package select[name="sort"]:focus,
+body[class*="dataset"] select[name="sort"]:focus {
+  border-color: #0069B4 !important;
+  outline: none !important;
+  box-shadow: 0 0 0 3px rgba(0, 105, 180, 0.12) !important;
+}
+
+/* 9. DATASET CARDS - Tarjetas con fondo blanco sobre fondo gris */
+body.controller-package .dataset-list,
+body[class*="dataset"] .dataset-list {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+body.controller-package .dataset-list .dataset-item,
+body[class*="dataset"] .dataset-list .dataset-item,
+body.controller-package ul.dataset-list > li,
+body[class*="dataset"] ul.dataset-list > li {
+  background: #fff !important;
+  border: 1px solid #e0e5eb !important;
+  border-radius: 12px !important;
+  margin-bottom: 16px !important;
+  padding: 20px 24px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease !important;
+}
+
+body.controller-package .dataset-list .dataset-item:hover,
+body[class*="dataset"] .dataset-list .dataset-item:hover {
+  border-color: rgba(0, 105, 180, 0.3) !important;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* 10. SIDEBAR FILTERS - Diseño limpio y moderno */
+body.controller-package .secondary,
+body[class*="dataset"] .secondary {
+  background: transparent !important;
+}
+
+body.controller-package .filters,
+body[class*="dataset"] .filters {
+  background: #fff !important;
+  border-radius: 12px !important;
+  border: 1px solid #e0e5eb !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
+  overflow: hidden !important;
+  margin-bottom: 16px !important;
+}
+
+body.controller-package .filters .module,
+body[class*="dataset"] .filters .module {
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  margin: 0 !important;
+}
+
+body.controller-package .filters .module:not(:last-child),
+body[class*="dataset"] .filters .module:not(:last-child) {
+  border-bottom: 1px solid #eef2f6 !important;
+}
+
+/* 11. FILTER HEADINGS - Claros y colapsables */
+body.controller-package .filters .module-heading,
+body[class*="dataset"] .filters .module-heading {
+  background: #f8fafc !important;
+  color: #374151 !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.4px !important;
+  padding: 14px 16px !important;
+  margin: 0 !important;
+  border: none !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  cursor: pointer !important;
+}
+
+body.controller-package .filters .module-heading:hover,
+body[class*="dataset"] .filters .module-heading:hover {
+  background: #f0f4f8 !important;
+}
+
+body.controller-package .filters .module-heading i,
+body[class*="dataset"] .filters .module-heading i,
+body.controller-package .filters .module-heading .fa,
+body[class*="dataset"] .filters .module-heading .fa {
+  color: #0069B4 !important;
+  font-size: 14px !important;
+}
+
+/* 12. FILTER CONTENT - Lista limpia */
+body.controller-package .filters .module-content,
+body[class*="dataset"] .filters .module-content {
+  padding: 8px 12px 12px !important;
+  background: #fff !important;
+}
+
+body.controller-package .filters .nav.nav-simple,
+body[class*="dataset"] .filters .nav.nav-simple {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+body.controller-package .filters .nav.nav-simple li,
+body[class*="dataset"] .filters .nav.nav-simple li {
+  margin: 0 !important;
+  padding: 0 !important;
+  border: none !important;
+}
+
+body.controller-package .filters .nav.nav-simple li a,
+body[class*="dataset"] .filters .nav.nav-simple li a {
+  padding: 10px 12px !important;
+  font-size: 13px !important;
+  color: #495057 !important;
+  border-radius: 6px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  text-decoration: none !important;
+  transition: background 0.15s ease !important;
+}
+
+body.controller-package .filters .nav.nav-simple li a:hover,
+body[class*="dataset"] .filters .nav.nav-simple li a:hover {
+  background: #f0f4f8 !important;
+  color: #0069B4 !important;
+}
+
+body.controller-package .filters .nav.nav-simple li.active a,
+body[class*="dataset"] .filters .nav.nav-simple li.active a {
+  background: rgba(0, 105, 180, 0.1) !important;
+  color: #0069B4 !important;
+  font-weight: 600 !important;
+}
+
+/* 13. FILTER COUNT BADGES */
+body.controller-package .filters .nav.nav-simple li a .count,
+body[class*="dataset"] .filters .nav.nav-simple li a .count {
+  background: #e9ecef !important;
+  color: #6c757d !important;
+  padding: 2px 8px !important;
+  border-radius: 10px !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  margin-left: 8px !important;
+}
+
+body.controller-package .filters .nav.nav-simple li.active a .count,
+body[class*="dataset"] .filters .nav.nav-simple li.active a .count {
+  background: #0069B4 !important;
+  color: white !important;
+}
+
+/* 14. SHOW MORE LINK */
+body.controller-package .filters p.module-footer,
+body[class*="dataset"] .filters p.module-footer {
+  margin: 0 !important;
+  padding: 10px 12px !important;
+  border-top: 1px solid #eef2f6 !important;
+}
+
+body.controller-package .filters p.module-footer a,
+body[class*="dataset"] .filters p.module-footer a {
+  color: #0069B4 !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  text-decoration: none !important;
+}
+
+body.controller-package .filters p.module-footer a:hover,
+body[class*="dataset"] .filters p.module-footer a:hover {
+  text-decoration: underline !important;
+}
+
+/* 15. MAP FILTER - Bordes limpios */
+body.controller-package .filters #dataset-map-container,
+body[class*="dataset"] .filters #dataset-map-container,
+body.controller-package .filters .map-container,
+body[class*="dataset"] .filters .map-container {
+  border-radius: 8px !important;
+  overflow: hidden !important;
+  margin: 8px !important;
+  min-height: 160px !important;
+  border: 1px solid #e9ecef !important;
+}
+
+/* 16. REMOVE CONFLICTING BORDERS */
+body.controller-package .primary .module-content,
+body[class*="dataset"] .primary .module-content {
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+body.controller-package .primary > section,
+body[class*="dataset"] .primary > section {
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+/* 17. PAGINATION - Consistente con el diseño */
+body.controller-package .pagination,
+body[class*="dataset"] .pagination {
+  display: flex !important;
+  justify-content: center !important;
+  gap: 6px !important;
+  margin: 24px 0 !important;
+  padding: 20px !important;
+  background: #fff !important;
+  border-radius: 12px !important;
+  border: 1px solid #e0e5eb !important;
+}
+
+body.controller-package .pagination li a,
+body[class*="dataset"] .pagination li a,
+body.controller-package .pagination li span,
+body[class*="dataset"] .pagination li span {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 40px !important;
+  height: 40px !important;
+  padding: 0 12px !important;
+  border-radius: 8px !important;
+  font-weight: 500 !important;
+  font-size: 14px !important;
+  color: #495057 !important;
+  background: #f8fafc !important;
+  border: 1px solid #e0e5eb !important;
+  text-decoration: none !important;
+  transition: all 0.15s ease !important;
+}
+
+body.controller-package .pagination li a:hover,
+body[class*="dataset"] .pagination li a:hover {
+  background: #e8f4fc !important;
+  border-color: #0069B4 !important;
+  color: #0069B4 !important;
+}
+
+body.controller-package .pagination li.active a,
+body[class*="dataset"] .pagination li.active a,
+body.controller-package .pagination li.active span,
+body[class*="dataset"] .pagination li.active span {
+  background: #0069B4 !important;
+  border-color: #0069B4 !important;
+  color: white !important;
+  font-weight: 600 !important;
+}
+
+/* 18. FIX DATASET CONTENT SPACING */
+body.controller-package .dataset-item .dataset-content,
+body[class*="dataset"] .dataset-item .dataset-content {
+  padding: 0 !important;
+}
+
+body.controller-package .dataset-item .dataset-heading,
+body[class*="dataset"] .dataset-item .dataset-heading {
+  margin-bottom: 8px !important;
+}
+
+body.controller-package .dataset-item .dataset-heading a,
+body[class*="dataset"] .dataset-item .dataset-heading a {
+  font-size: 17px !important;
+  font-weight: 600 !important;
+  color: #1a1a2e !important;
+  text-decoration: none !important;
+}
+
+body.controller-package .dataset-item .dataset-heading a:hover,
+body[class*="dataset"] .dataset-item .dataset-heading a:hover {
+  color: #0069B4 !important;
+  text-decoration: underline !important;
+}
+
+body.controller-package .dataset-item .notes,
+body[class*="dataset"] .dataset-item .notes,
+body.controller-package .dataset-item p,
+body[class*="dataset"] .dataset-item p {
+  color: #6c757d !important;
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+  margin: 8px 0 !important;
+}
+
+/* 19. RESOURCE BADGES - Colores consistentes */
+body.controller-package .dataset-resources,
+body[class*="dataset"] .dataset-resources {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 6px !important;
+  margin-top: 12px !important;
+}
+
+body.controller-package .dataset-resources .label,
+body[class*="dataset"] .dataset-resources .label,
+body.controller-package .dataset-resources a,
+body[class*="dataset"] .dataset-resources a {
+  display: inline-flex !important;
+  padding: 4px 10px !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  border-radius: 4px !important;
+  text-decoration: none !important;
+  color: white !important;
+}
+
+/* 20. RESPONSIVE FIXES */
+@media (max-width: 991px) {
+  body.controller-package .page_primary_action,
+  body[class*="dataset"] .page_primary_action {
+    margin-bottom: 16px !important;
+  }
+  
+  body.controller-package .primary .module-content > form,
+  body[class*="dataset"] .primary .module-content > form {
+    padding: 16px !important;
+  }
+  
+  body.controller-package .dataset-list .dataset-item,
+  body[class*="dataset"] .dataset-list .dataset-item {
+    padding: 16px !important;
+  }
+  
+  body.controller-package .form-select-control,
+  body[class*="dataset"] .form-select-control,
+  body.controller-package .form-inline,
+  body[class*="dataset"] .form-inline {
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+}
+
+@media (max-width: 768px) {
+  body.controller-package h1.page-heading,
+  body[class*="dataset"] h1.page-heading {
+    font-size: 16px !important;
+    flex-wrap: wrap !important;
+  }
+  
+  body.controller-package h1.page-heading strong,
+  body[class*="dataset"] h1.page-heading strong {
+    font-size: 12px !important;
+    padding: 4px 10px !important;
+  }
+  
+  body.controller-package .filters .module-heading,
+  body[class*="dataset"] .filters .module-heading {
+    font-size: 12px !important;
+    padding: 12px 14px !important;
+  }
+  
+  body.controller-package .filters .nav.nav-simple li a,
+  body[class*="dataset"] .filters .nav.nav-simple li a {
+    font-size: 12px !important;
+    padding: 8px 10px !important;
   }
 }
