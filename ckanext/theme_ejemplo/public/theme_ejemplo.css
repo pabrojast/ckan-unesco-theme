@@ -309,6 +309,39 @@ border-radius: 3px 3px 0 0;
 background-color: transparent !important;
 border-bottom: none;
 }
+
+/* Make the entire search module container transparent */
+.homepage .module-search {
+    background-color: transparent !important;
+}
+
+/* Make search form and input transparent */
+.homepage .module-search .search-form,
+.homepage .module-search .search-input,
+.homepage .module-search input[type="text"],
+.homepage .module-search .form-control {
+    background-color: transparent !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+}
+
+/* Search input placeholder */
+.homepage .module-search input::placeholder {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+/* Search button */
+.homepage .module-search .btn,
+.homepage .module-search button {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    color: white !important;
+}
+
+.homepage .module-search .btn:hover,
+.homepage .module-search button:hover {
+    background-color: rgba(255, 255, 255, 0.3) !important;
+}
+
 /*search margin */
 .homepage .module-search {
     margin-top: 5px;
@@ -690,7 +723,7 @@ border-radius: 0 0 3px 3px;
 
 .homepage .row {
     position: relative;
-    background: #fff;
+    background: transparent !important;
 }
 .masthead .navigation .nav-pills li a:hover, .masthead .navigation .nav-pills li a:focus, .masthead .navigation .nav-pills li.active a {
     background-color: transparent !important;
