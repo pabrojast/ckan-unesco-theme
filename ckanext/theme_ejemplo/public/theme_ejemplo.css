@@ -3454,3 +3454,17 @@ body a.badge-label[data-format]:hover,
     font-size: 15px !important;
   }
 }
+
+/* Minor spacing improvements for dataset page */
+.dataset-item {
+  margin-bottom: 15px !important;
+}
+
+.filters .module-content {
+  padding: 12px !important;
+}
+
+.filters .nav.nav-simple li a {
+  padding: 6px 0 !important;
+  font-size: 13px !important;
+}
