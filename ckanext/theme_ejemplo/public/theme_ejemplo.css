@@ -2733,8 +2733,17 @@ body a.badge-label[data-format*=csv],
 .dataset-resources a.label[data-format=csv],
 .dataset-resources a.label[data-format*=csv],
 .dataset-resources a.badge-label[data-format=csv],
-.dataset-resources a.badge-label[data-format*=csv] {
+.dataset-resources a.badge-label[data-format*=csv],
+.dataset-item .label[data-format=csv],
+.dataset-item .label[data-format*=csv],
+.dataset-item .badge-label[data-format=csv],
+.dataset-item .badge-label[data-format*=csv],
+.dataset-item a.label[data-format=csv],
+.dataset-item a.label[data-format*=csv],
+.dataset-item a.badge-label[data-format=csv],
+.dataset-item a.badge-label[data-format*=csv] {
   background-color: #5cb85c !important;
+  color: #fff !important;
 }
 
 /* JSON tags */
@@ -2757,8 +2766,17 @@ body a.badge-label[data-format*=json],
 .dataset-resources a.label[data-format=json],
 .dataset-resources a.label[data-format*=json],
 .dataset-resources a.badge-label[data-format=json],
-.dataset-resources a.badge-label[data-format*=json] {
+.dataset-resources a.badge-label[data-format*=json],
+.dataset-item .label[data-format=json],
+.dataset-item .label[data-format*=json],
+.dataset-item .badge-label[data-format=json],
+.dataset-item .badge-label[data-format*=json],
+.dataset-item a.label[data-format=json],
+.dataset-item a.label[data-format*=json],
+.dataset-item a.badge-label[data-format=json],
+.dataset-item a.badge-label[data-format*=json] {
   background-color: #f0ad4e !important;
+  color: #fff !important;
 }
 
 /* XML tags */
@@ -2919,8 +2937,17 @@ body a.badge-label[data-format*=shp],
 .dataset-resources a.label[data-format=shp],
 .dataset-resources a.label[data-format*=shp],
 .dataset-resources a.badge-label[data-format=shp],
-.dataset-resources a.badge-label[data-format*=shp] {
+.dataset-resources a.badge-label[data-format*=shp],
+.dataset-item .label[data-format=shp],
+.dataset-item .label[data-format*=shp],
+.dataset-item .badge-label[data-format=shp],
+.dataset-item .badge-label[data-format*=shp],
+.dataset-item a.label[data-format=shp],
+.dataset-item a.label[data-format*=shp],
+.dataset-item a.badge-label[data-format=shp],
+.dataset-item a.badge-label[data-format*=shp] {
   background-color: #36849a !important;
+  color: #fff !important;
 }
 
 body .format-label[data-format=tiff],
@@ -3008,7 +3035,9 @@ body a.badge-label[data-format*=geojson],
 body a.label[data-format],
 body a.badge-label[data-format],
 .dataset-resources a.label[data-format],
-.dataset-resources a.badge-label[data-format] {
+.dataset-resources a.badge-label[data-format],
+.dataset-item a.label[data-format],
+.dataset-item a.badge-label[data-format] {
   background-color: #999999 !important;
   color: #ffffff !important;
   text-decoration: none !important;
@@ -3023,10 +3052,46 @@ body a.badge-label[data-format],
 body a.label[data-format]:hover,
 body a.badge-label[data-format]:hover,
 .dataset-resources a.label[data-format]:hover,
-.dataset-resources a.badge-label[data-format]:hover {
+.dataset-resources a.badge-label[data-format]:hover,
+.dataset-item a.label[data-format]:hover,
+.dataset-item a.badge-label[data-format]:hover {
   background-color: #777777 !important;
   color: #ffffff !important;
   text-decoration: none !important;
+}
+
+/* Ultra-specific overrides for dataset list items */
+ul.dataset-list li.dataset-item a.label.badge-label,
+.dataset-list .dataset-item a.label.badge-label {
+  background-color: #999999 !important;
+  color: #fff !important;
+}
+
+/* Ultra-specific CSV in dataset lists */
+ul.dataset-list li.dataset-item a.label.badge-label[data-format="csv"],
+ul.dataset-list li.dataset-item a.label.badge-label[data-format*="csv"],
+.dataset-list .dataset-item a.label.badge-label[data-format="csv"],
+.dataset-list .dataset-item a.label.badge-label[data-format*="csv"] {
+  background-color: #5cb85c !important;
+  color: #fff !important;
+}
+
+/* Ultra-specific JSON in dataset lists */
+ul.dataset-list li.dataset-item a.label.badge-label[data-format="json"],
+ul.dataset-list li.dataset-item a.label.badge-label[data-format*="json"],
+.dataset-list .dataset-item a.label.badge-label[data-format="json"],
+.dataset-list .dataset-item a.label.badge-label[data-format*="json"] {
+  background-color: #f0ad4e !important;
+  color: #fff !important;
+}
+
+/* Ultra-specific SHP in dataset lists */
+ul.dataset-list li.dataset-item a.label.badge-label[data-format="shp"],
+ul.dataset-list li.dataset-item a.label.badge-label[data-format*="shp"],
+.dataset-list .dataset-item a.label.badge-label[data-format="shp"],
+.dataset-list .dataset-item a.label.badge-label[data-format*="shp"] {
+  background-color: #36849a !important;
+  color: #fff !important;
 }
 
 /* Popular tags styling */
