@@ -2683,13 +2683,21 @@ body .label[data-format=csv],
 body .label[data-format*=csv],
 body .badge-label[data-format=csv],
 body .badge-label[data-format*=csv],
+body a.label[data-format=csv],
+body a.label[data-format*=csv],
+body a.badge-label[data-format=csv],
+body a.badge-label[data-format*=csv],
 .dataset-resources .format-label[data-format=csv],
 .dataset-resources .format-label[data-format*=csv],
 .dataset-resources .label[data-format=csv],
 .dataset-resources .label[data-format*=csv],
 .dataset-resources .badge-label[data-format=csv],
-.dataset-resources .badge-label[data-format*=csv] {
-  background-color: #3c763d !important;
+.dataset-resources .badge-label[data-format*=csv],
+.dataset-resources a.label[data-format=csv],
+.dataset-resources a.label[data-format*=csv],
+.dataset-resources a.badge-label[data-format=csv],
+.dataset-resources a.badge-label[data-format*=csv] {
+  background-color: #5cb85c !important;
 }
 
 /* JSON tags */
@@ -2699,13 +2707,21 @@ body .label[data-format=json],
 body .label[data-format*=json],
 body .badge-label[data-format=json],
 body .badge-label[data-format*=json],
+body a.label[data-format=json],
+body a.label[data-format*=json],
+body a.badge-label[data-format=json],
+body a.badge-label[data-format*=json],
 .dataset-resources .format-label[data-format=json],
 .dataset-resources .format-label[data-format*=json],
 .dataset-resources .label[data-format=json],
 .dataset-resources .label[data-format*=json],
 .dataset-resources .badge-label[data-format=json],
-.dataset-resources .badge-label[data-format*=json] {
-  background-color: #31708f !important;
+.dataset-resources .badge-label[data-format*=json],
+.dataset-resources a.label[data-format=json],
+.dataset-resources a.label[data-format*=json],
+.dataset-resources a.badge-label[data-format=json],
+.dataset-resources a.badge-label[data-format*=json] {
+  background-color: #f0ad4e !important;
 }
 
 /* XML tags */
@@ -2715,12 +2731,20 @@ body .label[data-format=xml],
 body .label[data-format*=xml],
 body .badge-label[data-format=xml],
 body .badge-label[data-format*=xml],
+body a.label[data-format=xml],
+body a.label[data-format*=xml],
+body a.badge-label[data-format=xml],
+body a.badge-label[data-format*=xml],
 .dataset-resources .format-label[data-format=xml],
 .dataset-resources .format-label[data-format*=xml],
 .dataset-resources .label[data-format=xml],
 .dataset-resources .label[data-format*=xml],
 .dataset-resources .badge-label[data-format=xml],
-.dataset-resources .badge-label[data-format*=xml] {
+.dataset-resources .badge-label[data-format*=xml],
+.dataset-resources a.label[data-format=xml],
+.dataset-resources a.label[data-format*=xml],
+.dataset-resources a.badge-label[data-format=xml],
+.dataset-resources a.badge-label[data-format*=xml] {
   background-color: #8a6d3b !important;
 }
 
@@ -2731,12 +2755,20 @@ body .label[data-format=pdf],
 body .label[data-format*=pdf],
 body .badge-label[data-format=pdf],
 body .badge-label[data-format*=pdf],
+body a.label[data-format=pdf],
+body a.label[data-format*=pdf],
+body a.badge-label[data-format=pdf],
+body a.badge-label[data-format*=pdf],
 .dataset-resources .format-label[data-format=pdf],
 .dataset-resources .format-label[data-format*=pdf],
 .dataset-resources .label[data-format=pdf],
 .dataset-resources .label[data-format*=pdf],
 .dataset-resources .badge-label[data-format=pdf],
-.dataset-resources .badge-label[data-format*=pdf] {
+.dataset-resources .badge-label[data-format*=pdf],
+.dataset-resources a.label[data-format=pdf],
+.dataset-resources a.label[data-format*=pdf],
+.dataset-resources a.badge-label[data-format=pdf],
+.dataset-resources a.badge-label[data-format*=pdf] {
   background-color: #a94442 !important;
 }
 
@@ -2753,6 +2785,14 @@ body .badge-label[data-format=xls],
 body .badge-label[data-format*=xls],
 body .badge-label[data-format=xlsx],
 body .badge-label[data-format*=xlsx],
+body a.label[data-format=xls],
+body a.label[data-format*=xls],
+body a.label[data-format=xlsx],
+body a.label[data-format*=xlsx],
+body a.badge-label[data-format=xls],
+body a.badge-label[data-format*=xls],
+body a.badge-label[data-format=xlsx],
+body a.badge-label[data-format*=xlsx],
 .dataset-resources .format-label[data-format=xls],
 .dataset-resources .format-label[data-format*=xls],
 .dataset-resources .format-label[data-format=xlsx],
@@ -2764,7 +2804,15 @@ body .badge-label[data-format*=xlsx],
 .dataset-resources .badge-label[data-format=xls],
 .dataset-resources .badge-label[data-format*=xls],
 .dataset-resources .badge-label[data-format=xlsx],
-.dataset-resources .badge-label[data-format*=xlsx] {
+.dataset-resources .badge-label[data-format*=xlsx],
+.dataset-resources a.label[data-format=xls],
+.dataset-resources a.label[data-format*=xls],
+.dataset-resources a.label[data-format=xlsx],
+.dataset-resources a.label[data-format*=xlsx],
+.dataset-resources a.badge-label[data-format=xls],
+.dataset-resources a.badge-label[data-format*=xls],
+.dataset-resources a.badge-label[data-format=xlsx],
+.dataset-resources a.badge-label[data-format*=xlsx] {
   background-color: #269abc !important;
 }
 
@@ -2775,12 +2823,20 @@ body .label[data-format=zip],
 body .label[data-format*=zip],
 body .badge-label[data-format=zip],
 body .badge-label[data-format*=zip],
+body a.label[data-format=zip],
+body a.label[data-format*=zip],
+body a.badge-label[data-format=zip],
+body a.badge-label[data-format*=zip],
 .dataset-resources .format-label[data-format=zip],
 .dataset-resources .format-label[data-format*=zip],
 .dataset-resources .label[data-format=zip],
 .dataset-resources .label[data-format*=zip],
 .dataset-resources .badge-label[data-format=zip],
-.dataset-resources .badge-label[data-format*=zip] {
+.dataset-resources .badge-label[data-format*=zip],
+.dataset-resources a.label[data-format=zip],
+.dataset-resources a.label[data-format*=zip],
+.dataset-resources a.badge-label[data-format=zip],
+.dataset-resources a.badge-label[data-format*=zip] {
   background-color: #5a5a5a !important;
 }
 
@@ -2791,12 +2847,20 @@ body .label[data-format=api],
 body .label[data-format*=api],
 body .badge-label[data-format=api],
 body .badge-label[data-format*=api],
+body a.label[data-format=api],
+body a.label[data-format*=api],
+body a.badge-label[data-format=api],
+body a.badge-label[data-format*=api],
 .dataset-resources .format-label[data-format=api],
 .dataset-resources .format-label[data-format*=api],
 .dataset-resources .label[data-format=api],
 .dataset-resources .label[data-format*=api],
 .dataset-resources .badge-label[data-format=api],
-.dataset-resources .badge-label[data-format*=api] {
+.dataset-resources .badge-label[data-format*=api],
+.dataset-resources a.label[data-format=api],
+.dataset-resources a.label[data-format*=api],
+.dataset-resources a.badge-label[data-format=api],
+.dataset-resources a.badge-label[data-format*=api] {
   background-color: #f57c00 !important;
 }
 
@@ -2806,7 +2870,19 @@ body .format-label[data-format*=shp],
 body .label[data-format=shp],
 body .label[data-format*=shp],
 body .badge-label[data-format=shp],
-body .badge-label[data-format*=shp] {
+body .badge-label[data-format*=shp],
+body a.label[data-format=shp],
+body a.label[data-format*=shp],
+body a.badge-label[data-format=shp],
+body a.badge-label[data-format*=shp],
+.dataset-resources .label[data-format=shp],
+.dataset-resources .label[data-format*=shp],
+.dataset-resources .badge-label[data-format=shp],
+.dataset-resources .badge-label[data-format*=shp],
+.dataset-resources a.label[data-format=shp],
+.dataset-resources a.label[data-format*=shp],
+.dataset-resources a.badge-label[data-format=shp],
+.dataset-resources a.badge-label[data-format*=shp] {
   background-color: #36849a !important;
 }
 
@@ -2821,7 +2897,31 @@ body .label[data-format*=tif],
 body .badge-label[data-format=tiff],
 body .badge-label[data-format*=tiff],
 body .badge-label[data-format=tif],
-body .badge-label[data-format*=tif] {
+body .badge-label[data-format*=tif],
+body a.label[data-format=tiff],
+body a.label[data-format*=tiff],
+body a.label[data-format=tif],
+body a.label[data-format*=tif],
+body a.badge-label[data-format=tiff],
+body a.badge-label[data-format*=tiff],
+body a.badge-label[data-format=tif],
+body a.badge-label[data-format*=tif],
+.dataset-resources .label[data-format=tiff],
+.dataset-resources .label[data-format*=tiff],
+.dataset-resources .label[data-format=tif],
+.dataset-resources .label[data-format*=tif],
+.dataset-resources .badge-label[data-format=tiff],
+.dataset-resources .badge-label[data-format*=tiff],
+.dataset-resources .badge-label[data-format=tif],
+.dataset-resources .badge-label[data-format*=tif],
+.dataset-resources a.label[data-format=tiff],
+.dataset-resources a.label[data-format*=tiff],
+.dataset-resources a.label[data-format=tif],
+.dataset-resources a.label[data-format*=tif],
+.dataset-resources a.badge-label[data-format=tiff],
+.dataset-resources a.badge-label[data-format*=tiff],
+.dataset-resources a.badge-label[data-format=tif],
+.dataset-resources a.badge-label[data-format*=tif] {
   background-color: #ff5364 !important;
 }
 
@@ -2830,7 +2930,19 @@ body .format-label[data-format*=png],
 body .label[data-format=png],
 body .label[data-format*=png],
 body .badge-label[data-format=png],
-body .badge-label[data-format*=png] {
+body .badge-label[data-format*=png],
+body a.label[data-format=png],
+body a.label[data-format*=png],
+body a.badge-label[data-format=png],
+body a.badge-label[data-format*=png],
+.dataset-resources .label[data-format=png],
+.dataset-resources .label[data-format*=png],
+.dataset-resources .badge-label[data-format=png],
+.dataset-resources .badge-label[data-format*=png],
+.dataset-resources a.label[data-format=png],
+.dataset-resources a.label[data-format*=png],
+.dataset-resources a.badge-label[data-format=png],
+.dataset-resources a.badge-label[data-format*=png] {
   background-color: #659c35 !important;
 }
 
@@ -2839,7 +2951,19 @@ body .format-label[data-format*=geojson],
 body .label[data-format=geojson],
 body .label[data-format*=geojson],
 body .badge-label[data-format=geojson],
-body .badge-label[data-format*=geojson] {
+body .badge-label[data-format*=geojson],
+body a.label[data-format=geojson],
+body a.label[data-format*=geojson],
+body a.badge-label[data-format=geojson],
+body a.badge-label[data-format*=geojson],
+.dataset-resources .label[data-format=geojson],
+.dataset-resources .label[data-format*=geojson],
+.dataset-resources .badge-label[data-format=geojson],
+.dataset-resources .badge-label[data-format*=geojson],
+.dataset-resources a.label[data-format=geojson],
+.dataset-resources a.label[data-format*=geojson],
+.dataset-resources a.badge-label[data-format=geojson],
+.dataset-resources a.badge-label[data-format*=geojson] {
   background-color: #eeaf4b !important;
 }
 
