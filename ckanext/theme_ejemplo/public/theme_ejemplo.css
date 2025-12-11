@@ -3042,6 +3042,31 @@ body a.badge-label[data-format]:hover,
   border-radius: 8px;
 }
 
+/* Ensure facet icons from schemingdcat are visible */
+img.facet-icon {
+  width: 1.3em !important;
+  height: 1.3em !important;
+  margin-right: 5px !important;
+  display: inline-block !important;
+  border-radius: 50% !important;
+  vertical-align: middle !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+.facet-list .nav-item a img.facet-icon,
+.filters .nav-item a img.facet-icon,
+.nav-facet a img.facet-icon {
+  width: 1.3em !important;
+  height: 1.3em !important;
+  margin-right: 5px !important;
+  display: inline-block !important;
+  border-radius: 50% !important;
+  vertical-align: middle !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
 /* Tags in home page search section */
 .homepage .module-search .tags .tag {
   background-color: var(--unesco-blue);
