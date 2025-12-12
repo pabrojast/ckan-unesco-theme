@@ -316,11 +316,14 @@ border-bottom: none;
 }
 
 /* Make search form and input with WHITE background and clean borders */
-.homepage .module-search .search-form,
+.homepage .module-search .search-form {
+    background-color: transparent !important;
+}
+
 .homepage .module-search .search-input,
 .homepage .module-search input[type="text"],
 .homepage .module-search .form-control {
-    background-color: #fff !important;
+    background-color: rgba(255, 255, 255, 0.95) !important;
     border: 1px solid #d5dadd !important;
     color: #212529 !important;
     border-radius: 3px !important;
