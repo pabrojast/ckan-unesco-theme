@@ -1,3 +1,19 @@
+/* CSS Variables - Define at the top for global availability */
+:root {
+  --unesco-blue: #0069B4;
+  --unesco-blue-dark: #005a9e;
+  --unesco-blue-light: #0077d4;
+  --unesco-blue-pale: #E8F4F8;
+  --text-primary: #212529;
+  --text-secondary: #6c757d;
+  --text-muted: #8a8a8a;
+  --shadow-light: 0 2px 4px rgba(0,0,0,0.1);
+  --shadow-medium: 0 4px 8px rgba(0,0,0,0.15);
+  --shadow-strong: 0 6px 12px rgba(0,0,0,0.2);
+  --border-radius: 0.5rem;
+  --transition: all 0.3s ease;
+}
+
 /* background before footer */
 html {
 font-family: sans-serif;
@@ -345,17 +361,34 @@ border-bottom: none;
     right: 0 !important;
     top: 0 !important;
     height: 100% !important;
+    width: 50px !important;
+    min-width: 50px !important;
+    background-color: #0069B4 !important;
     background-color: var(--unesco-blue) !important;
+    border: 1px solid #0069B4 !important;
     border: 1px solid var(--unesco-blue) !important;
     border-left: none !important;
     color: white !important;
     border-radius: 0 3px 3px 0 !important;
-    padding: 0 15px !important;
+    padding: 0 !important;
     cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    z-index: 10 !important;
+}
+
+.homepage .module-search .search-input button i,
+.homepage .module-search .search-input button .fa,
+.homepage .module-search .search-input button .fa-search {
+    color: white !important;
+    font-size: 16px !important;
 }
 
 .homepage .module-search .search-input button:hover {
+    background-color: #005a9e !important;
     background-color: var(--unesco-blue-dark) !important;
+    border-color: #005a9e !important;
     border-color: var(--unesco-blue-dark) !important;
 }
 
