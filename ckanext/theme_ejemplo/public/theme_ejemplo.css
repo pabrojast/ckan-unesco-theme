@@ -3190,29 +3190,123 @@ ul.dataset-list li.dataset-item a.label.badge-label[data-format*="shp"],
   border-radius: 8px;
 }
 
-/* Ensure facet icons from schemingdcat are visible */
-img.facet-icon {
+/* ===== FACET ICONS - CKAN 2.10 + SCHEMINGDCAT COMPATIBILITY ===== */
+
+/* Base facet icon styles - high specificity for CKAN 2.10 */
+img.facet-icon,
+.facet-icon {
   width: 1.3em !important;
   height: 1.3em !important;
+  min-width: 1.3em !important;
+  min-height: 1.3em !important;
   margin-right: 5px !important;
   display: inline-block !important;
   border-radius: 50% !important;
   vertical-align: middle !important;
   opacity: 1 !important;
   visibility: visible !important;
+  flex-shrink: 0 !important;
 }
 
+/* Facet list in filters sidebar - CKAN 2.10 structure */
+.filters .module .nav img.facet-icon,
+.filters .module nav img.facet-icon,
+.filters .nav-facet img.facet-icon,
+.filters ul.nav img.facet-icon,
+.secondary .module .nav img.facet-icon,
+.secondary .filters img.facet-icon,
 .facet-list .nav-item a img.facet-icon,
 .filters .nav-item a img.facet-icon,
-.nav-facet a img.facet-icon {
+.nav-facet a img.facet-icon,
+nav.nav-facet li a img.facet-icon,
+ul.nav-facet li a img.facet-icon,
+.module-content .nav-facet li a img.facet-icon,
+.module-content nav.nav-facet a img.facet-icon {
   width: 1.3em !important;
   height: 1.3em !important;
+  min-width: 1.3em !important;
+  min-height: 1.3em !important;
+  max-width: 20px !important;
+  max-height: 20px !important;
   margin-right: 5px !important;
   display: inline-block !important;
   border-radius: 50% !important;
   vertical-align: middle !important;
   opacity: 1 !important;
   visibility: visible !important;
+  flex-shrink: 0 !important;
+  object-fit: contain !important;
+}
+
+/* Ensure facet links have proper flex layout for icons */
+.filters .nav-item a,
+.nav-facet li a,
+nav.nav-facet a,
+.module-content .nav-facet a {
+  display: flex !important;
+  align-items: center !important;
+  flex-wrap: nowrap !important;
+}
+
+/* Item label in facet */
+.filters .nav-item a .item-label,
+.nav-facet li a .item-label,
+nav.nav-facet a .item-label {
+  flex: 1 1 auto !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+/* Badge count in facet */
+.filters .nav-item a .badge,
+.nav-facet li a .badge,
+nav.nav-facet a .badge,
+.filters .nav-item a .item-count,
+.nav-facet li a .item-count {
+  flex-shrink: 0 !important;
+  margin-left: 5px !important;
+}
+
+/* Separator in facet (hidden) */
+.filters .nav-item a .separator,
+.nav-facet li a .separator {
+  display: none !important;
+}
+
+/* Fix for nav-facet structure in CKAN 2.10 */
+nav.nav-facet,
+.nav-facet {
+  display: block !important;
+}
+
+nav.nav-facet ul,
+.nav-facet ul {
+  list-style: none !important;
+  padding-left: 0 !important;
+  margin: 0 !important;
+}
+
+nav.nav-facet li,
+.nav-facet li {
+  margin-bottom: 2px !important;
+}
+
+/* Active state for facets */
+.nav-facet li.active a,
+.nav-facet .nav-item.active a,
+.filters .nav-item.active a {
+  background-color: rgba(0, 105, 180, 0.1) !important;
+  border-radius: 4px !important;
+}
+
+/* Hover state for facets */
+.nav-facet li a:hover,
+.nav-facet .nav-item a:hover,
+.filters .nav-item a:hover {
+  background-color: rgba(0, 105, 180, 0.05) !important;
+  text-decoration: none !important;
+  border-radius: 4px !important;
 }
 
 /* Tags in home page search section */
@@ -3764,4 +3858,266 @@ img.facet-icon {
 .filters .nav.nav-simple li a {
   padding: 6px 0 !important;
   font-size: 13px !important;
+}
+
+/* ===== CKAN 2.10 SPECIFIC STYLES ===== */
+
+/* Dataset search page - Filters sidebar */
+.secondary .module.module-narrow {
+  background: #fff !important;
+  border-radius: 8px !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
+  margin-bottom: 15px !important;
+  overflow: visible !important;
+}
+
+.secondary .module.module-narrow .module-heading {
+  background: #f8f9fa !important;
+  border-bottom: 1px solid #e9ecef !important;
+  padding: 12px 15px !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  color: #495057 !important;
+}
+
+/* Nav facet in CKAN 2.10 */
+.secondary .module-content nav.nav-facet,
+.secondary .module-content .nav-facet {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.secondary .module-content nav.nav-facet ul,
+.secondary .module-content .nav-facet ul {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.secondary .module-content nav.nav-facet li,
+.secondary .module-content .nav-facet li,
+.secondary .module-content .nav-facet .nav-item {
+  margin: 0 !important;
+  padding: 0 !important;
+  border-bottom: 1px solid #f5f5f5 !important;
+}
+
+.secondary .module-content nav.nav-facet li:last-child,
+.secondary .module-content .nav-facet li:last-child,
+.secondary .module-content .nav-facet .nav-item:last-child {
+  border-bottom: none !important;
+}
+
+.secondary .module-content nav.nav-facet li a,
+.secondary .module-content .nav-facet li a,
+.secondary .module-content .nav-facet .nav-item a {
+  display: flex !important;
+  align-items: center !important;
+  padding: 8px 5px !important;
+  color: #495057 !important;
+  text-decoration: none !important;
+  transition: all 0.2s ease !important;
+  border-radius: 4px !important;
+  margin: 2px 0 !important;
+}
+
+.secondary .module-content nav.nav-facet li a:hover,
+.secondary .module-content .nav-facet li a:hover,
+.secondary .module-content .nav-facet .nav-item a:hover {
+  background-color: rgba(0, 105, 180, 0.08) !important;
+  color: #0069B4 !important;
+  color: var(--unesco-blue) !important;
+}
+
+.secondary .module-content nav.nav-facet li.active a,
+.secondary .module-content .nav-facet li.active a,
+.secondary .module-content .nav-facet .nav-item.active a {
+  background-color: rgba(0, 105, 180, 0.12) !important;
+  color: #0069B4 !important;
+  color: var(--unesco-blue) !important;
+  font-weight: 600 !important;
+}
+
+/* Facet icon in nav-facet */
+.secondary .module-content nav.nav-facet li a img.facet-icon,
+.secondary .module-content .nav-facet li a img.facet-icon,
+.secondary .module-content .nav-facet .nav-item a img.facet-icon {
+  width: 18px !important;
+  height: 18px !important;
+  min-width: 18px !important;
+  min-height: 18px !important;
+  margin-right: 8px !important;
+  display: inline-block !important;
+  border-radius: 50% !important;
+  vertical-align: middle !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  flex-shrink: 0 !important;
+  object-fit: contain !important;
+}
+
+/* Item label in facet */
+.secondary .module-content nav.nav-facet li a .item-label,
+.secondary .module-content .nav-facet li a .item-label,
+.secondary .module-content .nav-facet .nav-item a .item-label {
+  flex: 1 1 auto !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  font-size: 13px !important;
+}
+
+/* Badge/count in facet */
+.secondary .module-content nav.nav-facet li a .badge,
+.secondary .module-content .nav-facet li a .badge,
+.secondary .module-content .nav-facet .nav-item a .badge,
+.secondary .module-content nav.nav-facet li a .item-count,
+.secondary .module-content .nav-facet li a .item-count,
+.secondary .module-content .nav-facet .nav-item a .item-count {
+  flex-shrink: 0 !important;
+  margin-left: auto !important;
+  padding: 2px 8px !important;
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  background-color: #e9ecef !important;
+  color: #495057 !important;
+  border-radius: 10px !important;
+}
+
+.secondary .module-content nav.nav-facet li.active a .badge,
+.secondary .module-content .nav-facet li.active a .badge,
+.secondary .module-content .nav-facet .nav-item.active a .badge {
+  background-color: #0069B4 !important;
+  background-color: var(--unesco-blue) !important;
+  color: white !important;
+}
+
+/* Show more/less link in facets */
+.secondary .module-footer,
+.module-footer {
+  padding: 10px 15px !important;
+  border-top: 1px solid #e9ecef !important;
+  background-color: #fafafa !important;
+}
+
+.secondary .module-footer a,
+.module-footer a.read-more {
+  color: #0069B4 !important;
+  color: var(--unesco-blue) !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  text-decoration: none !important;
+}
+
+.secondary .module-footer a:hover,
+.module-footer a.read-more:hover {
+  text-decoration: underline !important;
+}
+
+/* Dataset list improvements for CKAN 2.10 */
+.dataset-list {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.dataset-list .dataset-item {
+  background: #fff !important;
+  border: 1px solid #e9ecef !important;
+  border-radius: 8px !important;
+  margin-bottom: 15px !important;
+  padding: 20px !important;
+  transition: all 0.2s ease !important;
+}
+
+.dataset-list .dataset-item:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
+  border-color: #dee2e6 !important;
+}
+
+.dataset-list .dataset-item .dataset-heading {
+  margin-bottom: 10px !important;
+}
+
+.dataset-list .dataset-item .dataset-heading a {
+  color: #0069B4 !important;
+  color: var(--unesco-blue) !important;
+  font-size: 18px !important;
+  font-weight: 600 !important;
+  text-decoration: none !important;
+}
+
+.dataset-list .dataset-item .dataset-heading a:hover {
+  text-decoration: underline !important;
+}
+
+/* Dataset resources badges */
+.dataset-list .dataset-item .dataset-resources {
+  margin-top: 10px !important;
+}
+
+.dataset-list .dataset-item .dataset-resources ul {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 5px !important;
+}
+
+.dataset-list .dataset-item .dataset-resources li {
+  display: inline-block !important;
+}
+
+/* Search form in dataset page */
+.search-form .search-input {
+  position: relative !important;
+}
+
+.search-form .search-input input[type="text"],
+.search-form .search-input .form-control {
+  border-radius: 4px !important;
+  border: 1px solid #ced4da !important;
+  padding-right: 45px !important;
+}
+
+.search-form .search-input button[type="submit"] {
+  position: absolute !important;
+  right: 0 !important;
+  top: 0 !important;
+  height: 100% !important;
+  width: 40px !important;
+  background-color: #0069B4 !important;
+  background-color: var(--unesco-blue) !important;
+  border: none !important;
+  border-radius: 0 4px 4px 0 !important;
+  color: white !important;
+  cursor: pointer !important;
+}
+
+.search-form .search-input button[type="submit"]:hover {
+  background-color: #005a9e !important;
+  background-color: var(--unesco-blue-dark) !important;
+}
+
+/* Order by dropdown */
+.search-form .control-order-by select,
+.search-form .order-by select {
+  border-radius: 4px !important;
+  border: 1px solid #ced4da !important;
+  padding: 6px 12px !important;
+  font-size: 13px !important;
+}
+
+/* Fix for sorting buttons from schemingdcat */
+.filters .module .sorting {
+  border: 1px solid #e9ecef !important;
+  background-color: #f8f9fa !important;
+  border-radius: 4px !important;
+}
+
+.filters .module .sorting:hover {
+  border-color: #0069B4 !important;
+  border-color: var(--unesco-blue) !important;
+  background-color: rgba(0, 105, 180, 0.05) !important;
 }
