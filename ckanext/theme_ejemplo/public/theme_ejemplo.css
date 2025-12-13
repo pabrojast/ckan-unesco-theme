@@ -4643,3 +4643,396 @@ ul.resource-list li.resource-item:hover,
   font-size: 12px !important;
   color: #868e96 !important;
 }
+
+/* ===== CRITICAL FIXES FOR CKAN 2.10 DATASET PAGE ===== */
+
+/* Dataset search page - Search input with button */
+.primary .search-form .search-input,
+.primary .search-form .search-giant,
+.search-form .search-input,
+.search-form .search-giant {
+  position: relative !important;
+  display: flex !important;
+  align-items: stretch !important;
+}
+
+.primary .search-form .search-input input,
+.primary .search-form .search-giant input,
+.search-form .search-input input[type="text"],
+.search-form .search-giant input[type="text"],
+.search-form input#field-giant-search,
+.search-form input[name="q"] {
+  flex: 1 !important;
+  width: 100% !important;
+  padding: 12px 50px 12px 15px !important;
+  border: 1px solid #ced4da !important;
+  border-radius: 4px !important;
+  font-size: 14px !important;
+  background-color: #fff !important;
+}
+
+.primary .search-form .search-input button,
+.primary .search-form .search-giant button,
+.search-form .search-input button[type="submit"],
+.search-form .search-giant button[type="submit"],
+.search-form button[type="submit"] {
+  position: absolute !important;
+  right: 0 !important;
+  top: 0 !important;
+  height: 100% !important;
+  width: 50px !important;
+  min-width: 50px !important;
+  background-color: #0069B4 !important;
+  border: none !important;
+  border-radius: 0 4px 4px 0 !important;
+  color: white !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  z-index: 10 !important;
+}
+
+.primary .search-form .search-input button:hover,
+.primary .search-form .search-giant button:hover,
+.search-form .search-input button[type="submit"]:hover,
+.search-form .search-giant button[type="submit"]:hover,
+.search-form button[type="submit"]:hover {
+  background-color: #005a9e !important;
+}
+
+.primary .search-form .search-input button i,
+.primary .search-form .search-giant button i,
+.search-form .search-input button i,
+.search-form .search-giant button i,
+.search-form button[type="submit"] i,
+.search-form button[type="submit"] .fa,
+.search-form button[type="submit"] .fa-search {
+  color: white !important;
+  font-size: 16px !important;
+}
+
+/* ===== FACET ICONS FIX - CRITICAL FOR CKAN 2.10 ===== */
+
+/* Force display of facet icons with maximum specificity */
+.secondary img.facet-icon,
+.filters img.facet-icon,
+.module img.facet-icon,
+.module-content img.facet-icon,
+nav img.facet-icon,
+ul img.facet-icon,
+li img.facet-icon,
+a img.facet-icon,
+img.facet-icon {
+  width: 20px !important;
+  height: 20px !important;
+  min-width: 20px !important;
+  min-height: 20px !important;
+  max-width: 20px !important;
+  max-height: 20px !important;
+  margin-right: 8px !important;
+  display: inline-block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  vertical-align: middle !important;
+  border-radius: 50% !important;
+  flex-shrink: 0 !important;
+  object-fit: contain !important;
+}
+
+/* Ensure parent containers don't hide the icons */
+.filters .module-content,
+.secondary .module-content,
+.filters .nav-facet,
+.secondary .nav-facet,
+.filters nav,
+.secondary nav {
+  overflow: visible !important;
+}
+
+/* Fix nav-facet list items for icon display */
+.filters .nav-facet li,
+.secondary .nav-facet li,
+.filters nav.nav-facet li,
+.secondary nav.nav-facet li,
+nav.nav-facet li {
+  display: block !important;
+  overflow: visible !important;
+}
+
+.filters .nav-facet li a,
+.secondary .nav-facet li a,
+.filters nav.nav-facet li a,
+.secondary nav.nav-facet li a,
+nav.nav-facet li a {
+  display: flex !important;
+  align-items: center !important;
+  flex-wrap: nowrap !important;
+  overflow: visible !important;
+  padding: 6px 8px !important;
+  color: #495057 !important;
+  text-decoration: none !important;
+  border-radius: 4px !important;
+  transition: background-color 0.2s ease !important;
+}
+
+.filters .nav-facet li a:hover,
+.secondary .nav-facet li a:hover,
+nav.nav-facet li a:hover {
+  background-color: rgba(0, 105, 180, 0.08) !important;
+  color: #0069B4 !important;
+}
+
+.filters .nav-facet li.active a,
+.secondary .nav-facet li.active a,
+nav.nav-facet li.active a {
+  background-color: rgba(0, 105, 180, 0.12) !important;
+  color: #0069B4 !important;
+  font-weight: 600 !important;
+}
+
+/* Item label text */
+.filters .nav-facet li a .item-label,
+.secondary .nav-facet li a .item-label,
+nav.nav-facet li a .item-label {
+  flex: 1 1 auto !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  margin-right: 5px !important;
+}
+
+/* Badge/count */
+.filters .nav-facet li a .badge,
+.secondary .nav-facet li a .badge,
+nav.nav-facet li a .badge,
+.filters .nav-facet li a .item-count,
+.secondary .nav-facet li a .item-count,
+nav.nav-facet li a .item-count {
+  flex-shrink: 0 !important;
+  margin-left: auto !important;
+  padding: 2px 8px !important;
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  background-color: #6c757d !important;
+  color: white !important;
+  border-radius: 10px !important;
+  min-width: 20px !important;
+  text-align: center !important;
+}
+
+/* Separator - hide it */
+.filters .nav-facet li a .separator,
+.secondary .nav-facet li a .separator,
+nav.nav-facet li a .separator {
+  display: none !important;
+}
+
+/* Module heading for filters */
+.filters .module-heading,
+.secondary .module-heading {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  background-color: #f8f9fa !important;
+  padding: 12px 15px !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  color: #495057 !important;
+  border-bottom: 1px solid #e9ecef !important;
+}
+
+/* Sorting buttons in filter headings */
+.filters .module-heading .sorting,
+.filters .module .sorting {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 2px !important;
+}
+
+/* Search config OR/AND buttons */
+.filters .container__filter__type__search_and__or {
+  display: flex !important;
+  gap: 5px !important;
+  margin-bottom: 10px !important;
+}
+
+.filters .container__filter__type__search_and__or .btn {
+  padding: 6px 15px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  border-radius: 4px !important;
+}
+
+.filters .container__filter__type__search_and__or .btn.active,
+.filters .container__filter__type__search_and__or .btn-primary {
+  background-color: #0069B4 !important;
+  border-color: #0069B4 !important;
+  color: white !important;
+}
+
+.filters .container__filter__type__search_and__or .btn:not(.active):not(.btn-primary) {
+  background-color: #f8f9fa !important;
+  border-color: #ced4da !important;
+  color: #495057 !important;
+}
+
+/* Fix for h1 search results heading */
+.primary h1.h1-search,
+h1.h1-search {
+  font-size: 24px !important;
+  font-weight: 700 !important;
+  color: #212529 !important;
+  margin-bottom: 20px !important;
+}
+
+/* Dataset list - ensure proper card styling */
+.dataset-list,
+ul.dataset-list {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.dataset-list > li,
+ul.dataset-list > li,
+.dataset-list .dataset-item,
+ul.dataset-list .dataset-item,
+li.dataset-item {
+  background: #fff !important;
+  border: 1px solid #e9ecef !important;
+  border-radius: 8px !important;
+  margin-bottom: 15px !important;
+  padding: 20px !important;
+  transition: all 0.2s ease !important;
+  list-style: none !important;
+}
+
+.dataset-list > li:hover,
+ul.dataset-list > li:hover,
+li.dataset-item:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
+  border-color: #dee2e6 !important;
+}
+
+/* Dataset title link */
+.dataset-item h2 a,
+.dataset-item h3 a,
+.dataset-item .dataset-heading a,
+.dataset-heading a {
+  color: #0069B4 !important;
+  text-decoration: none !important;
+  font-weight: 600 !important;
+  font-size: 18px !important;
+}
+
+.dataset-item h2 a:hover,
+.dataset-item h3 a:hover,
+.dataset-item .dataset-heading a:hover,
+.dataset-heading a:hover {
+  color: #005a9e !important;
+  text-decoration: underline !important;
+}
+
+/* Dataset notes/description */
+.dataset-item p,
+.dataset-item .notes,
+.dataset-item .dataset-content {
+  color: #6c757d !important;
+  font-size: 14px !important;
+  line-height: 1.6 !important;
+  margin: 10px 0 !important;
+}
+
+/* Resource format labels in dataset list */
+.dataset-item .dataset-resources,
+.dataset-item ul.dataset-resources {
+  margin-top: 15px !important;
+  padding-top: 10px !important;
+  border-top: 1px solid #f0f0f0 !important;
+}
+
+.dataset-item .dataset-resources li {
+  display: inline-block !important;
+  margin-right: 5px !important;
+  margin-bottom: 5px !important;
+  list-style: none !important;
+}
+
+.dataset-item .dataset-resources a.label,
+.dataset-item .dataset-resources .label,
+.dataset-item .dataset-resources .badge-label {
+  display: inline-block !important;
+  padding: 4px 10px !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  border-radius: 3px !important;
+  color: white !important;
+  text-decoration: none !important;
+  background-color: #6c757d !important;
+}
+
+/* Format-specific colors */
+.dataset-item .dataset-resources a.label[data-format="csv"],
+.dataset-item .dataset-resources a.label[data-format*="csv"],
+.dataset-item .dataset-resources .label[data-format="csv"],
+.dataset-item .dataset-resources .label[data-format*="csv"] {
+  background-color: #28a745 !important;
+}
+
+.dataset-item .dataset-resources a.label[data-format="json"],
+.dataset-item .dataset-resources a.label[data-format*="json"],
+.dataset-item .dataset-resources .label[data-format="json"],
+.dataset-item .dataset-resources .label[data-format*="json"] {
+  background-color: #ffc107 !important;
+  color: #212529 !important;
+}
+
+.dataset-item .dataset-resources a.label[data-format="pdf"],
+.dataset-item .dataset-resources a.label[data-format*="pdf"],
+.dataset-item .dataset-resources .label[data-format="pdf"],
+.dataset-item .dataset-resources .label[data-format*="pdf"] {
+  background-color: #dc3545 !important;
+}
+
+.dataset-item .dataset-resources a.label[data-format="xls"],
+.dataset-item .dataset-resources a.label[data-format*="xls"],
+.dataset-item .dataset-resources .label[data-format="xls"],
+.dataset-item .dataset-resources .label[data-format*="xls"] {
+  background-color: #17a2b8 !important;
+}
+
+.dataset-item .dataset-resources a.label[data-format="shp"],
+.dataset-item .dataset-resources a.label[data-format*="shp"],
+.dataset-item .dataset-resources .label[data-format="shp"],
+.dataset-item .dataset-resources .label[data-format*="shp"] {
+  background-color: #36849a !important;
+}
+
+/* Spatial query map container */
+.spatial-query-map,
+#dataset-map-container,
+.dataset-map {
+  border-radius: 8px !important;
+  overflow: hidden !important;
+  margin-bottom: 15px !important;
+}
+
+/* Add dataset button */
+.btn.btn-primary[href*="new"],
+a.btn.btn-primary[href*="dataset/new"] {
+  background-color: #0069B4 !important;
+  border-color: #0069B4 !important;
+  color: white !important;
+  padding: 8px 16px !important;
+  border-radius: 4px !important;
+  font-weight: 600 !important;
+  text-decoration: none !important;
+}
+
+.btn.btn-primary[href*="new"]:hover,
+a.btn.btn-primary[href*="dataset/new"]:hover {
+  background-color: #005a9e !important;
+  border-color: #005a9e !important;
+}
