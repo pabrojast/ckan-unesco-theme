@@ -24,7 +24,11 @@
         {% endif %}
         <li>
           <a href="{{ h.url_for('user.read', id=c.user) }}" class="image" title="{{ _('View profile') }}">
-                  {{ h.user_image(c.userobj, size=22) if c.userobj else '' }}
+                  {% if c.userobj and c.userobj.image_url %}
+                  <img src="{{ h.url_for_static_or_external('/uploads/user/' ~ c.userobj.image_url) }}" width="22" height="22" alt="{{ c.userobj.display_name }}" class="user-image" />
+                  {% elif c.userobj %}
+                  {{ h.gravatar(c.userobj.email_hash if c.userobj.email_hash else '', size=22) }}
+                  {% endif %}
                   <span class="username">{{ c.userobj.display_name if c.userobj else c.user }}</span>
                 </a>
         </li>
