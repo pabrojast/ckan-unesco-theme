@@ -49,9 +49,9 @@ body .dataset-item ul.dataset-resources.list-unstyled li a.label.badge-label,
 body li.dataset-item ul.dataset-resources.list-unstyled li a.label.badge-label,
 body .dataset-list .dataset-item ul.dataset-resources.list-unstyled li a.label.badge-label,
 body ul.dataset-list li.dataset-item ul.dataset-resources.list-unstyled li a.label.badge-label,
-body ul.dataset-resources li a.label.badge-label[data-format],
-body .dataset-resources li a.label.badge-label[data-format],
-body a.label.badge-label[data-format] {
+body ul.dataset-resources li a.label.badge-label,
+body .dataset-resources li a.label.badge-label,
+body a.label.badge-label {
   display: inline-block !important;
   padding: 4px 10px !important;
   font-size: 11px !important;
@@ -71,47 +71,106 @@ body a.label.badge-label[data-format] {
   z-index: 1 !important;
 }
 
-/* Format-specific colors with body prefix for highest specificity */
+/* Format-specific colors - must have same or higher specificity than general rule */
+/* CSV - Green */
+body .dataset-item ul.dataset-resources.list-unstyled li a.label.badge-label[data-format="csv"],
+body ul.dataset-resources li a.label.badge-label[data-format="csv"],
 body a.label.badge-label[data-format="csv"],
-body ul.dataset-resources li a.label.badge-label[data-format="csv"] {
+a.label.badge-label[data-format="csv"] {
   background-color: #28a745 !important;
 }
 
+/* JSON - Yellow/Orange */
+body .dataset-item ul.dataset-resources.list-unstyled li a.label.badge-label[data-format="json"],
+body ul.dataset-resources li a.label.badge-label[data-format="json"],
 body a.label.badge-label[data-format="json"],
-body ul.dataset-resources li a.label.badge-label[data-format="json"] {
+a.label.badge-label[data-format="json"] {
   background-color: #ffc107 !important;
   color: #212529 !important;
 }
 
+/* PDF - Red */
+body .dataset-item ul.dataset-resources.list-unstyled li a.label.badge-label[data-format="pdf"],
+body ul.dataset-resources li a.label.badge-label[data-format="pdf"],
 body a.label.badge-label[data-format="pdf"],
-body ul.dataset-resources li a.label.badge-label[data-format="pdf"] {
+a.label.badge-label[data-format="pdf"] {
   background-color: #dc3545 !important;
 }
 
+/* XLS/XLSX - Cyan */
+body .dataset-item ul.dataset-resources.list-unstyled li a.label.badge-label[data-format="xls"],
+body .dataset-item ul.dataset-resources.list-unstyled li a.label.badge-label[data-format="xlsx"],
+body ul.dataset-resources li a.label.badge-label[data-format="xls"],
+body ul.dataset-resources li a.label.badge-label[data-format="xlsx"],
 body a.label.badge-label[data-format="xls"],
 body a.label.badge-label[data-format="xlsx"],
-body ul.dataset-resources li a.label.badge-label[data-format="xls"],
-body ul.dataset-resources li a.label.badge-label[data-format="xlsx"] {
+a.label.badge-label[data-format="xls"],
+a.label.badge-label[data-format="xlsx"] {
   background-color: #17a2b8 !important;
 }
 
+/* SHP - Teal */
+body .dataset-item ul.dataset-resources.list-unstyled li a.label.badge-label[data-format="shp"],
+body ul.dataset-resources li a.label.badge-label[data-format="shp"],
 body a.label.badge-label[data-format="shp"],
-body ul.dataset-resources li a.label.badge-label[data-format="shp"] {
+a.label.badge-label[data-format="shp"] {
   background-color: #36849a !important;
 }
 
+/* TIF/TIFF/GeoTIFF - Purple */
+body .dataset-item ul.dataset-resources.list-unstyled li a.label.badge-label[data-format="tif"],
+body .dataset-item ul.dataset-resources.list-unstyled li a.label.badge-label[data-format="tiff"],
+body .dataset-item ul.dataset-resources.list-unstyled li a.label.badge-label[data-format="geotiff"],
+body ul.dataset-resources li a.label.badge-label[data-format="tif"],
+body ul.dataset-resources li a.label.badge-label[data-format="tiff"],
+body ul.dataset-resources li a.label.badge-label[data-format="geotiff"],
 body a.label.badge-label[data-format="tif"],
 body a.label.badge-label[data-format="tiff"],
 body a.label.badge-label[data-format="geotiff"],
-body ul.dataset-resources li a.label.badge-label[data-format="tif"],
-body ul.dataset-resources li a.label.badge-label[data-format="tiff"],
-body ul.dataset-resources li a.label.badge-label[data-format="geotiff"] {
+a.label.badge-label[data-format="tif"],
+a.label.badge-label[data-format="tiff"],
+a.label.badge-label[data-format="geotiff"] {
   background-color: #6f42c1 !important;
 }
 
+/* XML - Orange */
+body .dataset-item ul.dataset-resources.list-unstyled li a.label.badge-label[data-format="xml"],
+body ul.dataset-resources li a.label.badge-label[data-format="xml"],
 body a.label.badge-label[data-format="xml"],
-body ul.dataset-resources li a.label.badge-label[data-format="xml"] {
+a.label.badge-label[data-format="xml"] {
   background-color: #fd7e14 !important;
+}
+
+/* SLD - Brown */
+body .dataset-item ul.dataset-resources.list-unstyled li a.label.badge-label[data-format="sld"],
+body ul.dataset-resources li a.label.badge-label[data-format="sld"],
+body a.label.badge-label[data-format="sld"],
+a.label.badge-label[data-format="sld"] {
+  background-color: #8B4513 !important;
+}
+
+/* ZIP - Dark Gray */
+body .dataset-item ul.dataset-resources.list-unstyled li a.label.badge-label[data-format="zip"],
+body ul.dataset-resources li a.label.badge-label[data-format="zip"],
+body a.label.badge-label[data-format="zip"],
+a.label.badge-label[data-format="zip"] {
+  background-color: #5a5a5a !important;
+}
+
+/* WMS - Blue */
+body .dataset-item ul.dataset-resources.list-unstyled li a.label.badge-label[data-format="wms"],
+body ul.dataset-resources li a.label.badge-label[data-format="wms"],
+body a.label.badge-label[data-format="wms"],
+a.label.badge-label[data-format="wms"] {
+  background-color: #0069B4 !important;
+}
+
+/* API - Pink */
+body .dataset-item ul.dataset-resources.list-unstyled li a.label.badge-label[data-format="api"],
+body ul.dataset-resources li a.label.badge-label[data-format="api"],
+body a.label.badge-label[data-format="api"],
+a.label.badge-label[data-format="api"] {
+  background-color: #e83e8c !important;
 }
 
 /* ===== DATASET ITEM HEIGHT FIX - CRITICAL ===== */
