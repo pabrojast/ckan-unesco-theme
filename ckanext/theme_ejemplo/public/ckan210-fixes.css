@@ -114,6 +114,71 @@ body ul.dataset-resources li a.label.badge-label[data-format="xml"] {
   background-color: #fd7e14 !important;
 }
 
+/* ===== DATASET ITEM HEIGHT FIX - CRITICAL ===== */
+/* Fix for dataset items not expanding to show format badges */
+
+body .dataset-list .dataset-item,
+body ul.dataset-list li.dataset-item,
+body li.dataset-item {
+  min-height: auto !important;
+  height: auto !important;
+  overflow: visible !important;
+  display: block !important; /* Override flex-direction: column which causes issues */
+}
+
+body .dataset-list .dataset-item .row,
+body ul.dataset-list li.dataset-item .row,
+body li.dataset-item .row,
+body .dataset-item > .row {
+  min-height: auto !important;
+  height: auto !important;
+  overflow: visible !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+}
+
+body .dataset-list .dataset-item .col-md-12,
+body .dataset-list .dataset-item .col-md-12.d-flex,
+body ul.dataset-list li.dataset-item .col-md-12,
+body ul.dataset-list li.dataset-item .col-md-12.d-flex,
+body li.dataset-item .col-md-12,
+body li.dataset-item .col-md-12.d-flex,
+body .dataset-item .col-md-12.d-flex {
+  min-height: auto !important;
+  height: auto !important;
+  overflow: visible !important;
+  display: flex !important;
+  flex-direction: row !important;
+  flex-wrap: nowrap !important;
+  align-items: flex-start !important;
+}
+
+body .dataset-list .dataset-item .dataset-content,
+body ul.dataset-list li.dataset-item .dataset-content,
+body li.dataset-item .dataset-content,
+body .dataset-item .dataset-content {
+  flex: 1 1 auto !important;
+  min-height: auto !important;
+  height: auto !important;
+  overflow: visible !important;
+  display: block !important; /* Use block instead of flex-column to ensure natural flow */
+}
+
+/* Ensure resources list is visible at the bottom of dataset-content */
+body .dataset-item .dataset-content ul.dataset-resources,
+body .dataset-item ul.dataset-resources.list-unstyled {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 6px !important;
+  margin-top: 12px !important;
+  padding: 0 !important;
+  list-style: none !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  height: auto !important;
+  overflow: visible !important;
+}
+
 /* ===== FACET ICONS FIX - CRITICAL FOR CKAN 2.10 ===== */
 
 /* Base facet icon styles with maximum specificity for CKAN 2.10 */
@@ -529,22 +594,52 @@ img.spatial_uri-icon {
 .dataset-list .dataset-item .row,
 li.dataset-item .row {
   display: flex !important;
-  align-items: flex-start !important;
+  align-items: stretch !important;
 }
 
 .dataset-list .dataset-item .col-md-12,
-li.dataset-item .col-md-12 {
+li.dataset-item .col-md-12,
+.dataset-list .dataset-item .col-md-12.d-flex,
+li.dataset-item .col-md-12.d-flex {
   display: flex !important;
   flex-direction: row !important;
   width: 100% !important;
+  min-height: auto !important;
+  height: auto !important;
+  align-items: stretch !important;
 }
 
-/* Dataset content takes most space */
+/* Dataset content takes most space and should expand to show all content */
 .dataset-list .dataset-item .dataset-content,
 li.dataset-item .dataset-content {
   flex: 1 1 auto !important;
   min-width: 0 !important;
   padding-right: 15px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  height: auto !important;
+  min-height: auto !important;
+}
+
+/* Ensure dataset heading doesn't shrink */
+.dataset-list .dataset-item .dataset-content .dataset-heading,
+li.dataset-item .dataset-content .dataset-heading {
+  flex-shrink: 0 !important;
+}
+
+/* Ensure description doesn't shrink */
+.dataset-list .dataset-item .dataset-content > div,
+li.dataset-item .dataset-content > div {
+  flex-shrink: 0 !important;
+}
+
+/* Dataset resources list should be at the bottom and fully visible */
+.dataset-list .dataset-item .dataset-content ul.dataset-resources,
+li.dataset-item .dataset-content ul.dataset-resources,
+.dataset-content ul.dataset-resources.list-unstyled {
+  flex-shrink: 0 !important;
+  margin-top: auto !important;
+  padding-top: 10px !important;
 }
 
 /* Dataset categories (INSPIRE icon) fixed width on the right */
