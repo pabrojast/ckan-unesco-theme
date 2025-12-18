@@ -413,3 +413,211 @@ img.spatial_uri-icon {
   display: flex !important;
   align-items: center !important;
 }
+
+/* ===== DATASET SEARCH PAGE LAYOUT FIXES ===== */
+
+/* Add spacing between sidebar and dataset list - fix for datasets being too close to sidebar */
+.primary .module-content {
+  padding-left: 20px !important;
+}
+
+/* Fix dataset item layout to show icon and content properly */
+.dataset-list .dataset-item .row,
+li.dataset-item .row {
+  display: flex !important;
+  align-items: flex-start !important;
+}
+
+.dataset-list .dataset-item .col-md-12,
+li.dataset-item .col-md-12 {
+  display: flex !important;
+  flex-direction: row !important;
+  width: 100% !important;
+}
+
+/* Dataset content takes most space */
+.dataset-list .dataset-item .dataset-content,
+li.dataset-item .dataset-content {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  padding-right: 15px !important;
+}
+
+/* Dataset categories (INSPIRE icon) fixed width on the right */
+.dataset-list .dataset-item .dataset-categories,
+li.dataset-item .dataset-categories,
+.dataset-categories {
+  flex: 0 0 auto !important;
+  width: 50px !important;
+  display: flex !important;
+  justify-content: flex-end !important;
+  align-items: flex-start !important;
+  padding-top: 5px !important;
+}
+
+/* Ensure category icons display properly */
+.category-theme,
+.category-theme_eu,
+.category-theme_es,
+a.category-theme,
+a.category-theme_eu,
+a.category-theme_es {
+  display: block !important;
+  width: 40px !important;
+  height: 40px !important;
+  background-repeat: no-repeat !important;
+  background-size: 30px auto !important;
+  background-position: center center !important;
+  text-indent: -9999px !important;
+  overflow: hidden !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Resource format badges/tags in dataset list */
+.dataset-list .dataset-item .dataset-resources ul,
+li.dataset-item .dataset-resources ul,
+ul.dataset-resources {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 10px 0 0 0 !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 6px !important;
+}
+
+.dataset-list .dataset-item .dataset-resources li,
+li.dataset-item .dataset-resources li,
+ul.dataset-resources li {
+  list-style: none !important;
+  display: inline-block !important;
+  margin: 0 !important;
+}
+
+.dataset-list .dataset-item .dataset-resources a.badge-label,
+.dataset-list .dataset-item .dataset-resources a.label,
+.dataset-list .dataset-item .dataset-resources .label,
+li.dataset-item .dataset-resources a.badge-label,
+li.dataset-item .dataset-resources a.label,
+li.dataset-item .dataset-resources .label,
+ul.dataset-resources a.badge-label,
+ul.dataset-resources a.label,
+ul.dataset-resources .label,
+a.badge-label,
+.badge-label {
+  display: inline-block !important;
+  padding: 4px 10px !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  border-radius: 3px !important;
+  color: white !important;
+  text-decoration: none !important;
+  background-color: #6c757d !important;
+  transition: all 0.2s ease !important;
+}
+
+.dataset-resources a.badge-label:hover,
+.dataset-resources a.label:hover,
+a.badge-label:hover {
+  opacity: 0.85 !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Format-specific colors for resource badges */
+a.badge-label[data-format="csv"],
+a.badge-label[data-format*="csv"],
+a.label[data-format="csv"],
+a.label[data-format*="csv"] {
+  background-color: #28a745 !important;
+}
+
+a.badge-label[data-format="json"],
+a.badge-label[data-format*="json"],
+a.label[data-format="json"],
+a.label[data-format*="json"] {
+  background-color: #ffc107 !important;
+  color: #212529 !important;
+}
+
+a.badge-label[data-format="pdf"],
+a.badge-label[data-format*="pdf"],
+a.label[data-format="pdf"],
+a.label[data-format*="pdf"] {
+  background-color: #dc3545 !important;
+}
+
+a.badge-label[data-format="xls"],
+a.badge-label[data-format*="xls"],
+a.badge-label[data-format*="xlsx"],
+a.label[data-format="xls"],
+a.label[data-format*="xls"],
+a.label[data-format*="xlsx"] {
+  background-color: #17a2b8 !important;
+}
+
+a.badge-label[data-format="xml"],
+a.badge-label[data-format*="xml"],
+a.label[data-format="xml"],
+a.label[data-format*="xml"] {
+  background-color: #fd7e14 !important;
+}
+
+a.badge-label[data-format="tif"],
+a.badge-label[data-format*="tif"],
+a.badge-label[data-format*="tiff"],
+a.badge-label[data-format*="geotiff"],
+a.label[data-format="tif"],
+a.label[data-format*="tif"],
+a.label[data-format*="tiff"],
+a.label[data-format*="geotiff"] {
+  background-color: #6f42c1 !important;
+}
+
+a.badge-label[data-format="shp"],
+a.badge-label[data-format*="shp"],
+a.badge-label[data-format*="shapefile"],
+a.label[data-format="shp"],
+a.label[data-format*="shp"],
+a.label[data-format*="shapefile"] {
+  background-color: #20c997 !important;
+}
+
+a.badge-label[data-format="zip"],
+a.badge-label[data-format*="zip"],
+a.label[data-format="zip"],
+a.label[data-format*="zip"] {
+  background-color: #6c757d !important;
+}
+
+a.badge-label[data-format="wms"],
+a.badge-label[data-format*="wms"],
+a.label[data-format="wms"],
+a.label[data-format*="wms"] {
+  background-color: #0069B4 !important;
+}
+
+a.badge-label[data-format="api"],
+a.badge-label[data-format*="api"],
+a.label[data-format="api"],
+a.label[data-format*="api"] {
+  background-color: #e83e8c !important;
+}
+
+/* Fix for very narrow viewports */
+@media (max-width: 992px) {
+  .primary .module-content {
+    padding-left: 15px !important;
+  }
+  
+  .dataset-categories {
+    display: none !important;
+  }
+}
+
+@media (min-width: 993px) {
+  /* Ensure proper spacing between columns */
+  .row .primary {
+    padding-left: 30px !important;
+  }
+}
