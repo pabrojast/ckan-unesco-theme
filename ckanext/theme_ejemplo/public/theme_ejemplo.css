@@ -54,6 +54,170 @@ width: 100% !important;
 .masthead .section {
     position: relative !important;
 }
+
+/* Estructura específica del header personalizado - Two Row Layout */
+.masthead .masthead-container {
+    padding: 0 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Primera fila: Top menu alineado a la derecha */
+.masthead .masthead-top-bar {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 5px 0;
+    min-height: 35px;
+    width: 100%;
+    text-align: left;
+}
+
+.masthead .masthead-nav .masthead-brand {
+    flex-shrink: 0;
+    margin-right: 30px;
+    margin-bottom: 0;
+}
+
+/* Top menu en la primera fila */
+.masthead .masthead-top-bar .masthead-topmenu {
+    display: flex !important;
+    align-items: center;
+    visibility: visible !important;
+    width: 100%;
+    justify-content: flex-end;
+}
+
+.masthead .masthead-nav .masthead-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: 15px;
+    flex-shrink: 0;
+}
+
+/* Estilos para el topmenu en la primera fila */
+.masthead .masthead-top-bar .masthead-topmenu ul {
+    display: flex;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    align-items: center;
+    background: transparent;
+    justify-content: flex-start;
+}
+
+.masthead .masthead-top-bar .masthead-topmenu li {
+    margin-right: 15px;
+    white-space: nowrap;
+}
+
+.masthead .masthead-top-bar .masthead-topmenu li:first-child {
+    margin-left: 0;
+}
+
+.masthead .masthead-top-bar .masthead-topmenu a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 12px;
+    padding: 4px 8px;
+    font-weight: 500;
+    border-radius: 3px;
+    transition: background-color 0.2s;
+    white-space: nowrap;
+}
+
+.masthead .masthead-top-bar .masthead-topmenu a:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Elementos mobile */
+.masthead .masthead-lang-mobile {
+    display: none;
+}
+
+/* Segunda fila: Logo + Navigation + Search */
+.masthead .masthead-nav {
+    width: 100%;
+    margin: 0;
+    display: flex !important;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 8px 0;
+    flex-wrap: nowrap;
+    min-height: 60px;
+    position: relative;
+    visibility: visible !important;
+    opacity: 1 !important;
+    height: auto !important;
+    overflow: visible !important;
+}
+
+/* El logo ahora está dentro de masthead-nav */
+.masthead .masthead-nav .masthead-brand .logo img {
+    height: 60px !important;
+    width: auto !important;
+    max-width: 350px !important;
+    padding: 0;
+    margin: 0;
+}
+
+.masthead .masthead-nav .navigation {
+    display: flex !important;
+    align-items: center;
+    justify-content: flex-end;
+    flex: 1;
+    margin-right: 20px;
+    visibility: visible !important;
+}
+
+.masthead .masthead-nav .navigation .nav {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: flex-end;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+}
+
+.masthead .masthead-nav .navigation .nav li {
+    list-style: none;
+    margin-right: 18px;
+    white-space: nowrap;
+}
+
+.masthead .masthead-nav .navigation .nav li a {
+    color: white;
+    text-decoration: none;
+    font-size: 13px;
+    padding: 6px 10px;
+    border-radius: 3px;
+    transition: background-color 0.2s;
+}
+
+.masthead .masthead-nav .navigation .nav li a:hover,
+.masthead .masthead-nav .navigation .nav li.active a {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+.masthead .masthead-nav .site-search {
+    margin-left: auto;
+    max-width: 280px;
+    flex-shrink: 0;
+    width: 240px;
+    display: block !important;
+    visibility: visible !important;
+}
+
+.masthead .masthead-nav .site-search .form-control {
+    min-width: 180px;
+    width: 200px;
+    transition: width 0.3s ease;
+}
+
+.masthead .masthead-nav .site-search .form-control:focus {
+    width: 220px;
+}
 /* footer */
 .site-footer {
 margin-bottom: initial;
@@ -88,6 +252,142 @@ border-radius: 0 0 3px 3px;
         max-width: 9.375rem !important;
     }
     .topmenu{
+        display: none !important;
+    }
+    
+    /* Logo más pequeño en mobile */
+    .masthead .masthead-nav .masthead-brand .logo img {
+        height: 40px !important;
+        max-width: 250px !important;
+    }
+    
+    /* Ocultar top menu completo en mobile */
+    .masthead .masthead-top-bar {
+        display: none !important;
+    }
+    
+    /* Restructurar masthead-nav para mobile */
+    .masthead .masthead-nav {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: flex-start;
+        flex-wrap: wrap;
+        position: relative;
+        padding: 10px 0;
+        min-height: auto;
+    }
+    
+    /* Ocultar navegación principal en mobile por defecto */
+    .masthead .masthead-nav .navigation {
+        display: none !important;
+        width: 100%;
+        margin-top: 15px;
+        order: 3;
+        flex-basis: 100%;
+        margin-right: 0;
+    }
+    
+    /* Ocultar search en mobile */
+    .masthead .masthead-nav .site-search {
+        display: none !important;
+    }
+    
+    /* Mostrar toggle button en mobile */
+    .masthead .masthead-nav .navbar-toggle,
+    .masthead .masthead-nav .navbar-toggler {
+        display: block !important;
+        order: 2;
+    }
+    
+    /* Mostrar lang mobile */
+    .masthead .masthead-lang-mobile {
+        display: block;
+    }
+    
+    /* Cuando se activa el collapse, mostrar navigation */
+    .masthead .masthead-nav.show .navigation,
+    .masthead .masthead-nav.in .navigation {
+        display: flex !important;
+        flex-direction: column;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: rgba(0, 119, 212, 0.95);
+        z-index: 1000;
+        padding: 15px;
+        border-radius: 0 0 8px 8px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    .masthead .masthead-nav.show .navigation .nav,
+    .masthead .masthead-nav.in .navigation .nav {
+        flex-direction: column;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+    }
+    
+    .masthead .masthead-nav.show .navigation .nav li,
+    .masthead .masthead-nav.in .navigation .nav li {
+        margin-bottom: 8px;
+        margin-right: 0;
+        width: 100%;
+        text-align: left;
+    }
+    
+    .masthead .masthead-nav.show .navigation .nav li a,
+    .masthead .masthead-nav.in .navigation .nav li a {
+        display: block;
+        width: 100%;
+        padding: 15px 20px;
+        font-size: 16px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 6px;
+        text-align: left;
+        margin-bottom: 5px;
+        box-sizing: border-box;
+    }
+    
+    .masthead .masthead-nav.show .navigation .nav li a:hover,
+    .masthead .masthead-nav.in .navigation .nav li a:hover {
+        background-color: rgba(255, 255, 255, 0.15);
+        border-color: rgba(255, 255, 255, 0.2);
+        transform: translateY(-1px);
+    }
+}
+
+/* Force desktop visibility - override any Bootstrap collapse rules */
+@media (min-width: 769px) {
+    .masthead .masthead-nav {
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        height: auto !important;
+    }
+    
+    .masthead .masthead-nav .navigation,
+    .masthead .masthead-nav .site-search {
+        display: flex !important;
+        visibility: visible !important;
+    }
+    
+    .masthead .masthead-top-bar .masthead-topmenu {
+        display: flex !important;
+        visibility: visible !important;
+    }
+    
+    .masthead .masthead-lang-mobile {
+        display: none;
+    }
+    
+    .masthead .masthead-topmenu {
+        display: flex;
+    }
+    
+    .masthead .navbar-toggle,
+    .masthead .navbar-toggler {
         display: none !important;
     }
 }
@@ -134,25 +434,57 @@ border-radius: 0 0 3px 3px;
 
 /* padding fix */
 @media (max-width: 1200px) {
-    .masthead .site-search {
-        /* padding-top: 9rem !important; */
-        display:none !important;
-  }
-  
+    .masthead .masthead-nav .site-search {
+        max-width: 200px;
+        width: 180px;
+    }
+    
+    .masthead .masthead-nav .site-search .form-control {
+        min-width: 140px;
+        width: 160px;
+    }
+    
+    .masthead .masthead-nav .navigation .nav li {
+        margin-right: 15px;
+    }
+    
+    .masthead .masthead-nav .navigation .nav li a {
+        font-size: 13px;
+        padding: 5px 8px;
+    }
 }
+
 @media (min-width: 768px) and (max-width: 991px){
 	.masthead .navigation.section {
 		float: right;
-        /* padding-top: 9rem !important; */
-
 	}
     .navbar-collapse.collapse {
         display: flex !important;
     }
-    .masthead .site-search {
-        /* padding-top: 9rem !important; */
-        display:none !important;
-  }
+    
+    .masthead .masthead-nav .site-search {
+        max-width: 160px;
+        width: 140px;
+    }
+    
+    .masthead .masthead-nav .site-search .form-control {
+        min-width: 120px;
+        width: 140px;
+    }
+    
+    .masthead .masthead-nav .navigation .nav li {
+        margin-right: 10px;
+    }
+    
+    .masthead .masthead-nav .navigation .nav li a {
+        font-size: 12px;
+        padding: 4px 6px;
+    }
+    
+    /* Hide longer menu items on medium screens if needed */
+    .masthead .masthead-top-bar .masthead-topmenu li:first-child {
+        display: none;
+    }
 }
 @media (min-width: 768px) {
     #main-navigation-toggle {
@@ -691,8 +1023,43 @@ img {
     }
 }
 
+/* Search field improvements */
 .masthead .site-search input {
-    width: 100px !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    background: transparent !important;
+    color: white !important;
+    border-radius: 4px !important;
+    padding: 8px 40px 8px 12px !important;
+}
+
+.masthead .site-search input::placeholder {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.masthead .site-search input:focus {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-color: rgba(255, 255, 255, 0.5) !important;
+    outline: none !important;
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.3) !important;
+}
+
+.masthead .site-search .btn-search {
+    border: none !important;
+    background: transparent !important;
+    color: rgba(255, 255, 255, 0.8) !important;
+    position: absolute !important;
+    right: 8px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    padding: 4px !important;
+}
+
+.masthead .site-search .btn-search:hover {
+    color: white !important;
+}
+
+.masthead .site-search .field {
+    position: relative !important;
 }
 .d-flex {
     display: flex !important;
