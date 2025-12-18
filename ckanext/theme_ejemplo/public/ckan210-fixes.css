@@ -1,0 +1,415 @@
+/**
+ * CKAN 2.10 Compatibility Fixes for UNESCO Theme
+ *
+ * This file contains critical CSS fixes for compatibility with CKAN 2.10
+ * and ckanext-schemingdcat plugin integration.
+ *
+ * Issues fixed:
+ * - Facet icons not displaying in sidebar
+ * - Text truncation in dataset lists
+ * - Module content padding and layout
+ */
+
+/* ===== FACET ICONS FIX - CRITICAL FOR CKAN 2.10 ===== */
+
+/* Base facet icon styles with maximum specificity for CKAN 2.10 */
+.secondary img.facet-icon,
+.secondary .module img.facet-icon,
+.secondary .module-content img.facet-icon,
+.secondary .nav-facet img.facet-icon,
+.secondary nav.nav-facet li a img.facet-icon,
+.filters img.facet-icon,
+.filters .module img.facet-icon,
+.filters .module-content img.facet-icon,
+.filters .nav-facet img.facet-icon,
+nav.nav-facet li a img.facet-icon,
+ul.nav-facet li a img.facet-icon,
+.module-content .nav-facet li a img.facet-icon,
+img.facet-icon {
+  display: inline-block !important;
+  width: 1.3em !important;
+  height: 1.3em !important;
+  min-width: 1.3em !important;
+  min-height: 1.3em !important;
+  max-width: 20px !important;
+  max-height: 20px !important;
+  margin-right: 8px !important;
+  border-radius: 50% !important;
+  vertical-align: middle !important;
+  object-fit: contain !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  flex-shrink: 0 !important;
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+/* Ensure parent containers don't hide the icons */
+.secondary .module-content,
+.secondary .nav-facet,
+.secondary nav,
+.filters .module-content,
+.filters .nav-facet,
+.filters nav {
+  overflow: visible !important;
+}
+
+/* Fix nav-facet list items for icon display */
+.secondary .nav-facet li,
+.secondary nav.nav-facet li,
+.filters .nav-facet li,
+.filters nav.nav-facet li,
+nav.nav-facet li {
+  display: block !important;
+  overflow: visible !important;
+  position: relative !important;
+}
+
+/* Facet links with proper flex layout for icons */
+.secondary .nav-facet li a,
+.secondary nav.nav-facet li a,
+.filters .nav-facet li a,
+.filters nav.nav-facet li a,
+nav.nav-facet li a {
+  display: flex !important;
+  align-items: center !important;
+  flex-wrap: nowrap !important;
+  padding: 8px 5px !important;
+  color: #495057 !important;
+  text-decoration: none !important;
+  transition: all 0.2s ease !important;
+  border-radius: 4px !important;
+  margin: 2px 0 !important;
+  position: relative !important;
+  overflow: visible !important;
+}
+
+.secondary .nav-facet li a:hover,
+.secondary nav.nav-facet li a:hover,
+.filters .nav-facet li a:hover,
+.filters nav.nav-facet li a:hover,
+nav.nav-facet li a:hover {
+  background-color: rgba(0, 105, 180, 0.08) !important;
+  color: #0069B4 !important;
+}
+
+.secondary .nav-facet li.active a,
+.secondary nav.nav-facet li.active a,
+.filters .nav-facet li.active a,
+.filters nav.nav-facet li.active a,
+nav.nav-facet li.active a {
+  background-color: rgba(0, 105, 180, 0.12) !important;
+  color: #0069B4 !important;
+  font-weight: 600 !important;
+}
+
+/* Item label text - prevent excessive truncation */
+.secondary .nav-facet li a .item-label,
+.secondary nav.nav-facet li a .item-label,
+.filters .nav-facet li a .item-label,
+.filters nav.nav-facet li a .item-label,
+nav.nav-facet li a .item-label,
+.nav-facet .item-label {
+  flex: 1 1 auto !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: normal !important;  /* Changed from nowrap to normal for better text display */
+  font-size: 13px !important;
+  line-height: 1.4 !important;  /* Better line height for readability */
+  max-width: 100% !important;
+}
+
+/* Badge/count */
+.secondary .nav-facet li a .badge,
+.secondary nav.nav-facet li a .badge,
+.secondary .nav-facet li a .item-count,
+.secondary nav.nav-facet li a .item-count,
+.filters .nav-facet li a .badge,
+.filters nav.nav-facet li a .badge,
+.filters .nav-facet li a .item-count,
+.filters nav.nav-facet li a .item-count,
+nav.nav-facet li a .badge,
+nav.nav-facet li a .item-count {
+  flex-shrink: 0 !important;
+  margin-left: auto !important;
+  padding: 2px 8px !important;
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  background-color: #e9ecef !important;
+  color: #495057 !important;
+  border-radius: 10px !important;
+  min-width: 24px !important;  /* Ensure badge doesn't collapse */
+  text-align: center !important;
+}
+
+.secondary .nav-facet li.active a .badge,
+.secondary nav.nav-facet li.active a .badge,
+.filters .nav-facet li.active a .badge,
+.filters nav.nav-facet li.active a .badge,
+nav.nav-facet li.active a .badge {
+  background-color: #0069B4 !important;
+  color: white !important;
+}
+
+/* Separator - hide it */
+.secondary .nav-facet li a .separator,
+.secondary nav.nav-facet li a .separator,
+.filters .nav-facet li a .separator,
+.filters nav.nav-facet li a .separator,
+nav.nav-facet li a .separator {
+  display: none !important;
+}
+
+/* ===== DATASET LIST TEXT TRUNCATION FIX ===== */
+
+/* Dataset item headings - prevent excessive truncation */
+.dataset-list .dataset-item .dataset-heading,
+.dataset-item .dataset-heading,
+.dataset-item h2.dataset-heading,
+.dataset-item h3.dataset-heading {
+  margin: 0 0 10px 0 !important;
+  font-size: 18px !important;
+  line-height: 1.4 !important;
+  overflow: visible !important;  /* Don't hide overflow */
+  white-space: normal !important;  /* Allow text wrapping */
+  text-overflow: clip !important;  /* Don't use ellipsis */
+}
+
+/* Dataset content/notes - allow better text display */
+.dataset-item .dataset-content,
+.dataset-item .notes {
+  color: #6c757d !important;
+  font-size: 14px !important;
+  line-height: 1.6 !important;
+  margin-bottom: 15px !important;
+  max-height: none !important;  /* Remove height restriction */
+  overflow: visible !important;  /* Show all text */
+  text-overflow: clip !important;
+  display: -webkit-box !important;
+  -webkit-line-clamp: 3 !important;  /* Limit to 3 lines but show full words */
+  -webkit-box-orient: vertical !important;
+  overflow: hidden !important;
+}
+
+/* ===== MODULE CONTENT FIXES ===== */
+
+/* Fix module content padding for proper display */
+.secondary .module-content {
+  padding: 12px 15px !important;
+  overflow: visible !important;
+}
+
+.filters .module-content {
+  padding: 12px 15px !important;
+  overflow: visible !important;
+}
+
+/* Module headings */
+.secondary .module-heading,
+.filters .module-heading {
+  background: #f8f9fa !important;
+  border-bottom: 1px solid #e9ecef !important;
+  padding: 12px 15px !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  color: #495057 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+}
+
+/* ===== SIDEBAR MODULE FIXES ===== */
+
+/* Fix sidebar module styling for CKAN 2.10 */
+.secondary .module.module-narrow {
+  background: #fff !important;
+  border-radius: 8px !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
+  margin-bottom: 15px !important;
+  overflow: visible !important;
+}
+
+/* Module footer */
+.secondary .module-footer,
+.filters .module-footer {
+  padding: 10px 15px !important;
+  border-top: 1px solid #e9ecef !important;
+  background-color: #fafafa !important;
+  text-align: center !important;
+}
+
+.secondary .module-footer a,
+.filters .module-footer a,
+.module-footer a.read-more {
+  color: #0069B4 !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  text-decoration: none !important;
+}
+
+.secondary .module-footer a:hover,
+.filters .module-footer a:hover,
+.module-footer a.read-more:hover {
+  text-decoration: underline !important;
+}
+
+/* ===== DATASET CATEGORIES ICONS FIX ===== */
+
+/* Ensure category icons display properly on dataset items */
+.dataset-categories {
+  display: flex !important;
+  justify-content: flex-end !important;
+  gap: 5px !important;
+  margin-top: 10px !important;
+}
+
+.dataset-categories a,
+.dataset-categories img {
+  display: inline-block !important;
+  width: 40px !important;
+  height: 40px !important;
+  object-fit: contain !important;
+  border-radius: 4px !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Category spatial_uri images */
+.category-spatial_uri {
+  width: 40px !important;
+  height: 40px !important;
+  background-repeat: no-repeat !important;
+  background-size: 30px auto !important;
+  background-position: center center !important;
+  object-fit: contain !important;
+  display: inline-block !important;
+}
+
+/* ===== RESPONSIVE FIXES ===== */
+
+@media (max-width: 768px) {
+  /* Adjust facet icons for mobile */
+  .secondary .nav-facet li a img.facet-icon,
+  .filters .nav-facet li a img.facet-icon,
+  nav.nav-facet li a img.facet-icon,
+  img.facet-icon {
+    width: 1.2em !important;
+    height: 1.2em !important;
+    max-width: 18px !important;
+    max-height: 18px !important;
+    margin-right: 6px !important;
+  }
+
+  /* Adjust module content padding for mobile */
+  .secondary .module-content,
+  .filters .module-content {
+    padding: 10px 12px !important;
+  }
+
+  /* Hide category icons on very small screens if needed */
+  .dataset-categories a,
+  .category-spatial_uri {
+    width: 32px !important;
+    height: 32px !important;
+    background-size: 24px auto !important;
+  }
+}
+
+/* ===== ADDITIONAL SCHEMINGDCAT COMPATIBILITY ===== */
+
+/* Ensure scheming icon list displays correctly */
+.scheming-icon-list {
+  list-style-type: none !important;
+  padding-left: 1em !important;
+  line-height: 2em !important;
+}
+
+.scheming-icon-list-icon {
+  vertical-align: middle !important;
+  height: 1.6em !important;
+  display: inline-block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* Spatial URI icons */
+img.spatial_uri-icon {
+  vertical-align: middle !important;
+  height: 1.6em !important;
+  display: inline-block !important;
+  border-radius: 50% !important;
+  margin-left: 1em !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+}
+
+/* ===== SEARCH FORM FIXES ===== */
+
+/* Fix search heading with sorting controls */
+.module-heading.search_heading {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  flex-wrap: wrap !important;
+}
+
+.search_heading_span {
+  flex: 1 1 auto !important;
+  min-width: 50% !important;
+}
+
+.sorting_heading {
+  display: flex !important;
+  gap: 5px !important;
+  flex-shrink: 0 !important;
+}
+
+/* Sorting controls */
+.filters .module .sorting {
+  position: relative !important;
+  width: 38px !important;
+  height: 38px !important;
+  border-radius: 5px !important;
+  background-color: rgba(255,255,255,0.7) !important;
+  border: 1px solid #ffffff !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.filters .module .sorting:hover {
+  border: 1px solid #000 !important;
+  background-color: rgba(255,255,255,0.9) !important;
+}
+
+/* ===== FORCE VISIBILITY OF ALL IMAGES IN SIDEBAR ===== */
+
+/* Nuclear option: force all images in secondary sidebar to be visible */
+.secondary img,
+.filters img {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: inline-block !important;
+  max-width: 100% !important;
+}
+
+/* Ensure nav items don't hide content */
+.secondary .nav-item,
+.filters .nav-item,
+.secondary nav li,
+.filters nav li {
+  overflow: visible !important;
+  position: relative !important;
+}
+
+/* Ensure links in nav don't hide images */
+.secondary .nav-item a,
+.filters .nav-item a,
+.secondary nav li a,
+.filters nav li a {
+  overflow: visible !important;
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+}
