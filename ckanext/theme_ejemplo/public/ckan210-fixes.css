@@ -1220,13 +1220,13 @@ html body .resource-list .resource-item:hover {
   border-color: #c0c0c0 !important;
 }
 
-/* Resource heading/title link - spans first column, first row */
+/* Resource heading/title link - spans SECOND column, first row */
 body .resource-item > a.heading,
 body .resource-item a.heading,
 body li.resource-item > a.heading,
 html body .resource-item > a.heading,
 html body li.resource-item > a.heading {
-  grid-column: 1 !important;
+  grid-column: 2 !important;
   grid-row: 1 !important;
   display: block !important;
   font-size: 15px !important;
@@ -1235,6 +1235,7 @@ html body li.resource-item > a.heading {
   text-decoration: none !important;
   margin: 0 0 5px 0 !important;
   line-height: 1.4 !important;
+  text-align: left !important;
 }
 
 body .resource-item > a.heading:hover,
@@ -1264,29 +1265,30 @@ html body .resource-item > a.heading .format-label {
   margin-left: 8px !important;
 }
 
-/* Description paragraph - spans first column, second row */
+/* Description paragraph - spans SECOND column, second row */
 body .resource-item p.description,
 body .resource-item .description,
 body li.resource-item p.description,
 html body .resource-item p.description,
 html body .resource-item .description {
-  grid-column: 1 !important;
+  grid-column: 2 !important;
   grid-row: 2 !important;
   margin: 0 !important;
   padding: 0 !important;
   font-size: 13px !important;
   color: #666 !important;
   line-height: 1.5 !important;
+  text-align: left !important;
 }
 
-/* Explore button group - spans second column, both rows */
+/* Explore button group - spans THIRD column, both rows */
 body .resource-item .btn-group,
 body .resource-item .dropdown.btn-group,
 body li.resource-item .btn-group,
 body li.resource-item .dropdown.btn-group,
 html body .resource-item .btn-group,
 html body .resource-item .dropdown.btn-group {
-  grid-column: 2 !important;
+  grid-column: 3 !important;
   grid-row: 1 / 3 !important;
   align-self: center !important;
   justify-self: end !important;
@@ -1451,22 +1453,24 @@ body .resource-item .btn-group .dropdown-menu,
   right: 0 !important;
   left: auto !important;
   z-index: 1000 !important;
-  display: none !important;
   min-width: 160px !important;
   padding: 5px 0 !important;
-  margin: 2px 0 0 !important;
+  margin: 0 !important;
   background-color: #fff !important;
   border: 1px solid rgba(0,0,0,0.15) !important;
   border-radius: 4px !important;
   box-shadow: 0 6px 12px rgba(0,0,0,0.175) !important;
 }
 
-/* Show dropdown when open */
+/* Show dropdown when open - Bootstrap 3 uses .open class, Bootstrap 5 uses .show class */
 body .resource-item .dropdown.open .dropdown-menu,
 body .resource-item .btn-group.open .dropdown-menu,
 body .resource-item .dropdown-menu.show,
+body .resource-item .btn-group .dropdown-menu.show,
 .resource-item .dropdown.open .dropdown-menu,
-.resource-item .btn-group.open .dropdown-menu {
+.resource-item .btn-group.open .dropdown-menu,
+.resource-item .dropdown-menu.show,
+.btn-group .dropdown-menu.show {
   display: block !important;
 }
 
@@ -1625,9 +1629,7 @@ body li.resource-item > a.heading,
 .resource-item a.heading {
   grid-column: 2 !important;
   grid-row: 1 !important;
-  display: flex !important;
-  align-items: center !important;
-  gap: 10px !important;
+  display: block !important;
   font-size: 15px !important;
   font-weight: 600 !important;
   color: #0069B4 !important;
@@ -1635,6 +1637,7 @@ body li.resource-item > a.heading,
   margin: 0 !important;
   padding: 0 !important;
   line-height: 1.4 !important;
+  text-align: left !important;
 }
 
 /* Remove format-label from inside heading since it's now in its own column */
@@ -1660,6 +1663,7 @@ body li.resource-item p.description,
   font-size: 13px !important;
   color: #666 !important;
   line-height: 1.5 !important;
+  text-align: left !important;
 }
 
 /* Button group - THIRD COLUMN, spans both rows */
