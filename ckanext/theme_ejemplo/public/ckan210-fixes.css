@@ -1498,3 +1498,49 @@ body .resource-item .dropdown-menu li a i,
   width: 16px !important;
   text-align: center !important;
 }
+
+/* ===== RESOURCE TITLE ROW - BADGE POSITION FIX ===== */
+
+/* Container for title and badge */
+body .resource-item .resource-title-row,
+.resource-item .resource-title-row {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  grid-column: 1 !important;
+  grid-row: 1 !important;
+  margin-bottom: 5px !important;
+}
+
+/* Format badge - appears BEFORE title */
+body .resource-item .resource-title-row .format-label,
+.resource-item .resource-title-row .format-label {
+  display: inline-block !important;
+  padding: 3px 8px !important;
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  border-radius: 3px !important;
+  color: white !important;
+  text-decoration: none !important;
+  flex-shrink: 0 !important;
+  order: -1 !important;
+}
+
+/* Title link - comes after badge */
+body .resource-item .resource-title-row .heading,
+.resource-item .resource-title-row .heading {
+  display: inline !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  color: #0069B4 !important;
+  text-decoration: none !important;
+  line-height: 1.4 !important;
+  flex: 1 !important;
+}
+
+body .resource-item .resource-title-row .heading:hover,
+.resource-item .resource-title-row .heading:hover {
+  text-decoration: underline !important;
+  color: #005090 !important;
+}

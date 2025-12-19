@@ -17,10 +17,13 @@
 
 <li class="resource-item" data-id="{{ res.id }}">
   {% block resource_item_title %}
-  <a class="heading" href="{{ url }}" title="{{ res.name or res.description }}">
-    {{ h.resource_display_name(res) }}<span class="format-label" property="dc:format" data-format="{{ res.format.lower() or 'data' }}">{{ h.get_translated(res, 'format') }}</span>
-    {{ h.popular('views', res.tracking_summary.total, min=10) if res.tracking_summary }}
-  </a>
+  <div class="resource-title-row">
+    <span class="format-label" property="dc:format" data-format="{{ res.format.lower() or 'data' }}">{{ h.get_translated(res, 'format') }}</span>
+    <a class="heading" href="{{ url }}" title="{{ res.name or res.description }}">
+      {{ h.resource_display_name(res) }}
+      {{ h.popular('views', res.tracking_summary.total, min=10) if res.tracking_summary }}
+    </a>
+  </div>
   {% endblock %}
   {% block resource_item_description %}
     <p class="description">
