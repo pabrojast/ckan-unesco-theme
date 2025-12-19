@@ -74,14 +74,8 @@ If facet field has options, list in the form [dic{keys:'value', 'label'}], where
 
       {%  block facet_list_items %}
         {%  set field = h.scheming_field_by_name(h.schemingdcat_get_dataset_schema('dataset').dataset_fields,name) %}
-        {# FIX: Get icons_dir from field and ensure it has the correct prefix #}
-        {%  set raw_icons_dir = h.schemingdcat_get_icons_dir(field=field) %}
-        {# Add images/icons/ prefix if icons_dir doesn't start with 'images/' #}
-        {%  if raw_icons_dir and not raw_icons_dir.startswith('images/') %}
-          {%  set icons_dir = 'images/icons/' + raw_icons_dir %}
-        {%  else %}
-          {%  set icons_dir = raw_icons_dir %}
-        {%  endif %}
+        {# Get icons_dir from field schema #}
+        {%  set schema_icons_dir = field.icons_dir if field and field.icons_dir else None %}
         {%  with items = items or h.schemingdcat_get_facet_items_dict(name, search_facets or c.search_facets,scheming_choices=scheming_choices) %}
           {% if items %}
             {% set nav_class = 'nav nav-simple nav-facet '+name %}
@@ -94,10 +88,13 @@ If facet field has options, list in the form [dic{keys:'value', 'label'}], where
               {% set label_truncated = h.truncate(label, 22) if not label_function else label %}
               {% set count = count_label(item['count']) if count_label else ('%d' % item['count']) %}
               {% set nav_item_class = 'nav-item ' %}
-              {%  if icons_dir %}
-                {%  set icon = h.schemingdcat_get_icon(h.schemingdcat_get_choice_item(field, item.name), icons_dir) %}
-                {%  if icon and icon != '/images/default/no_icon.svg' %}
-                  {% set img_url = h.url_for_static(icon) %}
+              {# Build icon URL directly from item.name (which is a URL like http://inspire.ec.europa.eu/theme/hy) #}
+              {%  if schema_icons_dir and item.name %}
+                {%  set item_parts = item.name.split('/') %}
+                {%  if item_parts|length >= 2 %}
+                  {# Extract last two parts: e.g., 'theme' and 'hy' from URL #}
+                  {%  set icon_path = 'images/icons/' + schema_icons_dir + '/' + item_parts[-2] + '/' + item_parts[-1] + '.svg' %}
+                  {% set img_url = h.url_for_static(icon_path) %}
                 {%  endif %}
               {%  endif %}
               <li class="{{ 'nav-item' }}{% if item.active %} active{% endif %}">
