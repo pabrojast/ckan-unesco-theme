@@ -434,3 +434,50 @@ window.themeEnhanced = {
     enhanceSearch,
     initializeMobileNavigation
 }; 
+// ===== BOOTSTRAP 5 COMPATIBILITY FIX =====
+// Convert data-toggle to data-bs-toggle for Bootstrap 5 compatibility
+document.addEventListener('DOMContentLoaded', function() {
+    // Fix dropdown toggles
+    document.querySelectorAll('[data-toggle="dropdown"]').forEach(function(el) {
+        if (!el.hasAttribute('data-bs-toggle')) {
+            el.setAttribute('data-bs-toggle', 'dropdown');
+        }
+    });
+    
+    // Fix collapse toggles
+    document.querySelectorAll('[data-toggle="collapse"]').forEach(function(el) {
+        if (!el.hasAttribute('data-bs-toggle')) {
+            el.setAttribute('data-bs-toggle', 'collapse');
+        }
+    });
+    
+    // Fix modal toggles
+    document.querySelectorAll('[data-toggle="modal"]').forEach(function(el) {
+        if (!el.hasAttribute('data-bs-toggle')) {
+            el.setAttribute('data-bs-toggle', 'modal');
+        }
+    });
+    
+    // Fix tab toggles
+    document.querySelectorAll('[data-toggle="tab"]').forEach(function(el) {
+        if (!el.hasAttribute('data-bs-toggle')) {
+            el.setAttribute('data-bs-toggle', 'tab');
+        }
+    });
+    
+    // Fix tooltip toggles
+    document.querySelectorAll('[data-toggle="tooltip"]').forEach(function(el) {
+        if (!el.hasAttribute('data-bs-toggle')) {
+            el.setAttribute('data-bs-toggle', 'tooltip');
+        }
+    });
+    
+    // Initialize Bootstrap 5 dropdowns
+    if (typeof bootstrap !== 'undefined' && bootstrap.Dropdown) {
+        document.querySelectorAll('[data-bs-toggle="dropdown"]').forEach(function(el) {
+            new bootstrap.Dropdown(el);
+        });
+    }
+    
+    console.log('Bootstrap 5 compatibility fix applied');
+});

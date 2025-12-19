@@ -1228,15 +1228,12 @@ html body .resource-item > a.heading,
 html body li.resource-item > a.heading {
   grid-column: 1 !important;
   grid-row: 1 !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  flex-wrap: wrap !important;
-  gap: 10px !important;
+  display: block !important;
   font-size: 15px !important;
   font-weight: 600 !important;
   color: #0069B4 !important;
   text-decoration: none !important;
-  margin: 0 !important;
+  margin: 0 0 5px 0 !important;
   line-height: 1.4 !important;
 }
 
@@ -1247,7 +1244,7 @@ html body .resource-item > a.heading:hover {
   color: #005090 !important;
 }
 
-/* Format label inside heading */
+/* Format label inside heading - positioned after title text */
 body .resource-item .heading .format-label,
 body .resource-item > a.heading .format-label,
 body .resource-item a.heading .format-label,
@@ -1255,16 +1252,16 @@ body li.resource-item > a.heading .format-label,
 html body .resource-item .heading .format-label,
 html body .resource-item > a.heading .format-label {
   display: inline-block !important;
-  padding: 3px 10px !important;
-  font-size: 11px !important;
+  padding: 2px 8px !important;
+  font-size: 10px !important;
   font-weight: 600 !important;
   text-transform: uppercase !important;
   border-radius: 3px !important;
   color: white !important;
   text-decoration: none !important;
-  flex-shrink: 0 !important;
   vertical-align: middle !important;
   line-height: 1.2 !important;
+  margin-left: 8px !important;
 }
 
 /* Description paragraph - spans first column, second row */
@@ -1433,4 +1430,71 @@ body .citation-section {
   border-radius: 8px !important;
   padding: 15px !important;
   margin: 20px 0 !important;
+}
+
+/* ===== DROPDOWN MENU FIX FOR EXPLORE BUTTON ===== */
+
+/* Ensure dropdown container has proper positioning */
+body .resource-item .dropdown.btn-group,
+body .resource-item .btn-group.dropdown,
+.resource-item .dropdown.btn-group {
+  position: relative !important;
+  z-index: 10 !important;
+}
+
+/* Dropdown menu styling */
+body .resource-item .dropdown-menu,
+body .resource-item .btn-group .dropdown-menu,
+.resource-item .dropdown-menu {
+  position: absolute !important;
+  top: 100% !important;
+  right: 0 !important;
+  left: auto !important;
+  z-index: 1000 !important;
+  display: none !important;
+  min-width: 160px !important;
+  padding: 5px 0 !important;
+  margin: 2px 0 0 !important;
+  background-color: #fff !important;
+  border: 1px solid rgba(0,0,0,0.15) !important;
+  border-radius: 4px !important;
+  box-shadow: 0 6px 12px rgba(0,0,0,0.175) !important;
+}
+
+/* Show dropdown when open */
+body .resource-item .dropdown.open .dropdown-menu,
+body .resource-item .btn-group.open .dropdown-menu,
+body .resource-item .dropdown-menu.show,
+.resource-item .dropdown.open .dropdown-menu,
+.resource-item .btn-group.open .dropdown-menu {
+  display: block !important;
+}
+
+/* Dropdown menu items */
+body .resource-item .dropdown-menu li,
+.resource-item .dropdown-menu li {
+  list-style: none !important;
+}
+
+body .resource-item .dropdown-menu li a,
+.resource-item .dropdown-menu li a {
+  display: block !important;
+  padding: 8px 15px !important;
+  color: #333 !important;
+  text-decoration: none !important;
+  font-size: 13px !important;
+  white-space: nowrap !important;
+}
+
+body .resource-item .dropdown-menu li a:hover,
+.resource-item .dropdown-menu li a:hover {
+  background-color: #f5f5f5 !important;
+  color: #0069B4 !important;
+}
+
+body .resource-item .dropdown-menu li a i,
+.resource-item .dropdown-menu li a i {
+  margin-right: 8px !important;
+  width: 16px !important;
+  text-align: center !important;
 }
