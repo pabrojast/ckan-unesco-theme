@@ -4532,16 +4532,14 @@ ul.resource-list li.resource-item:hover,
 .resource-item .heading {
   grid-column: 1 !important;
   grid-row: 1 !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  flex-wrap: wrap !important;
-  gap: 10px !important;
+  display: block !important;
   font-size: 15px !important;
   font-weight: 600 !important;
-  margin: 0 !important;
+  margin: 0 0 5px 0 !important;
   color: #0069B4 !important;
   color: var(--unesco-blue) !important;
   text-decoration: none !important;
+  line-height: 1.4 !important;
 }
 
 .resource-item .heading a {
@@ -4556,10 +4554,19 @@ ul.resource-list li.resource-item:hover,
 }
 
 .resource-item .format-label,
-.resource-item .label {
-  flex-shrink: 0 !important;
+.resource-item .label,
+.resource-item > a.heading .format-label,
+.resource-item > a.heading .label {
   display: inline-block !important;
   vertical-align: middle !important;
+  margin-left: 10px !important;
+  padding: 2px 8px !important;
+  font-size: 10px !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  border-radius: 3px !important;
+  color: white !important;
+  text-decoration: none !important;
 }
 
 .resource-item p.description,
