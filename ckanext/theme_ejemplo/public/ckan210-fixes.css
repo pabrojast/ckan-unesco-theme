@@ -60,7 +60,7 @@ body a.label.badge-label {
   border-radius: 3px !important;
   color: white !important;
   text-decoration: none !important;
-  background-color: #6c757d !important;
+  /* Removed background-color to let schemingdcat CSS handle format-specific colors */
   visibility: visible !important;
   opacity: 1 !important;
   line-height: 1.4 !important;
@@ -69,6 +69,12 @@ body a.label.badge-label {
   text-align: center !important;
   position: relative !important;
   z-index: 1 !important;
+}
+
+/* Default background for badges without specific format color */
+body a.label.badge-label:not([data-format]),
+body ul.dataset-resources li a.label.badge-label:not([data-format]) {
+  background-color: #6c757d !important;
 }
 
 /* Format-specific colors - must have same or higher specificity than general rule */
