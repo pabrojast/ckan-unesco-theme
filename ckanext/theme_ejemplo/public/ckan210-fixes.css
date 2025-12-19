@@ -1085,3 +1085,95 @@ a.badge-label[data-format]:hover {
   text-decoration: none !important;
   transform: translateY(-1px) !important;
 }
+
+/* ===== SEARCH CONFIG OR/AND BUTTONS - CONTRAST FIX ===== */
+
+/* Container styling */
+body .filters .container__filter__type__search_and__or,
+body .secondary .container__filter__type__search_and__or,
+.container__filter__type__search_and__or {
+  display: flex !important;
+  justify-content: center !important;
+  gap: 0 !important;
+  margin: 15px 0 !important;
+}
+
+/* Button group styling */
+body .filters .container__filter__type__search_and__or .btn-group,
+body .secondary .container__filter__type__search_and__or .btn-group,
+.container__filter__type__search_and__or .btn-group {
+  display: flex !important;
+  border-radius: 6px !important;
+  overflow: hidden !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1) !important;
+}
+
+/* Base button styles */
+body .filters .container__filter__type__search_and__or .btn,
+body .secondary .container__filter__type__search_and__or .btn,
+.container__filter__type__search_and__or .btn {
+  padding: 8px 20px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  border: 1px solid #dee2e6 !important;
+  border-radius: 0 !important;
+  transition: all 0.2s ease !important;
+}
+
+/* Inactive button - light gray background with dark text */
+body .filters .container__filter__type__search_and__or .btn:not(.active),
+body .secondary .container__filter__type__search_and__or .btn:not(.active),
+.container__filter__type__search_and__or .btn:not(.active) {
+  background-color: #f8f9fa !important;
+  border-color: #dee2e6 !important;
+  color: #495057 !important;
+}
+
+body .filters .container__filter__type__search_and__or .btn:not(.active) a,
+body .secondary .container__filter__type__search_and__or .btn:not(.active) a,
+.container__filter__type__search_and__or .btn:not(.active) a {
+  color: #495057 !important;
+  text-decoration: none !important;
+}
+
+/* Active button - UNESCO blue background with white text */
+body .filters .container__filter__type__search_and__or .btn.active,
+body .secondary .container__filter__type__search_and__or .btn.active,
+.container__filter__type__search_and__or .btn.active {
+  background-color: #0069B4 !important;
+  border-color: #0069B4 !important;
+  color: white !important;
+}
+
+body .filters .container__filter__type__search_and__or .btn.active a,
+body .secondary .container__filter__type__search_and__or .btn.active a,
+.container__filter__type__search_and__or .btn.active a {
+  color: white !important;
+  text-decoration: none !important;
+}
+
+/* Hover states */
+body .filters .container__filter__type__search_and__or .btn:not(.active):hover,
+body .secondary .container__filter__type__search_and__or .btn:not(.active):hover,
+.container__filter__type__search_and__or .btn:not(.active):hover {
+  background-color: #e9ecef !important;
+  border-color: #ced4da !important;
+}
+
+body .filters .container__filter__type__search_and__or .btn.active:hover,
+body .secondary .container__filter__type__search_and__or .btn.active:hover,
+.container__filter__type__search_and__or .btn.active:hover {
+  background-color: #005a9e !important;
+  border-color: #005a9e !important;
+}
+
+/* First and last button border radius */
+body .container__filter__type__search_and__or .btn-group .btn:first-child,
+.container__filter__type__search_and__or .btn-group .btn:first-child {
+  border-radius: 6px 0 0 6px !important;
+}
+
+body .container__filter__type__search_and__or .btn-group .btn:last-child,
+.container__filter__type__search_and__or .btn-group .btn:last-child {
+  border-radius: 0 6px 6px 0 !important;
+}
