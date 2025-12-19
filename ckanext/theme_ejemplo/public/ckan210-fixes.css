@@ -1177,3 +1177,227 @@ body .container__filter__type__search_and__or .btn-group .btn:last-child,
 .container__filter__type__search_and__or .btn-group .btn:last-child {
   border-radius: 0 6px 6px 0 !important;
 }
+
+/* ===== DATASET PAGE - RESOURCE LIST FIX ===== */
+
+/* Resource list container */
+body ul.resource-list,
+body .resource-list {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 20px 0 !important;
+}
+
+/* Individual resource item - use block layout instead of flex to prevent overlap */
+body ul.resource-list li.resource-item,
+body .resource-list .resource-item,
+body li.resource-item {
+  display: block !important;
+  background: #fff !important;
+  border: 1px solid #e0e0e0 !important;
+  border-radius: 8px !important;
+  margin-bottom: 12px !important;
+  padding: 16px 20px !important;
+  transition: all 0.2s ease !important;
+  position: relative !important;
+}
+
+body ul.resource-list li.resource-item:hover,
+body .resource-list .resource-item:hover,
+body li.resource-item:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
+  border-color: #c0c0c0 !important;
+}
+
+/* Resource heading/title link */
+body .resource-item > a.heading,
+body .resource-item .heading,
+body li.resource-item > a.heading {
+  display: flex !important;
+  align-items: center !important;
+  flex-wrap: wrap !important;
+  gap: 10px !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  color: #0069B4 !important;
+  text-decoration: none !important;
+  margin-bottom: 8px !important;
+}
+
+body .resource-item > a.heading:hover,
+body li.resource-item > a.heading:hover {
+  text-decoration: underline !important;
+}
+
+/* Format label inside heading */
+body .resource-item .heading .format-label,
+body .resource-item > a.heading .format-label,
+body li.resource-item > a.heading .format-label {
+  display: inline-block !important;
+  padding: 3px 10px !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  border-radius: 3px !important;
+  color: white !important;
+  background-color: #6c757d !important;
+  margin-left: auto !important;
+  text-decoration: none !important;
+}
+
+/* Description paragraph */
+body .resource-item p.description,
+body .resource-item .description,
+body li.resource-item p.description {
+  margin: 0 0 12px 0 !important;
+  padding: 0 !important;
+  font-size: 13px !important;
+  color: #666 !important;
+  line-height: 1.5 !important;
+}
+
+/* Explore button group */
+body .resource-item .btn-group,
+body .resource-item .dropdown.btn-group,
+body li.resource-item .btn-group,
+body li.resource-item .dropdown.btn-group {
+  display: inline-flex !important;
+  margin-top: 5px !important;
+}
+
+body .resource-item .btn-group .btn,
+body li.resource-item .btn-group .btn {
+  padding: 6px 14px !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  border-radius: 4px !important;
+}
+
+body .resource-item .btn-group .btn-primary,
+body li.resource-item .btn-group .btn-primary {
+  background-color: #0069B4 !important;
+  border-color: #0069B4 !important;
+  color: white !important;
+}
+
+body .resource-item .btn-group .btn-primary:hover,
+body li.resource-item .btn-group .btn-primary:hover {
+  background-color: #005a9e !important;
+  border-color: #005a9e !important;
+}
+
+/* ===== DATASET PAGE - ADDITIONAL INFO SECTIONS FIX ===== */
+
+/* Additional info tables/sections */
+body .additional-info,
+body .module.module-info,
+body section.module {
+  margin-bottom: 20px !important;
+}
+
+/* Section headers */
+body .additional-info h3,
+body .module-heading,
+body section.module h2,
+body .dataset-additional-info h3 {
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  color: #333 !important;
+  padding: 12px 15px !important;
+  background-color: #f8f9fa !important;
+  border-bottom: 1px solid #e9ecef !important;
+  margin: 0 !important;
+}
+
+/* Info table styling */
+body .additional-info table,
+body .module table.table,
+body table.table-striped {
+  width: 100% !important;
+  border-collapse: collapse !important;
+  margin: 0 !important;
+}
+
+body .additional-info table th,
+body .additional-info table td,
+body .module table.table th,
+body .module table.table td,
+body table.table-striped th,
+body table.table-striped td {
+  padding: 10px 15px !important;
+  border-bottom: 1px solid #e9ecef !important;
+  vertical-align: top !important;
+  font-size: 13px !important;
+}
+
+body .additional-info table th,
+body .module table.table th,
+body table.table-striped th {
+  width: 35% !important;
+  font-weight: 600 !important;
+  color: #495057 !important;
+  background-color: #fafafa !important;
+}
+
+body .additional-info table td,
+body .module table.table td,
+body table.table-striped td {
+  color: #333 !important;
+  word-break: break-word !important;
+}
+
+/* Links in table cells */
+body .additional-info table td a,
+body .module table.table td a,
+body table.table-striped td a {
+  color: #0069B4 !important;
+  text-decoration: none !important;
+}
+
+body .additional-info table td a:hover,
+body .module table.table td a:hover,
+body table.table-striped td a:hover {
+  text-decoration: underline !important;
+}
+
+/* Show more buttons */
+body .show-more-btn,
+body .module-footer a,
+body a.read-more {
+  display: inline-block !important;
+  padding: 8px 16px !important;
+  font-size: 13px !important;
+  color: #0069B4 !important;
+  background-color: #f0f7fc !important;
+  border: 1px solid #0069B4 !important;
+  border-radius: 4px !important;
+  text-decoration: none !important;
+  margin-top: 10px !important;
+  cursor: pointer !important;
+}
+
+body .show-more-btn:hover,
+body .module-footer a:hover,
+body a.read-more:hover {
+  background-color: #0069B4 !important;
+  color: white !important;
+}
+
+/* Download button section */
+body .btn-download,
+body a.btn[download],
+body .resource-url-analytics {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+/* Cite this as section */
+body .cite-this,
+body .citation-section {
+  background: #f8f9fa !important;
+  border: 1px solid #e9ecef !important;
+  border-radius: 8px !important;
+  padding: 15px !important;
+  margin: 20px 0 !important;
+}
