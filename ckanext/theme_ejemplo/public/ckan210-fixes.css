@@ -2728,3 +2728,69 @@ html body .resource-list li.resource-item * {
 .doi-citation-section .citation-export .btn-group.open {
   z-index: 1001 !important;
 }
+
+/* ===== DATASET SIDEBAR THEME ICONS ===== */
+
+/* Theme icons in dataset sidebar */
+.dataset_org_info .info_image {
+  display: inline-block !important;
+  max-height: 24px !important;
+  max-width: 24px !important;
+  width: 24px !important;
+  height: 24px !important;
+  margin-right: 10px !important;
+  vertical-align: middle !important;
+  object-fit: contain !important;
+  filter: none !important;
+  opacity: 1 !important;
+}
+
+.dataset_org_info .info_item {
+  display: flex !important;
+  align-items: center !important;
+  padding: 8px 12px !important;
+  margin-bottom: 0 !important;
+  border-bottom: 1px solid #f0f0f0 !important;
+  transition: background-color 0.15s ease !important;
+}
+
+.dataset_org_info .info_item:last-child {
+  border-bottom: none !important;
+}
+
+.dataset_org_info .info_item:hover {
+  background-color: #f6f8fa !important;
+}
+
+.dataset_org_info .info_text {
+  flex: 1 !important;
+  color: #24292f !important;
+  font-size: 14px !important;
+  font-weight: 500 !important;
+  text-decoration: none !important;
+  transition: color 0.15s ease !important;
+}
+
+.dataset_org_info .info_item:hover .info_text {
+  color: #0969da !important;
+}
+
+.dataset_org_info .scrollable-list {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.dataset_org_info .module.context-info {
+  background: #ffffff !important;
+  border: 1px solid #d0d7de !important;
+  border-radius: 8px !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+
+/* Ensure nav-simple has no extra padding */
+.dataset_org_info .nav-simple {
+  padding: 0 !important;
+  margin: 0 !important;
+}
