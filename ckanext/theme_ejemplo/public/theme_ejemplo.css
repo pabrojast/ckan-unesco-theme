@@ -4546,9 +4546,10 @@ ul.resource-list li.resource-item:hover,
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
-  min-width: 50px !important;
-  max-width: 60px !important;
-  padding: 4px 8px !important;
+  min-width: 45px !important;
+  width: 45px !important;
+  height: 45px !important;
+  padding: 0 !important;
   font-size: 10px !important;
   font-weight: 600 !important;
   text-transform: uppercase !important;
@@ -4556,21 +4557,20 @@ ul.resource-list li.resource-item:hover,
   color: white !important;
   text-decoration: none !important;
   position: relative !important;
-  overflow: hidden !important;
-  /* CRITICAL: Reset negative margins that cause overlay */
+  overflow: visible !important;
   margin: 0 !important;
   transform: none !important;
+  background: transparent !important;
 }
 
 /* Image inside format-label - control size */
 .resource-item .resource-title-row .format-label img,
 .resource-item .format-label img {
-  max-width: 40px !important;
-  max-height: 40px !important;
-  width: auto !important;
+  max-width: 45px !important;
+  max-height: 45px !important;
+  width: 45px !important;
   height: auto !important;
   display: block !important;
-  /* Reset any transforms or margins */
   transform: none !important;
   margin: 0 !important;
 }
