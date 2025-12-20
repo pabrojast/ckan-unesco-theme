@@ -4506,7 +4506,7 @@ ul.resource-list,
   margin: 0 !important;
 }
 
-/* Resource item - 2 column grid: content | button */
+/* Resource item - 3 column grid: icon | content | button */
 ul.resource-list li.resource-item,
 .resource-list .resource-item {
   background: #fff !important;
@@ -4515,9 +4515,9 @@ ul.resource-list li.resource-item,
   margin-bottom: 10px !important;
   padding: 15px 20px !important;
   display: grid !important;
-  grid-template-columns: 1fr auto !important;
+  grid-template-columns: auto 1fr auto !important;
   grid-template-rows: auto auto !important;
-  gap: 5px 15px !important;
+  gap: 2px 15px !important;
   align-items: start !important;
   transition: box-shadow 0.2s ease, border-color 0.2s ease !important;
 }
@@ -4662,10 +4662,10 @@ ul.resource-list li.resource-item:hover,
   display: none !important;
 }
 
-/* Description - Column 1, Row 2 */
+/* Description - Column 2, Row 2 */
 .resource-item p.description,
 .resource-item .description {
-  grid-column: 1 !important;
+  grid-column: 2 !important;
   grid-row: 2 !important;
   margin: 0 !important;
   font-size: 13px !important;
@@ -4674,10 +4674,10 @@ ul.resource-list li.resource-item:hover,
   text-align: left !important;
 }
 
-/* Button group - Column 2, spans both rows */
+/* Button group - Column 3, spans both rows */
 .resource-item .btn-group,
 .resource-item .dropdown.btn-group {
-  grid-column: 2 !important;
+  grid-column: 3 !important;
   grid-row: 1 / 3 !important;
   align-self: center !important;
   justify-self: end !important;
