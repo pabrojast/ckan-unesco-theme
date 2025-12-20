@@ -6,7 +6,9 @@
       "WebFetch(domain:data.dev-wins.com)",
       "Bash(git show:*)",
       "Read(//c/**)",
-      "Bash(git checkout:*)"
+      "Bash(git checkout:*)",
+      "Bash(dir:*)",
+      "Bash(findstr:*)"
     ],
     "deny": [],
     "ask": []
