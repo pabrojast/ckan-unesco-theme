@@ -2220,10 +2220,9 @@ span.format-label[data-format="css"] {
 }
 
 /* Metadata download dropdown menu - specific to metadata section */
-.download-links .metadata-download .dropdown-menu,
-.module-content .metadata-download .dropdown-menu,
-.additional-info .metadata-download .dropdown-menu {
-  min-width: 240px !important;
+.download-links .btn-group .dropdown-menu,
+.additional-info .download-links .btn-group .dropdown-menu {
+  min-width: 280px !important;
   max-height: 400px !important;
   overflow-y: auto !important;
   padding: 8px 0 !important;
@@ -2231,50 +2230,41 @@ span.format-label[data-format="css"] {
   border: 1px solid #d0d7de !important;
   border-radius: 8px !important;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.08) !important;
-  z-index: 1000 !important;
+  z-index: 2000 !important;
+  margin-top: 2px !important;
 }
 
 /* Metadata dropdown items */
-.download-links .metadata-download .dropdown-menu li,
-.module-content .metadata-download .dropdown-menu li,
-.additional-info .metadata-download .dropdown-menu li {
+.download-links .btn-group .dropdown-menu li {
   list-style: none !important;
   margin: 0 !important;
   padding: 0 !important;
 }
 
-.download-links .metadata-download .dropdown-menu li a,
-.module-content .metadata-download .dropdown-menu li a,
-.additional-info .metadata-download .dropdown-menu li a {
+.download-links .btn-group .dropdown-menu li a {
   display: flex !important;
   align-items: center !important;
   gap: 10px !important;
   padding: 10px 14px !important;
   font-size: 13px !important;
-  font-weight: 500 !important;
+  font-weight: 400 !important;
   color: #24292f !important;
   text-decoration: none !important;
   transition: all 0.15s ease !important;
   white-space: nowrap !important;
 }
 
-.download-links .metadata-download .dropdown-menu li a:hover,
-.module-content .metadata-download .dropdown-menu li a:hover,
-.additional-info .metadata-download .dropdown-menu li a:hover {
+.download-links .btn-group .dropdown-menu li a:hover {
   background-color: #f6f8fa !important;
   color: #0969da !important;
 }
 
-.download-links .metadata-download .dropdown-menu li a:active,
-.module-content .metadata-download .dropdown-menu li a:active,
-.additional-info .metadata-download .dropdown-menu li a:active {
+.download-links .btn-group .dropdown-menu li a:active {
   background-color: #e1e4e8 !important;
 }
 
 /* Icons in metadata dropdown */
-.download-links .metadata-download .dropdown-menu li a i,
-.module-content .metadata-download .dropdown-menu li a i,
-.additional-info .metadata-download .dropdown-menu li a i {
+.download-links .btn-group .dropdown-menu li a i {
   font-size: 14px !important;
   width: 18px !important;
   text-align: center !important;
@@ -2282,51 +2272,71 @@ span.format-label[data-format="css"] {
   color: #656d76 !important;
 }
 
-.download-links .metadata-download .dropdown-menu li a:hover i,
-.module-content .metadata-download .dropdown-menu li a:hover i,
-.additional-info .metadata-download .dropdown-menu li a:hover i {
+.download-links .btn-group .dropdown-menu li a:hover i {
   color: #0969da !important;
 }
 
-/* Metadata format text styling - remove harsh colors */
-.metadata-download .dropdown-menu li a strong {
+/* Metadata format text styling - subtle and professional */
+.download-links .btn-group .dropdown-menu li a strong {
   font-weight: 600 !important;
+  color: #57606a !important;
+}
+
+.download-links .btn-group .dropdown-menu li a:hover strong {
+  color: #0969da !important;
+}
+
+.download-links .btn-group .dropdown-menu li a span.metadata-download_info_label {
   color: #24292f !important;
+  font-size: 13px !important;
 }
 
-/* Specific metadata format colors - subtle and professional */
-.metadata-download .dropdown-menu li a[href*="inspire"] strong,
-.metadata-download .dropdown-menu li a[href*="INSPIRE"] strong {
-  color: #0969da !important;
+/* Download button styling - match the professional design */
+.download-links .btn-group .btn-primary {
+  padding: 8px 16px !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  background: linear-gradient(180deg, #0074cc 0%, #0069B4 100%) !important;
+  border: 1px solid #0069B4 !important;
+  color: white !important;
+  transition: all 0.2s ease !important;
+  white-space: nowrap !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 1px 3px rgba(0, 105, 180, 0.15) !important;
 }
 
-.metadata-download .dropdown-menu li a[href*="dcat"] strong,
-.metadata-download .dropdown-menu li a[href*="DCAT"] strong {
-  color: #0969da !important;
+.download-links .btn-group .btn-primary:hover {
+  background: linear-gradient(180deg, #0069B4 0%, #005a9e 100%) !important;
+  box-shadow: 0 2px 6px rgba(0, 105, 180, 0.25) !important;
+  transform: translateY(-1px) !important;
 }
 
-.metadata-download .dropdown-menu li a[href*="json"] strong,
-.metadata-download .dropdown-menu li a[href*="JSON"] strong {
-  color: #8250df !important;
+.download-links .btn-group .btn-primary:active {
+  background: #005a9e !important;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15) !important;
+  transform: translateY(0) !important;
 }
 
-.metadata-download .dropdown-menu li a[href*="xml"] strong,
-.metadata-download .dropdown-menu li a[href*="XML"] strong {
-  color: #cf222e !important;
+.download-links .btn-group .btn-primary i {
+  margin-right: 6px !important;
 }
 
-.metadata-download .dropdown-menu li a[href*="rdf"] strong,
-.metadata-download .dropdown-menu li a[href*="RDF"] strong {
-  color: #1a7f37 !important;
+.download-links .btn-group .dropdown-toggle {
+  padding-left: 10px !important;
+  padding-right: 10px !important;
+  border-left: 1px solid rgba(255, 255, 255, 0.2) !important;
 }
 
-.metadata-download .dropdown-menu li a[href*="turtle"] strong,
-.metadata-download .dropdown-menu li a[href*="Turtle"] strong {
-  color: #1a7f37 !important;
+.download-links .btn-group .dropdown-toggle .caret {
+  transition: transform 0.2s ease !important;
+}
+
+.download-links .btn-group.open .dropdown-toggle .caret {
+  transform: rotate(180deg) !important;
 }
 
 /* Dropdown header/divider - specific to metadata */
-.metadata-download .dropdown-menu .dropdown-header {
+.download-links .btn-group .dropdown-menu .dropdown-header {
   padding: 8px 14px 6px !important;
   font-size: 11px !important;
   font-weight: 600 !important;
@@ -2335,10 +2345,16 @@ span.format-label[data-format="css"] {
   letter-spacing: 0.5px !important;
   border-bottom: 1px solid #d0d7de !important;
   margin-bottom: 4px !important;
+  background: transparent !important;
 }
 
-.metadata-download .dropdown-menu .divider,
-.metadata-download .dropdown-menu hr {
+.download-links .btn-group .dropdown-menu .dropdown-header i {
+  margin-right: 6px !important;
+  color: #656d76 !important;
+}
+
+.download-links .btn-group .dropdown-menu .divider,
+.download-links .btn-group .dropdown-menu hr {
   height: 1px !important;
   margin: 6px 0 !important;
   background-color: #d0d7de !important;
@@ -2346,21 +2362,21 @@ span.format-label[data-format="css"] {
 }
 
 /* Scrollbar styling for long dropdown */
-.metadata-download .dropdown-menu::-webkit-scrollbar {
+.download-links .btn-group .dropdown-menu::-webkit-scrollbar {
   width: 8px !important;
 }
 
-.metadata-download .dropdown-menu::-webkit-scrollbar-track {
+.download-links .btn-group .dropdown-menu::-webkit-scrollbar-track {
   background: #f6f8fa !important;
   border-radius: 0 8px 8px 0 !important;
 }
 
-.metadata-download .dropdown-menu::-webkit-scrollbar-thumb {
+.download-links .btn-group .dropdown-menu::-webkit-scrollbar-thumb {
   background: #d0d7de !important;
   border-radius: 4px !important;
 }
 
-.metadata-download .dropdown-menu::-webkit-scrollbar-thumb:hover {
+.download-links .btn-group .dropdown-menu::-webkit-scrollbar-thumb:hover {
   background: #afb8c1 !important;
 }
 
@@ -2391,4 +2407,27 @@ html body .resource-list {
 body .resource-list li.resource-item *,
 html body .resource-list li.resource-item * {
   box-sizing: border-box !important;
+}
+
+/* ===== METADATA SECTION HEADER STYLING ===== */
+
+/* Fix metadata header to integrate properly with the blue bar design */
+.additional-info header h2.inline {
+  background: transparent !important;
+  color: white !important;
+  font-size: 18px !important;
+  font-weight: 600 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+}
+
+/* Ensure the header container has no conflicting styles */
+.additional-info header {
+  background: transparent !important;
+  border: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
 }
