@@ -353,6 +353,9 @@ border-bottom: none;
     border: 1px solid #d5dadd !important;
     color: #212529 !important;
     border-radius: 3px 0 0 3px !important;
+    padding: 12px 15px !important;
+    font-size: 16px !important;
+    line-height: 1.5 !important;
 }
 
 /* Search input placeholder */
@@ -360,12 +363,12 @@ border-bottom: none;
     color: #8a8a8a !important;
 }
 
-/* Search button */
+/* Search button - aligned perfectly with input */
 .homepage .module-search .search-input button {
     position: relative !important;
-    width: 50px !important;
-    height: auto !important;
-    min-width: 50px !important;
+    width: 60px !important;
+    min-width: 60px !important;
+    align-self: stretch !important;
     background-color: #0069B4 !important;
     background-color: var(--unesco-blue) !important;
     border: 1px solid #0069B4 !important;
@@ -379,6 +382,7 @@ border-bottom: none;
     align-items: center !important;
     justify-content: center !important;
     z-index: 10 !important;
+    transition: background-color 0.2s ease !important;
 }
 
 .homepage .module-search .search-input button i,
