@@ -1191,7 +1191,7 @@ html body .resource-list {
   margin: 20px 0 !important;
 }
 
-/* Individual resource item - CSS Grid with proper structure */
+/* Individual resource item - 2 column grid: content | button */
 body ul.resource-list li.resource-item,
 body .resource-list .resource-item,
 body li.resource-item,
@@ -1199,7 +1199,7 @@ html body ul.resource-list li.resource-item,
 html body .resource-list .resource-item,
 html body li.resource-item {
   display: grid !important;
-  grid-template-columns: auto 1fr auto !important;
+  grid-template-columns: 1fr auto !important;
   grid-template-rows: auto auto !important;
   gap: 5px 15px !important;
   align-items: start !important;
@@ -1220,20 +1220,29 @@ html body .resource-list .resource-item:hover {
   border-color: #c0c0c0 !important;
 }
 
-/* Format icon - Column 1, spans both rows */
-body .resource-item .format-label,
-body .resource-item > .format-label,
-body li.resource-item .format-label,
-html body .resource-item .format-label,
-.resource-item .format-label {
+/* Resource title row (contains format-label + heading) - Column 1, Row 1 */
+body .resource-item .resource-title-row,
+html body .resource-item .resource-title-row,
+.resource-item .resource-title-row {
   grid-column: 1 !important;
-  grid-row: 1 / 3 !important;
-  align-self: center !important;
+  grid-row: 1 !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 10px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Format label inside resource-title-row */
+body .resource-item .resource-title-row .format-label,
+html body .resource-item .resource-title-row .format-label,
+.resource-item .resource-title-row .format-label {
+  flex: 0 0 auto !important;
   display: inline-flex !important;
   align-items: center !important;
   justify-content: center !important;
   min-width: 50px !important;
-  max-width: 60px !important;
   padding: 4px 8px !important;
   font-size: 10px !important;
   font-weight: 600 !important;
@@ -1243,16 +1252,12 @@ html body .resource-item .format-label,
   text-decoration: none !important;
 }
 
-/* Resource heading/title - Column 2, Row 1 */
-body .resource-item > a.heading,
-body .resource-item a.heading,
-body li.resource-item > a.heading,
-html body .resource-item > a.heading,
-html body li.resource-item > a.heading,
-.resource-item > a.heading,
-.resource-item a.heading {
-  grid-column: 2 !important;
-  grid-row: 1 !important;
+/* Heading link inside resource-title-row */
+body .resource-item .resource-title-row .heading,
+body .resource-item .resource-title-row a.heading,
+html body .resource-item .resource-title-row .heading,
+.resource-item .resource-title-row .heading {
+  flex: 1 1 auto !important;
   display: block !important;
   font-size: 15px !important;
   font-weight: 600 !important;
@@ -1263,20 +1268,13 @@ html body li.resource-item > a.heading,
   text-align: left !important;
 }
 
-body .resource-item > a.heading:hover,
-body li.resource-item > a.heading:hover,
-html body .resource-item > a.heading:hover {
+body .resource-item .resource-title-row .heading:hover,
+.resource-item .resource-title-row .heading:hover {
   text-decoration: underline !important;
   color: #005090 !important;
 }
 
-/* Hide format label inside heading - we show it separately in column 1 */
-body .resource-item a.heading .format-label,
-.resource-item a.heading .format-label {
-  display: none !important;
-}
-
-/* Description - Column 2, Row 2 */
+/* Description - Column 1, Row 2 */
 body .resource-item p.description,
 body .resource-item .description,
 body li.resource-item p.description,
@@ -1284,7 +1282,7 @@ html body .resource-item p.description,
 html body .resource-item .description,
 .resource-item p.description,
 .resource-item .description {
-  grid-column: 2 !important;
+  grid-column: 1 !important;
   grid-row: 2 !important;
   margin: 0 !important;
   padding: 0 !important;
@@ -1294,7 +1292,7 @@ html body .resource-item .description,
   text-align: left !important;
 }
 
-/* Button group - Column 3, spans both rows - CRITICAL: position relative */
+/* Button group - Column 2, spans both rows - CRITICAL: position relative */
 body .resource-item .btn-group,
 body .resource-item .dropdown.btn-group,
 body li.resource-item .btn-group,
@@ -1303,7 +1301,7 @@ html body .resource-item .btn-group,
 html body .resource-item .dropdown.btn-group,
 .resource-item .btn-group,
 .resource-item .dropdown.btn-group {
-  grid-column: 3 !important;
+  grid-column: 2 !important;
   grid-row: 1 / 3 !important;
   align-self: center !important;
   justify-self: end !important;
@@ -1345,6 +1343,16 @@ html body .resource-item .btn-group .dropdown-toggle {
   border-radius: 0 4px 4px 0 !important;
   padding: 8px 10px !important;
 }
+
+/* Fallback: Format label as direct child (older CKAN structure) */
+body .resource-item > .format-label,
+html body .resource-item > .format-label,
+.resource-item > .format-label {
+  grid-column: 1 !important;
+  grid-row: 1 !important;
+  display: none !important;
+}
+
 
 
 /* ===== DATASET PAGE - ADDITIONAL INFO SECTIONS FIX ===== */
@@ -1532,187 +1540,6 @@ body .resource-item .dropdown-menu li a i,
   text-align: center !important;
 }
 
-/* ===== RESOURCE TITLE ROW - BADGE POSITION FIX ===== */
-
-/* Container for title and badge */
-body .resource-item .resource-title-row,
-.resource-item .resource-title-row {
-  display: flex !important;
-  align-items: center !important;
-  gap: 10px !important;
-  grid-column: 1 !important;
-  grid-row: 1 !important;
-  margin-bottom: 5px !important;
-}
-
-/* Format badge - appears BEFORE title */
-body .resource-item .resource-title-row .format-label,
-.resource-item .resource-title-row .format-label {
-  display: inline-block !important;
-  padding: 3px 8px !important;
-  font-size: 10px !important;
-  font-weight: 600 !important;
-  text-transform: uppercase !important;
-  border-radius: 3px !important;
-  color: white !important;
-  text-decoration: none !important;
-  flex-shrink: 0 !important;
-  order: -1 !important;
-}
-
-/* Title link - comes after badge */
-body .resource-item .resource-title-row .heading,
-.resource-item .resource-title-row .heading {
-  display: inline !important;
-  font-size: 15px !important;
-  font-weight: 600 !important;
-  color: #0069B4 !important;
-  text-decoration: none !important;
-  line-height: 1.4 !important;
-  flex: 1 !important;
-}
-
-body .resource-item .resource-title-row .heading:hover,
-.resource-item .resource-title-row .heading:hover {
-  text-decoration: underline !important;
-  color: #005090 !important;
-}
-
-/* ===== RESOURCE LIST ITEM FIX - FORMAT ICON OVERLAY FIX ===== */
-/* Critical fix for format icons overlapping title text */
-
-/* Resource item - use 3-column grid: format-icon | title+desc | button */
-html body ul.resource-list li.resource-item,
-html body .resource-list .resource-item,
-html body li.resource-item,
-body ul.resource-list li.resource-item,
-body .resource-list .resource-item,
-body li.resource-item {
-  display: grid !important;
-  grid-template-columns: auto 1fr auto !important;
-  grid-template-rows: auto auto !important;
-  gap: 8px 15px !important;
-  align-items: start !important;
-  background: #fff !important;
-  border: 1px solid #e0e0e0 !important;
-  border-radius: 8px !important;
-  margin-bottom: 12px !important;
-  padding: 16px 20px !important;
-  transition: all 0.2s ease !important;
-  position: relative !important;
-}
-
-/* Format label/icon - FIRST COLUMN, spans both rows */
-html body .resource-item .format-label,
-html body .resource-item > .format-label,
-html body li.resource-item .format-label,
-body .resource-item .format-label,
-body .resource-item > .format-label,
-body li.resource-item .format-label,
-.resource-item .format-label {
-  grid-column: 1 !important;
-  grid-row: 1 / 3 !important;
-  align-self: center !important;
-  display: inline-flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-  min-width: 50px !important;
-  max-width: 60px !important;
-  padding: 4px 8px !important;
-  font-size: 10px !important;
-  font-weight: 600 !important;
-  text-transform: uppercase !important;
-  border-radius: 4px !important;
-  color: white !important;
-  text-decoration: none !important;
-  position: relative !important;
-  z-index: 1 !important;
-  margin: 0 !important;
-}
-
-/* Format icon image inside resource item - ensure no overlap */
-html body .resource-item img.format-icon,
-html body .resource-item .format-label img,
-html body li.resource-item img.format-icon,
-body .resource-item img.format-icon,
-body .resource-item .format-label img,
-body li.resource-item img.format-icon,
-.resource-item img.format-icon {
-  max-width: 40px !important;
-  max-height: 40px !important;
-  width: auto !important;
-  height: auto !important;
-  display: block !important;
-  position: relative !important;
-  z-index: 1 !important;
-}
-
-/* Resource heading/title - SECOND COLUMN, first row */
-html body .resource-item > a.heading,
-html body .resource-item a.heading,
-html body li.resource-item > a.heading,
-body .resource-item > a.heading,
-body .resource-item a.heading,
-body li.resource-item > a.heading,
-.resource-item > a.heading,
-.resource-item a.heading {
-  grid-column: 2 !important;
-  grid-row: 1 !important;
-  display: block !important;
-  font-size: 15px !important;
-  font-weight: 600 !important;
-  color: #0069B4 !important;
-  text-decoration: none !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  line-height: 1.4 !important;
-  text-align: left !important;
-}
-
-/* Remove format-label from inside heading since it's now in its own column */
-html body .resource-item a.heading .format-label,
-body .resource-item a.heading .format-label,
-.resource-item a.heading .format-label {
-  display: none !important;
-}
-
-/* Description - SECOND COLUMN, second row */
-html body .resource-item p.description,
-html body .resource-item .description,
-html body li.resource-item p.description,
-body .resource-item p.description,
-body .resource-item .description,
-body li.resource-item p.description,
-.resource-item p.description,
-.resource-item .description {
-  grid-column: 2 !important;
-  grid-row: 2 !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  font-size: 13px !important;
-  color: #666 !important;
-  line-height: 1.5 !important;
-  text-align: left !important;
-}
-
-/* Button group - THIRD COLUMN, spans both rows */
-html body .resource-item .btn-group,
-html body .resource-item .dropdown.btn-group,
-html body li.resource-item .btn-group,
-body .resource-item .btn-group,
-body .resource-item .dropdown.btn-group,
-body li.resource-item .btn-group,
-.resource-item .btn-group,
-.resource-item .dropdown.btn-group {
-  grid-column: 3 !important;
-  grid-row: 1 / 3 !important;
-  align-self: center !important;
-  justify-self: end !important;
-  display: inline-flex !important;
-  flex-direction: row !important;
-  flex-wrap: nowrap !important;
-  gap: 0 !important;
-}
 
 /* ===== DOWNLOAD LINKS BAR FIX - HORIZONTAL LAYOUT ===== */
 /* Fix for download bar elements being stacked vertically */
