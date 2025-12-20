@@ -2189,6 +2189,181 @@ span.format-label[data-format="css"] {
   color: #ffffff !important;
 }
 
+/* ===== METADATA DOWNLOAD DROPDOWN FIXES ===== */
+/* Fix for metadata format dropdown menu styling */
+
+/* Metadata badges (INSPIRE, DCAT-AP) - clean styling */
+.metadata-label {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  padding: 6px 12px !important;
+  margin-right: 8px !important;
+  font-size: 13px !important;
+  font-weight: 600 !important;
+  color: #24292f !important;
+  background-color: #f6f8fa !important;
+  border: 1px solid #d0d7de !important;
+  border-radius: 6px !important;
+  transition: all 0.2s ease !important;
+  white-space: nowrap !important;
+}
+
+.metadata-label:hover {
+  background-color: #eaeef2 !important;
+  border-color: #afb8c1 !important;
+}
+
+.metadata-label > i {
+  font-size: 14px !important;
+  color: #1a7f37 !important;
+}
+
+/* Metadata download dropdown menu - specific to metadata section */
+.download-links .metadata-download .dropdown-menu,
+.module-content .metadata-download .dropdown-menu,
+.additional-info .metadata-download .dropdown-menu {
+  min-width: 240px !important;
+  max-height: 400px !important;
+  overflow-y: auto !important;
+  padding: 8px 0 !important;
+  background: #ffffff !important;
+  border: 1px solid #d0d7de !important;
+  border-radius: 8px !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.08) !important;
+  z-index: 1000 !important;
+}
+
+/* Metadata dropdown items */
+.download-links .metadata-download .dropdown-menu li,
+.module-content .metadata-download .dropdown-menu li,
+.additional-info .metadata-download .dropdown-menu li {
+  list-style: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.download-links .metadata-download .dropdown-menu li a,
+.module-content .metadata-download .dropdown-menu li a,
+.additional-info .metadata-download .dropdown-menu li a {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  padding: 10px 14px !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  color: #24292f !important;
+  text-decoration: none !important;
+  transition: all 0.15s ease !important;
+  white-space: nowrap !important;
+}
+
+.download-links .metadata-download .dropdown-menu li a:hover,
+.module-content .metadata-download .dropdown-menu li a:hover,
+.additional-info .metadata-download .dropdown-menu li a:hover {
+  background-color: #f6f8fa !important;
+  color: #0969da !important;
+}
+
+.download-links .metadata-download .dropdown-menu li a:active,
+.module-content .metadata-download .dropdown-menu li a:active,
+.additional-info .metadata-download .dropdown-menu li a:active {
+  background-color: #e1e4e8 !important;
+}
+
+/* Icons in metadata dropdown */
+.download-links .metadata-download .dropdown-menu li a i,
+.module-content .metadata-download .dropdown-menu li a i,
+.additional-info .metadata-download .dropdown-menu li a i {
+  font-size: 14px !important;
+  width: 18px !important;
+  text-align: center !important;
+  flex-shrink: 0 !important;
+  color: #656d76 !important;
+}
+
+.download-links .metadata-download .dropdown-menu li a:hover i,
+.module-content .metadata-download .dropdown-menu li a:hover i,
+.additional-info .metadata-download .dropdown-menu li a:hover i {
+  color: #0969da !important;
+}
+
+/* Metadata format text styling - remove harsh colors */
+.metadata-download .dropdown-menu li a strong {
+  font-weight: 600 !important;
+  color: #24292f !important;
+}
+
+/* Specific metadata format colors - subtle and professional */
+.metadata-download .dropdown-menu li a[href*="inspire"] strong,
+.metadata-download .dropdown-menu li a[href*="INSPIRE"] strong {
+  color: #0969da !important;
+}
+
+.metadata-download .dropdown-menu li a[href*="dcat"] strong,
+.metadata-download .dropdown-menu li a[href*="DCAT"] strong {
+  color: #0969da !important;
+}
+
+.metadata-download .dropdown-menu li a[href*="json"] strong,
+.metadata-download .dropdown-menu li a[href*="JSON"] strong {
+  color: #8250df !important;
+}
+
+.metadata-download .dropdown-menu li a[href*="xml"] strong,
+.metadata-download .dropdown-menu li a[href*="XML"] strong {
+  color: #cf222e !important;
+}
+
+.metadata-download .dropdown-menu li a[href*="rdf"] strong,
+.metadata-download .dropdown-menu li a[href*="RDF"] strong {
+  color: #1a7f37 !important;
+}
+
+.metadata-download .dropdown-menu li a[href*="turtle"] strong,
+.metadata-download .dropdown-menu li a[href*="Turtle"] strong {
+  color: #1a7f37 !important;
+}
+
+/* Dropdown header/divider - specific to metadata */
+.metadata-download .dropdown-menu .dropdown-header {
+  padding: 8px 14px 6px !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  color: #656d76 !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+  border-bottom: 1px solid #d0d7de !important;
+  margin-bottom: 4px !important;
+}
+
+.metadata-download .dropdown-menu .divider,
+.metadata-download .dropdown-menu hr {
+  height: 1px !important;
+  margin: 6px 0 !important;
+  background-color: #d0d7de !important;
+  border: none !important;
+}
+
+/* Scrollbar styling for long dropdown */
+.metadata-download .dropdown-menu::-webkit-scrollbar {
+  width: 8px !important;
+}
+
+.metadata-download .dropdown-menu::-webkit-scrollbar-track {
+  background: #f6f8fa !important;
+  border-radius: 0 8px 8px 0 !important;
+}
+
+.metadata-download .dropdown-menu::-webkit-scrollbar-thumb {
+  background: #d0d7de !important;
+  border-radius: 4px !important;
+}
+
+.metadata-download .dropdown-menu::-webkit-scrollbar-thumb:hover {
+  background: #afb8c1 !important;
+}
+
 /* ===== FINAL OVERRIDES FOR CLEAN LAYOUT ===== */
 
 /* Ensure all resource items maintain consistent spacing */
