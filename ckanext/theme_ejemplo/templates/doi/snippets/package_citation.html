@@ -1,0 +1,280 @@
+{#
+Enhanced citation template with professional styling
+#}
+
+{% block citation %}
+<section class="additional-info doi-citation-section">
+    <h3>{{ _('Cite this as') }}</h3>
+
+    <div class="citation-container">
+        {# --- DOI Information Bar --- #}
+        {% if pkg_dict.get('doi') or pkg_dict.get('custom_doi') %}
+        <div class="doi-bar">
+            <div class="doi-label">
+                <i class="fa fa-link"></i>
+                <strong>DOI:</strong>
+            </div>
+            <div class="doi-content">
+                {% if pkg_dict.get('custom_doi') %}
+                    {% set doi_link = pkg_dict['custom_doi'] %}
+                    {% set doi_display = pkg_dict['custom_doi'].replace('https://doi.org/', '').replace('http://doi.org/', '') %}
+                {% elif pkg_dict.get('doi') %}
+                    {% set doi_link = 'https://doi.org/' + pkg_dict['doi'] %}
+                    {% set doi_display = pkg_dict['doi'] %}
+                {% endif %}
+
+                <a href="{{ doi_link }}" target="_blank" class="doi-link">
+                    {{ doi_display }}
+                </a>
+
+                <button class="btn btn-sm btn-default copy-doi-btn" data-doi="{{ doi_display }}" title="{{ _('Copy DOI to clipboard') }}">
+                    <i class="fa fa-copy"></i>
+                </button>
+            </div>
+
+            {% if not pkg_dict.get('doi_status', True) %}
+            <div class="doi-status">
+                <span class="label label-warning">
+                    <i class="fa fa-clock-o"></i> {{ _('Pending') }}
+                </span>
+            </div>
+            {% endif %}
+        </div>
+        {% endif %}
+
+        {# --- Citation Text --- #}
+        <div class="citation-text">
+            <div id="citation-string" class="citation-string">
+                {# --- 1) Custom citation, if available --- #}
+                {% if pkg_dict.get('custom_citation') %}
+                    {{ pkg_dict.get('custom_citation')|safe }}
+
+                {# --- 2) Enhanced citation with authors --- #}
+                {% else %}
+                    {% set authors_data = pkg_dict.get('authors') %}
+                    {% set legacy_author = pkg_dict.get('author') %}
+
+                    {# Parse enhanced authors if available #}
+                    {% if authors_data %}
+                        {% set authors = h.parse_json_authors(authors_data) %}
+
+                        {# Display enhanced authors with ORCID and affiliations #}
+                        {% for author in authors %}
+                            {% if loop.index > 1 %}, {% endif %}
+                            <span class="author-name">{{ author.name }}</span>
+                            {% if author.orcid %}
+                                <a href="https://orcid.org/{{ author.orcid }}" target="_blank" class="orcid-link" title="ORCID: {{ author.orcid }}">
+                                    <img src="/orcid.svg" alt="ORCID iD" class="orcid-icon">
+                                </a>
+                            {% endif %}
+                            {% if author.affiliation %}
+                                <span class="author-affiliation"> ({{ author.affiliation }})</span>
+                            {% endif %}
+                        {% endfor %}
+
+                    {# Fallback to legacy author field #}
+                    {% elif legacy_author %}
+                        <span class="author-name">{{ legacy_author }}</span>
+                    {% endif %}
+
+                    {% if (authors_data or legacy_author) and pkg_dict.get('title') %}
+                        ({{ h.package_get_year(pkg_dict) }}).
+                        <i>{{ pkg_dict.get('title') }}</i> [Data set].
+                        {{ pkg_dict.get('doi_publisher', '') }}
+                        {% if pkg_dict['doi_status'] %}.{% endif %}
+                    {% else %}
+                        <em>{{ _('Citation information not available') }}</em>
+                    {% endif %}
+                {% endif %}
+            </div>
+        </div>
+
+        {# --- Citation Export Dropdown (Opens Downward) --- #}
+        <div class="citation-export">
+            <div class="btn-group">
+                <button type="button" class="btn btn-primary dropdown-toggle" data-toggle="dropdown" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <i class="fa fa-download"></i> {{ _('Export Citation') }} <span class="caret"></span>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a href="#" class="export-citation" data-format="bibtex"><i class="fa fa-file-text-o"></i> BibTeX</a></li>
+                    <li><a href="#" class="export-citation" data-format="ris"><i class="fa fa-file-text-o"></i> RIS</a></li>
+                    <li><a href="#" class="export-citation" data-format="endnote"><i class="fa fa-file-text-o"></i> EndNote</a></li>
+                    <li><a href="#" class="export-citation" data-format="apa"><i class="fa fa-file-text-o"></i> APA</a></li>
+                    <li role="separator" class="divider"></li>
+                    <li><a href="#" class="copy-citation"><i class="fa fa-copy"></i> {{ _('Copy to Clipboard') }}</a></li>
+                </ul>
+            </div>
+        </div>
+
+        {# --- DOI Status Information --- #}
+        {% if pkg_dict.get('doi') and not pkg_dict.get('doi_status', True) %}
+        <div class="doi-status-info">
+            <div class="alert alert-info">
+                <i class="fa fa-info-circle"></i>
+                <strong>{{ _('DOI Status:') }}</strong>
+                {{ _('This DOI is not yet resolvable. It will be published when the dataset is made public or updated.') }}
+            </div>
+        </div>
+        {% endif %}
+
+        {# --- Publication Details --- #}
+        {% if pkg_dict.get('doi_date_published') %}
+        <div class="publication-details">
+            <small class="text-muted">
+                <i class="fa fa-calendar"></i>
+                {{ _('Published:') }} {{ pkg_dict['doi_date_published'] }}
+                {% if pkg_dict.get('doi_publisher') %}
+                    | {{ _('Publisher:') }} {{ pkg_dict['doi_publisher'] }}
+                {% endif %}
+            </small>
+        </div>
+        {% endif %}
+    </div>
+</section>
+
+{# --- JavaScript for enhanced functionality --- #}
+<script type="text/javascript">
+// Ensure jQuery is loaded before executing
+(function() {
+    'use strict';
+
+    function initializeCitationHandlers() {
+        var $ = window.jQuery;
+        if (!$) {
+            console.error('jQuery is not available');
+            return;
+        }
+
+        // Wait for DOM to be ready
+        $(document).ready(function() {
+
+        // Copy DOI to clipboard
+        $('.copy-doi-btn').on('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            var doi = $(this).data('doi');
+            var btn = $(this);
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(doi).then(function() {
+                    // Show success message
+                    var originalHtml = btn.html();
+                    btn.html('<i class="fa fa-check"></i>').addClass('btn-success');
+                    setTimeout(function() {
+                        btn.html(originalHtml).removeClass('btn-success');
+                    }, 2000);
+                }).catch(function(err) {
+                    console.error('Error copying DOI:', err);
+                    alert('{{ _("Error copying DOI. Please copy manually.") }}');
+                });
+            } else {
+                // Fallback for older browsers
+                var textArea = document.createElement('textarea');
+                textArea.value = doi;
+                textArea.style.position = 'fixed';
+                textArea.style.left = '-999999px';
+                document.body.appendChild(textArea);
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    var originalHtml = btn.html();
+                    btn.html('<i class="fa fa-check"></i>').addClass('btn-success');
+                    setTimeout(function() {
+                        btn.html(originalHtml).removeClass('btn-success');
+                    }, 2000);
+                } catch (err) {
+                    console.error('Error copying DOI:', err);
+                    alert('{{ _("Error copying DOI. Please copy manually.") }}');
+                }
+                document.body.removeChild(textArea);
+            }
+        });
+
+        // Copy citation to clipboard
+        $('.copy-citation').on('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            var citation = $('#citation-string').text().trim();
+
+            if (navigator.clipboard && navigator.clipboard.writeText) {
+                navigator.clipboard.writeText(citation).then(function() {
+                    alert('{{ _("Citation copied to clipboard!") }}');
+                }).catch(function(err) {
+                    console.error('Error copying citation:', err);
+                    alert('{{ _("Error copying citation. Please copy manually.") }}');
+                });
+            } else {
+                // Fallback for older browsers
+                var textArea = document.createElement('textarea');
+                textArea.value = citation;
+                textArea.style.position = 'fixed';
+                textArea.style.left = '-999999px';
+                document.body.appendChild(textArea);
+                textArea.select();
+                try {
+                    document.execCommand('copy');
+                    alert('{{ _("Citation copied to clipboard!") }}');
+                } catch (err) {
+                    console.error('Error copying citation:', err);
+                    alert('{{ _("Error copying citation. Please copy manually.") }}');
+                }
+                document.body.removeChild(textArea);
+            }
+        });
+
+        // Export citation in different formats
+        $('.export-citation').on('click', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+
+            var format = $(this).data('format');
+            var packageId = '{{ pkg_dict.id }}';
+
+            if (!format) {
+                console.error('No format specified for export');
+                return;
+            }
+
+            // Construct the export URL
+            var exportUrl = '/dataset/' + packageId + '/export_citation?format=' + format;
+
+            // Create a temporary link and click it to trigger download
+            var link = document.createElement('a');
+            link.href = exportUrl;
+            link.style.display = 'none';
+            document.body.appendChild(link);
+            link.click();
+
+            // Clean up
+            setTimeout(function() {
+                document.body.removeChild(link);
+            }, 100);
+        });
+        }); // End of $(document).ready
+    } // End of initializeCitationHandlers
+
+    // Wait for jQuery to be available
+    if (window.jQuery) {
+        initializeCitationHandlers();
+    } else {
+        // Check periodically if jQuery is loaded
+        var checkJQuery = setInterval(function() {
+            if (window.jQuery) {
+                clearInterval(checkJQuery);
+                initializeCitationHandlers();
+            }
+        }, 100);
+
+        // Timeout after 10 seconds
+        setTimeout(function() {
+            clearInterval(checkJQuery);
+            if (!window.jQuery) {
+                console.error('jQuery failed to load after 10 seconds');
+            }
+        }, 10000);
+    }
+})();
+</script>
+{% endblock %}

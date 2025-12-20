@@ -2431,3 +2431,300 @@ html body .resource-list li.resource-item * {
   margin: 0 !important;
   padding: 0 !important;
 }
+
+/* ===== DOI CITATION SECTION STYLING ===== */
+
+/* Main citation container */
+.doi-citation-section .citation-container {
+  border: 1px solid #d0d7de !important;
+  border-radius: 8px !important;
+  background-color: #ffffff !important;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+  overflow: hidden !important;
+  margin-top: 16px !important;
+}
+
+/* DOI Bar - Top section with DOI information */
+.doi-citation-section .doi-bar {
+  display: flex !important;
+  align-items: center !important;
+  padding: 14px 16px !important;
+  background-color: #f6f8fa !important;
+  border-bottom: 1px solid #d0d7de !important;
+  gap: 12px !important;
+}
+
+.doi-citation-section .doi-label {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  color: #57606a !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  white-space: nowrap !important;
+}
+
+.doi-citation-section .doi-label i {
+  color: #656d76 !important;
+  font-size: 15px !important;
+}
+
+.doi-citation-section .doi-content {
+  flex: 1 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+.doi-citation-section .doi-link {
+  color: #0969da !important;
+  text-decoration: none !important;
+  font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  transition: color 0.15s ease !important;
+}
+
+.doi-citation-section .doi-link:hover {
+  color: #0550ae !important;
+  text-decoration: underline !important;
+}
+
+.doi-citation-section .copy-doi-btn {
+  padding: 4px 10px !important;
+  font-size: 12px !important;
+  background-color: #ffffff !important;
+  border: 1px solid #d0d7de !important;
+  color: #24292f !important;
+  border-radius: 6px !important;
+  transition: all 0.15s ease !important;
+  cursor: pointer !important;
+}
+
+.doi-citation-section .copy-doi-btn:hover {
+  background-color: #f6f8fa !important;
+  border-color: #1f883d !important;
+  color: #1f883d !important;
+}
+
+.doi-citation-section .copy-doi-btn.btn-success {
+  background-color: #1f883d !important;
+  border-color: #1f883d !important;
+  color: #ffffff !important;
+}
+
+.doi-citation-section .doi-status {
+  margin-left: auto !important;
+}
+
+.doi-citation-section .doi-status .label {
+  padding: 4px 10px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  border-radius: 12px !important;
+}
+
+/* Citation text area */
+.doi-citation-section .citation-text {
+  padding: 18px !important;
+  background-color: #ffffff !important;
+}
+
+.doi-citation-section .citation-string {
+  font-size: 14px !important;
+  line-height: 1.6 !important;
+  color: #24292f !important;
+  margin: 0 !important;
+}
+
+.doi-citation-section .author-name {
+  font-weight: 600 !important;
+  color: #24292f !important;
+}
+
+.doi-citation-section .orcid-link {
+  margin-left: 4px !important;
+  text-decoration: none !important;
+  display: inline-block !important;
+  vertical-align: middle !important;
+}
+
+.doi-citation-section .orcid-link:hover {
+  opacity: 0.8 !important;
+}
+
+.doi-citation-section .orcid-icon {
+  width: 16px !important;
+  height: 16px !important;
+  vertical-align: middle !important;
+  display: inline-block !important;
+}
+
+.doi-citation-section .author-affiliation {
+  color: #656d76 !important;
+  font-size: 13px !important;
+  font-weight: 400 !important;
+}
+
+/* Citation export section */
+.doi-citation-section .citation-export {
+  padding: 0 18px 18px !important;
+  background-color: #ffffff !important;
+}
+
+.doi-citation-section .citation-export .btn-group {
+  position: relative !important;
+  display: inline-block !important;
+}
+
+.doi-citation-section .citation-export .btn-primary {
+  padding: 10px 20px !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  background: linear-gradient(180deg, #0074cc 0%, #0069B4 100%) !important;
+  border: 1px solid #0069B4 !important;
+  color: white !important;
+  transition: all 0.2s ease !important;
+  white-space: nowrap !important;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 1px 3px rgba(0, 105, 180, 0.15) !important;
+  border-radius: 6px !important;
+}
+
+.doi-citation-section .citation-export .btn-primary:hover {
+  background: linear-gradient(180deg, #0069B4 0%, #005a9e 100%) !important;
+  box-shadow: 0 2px 6px rgba(0, 105, 180, 0.25) !important;
+  transform: translateY(-1px) !important;
+}
+
+.doi-citation-section .citation-export .btn-primary:active {
+  background: #005a9e !important;
+  box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.15) !important;
+  transform: translateY(0) !important;
+}
+
+.doi-citation-section .citation-export .btn-primary i {
+  margin-right: 6px !important;
+}
+
+.doi-citation-section .citation-export .caret {
+  margin-left: 6px !important;
+  transition: transform 0.2s ease !important;
+}
+
+.doi-citation-section .citation-export .btn-group.open .caret {
+  transform: rotate(180deg) !important;
+}
+
+/* Citation export dropdown menu - opens DOWNWARD */
+.doi-citation-section .citation-export .dropdown-menu {
+  min-width: 220px !important;
+  padding: 8px 0 !important;
+  background: #ffffff !important;
+  border: 1px solid #d0d7de !important;
+  border-radius: 8px !important;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.08) !important;
+  z-index: 2000 !important;
+  margin-top: 4px !important;
+  top: 100% !important;
+  bottom: auto !important;
+  position: absolute !important;
+}
+
+.doi-citation-section .citation-export .dropdown-menu li {
+  list-style: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.doi-citation-section .citation-export .dropdown-menu li a {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+  padding: 10px 14px !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  color: #24292f !important;
+  text-decoration: none !important;
+  transition: all 0.15s ease !important;
+  white-space: nowrap !important;
+}
+
+.doi-citation-section .citation-export .dropdown-menu li a:hover {
+  background-color: #f6f8fa !important;
+  color: #0969da !important;
+}
+
+.doi-citation-section .citation-export .dropdown-menu li a i {
+  font-size: 14px !important;
+  width: 18px !important;
+  text-align: center !important;
+  flex-shrink: 0 !important;
+  color: #656d76 !important;
+}
+
+.doi-citation-section .citation-export .dropdown-menu li a:hover i {
+  color: #0969da !important;
+}
+
+.doi-citation-section .citation-export .dropdown-menu .divider {
+  height: 1px !important;
+  margin: 6px 0 !important;
+  background-color: #d0d7de !important;
+  border: none !important;
+}
+
+/* DOI status info section */
+.doi-citation-section .doi-status-info {
+  padding: 16px !important;
+  border-top: 1px solid #d0d7de !important;
+  background-color: #ffffff !important;
+}
+
+.doi-citation-section .doi-status-info .alert {
+  margin: 0 !important;
+  padding: 12px 14px !important;
+  border-radius: 6px !important;
+  background-color: #ddf4ff !important;
+  border: 1px solid #54aeff !important;
+  color: #0969da !important;
+  font-size: 13px !important;
+}
+
+.doi-citation-section .doi-status-info .alert i {
+  margin-right: 8px !important;
+}
+
+/* Publication details */
+.doi-citation-section .publication-details {
+  padding: 12px 16px !important;
+  background-color: #f6f8fa !important;
+  border-top: 1px solid #d0d7de !important;
+  border-radius: 0 0 8px 8px !important;
+}
+
+.doi-citation-section .publication-details small {
+  font-size: 12px !important;
+  color: #656d76 !important;
+  line-height: 1.5 !important;
+}
+
+.doi-citation-section .publication-details i {
+  margin-right: 6px !important;
+  color: #656d76 !important;
+}
+
+/* Ensure proper stacking */
+.doi-citation-section {
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+.doi-citation-section .citation-export .btn-group {
+  position: relative !important;
+  z-index: auto !important;
+}
+
+.doi-citation-section .citation-export .btn-group.open {
+  z-index: 1001 !important;
+}
