@@ -4547,9 +4547,7 @@ ul.resource-list li.resource-item:hover,
   align-items: center !important;
   justify-content: center !important;
   min-width: 45px !important;
-  width: 45px !important;
-  height: 45px !important;
-  padding: 0 !important;
+  padding: 4px 8px !important;
   font-size: 10px !important;
   font-weight: 600 !important;
   text-transform: uppercase !important;
@@ -4560,7 +4558,6 @@ ul.resource-list li.resource-item:hover,
   overflow: visible !important;
   margin: 0 !important;
   transform: none !important;
-  background: transparent !important;
 }
 
 /* Image inside format-label - control size */
@@ -4568,7 +4565,7 @@ ul.resource-list li.resource-item:hover,
 .resource-item .format-label img {
   max-width: 45px !important;
   max-height: 45px !important;
-  width: 45px !important;
+  width: auto !important;
   height: auto !important;
   display: block !important;
   transform: none !important;
