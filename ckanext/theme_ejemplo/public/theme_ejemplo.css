@@ -2237,10 +2237,26 @@ h2.page-heading {
   font-size: 2.5rem;
   font-weight: 700;
   margin-bottom: 1rem;
-  color: #fff;
+  color: #fff !important;
+  background: transparent !important;
+  background-color: transparent !important;
   text-shadow: 2px 2px 8px rgba(0,0,0,0.4);
   line-height: 1.2;
   letter-spacing: -0.02em;
+}
+
+/* Override any inherited h2 styles with maximum specificity for homepage titles */
+body .homepage .section-title-enhanced h2,
+body .container .section-title-enhanced h2,
+body section.module .section-title-enhanced h2,
+body .module-content .section-title-enhanced h2,
+.homepage .section-title-enhanced h2,
+.container .section-title-enhanced h2 {
+  color: #fff !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  border: none !important;
+  margin: 0 0 1rem 0 !important;
 }
 
 .section-title-enhanced .section-title-description {
@@ -4650,20 +4666,46 @@ ul.resource-list li.resource-item:hover,
   z-index: 10 !important;
 }
 
-/* Fix dropdown menu positioning */
+/* Fix dropdown menu positioning - Override ckan210-fixes.css with higher specificity */
+body .resource-item .dropdown-menu,
+body .resource-item .btn-group .dropdown-menu,
+body ul.resource-list li.resource-item .dropdown-menu,
+body .resource-list .resource-item .dropdown-menu,
+body li.resource-item .dropdown-menu,
 .resource-item .dropdown-menu,
 .btn-group .dropdown-menu,
 .dropdown .dropdown-menu {
   position: absolute !important;
   top: 100% !important;
-  left: 0 !important;
+  left: auto !important;
+  right: 0 !important;
   z-index: 1000 !important;
   min-width: 160px !important;
+  max-width: 280px !important;
   background-color: #fff !important;
   border: 1px solid #e9ecef !important;
-  border-radius: 4px !important;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
-  margin-top: 2px !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  margin-top: 4px !important;
+  display: block !important;
+  opacity: 1 !important;
+  transform: translateY(0) scale(1) !important;
+  overflow: visible !important;
+}
+
+/* Ensure dropdown shows when open */
+body .resource-item .dropdown.open .dropdown-menu,
+body .resource-item .btn-group.open .dropdown-menu,
+body .resource-item .dropdown-menu.show,
+body .resource-item .btn-group .dropdown-menu.show,
+.resource-item .dropdown.open .dropdown-menu,
+.resource-item .btn-group.open .dropdown-menu,
+.resource-item .dropdown-menu.show,
+.btn-group .dropdown-menu.show {
+  display: block !important;
+  opacity: 1 !important;
+  transform: translateY(0) scale(1) !important;
+  visibility: visible !important;
 }
 
 /* Additional info tables on dataset page */
