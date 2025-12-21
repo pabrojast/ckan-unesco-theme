@@ -2731,8 +2731,15 @@ html body .resource-list li.resource-item * {
 
 /* ===== DATASET SIDEBAR THEME ICONS ===== */
 
-/* Theme icons in dataset sidebar */
-.dataset_org_info .info_image {
+/* Theme icons in dataset sidebar - MAXIMUM PRIORITY */
+.secondary .dataset_org_info .info_image,
+.secondary .dataset_org_info img.info_image,
+.secondary .dataset_org_info .module-image,
+.dataset_org_info .info_image,
+.dataset_org_info img.info_image,
+.dataset_org_info .module-image,
+aside .dataset_org_info img,
+.sidebar .dataset_org_info img {
   display: inline-block !important;
   max-height: 24px !important;
   max-width: 24px !important;
@@ -2743,6 +2750,9 @@ html body .resource-list li.resource-item * {
   object-fit: contain !important;
   filter: none !important;
   opacity: 1 !important;
+  visibility: visible !important;
+  position: relative !important;
+  z-index: 1 !important;
 }
 
 .dataset_org_info .info_item {
@@ -2793,4 +2803,26 @@ html body .resource-list li.resource-item * {
 .dataset_org_info .nav-simple {
   padding: 0 !important;
   margin: 0 !important;
+}
+
+/* ===== FORMAT ICONS IN RESOURCE LIST (CSV, JSON, etc.) ===== */
+
+/* Ensure format icons are visible in dataset resource list */
+.resource-list .resource-item span.format-label::before,
+.resource-list .resource-item .format-label::before,
+body .resource-list .resource-item span[data-format]::before,
+body .resource-list .resource-item [data-format]::before {
+  content: none !important;
+  display: none !important;
+}
+
+/* Override any sprite background that might be hiding icons */
+.resource-list .resource-item .format-label,
+.resource-list .resource-item span.format-label,
+body .resource-list .resource-item span[data-format],
+body .resource-list .resource-item [data-format] {
+  background-image: none !important;
+  background-position: 0 0 !important;
+  text-indent: 0 !important;
+  overflow: visible !important;
 }
