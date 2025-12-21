@@ -2279,6 +2279,7 @@ h2.page-heading {
   font-size: 2.5rem;
   font-weight: 700;
   margin-bottom: 1rem;
+  color: #fff;
   text-shadow: 2px 2px 8px rgba(0,0,0,0.4);
   line-height: 1.2;
   letter-spacing: -0.02em;
@@ -4691,6 +4692,22 @@ ul.resource-list li.resource-item:hover,
   z-index: 10 !important;
 }
 
+/* Fix dropdown menu positioning */
+.resource-item .dropdown-menu,
+.btn-group .dropdown-menu,
+.dropdown .dropdown-menu {
+  position: absolute !important;
+  top: 100% !important;
+  left: 0 !important;
+  z-index: 1000 !important;
+  min-width: 160px !important;
+  background-color: #fff !important;
+  border: 1px solid #e9ecef !important;
+  border-radius: 4px !important;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1) !important;
+  margin-top: 2px !important;
+}
+
 /* Additional info tables on dataset page */
 .additional-info {
   margin-top: 30px !important;
@@ -4840,6 +4857,10 @@ ul.resource-list li.resource-item:hover,
 .search-form .search-giant button[type="submit"]:hover,
 .search-form button[type="submit"]:hover {
   background-color: #005a9e !important;
+}
+
+.search-form .search-input.search-giant button {
+    margin-top: 0.01rem !important;
 }
 
 .primary .search-form .search-input button i,
