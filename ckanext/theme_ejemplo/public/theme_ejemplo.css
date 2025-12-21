@@ -3467,13 +3467,17 @@ nav.nav-facet li,
   display: inline-block !important;
 }
 
-/* Fix collapsible table rows */
-.additional-info .toggle-more {
-  display: none;
+/* Fix collapsible table rows (schemingdcat) */
+.additional-info table[data-module="schemingdcat-table-collapsible-rows"] tr.toggle-more {
+  display: none !important;
 }
 
-.additional-info .table[data-show-more="true"] .toggle-more {
-  display: table-row;
+.additional-info table.table-toggle-more tr.toggle-more {
+  display: none !important;
+}
+
+.additional-info table.table-toggle-less tr.toggle-more {
+  display: table-row !important;
 }
 
 .additional-info .toggle-show-more {
