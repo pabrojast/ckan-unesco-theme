@@ -5172,6 +5172,116 @@ li.dataset-item:hover {
   background-color: #36849a !important;
 }
 
+/* ===== CRITICAL OVERRIDES FOR DATASET SIDEBAR ICONS ===== */
+/* Override all possible conflicting styles with maximum specificity */
+
+/* Dataset sidebar facet icons - Force visibility with maximum specificity */
+body .secondary img.facet-icon,
+body .secondary .module img.facet-icon,
+body .secondary .module-content img.facet-icon,
+body .secondary .nav-facet img.facet-icon,
+body .secondary nav.nav-facet li a img.facet-icon,
+body .filters img.facet-icon,
+body .filters .module img.facet-icon,
+body .filters .module-content img.facet-icon,
+body .filters .nav-facet img.facet-icon,
+body nav.nav-facet li a img.facet-icon,
+body ul.nav-facet li a img.facet-icon,
+body .module-content .nav-facet li a img.facet-icon,
+.secondary img.facet-icon,
+.secondary .module img.facet-icon,
+.secondary .module-content img.facet-icon,
+.secondary .nav-facet img.facet-icon,
+.secondary nav.nav-facet li a img.facet-icon,
+.filters img.facet-icon,
+.filters .module img.facet-icon,
+.filters .module-content img.facet-icon,
+.filters .nav-facet img.facet-icon,
+nav.nav-facet li a img.facet-icon,
+ul.nav-facet li a img.facet-icon,
+.module-content .nav-facet li a img.facet-icon,
+img.facet-icon {
+  display: inline-block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  width: 20px !important;
+  height: 20px !important;
+  min-width: 20px !important;
+  min-height: 20px !important;
+  max-width: 20px !important;
+  max-height: 20px !important;
+  margin-right: 8px !important;
+  margin-left: 0 !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  vertical-align: middle !important;
+  border-radius: 50% !important;
+  flex-shrink: 0 !important;
+  object-fit: contain !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  filter: none !important;
+  transform: none !important;
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+/* DROPDOWN FIXES WITH ABSOLUTE MAXIMUM SPECIFICITY */
+/* Override all possible dropdown conflicts */
+html body .resource-item .dropdown-menu,
+html body .resource-item .btn-group .dropdown-menu,
+html body ul.resource-list li.resource-item .dropdown-menu,
+html body .resource-list .resource-item .dropdown-menu,
+html body li.resource-item .dropdown-menu,
+html body .dataset-resources .resource-item .dropdown-menu,
+body .resource-item .dropdown-menu,
+body .resource-item .btn-group .dropdown-menu,
+body ul.resource-list li.resource-item .dropdown-menu,
+body .resource-list .resource-item .dropdown-menu,
+body li.resource-item .dropdown-menu {
+  position: absolute !important;
+  top: 100% !important;
+  left: auto !important;
+  right: 0 !important;
+  bottom: auto !important;
+  z-index: 9999 !important;
+  min-width: 180px !important;
+  max-width: 300px !important;
+  background-color: #ffffff !important;
+  border: 1px solid #dee2e6 !important;
+  border-radius: 6px !important;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15) !important;
+  margin-top: 2px !important;
+  margin-bottom: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  padding: 6px 0 !important;
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: translateY(0) scale(1) !important;
+  overflow: visible !important;
+  clip: auto !important;
+  white-space: nowrap !important;
+}
+
+/* Ensure dropdown appears when active/open */
+html body .resource-item .dropdown.open .dropdown-menu,
+html body .resource-item .btn-group.open .dropdown-menu,
+html body .resource-item .dropdown-menu.show,
+html body .resource-item .btn-group .dropdown-menu.show,
+body .resource-item .dropdown.open .dropdown-menu,
+body .resource-item .btn-group.open .dropdown-menu,
+body .resource-item .dropdown-menu.show,
+body .resource-item .btn-group .dropdown-menu.show {
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: translateY(0) scale(1) !important;
+  z-index: 9999 !important;
+}
+
 /* Spatial query map container */
 .spatial-query-map,
 #dataset-map-container,
