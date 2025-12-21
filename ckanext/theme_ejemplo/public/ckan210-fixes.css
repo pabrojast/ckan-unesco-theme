@@ -2805,24 +2805,3 @@ aside .dataset_org_info img,
   margin: 0 !important;
 }
 
-/* ===== FORMAT ICONS IN RESOURCE LIST (CSV, JSON, etc.) ===== */
-
-/* Ensure format icons are visible in dataset resource list */
-.resource-list .resource-item span.format-label::before,
-.resource-list .resource-item .format-label::before,
-body .resource-list .resource-item span[data-format]::before,
-body .resource-list .resource-item [data-format]::before {
-  content: none !important;
-  display: none !important;
-}
-
-/* Override any sprite background that might be hiding icons */
-.resource-list .resource-item .format-label,
-.resource-list .resource-item span.format-label,
-body .resource-list .resource-item span[data-format],
-body .resource-list .resource-item [data-format] {
-  background-image: none !important;
-  background-position: 0 0 !important;
-  text-indent: 0 !important;
-  overflow: visible !important;
-}
