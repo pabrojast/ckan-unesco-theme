@@ -794,11 +794,6 @@ border-radius: 0 0 3px 3px;
     color: #212529 !important;
 }
 
-.btn-primary {
-    background-color: #0069B4 !important;
-    border-color: #212529 !important;
-}
-
 .lang-select label, .lang-select select, .lang-select .lang-container {
     max-width: 300px !important;
 }
@@ -912,19 +907,9 @@ p {
     width: 100%;
 }
 img {
-    border-style: none;
     max-width: 100%;
     height: auto;
-}
-img {
     vertical-align: middle;
-    border-style: none;
-}
-img {
-    vertical-align: middle;
-    border-style: none;
-}
-img {
     border-style: none;
 }
 .is-drupal .card-body {
@@ -1132,15 +1117,6 @@ img {
 }
 .page-header.module-content {
     background: #fff;
-}
-.page-header .content_action {
-    float: right;
-    margin-top: -40px;
-}
-.page-header .content_action {
-    float: none !important;
-    margin-top: 0 !important;
-    text-align: right;
 }
 .page-header .nav-tabs {
     float: none !important;
@@ -1882,24 +1858,6 @@ h2.page-heading {
   background-position: -2620px -220px;
   transform: scale(0.53);
   margin: -14px 0 0 -14px;
-}
-
-/* ===== MEJORAS DE DISEÑO - PEQUEÑAS PERO EFECTIVAS ===== */
-
-/* Variables CSS para consistencia */
-:root {
-  --unesco-blue: #0069B4;
-  --unesco-blue-dark: #005a9e;
-  --unesco-blue-light: #0077d4;
-  --unesco-blue-pale: #E8F4F8;
-  --text-primary: #212529;
-  --text-secondary: #6c757d;
-  --text-muted: #8a8a8a;
-  --shadow-light: 0 2px 4px rgba(0,0,0,0.1);
-  --shadow-medium: 0 4px 8px rgba(0,0,0,0.15);
-  --shadow-strong: 0 6px 12px rgba(0,0,0,0.2);
-  --border-radius: 0.5rem;
-  --transition: all 0.3s ease;
 }
 
 /* ===== FUNCIONALIDAD DE "LEER MÁS" ===== */
