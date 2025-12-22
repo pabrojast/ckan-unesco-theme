@@ -489,6 +489,24 @@ border-radius: 0 0 3px 3px;
         order: 2;
     }
     
+    .masthead .masthead-actions {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+    
+    .masthead .masthead-login-mobile {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+    }
+    
+    .masthead .masthead-login-mobile .btn {
+        padding: 6px 10px !important;
+        font-size: 12px !important;
+        line-height: 1.2 !important;
+    }
+    
     /* Mostrar lang mobile */
     .masthead .masthead-lang-mobile {
         display: block;
@@ -742,6 +760,21 @@ border-radius: 0 0 3px 3px;
         padding: 15px;
         z-index: 1000;
         border-radius: 0 0 8px 8px;
+    }
+}
+
+/* Ensure mobile menu can close when toggler is pressed again */
+@media (max-width: 768px) {
+    body .masthead .masthead-nav:not(.show):not(.in) .navigation {
+        display: none !important;
+        opacity: 0 !important;
+        transform: translateY(-10px) !important;
+    }
+    
+    /* Hide desktop login/logout links; mobile version shown in actions */
+    .masthead-top-bar .masthead-topmenu li a[href*=\"user/login\"],
+    .masthead-top-bar .masthead-topmenu li a[href*=\"user.logout\"] {
+        display: none !important;
     }
 }
 
