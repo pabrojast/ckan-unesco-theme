@@ -5444,12 +5444,12 @@ body .additional-info .section-header {
   padding-bottom: 8px !important;
 }
 
-/* Clean table styling - no borders, minimal design */
+/* Clean table styling within bordered container */
 .additional-info .table,
 .additional-info table,
 body .additional-info .table,
 body .additional-info table {
-  margin: 0 0 20px 0 !important;
+  margin: 0 !important;
   background: transparent !important;
   border-collapse: collapse !important;
   border-spacing: 0 !important;
@@ -5484,7 +5484,7 @@ body .additional-info .table td,
 body .additional-info table td,
 body .additional-info .dataset-label,
 body .additional-info .dataset-details {
-  padding: 12px 0 !important;
+  padding: 12px 15px !important;
   vertical-align: top !important;
   border: none !important;
   border-bottom: 1px solid #f0f0f0 !important;
@@ -5498,7 +5498,6 @@ body .additional-info .dataset-label {
   color: #6c757d !important;
   width: 35% !important;
   border-right: none !important;
-  padding-right: 15px !important;
   font-size: 14px !important;
 }
 
@@ -5508,18 +5507,27 @@ body .additional-info .dataset-details {
   color: #212529 !important;
   width: 65% !important;
   font-size: 14px !important;
-  padding-left: 15px !important;
 }
 
-/* Improved Show More button - clearly belongs to Basic Information section */
+/* Create a container for Basic Information with clear boundaries */
+.additional-info .table:first-of-type,
+body .additional-info .table:first-of-type {
+  border: 1px solid #e9ecef !important;
+  border-radius: 6px 6px 0 0 !important;
+  border-bottom: none !important;
+  overflow: hidden !important;
+  margin-bottom: 0 !important;
+}
+
+/* Show More button connects seamlessly with the table above */
 .additional-info .toggle-show-more,
 body .additional-info .toggle-show-more {
   background: #f8f9fa !important;
   border: 1px solid #e9ecef !important;
-  border-top: 2px solid #007bff !important;
+  border-top: none !important;
   padding: 12px 20px !important;
   text-align: center !important;
-  margin: 0 !important;
+  margin: 0 0 30px 0 !important;
   cursor: pointer !important;
   transition: all 0.2s ease !important;
   font-weight: 500 !important;
@@ -5529,15 +5537,13 @@ body .additional-info .toggle-show-more {
   font-size: 14px !important;
   width: 100% !important;
   display: block !important;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05) !important;
+  box-shadow: none !important;
 }
 
 .additional-info .toggle-show-more:hover,
 body .additional-info .toggle-show-more:hover {
   background: #e9ecef !important;
   color: #0056b3 !important;
-  transform: translateY(-1px) !important;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.1) !important;
   text-decoration: none !important;
 }
 
@@ -5556,23 +5562,14 @@ body .additional-info .toggle-show-more.collapsed::before {
   content: "▶ " !important;
 }
 
-/* Add clear separation between metadata sections */
+/* Clear separation between metadata sections */
 .additional-info h3:not(:first-child),
 .additional-info .section-header:not(:first-child),
 body .additional-info h3:not(:first-child),
 body .additional-info .section-header:not(:first-child) {
-  margin-top: 40px !important;
-  padding-top: 20px !important;
-  border-top: 2px solid #e9ecef !important;
-}
-
-/* Ensure Basic Information section has clear boundaries */
-.additional-info .table:first-of-type,
-body .additional-info .table:first-of-type {
-  border: 1px solid #e9ecef !important;
-  border-radius: 6px 6px 0 0 !important;
-  overflow: hidden !important;
-  margin-bottom: 0 !important;
+  margin-top: 20px !important;
+  padding-top: 15px !important;
+  border-top: 1px solid #e9ecef !important;
 }
 
 /* Consistent button styling for Download vs Explore */
