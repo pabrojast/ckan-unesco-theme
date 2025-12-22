@@ -5511,35 +5511,68 @@ body .additional-info .dataset-details {
   padding-left: 15px !important;
 }
 
-/* Minimal Show More button - like right side */
+/* Improved Show More button - clearly belongs to Basic Information section */
 .additional-info .toggle-show-more,
 body .additional-info .toggle-show-more {
-  background: transparent !important;
-  border: none !important;
-  border-top: none !important;
-  padding: 10px 0 !important;
-  text-align: left !important;
-  margin: 15px 0 0 0 !important;
+  background: #f8f9fa !important;
+  border: 1px solid #e9ecef !important;
+  border-top: 2px solid #007bff !important;
+  padding: 12px 20px !important;
+  text-align: center !important;
+  margin: 0 !important;
   cursor: pointer !important;
-  transition: color 0.2s ease !important;
+  transition: all 0.2s ease !important;
   font-weight: 500 !important;
   color: #007bff !important;
-  border-radius: 0 !important;
+  border-radius: 0 0 6px 6px !important;
   position: relative !important;
   font-size: 14px !important;
+  width: 100% !important;
+  display: block !important;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05) !important;
 }
 
 .additional-info .toggle-show-more:hover,
 body .additional-info .toggle-show-more:hover {
-  background: transparent !important;
+  background: #e9ecef !important;
   color: #0056b3 !important;
-  text-decoration: underline !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1) !important;
+  text-decoration: none !important;
 }
 
 .additional-info .toggle-show-more::before,
 body .additional-info .toggle-show-more::before {
-  content: "" !important;
-  display: none !important;
+  content: "▼ " !important;
+  font-size: 12px !important;
+  margin-right: 6px !important;
+  transition: transform 0.2s ease !important;
+  display: inline !important;
+}
+
+.additional-info .toggle-show-more.collapsed::before,
+body .additional-info .toggle-show-more.collapsed::before {
+  transform: rotate(-90deg) !important;
+  content: "▶ " !important;
+}
+
+/* Add clear separation between metadata sections */
+.additional-info h3:not(:first-child),
+.additional-info .section-header:not(:first-child),
+body .additional-info h3:not(:first-child),
+body .additional-info .section-header:not(:first-child) {
+  margin-top: 40px !important;
+  padding-top: 20px !important;
+  border-top: 2px solid #e9ecef !important;
+}
+
+/* Ensure Basic Information section has clear boundaries */
+.additional-info .table:first-of-type,
+body .additional-info .table:first-of-type {
+  border: 1px solid #e9ecef !important;
+  border-radius: 6px 6px 0 0 !important;
+  overflow: hidden !important;
+  margin-bottom: 0 !important;
 }
 
 /* Consistent button styling for Download vs Explore */
