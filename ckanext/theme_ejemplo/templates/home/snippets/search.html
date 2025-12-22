@@ -15,6 +15,12 @@
         <i class="fa fa-search"></i>
         <span class="sr-only" id="search-label">{{ _('Search') }}</span>
       </button>
+      {% if not c.userobj %}
+      <a href="{{ h.url_for('user.login') }}" class="btn btn-primary login-btn-search" title="{{ _('Log in') }}">
+        <i class="fa fa-sign-in"></i>
+        <span class="login-text">{{ _('Log in') }}</span>
+      </a>
+      {% endif %}
     </div>
   </form>
   <div class="tags">

@@ -24,7 +24,7 @@
               {% if item %}
                 {% set label = h.scheming_choices_label(field_choices, item) %}
                 {% set choice_item = h.schemingdcat_get_choice_item(field, item) %}
-                {% set icon = choice_item and h.schemingdcat_get_icon(choice_item, icons_dir) %}
+                {% set icon = choice_item and h.schemingdcat_get_icon(choice_item, icons_dir, default=None) %}
                 {% if not icon %}
                   {# Fallback: try to construct icon path manually #}
                   {% if theme_field == 'theme_eu' %}

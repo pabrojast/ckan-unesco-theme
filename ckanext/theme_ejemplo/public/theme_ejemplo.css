@@ -5610,3 +5610,155 @@ body .download-links .btn-group .btn i {
   font-size: 14px !important;
   margin-right: 0 !important;
 }
+
+/* ===== MOBILE LOGIN ENHANCEMENTS ===== */
+
+/* Login button next to search bar on home page */
+.login-btn-search {
+  position: absolute !important;
+  right: 60px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  background: linear-gradient(135deg, #0069B4 0%, #005a9e 100%) !important;
+  border: 1px solid #005a9e !important;
+  color: white !important;
+  padding: 12px 16px !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  border-radius: 4px !important;
+  text-decoration: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  transition: all 0.2s ease !important;
+  z-index: 10 !important;
+}
+
+.login-btn-search:hover {
+  background: linear-gradient(135deg, #005a9e 0%, #004d87 100%) !important;
+  border-color: #004d87 !important;
+  transform: translateY(-51%) !important;
+  color: white !important;
+  text-decoration: none !important;
+}
+
+.login-btn-search i {
+  color: white !important;
+  margin-right: 4px !important;
+}
+
+/* Make search form position relative to allow absolute positioning of login button */
+.search-form .search-input {
+  position: relative !important;
+}
+
+/* Hide/show elements based on screen size */
+.visible-mobile {
+  display: none !important;
+}
+
+.hidden-mobile {
+  display: block !important;
+}
+
+/* Mobile login top bar improvements */
+.mobile-login-item {
+  font-weight: 600 !important;
+}
+
+.mobile-login-item a {
+  padding: 8px 12px !important;
+  border-radius: 4px !important;
+  transition: background-color 0.2s ease !important;
+}
+
+.mobile-login-item a:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+/* Responsive mobile styles */
+@media (max-width: 768px) {
+  
+  /* Show mobile-specific elements */
+  .visible-mobile {
+    display: inline !important;
+  }
+  
+  .hidden-mobile {
+    display: none !important;
+  }
+  
+  /* Make top bar login more prominent on mobile */
+  .masthead-topmenu ul {
+    justify-content: center !important;
+    gap: 10px !important;
+  }
+  
+  .masthead-topmenu li {
+    margin: 0 5px !important;
+  }
+  
+  .mobile-login-item {
+    background-color: rgba(255, 255, 255, 0.1) !important;
+    border-radius: 6px !important;
+    padding: 2px !important;
+  }
+  
+  .mobile-login-item a {
+    color: white !important;
+    font-weight: 700 !important;
+    font-size: 14px !important;
+    padding: 10px 15px !important;
+    border-radius: 4px !important;
+    display: flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+  }
+  
+  .mobile-login-item a:hover {
+    background-color: rgba(255, 255, 255, 0.2) !important;
+    text-decoration: none !important;
+  }
+  
+  /* Position login button better next to search on mobile */
+  .login-btn-search {
+    right: 50px !important;
+    padding: 10px 12px !important;
+    font-size: 12px !important;
+  }
+  
+  .login-btn-search .login-text {
+    display: none !important;
+  }
+  
+  .login-btn-search i {
+    margin-right: 0 !important;
+    font-size: 16px !important;
+  }
+  
+  /* Make top bar more visible */
+  .masthead-top-bar {
+    background-color: rgba(0, 119, 212, 0.9) !important;
+    padding: 8px 0 !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
+  }
+  
+  /* Ensure language selector is still accessible on mobile */
+  .masthead-topmenu li:last-child {
+    margin-left: auto !important;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Extra small screens - make login button icon only */
+  .login-btn-search {
+    right: 45px !important;
+    padding: 8px !important;
+    min-width: auto !important;
+  }
+  
+  .mobile-login-item a {
+    padding: 8px 12px !important;
+    font-size: 13px !important;
+  }
+}
