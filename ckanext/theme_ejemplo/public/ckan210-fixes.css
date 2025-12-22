@@ -2807,38 +2807,62 @@ aside .dataset_org_info img,
 
 /* ===== METADATA TABLE COLLAPSIBLE ROWS STYLING ===== */
 
-/* Remove the floating triangle from table-toggle-more */
-body .table-toggle-more::after,
-body .table-toggle-more:after,
+/* Remove the floating triangle from table-toggle-more - MAXIMUM SPECIFICITY */
+html body table.table-toggle-more::after,
+html body table.table-toggle-more:after,
+html body .table.table-toggle-more::after,
+html body .table.table-toggle-more:after,
+body table.table-toggle-more::after,
+body table.table-toggle-more:after,
+table.table-toggle-more::after,
+table.table-toggle-more:after,
 .table-toggle-more::after,
 .table-toggle-more:after {
   display: none !important;
-  content: none !important;
+  content: "" !important;
+  border: none !important;
+  height: 0 !important;
+  width: 0 !important;
+  visibility: hidden !important;
+  position: absolute !important;
+  left: -9999px !important;
 }
 
 /* Ensure table has proper structure */
-body .table-toggle-more,
-body .table-toggle-less,
+html body table.table-toggle-more,
+html body table.table-toggle-less,
+body .table.table-toggle-more,
+body .table.table-toggle-less,
 .table-toggle-more,
 .table-toggle-less {
   position: relative !important;
   border-collapse: collapse !important;
 }
 
-/* Separator row - make it minimal */
+/* Separator row - hide completely */
+html body .table tr.toggle-separator,
 body .table tr.toggle-separator,
-.table tr.toggle-separator {
-  display: table-row !important;
+.table tr.toggle-separator,
+table tr.toggle-separator {
+  display: none !important;
+  height: 0 !important;
+  visibility: hidden !important;
 }
 
+html body .table tr.toggle-separator td,
 body .table tr.toggle-separator td,
 .table tr.toggle-separator td {
+  display: none !important;
   padding: 0 !important;
   height: 0 !important;
   border: none !important;
 }
 
 /* Show more/less toggle row styling - integrated with table */
+html body .table tr.toggle-show,
+html body .table tr.toggle-show-more,
+html body table tr.toggle-show,
+html body table tr.toggle-show-more,
 body .table tr.toggle-show,
 body .table tr.toggle-show-more,
 .table tr.toggle-show,
@@ -2847,6 +2871,10 @@ body .table tr.toggle-show-more,
   background-color: #f8f9fa !important;
 }
 
+html body .table tr.toggle-show td,
+html body .table tr.toggle-show-more td,
+html body table tr.toggle-show td,
+html body table tr.toggle-show-more td,
 body .table tr.toggle-show td,
 body .table tr.toggle-show-more td,
 .table tr.toggle-show td,
@@ -2859,13 +2887,12 @@ body .table tr.toggle-show-more td,
 }
 
 /* Show more/less link styling */
+html body .table tr.toggle-show a.show-more,
+html body .table tr.toggle-show a.show-less,
+html body .table tr.toggle-show-more a.show-more,
+html body .table tr.toggle-show-more a.show-less,
 body .table tr.toggle-show a.show-more,
-body .table tr.toggle-show a.show-less,
-body .table tr.toggle-show-more a.show-more,
-body .table tr.toggle-show-more a.show-less,
-.table tr.toggle-show a.show-more,
-.table tr.toggle-show a.show-less {
-  display: inline-block !important;
+body .table tr.toggle-show a.show-less {
   padding: 6px 16px !important;
   font-size: 13px !important;
   font-weight: 500 !important;
@@ -2877,49 +2904,82 @@ body .table tr.toggle-show-more a.show-less,
   transition: color 0.15s ease !important;
 }
 
-body .table tr.toggle-show a.show-more:hover,
-body .table tr.toggle-show a.show-less:hover,
-body .table tr.toggle-show-more a.show-more:hover,
-body .table tr.toggle-show-more a.show-less:hover,
-.table tr.toggle-show a:hover {
+html body .table tr.toggle-show a.show-more:hover,
+html body .table tr.toggle-show a.show-less:hover,
+body .table tr.toggle-show a:hover {
   color: #005a9e !important;
   text-decoration: underline !important;
 }
 
-/* Hide show-less when in "more" state, hide show-more when in "less" state */
-body .table-toggle-more tr.toggle-show .show-less,
-.table-toggle-more tr.toggle-show .show-less {
+/* CRITICAL: Hide show-less when in "more" state (collapsed) */
+html body table.table-toggle-more tr.toggle-show a.show-less,
+html body .table.table-toggle-more tr.toggle-show a.show-less,
+html body table.table-toggle-more tr.toggle-show-more a.show-less,
+html body .table.table-toggle-more tr.toggle-show-more a.show-less,
+body table.table-toggle-more tr.toggle-show a.show-less,
+body .table-toggle-more tr.toggle-show a.show-less,
+.table-toggle-more tr.toggle-show a.show-less,
+.table-toggle-more tr.toggle-show-more a.show-less,
+table.table-toggle-more .show-less,
+.table-toggle-more .show-less {
   display: none !important;
+  visibility: hidden !important;
 }
 
-body .table-toggle-more tr.toggle-show .show-more,
-.table-toggle-more tr.toggle-show .show-more {
-  display: inline-block !important;
+/* Show the show-more link when in "more" state (collapsed) */
+html body table.table-toggle-more tr.toggle-show a.show-more,
+html body .table.table-toggle-more tr.toggle-show a.show-more,
+body .table-toggle-more tr.toggle-show a.show-more,
+.table-toggle-more tr.toggle-show a.show-more,
+.table-toggle-more .show-more {
+  display: inline !important;
+  visibility: visible !important;
 }
 
-body .table-toggle-less tr.toggle-show .show-more,
-.table-toggle-less tr.toggle-show .show-more {
+/* CRITICAL: Hide show-more when in "less" state (expanded) */
+html body table.table-toggle-less tr.toggle-show a.show-more,
+html body .table.table-toggle-less tr.toggle-show a.show-more,
+html body table.table-toggle-less tr.toggle-show-more a.show-more,
+html body .table.table-toggle-less tr.toggle-show-more a.show-more,
+body table.table-toggle-less tr.toggle-show a.show-more,
+body .table-toggle-less tr.toggle-show a.show-more,
+.table-toggle-less tr.toggle-show a.show-more,
+.table-toggle-less tr.toggle-show-more a.show-more,
+table.table-toggle-less .show-more,
+.table-toggle-less .show-more {
   display: none !important;
+  visibility: hidden !important;
 }
 
-body .table-toggle-less tr.toggle-show .show-less,
-.table-toggle-less tr.toggle-show .show-less {
-  display: inline-block !important;
+/* Show the show-less link when in "less" state (expanded) */
+html body table.table-toggle-less tr.toggle-show a.show-less,
+html body .table.table-toggle-less tr.toggle-show a.show-less,
+body .table-toggle-less tr.toggle-show a.show-less,
+.table-toggle-less tr.toggle-show a.show-less,
+.table-toggle-less .show-less {
+  display: inline !important;
+  visibility: visible !important;
 }
 
 /* Hidden rows when collapsed */
+html body table.table-toggle-more tr.toggle-more,
+html body .table.table-toggle-more tr.toggle-more,
 body .table-toggle-more tr.toggle-more,
 .table-toggle-more tr.toggle-more {
   display: none !important;
 }
 
 /* Visible rows when expanded */
+html body table.table-toggle-less tr.toggle-more,
+html body .table.table-toggle-less tr.toggle-more,
 body .table-toggle-less tr.toggle-more,
 .table-toggle-less tr.toggle-more {
   display: table-row !important;
 }
 
 /* Ensure the toggle row is the last visible element and connected to table */
+html body .additional-info .table,
+html body .module .table,
 body .additional-info .table,
 body .module .table,
 .additional-info .table,
@@ -2929,6 +2989,7 @@ body .module .table,
 }
 
 /* Last row of the table should have bottom border */
+html body .table tr:last-child td,
 body .table tr:last-child td,
 .table tr:last-child td {
   border-bottom: 1px solid #e9ecef !important;

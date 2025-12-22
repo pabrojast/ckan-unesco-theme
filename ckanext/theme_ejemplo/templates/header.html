@@ -85,26 +85,50 @@
   <div class="debug">Controller : {{ c.controller }}<br/>Action : {{ c.action }}</div>
   {% endif %} {% endblock %}
   <div class="container masthead-container">
-    <!-- PRIMERA FILA: Solo top menu alineado a la derecha -->
+    <!-- PRIMERA FILA: Responsive top menu -->
     <div class="masthead-top-bar">
       <div class="topmenu masthead-topmenu">
-        <ul>
-          <li><a href="https://www.unesco.org/en/" alt="UNESCO Portal">UNESCO</a></li>
-          <li class="hidden-mobile"><a href="/colab" alt="Enroll as a Data Contributor for Your Organization">{% trans %}Enroll as a Data Contributor for Your Organization{% endtrans %}</a></li>
+        <ul class="topmenu-main">
+          <li class="topmenu-unesco"><a href="https://www.unesco.org/en/" alt="UNESCO Portal">UNESCO</a></li>
+          
+          <!-- Full text on desktop, short on tablet, hidden on mobile -->
+          <li class="topmenu-enroll desktop-only">
+            <a href="/colab" alt="Enroll as a Data Contributor for Your Organization">{% trans %}Enroll as a Data Contributor for Your Organization{% endtrans %}</a>
+          </li>
+          <li class="topmenu-enroll tablet-only">
+            <a href="/colab" alt="Enroll as a Data Contributor">{% trans %}Enroll{% endtrans %}</a>
+          </li>
+          
+          <!-- Login - always visible but compact on mobile -->
           {% block header_account_notlogged %}
           {% if c.userobj %}
-          <li class="mobile-login-item"><a href="{{ h.url_for('user.logout') }}" title="{{ _('Log out') }}"><i class="fa fa-sign-out visible-mobile"></i> {{ _('Log out') }}</a></li> 
+          <li class="topmenu-login"><a href="{{ h.url_for('user.logout') }}" title="{{ _('Log out') }}"><i class="fa fa-sign-out mobile-icon"></i><span class="login-text">{{ _('Log out') }}</span></a></li> 
           {% else %}
-          <li class="mobile-login-item"><a href="{{ h.url_for('user.login') }}" title="{{ _('Log in') }}"><i class="fa fa-sign-in visible-mobile"></i> {{ _('Log in') }}</a></li>
+          <li class="topmenu-login"><a href="{{ h.url_for('user.login') }}" title="{{ _('Log in') }}"><i class="fa fa-sign-in mobile-icon"></i><span class="login-text">{{ _('Log in') }}</span></a></li>
           {% endif %}
           {% endblock %}
-          <li class="hidden-mobile">
-          {% snippet "snippets/IHPIX.html" %}
+          
+          <!-- IHP IX - hidden on mobile, in dropdown -->
+          <li class="topmenu-ihp desktop-tablet-only">
+            {% snippet "snippets/IHPIX.html" %}
           </li>
-          <li>
-          {% block footer_lang %}
-          {% snippet "snippets/language_selector.html" %}
-          {% endblock %}
+          
+          <!-- Language selector - always visible -->
+          <li class="topmenu-lang">
+            {% block footer_lang %}
+            {% snippet "snippets/language_selector.html" %}
+            {% endblock %}
+          </li>
+          
+          <!-- Mobile menu toggle for hidden items -->
+          <li class="topmenu-toggle mobile-only">
+            <a href="#" class="topmenu-dropdown-toggle" aria-label="More options">
+              <i class="fa fa-bars"></i>
+            </a>
+            <ul class="topmenu-dropdown">
+              <li><a href="/colab">{% trans %}Enroll as a Data Contributor for Your Organization{% endtrans %}</a></li>
+              <li>{% snippet "snippets/IHPIX.html" %}</li>
+            </ul>
           </li>
         </ul>
       </div>
