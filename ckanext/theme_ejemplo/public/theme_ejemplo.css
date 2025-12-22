@@ -5281,6 +5281,7 @@ body .resource-item .btn-group .dropdown-menu,
 body ul.resource-list li.resource-item .dropdown-menu,
 body .resource-list .resource-item .dropdown-menu,
 body li.resource-item .dropdown-menu {
+  display: none !important;
   position: absolute !important;
   top: 100% !important;
   left: auto !important;
@@ -5298,10 +5299,6 @@ body li.resource-item .dropdown-menu {
   margin-left: 0 !important;
   margin-right: 0 !important;
   padding: 6px 0 !important;
-  display: block !important;
-  opacity: 1 !important;
-  visibility: visible !important;
-  transform: translateY(0) scale(1) !important;
   overflow: visible !important;
   clip: auto !important;
   white-space: nowrap !important;
