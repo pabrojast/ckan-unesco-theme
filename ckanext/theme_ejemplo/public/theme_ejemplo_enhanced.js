@@ -340,43 +340,65 @@ function enhanceSearch() {
 function initializeMobileNavigation() {
     try {
         const toggleButtons = document.querySelectorAll('.navbar-toggle, .navbar-toggler');
-        const navContainer = document.querySelector('.masthead-nav');
+        // Intentar múltiples selectores para encontrar el contenedor del menú
+        let navContainer = document.querySelector('.masthead-nav') || 
+                          document.querySelector('.navigation') || 
+                          document.querySelector('.nav-collapse') ||
+                          document.querySelector('.navbar-collapse');
         
         console.log('Inicializando navegación mobile:', {
             toggleButtons: toggleButtons.length,
-            navContainer: !!navContainer
+            navContainer: !!navContainer,
+            navContainerSelector: navContainer ? navContainer.className : 'not found'
         });
         
         toggleButtons.forEach(button => {
             button.addEventListener('click', function(e) {
                 e.preventDefault();
                 console.log('Toggle button clicked');
+                console.log('Current navContainer classes:', navContainer ? navContainer.className : 'no container');
                 
                 if (navContainer) {
-                    // Simple toggle de la clase show
-                    const isCurrentlyShown = navContainer.classList.contains('show');
+                    // Debug: verificar todas las clases actuales
+                    const currentClasses = Array.from(navContainer.classList);
+                    console.log('Current classes:', currentClasses);
+                    
+                    // Verificar múltiples clases posibles para estado abierto
+                    const isCurrentlyShown = navContainer.classList.contains('show') ||
+                                           navContainer.classList.contains('in') ||
+                                           navContainer.classList.contains('open') ||
+                                           navContainer.classList.contains('active');
+                    
+                    console.log('Is currently shown?', isCurrentlyShown);
                     
                     if (isCurrentlyShown) {
-                        navContainer.classList.remove('show', 'in');
-                        console.log('Menú cerrado');
+                        navContainer.classList.remove('show', 'in', 'open', 'active');
+                        navContainer.style.display = ''; // Reset display style
+                        console.log('Menú cerrado - clases removidas');
                     } else {
                         navContainer.classList.add('show', 'in');
-                        console.log('Menú abierto');
+                        console.log('Menú abierto - clases agregadas');
                     }
                     
-                    // Actualizar aria-expanded
-                    const isExpanded = navContainer.classList.contains('show');
+                    // Debug: verificar clases después del cambio
+                    const newClasses = Array.from(navContainer.classList);
+                    console.log('New classes:', newClasses);
+                    
+                    // Actualizar aria-expanded basado en el nuevo estado
+                    const isExpanded = navContainer.classList.contains('show') || navContainer.classList.contains('in');
                     this.setAttribute('aria-expanded', isExpanded.toString());
+                    console.log('Aria-expanded set to:', isExpanded);
                 }
             });
         });
         
         // Cerrar menú mobile al hacer click en un link
-        const mobileNavLinks = document.querySelectorAll('.masthead-nav .navigation .nav a');
+        const mobileNavLinks = document.querySelectorAll('.masthead-nav .navigation .nav a, .navigation .nav a, .navbar-nav a');
         mobileNavLinks.forEach(link => {
             link.addEventListener('click', function() {
                 if (navContainer && window.innerWidth <= 768) {
-                    navContainer.classList.remove('show', 'in');
+                    navContainer.classList.remove('show', 'in', 'open', 'active');
+                    navContainer.style.display = '';
                     toggleButtons.forEach(btn => {
                         btn.setAttribute('aria-expanded', 'false');
                     });
@@ -388,7 +410,8 @@ function initializeMobileNavigation() {
         // Cerrar menú mobile al cambiar tamaño de ventana
         window.addEventListener('resize', function() {
             if (window.innerWidth > 768 && navContainer) {
-                navContainer.classList.remove('show', 'in');
+                navContainer.classList.remove('show', 'in', 'open', 'active');
+                navContainer.style.display = '';
                 toggleButtons.forEach(btn => {
                     btn.setAttribute('aria-expanded', 'false');
                 });
