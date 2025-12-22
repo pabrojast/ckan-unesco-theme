@@ -744,6 +744,15 @@ border-radius: 0 0 3px 3px;
         border-radius: 0 0 8px 8px;
     }
 }
+
+/* Ensure mobile menu can close when toggler is pressed again */
+@media (max-width: 768px) {
+    body .masthead .masthead-nav:not(.show):not(.in) .navigation {
+        display: none !important;
+        opacity: 0 !important;
+        transform: translateY(-10px) !important;
+    }
+}
 @media (min-width: 769px) {
     .masthead .navbar-collapse {
         display: block !important;
