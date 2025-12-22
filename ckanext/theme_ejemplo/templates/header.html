@@ -154,14 +154,6 @@
         <div class="masthead-lang-mobile">
           {% snippet "snippets/language_selector.html" %}
         </div>
-        <div class="masthead-login-mobile">
-          {% if c.userobj %}
-            <a class="btn btn-primary btn-sm" href="{{ h.url_for('user.read', id=c.userobj.name) }}">{{ _('My account') }}</a>
-            <a class="btn btn-default btn-sm" href="{{ h.url_for('user.logout') }}">{{ _('Log out') }}</a>
-          {% else %}
-            <a class="btn btn-primary btn-sm" href="{{ h.url_for('user.login') }}">{{ _('Log in') }}</a>
-          {% endif %}
-        </div>
         <button data-target="#main-navigation-toggle" data-toggle="collapse" data-bs-target="#main-navigation-toggle" data-bs-toggle="collapse" class="navbar-toggle navbar-toggler" type="button" aria-label="expand or collapse" aria-controls="main-navigation-toggle" aria-expanded="false">
           <span class="sr-only">{{ _('Toggle navigation') }}</span>
           <span class="fa fa-bars"></span>
