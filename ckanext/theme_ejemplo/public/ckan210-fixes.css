@@ -2805,3 +2805,132 @@ aside .dataset_org_info img,
   margin: 0 !important;
 }
 
+/* ===== METADATA TABLE COLLAPSIBLE ROWS STYLING ===== */
+
+/* Remove the floating triangle from table-toggle-more */
+body .table-toggle-more::after,
+body .table-toggle-more:after,
+.table-toggle-more::after,
+.table-toggle-more:after {
+  display: none !important;
+  content: none !important;
+}
+
+/* Ensure table has proper structure */
+body .table-toggle-more,
+body .table-toggle-less,
+.table-toggle-more,
+.table-toggle-less {
+  position: relative !important;
+  border-collapse: collapse !important;
+}
+
+/* Separator row - make it minimal */
+body .table tr.toggle-separator,
+.table tr.toggle-separator {
+  display: table-row !important;
+}
+
+body .table tr.toggle-separator td,
+.table tr.toggle-separator td {
+  padding: 0 !important;
+  height: 0 !important;
+  border: none !important;
+}
+
+/* Show more/less toggle row styling - integrated with table */
+body .table tr.toggle-show,
+body .table tr.toggle-show-more,
+.table tr.toggle-show,
+.table tr.toggle-show-more {
+  display: table-row !important;
+  background-color: #f8f9fa !important;
+}
+
+body .table tr.toggle-show td,
+body .table tr.toggle-show-more td,
+.table tr.toggle-show td,
+.table tr.toggle-show-more td {
+  padding: 12px 15px !important;
+  text-align: center !important;
+  border-top: 1px solid #e9ecef !important;
+  border-bottom: 1px solid #e9ecef !important;
+  background-color: #f8f9fa !important;
+}
+
+/* Show more/less link styling */
+body .table tr.toggle-show a.show-more,
+body .table tr.toggle-show a.show-less,
+body .table tr.toggle-show-more a.show-more,
+body .table tr.toggle-show-more a.show-less,
+.table tr.toggle-show a.show-more,
+.table tr.toggle-show a.show-less {
+  display: inline-block !important;
+  padding: 6px 16px !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  color: #0069B4 !important;
+  background-color: transparent !important;
+  border: none !important;
+  text-decoration: none !important;
+  cursor: pointer !important;
+  transition: color 0.15s ease !important;
+}
+
+body .table tr.toggle-show a.show-more:hover,
+body .table tr.toggle-show a.show-less:hover,
+body .table tr.toggle-show-more a.show-more:hover,
+body .table tr.toggle-show-more a.show-less:hover,
+.table tr.toggle-show a:hover {
+  color: #005a9e !important;
+  text-decoration: underline !important;
+}
+
+/* Hide show-less when in "more" state, hide show-more when in "less" state */
+body .table-toggle-more tr.toggle-show .show-less,
+.table-toggle-more tr.toggle-show .show-less {
+  display: none !important;
+}
+
+body .table-toggle-more tr.toggle-show .show-more,
+.table-toggle-more tr.toggle-show .show-more {
+  display: inline-block !important;
+}
+
+body .table-toggle-less tr.toggle-show .show-more,
+.table-toggle-less tr.toggle-show .show-more {
+  display: none !important;
+}
+
+body .table-toggle-less tr.toggle-show .show-less,
+.table-toggle-less tr.toggle-show .show-less {
+  display: inline-block !important;
+}
+
+/* Hidden rows when collapsed */
+body .table-toggle-more tr.toggle-more,
+.table-toggle-more tr.toggle-more {
+  display: none !important;
+}
+
+/* Visible rows when expanded */
+body .table-toggle-less tr.toggle-more,
+.table-toggle-less tr.toggle-more {
+  display: table-row !important;
+}
+
+/* Ensure the toggle row is the last visible element and connected to table */
+body .additional-info .table,
+body .module .table,
+.additional-info .table,
+.module .table {
+  margin-bottom: 0 !important;
+  border-bottom: none !important;
+}
+
+/* Last row of the table should have bottom border */
+body .table tr:last-child td,
+.table tr:last-child td {
+  border-bottom: 1px solid #e9ecef !important;
+}
+
