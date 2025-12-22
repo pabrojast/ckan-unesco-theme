@@ -5389,81 +5389,93 @@ a.btn.btn-primary[href*="dataset/new"]:hover {
   border-color: #005a9e !important;
 }
 
-/* ===== METADATA TABLE DESIGN IMPROVEMENTS ===== */
+/* ===== METADATA TABLE DESIGN IMPROVEMENTS - CLEAN FORMAT ===== */
 
-/* Fix metadata section header visibility and styling */
+/* Modern metadata section header */
 .additional-info header,
 .additional-info .module-heading,
 body .additional-info header,
 body .additional-info .module-heading {
-  background: linear-gradient(135deg, #0069B4 0%, #005a9e 100%) !important;
-  color: white !important;
-  padding: 15px 20px !important;
-  margin: 0 !important;
-  border-radius: 8px 8px 0 0 !important;
+  background: transparent !important;
   border: none !important;
-  font-size: 18px !important;
-  font-weight: 600 !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: space-between !important;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+  padding: 0 0 15px 0 !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  border-bottom: 1px solid #e9ecef !important;
 }
 
 .additional-info header h2,
 .additional-info header h2.inline,
 body .additional-info header h2,
 body .additional-info header h2.inline {
-  color: white !important;
+  color: #212529 !important;
   background: transparent !important;
   margin: 0 !important;
   padding: 0 !important;
-  font-size: 18px !important;
-  font-weight: 600 !important;
-  line-height: 1.2 !important;
+  font-size: 24px !important;
+  font-weight: 700 !important;
+  line-height: 1.3 !important;
 }
 
-/* Improve metadata table container */
+/* Clean metadata container - like right side */
 .additional-info,
 body .additional-info {
-  background: #fff !important;
-  border-radius: 8px !important;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
+  background: transparent !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
   margin: 30px 0 !important;
-  overflow: hidden !important;
-  border: 1px solid #e9ecef !important;
+  overflow: visible !important;
+  border: none !important;
+  padding: 0 !important;
 }
 
-/* Fix metadata table styling */
+/* Section headers within metadata */
+.additional-info h3,
+.additional-info .section-header,
+body .additional-info h3,
+body .additional-info .section-header {
+  color: #212529 !important;
+  font-size: 18px !important;
+  font-weight: 600 !important;
+  margin: 25px 0 15px 0 !important;
+  padding: 0 !important;
+  border-bottom: 1px solid #e9ecef !important;
+  padding-bottom: 8px !important;
+}
+
+/* Clean table styling - no borders, minimal design */
 .additional-info .table,
 .additional-info table,
 body .additional-info .table,
 body .additional-info table {
-  margin: 0 !important;
-  background: white !important;
-  border-collapse: separate !important;
+  margin: 0 0 20px 0 !important;
+  background: transparent !important;
+  border-collapse: collapse !important;
   border-spacing: 0 !important;
   width: 100% !important;
   border: none !important;
 }
 
-/* Table rows styling */
+/* Minimal row styling */
 .additional-info .table tbody tr,
 .additional-info table tbody tr,
 body .additional-info .table tbody tr,
 body .additional-info table tbody tr {
+  border: none !important;
   border-bottom: 1px solid #f0f0f0 !important;
-  transition: background-color 0.2s ease !important;
+  background: transparent !important;
+  transition: none !important;
 }
 
 .additional-info .table tbody tr:hover,
 .additional-info table tbody tr:hover,
 body .additional-info .table tbody tr:hover,
 body .additional-info table tbody tr:hover {
-  background-color: #f8f9fa !important;
+  background-color: transparent !important;
 }
 
-/* Table cells styling */
+/* Clean cell styling */
 .additional-info .table td,
 .additional-info table td,
 .additional-info .dataset-label,
@@ -5472,65 +5484,62 @@ body .additional-info .table td,
 body .additional-info table td,
 body .additional-info .dataset-label,
 body .additional-info .dataset-details {
-  padding: 15px 20px !important;
+  padding: 12px 0 !important;
   vertical-align: top !important;
-  border-top: none !important;
-  border-left: none !important;
-  border-right: none !important;
+  border: none !important;
   border-bottom: 1px solid #f0f0f0 !important;
+  background: transparent !important;
 }
 
 .additional-info .dataset-label,
 body .additional-info .dataset-label {
-  background: #f8f9fa !important;
+  background: transparent !important;
   font-weight: 600 !important;
-  color: #495057 !important;
-  width: 30% !important;
-  border-right: 1px solid #e9ecef !important;
+  color: #6c757d !important;
+  width: 35% !important;
+  border-right: none !important;
+  padding-right: 15px !important;
+  font-size: 14px !important;
 }
 
 .additional-info .dataset-details,
 body .additional-info .dataset-details {
-  background: white !important;
+  background: transparent !important;
   color: #212529 !important;
-  width: 70% !important;
+  width: 65% !important;
+  font-size: 14px !important;
+  padding-left: 15px !important;
 }
 
-/* Fix Show More button styling and positioning */
+/* Minimal Show More button - like right side */
 .additional-info .toggle-show-more,
 body .additional-info .toggle-show-more {
-  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%) !important;
+  background: transparent !important;
   border: none !important;
-  border-top: 2px solid #0069B4 !important;
-  padding: 12px 20px !important;
-  text-align: center !important;
-  margin: 0 !important;
+  border-top: none !important;
+  padding: 10px 0 !important;
+  text-align: left !important;
+  margin: 15px 0 0 0 !important;
   cursor: pointer !important;
-  transition: all 0.2s ease !important;
-  font-weight: 600 !important;
-  color: #0069B4 !important;
-  border-radius: 0 0 8px 8px !important;
+  transition: color 0.2s ease !important;
+  font-weight: 500 !important;
+  color: #007bff !important;
+  border-radius: 0 !important;
   position: relative !important;
+  font-size: 14px !important;
 }
 
 .additional-info .toggle-show-more:hover,
 body .additional-info .toggle-show-more:hover {
-  background: linear-gradient(135deg, #e9ecef 0%, #dee2e6 100%) !important;
-  color: #005a9e !important;
+  background: transparent !important;
+  color: #0056b3 !important;
+  text-decoration: underline !important;
 }
 
 .additional-info .toggle-show-more::before,
 body .additional-info .toggle-show-more::before {
-  content: "▼ " !important;
-  font-size: 12px !important;
-  margin-right: 8px !important;
-  transition: transform 0.2s ease !important;
-}
-
-.additional-info .toggle-show-more.collapsed::before,
-body .additional-info .toggle-show-more.collapsed::before {
-  transform: rotate(-90deg) !important;
-  content: "▶ " !important;
+  content: "" !important;
+  display: none !important;
 }
 
 /* Consistent button styling for Download vs Explore */
