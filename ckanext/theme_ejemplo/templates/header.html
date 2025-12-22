@@ -95,7 +95,7 @@
           {% if c.userobj %}
           <li class="mobile-login-item"><a href="{{ h.url_for('user.logout') }}" title="{{ _('Log out') }}"><i class="fa fa-sign-out visible-mobile"></i> {{ _('Log out') }}</a></li> 
           {% else %}
-          <li class="mobile-login-item">{% link_for _('Log in') | replace('Log in', '<i class="fa fa-sign-in visible-mobile"></i> Log in') | safe, named_route='user.login' %}</li>
+          <li class="mobile-login-item"><a href="{{ h.url_for('user.login') }}" title="{{ _('Log in') }}"><i class="fa fa-sign-in visible-mobile"></i> {{ _('Log in') }}</a></li>
           {% endif %}
           {% endblock %}
           <li class="hidden-mobile">
