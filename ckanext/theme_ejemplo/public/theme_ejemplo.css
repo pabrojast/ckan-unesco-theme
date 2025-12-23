@@ -450,9 +450,10 @@ border-radius: 0 0 3px 3px;
         max-width: 250px !important;
     }
     
-    /* Ocultar top menu completo en mobile */
+    /* Mostrar top menu en mobile con layout compacto */
     .masthead .masthead-top-bar {
-        display: none !important;
+        display: block !important;
+        padding: 5px 0 !important;
     }
     
     /* Restructurar masthead-nav para mobile */
@@ -695,7 +696,8 @@ border-radius: 0 0 3px 3px;
 /* Small-medium screens - further compact */
 @media (min-width: 600px) and (max-width: 767px) {
     .masthead .masthead-top-bar {
-        display: none !important;
+        display: block !important;
+        padding: 5px 0 !important;
     }
     
     .masthead .masthead-nav .navigation .nav li {
@@ -769,12 +771,6 @@ border-radius: 0 0 3px 3px;
         display: none !important;
         opacity: 0 !important;
         transform: translateY(-10px) !important;
-    }
-    
-    /* Hide desktop login/logout links; mobile version shown in actions */
-    .masthead-top-bar .masthead-topmenu li a[href*=\"user/login\"],
-    .masthead-top-bar .masthead-topmenu li a[href*=\"user.logout\"] {
-        display: none !important;
     }
 }
 
@@ -5615,9 +5611,9 @@ body .download-links .btn-group .btn i {
 
 /* Base styles for responsive top menu */
 .masthead-top-bar {
-  background-color: rgba(0, 119, 212, 0.95) !important;
+  background-color: transparent !important;
   padding: 8px 0 !important;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-bottom: none !important;
 }
 
 .topmenu-main {
