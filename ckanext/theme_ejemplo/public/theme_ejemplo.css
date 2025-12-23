@@ -5545,8 +5545,8 @@ body .additional-info .toggle-show-more:hover {
   text-decoration: none !important;
 }
 
-.additional-info .toggle-show-more::before,
-body .additional-info .toggle-show-more::before {
+.additional-info .toggle-show-more:not(tr)::before,
+body .additional-info .toggle-show-more:not(tr)::before {
   content: "▼ " !important;
   font-size: 12px !important;
   margin-right: 6px !important;
@@ -5554,10 +5554,19 @@ body .additional-info .toggle-show-more::before {
   display: inline !important;
 }
 
-.additional-info .toggle-show-more.collapsed::before,
-body .additional-info .toggle-show-more.collapsed::before {
+.additional-info .toggle-show-more.collapsed:not(tr)::before,
+body .additional-info .toggle-show-more.collapsed:not(tr)::before {
   transform: rotate(-90deg) !important;
   content: "▶ " !important;
+}
+
+/* Hide arrow for table rows with toggle-show-more class */
+.additional-info tr.toggle-show-more::before,
+.additional-info tr.toggle-show::before,
+body .additional-info tr.toggle-show-more::before,
+body .additional-info tr.toggle-show::before {
+  display: none !important;
+  content: none !important;
 }
 
 /* Clear separation between metadata sections */

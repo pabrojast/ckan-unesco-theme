@@ -3068,7 +3068,20 @@ table[data-module="schemingdcat-table-collapsible-rows"] tr.toggle-show-more a::
 .table tr.toggle-show td::before,
 .table tr.toggle-show-more td::before,
 table tr.toggle-show td::before,
-table tr.toggle-show-more td::before {
+table tr.toggle-show-more td::before,
+/* Also hide on the row itself */
+html body .additional-info tr.toggle-show-more::before,
+html body .additional-info tr.toggle-show::before,
+body .additional-info tr.toggle-show-more::before,
+body .additional-info tr.toggle-show::before,
+.additional-info tr.toggle-show-more::before,
+.additional-info tr.toggle-show::before,
+html body tr.toggle-show-more::before,
+html body tr.toggle-show::before,
+body tr.toggle-show-more::before,
+body tr.toggle-show::before,
+tr.toggle-show-more::before,
+tr.toggle-show::before {
   display: none !important;
   content: none !important;
   visibility: hidden !important;
