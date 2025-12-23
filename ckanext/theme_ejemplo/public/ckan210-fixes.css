@@ -2995,3 +2995,115 @@ body .table tr:last-child td,
   border-bottom: 1px solid #e9ecef !important;
 }
 
+/* ===== IMPROVED METADATA TABLE TOGGLE STYLING ===== */
+
+/* Extra specificity to remove triangle from schemingdcat */
+html body .additional-info table.table-toggle-more::after,
+html body .additional-info table.table-toggle-more:after,
+html body .additional-info table.table-toggle-less::after,
+html body .additional-info table.table-toggle-less:after,
+html body .additional-info .table-toggle-more::after,
+html body .additional-info .table-toggle-more:after,
+html body .additional-info .table-toggle-less::after,
+html body .additional-info .table-toggle-less:after,
+.additional-info table::after,
+.additional-info table:after,
+table[data-module="schemingdcat-table-collapsible-rows"]::after,
+table[data-module="schemingdcat-table-collapsible-rows"]:after {
+  display: none !important;
+  content: none !important;
+  border: none !important;
+  height: 0 !important;
+  width: 0 !important;
+  visibility: hidden !important;
+  opacity: 0 !important;
+  pointer-events: none !important;
+}
+
+/* Improved toggle row styling - make it look like a button area */
+html body .table tr.toggle-show,
+html body .table tr.toggle-show-more,
+html body table tr.toggle-show,
+html body table tr.toggle-show-more,
+.table tr.toggle-show,
+.table tr.toggle-show-more,
+table[data-module="schemingdcat-table-collapsible-rows"] tr.toggle-show,
+table[data-module="schemingdcat-table-collapsible-rows"] tr.toggle-show-more {
+  display: table-row !important;
+  background: linear-gradient(to bottom, #f8f9fa, #f0f2f5) !important;
+  border-top: 1px solid #dee2e6 !important;
+}
+
+html body .table tr.toggle-show td,
+html body .table tr.toggle-show-more td,
+html body table tr.toggle-show td,
+html body table tr.toggle-show-more td,
+.table tr.toggle-show td,
+.table tr.toggle-show-more td,
+table[data-module="schemingdcat-table-collapsible-rows"] tr.toggle-show td,
+table[data-module="schemingdcat-table-collapsible-rows"] tr.toggle-show-more td {
+  padding: 10px 15px !important;
+  text-align: center !important;
+  border-top: none !important;
+  border-bottom: 1px solid #dee2e6 !important;
+  background: transparent !important;
+}
+
+/* Style the show more/less links as buttons */
+html body .table tr.toggle-show a,
+html body .table tr.toggle-show-more a,
+html body table tr.toggle-show a,
+html body table tr.toggle-show-more a,
+.table tr.toggle-show a,
+.table tr.toggle-show-more a,
+table[data-module="schemingdcat-table-collapsible-rows"] tr.toggle-show a,
+table[data-module="schemingdcat-table-collapsible-rows"] tr.toggle-show-more a {
+  display: inline-block !important;
+  padding: 8px 20px !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+  color: #0069B4 !important;
+  background-color: #fff !important;
+  border: 1px solid #0069B4 !important;
+  border-radius: 4px !important;
+  text-decoration: none !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+}
+
+html body .table tr.toggle-show a:hover,
+html body .table tr.toggle-show-more a:hover,
+html body table tr.toggle-show a:hover,
+html body table tr.toggle-show-more a:hover,
+.table tr.toggle-show a:hover,
+.table tr.toggle-show-more a:hover,
+table[data-module="schemingdcat-table-collapsible-rows"] tr.toggle-show a:hover,
+table[data-module="schemingdcat-table-collapsible-rows"] tr.toggle-show-more a:hover {
+  color: #fff !important;
+  background-color: #0069B4 !important;
+  text-decoration: none !important;
+}
+
+/* Hide separator row completely */
+html body .table tr.toggle-separator,
+html body table tr.toggle-separator,
+.table tr.toggle-separator,
+table tr.toggle-separator,
+table[data-module="schemingdcat-table-collapsible-rows"] tr.toggle-separator {
+  display: none !important;
+  height: 0 !important;
+  visibility: hidden !important;
+  overflow: hidden !important;
+}
+
+html body .table tr.toggle-separator td,
+html body table tr.toggle-separator td,
+.table tr.toggle-separator td,
+table tr.toggle-separator td,
+table[data-module="schemingdcat-table-collapsible-rows"] tr.toggle-separator td {
+  display: none !important;
+  padding: 0 !important;
+  height: 0 !important;
+  border: none !important;
+}
+
