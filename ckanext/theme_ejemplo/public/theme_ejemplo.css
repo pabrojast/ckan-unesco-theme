@@ -89,6 +89,8 @@ z-index: 1000 !important;
     min-height: 35px;
     width: 100%;
     text-align: left;
+    position: relative;
+    z-index: 1010;
 }
 
 .masthead .masthead-nav .masthead-brand {
@@ -5681,7 +5683,7 @@ body .download-links .btn-group .btn i {
   padding: 8px 0 !important;
   margin: 4px 0 0 0 !important;
   min-width: 200px !important;
-  z-index: 1000 !important;
+  z-index: 10000 !important;
 }
 
 .topmenu-dropdown li {
