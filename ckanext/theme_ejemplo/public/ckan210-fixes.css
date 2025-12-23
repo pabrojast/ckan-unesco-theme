@@ -1787,11 +1787,16 @@ body .resource-item .dropdown-menu li a:active,
   background-color: #e1e4e8 !important;
 }
 
-/* Icon styling in dropdown */
+/* Icon styling in dropdown - ENSURE VISIBILITY */
 body .resource-item .dropdown-menu li a i,
 body .resource-item .dropdown-menu li a i.fa,
 .resource-item .dropdown-menu li a i,
-.resource-item .dropdown-menu li a i.fa {
+.resource-item .dropdown-menu li a i.fa,
+html body .resource-item .dropdown-menu li a i,
+html body .resource-item .dropdown-menu li a i.fa {
+  display: inline-block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
   margin-right: 12px !important;
   width: 20px !important;
   text-align: center !important;
@@ -2321,14 +2326,44 @@ span.format-label[data-format="css"] {
   margin-right: 6px !important;
 }
 
-.download-links .btn-group .dropdown-toggle {
-  padding-left: 10px !important;
-  padding-right: 10px !important;
-  border-left: 1px solid rgba(255, 255, 255, 0.2) !important;
+/* Dropdown toggle button - unify with main button */
+.download-links .btn-group .dropdown-toggle,
+html body .download-links .btn-group .dropdown-toggle,
+body .download-links .btn-group .dropdown-toggle,
+.download-links .btn-group button.dropdown-toggle,
+.download-links .btn-group .btn.dropdown-toggle {
+  padding: 8px 12px !important;
+  border-left: 1px solid rgba(255, 255, 255, 0.3) !important;
+  border-top-left-radius: 0 !important;
+  border-bottom-left-radius: 0 !important;
+  border-top-right-radius: 4px !important;
+  border-bottom-right-radius: 4px !important;
+  background: linear-gradient(180deg, #0074cc 0%, #0069B4 100%) !important;
+  border-color: #0069B4 !important;
+  margin-left: -1px !important;
+  min-width: 36px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+/* First button in group - remove right radius */
+.download-links .btn-group .btn:first-child,
+.download-links .btn-group .btn-primary:first-child,
+.download-links .btn-group a.btn:first-child {
+  border-top-right-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}
+
+.download-links .btn-group .dropdown-toggle:hover,
+html body .download-links .btn-group .dropdown-toggle:hover {
+  background: linear-gradient(180deg, #0069B4 0%, #005a9e 100%) !important;
 }
 
 .download-links .btn-group .dropdown-toggle .caret {
   transition: transform 0.2s ease !important;
+  border-top-color: white !important;
+  margin: 0 !important;
 }
 
 .download-links .btn-group.open .dropdown-toggle .caret {
