@@ -2903,7 +2903,7 @@ body .table tr.toggle-show-more,
 .table tr.toggle-show,
 .table tr.toggle-show-more {
   display: table-row !important;
-  background-color: #f8f9fa !important;
+  background-color: transparent !important;
 }
 
 html body .table tr.toggle-show td,
@@ -2915,10 +2915,10 @@ body .table tr.toggle-show-more td,
 .table tr.toggle-show td,
 .table tr.toggle-show-more td {
   padding: 12px 15px !important;
-  text-align: center !important;
-  border-top: 1px solid #e9ecef !important;
-  border-bottom: 1px solid #e9ecef !important;
-  background-color: #f8f9fa !important;
+  text-align: right !important;
+  border-top: none !important;
+  border-bottom: none !important;
+  background-color: transparent !important;
 }
 
 /* Show more/less link styling */
@@ -2928,8 +2928,8 @@ html body .table tr.toggle-show-more a.show-more,
 html body .table tr.toggle-show-more a.show-less,
 body .table tr.toggle-show a.show-more,
 body .table tr.toggle-show a.show-less {
-  padding: 6px 16px !important;
-  font-size: 13px !important;
+  padding: 0 !important;
+  font-size: 14px !important;
   font-weight: 500 !important;
   color: #0069B4 !important;
   background-color: transparent !important;
@@ -2944,6 +2944,7 @@ html body .table tr.toggle-show a.show-less:hover,
 body .table tr.toggle-show a:hover {
   color: #005a9e !important;
   text-decoration: underline !important;
+  background-color: transparent !important;
 }
 
 /* CRITICAL: Hide show-less when in "more" state (collapsed) */
@@ -3055,7 +3056,25 @@ table[data-module="schemingdcat-table-collapsible-rows"]:after {
   pointer-events: none !important;
 }
 
-/* Improved toggle row styling - make it look like a button area */
+/* Remove any triangle/arrow before the Show more link in tables */
+html body .table tr.toggle-show a::before,
+html body .table tr.toggle-show-more a::before,
+html body table tr.toggle-show a::before,
+html body table tr.toggle-show-more a::before,
+.table tr.toggle-show a::before,
+.table tr.toggle-show-more a::before,
+table[data-module="schemingdcat-table-collapsible-rows"] tr.toggle-show a::before,
+table[data-module="schemingdcat-table-collapsible-rows"] tr.toggle-show-more a::before,
+.table tr.toggle-show td::before,
+.table tr.toggle-show-more td::before,
+table tr.toggle-show td::before,
+table tr.toggle-show-more td::before {
+  display: none !important;
+  content: none !important;
+  visibility: hidden !important;
+}
+
+/* Improved toggle row styling - clean and minimal */
 html body .table tr.toggle-show,
 html body .table tr.toggle-show-more,
 html body table tr.toggle-show,
@@ -3065,8 +3084,8 @@ html body table tr.toggle-show-more,
 table[data-module="schemingdcat-table-collapsible-rows"] tr.toggle-show,
 table[data-module="schemingdcat-table-collapsible-rows"] tr.toggle-show-more {
   display: table-row !important;
-  background: linear-gradient(to bottom, #f8f9fa, #f0f2f5) !important;
-  border-top: 1px solid #dee2e6 !important;
+  background: transparent !important;
+  border-top: none !important;
 }
 
 html body .table tr.toggle-show td,
@@ -3077,14 +3096,14 @@ html body table tr.toggle-show-more td,
 .table tr.toggle-show-more td,
 table[data-module="schemingdcat-table-collapsible-rows"] tr.toggle-show td,
 table[data-module="schemingdcat-table-collapsible-rows"] tr.toggle-show-more td {
-  padding: 10px 15px !important;
-  text-align: center !important;
+  padding: 12px 15px !important;
+  text-align: right !important;
   border-top: none !important;
-  border-bottom: 1px solid #dee2e6 !important;
+  border-bottom: none !important;
   background: transparent !important;
 }
 
-/* Style the show more/less links as buttons */
+/* Style the show more/less links as simple text links */
 html body .table tr.toggle-show a,
 html body .table tr.toggle-show-more a,
 html body table tr.toggle-show a,
@@ -3094,16 +3113,16 @@ html body table tr.toggle-show-more a,
 table[data-module="schemingdcat-table-collapsible-rows"] tr.toggle-show a,
 table[data-module="schemingdcat-table-collapsible-rows"] tr.toggle-show-more a {
   display: inline-block !important;
-  padding: 8px 20px !important;
-  font-size: 13px !important;
+  padding: 0 !important;
+  font-size: 14px !important;
   font-weight: 500 !important;
   color: #0069B4 !important;
-  background-color: #fff !important;
-  border: 1px solid #0069B4 !important;
-  border-radius: 4px !important;
+  background-color: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
   text-decoration: none !important;
   cursor: pointer !important;
-  transition: all 0.2s ease !important;
+  transition: color 0.2s ease !important;
 }
 
 html body .table tr.toggle-show a:hover,
@@ -3114,9 +3133,9 @@ html body table tr.toggle-show-more a:hover,
 .table tr.toggle-show-more a:hover,
 table[data-module="schemingdcat-table-collapsible-rows"] tr.toggle-show a:hover,
 table[data-module="schemingdcat-table-collapsible-rows"] tr.toggle-show-more a:hover {
-  color: #fff !important;
-  background-color: #0069B4 !important;
-  text-decoration: none !important;
+  color: #005a9e !important;
+  background-color: transparent !important;
+  text-decoration: underline !important;
 }
 
 /* Hide separator row completely */
