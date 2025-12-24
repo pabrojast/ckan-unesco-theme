@@ -26,11 +26,30 @@
   </div>
   {% endblock %}
   {% block resource_item_description %}
-    <p class="description">
-      {% if res.description %}
-        {{ h.theme_ejemplo_markdown_excerpt(h.get_translated(res, 'description'), 80) }}
-      {% endif %}
-    </p>
+    {% set description = h.get_translated(res, 'description') %}
+    {% if description %}
+      {% set full_plain = h.theme_ejemplo_markdown_excerpt(description, 10000) %}
+      {% set excerpt = h.theme_ejemplo_markdown_excerpt(description, 200) %}
+      {% set is_truncated = full_plain|length > excerpt|length %}
+      <div class="description-wrapper" data-resource-id="{{ res.id }}">
+        <p class="description excerpt{% if is_truncated %} is-truncated{% endif %}">
+          {{ excerpt }}
+        </p>
+        {% if is_truncated %}
+          <div class="description description-full" hidden>
+            {{ h.render_markdown(description) }}
+          </div>
+          <button class="btn btn-link btn-sm resource-read-more"
+                  type="button"
+                  data-target="{{ res.id }}"
+                  data-label-more="{{ _('Read more') }}"
+                  data-label-less="{{ _('Read less') }}"
+                  aria-expanded="false">
+            {{ _('Read more') }}
+          </button>
+        {% endif %}
+      </div>
+    {% endif %}
   {% endblock %}
   {% block resource_item_explore %}
   {% if not url_is_edit %}
@@ -80,3 +99,34 @@
   {% endif %}
   {% endblock %}
 </li>
+
+{# Lightweight read-more toggler for resource descriptions #}
+{% block resource_item_scripts %}
+<script>
+if (!window.__resourceReadMore) {
+  window.__resourceReadMore = true;
+  document.addEventListener('click', function (event) {
+    var button = event.target.closest('.resource-read-more');
+    if (!button) return;
+    event.preventDefault();
+    var wrapper = button.closest('.description-wrapper');
+    if (!wrapper) return;
+    var excerpt = wrapper.querySelector('.description.excerpt');
+    var full = wrapper.querySelector('.description-full');
+    if (!excerpt || !full) return;
+    var expanded = button.getAttribute('aria-expanded') === 'true';
+    if (expanded) {
+      full.hidden = true;
+      excerpt.hidden = false;
+      button.setAttribute('aria-expanded', 'false');
+      button.textContent = button.dataset.labelMore || 'Read more';
+    } else {
+      full.hidden = false;
+      excerpt.hidden = true;
+      button.setAttribute('aria-expanded', 'true');
+      button.textContent = button.dataset.labelLess || 'Read less';
+    }
+  });
+}
+</script>
+{% endblock %}
