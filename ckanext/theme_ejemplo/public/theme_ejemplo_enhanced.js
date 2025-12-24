@@ -424,6 +424,36 @@ function initializeMobileNavigation() {
     }
 }
 
+// Rellena el campo URIRef/Permalink si viene vacío
+function fixUriRefFields() {
+    try {
+        const currentUrl = window.location.href.split('#')[0];
+        const inputs = document.querySelectorAll('.permanav input[type="text"], .permanav input[type="url"], input#permalink, input.permalink, input.permalink-input');
+        inputs.forEach(input => {
+            const value = (input.value || '').trim();
+            if (!value) {
+                input.value = currentUrl;
+            }
+            input.setAttribute('title', input.value);
+        });
+
+        const links = document.querySelectorAll('.permanav a.permalink, .permalink-label a');
+        links.forEach(link => {
+            const hasHref = (link.getAttribute('href') || '').trim().length > 0;
+            const hasText = (link.textContent || '').trim().length > 0;
+            if (!hasHref) {
+                link.setAttribute('href', currentUrl);
+            }
+            if (!hasText) {
+                link.textContent = currentUrl;
+            }
+            link.setAttribute('title', link.textContent);
+        });
+    } catch (error) {
+        console.error('Error fixing URIRef fields:', error);
+    }
+}
+
 // Inicialización cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', function() {
     initializeEnhancements();
@@ -432,6 +462,7 @@ document.addEventListener('DOMContentLoaded', function() {
     enhanceForms();
     enhanceSearch();
     initializeMobileNavigation();
+    fixUriRefFields();
 });
 
 // Inicialización adicional cuando la página esté completamente cargada

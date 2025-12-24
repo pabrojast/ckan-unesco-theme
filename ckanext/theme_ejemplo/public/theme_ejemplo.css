@@ -3771,6 +3771,13 @@ nav.nav-facet li,
   border-bottom: none !important;
 }
 
+.module .permanav input[type="text"],
+.module .permanav input[type="url"] {
+  background: #fff !important;
+  color: #212529 !important;
+  width: 100% !important;
+}
+
 .permalink-label {
   background-color: #f8f9fa !important;
   margin: 0 !important;
@@ -3788,6 +3795,8 @@ nav.nav-facet li,
   border: 1px solid #dee2e6 !important;
   border-radius: 4px !important;
   padding: 8px 12px !important;
+  color: #212529 !important;
+  width: 100% !important;
   font-family: monospace !important;
   font-size: 12px !important;
 }
