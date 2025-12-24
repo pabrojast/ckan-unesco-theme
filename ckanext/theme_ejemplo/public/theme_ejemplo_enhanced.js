@@ -424,6 +424,29 @@ function initializeMobileNavigation() {
     }
 }
 
+// Normaliza enlaces de compartir para usar URL absolutas (Twitter/Facebook)
+function fixShareLinks() {
+    try {
+        const origin = window.location.origin;
+        const selectors = 'a[href*="twitter.com/share"], a[href*="facebook.com/sharer"], a[href*="facebook.com/dialog/share"]';
+        document.querySelectorAll(selectors).forEach(link => {
+            const href = link.getAttribute('href') || '';
+            const match = href.match(/(url|u)=([^&]+)/i);
+            if (!match) return;
+            const paramKey = match[1];
+            const current = decodeURIComponent(match[2]);
+            // If already absolute, skip
+            if (/^https?:\/\//i.test(current)) return;
+            const absoluteUrl = new URL(current, origin).href;
+            const newHref = href.replace(match[0], `${paramKey}=${encodeURIComponent(absoluteUrl)}`);
+            link.setAttribute('href', newHref);
+            link.setAttribute('title', absoluteUrl);
+        });
+    } catch (error) {
+        console.error('Error fixing share links:', error);
+    }
+}
+
 // Rellena el campo URIRef/Permalink si viene vacío
 function fixUriRefFields() {
     try {
@@ -462,6 +485,7 @@ document.addEventListener('DOMContentLoaded', function() {
     enhanceForms();
     enhanceSearch();
     initializeMobileNavigation();
+    fixShareLinks();
     fixUriRefFields();
 });
 
