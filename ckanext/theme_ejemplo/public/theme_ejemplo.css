@@ -5428,16 +5428,30 @@ a.btn.btn-primary[href*="dataset/new"] {
   background-color: #0069B4 !important;
   border-color: #0069B4 !important;
   color: white !important;
-  padding: 8px 16px !important;
+  padding: 10px 18px !important;
   border-radius: 4px !important;
   font-weight: 600 !important;
   text-decoration: none !important;
+  box-shadow: 0 2px 8px rgba(0, 105, 180, 0.25) !important;
 }
 
 .btn.btn-primary[href*="new"]:hover,
 a.btn.btn-primary[href*="dataset/new"]:hover {
   background-color: #005a9e !important;
   border-color: #005a9e !important;
+}
+
+/* Layout spacing for primary action bar on listing pages */
+.page_primary_action,
+.page_primary_action .btn-group,
+.page_primary_action .btn {
+  margin-bottom: 10px !important;
+}
+
+.page_primary_action {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
 }
 
 /* ===== METADATA TABLE DESIGN IMPROVEMENTS - CLEAN FORMAT ===== */
