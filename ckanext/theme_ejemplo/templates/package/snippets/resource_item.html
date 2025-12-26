@@ -48,7 +48,6 @@
   <div class="resource-title-row">
     <span class="format-label" property="dc:format" data-format="{{ res.format.lower() or 'data' }}">{{ h.get_translated(res, 'format') }}</span>
     <a class="heading" href="{{ url }}" title="{{ res.name or res.description }}">
-      <i class="fa {{ format_icon }} resource-format-icon-inline" aria-hidden="true"></i>
       {{ h.resource_display_name(res) }}
       {{ h.popular('views', res.tracking_summary.total, min=10) if res.tracking_summary }}
     </a>

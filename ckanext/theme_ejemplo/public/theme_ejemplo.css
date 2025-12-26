@@ -4706,15 +4706,6 @@ ul.resource-list li.resource-item:hover,
   text-align: left !important;
 }
 
-.resource-item .resource-format-icon-inline {
-  margin-right: 8px !important;
-  font-size: 15px !important;
-  color: #0069B4 !important;
-  color: var(--unesco-blue) !important;
-  width: 16px !important;
-  text-align: center !important;
-}
-
 /* Global sprite hookup for format labels (fallback) */
 body .format-label,
 .resource-item .format-label,
