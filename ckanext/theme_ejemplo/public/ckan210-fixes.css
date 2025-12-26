@@ -2653,14 +2653,14 @@ html body .resource-list li.resource-item * {
 
 /* Citation export dropdown menu - opens DOWNWARD */
 .doi-citation-section .citation-export .dropdown-menu {
-  min-width: 220px !important;
-  padding: 8px 0 !important;
+  min-width: 230px !important;
+  padding: 10px 0 !important;
   background: #ffffff !important;
   border: 1px solid #d0d7de !important;
   border-radius: 8px !important;
   box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12), 0 2px 6px rgba(0, 0, 0, 0.08) !important;
   z-index: 2000 !important;
-  margin-top: 4px !important;
+  margin-top: 6px !important;
   top: 100% !important;
   bottom: auto !important;
   position: absolute !important;
@@ -2676,7 +2676,7 @@ html body .resource-list li.resource-item * {
   display: flex !important;
   align-items: center !important;
   gap: 10px !important;
-  padding: 10px 14px !important;
+  padding: 12px 16px !important;
   font-size: 13px !important;
   font-weight: 500 !important;
   color: #24292f !important;
@@ -3173,4 +3173,3 @@ table[data-module="schemingdcat-table-collapsible-rows"] tr.toggle-separator td 
   height: 0 !important;
   border: none !important;
 }
-
