@@ -3582,12 +3582,13 @@ nav.nav-facet li,
   padding: 8px 12px !important;
   border-radius: 4px !important;
   font-size: 12px !important;
-  margin-right: 10px !important;
+  margin-right: 14px !important;
   display: inline-block !important;
 }
 
 .dataset-badges .dataset-private.badge {
   background-color: #dc3545 !important;
+  margin-left: 6px !important;
 }
 
 .dataset-badges .dataset-draft.badge {
