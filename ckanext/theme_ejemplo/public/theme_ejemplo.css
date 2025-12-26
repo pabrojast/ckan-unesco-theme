@@ -97,6 +97,8 @@ z-index: 1000 !important;
     flex-shrink: 0;
     margin-right: 30px;
     margin-bottom: 0;
+    display: flex;
+    align-items: center;
 }
 
 /* Top menu en la primera fila */
@@ -196,11 +198,23 @@ z-index: 1000 !important;
 
 /* El logo ahora está dentro de masthead-nav */
 .masthead .masthead-nav .masthead-brand .logo img {
-    height: 60px !important;
+    height: 64px !important;
     width: auto !important;
     max-width: 350px !important;
     padding: 0;
     margin: 0;
+    display: block;
+}
+
+/* Alinear logo verticalmente en escritorio */
+.masthead .masthead-nav .masthead-brand .logo {
+    display: flex;
+    align-items: center;
+}
+
+/* Contenedor principal del header */
+.masthead .masthead-nav {
+    align-items: center;
 }
 
 .masthead .masthead-nav .navigation {
@@ -448,7 +462,7 @@ border-radius: 0 0 3px 3px;
 @media (max-width: 768px){
     /* Logo más pequeño en mobile */
     .masthead .masthead-nav .masthead-brand .logo img {
-        height: 40px !important;
+        height: 44px !important;
         max-width: 250px !important;
     }
     
