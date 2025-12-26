@@ -4808,9 +4808,7 @@ body .resource-item .btn-group .dropdown-menu,
 body ul.resource-list li.resource-item .dropdown-menu,
 body .resource-list .resource-item .dropdown-menu,
 body li.resource-item .dropdown-menu,
-.resource-item .dropdown-menu,
-.btn-group .dropdown-menu,
-.dropdown .dropdown-menu {
+.resource-item .dropdown-menu {
   position: absolute !important;
   top: calc(100% + 6px) !important;
   left: auto !important;
@@ -4835,8 +4833,7 @@ body .resource-item .dropdown-menu.show,
 body .resource-item .btn-group .dropdown-menu.show,
 .resource-item .dropdown.open .dropdown-menu,
 .resource-item .btn-group.open .dropdown-menu,
-.resource-item .dropdown-menu.show,
-.btn-group .dropdown-menu.show {
+.resource-item .dropdown-menu.show {
   display: block !important;
   opacity: 1 !important;
   transform: none !important;
