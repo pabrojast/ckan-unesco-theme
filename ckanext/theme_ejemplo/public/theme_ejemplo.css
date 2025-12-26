@@ -488,8 +488,22 @@ border-radius: 0 0 3px 3px;
     /* Mostrar toggle button en mobile */
     .masthead .masthead-nav .navbar-toggle,
     .masthead .masthead-nav .navbar-toggler {
-        display: block !important;
+        display: inline-flex !important;
+        align-items: center;
+        justify-content: center;
         order: 2;
+        width: 38px;
+        height: 38px;
+        padding: 8px;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.65);
+        border-radius: 6px;
+        line-height: 1;
+    }
+
+    .masthead .masthead-nav .navbar-toggle .fa,
+    .masthead .masthead-nav .navbar-toggler .fa {
+        font-size: 16px;
     }
     
     .masthead .masthead-actions {
@@ -5791,6 +5805,7 @@ body .download-links .btn-group .btn i {
   
   .topmenu-lang {
     order: 3 !important;
+    display: none !important;
   }
   
   .topmenu-toggle {
@@ -5816,9 +5831,20 @@ body .download-links .btn-group .btn i {
   
   /* Make dropdown toggle more prominent */
   .topmenu-dropdown-toggle {
-    background-color: rgba(255, 255, 255, 0.1) !important;
-    border-radius: 4px !important;
-    padding: 8px 10px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 38px !important;
+    height: 38px !important;
+    padding: 8px !important;
+    background-color: rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(255, 255, 255, 0.65) !important;
+    border-radius: 6px !important;
+    line-height: 1 !important;
+  }
+
+  .topmenu-dropdown-toggle .fa {
+    font-size: 16px !important;
   }
 }
 
@@ -5837,4 +5863,3 @@ body .download-links .btn-group .btn i {
     padding: 6px 10px !important;
   }
 }
-
