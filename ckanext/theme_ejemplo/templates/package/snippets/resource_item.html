@@ -14,12 +14,41 @@
 #}
 {% set url_action = pkg.type ~ ('_resource.edit' if url_is_edit and can_edit else '_resource.read') %}
 {% set url = h.url_for(url_action, id=pkg.id if is_activity_archive else pkg.name, resource_id=res.id, **({'activity_id': request.args['activity_id']} if 'activity_id' in request.args else {})) %}
+{# Icono por formato para mejorar el escaneo visual #}
+{% set fmt = (res.format or '').lower() %}
+{% set format_icon_map = {
+  'csv': 'fa-file-excel-o',
+  'xls': 'fa-file-excel-o',
+  'xlsx': 'fa-file-excel-o',
+  'tsv': 'fa-file-text-o',
+  'pdf': 'fa-file-pdf-o',
+  'doc': 'fa-file-word-o',
+  'docx': 'fa-file-word-o',
+  'json': 'fa-file-code-o',
+  'xml': 'fa-code',
+  'html': 'fa-code',
+  'zip': 'fa-file-archive-o',
+  'rar': 'fa-file-archive-o',
+  'shp': 'fa-map-o',
+  'geojson': 'fa-map-marker',
+  'kml': 'fa-map',
+  'jpg': 'fa-file-image-o',
+  'jpeg': 'fa-file-image-o',
+  'png': 'fa-file-image-o',
+  'gif': 'fa-file-image-o',
+  'txt': 'fa-file-text-o',
+  'api': 'fa-plug',
+  'wms': 'fa-globe',
+  'wfs': 'fa-globe'
+} %}
+{% set format_icon = format_icon_map.get(fmt, 'fa-file-o') %}
 
 <li class="resource-item" data-id="{{ res.id }}">
   {% block resource_item_title %}
   <div class="resource-title-row">
     <span class="format-label" property="dc:format" data-format="{{ res.format.lower() or 'data' }}">{{ h.get_translated(res, 'format') }}</span>
     <a class="heading" href="{{ url }}" title="{{ res.name or res.description }}">
+      <i class="fa {{ format_icon }} resource-format-icon-inline" aria-hidden="true"></i>
       {{ h.resource_display_name(res) }}
       {{ h.popular('views', res.tracking_summary.total, min=10) if res.tracking_summary }}
     </a>
