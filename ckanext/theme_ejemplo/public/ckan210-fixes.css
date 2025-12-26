@@ -1801,6 +1801,10 @@ html body .resource-item .dropdown-menu li a i.fa {
   width: 20px !important;
   text-align: center !important;
   font-size: 15px !important;
+  line-height: 1 !important;
+  font-family: "FontAwesome" !important;
+  font-style: normal !important;
+  font-weight: normal !important;
   flex-shrink: 0 !important;
   color: #57606a !important;
   transition: color 0.12s ease !important;
