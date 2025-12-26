@@ -1840,7 +1840,8 @@ body .resource-item .dropdown-menu li a i.fa-external-link,
 body .resource-item .dropdown-menu li a i.fa-pencil-square-o,
 body .resource-item .dropdown-menu li a i.fa-edit,
 .resource-item .dropdown-menu li a i.fa-pencil-square-o,
-.resource-item .dropdown-menu li a i.fa-edit {
+.resource-item .dropdown-menu li a i.fa-edit,
+.resource-item .dropdown-menu li a i.fa-pencil {
   color: #bf8700 !important;
 }
 

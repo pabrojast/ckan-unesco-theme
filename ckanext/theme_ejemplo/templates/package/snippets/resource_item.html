@@ -92,7 +92,7 @@
       <li>
         <a href="{{ url }}">
           {% if not is_activity_archive and res.has_views %}
-            <i class="fa fa-bar-chart-o"></i>
+            <i class="fa fa-info-circle"></i>
             {{ _('Preview') }}
           {% else %}
             <i class="fa fa-info-circle"></i>
@@ -104,7 +104,7 @@
       <li>
         <a href="{{ res.url }}" class="resource-url-analytics" target="_blank">
           {% if res.has_views or res.url_type == 'upload' %}
-            <i class="fa fa-arrow-circle-o-down"></i>
+            <i class="fa fa-download"></i>
             {{ _('Download') }}
           {% else %}
             <i class="fa fa-external-link"></i>
@@ -116,7 +116,7 @@
       {% if can_edit %}
       <li>
         <a href="{{ h.url_for(pkg.type ~ '_resource.edit', id=pkg.name, resource_id=res.id) }}">
-          <i class="fa fa-pencil-square-o"></i>
+          <i class="fa fa-pencil"></i>
           {{ _('Edit') }}
         </a>
       </li>
