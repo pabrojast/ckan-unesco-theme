@@ -4806,7 +4806,7 @@ body li.resource-item .dropdown-menu,
 .btn-group .dropdown-menu,
 .dropdown .dropdown-menu {
   position: absolute !important;
-  top: 100% !important;
+  top: calc(100% + 6px) !important;
   left: auto !important;
   right: 0 !important;
   z-index: 1000 !important;
@@ -4816,8 +4816,10 @@ body li.resource-item .dropdown-menu,
   border: 1px solid #e9ecef !important;
   border-radius: 8px !important;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
-  margin-top: 4px !important;
   overflow: visible !important;
+  margin: 0 !important;
+  transform: none !important;
+  transition: none !important;
 }
 
 /* Ensure dropdown shows when open */
@@ -4831,7 +4833,7 @@ body .resource-item .btn-group .dropdown-menu.show,
 .btn-group .dropdown-menu.show {
   display: block !important;
   opacity: 1 !important;
-  transform: translateY(0) scale(1) !important;
+  transform: none !important;
   visibility: visible !important;
 }
 
@@ -5369,7 +5371,7 @@ body .resource-list .resource-item .dropdown-menu,
 body li.resource-item .dropdown-menu {
   display: none !important;
   position: absolute !important;
-  top: 100% !important;
+  top: calc(100% + 6px) !important;
   left: auto !important;
   right: 0 !important;
   bottom: auto !important;
@@ -5380,7 +5382,7 @@ body li.resource-item .dropdown-menu {
   border: 1px solid #dee2e6 !important;
   border-radius: 6px !important;
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15) !important;
-  margin-top: 2px !important;
+  margin-top: 0 !important;
   margin-bottom: 0 !important;
   margin-left: 0 !important;
   margin-right: 0 !important;
@@ -5388,6 +5390,8 @@ body li.resource-item .dropdown-menu {
   overflow: visible !important;
   clip: auto !important;
   white-space: nowrap !important;
+  transform: none !important;
+  transition: none !important;
 }
 
 /* Ensure dropdown appears when active/open */
@@ -5402,7 +5406,7 @@ body .resource-item .btn-group .dropdown-menu.show {
   display: block !important;
   opacity: 1 !important;
   visibility: visible !important;
-  transform: translateY(0) scale(1) !important;
+  transform: none !important;
   z-index: 9999 !important;
 }
 
