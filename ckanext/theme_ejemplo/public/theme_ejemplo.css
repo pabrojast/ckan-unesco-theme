@@ -4635,13 +4635,11 @@ ul.resource-list li.resource-item:hover,
 
   /* Sprite-based icon */
   display: inline-block !important;
-  width: 60px !important;
-  height: 60px !important;
-  min-width: 60px !important;
+  width: 48px !important;
+  height: 52px !important;
+  min-width: 48px !important;
   background-image: url("/base/images/sprite-resource-icons.png") !important;
   background-repeat: no-repeat !important;
-  background-size: contain !important;
-  background-position: center center !important;
   background-color: transparent !important;
   color: transparent !important;
   text-indent: -9999px !important;
