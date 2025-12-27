@@ -1274,7 +1274,6 @@ span.format-label[property="dc:format"] {
   justify-content: center !important;
 
   min-width: 56px !important;
-  height: 40px !important;
   padding: 8px 14px !important;
   margin: 0 !important;
 
@@ -1288,7 +1287,6 @@ span.format-label[property="dc:format"] {
 
   /* Colors - white text on colored background */
   color: #ffffff !important;
-  background-color: #6c757d !important;
 
   /* Styling */
   border: none !important;
