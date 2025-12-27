@@ -12,7 +12,7 @@
 
   {% if groups %}
     <form class="add-to-group" method="post">
-      {{ form.hidden('csrf_token', h.get_csrf_token()) }}
+      {{ form.hidden('csrf_token', h.csrf_token()) }}
       <div class="form-group">
         <select id="field-add_group" class="form-control" name="group_added">
           {% for option in groups %}
@@ -27,7 +27,7 @@
   {% if c.pkg_dict.groups %}
 
     <form method="post">
-      {{ form.hidden('csrf_token', h.get_csrf_token()) }}
+      {{ form.hidden('csrf_token', h.csrf_token()) }}
       {% snippet 'group/snippets/group_list.html', groups=c.pkg_dict.groups %}
     </form>
   {% else %}
