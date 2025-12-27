@@ -3894,7 +3894,7 @@ nav.nav-facet li,
 }
 
 .page-header .content_action .btn {
-  margin-bottom: 0 !important;
+  margin-top: 2px !important;
 }
 
 /* Fix action buttons */

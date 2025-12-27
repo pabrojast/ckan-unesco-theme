@@ -1,6 +1,7 @@
 {% import 'macros/form.html' as form %}
 
 <form id="group-edit" class="dataset-form" method="post" data-module="basic-form" enctype="multipart/form-data">
+  {{ form.hidden('csrf_token', h.get_csrf_token()) }}
   {% block error_summary %}
     {{ form.errors(error_summary) }}
   {% endblock %}

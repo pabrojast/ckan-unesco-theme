@@ -12,12 +12,13 @@
     {% import 'macros/form.html' as form %}
     
     {% set username_error = true if error_summary %}
-    {% set password_error = true if error_summary %}
-    
-    <form action="{{ action }}" method="post">
-      {{ form.errors(errors=error_summary) }}
-    
-      {{ form.input('login', label=_("Username or Email"), id='field-login', value="", error=username_error, classes=["control-medium"]) }}
+{% set password_error = true if error_summary %}
+
+<form action="{{ action }}" method="post">
+  {{ form.hidden('csrf_token', h.get_csrf_token()) }}
+  {{ form.errors(errors=error_summary) }}
+
+  {{ form.input('login', label=_("Username or Email"), id='field-login', value="", error=username_error, classes=["control-medium"]) }}
     
       {{ form.input('password', label=_("Password"), id='field-password', type="password", value="", error=password_error, classes=["control-medium"]) }}
     
