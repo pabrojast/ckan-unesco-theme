@@ -3589,6 +3589,7 @@ nav.nav-facet li,
 .dataset-badges .dataset-private.badge {
   background-color: #dc3545 !important;
   margin-left: 6px !important;
+  margin-top: 20px !important;
 }
 
 .dataset-badges .dataset-draft.badge {
