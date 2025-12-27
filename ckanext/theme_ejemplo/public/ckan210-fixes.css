@@ -653,6 +653,8 @@ img.spatial_uri-icon {
 /* Add spacing between sidebar and dataset list - fix for datasets being too close to sidebar */
 .primary .module-content {
   padding-left: 20px !important;
+  padding-right: 20px !important;
+  padding-top: 20px !important;
 }
 
 /* Fix dataset item layout to show icon and content properly */
