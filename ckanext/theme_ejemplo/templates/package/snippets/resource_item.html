@@ -64,9 +64,9 @@
           {{ excerpt }}
         </p>
         {% if is_truncated %}
-          <div class="description description-full" hidden>
-            {{ h.render_markdown(description) }}
-          </div>
+          <p class="description excerpt description-full" hidden>
+            {{ full_plain }}
+          </p>
           <button class="btn btn-link btn-sm resource-read-more"
                   type="button"
                   data-target="{{ res.id }}"
