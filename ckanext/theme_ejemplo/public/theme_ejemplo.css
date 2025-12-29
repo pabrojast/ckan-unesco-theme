@@ -5894,3 +5894,7 @@ body .download-links .btn-group .btn i {
     padding: 6px 10px !important;
   }
 }
+
+.stages li.last {
+     top: -1px;
+}
