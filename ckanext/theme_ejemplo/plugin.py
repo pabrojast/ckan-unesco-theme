@@ -357,10 +357,15 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
             """Obtiene los grupos de member-states como lista de tuplas (id, name)"""
             try:
                 member_states = toolkit.get_action('group_show')(
-                    data_dict={'id': 'member-states', 'include_groups': True}
+                    {'ignore_auth': True},
+                    {'id': 'member-states', 'include_groups': True}
                 )
                 groups = member_states.get("groups", [])
+                log.debug(f"Member states groups found: {len(groups)}")
                 return [(g['name'], g.get('display_name', g['name'])) for g in groups]
+            except toolkit.ObjectNotFound:
+                log.warning("Group 'member-states' not found")
+                return []
             except Exception as e:
                 log.error(f"Error obteniendo member-states groups: {e}")
                 return []
@@ -368,16 +373,24 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
         def get_initiatives_groups_list(self):
             """Obtiene los grupos de initiatives (excluyendo member-states)"""
             try:
-                # Obtener member-states group names
-                member_states = toolkit.get_action('group_show')(
-                    data_dict={'id': 'member-states', 'include_groups': True}
-                )
-                member_states_names = set([g['name'] for g in member_states.get("groups", [])])
-                member_states_names.add('member-states')
+                # Intentar obtener member-states group names
+                member_states_names = set()
+                try:
+                    member_states = toolkit.get_action('group_show')(
+                        {'ignore_auth': True},
+                        {'id': 'member-states', 'include_groups': True}
+                    )
+                    member_states_names = set([g['name'] for g in member_states.get("groups", [])])
+                    member_states_names.add('member-states')
+                except toolkit.ObjectNotFound:
+                    log.warning("Group 'member-states' not found, showing all groups as initiatives")
+                except Exception as e:
+                    log.warning(f"Could not get member-states: {e}")
                 
                 # Obtener todos los grupos
                 all_groups = toolkit.get_action('group_list')(
-                    data_dict={'all_fields': True, 'include_dataset_count': True}
+                    {'ignore_auth': True},
+                    {'all_fields': True, 'include_dataset_count': True}
                 )
                 
                 # Filtrar para obtener solo initiatives
@@ -386,6 +399,7 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                     for g in all_groups 
                     if g['name'] not in member_states_names
                 ]
+                log.debug(f"Initiatives groups found: {len(initiatives)}")
                 return initiatives
             except Exception as e:
                 log.error(f"Error obteniendo initiatives groups: {e}")

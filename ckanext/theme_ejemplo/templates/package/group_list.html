@@ -25,13 +25,13 @@
   {# Tabs Navigation #}
   <ul class="nav nav-tabs" role="tablist">
     <li role="presentation" class="active">
-      <a href="#member-states-tab" aria-controls="member-states-tab" role="tab" data-toggle="tab">
+      <a href="#member-states-tab" aria-controls="member-states-tab" role="tab" data-toggle="tab" data-bs-toggle="tab">
         <i class="fa fa-globe"></i> {{ _('Member States') }}
         {% if pkg_member_states %}<span class="badge">{{ pkg_member_states|length }}</span>{% endif %}
       </a>
     </li>
     <li role="presentation">
-      <a href="#initiatives-tab" aria-controls="initiatives-tab" role="tab" data-toggle="tab">
+      <a href="#initiatives-tab" aria-controls="initiatives-tab" role="tab" data-toggle="tab" data-bs-toggle="tab">
         <i class="fa fa-lightbulb-o"></i> {{ _('Initiatives') }}
         {% if pkg_initiatives %}<span class="badge">{{ pkg_initiatives|length }}</span>{% endif %}
       </a>
