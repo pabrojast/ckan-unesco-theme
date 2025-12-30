@@ -348,8 +348,48 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                  'get_organization_image_by_name': self.get_organization_image_by_name,  # Cambio de nombre del helper
                  'get_featured_datasets_filtered': self.get_featured_datasets_filtered,
                  'theme_ejemplo_get_paged_resources': helpers.get_paged_resources,
-                 'theme_ejemplo_markdown_excerpt': helpers.markdown_excerpt
+                 'theme_ejemplo_markdown_excerpt': helpers.markdown_excerpt,
+                 'get_member_states_groups_list': self.get_member_states_groups_list,
+                 'get_initiatives_groups_list': self.get_initiatives_groups_list
                  }
+        
+        def get_member_states_groups_list(self):
+            """Obtiene los grupos de member-states como lista de tuplas (id, name)"""
+            try:
+                member_states = toolkit.get_action('group_show')(
+                    data_dict={'id': 'member-states', 'include_groups': True}
+                )
+                groups = member_states.get("groups", [])
+                return [(g['name'], g.get('display_name', g['name'])) for g in groups]
+            except Exception as e:
+                log.error(f"Error obteniendo member-states groups: {e}")
+                return []
+        
+        def get_initiatives_groups_list(self):
+            """Obtiene los grupos de initiatives (excluyendo member-states)"""
+            try:
+                # Obtener member-states group names
+                member_states = toolkit.get_action('group_show')(
+                    data_dict={'id': 'member-states', 'include_groups': True}
+                )
+                member_states_names = set([g['name'] for g in member_states.get("groups", [])])
+                member_states_names.add('member-states')
+                
+                # Obtener todos los grupos
+                all_groups = toolkit.get_action('group_list')(
+                    data_dict={'all_fields': True, 'include_dataset_count': True}
+                )
+                
+                # Filtrar para obtener solo initiatives
+                initiatives = [
+                    (g['name'], g.get('display_name', g['name'])) 
+                    for g in all_groups 
+                    if g['name'] not in member_states_names
+                ]
+                return initiatives
+            except Exception as e:
+                log.error(f"Error obteniendo initiatives groups: {e}")
+                return []
         
         @lru_cache(maxsize=32)  # Cache para evitar llamadas repetidas
         def get_latest_courses(self):
