@@ -52,6 +52,49 @@
       font-size: 11px;
       margin-left: 5px;
     }
+    /* Fix para el media-grid dentro de las pestañas */
+    .group-tabs .media-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      position: relative;
+      height: auto !important;
+    }
+    .group-tabs .media-grid .media-item {
+      position: relative !important;
+      top: auto !important;
+      left: auto !important;
+      width: calc(33.333% - 10px);
+      min-width: 200px;
+      max-width: 280px;
+      flex: 1 1 auto;
+      margin: 0;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background: #fff;
+    }
+    .group-tabs .media-grid .media-item .media-image {
+      width: 100%;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 4px;
+    }
+    .group-tabs .media-grid .media-item .media-heading {
+      font-size: 14px;
+      margin: 10px 0 5px;
+    }
+    .group-tabs .media-grid .media-item .media-view {
+      position: relative;
+      display: inline-block;
+      margin-top: 10px;
+    }
+    .group-tabs .media-grid .clearfix {
+      display: none;
+    }
   </style>
 
   <div class="group-tabs">
