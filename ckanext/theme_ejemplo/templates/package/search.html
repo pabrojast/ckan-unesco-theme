@@ -3,9 +3,11 @@
 {% block page_primary_action %}
   {{ super() }}
   {% if h.check_access('package_create') %}
+  <div class="page_primary_action">
     <a class="btn btn-primary" href="/documents/new">
       <i class="fa fa-plus-square"></i> {{ _('Add Documents') }}
     </a>
+  </div>
   {% endif %}
 {% endblock %}
 
