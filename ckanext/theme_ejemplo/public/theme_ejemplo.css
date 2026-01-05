@@ -210,7 +210,7 @@ z-index: 1000 !important;
 .masthead .masthead-nav .masthead-brand .logo {
     display: flex;
     align-items: center;
-    margin-top: -20px;
+    margin-top: -50px;
 }
 
 /* Contenedor principal del header */
