@@ -5905,3 +5905,8 @@ body .download-links .btn-group .btn i {
     border-radius: 0 !important;
     box-shadow: 0 !important;
 }
+@media (min-width: 768px) {
+    .wrapper:before {
+        border-right: 0 !important;
+    }
+}
