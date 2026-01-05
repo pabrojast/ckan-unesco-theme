@@ -5899,3 +5899,9 @@ body .download-links .btn-group .btn i {
 .stages li.last {
      top: -1px;
 }
+.box, .wrapper {
+    background-color: #fff !important; 
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: 0 !important;
+}
