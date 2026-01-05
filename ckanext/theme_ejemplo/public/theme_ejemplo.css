@@ -5902,7 +5902,7 @@ body .download-links .btn-group .btn i {
     background-color: #fff !important; 
     border: 0 !important;
     border-radius: 0 !important;
-    box-shadow: 0 !important;
+    box-shadow: none !important;
 }
 @media (min-width: 768px) {
     .wrapper:before {
