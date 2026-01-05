@@ -2244,6 +2244,27 @@ span.format-label[data-format="css"] {
   margin-top: 2px !important;
 }
 
+/* Keep metadata dropdown visible and opening downward */
+.additional-info header,
+.additional-info header h2,
+.additional-info .download-links,
+.additional-info .download-links .btn-group {
+  overflow: visible !important;
+  position: relative !important;
+}
+
+.additional-info .download-links .dropdown-menu,
+.additional-info .download-links .btn-group .dropdown-menu,
+.additional-info .download-links .dropup .dropdown-menu {
+  position: absolute !important;
+  top: calc(100% + 6px) !important;
+  bottom: auto !important;
+  left: auto !important;
+  right: 0 !important;
+  transform: none !important;
+  z-index: 3000 !important;
+}
+
 /* Metadata dropdown items */
 .download-links .btn-group .dropdown-menu li {
   list-style: none !important;
