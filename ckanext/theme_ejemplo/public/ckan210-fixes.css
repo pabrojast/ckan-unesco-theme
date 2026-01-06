@@ -654,7 +654,7 @@ img.spatial_uri-icon {
 .primary .module-content {
   padding-left: 20px !important;
   padding-right: 20px !important;
-  padding-top: 4px !important;
+  padding-top: 5px !important;
 }
 
 /* Fix dataset item layout to show icon and content properly */
