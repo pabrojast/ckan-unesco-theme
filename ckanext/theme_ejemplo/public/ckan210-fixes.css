@@ -1293,7 +1293,6 @@ span.format-label[property="dc:format"] {
   /* Styling */
   border: none !important;
   border-radius: 6px !important;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
 
   position: relative !important;
   z-index: 1 !important;
@@ -1307,7 +1306,6 @@ span.format-label[property="dc:format"] {
 body .resource-item .resource-title-row .format-label:hover,
 .resource-item .resource-title-row .format-label:hover {
   transform: translateY(-2px) !important;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.15) !important;
 }
 
 /* Fix for non-sprite icons (images) */
