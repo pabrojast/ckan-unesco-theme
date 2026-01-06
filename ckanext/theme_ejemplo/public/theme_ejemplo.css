@@ -5909,3 +5909,6 @@ body .download-links .btn-group .btn i {
         border-right: 0 !important;
     }
 }
+.btn-default {
+  margin-top: 10px !important;
+}
