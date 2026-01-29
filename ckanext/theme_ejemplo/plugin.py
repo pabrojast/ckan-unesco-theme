@@ -15,6 +15,7 @@ from ckanext.theme_ejemplo.controller import MyLogica
 from . import helpers
 import logging
 from functools import lru_cache
+import time
 
 # Configurar logging
 log = logging.getLogger(__name__)
@@ -349,6 +350,7 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                  'get_featured_datasets_filtered': self.get_featured_datasets_filtered,
                  'theme_ejemplo_get_paged_resources': helpers.get_paged_resources,
                  'theme_ejemplo_markdown_excerpt': helpers.markdown_excerpt,
+                 'theme_ejemplo_site_statistics': self.get_site_statistics_cached,
                  'get_member_states_groups_list': self.get_member_states_groups_list,
                  'get_initiatives_groups_list': self.get_initiatives_groups_list
                  }
@@ -427,6 +429,12 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
             except requests.exceptions.Timeout:
                 log.warning("Timeout al obtener cursos de UNESCO")
                 return []
+
+        def _get_home_cache_ttl(self):
+            try:
+                return max(0, toolkit.asint(toolkit.config.get('ckanext.theme_ejemplo.home_cache_ttl', 300)))
+            except Exception:
+                return 300
             except requests.exceptions.RequestException as e:
                 log.error(f"Error al obtener cursos de UNESCO: {e}")
                 return []
@@ -450,12 +458,11 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 log.error(f"Error getting featured datasets: {e}")
                 return []  # Retornar lista vacía en lugar de abortar
                 
-        def get_featured_datasets_filtered(self, tag='FeaturedDataset', user=None):
-            """Mejorado con mejor manejo de errores"""
+        def _get_featured_datasets_filtered_uncached(self, tag, user):
             try:
                 if not user:
                     return []
-                    
+
                 # Construir la consulta para buscar datasets destacados
                 query = '( followers:yes AND tags:{tag} ) OR ( tags:{tag} AND creator_user_id:{user} )'.format(
                     tag=tag, user=user
@@ -469,10 +476,39 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
 
                 # Limitar la cantidad de resultados a devolver
                 return search_result.get('results', [])
-                
             except Exception as e:
                 log.error(f'Error in get_featured_datasets_filtered: {e}')
                 return []
+
+        @lru_cache(maxsize=64)
+        def _get_featured_datasets_filtered_cached(self, tag, user, cache_buster):
+            return self._get_featured_datasets_filtered_uncached(tag, user)
+
+        def get_featured_datasets_filtered(self, tag='FeaturedDataset', user=None):
+            """Mejorado con cache TTL configurable"""
+            cache_ttl = self._get_home_cache_ttl()
+            if cache_ttl <= 0:
+                return self._get_featured_datasets_filtered_uncached(tag, user)
+            cache_buster = int(time.time() / cache_ttl)
+            return self._get_featured_datasets_filtered_cached(tag, user, cache_buster)
+
+        def _get_site_statistics_uncached(self):
+            stats = {}
+            stats['dataset_count'] = toolkit.get_action('package_search')({}, {'rows': 1}).get('count', 0)
+            stats['group_count'] = len(toolkit.get_action('group_list')({}, {}))
+            stats['organization_count'] = len(toolkit.get_action('organization_list')({}, {}))
+            return stats
+
+        @lru_cache(maxsize=16)
+        def _get_site_statistics_cached(self, cache_buster):
+            return self._get_site_statistics_uncached()
+
+        def get_site_statistics_cached(self):
+            cache_ttl = self._get_home_cache_ttl()
+            if cache_ttl <= 0:
+                return self._get_site_statistics_uncached()
+            cache_buster = int(time.time() / cache_ttl)
+            return self._get_site_statistics_cached(cache_buster)
 
         def get_organization_image_by_name(self, dataset_name):
             """

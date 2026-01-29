@@ -4,7 +4,10 @@
 <div class="col-md-4 col3 col-enhanced">
   <div class="col-small">
     <div class="cardsmall cardsmall-enhanced cardsmall-height-fixed cardsmall-cta cardsmall-hero content-wrapper-enhanced hover-lift"> 
-      {% set org_image_url = h.get_organization_image_by_name(dataset['name']) %}
+      {% set org_image_url = dataset.get('organization', {}).get('image_display_url') %}
+      {% if not org_image_url %}
+        {% set org_image_url = h.get_organization_image_by_name(dataset['name']) %}
+      {% endif %}
       {% if org_image_url %}
         <img class="cardsmall-img-top2-enhanced image-style-cardsmall-1-column" src="{{ org_image_url }}" width="289" height="424" alt="{{ dataset['title'] }}" loading="lazy">
       {% else %}
