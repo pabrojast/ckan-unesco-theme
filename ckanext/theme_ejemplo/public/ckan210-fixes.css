@@ -1600,7 +1600,7 @@ body .additional-info h3,
 body .module-heading,
 body section.module h2,
 body .dataset-additional-info h3 {
-  font-size: 16px !important;
+  /* font-size: 16px !important; */
   font-weight: 600 !important;
   color: #333 !important;
   padding: 12px 15px !important;
