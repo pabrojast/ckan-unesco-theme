@@ -4238,6 +4238,7 @@ nav.nav-facet li,
 .search-form .input-group {
   display: flex !important;
   align-items: stretch !important;
+  position: relative !important;
 }
 
 .search-form .search-input-group input,
