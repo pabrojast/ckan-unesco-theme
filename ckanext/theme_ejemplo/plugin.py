@@ -27,6 +27,17 @@ http_session = requests.Session()
 # read_timeout: tiempo para recibir respuesta
 http_session.timeout = (5, 10)  # 5s conexión + 10s respuesta = máximo 15s total
 
+# TTL caches para evitar llamadas repetidas en helpers costosos
+_courses_cache = {'data': None, 'expires': 0}
+_member_states_cache = {'data': None, 'expires': 0}
+_initiatives_cache = {'data': None, 'expires': 0}
+
+def _get_cache_ttl(config_key, default):
+    try:
+        return max(0, toolkit.asint(toolkit.config.get(config_key, default)))
+    except Exception:
+        return default
+
 class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
         '''An example theme plugin.
 
@@ -58,21 +69,22 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
             try:
                 package_id = dataset_dict.get('id')
                 
-                # Optimización: Solo obtener followers si es necesario
+                # Evitar llamadas costosas en indexación (habilitar solo si es imprescindible)
                 featured_ = 'no'  # Valor por defecto
-                try:
-                    sysadmin_context = {
-                        'user': 'ckan.system',
-                        'ignore_auth': True
-                    }
-                    package = toolkit.get_action('dataset_follower_list')(sysadmin_context, {'id': package_id})
-                    
-                    #to define featured dataset
-                    if package and any(user.get('sysadmin', False) for user in package):
-                        featured_ = 'yes'
-                except Exception as e:
-                    log.warning(f"Error getting followers for dataset {package_id}: {e}")
-                
+                if toolkit.asbool(toolkit.config.get('ckanext.theme_ejemplo.index_followers', False)):
+                    try:
+                        sysadmin_context = {
+                            'user': 'ckan.system',
+                            'ignore_auth': True
+                        }
+                        package = toolkit.get_action('dataset_follower_list')(sysadmin_context, {'id': package_id})
+
+                        # to define featured dataset
+                        if package and any(user.get('sysadmin', False) for user in package):
+                            featured_ = 'yes'
+                    except Exception as e:
+                        log.warning(f"Error getting followers for dataset {package_id}: {e}")
+
                 dataset_dict['followers'] = featured_
 
                 #better compatibility    
@@ -357,6 +369,11 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
         
         def get_member_states_groups_list(self):
             """Obtiene los grupos de member-states como lista de tuplas (id, name)"""
+            cache_ttl = _get_cache_ttl('ckanext.theme_ejemplo.groups_cache_ttl', 300)
+            now = time.time()
+            if cache_ttl > 0 and _member_states_cache['data'] is not None and now < _member_states_cache['expires']:
+                return _member_states_cache['data']
+
             try:
                 member_states = toolkit.get_action('group_show')(
                     {'ignore_auth': True},
@@ -364,30 +381,34 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 )
                 groups = member_states.get("groups", [])
                 log.debug(f"Member states groups found: {len(groups)}")
-                return [(g['name'], g.get('display_name', g['name'])) for g in groups]
+                result = [(g['name'], g.get('display_name', g['name'])) for g in groups]
+                if cache_ttl > 0:
+                    _member_states_cache['data'] = result
+                    _member_states_cache['expires'] = now + cache_ttl
+                return result
             except toolkit.ObjectNotFound:
                 log.warning("Group 'member-states' not found")
-                return []
+                result = []
+                if cache_ttl > 0:
+                    _member_states_cache['data'] = result
+                    _member_states_cache['expires'] = now + cache_ttl
+                return result
             except Exception as e:
                 log.error(f"Error obteniendo member-states groups: {e}")
-                return []
+                return _member_states_cache['data'] or []
         
         def get_initiatives_groups_list(self):
             """Obtiene los grupos de initiatives (excluyendo member-states)"""
+            cache_ttl = _get_cache_ttl('ckanext.theme_ejemplo.groups_cache_ttl', 300)
+            now = time.time()
+            if cache_ttl > 0 and _initiatives_cache['data'] is not None and now < _initiatives_cache['expires']:
+                return _initiatives_cache['data']
+
             try:
                 # Intentar obtener member-states group names
-                member_states_names = set()
-                try:
-                    member_states = toolkit.get_action('group_show')(
-                        {'ignore_auth': True},
-                        {'id': 'member-states', 'include_groups': True}
-                    )
-                    member_states_names = set([g['name'] for g in member_states.get("groups", [])])
-                    member_states_names.add('member-states')
-                except toolkit.ObjectNotFound:
-                    log.warning("Group 'member-states' not found, showing all groups as initiatives")
-                except Exception as e:
-                    log.warning(f"Could not get member-states: {e}")
+                member_states = self.get_member_states_groups_list()
+                member_states_names = {name for name, _ in member_states}
+                member_states_names.add('member-states')
                 
                 # Obtener todos los grupos
                 all_groups = toolkit.get_action('group_list')(
@@ -402,33 +423,53 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                     if g['name'] not in member_states_names
                 ]
                 log.debug(f"Initiatives groups found: {len(initiatives)}")
+                if cache_ttl > 0:
+                    _initiatives_cache['data'] = initiatives
+                    _initiatives_cache['expires'] = now + cache_ttl
                 return initiatives
             except Exception as e:
                 log.error(f"Error obteniendo initiatives groups: {e}")
-                return []
+                return _initiatives_cache['data'] or []
         
-        @lru_cache(maxsize=32)  # Cache para evitar llamadas repetidas
         def get_latest_courses(self):
             """
             Mejorado con:
             - Session reutilizable
             - Manejo robusto de errores
-            - Cache LRU
+            - Cache TTL configurable
             - Timeout apropiado
             """
+            cache_ttl = _get_cache_ttl('ckanext.theme_ejemplo.courses_cache_ttl', 600)
+            now = time.time()
+            if cache_ttl > 0 and _courses_cache['data'] is not None and now < _courses_cache['expires']:
+                return _courses_cache['data']
+
             try:
                 url = 'https://openlearning.unesco.org/api/courses/v1/courses/'
                 params = {'search_term': 'water'}
-                
+
                 response = http_session.get(url, params=params, timeout=5)
                 response.raise_for_status()  # Lanza excepción para status HTTP de error
-                
+
                 courses = response.json().get('results', [])
-                return courses[:8]  # Limitar a un máximo de 8 cursos
-                
+                result = courses[:8]  # Limitar a un máximo de 8 cursos
             except requests.exceptions.Timeout:
                 log.warning("Timeout al obtener cursos de UNESCO")
-                return []
+                result = _courses_cache['data'] or []
+            except requests.exceptions.RequestException as e:
+                log.warning(f"Error HTTP al obtener cursos de UNESCO: {e}")
+                result = _courses_cache['data'] or []
+            except (ValueError, json.JSONDecodeError) as e:
+                log.warning(f"Error al parsear cursos de UNESCO: {e}")
+                result = _courses_cache['data'] or []
+            except Exception as e:
+                log.error(f"Error inesperado al obtener cursos: {e}")
+                result = _courses_cache['data'] or []
+
+            if cache_ttl > 0:
+                _courses_cache['data'] = result
+                _courses_cache['expires'] = now + cache_ttl
+            return result
 
         def _get_home_cache_ttl(self):
             try:
