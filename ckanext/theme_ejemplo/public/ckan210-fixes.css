@@ -3196,3 +3196,14 @@ table[data-module="schemingdcat-table-collapsible-rows"] tr.toggle-separator td 
   height: 0 !important;
   border: none !important;
 }
+
+/* ==========================================================================
+   Hide "Go" button in group/initiatives/memberstates search forms
+   The button has class js-hide and should be hidden by JS, but we ensure
+   it stays hidden even if JS enhancement fails
+   ========================================================================== */
+#group-search-form .control-order-by button.js-hide,
+.search-form .control-order-by button.js-hide,
+.search-form button.btn.js-hide {
+  display: none !important;
+}
