@@ -2475,7 +2475,8 @@ body .module-content .section-title-enhanced h2,
 
 @media (max-width: 768px) {
   .section-title-enhanced {
-    height: 180px;
+    height: auto;
+    min-height: 180px;
   }
   
   .section-title-enhanced h2 {
@@ -2487,7 +2488,7 @@ body .module-content .section-title-enhanced h2,
   }
   
   .section-title-enhanced .section-title-content {
-    padding: 1.5rem 2rem;
+    padding: 1.25rem 1.5rem;
   }
   
   .cardsmall-title-enhanced {
@@ -2510,15 +2511,16 @@ body .module-content .section-title-enhanced h2,
 
 @media (max-width: 576px) {
   .section-title-enhanced {
-    height: 160px;
+    height: auto;
+    min-height: 160px;
   }
   
   .section-title-enhanced h2 {
-    font-size: 1.8rem;
+    font-size: 1.7rem;
   }
   
   .section-title-enhanced .section-title-description {
-    font-size: 1rem;
+    font-size: 0.95rem;
   }
   
   .cardsmall-body-enhanced {
