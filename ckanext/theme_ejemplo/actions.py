@@ -192,13 +192,19 @@ def organization_people(context, data_dict):
 
     org = toolkit.get_action('organization_show')(
         {'ignore_auth': True},
-        {'id': org_id, 'include_users': True}
+        {'id': org_id}
+    )
+
+    # Use member_list instead of include_users which is restricted in CKAN 2.10
+    member_tuples = toolkit.get_action('member_list')(
+        {'ignore_auth': True},
+        {'id': org_id, 'object_type': 'user'}
     )
 
     members = []
-    for user_data in org.get('users', []):
+    for user_id, _obj_type, capacity in member_tuples:
         try:
-            user_obj = model.User.get(user_data['id'])
+            user_obj = model.User.get(user_id)
             if not user_obj or user_obj.state != 'active':
                 continue
 
@@ -221,10 +227,10 @@ def organization_people(context, data_dict):
                 'institution': profile.get('institution', ''),
                 'country': profile.get('country', ''),
                 'expertise_areas': expertise_areas,
-                'capacity': user_data.get('capacity', 'member'),
+                'capacity': capacity or 'member',
             })
         except Exception as e:
-            log.warning(f"Error getting user profile for {user_data.get('id')}: {e}")
+            log.warning(f"Error getting user profile for {user_id}: {e}")
 
     return {
         'organization': org,

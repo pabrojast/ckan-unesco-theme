@@ -109,6 +109,7 @@
       {% endif %}
 
       {% block user_info %}
+      {% set profile = user.get('profile', {}) %}
       <div class="info">
         <dl>
           {% if user.name.startswith('http://') or user.name.startswith('https://') %}
