@@ -282,7 +282,68 @@ class MyLogica():
         def ihpix():
             
             if request.method == 'GET':
-                return render_template("ihpix/index.html")
+                priority_areas = {}
+                for pa_num in range(1, 6):
+                    pa_key = 'PA{}'.format(pa_num)
+                    try:
+                        result = toolkit.get_action('package_search')(
+                            {'ignore_auth': True},
+                            {
+                                'fq': 'ihpix_priority_area:{}'.format(pa_key),
+                                'sort': 'metadata_created desc',
+                                'rows': 3,
+                            }
+                        )
+                        priority_areas[pa_key] = result.get('results', [])
+                    except Exception:
+                        priority_areas[pa_key] = []
+
+                return render_template("ihpix/index.html",
+                                       priority_areas=priority_areas)
+
+        def ihpix_outputs():
+            if request.method == 'GET':
+                pa_filter = request.args.get('pa', '')
+                q = request.args.get('q', '')
+                page = int(request.args.get('page', 1))
+                items_per_page = 20
+
+                fq_parts = []
+                if pa_filter:
+                    fq_parts.append('ihpix_priority_area:{}'.format(pa_filter))
+                else:
+                    fq_parts.append('ihpix_priority_area:[* TO *]')
+
+                try:
+                    result = toolkit.get_action('package_search')(
+                        {'ignore_auth': True},
+                        {
+                            'q': q,
+                            'fq': ' AND '.join(fq_parts),
+                            'sort': 'metadata_created desc',
+                            'rows': items_per_page,
+                            'start': items_per_page * (page - 1),
+                            'facet.field': ['ihpix_priority_area', 'ihpix_output'],
+                            'facet': 'true',
+                        }
+                    )
+                    activities = result.get('results', [])
+                    facets = result.get('search_facets', {})
+                    total = result.get('count', 0)
+                except Exception as e:
+                    log.error('Error fetching IHP-IX outputs: %s', e)
+                    activities = []
+                    facets = {}
+                    total = 0
+
+                return render_template("ihpix/outputs.html",
+                                       activities=activities,
+                                       facets=facets,
+                                       total=total,
+                                       pa_filter=pa_filter,
+                                       q=q,
+                                       page=page,
+                                       items_per_page=items_per_page)
 
         def iot_portal():
             

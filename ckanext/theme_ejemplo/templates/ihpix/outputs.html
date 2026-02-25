@@ -1,0 +1,149 @@
+{% extends "page.html" %}
+{% block title %}
+{% trans %}IHP-IX Activities by Output{% endtrans %} - {{ super() }}
+{% endblock %}
+
+{% block breadcrumb_content %}
+<li><a href="{{ h.url_for('/ihpix') }}">{% trans %}IHP IX{% endtrans %}</a></li>
+<li class="active"><a href="{{ h.url_for('/ihpix/outputs') }}">{% trans %}Activities by Output{% endtrans %}</a></li>
+{% endblock %}
+
+{% block primary_content_inner %}
+  <h1>{{ _('IHP-IX: Reported Activities by Output') }}</h1>
+
+  <div class="module-content box">
+
+    {# Search and filter bar #}
+    <div style="margin-bottom: 1.5rem; padding: 1rem; background: #f8f9fa; border-radius: 6px;">
+      <form method="get" action="{{ h.url_for('/ihpix/outputs') }}" class="form-inline">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="input-group" style="width: 100%;">
+              <input type="text" name="q" class="form-control" placeholder="{{ _('Search activities...') }}" value="{{ q }}">
+              <span class="input-group-btn">
+                <button type="submit" class="btn btn-primary"><i class="fa fa-search"></i></button>
+              </span>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <select name="pa" class="form-control" onchange="this.form.submit()">
+              <option value="">{{ _('All Priority Areas') }}</option>
+              {% for pa_num in range(1, 6) %}
+                <option value="PA{{ pa_num }}" {% if pa_filter == 'PA' ~ pa_num %}selected{% endif %}>
+                  {{ _('Priority Area') }} {{ pa_num }}
+                </option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="col-md-2">
+            {% if q or pa_filter %}
+              <a href="{{ h.url_for('/ihpix/outputs') }}" class="btn btn-default" style="width: 100%;">{{ _('Clear') }}</a>
+            {% endif %}
+          </div>
+        </div>
+      </form>
+    </div>
+
+    {# Results summary #}
+    <p class="text-muted">
+      {{ _('Showing {count} activities').format(count=total) }}
+      {% if pa_filter %} {{ _('for Priority Area {pa}').format(pa=pa_filter) }}{% endif %}
+      {% if q %} {{ _('matching "{query}"').format(query=q) }}{% endif %}
+    </p>
+
+    {# Faceted sidebar for outputs #}
+    {% if facets and facets.get('ihpix_output') and facets['ihpix_output'].get('items') %}
+    <div style="margin-bottom: 1.5rem;">
+      <h3 style="font-size: 1rem; color: #0069B4; margin-bottom: 0.8rem;">
+        <i class="fa fa-filter"></i> {{ _('Filter by Output') }}
+      </h3>
+      <div class="row">
+        {% for item in facets['ihpix_output']['items'] %}
+          {% if item.count > 0 %}
+          <div class="col-md-3 col-sm-4" style="margin-bottom: 0.4rem;">
+            <a href="{{ h.url_for('/ihpix/outputs', pa=pa_filter, q=q) }}&fq=ihpix_output:{{ item.name }}"
+               style="font-size: 0.85rem;">
+              {{ item.display_name }} <span class="badge">{{ item.count }}</span>
+            </a>
+          </div>
+          {% endif %}
+        {% endfor %}
+      </div>
+    </div>
+    {% endif %}
+
+    {# Activities list #}
+    {% if activities %}
+      {% for activity in activities %}
+      <div style="padding: 1rem; margin-bottom: 0.8rem; border: 1px solid #eee; border-radius: 6px; background: #fff;">
+        <div class="row">
+          <div class="col-md-9">
+            <h4 style="margin: 0 0 0.3rem; font-size: 1.05rem;">
+              <a href="{{ h.url_for('dataset.read', id=activity.name) }}" style="color: #333;">
+                {{ activity.title }}
+              </a>
+            </h4>
+            {% if activity.notes %}
+              <p style="margin: 0; font-size: 0.88rem; color: #666;">
+                {{ h.truncate(activity.notes, 200) }}
+              </p>
+            {% endif %}
+          </div>
+          <div class="col-md-3 text-right">
+            {% if activity.ihpix_priority_area %}
+              <span class="label label-primary" style="font-size: 0.78rem;">
+                {{ activity.ihpix_priority_area }}
+              </span>
+            {% endif %}
+            {% if activity.ihpix_output %}
+              <span class="label label-info" style="font-size: 0.78rem;">
+                {{ activity.ihpix_output }}
+              </span>
+            {% endif %}
+            <br>
+            <small class="text-muted" style="font-size: 0.78rem;">
+              {{ h.render_datetime(activity.metadata_created, date_format='%d %b %Y') }}
+            </small>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+
+      {# Pagination #}
+      {% set total_pages = (total / items_per_page)|round(0, 'ceil')|int %}
+      {% if total_pages > 1 %}
+      <nav aria-label="Page navigation" style="text-align: center; margin-top: 1.5rem;">
+        <ul class="pagination">
+          {% if page > 1 %}
+            <li><a href="{{ h.url_for('/ihpix/outputs', pa=pa_filter, q=q, page=page-1) }}">«</a></li>
+          {% endif %}
+          {% for p in range(1, total_pages + 1) %}
+            {% if p == page %}
+              <li class="active"><span>{{ p }}</span></li>
+            {% elif p <= 3 or p >= total_pages - 2 or (p >= page - 2 and p <= page + 2) %}
+              <li><a href="{{ h.url_for('/ihpix/outputs', pa=pa_filter, q=q, page=p) }}">{{ p }}</a></li>
+            {% elif p == 4 or p == total_pages - 3 %}
+              <li class="disabled"><span>…</span></li>
+            {% endif %}
+          {% endfor %}
+          {% if page < total_pages %}
+            <li><a href="{{ h.url_for('/ihpix/outputs', pa=pa_filter, q=q, page=page+1) }}">»</a></li>
+          {% endif %}
+        </ul>
+      </nav>
+      {% endif %}
+
+    {% else %}
+      <div class="empty" style="text-align: center; padding: 3rem; color: #999;">
+        <i class="fa fa-inbox fa-3x" style="margin-bottom: 1rem;"></i>
+        <p>{{ _('No reported activities found.') }}</p>
+        <p style="font-size: 0.9rem;">{{ _('Activities will appear here once datasets are tagged with IHP-IX Priority Areas and Outputs.') }}</p>
+      </div>
+    {% endif %}
+
+  </div>
+{% endblock %}
+
+{% block secondary_content %}
+  {% snippet "ihpix/snippets/helper.html" %}
+{% endblock %}

@@ -32,6 +32,8 @@ http_session.timeout = (5, 10)  # 5s conexión + 10s respuesta = máximo 15s tot
 _courses_cache = {'data': None, 'expires': 0}
 _member_states_cache = {'data': None, 'expires': 0}
 _initiatives_cache = {'data': None, 'expires': 0}
+_recently_added_datasets_cache = {'data': None, 'expires': 0}
+_recently_added_documents_cache = {'data': None, 'expires': 0}
 
 def _get_cache_ttl(config_key, default):
     try:
@@ -306,6 +308,13 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
             )
 
             blueprint.add_url_rule(
+                u'/ihpix/outputs',
+                u'ihpix_outputs',
+                MyLogica.ihpix_outputs,
+                methods=['GET']
+            )
+
+            blueprint.add_url_rule(
                 u'/iot-portal',
                 u'iot_portal',
                 MyLogica.iot_portal,
@@ -414,6 +423,7 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                  'get_org_statistics': helpers.get_org_statistics,
                  'get_org_publications': helpers.get_org_publications,
                  'get_country_list': helpers.get_country_list,
+                 'get_recently_added': self.get_recently_added,
                  }
 
         # IActions
@@ -528,6 +538,37 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 _courses_cache['data'] = result
                 _courses_cache['expires'] = now + cache_ttl
             return result
+
+        def get_recently_added(self, item_type='dataset', limit=5):
+            """Returns recently created datasets or documents, with TTL cache."""
+            if item_type == 'documents':
+                cache = _recently_added_documents_cache
+            else:
+                cache = _recently_added_datasets_cache
+
+            cache_ttl = _get_cache_ttl('ckanext.theme_ejemplo.recently_added_cache_ttl', 300)
+            now = time.time()
+            if cache_ttl > 0 and cache['data'] is not None and now < cache['expires']:
+                return cache['data']
+
+            try:
+                result = toolkit.get_action('package_search')(
+                    {'ignore_auth': True},
+                    {
+                        'fq': 'type:{}'.format(item_type),
+                        'sort': 'metadata_created desc',
+                        'rows': limit,
+                    }
+                )
+                items = result.get('results', [])
+            except Exception as e:
+                log.error('Error getting recently added %s: %s', item_type, e)
+                items = cache['data'] or []
+
+            if cache_ttl > 0:
+                cache['data'] = items
+                cache['expires'] = now + cache_ttl
+            return items
 
         def _get_home_cache_ttl(self):
             try:

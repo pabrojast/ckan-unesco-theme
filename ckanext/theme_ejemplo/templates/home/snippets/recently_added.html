@@ -1,0 +1,72 @@
+<section class="module module-narrow module-shallow">
+  <div class="section-title section-title-enhanced" style="margin-bottom: 0.5rem;">
+    <div class="section-title-bg" style="background-image: url('/Landing_page/Content/IHPTITLE02DATASETS.jpg');"></div>
+    <div class="section-title-overlay"></div>
+    <div class="section-title-content">
+      <h2>{{ _('Recently Added') }}</h2>
+      <p class="section-title-description">{{ _('Latest datasets and publications added to IHP-WINS') }}</p>
+    </div>
+  </div>
+</section>
+
+<div class="module-content box recently-added-section">
+  <div class="row">
+    <div class="col-md-6">
+      <h3 class="recently-added-heading">
+        <i class="fa fa-database"></i> {{ _('New Datasets') }}
+      </h3>
+      {% set recent_datasets = h.get_recently_added('dataset', 5) %}
+      {% if recent_datasets %}
+        <ul class="recently-added-list">
+          {% for ds in recent_datasets %}
+            <li class="recently-added-item">
+              <a href="{{ h.url_for('dataset.read', id=ds.name) }}" title="{{ ds.title }}">
+                {{ h.truncate(ds.title, 80) }}
+              </a>
+              <span class="recently-added-date">
+                <i class="fa fa-calendar-o"></i>
+                {{ h.render_datetime(ds.metadata_created, date_format='%d %b %Y') }}
+              </span>
+            </li>
+          {% endfor %}
+        </ul>
+        <div class="recently-added-more">
+          <a href="/dataset/?sort=metadata_created+desc" class="btn btn-sm btn-default">
+            {{ _('View all datasets') }} <i class="fa fa-arrow-right"></i>
+          </a>
+        </div>
+      {% else %}
+        <p class="text-muted">{{ _('No datasets available') }}</p>
+      {% endif %}
+    </div>
+
+    <div class="col-md-6">
+      <h3 class="recently-added-heading">
+        <i class="fa fa-file-pdf-o"></i> {{ _('New Publications') }}
+      </h3>
+      {% set recent_docs = h.get_recently_added('documents', 5) %}
+      {% if recent_docs %}
+        <ul class="recently-added-list">
+          {% for doc in recent_docs %}
+            <li class="recently-added-item">
+              <a href="{{ h.url_for('dataset.read', id=doc.name) }}" title="{{ doc.title }}">
+                {{ h.truncate(doc.title, 80) }}
+              </a>
+              <span class="recently-added-date">
+                <i class="fa fa-calendar-o"></i>
+                {{ h.render_datetime(doc.metadata_created, date_format='%d %b %Y') }}
+              </span>
+            </li>
+          {% endfor %}
+        </ul>
+        <div class="recently-added-more">
+          <a href="/dataset/?type=documents&sort=metadata_created+desc" class="btn btn-sm btn-default">
+            {{ _('View all publications') }} <i class="fa fa-arrow-right"></i>
+          </a>
+        </div>
+      {% else %}
+        <p class="text-muted">{{ _('No publications available') }}</p>
+      {% endif %}
+    </div>
+  </div>
+</div>

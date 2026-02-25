@@ -78,38 +78,75 @@
       <p>
         {% trans %}The Operational Implementation Plan of the Intergovernmental Hydrological Programme is based on the Strategic Plan of IHP-IX. This Strategy establishes five interrelated and intertwined priority areas and 34 Outputs, designed to address water challenges through a holistic, coherent, and multi-disciplinary approach. These priority areas promote science-based policies and create frameworks for water governance at all levels.{% endtrans %}
       </p>
+
+      {# Macro to render recent activities for a priority area #}
+      {% macro render_pa_activities(pa_key) %}
+        {% if priority_areas is defined and priority_areas.get(pa_key) %}
+        <div class="ihpix-recent-activities" style="margin-top: 0.5rem; padding: 0.8rem 1rem; background: #f8f9fa; border-radius: 6px;">
+          <h5 style="margin: 0 0 0.5rem; font-size: 0.9rem; color: #0069B4;">
+            <i class="fa fa-clock-o"></i> {{ _('Recent Activities') }}
+          </h5>
+          {% for activity in priority_areas[pa_key] %}
+          <div style="padding: 0.3rem 0; border-bottom: 1px solid #eee; font-size: 0.85rem;">
+            <a href="{{ h.url_for('dataset.read', id=activity.name) }}" style="color: #333; text-decoration: none;">
+              {{ h.truncate(activity.title, 60) }}
+            </a>
+            <span style="color: #999; font-size: 0.78rem; margin-left: 0.3rem;">
+              {{ h.render_datetime(activity.metadata_created, date_format='%d %b %Y') }}
+            </span>
+          </div>
+          {% endfor %}
+          <a href="/dataset/?ihpix_priority_area={{ pa_key }}" style="font-size: 0.82rem; color: #0069B4; display: block; margin-top: 0.4rem;">
+            {{ _('View all') }} →
+          </a>
+        </div>
+        {% endif %}
+      {% endmacro %}
       
       <div class="row">  
       <div class="col-md-6 col2">
         <div class="col-small"><div class="cardsmall cardsmall-thematic cardsmall-cta cardsmall-hero" style="min-height:28rem;"> <img class="cardsmall-img-top image-style-cardsmall-1-column" src="./Landing_page/Content/area_1.png" width="289" height="424" alt="" loading="lazy"><div class="cardsmall-body"><div class="cardsmall-title">{% trans %}Priority Area 1: Scientific Research and Innovation{% endtrans %}</div><div class="cardsmall-text" style="padding-top:1rem">{% trans %}Advancing scientific knowledge and developing innovative approaches to understand water cycles, improve water management and address water-related challenges through interdisciplinary research.{% endtrans %}</div>
+          {{ render_pa_activities('PA1') }}
         </div>            <div class="field field--name-field-link field--type-link field--label-hidden field__item"><a href="https://unesdoc.unesco.org/in/documentViewer.xhtml?v=2.1.196&id=p%3A%3Ausmarcdef_0000381318&file=/in/rest/annotationSVC/DownloadWatermarkedAttachment/attach_import_9aabb773-6ee5-4fd1-b6a4-6b3a55a7766a%3F_%3D381318eng.pdf&locale=en&multi=true&ark=/ark%3A/48223/pf0000381318/PDF/381318eng.pdf#page=18" class="btn btn-primary btn-arrow-right" target="_blank">{{ _("Discover") }}</a></div>
         </div></div>
       </div>
 
       <div class="col-md-6 col2">
         <div class="col-small"><div class="cardsmall cardsmall-thematic cardsmall-cta cardsmall-hero" style="min-height:28rem;"> <img class="cardsmall-img-top image-style-cardsmall-1-column" src="./Landing_page/Content/priority_area_2_water_education_in_the_fourth_industrial_revolution.png" width="289" height="424" alt="" loading="lazy"><div class="cardsmall-body"><div class="cardsmall-title">{% trans %}Priority Area 2: Water Education in the Fourth Industrial Revolution including Sustainability{% endtrans %}</div><div class="cardsmall-text" style="padding-top:1rem">{% trans %}Developing educational approaches that integrate traditional knowledge with emerging technologies to prepare the next generation of water professionals and informed citizens.{% endtrans %}
+          {{ render_pa_activities('PA2') }}
         </div>            </div><div class="field field--name-field-link field--type-link field--label-hidden field__item"><a href="https://unesdoc.unesco.org/in/documentViewer.xhtml?v=2.1.196&id=p%3A%3Ausmarcdef_0000381318&file=/in/rest/annotationSVC/DownloadWatermarkedAttachment/attach_import_9aabb773-6ee5-4fd1-b6a4-6b3a55a7766a%3F_%3D381318eng.pdf&locale=en&multi=true&ark=/ark%3A/48223/pf0000381318/PDF/381318eng.pdf#page=24" class="btn btn-primary btn-arrow-right" target="_blank">{{ _("Discover") }}</a></div>
         </div></div>
       </div>
 
       <div class="col-md-6 col2">
         <div class="col-small"><div class="cardsmall cardsmall-thematic cardsmall-cta cardsmall-hero" style="min-height:28rem;"> <img class="cardsmall-img-top image-style-cardsmall-1-column" src="./Landing_page/Content/priority_area_3.png" width="289" height="424" alt="" loading="lazy"><div class="cardsmall-body"><div class="cardsmall-title">{% trans %}Priority Area 3: Bridging the Data-Knowledge Gap{% endtrans %}</div><div class="cardsmall-text" style="padding-top:1rem">{% trans %}Enhancing data accessibility, interoperability, and knowledge sharing to improve water resource management through open science principles and collaborative information systems.{% endtrans %}</div>
+          {{ render_pa_activities('PA3') }}
         </div>            <div class="field field--name-field-link field--type-link field--label-hidden field__item"><a href="https://unesdoc.unesco.org/in/documentViewer.xhtml?v=2.1.196&id=p%3A%3Ausmarcdef_0000381318&file=/in/rest/annotationSVC/DownloadWatermarkedAttachment/attach_import_9aabb773-6ee5-4fd1-b6a4-6b3a55a7766a%3F_%3D381318eng.pdf&locale=en&multi=true&ark=/ark%3A/48223/pf0000381318/PDF/381318eng.pdf#page=28" class="btn btn-primary btn-arrow-right" target="_blank">{{ _("Discover") }}</a></div>
         </div></div>
       </div>  
 
       <div class="col-md-6 col2">
         <div class="col-small"><div class="cardsmall cardsmall-thematic cardsmall-cta cardsmall-hero" style="min-height:28rem;"> <img class="cardsmall-img-top image-style-cardsmall-1-column" src="./Landing_page/Content/area_4.png" width="289" height="424" alt="" loading="lazy"><div class="cardsmall-body"><div class="cardsmall-title">{% trans %}Priority Area 4: Integrated Water Resources Management under Conditions of Global Change{% endtrans %}</div><div class="cardsmall-text" style="padding-top:1rem">{% trans %}Developing holistic approaches to manage water resources considering climate change impacts, growing demands, and environmental pressures through nature-based solutions and adaptive strategies.{% endtrans %}</div>
+          {{ render_pa_activities('PA4') }}
         </div>            <div class="field field--name-field-link field--type-link field--label-hidden field__item"><a href="https://unesdoc.unesco.org/in/documentViewer.xhtml?v=2.1.196&id=p%3A%3Ausmarcdef_0000381318&file=/in/rest/annotationSVC/DownloadWatermarkedAttachment/attach_import_9aabb773-6ee5-4fd1-b6a4-6b3a55a7766a%3F_%3D381318eng.pdf&locale=en&multi=true&ark=/ark%3A/48223/pf0000381318/PDF/381318eng.pdf#page=31" class="btn btn-primary btn-arrow-right" target="_blank">{{ _("Discover") }}</a></div>
         </div></div>
       </div>  
 
       <div class="col-md-6 col2">
         <div class="col-small"><div class="cardsmall cardsmall-thematic cardsmall-cta cardsmall-hero" style="min-height:28rem;"> <img class="cardsmall-img-top image-style-cardsmall-1-column" src="./Landing_page/Content/area_5.png" width="289" height="424" alt="" loading="lazy"><div class="cardsmall-body"><div class="cardsmall-title">{% trans %}Priority Area 5: Water Governance based on Science for Mitigation, Adaptation, and Resilience{% endtrans %}</div><div class="cardsmall-text" style="padding-top:1rem">{% trans %}Strengthening water governance frameworks through scientific knowledge to build resilient societies, enhance adaptation capacities, and promote participatory decision-making processes at all levels.{% endtrans %}</div>
+          {{ render_pa_activities('PA5') }}
         </div>            <div class="field field--name-field-link field--type-link field--label-hidden field__item"><a href="https://unesdoc.unesco.org/in/documentViewer.xhtml?v=2.1.196&id=p%3A%3Ausmarcdef_0000381318&file=/in/rest/annotationSVC/DownloadWatermarkedAttachment/attach_import_9aabb773-6ee5-4fd1-b6a4-6b3a55a7766a%3F_%3D381318eng.pdf&locale=en&multi=true&ark=/ark%3A/48223/pf0000381318/PDF/381318eng.pdf#page=36" class="btn btn-primary btn-arrow-right" target="_blank">{{ _("Discover") }}</a></div>
         </div></div>
       </div>
-      </div>   
+      </div>
+
+      {# Link to browsable outputs page #}
+      <div style="text-align: center; margin-top: 2rem;">
+        <a href="/ihpix/outputs" class="btn btn-primary btn-lg">
+          <i class="fa fa-list-alt"></i> {{ _('Browse All Activities by Output') }}
+        </a>
+      </div>
+
     </div>
   </div>
 

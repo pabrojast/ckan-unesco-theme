@@ -24,6 +24,11 @@
             {% snippet 'home/snippets/data.html' %}
           {% endblock %}
         </div>
+        <div class="col-md-12 col1">
+          {% block recently_added %}
+            {% snippet 'home/snippets/recently_added.html' %}
+          {% endblock %}
+        </div>
         {# 
         <div class="col-md-12 col1" style="border-top: 0 !important;">
           {% block IHPIX %}
@@ -50,6 +55,11 @@
         <div class="col-md-12 col1" style="border-top: 0 !important;">
           {% block ThematicViewers %}
             {% snippet 'home/snippets/ThematicViewers.html' %}
+          {% endblock %}
+        </div>
+        <div class="col-md-12 col1">
+          {% block AIWaterTools %}
+            {% snippet 'home/snippets/ai_water_tools.html' %}
           {% endblock %}
         </div>
         <div class="col-md-12 col1">
