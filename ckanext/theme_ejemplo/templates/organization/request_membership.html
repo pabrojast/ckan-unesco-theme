@@ -1,0 +1,25 @@
+{% extends "organization/read_base.html" %}
+{% import 'macros/form.html' as form %}
+
+{% block subtitle %}{{ _('Request Membership') }} {{ g.template_title_delimiter }} {{ group_dict.display_name }}{% endblock %}
+
+{% block primary_content_inner %}
+  <h2><i class="fa fa-user-plus"></i> {{ _('Request to Join') }} "{{ group_dict.title or group_dict.name }}"</h2>
+
+  <div class="membership-request-info">
+    <p>{{ _('Submit a request to join this organization. The organization administrators will be notified and can approve your request.') }}</p>
+  </div>
+
+  <form method="POST" class="dataset-form">
+    {{ h.csrf_input() }}
+
+    {{ form.markdown('message', label=_('Message to administrators'), id='field-message', placeholder=_('Please explain why you would like to join this organization and what your role would be...'), value='') }}
+
+    <div class="form-actions">
+      <a href="{{ h.url_for('organization.read', id=group_dict.name) }}" class="btn btn-default">{{ _('Cancel') }}</a>
+      <button type="submit" class="btn btn-primary">
+        <i class="fa fa-paper-plane"></i> {{ _('Send Request') }}
+      </button>
+    </div>
+  </form>
+{% endblock %}

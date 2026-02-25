@@ -1,0 +1,357 @@
+/* ========================================
+   People Directory & Organization Pages
+   ======================================== */
+
+/* --- People Grid --- */
+.people-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.25rem;
+  margin: 1.5rem 0;
+}
+
+/* --- Person Card --- */
+.person-card {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: var(--border-radius, 0.5rem);
+  overflow: hidden;
+  transition: var(--transition, all 0.3s ease);
+  display: flex;
+  flex-direction: column;
+}
+.person-card:hover {
+  box-shadow: var(--shadow-medium, 0 4px 8px rgba(0,0,0,0.15));
+  transform: translateY(-2px);
+}
+.person-card-link {
+  display: flex;
+  align-items: flex-start;
+  padding: 1rem;
+  text-decoration: none;
+  color: inherit;
+  gap: 1rem;
+}
+.person-card-link:hover {
+  text-decoration: none;
+  color: inherit;
+}
+.person-card-image {
+  flex-shrink: 0;
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--unesco-blue-pale, #E8F4F8);
+}
+.person-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.person-card-avatar {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2rem;
+  color: var(--unesco-blue, #0069B4);
+}
+.person-card-body {
+  flex: 1;
+  min-width: 0;
+}
+.person-card-name {
+  font-size: 1rem;
+  font-weight: 600;
+  margin: 0 0 0.25rem;
+  color: var(--text-primary, #212529);
+}
+.person-card-title {
+  font-size: 0.85rem;
+  color: var(--unesco-blue, #0069B4);
+  margin: 0 0 0.25rem;
+  font-weight: 500;
+}
+.person-card-institution,
+.person-card-country {
+  font-size: 0.8rem;
+  color: var(--text-secondary, #6c757d);
+  margin: 0 0 0.15rem;
+}
+.person-card-institution i,
+.person-card-country i {
+  width: 14px;
+  text-align: center;
+  margin-right: 4px;
+}
+.person-card-tags {
+  padding: 0 1rem 0.75rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+.person-card-footer {
+  padding: 0.5rem 1rem 0.75rem;
+  border-top: 1px solid #f0f0f0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  align-items: center;
+}
+.person-card-orgs {
+  padding: 0 1rem 0.75rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+.person-org-badge {
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  background: var(--unesco-blue-pale, #E8F4F8);
+  color: var(--unesco-blue, #0069B4);
+  border-radius: 12px;
+  text-decoration: none;
+}
+.person-org-badge:hover {
+  background: var(--unesco-blue, #0069B4);
+  color: #fff;
+  text-decoration: none;
+}
+
+/* --- Tags --- */
+.tag {
+  display: inline-block;
+  font-size: 0.7rem;
+  padding: 2px 8px;
+  background: #f0f4f8;
+  color: var(--text-secondary, #6c757d);
+  border-radius: 12px;
+  white-space: nowrap;
+}
+.tag-more {
+  background: #e0e0e0;
+  font-weight: 600;
+}
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  margin-top: 0.5rem;
+}
+
+/* --- People Search Bar --- */
+.people-search-bar {
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: var(--border-radius, 0.5rem);
+}
+.people-search-bar .row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+.people-search-bar .form-control {
+  width: 100%;
+}
+
+/* --- User Profile Enhancements --- */
+.user-professional-info {
+  margin: 0.75rem 0;
+  padding: 0.75rem 0;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+}
+.user-professional-info p {
+  margin: 0.25rem 0;
+  font-size: 0.9rem;
+  color: var(--text-secondary, #6c757d);
+}
+.user-professional-info i {
+  width: 18px;
+  text-align: center;
+  color: var(--unesco-blue, #0069B4);
+  margin-right: 6px;
+}
+.user-job-title {
+  font-weight: 600;
+  color: var(--text-primary, #212529) !important;
+}
+.user-expertise {
+  margin: 0.75rem 0;
+}
+.user-expertise h3 {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+.user-social-links {
+  margin: 0.75rem 0;
+}
+.user-social-links h3 {
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+}
+.user-social-links ul {
+  padding-left: 0;
+}
+.user-social-links li {
+  margin-bottom: 0.35rem;
+}
+.user-social-links a {
+  color: var(--unesco-blue, #0069B4);
+  text-decoration: none;
+}
+.user-social-links a:hover {
+  text-decoration: underline;
+}
+.user-social-links i {
+  width: 18px;
+  text-align: center;
+  margin-right: 6px;
+}
+.user-orcid {
+  margin: 0.75rem 0;
+}
+.user-orcid a {
+  color: #a6ce39;
+  text-decoration: none;
+  font-size: 0.85rem;
+}
+.user-orcid a:hover {
+  text-decoration: underline;
+}
+
+/* --- Organization Stats --- */
+.org-stats .nums {
+  display: flex;
+  justify-content: space-around;
+  text-align: center;
+  padding: 0.5rem 0;
+}
+.org-stats .nums dl {
+  margin: 0;
+}
+.org-stats .nums dt {
+  font-size: 0.75rem;
+  color: var(--text-secondary, #6c757d);
+  text-transform: uppercase;
+}
+.org-stats .nums dd {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--unesco-blue, #0069B4);
+}
+
+/* --- Publications List --- */
+.publications-list {
+  margin: 1rem 0;
+}
+.publication-item {
+  padding: 1rem 0;
+  border-bottom: 1px solid #eee;
+}
+.publication-item:last-child {
+  border-bottom: none;
+}
+.publication-item h3 {
+  font-size: 1rem;
+  margin: 0 0 0.5rem;
+}
+.publication-item h3 a {
+  color: var(--text-primary, #212529);
+}
+.publication-item h3 a:hover {
+  color: var(--unesco-blue, #0069B4);
+}
+.publication-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 0.5rem;
+  font-size: 0.85rem;
+  color: var(--text-secondary, #6c757d);
+}
+.publication-meta i {
+  margin-right: 4px;
+}
+.publication-notes {
+  font-size: 0.9rem;
+  color: var(--text-secondary, #6c757d);
+  margin: 0.5rem 0;
+}
+.publication-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  margin-top: 0.5rem;
+}
+
+/* --- News & Events Lists --- */
+.news-list,
+.events-list {
+  margin: 1rem 0;
+}
+.news-item,
+.event-item {
+  padding: 1rem 0;
+  border-bottom: 1px solid #eee;
+}
+.news-item:last-child,
+.event-item:last-child {
+  border-bottom: none;
+}
+.news-item h3,
+.event-item h3 {
+  font-size: 1rem;
+  margin: 0 0 0.5rem;
+}
+.news-date,
+.event-date {
+  font-size: 0.85rem;
+  color: var(--text-secondary, #6c757d);
+  margin-bottom: 0.5rem;
+}
+.news-excerpt,
+.event-excerpt {
+  font-size: 0.9rem;
+  color: var(--text-secondary, #6c757d);
+}
+.empty-hint {
+  font-size: 0.85rem;
+  color: var(--text-muted, #8a8a8a);
+  font-style: italic;
+}
+
+/* --- Membership Request --- */
+.membership-request-info {
+  background: var(--unesco-blue-pale, #E8F4F8);
+  padding: 1rem;
+  border-radius: var(--border-radius, 0.5rem);
+  margin-bottom: 1.5rem;
+}
+.membership-request-info p {
+  margin: 0;
+  color: var(--text-primary, #212529);
+}
+
+/* --- Responsive --- */
+@media (max-width: 768px) {
+  .people-grid {
+    grid-template-columns: 1fr;
+  }
+  .people-search-bar .row {
+    flex-direction: column;
+  }
+  .people-search-bar .row > div {
+    width: 100%;
+  }
+  .publication-meta {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+}

@@ -1,0 +1,43 @@
+{# Person card snippet for the people directory grid #}
+<div class="person-card">
+  <a href="{{ h.url_for('user.read', id=person.name) }}" class="person-card-link">
+    <div class="person-card-image">
+      {% if person.image_url %}
+        <img src="{{ person.image_url }}" alt="{{ person.fullname }}">
+      {% else %}
+        <div class="person-card-avatar">
+          <i class="fa fa-user"></i>
+        </div>
+      {% endif %}
+    </div>
+    <div class="person-card-body">
+      <h3 class="person-card-name">{{ person.fullname }}</h3>
+      {% if person.job_title %}
+        <p class="person-card-title">{{ person.job_title }}</p>
+      {% endif %}
+      {% if person.institution %}
+        <p class="person-card-institution"><i class="fa fa-building"></i> {{ person.institution }}</p>
+      {% endif %}
+      {% if person.country %}
+        <p class="person-card-country"><i class="fa fa-globe"></i> {{ person.country }}</p>
+      {% endif %}
+    </div>
+  </a>
+  {% if person.expertise_areas %}
+    <div class="person-card-tags">
+      {% for area in person.expertise_areas[:3] %}
+        <span class="tag">{{ area }}</span>
+      {% endfor %}
+      {% if person.expertise_areas|length > 3 %}
+        <span class="tag tag-more">+{{ person.expertise_areas|length - 3 }}</span>
+      {% endif %}
+    </div>
+  {% endif %}
+  {% if person.organizations %}
+    <div class="person-card-orgs">
+      {% for org in person.organizations[:2] %}
+        <a href="{{ h.url_for('organization.read', id=org.name) }}" class="person-org-badge" title="{{ org.title }}">{{ org.title|truncate(25) }}</a>
+      {% endfor %}
+    </div>
+  {% endif %}
+</div>

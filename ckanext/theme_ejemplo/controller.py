@@ -9,9 +9,11 @@ import ckan.lib.navl.dictization_functions as dict_fns
 import ckan.lib.search as search
 import ckan.authz as authz
 import ckan.plugins as plugins
-from ckan.common import c, config, request, _
+import ckan.lib.mailer as mailer
+from ckan.common import c, config, request, _, current_user
 from functools import lru_cache
 import time
+import json
 import logging
 
 log = logging.getLogger(__name__)
@@ -296,3 +298,269 @@ class MyLogica():
             
             if request.method == 'GET':
                 return render_template("citizen_science_portal/index.html")
+
+        # --- People & Organizations views ---
+
+        def people_index():
+            """People directory page."""
+            q = request.args.get('q', '')
+            country = request.args.get('country', '')
+            organization = request.args.get('organization', '')
+            expertise = request.args.get('expertise', '')
+            page = h.get_page_number(request.args) or 1
+            items_per_page = 21
+
+            try:
+                result = toolkit.get_action('people_list')(
+                    {'ignore_auth': True},
+                    {
+                        'q': q,
+                        'country': country,
+                        'organization': organization,
+                        'expertise': expertise,
+                        'limit': items_per_page,
+                        'offset': items_per_page * (page - 1),
+                    }
+                )
+
+                people = result.get('results', [])
+                total = result.get('count', 0)
+
+                # Get filter options
+                orgs = toolkit.get_action('organization_list')(
+                    {'ignore_auth': True},
+                    {'all_fields': True, 'sort': 'title asc'}
+                )
+
+                from ckanext.theme_ejemplo.helpers import get_country_list
+                countries = get_country_list()
+
+                # Build pagination
+                dummy_collection = range(total)
+                pager = h.Page(
+                    collection=dummy_collection,
+                    page=page,
+                    url=h.pager_url,
+                    items_per_page=items_per_page,
+                )
+                pager.items = people
+
+                return render_template(
+                    "people/index.html",
+                    people=people,
+                    page=pager,
+                    q=q,
+                    country=country,
+                    organization=organization,
+                    expertise=expertise,
+                    organizations=orgs,
+                    countries=countries,
+                    total=total,
+                )
+            except Exception as e:
+                log.error(f"Error in people_index: {e}")
+                return render_template(
+                    "people/index.html",
+                    people=[],
+                    page=h.Page(collection=[], page=1, url=h.pager_url, items_per_page=items_per_page),
+                    q=q, country='', organization='', expertise='',
+                    organizations=[], countries=[], total=0,
+                )
+
+        def organization_people(name):
+            """Organization people tab."""
+            try:
+                context = {'ignore_auth': True}
+                org = toolkit.get_action('organization_show')(
+                    context, {'id': name, 'include_users': True}
+                )
+                result = toolkit.get_action('organization_people')(
+                    context, {'id': name}
+                )
+                members = result.get('members', [])
+
+                return render_template(
+                    "organization/people.html",
+                    group_dict=org,
+                    group_type='organization',
+                    members=members,
+                )
+            except toolkit.ObjectNotFound:
+                abort(404, _('Organization not found'))
+            except Exception as e:
+                log.error(f"Error in organization_people: {e}")
+                abort(500)
+
+        def organization_publications(name):
+            """Organization publications tab."""
+            try:
+                context = {'ignore_auth': True}
+                org = toolkit.get_action('organization_show')(
+                    context, {'id': name}
+                )
+
+                page = h.get_page_number(request.args) or 1
+                items_per_page = 20
+
+                pub_search = toolkit.get_action('package_search')(
+                    {},
+                    {
+                        'fq': f'owner_org:{org["id"]} AND (dcat_type:*document* OR dcat_type:*publication*)',
+                        'rows': items_per_page,
+                        'start': items_per_page * (page - 1),
+                        'sort': 'metadata_modified desc',
+                    }
+                )
+
+                publications = pub_search.get('results', [])
+                total = pub_search.get('count', 0)
+
+                pager = h.Page(
+                    collection=range(total),
+                    page=page,
+                    url=h.pager_url,
+                    items_per_page=items_per_page,
+                )
+                pager.items = publications
+
+                return render_template(
+                    "organization/publications.html",
+                    group_dict=org,
+                    group_type='organization',
+                    publications=publications,
+                    page=pager,
+                    total=total,
+                )
+            except toolkit.ObjectNotFound:
+                abort(404, _('Organization not found'))
+            except Exception as e:
+                log.error(f"Error in organization_publications: {e}")
+                abort(500)
+
+        def organization_news(name):
+            """Organization news tab."""
+            try:
+                context = {'ignore_auth': True}
+                org = toolkit.get_action('organization_show')(
+                    context, {'id': name}
+                )
+
+                # Try to get pages tagged with org name
+                news = []
+                try:
+                    pages = toolkit.get_action('ckanext_pages_list')(
+                        context, {'page_type': 'page'}
+                    )
+                    org_name = org.get('name', '')
+                    for p in pages:
+                        extras = p.get('extras', {})
+                        page_org = extras.get('organization', '') if isinstance(extras, dict) else ''
+                        if page_org == org_name or org_name in p.get('name', ''):
+                            news.append(p)
+                except Exception:
+                    pass
+
+                return render_template(
+                    "organization/news.html",
+                    group_dict=org,
+                    group_type='organization',
+                    news=news,
+                )
+            except toolkit.ObjectNotFound:
+                abort(404, _('Organization not found'))
+            except Exception as e:
+                log.error(f"Error in organization_news: {e}")
+                abort(500)
+
+        def organization_events(name):
+            """Organization events tab."""
+            try:
+                context = {'ignore_auth': True}
+                org = toolkit.get_action('organization_show')(
+                    context, {'id': name}
+                )
+
+                events = []
+                try:
+                    pages = toolkit.get_action('ckanext_pages_list')(
+                        context, {'page_type': 'page'}
+                    )
+                    org_name = org.get('name', '')
+                    for p in pages:
+                        extras = p.get('extras', {})
+                        page_org = extras.get('organization', '') if isinstance(extras, dict) else ''
+                        page_type = extras.get('type', '') if isinstance(extras, dict) else ''
+                        if (page_org == org_name or org_name in p.get('name', '')) and page_type == 'event':
+                            events.append(p)
+                except Exception:
+                    pass
+
+                return render_template(
+                    "organization/events.html",
+                    group_dict=org,
+                    group_type='organization',
+                    events=events,
+                )
+            except toolkit.ObjectNotFound:
+                abort(404, _('Organization not found'))
+            except Exception as e:
+                log.error(f"Error in organization_events: {e}")
+                abort(500)
+
+        def request_membership(name):
+            """Handle membership request for an organization."""
+            try:
+                context = {'ignore_auth': True}
+                org = toolkit.get_action('organization_show')(
+                    context, {'id': name, 'include_users': True}
+                )
+            except toolkit.ObjectNotFound:
+                abort(404, _('Organization not found'))
+                return
+
+            if not current_user.is_authenticated:
+                return toolkit.redirect_to('user.login')
+
+            if request.method == 'POST':
+                message = request.form.get('message', '')
+                user_name = current_user.name
+                user_fullname = current_user.fullname or current_user.name
+
+                # Find org admins to notify
+                admins = [u for u in org.get('users', []) if u.get('capacity') == 'admin']
+
+                for admin in admins:
+                    try:
+                        admin_obj = model.User.get(admin['id'])
+                        if admin_obj and admin_obj.email:
+                            subject = _('Membership Request for {org}').format(org=org.get('title', org['name']))
+                            body = _(
+                                'User {user} ({fullname}) has requested to join the organization "{org}".\n\n'
+                                'Message:\n{message}\n\n'
+                                'To manage members, visit: {url}'
+                            ).format(
+                                user=user_name,
+                                fullname=user_fullname,
+                                org=org.get('title', org['name']),
+                                message=message or _('No message provided'),
+                                url=toolkit.url_for('organization.member_new', id=org['name'], qualified=True),
+                            )
+                            try:
+                                mailer.mail_user(admin_obj, subject, body)
+                            except Exception as mail_err:
+                                log.warning(f"Failed to send membership request email: {mail_err}")
+                    except Exception as e:
+                        log.warning(f"Error notifying admin {admin.get('id')}: {e}")
+
+                h.flash_success(
+                    _('Your membership request for "{org}" has been sent to the organization administrators.').format(
+                        org=org.get('title', org['name'])
+                    )
+                )
+                return toolkit.redirect_to('organization.read', id=name)
+
+            return render_template(
+                "organization/request_membership.html",
+                group_dict=org,
+                group_type='organization',
+            )

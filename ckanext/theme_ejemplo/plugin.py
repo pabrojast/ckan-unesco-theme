@@ -13,6 +13,7 @@ import ckanext.schemingdcat.utils as utils
 from flask import Blueprint
 from ckanext.theme_ejemplo.controller import MyLogica
 from . import helpers
+from . import actions as custom_actions
 import logging
 from functools import lru_cache
 import time
@@ -45,9 +46,10 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
         # Declare that this class implements IConfigurer.
         plugins.implements(plugins.IConfigurer)
         plugins.implements(plugins.IBlueprint)
-        plugins.implements(plugins.ITemplateHelpers)  # Implementar ITemplateHelpers
+        plugins.implements(plugins.ITemplateHelpers)
         plugins.implements(plugins.IPackageController, inherit=True)
-        plugins.implements(plugins.ITranslation)  # Implementar ITemplateHelpers
+        plugins.implements(plugins.ITranslation)
+        plugins.implements(plugins.IActions)
 
         def __init__(self, name=None):
             super().__init__(name=name)
@@ -351,21 +353,77 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
 #                methods=['GET']
 #    )
 
+            # People directory
+            blueprint.add_url_rule(
+                u'/people',
+                u'people_index',
+                MyLogica.people_index,
+                methods=['GET']
+            )
+
+            # Organization tabs
+            blueprint.add_url_rule(
+                u'/organization/<name>/people',
+                u'organization_people',
+                MyLogica.organization_people,
+                methods=['GET']
+            )
+            blueprint.add_url_rule(
+                u'/organization/<name>/publications',
+                u'organization_publications',
+                MyLogica.organization_publications,
+                methods=['GET']
+            )
+            blueprint.add_url_rule(
+                u'/organization/<name>/news',
+                u'organization_news',
+                MyLogica.organization_news,
+                methods=['GET']
+            )
+            blueprint.add_url_rule(
+                u'/organization/<name>/events',
+                u'organization_events',
+                MyLogica.organization_events,
+                methods=['GET']
+            )
+
+            # Membership request
+            blueprint.add_url_rule(
+                u'/organization/<name>/request-membership',
+                u'request_membership',
+                MyLogica.request_membership,
+                methods=['GET', 'POST']
+            )
+
             return blueprint
         
         def get_helpers(self):
-            # Registrar el helper 'get_latest_courses'
             return {
                  'get_latest_courses': self.get_latest_courses,
-                 'get_featured_datasets': self.get_featured_datasets,  # Nuevo helper añadido
-                 'get_organization_image_by_name': self.get_organization_image_by_name,  # Cambio de nombre del helper
+                 'get_featured_datasets': self.get_featured_datasets,
+                 'get_organization_image_by_name': self.get_organization_image_by_name,
                  'get_featured_datasets_filtered': self.get_featured_datasets_filtered,
                  'theme_ejemplo_get_paged_resources': helpers.get_paged_resources,
                  'theme_ejemplo_markdown_excerpt': helpers.markdown_excerpt,
                  'theme_ejemplo_site_statistics': self.get_site_statistics_cached,
                  'get_member_states_groups_list': self.get_member_states_groups_list,
-                 'get_initiatives_groups_list': self.get_initiatives_groups_list
+                 'get_initiatives_groups_list': self.get_initiatives_groups_list,
+                 'get_people_directory': helpers.get_people_directory,
+                 'get_user_profile': helpers.get_user_profile,
+                 'get_org_members_with_profiles': helpers.get_org_members_with_profiles,
+                 'get_org_statistics': helpers.get_org_statistics,
+                 'get_org_publications': helpers.get_org_publications,
+                 'get_country_list': helpers.get_country_list,
                  }
+
+        # IActions
+        def get_actions(self):
+            return {
+                'user_show': custom_actions.user_show,
+                'user_update': custom_actions.user_update,
+                'people_list': custom_actions.people_list,
+                'organization_people': custom_actions.organization_people,
+            }
         
         def get_member_states_groups_list(self):
             """Obtiene los grupos de member-states como lista de tuplas (id, name)"""

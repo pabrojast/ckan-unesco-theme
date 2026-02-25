@@ -1,0 +1,155 @@
+{% ckan_extends %}
+
+{% block secondary_content %}
+<div class="module context-info">
+  <section class="module-content">
+    {% block secondary_content_inner %}
+      {% block user_image %}
+      <div class="image">{{ h.user_image(user.id, size=270) }}</div>
+      {% endblock %}
+
+      {% block user_heading %}
+      <h1 class="heading">{{ user.display_name }}</h1>
+      {% endblock %}
+
+      {# Professional info #}
+      {% set profile = user.get('profile', {}) %}
+      {% if profile.get('job_title') or profile.get('institution') %}
+      <div class="user-professional-info">
+        {% if profile.get('job_title') %}
+          <p class="user-job-title"><i class="fa fa-briefcase"></i> {{ profile.job_title }}</p>
+        {% endif %}
+        {% if profile.get('institution') %}
+          <p class="user-institution"><i class="fa fa-building"></i> {{ profile.institution }}</p>
+        {% endif %}
+        {% if profile.get('country') %}
+          <p class="user-country"><i class="fa fa-globe"></i> {{ profile.country }}</p>
+        {% endif %}
+      </div>
+      {% endif %}
+
+      {% block user_about %}
+      {% if about_formatted %}
+        {{ about_formatted }}
+      {% else %}
+        <p class="empty">
+          {% if is_myself %}
+            {% trans %}You have not provided a biography.{% endtrans %}
+          {% else %}
+            {% trans %}This user has no biography.{% endtrans %}
+          {% endif %}
+        </p>
+      {% endif %}
+      {% endblock %}
+
+      {# Expertise areas #}
+      {% set expertise = user.get('expertise_areas', []) %}
+      {% if expertise %}
+      <div class="user-expertise">
+        <h3><i class="fa fa-tags"></i> {{ _('Expertise') }}</h3>
+        <div class="tag-list">
+          {% for area in expertise %}
+            <span class="tag">{{ area }}</span>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+
+      {% block user_nums %}
+      <div class="nums">
+        <dl>
+          <dt>{{ _('Followers') }}</dt>
+          <dd data-module="followers-counter" data-module-id="{{ user.id }}" data-module-num_followers="{{ user.num_followers }}">{{ h.SI_number_span(user.num_followers) }}</dd>
+        </dl>
+        <dl>
+          <dt>{{ h.humanize_entity_type('package', dataset_type, 'facet label') or _('Datasets') }}</dt>
+          <dd>{{ h.SI_number_span(user.number_created_packages) }}</dd>
+        </dl>
+      </div>
+      {% endblock %}
+
+      {% if is_myself == false %}
+        {% block user_follow %}
+        <div class="follow_button">
+          {{ h.follow_button('user', user.id) }}
+        </div>
+        {% endblock %}
+      {% endif %}
+
+      {# Social links #}
+      {% set social = user.get('social_links', {}) %}
+      {% if social and (social.get('linkedin') or social.get('twitter') or social.get('researchgate') or social.get('github')) %}
+      <div class="user-social-links">
+        <h3><i class="fa fa-share-alt"></i> {{ _('Links') }}</h3>
+        <ul class="list-unstyled">
+          {% if social.get('linkedin') %}
+            <li><a href="{{ social.linkedin }}" target="_blank" rel="noopener"><i class="fa fa-linkedin-square"></i> LinkedIn</a></li>
+          {% endif %}
+          {% if social.get('twitter') %}
+            <li><a href="{{ social.twitter }}" target="_blank" rel="noopener"><i class="fa fa-twitter"></i> Twitter / X</a></li>
+          {% endif %}
+          {% if social.get('researchgate') %}
+            <li><a href="{{ social.researchgate }}" target="_blank" rel="noopener"><i class="fa fa-flask"></i> ResearchGate</a></li>
+          {% endif %}
+          {% if social.get('github') %}
+            <li><a href="{{ social.github }}" target="_blank" rel="noopener"><i class="fa fa-github"></i> GitHub</a></li>
+          {% endif %}
+        </ul>
+      </div>
+      {% endif %}
+
+      {# ORCID #}
+      {% if profile.get('orcid') %}
+      <div class="user-orcid">
+        <a href="https://orcid.org/{{ profile.orcid }}" target="_blank" rel="noopener">
+          <img src="/orcid.svg" alt="ORCID" style="width:16px;height:16px;vertical-align:middle;">
+          {{ profile.orcid }}
+        </a>
+      </div>
+      {% endif %}
+
+      {% block user_info %}
+      <div class="info">
+        <dl>
+          {% if user.name.startswith('http://') or user.name.startswith('https://') %}
+            <dt>{{ _('Open ID') }}</dt>
+            <dd>{{ user.name|urlize(25) }}</dd>
+          {% else %}
+            <dt>{{ _('Username') }}</dt>
+            <dd>{{ user.name }}</dd>
+          {% endif %}
+        </dl>
+        {% if profile.get('website') %}
+        <dl>
+          <dt>{{ _('Website') }}</dt>
+          <dd><a href="{{ profile.website }}" target="_blank" rel="noopener">{{ profile.website|truncate(40) }}</a></dd>
+        </dl>
+        {% endif %}
+        {% if is_myself %}
+          <dl>
+            <dt>{{ _('Email') }} <span class="label label-default" title="{{ _('This means only you can see this') }}">{{ _('Private') }}</span></dt>
+            <dd>{{ user.email }}</dd>
+          </dl>
+          {% if profile.get('phone') %}
+          <dl>
+            <dt>{{ _('Phone') }} <span class="label label-default">{{ _('Private') }}</span></dt>
+            <dd>{{ profile.phone }}</dd>
+          </dl>
+          {% endif %}
+        {% endif %}
+        <dl>
+          <dt>{{ _('Member Since') }}</dt>
+          <dd>{{ h.render_datetime(user.created) }}</dd>
+        </dl>
+        {% if is_sysadmin %}
+        <dl>
+          <dt>{{_('Last Active') }}</dt>
+          <dd>{{ h.time_ago_from_timestamp(user.last_active) }}</dd>
+        </dl>
+        {% endif %}
+      </div>
+      {% endblock %}
+    {% endblock %}
+  </section>
+</div>
+{% endblock %}

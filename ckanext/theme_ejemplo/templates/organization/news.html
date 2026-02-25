@@ -1,0 +1,31 @@
+{% extends "organization/read_base.html" %}
+
+{% block subtitle %}{{ _('News') }} {{ g.template_title_delimiter }} {{ group_dict.display_name }}{% endblock %}
+
+{% block primary_content_inner %}
+  <h2><i class="fa fa-newspaper-o"></i> {{ _('News') }}</h2>
+
+  {% if news %}
+    <div class="news-list">
+      {% for item in news %}
+        <div class="news-item">
+          <h3>
+            <a href="{{ h.url_for('pages.show', page='/' + item.name) }}">{{ item.title }}</a>
+          </h3>
+          {% if item.publish_date or item.created %}
+            <p class="news-date">
+              <i class="fa fa-calendar"></i>
+              {{ h.render_datetime(item.publish_date or item.created, date_format='%Y-%m-%d') }}
+            </p>
+          {% endif %}
+          {% if item.content %}
+            <p class="news-excerpt">{{ h.markdown_extract(item.content, 200) }}</p>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="empty">{{ _('No news available for this organization.') }}</p>
+    <p class="empty-hint">{{ _('News can be added through the Pages feature and associated with this organization.') }}</p>
+  {% endif %}
+{% endblock %}

@@ -1,0 +1,31 @@
+{% extends "organization/read_base.html" %}
+
+{% block subtitle %}{{ _('Events') }} {{ g.template_title_delimiter }} {{ group_dict.display_name }}{% endblock %}
+
+{% block primary_content_inner %}
+  <h2><i class="fa fa-calendar"></i> {{ _('Events') }}</h2>
+
+  {% if events %}
+    <div class="events-list">
+      {% for event in events %}
+        <div class="event-item">
+          <h3>
+            <a href="{{ h.url_for('pages.show', page='/' + event.name) }}">{{ event.title }}</a>
+          </h3>
+          {% if event.publish_date or event.created %}
+            <p class="event-date">
+              <i class="fa fa-calendar"></i>
+              {{ h.render_datetime(event.publish_date or event.created, date_format='%Y-%m-%d') }}
+            </p>
+          {% endif %}
+          {% if event.content %}
+            <p class="event-excerpt">{{ h.markdown_extract(event.content, 200) }}</p>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="empty">{{ _('No events available for this organization.') }}</p>
+    <p class="empty-hint">{{ _('Events can be added through the Pages feature and associated with this organization.') }}</p>
+  {% endif %}
+{% endblock %}

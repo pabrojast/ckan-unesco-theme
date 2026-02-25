@@ -1,0 +1,51 @@
+{% extends "organization/read_base.html" %}
+
+{% block subtitle %}{{ _('People') }} {{ g.template_title_delimiter }} {{ group_dict.display_name }}{% endblock %}
+
+{% block primary_content_inner %}
+  <h2><i class="fa fa-users"></i> {{ _('People') }}</h2>
+
+  {% if members %}
+    <div class="people-grid">
+      {% for member in members %}
+        <div class="person-card">
+          <a href="{{ h.url_for('user.read', id=member.name) }}" class="person-card-link">
+            <div class="person-card-image">
+              {% if member.image_url %}
+                <img src="{{ member.image_url }}" alt="{{ member.fullname }}">
+              {% else %}
+                <div class="person-card-avatar">
+                  <i class="fa fa-user"></i>
+                </div>
+              {% endif %}
+            </div>
+            <div class="person-card-body">
+              <h3 class="person-card-name">{{ member.fullname }}</h3>
+              {% if member.job_title %}
+                <p class="person-card-title">{{ member.job_title }}</p>
+              {% endif %}
+              {% if member.institution %}
+                <p class="person-card-institution"><i class="fa fa-building"></i> {{ member.institution }}</p>
+              {% endif %}
+              {% if member.country %}
+                <p class="person-card-country"><i class="fa fa-globe"></i> {{ member.country }}</p>
+              {% endif %}
+            </div>
+          </a>
+          <div class="person-card-footer">
+            <span class="label label-{{ 'primary' if member.capacity == 'admin' else 'default' }}">
+              {{ member.capacity|capitalize }}
+            </span>
+            {% if member.expertise_areas %}
+              {% for area in member.expertise_areas[:3] %}
+                <span class="tag">{{ area }}</span>
+              {% endfor %}
+            {% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="empty">{{ _('This organization has no members yet.') }}</p>
+  {% endif %}
+{% endblock %}
