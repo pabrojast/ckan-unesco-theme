@@ -605,7 +605,7 @@ class MyLogica():
 
                 # Find org admins via member_list (include_users is empty in CKAN 2.10)
                 admins_notified = 0
-                for member_id, _, capacity in members:
+                for member_id, _obj_type, capacity in members:
                     if capacity == 'admin':
                         try:
                             admin_obj = model.User.get(member_id)
