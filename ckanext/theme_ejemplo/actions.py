@@ -7,6 +7,7 @@ import ckan.plugins.toolkit as toolkit
 import ckan.logic as logic
 import ckan.model as model
 from ckan.common import current_user
+from sqlalchemy.orm.attributes import flag_modified
 
 log = logging.getLogger(__name__)
 
@@ -21,7 +22,10 @@ def user_show(context, data_dict):
     """Override user_show to expose profile fields from plugin_extras."""
     result = logic.action.get.user_show(context, data_dict)
 
-    plugin_extras = result.get('plugin_extras') or {}
+    # Read plugin_extras directly from model — core may not include it
+    # in the result dict depending on CKAN version and auth context
+    user_obj = model.User.get(result['id'])
+    plugin_extras = (user_obj.plugin_extras or {}) if user_obj else {}
     profile = plugin_extras.get('theme_ejemplo', {})
 
     for field in PROFILE_FIELDS:
@@ -44,7 +48,11 @@ def user_update(context, data_dict):
     profile_data = {}
     for field in PROFILE_FIELDS:
         if field in data_dict:
-            profile_data[field] = data_dict.pop(field)
+            val = data_dict.pop(field)
+            if field == 'expertise_areas' and isinstance(val, str):
+                areas = [a.strip() for a in val.split(',') if a.strip()]
+                val = json.dumps(areas)
+            profile_data[field] = val
 
     # Assemble social_links from individual form fields (social_links_linkedin, etc.)
     social_keys = ['linkedin', 'twitter', 'researchgate', 'github', 'website']
@@ -70,6 +78,7 @@ def user_update(context, data_dict):
                 extras['theme_ejemplo'] = {}
             extras['theme_ejemplo'].update(profile_data)
             user_obj.plugin_extras = extras
+            flag_modified(user_obj, 'plugin_extras')
             model.Session.commit()
 
             # Update result with saved profile
