@@ -7,33 +7,54 @@ import logging
 
 log = logging.getLogger(__name__)
 
-def get_paged_resources(package_id, page=1, items_per_page=10):
+def get_paged_resources(package_id, page=1, items_per_page=20, q='', format_filter=''):
     """
-    Get paginated resources for a package
+    Get paginated resources for a package with optional search and format filter.
     """
     try:
-        # Obtener el paquete completo
         package = toolkit.get_action('package_show')({}, {'id': package_id})
-        
-        # Obtener todos los recursos
         resources = package.get('resources', [])
+
+        # Collect unique formats before filtering
+        all_formats = sorted(set(
+            (r.get('format') or '').strip()
+            for r in resources
+            if (r.get('format') or '').strip()
+        ), key=str.lower)
+
+        # Apply search filter
+        if q:
+            q_lower = q.lower()
+            resources = [
+                r for r in resources
+                if q_lower in (r.get('name') or '').lower()
+                or q_lower in (r.get('description') or '').lower()
+                or q_lower in (r.get('url') or '').lower()
+            ]
+
+        # Apply format filter
+        if format_filter:
+            fmt_lower = format_filter.lower()
+            resources = [
+                r for r in resources
+                if (r.get('format') or '').lower() == fmt_lower
+            ]
+
         total = len(resources)
-        
-        # Calcular el inicio y fin para la paginación
         start = (page - 1) * items_per_page
         end = start + items_per_page
-        
-        # Obtener solo los recursos de la página actual
         paged_resources = resources[start:end]
-        
+
         return {
             'resources': paged_resources,
-            'total': total
+            'total': total,
+            'formats': all_formats,
         }
     except toolkit.ObjectNotFound:
         return {
             'resources': [],
-            'total': 0
+            'total': 0,
+            'formats': [],
         }
 
 def markdown_excerpt(text, length=180, killwords=False, end='...'):

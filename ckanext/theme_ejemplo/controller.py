@@ -1,5 +1,5 @@
 from random import random
-from flask import render_template, abort
+from flask import render_template, abort, jsonify
 import ckan.plugins.toolkit as toolkit
 import ckan.model as model
 import ckan.logic as logic
@@ -783,3 +783,64 @@ class MyLogica():
             except Exception as e:
                 log.error(f"Error in user_news: {e}")
                 abort(500)
+
+        @staticmethod
+        def dataset_resources_ajax(id):
+            """AJAX endpoint for paginated/filtered resource list."""
+            page = request.args.get('page', 1, type=int)
+            items_per_page = request.args.get('limit', 20, type=int)
+            q = request.args.get('q', '').strip()
+            format_filter = request.args.get('format', '').strip()
+
+            items_per_page = min(items_per_page, 100)
+
+            try:
+                pkg = toolkit.get_action('package_show')({}, {'id': id})
+                can_edit = h.check_access('package_update', {'id': pkg['id']})
+            except toolkit.ObjectNotFound:
+                abort(404)
+            except Exception:
+                pkg = {'id': id, 'name': id, 'type': 'dataset'}
+                can_edit = False
+
+            # Filter and paginate from already-loaded resources
+            resources = pkg.get('resources', [])
+            all_formats = sorted(set(
+                (r.get('format') or '').strip()
+                for r in resources
+                if (r.get('format') or '').strip()
+            ), key=str.lower)
+
+            if q:
+                q_lower = q.lower()
+                resources = [
+                    r for r in resources
+                    if q_lower in (r.get('name') or '').lower()
+                    or q_lower in (r.get('description') or '').lower()
+                    or q_lower in (r.get('url') or '').lower()
+                ]
+            if format_filter:
+                fmt_lower = format_filter.lower()
+                resources = [
+                    r for r in resources
+                    if (r.get('format') or '').lower() == fmt_lower
+                ]
+
+            total = len(resources)
+            start = (page - 1) * items_per_page
+            paged = resources[start:start + items_per_page]
+
+            html = render_template(
+                'package/snippets/resources_list_items.html',
+                pkg=pkg,
+                resources=paged,
+                can_edit=can_edit,
+            )
+
+            return jsonify({
+                'html': html,
+                'total': total,
+                'page': page,
+                'items_per_page': items_per_page,
+                'formats': all_formats,
+            })

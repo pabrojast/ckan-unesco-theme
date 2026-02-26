@@ -430,6 +430,13 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 methods=['GET']
             )
 
+            blueprint.add_url_rule(
+                u'/dataset/<id>/resources_ajax',
+                u'dataset_resources_ajax',
+                MyLogica.dataset_resources_ajax,
+                methods=['GET']
+            )
+
             return blueprint
         
         def get_helpers(self):

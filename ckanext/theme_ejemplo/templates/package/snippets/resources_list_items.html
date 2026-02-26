@@ -1,0 +1,9 @@
+{# Partial template: renders resource items only (for AJAX responses). #}
+{% for resource in resources %}
+  {% snippet 'package/snippets/resource_item.html', pkg=pkg, res=resource, can_edit=can_edit %}
+{% endfor %}
+{% if not resources %}
+<li class="resource-item resource-item-empty">
+  <p class="text-muted">{{ _('No resources match your search.') }}</p>
+</li>
+{% endif %}

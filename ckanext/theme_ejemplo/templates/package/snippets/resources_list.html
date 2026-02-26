@@ -1,0 +1,272 @@
+{#
+  Override of CKAN's resources_list.html with search, format filter and pagination.
+  Only renders the first page server-side; subsequent pages load via AJAX.
+#}
+{% set ITEMS_PER_PAGE = 20 %}
+{% set total_resources = resources|length %}
+{% set show_controls = total_resources > ITEMS_PER_PAGE %}
+{% set initial_resources = resources[:ITEMS_PER_PAGE] if show_controls else resources %}
+
+{# Collect unique formats for filter #}
+{% set ns = namespace(formats=[]) %}
+{% for r in resources %}
+  {% set fmt = (r.format or '')|trim %}
+  {% if fmt and fmt not in ns.formats %}
+    {% set ns.formats = ns.formats + [fmt] %}
+  {% endif %}
+{% endfor %}
+
+<section id="dataset-resources" class="resources"
+         data-package-id="{{ pkg.name or pkg.id }}"
+         data-total="{{ total_resources }}"
+         data-per-page="{{ ITEMS_PER_PAGE }}">
+
+  <div class="resources-header">
+    <h2>{{ _('Data and Resources') }}
+      {% if show_controls %}
+        <span class="resources-count badge">{{ total_resources }}</span>
+      {% endif %}
+    </h2>
+
+    {% if show_controls %}
+    <div class="resources-toolbar" id="resources-toolbar">
+      <div class="resources-search-row">
+        <div class="resources-search-box">
+          <i class="fa fa-search resources-search-icon"></i>
+          <input type="text"
+                 id="resources-search"
+                 class="form-control"
+                 placeholder="{{ _('Search resources by name or description…') }}"
+                 autocomplete="off">
+          <button type="button" id="resources-search-clear" class="resources-search-clear" hidden aria-label="{{ _('Clear') }}">
+            <i class="fa fa-times"></i>
+          </button>
+        </div>
+        <div class="resources-format-filter">
+          <select id="resources-format-filter" class="form-control">
+            <option value="">{{ _('All formats') }}</option>
+            {% for fmt in ns.formats|sort if fmt %}
+              <option value="{{ fmt }}">{{ fmt }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+      <div id="resources-status" class="resources-status" hidden></div>
+    </div>
+    {% endif %}
+  </div>
+
+  {% block resource_list %}
+    {% if resources %}
+      <ul class="{% block resource_list_class %}resource-list{% endblock %}" id="resources-list">
+        {% block resource_list_inner %}
+          {% set can_edit = can_edit or h.check_access('package_update', {'id':pkg.id }) %}
+          {% for resource in initial_resources %}
+            {% snippet 'package/snippets/resource_item.html', pkg=pkg, res=resource, can_edit=can_edit %}
+          {% endfor %}
+        {% endblock %}
+      </ul>
+
+      {% if show_controls %}
+      <div class="resources-pagination" id="resources-pagination">
+        <nav aria-label="{{ _('Resource pages') }}">
+          <ul class="pagination" id="resources-pagination-links"></ul>
+        </nav>
+      </div>
+      {% endif %}
+    {% else %}
+      {% block resource_list_empty %}
+        {% if h.check_access('resource_create', {'package_id': pkg['id']}) %}
+          {% trans url=h.url_for(pkg.type ~ '_resource.new', id=pkg.name) %}
+          <p class="empty">This dataset has no data, <a href="{{ url }}">why not add some?</a></p>
+          {% endtrans %}
+        {% else %}
+          <p class="empty">{{ _('This dataset has no data') }}</p>
+        {% endif %}
+      {% endblock %}
+    {% endif %}
+  {% endblock %}
+</section>
+
+{% if show_controls %}
+<style>
+.resources-header { margin-bottom: 10px; }
+.resources-header h2 { display: inline-flex; align-items: center; gap: 8px; }
+.resources-count { font-size: 14px; font-weight: normal; background: #6c757d; color: #fff; padding: 2px 8px; border-radius: 10px; }
+.resources-toolbar { margin-bottom: 15px; }
+.resources-search-row { display: flex; gap: 10px; flex-wrap: wrap; }
+.resources-search-box { position: relative; flex: 1; min-width: 200px; }
+.resources-search-box input { padding-left: 32px; padding-right: 28px; }
+.resources-search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: #999; pointer-events: none; }
+.resources-search-clear { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); background: none; border: none; color: #999; cursor: pointer; padding: 2px 4px; }
+.resources-search-clear:hover { color: #333; }
+.resources-format-filter { min-width: 150px; }
+.resources-status { padding: 8px 0; color: #555; font-size: 13px; }
+.resources-pagination { text-align: center; margin-top: 15px; }
+.resources-pagination .pagination { justify-content: center; }
+#resources-list.is-loading { opacity: 0.5; pointer-events: none; transition: opacity 0.15s; }
+</style>
+
+<script>
+/* Read-more toggler (registered once, works for initial + AJAX-loaded items) */
+document.addEventListener('click', function (event) {
+  var button = event.target.closest('.resource-read-more');
+  if (!button) return;
+  event.preventDefault();
+  var wrapper = button.closest('.description-wrapper');
+  if (!wrapper) return;
+  var excerpt = wrapper.querySelector('.description.excerpt');
+  var full = wrapper.querySelector('.description-full');
+  if (!excerpt || !full) return;
+  var expanded = button.getAttribute('aria-expanded') === 'true';
+  if (expanded) {
+    full.hidden = true;
+    excerpt.hidden = false;
+    button.setAttribute('aria-expanded', 'false');
+    button.textContent = button.dataset.labelMore || 'Read more';
+  } else {
+    full.hidden = false;
+    excerpt.hidden = true;
+    button.setAttribute('aria-expanded', 'true');
+    button.textContent = button.dataset.labelLess || 'Read less';
+  }
+});
+</script>
+
+<script>
+(function () {
+  var section = document.getElementById('dataset-resources');
+  if (!section) return;
+
+  var packageId = section.dataset.packageId;
+  var total = parseInt(section.dataset.total, 10);
+  var perPage = parseInt(section.dataset.perPage, 10);
+  var list = document.getElementById('resources-list');
+  var searchInput = document.getElementById('resources-search');
+  var clearBtn = document.getElementById('resources-search-clear');
+  var formatSelect = document.getElementById('resources-format-filter');
+  var statusEl = document.getElementById('resources-status');
+  var paginationEl = document.getElementById('resources-pagination-links');
+
+  if (!searchInput) return;
+
+  var currentPage = 1;
+  var currentTotal = total;
+  var debounceTimer = null;
+  var abortController = null;
+  var isFirstLoad = true;
+
+  function fetchResources(page, q, fmt) {
+    if (abortController) abortController.abort();
+    abortController = new AbortController();
+    list.classList.add('is-loading');
+
+    var params = new URLSearchParams({page: page, q: q, format: fmt, limit: perPage});
+    var url = '/dataset/' + encodeURIComponent(packageId) + '/resources_ajax?' + params.toString();
+
+    return fetch(url, {signal: abortController.signal})
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        list.innerHTML = data.html;
+        currentTotal = data.total;
+        currentPage = data.page;
+        updateStatus(q, fmt, data.total);
+        renderPagination(data.total, data.page);
+        list.classList.remove('is-loading');
+        isFirstLoad = false;
+      })
+      .catch(function (err) {
+        if (err.name !== 'AbortError') {
+          list.classList.remove('is-loading');
+          console.error('Resource fetch error:', err);
+        }
+      });
+  }
+
+  function updateStatus(q, fmt, count) {
+    if (!q && !fmt) {
+      statusEl.hidden = true;
+      return;
+    }
+    var msg = count === 0
+      ? '{{ _("No resources found") }}'
+      : count + ' {{ _("resource(s) found") }}';
+    statusEl.textContent = msg;
+    statusEl.hidden = false;
+  }
+
+  function renderPagination(totalItems, page) {
+    var totalPages = Math.ceil(totalItems / perPage);
+    if (totalPages <= 1) { paginationEl.innerHTML = ''; return; }
+
+    var html = '';
+    // Previous
+    html += '<li class="page-item' + (page <= 1 ? ' disabled' : '') + '">';
+    html += '<a class="page-link" href="#" data-page="' + (page - 1) + '">&laquo;</a></li>';
+
+    // Smart page numbers: show first, last, and around current
+    var pages = [];
+    pages.push(1);
+    for (var i = Math.max(2, page - 2); i <= Math.min(totalPages - 1, page + 2); i++) {
+      pages.push(i);
+    }
+    if (totalPages > 1) pages.push(totalPages);
+
+    var prev = 0;
+    for (var j = 0; j < pages.length; j++) {
+      var p = pages[j];
+      if (p - prev > 1) {
+        html += '<li class="page-item disabled"><span class="page-link">…</span></li>';
+      }
+      html += '<li class="page-item' + (p === page ? ' active' : '') + '">';
+      html += '<a class="page-link" href="#" data-page="' + p + '">' + p + '</a></li>';
+      prev = p;
+    }
+
+    // Next
+    html += '<li class="page-item' + (page >= totalPages ? ' disabled' : '') + '">';
+    html += '<a class="page-link" href="#" data-page="' + (page + 1) + '">&raquo;</a></li>';
+
+    paginationEl.innerHTML = html;
+  }
+
+  function triggerSearch() {
+    var q = searchInput.value.trim();
+    var fmt = formatSelect.value;
+    clearBtn.hidden = !q;
+    fetchResources(1, q, fmt);
+  }
+
+  searchInput.addEventListener('input', function () {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(triggerSearch, 300);
+  });
+
+  clearBtn.addEventListener('click', function () {
+    searchInput.value = '';
+    clearBtn.hidden = true;
+    triggerSearch();
+    searchInput.focus();
+  });
+
+  formatSelect.addEventListener('change', function () {
+    triggerSearch();
+  });
+
+  paginationEl.addEventListener('click', function (e) {
+    var link = e.target.closest('[data-page]');
+    if (!link) return;
+    e.preventDefault();
+    var page = parseInt(link.dataset.page, 10);
+    if (page < 1) return;
+    var q = searchInput.value.trim();
+    var fmt = formatSelect.value;
+    fetchResources(page, q, fmt);
+    section.scrollIntoView({behavior: 'smooth', block: 'start'});
+  });
+
+  // Render initial pagination (server-rendered first page)
+  renderPagination(total, 1);
+})();
+</script>
+{% endif %}
