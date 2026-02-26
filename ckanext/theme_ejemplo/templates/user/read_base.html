@@ -42,7 +42,7 @@
   {% block user_nums %}
   <div class="user-profile-stats">
     <div class="user-profile-stat">
-      <span class="user-profile-stat-num">{{ user.num_followers }}</span>
+      <span class="user-profile-stat-num">{{ user.num_followers or 0 }}</span>
       <span class="user-profile-stat-label">{{ _('Followers') }}</span>
     </div>
     <div class="user-profile-stat">
@@ -91,16 +91,16 @@
     <h3 class="user-profile-section-title"><i class="fa fa-share-alt"></i> {{ _('Links') }}</h3>
     <div class="user-profile-social">
       {% if social.get('linkedin') %}
-        <a href="{{ social.linkedin }}" target="_blank" rel="noopener" class="user-social-btn" title="LinkedIn"><i class="fa fa-linkedin"></i></a>
+        <a href="{{ social.linkedin }}" target="_blank" rel="noopener" class="user-social-btn" title="LinkedIn"><i class="fab fa-linkedin"></i></a>
       {% endif %}
       {% if social.get('twitter') %}
-        <a href="{{ social.twitter }}" target="_blank" rel="noopener" class="user-social-btn" title="Twitter / X"><i class="fa fa-twitter"></i></a>
+        <a href="{{ social.twitter }}" target="_blank" rel="noopener" class="user-social-btn" title="Twitter / X"><i class="fab fa-twitter"></i></a>
       {% endif %}
       {% if social.get('researchgate') %}
-        <a href="{{ social.researchgate }}" target="_blank" rel="noopener" class="user-social-btn" title="ResearchGate"><i class="fa fa-flask"></i></a>
+        <a href="{{ social.researchgate }}" target="_blank" rel="noopener" class="user-social-btn" title="ResearchGate"><i class="fas fa-flask"></i></a>
       {% endif %}
       {% if social.get('github') %}
-        <a href="{{ social.github }}" target="_blank" rel="noopener" class="user-social-btn" title="GitHub"><i class="fa fa-github"></i></a>
+        <a href="{{ social.github }}" target="_blank" rel="noopener" class="user-social-btn" title="GitHub"><i class="fab fa-github"></i></a>
       {% endif %}
     </div>
   </div>
