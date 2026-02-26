@@ -5,7 +5,7 @@
   {{ h.build_nav_icon(group_type + '.read', h.humanize_entity_type('package', dataset_type, 'content tab') or _('Datasets'), id=group_dict.name, icon='sitemap') }}
   {{ h.build_nav_icon('theme_ejemplo.organization_publications', _('Publications'), name=group_dict.name, icon='book') }}
   {{ h.build_nav_icon('theme_ejemplo.organization_people', _('People'), name=group_dict.name, icon='users') }}
-  {{ h.build_nav_icon('theme_ejemplo.organization_news', _('News'), name=group_dict.name, icon='newspaper-o') }}
+  {{ h.build_nav_icon('theme_ejemplo.organization_news', _('News'), name=group_dict.name, icon='newspaper') }}
   {{ h.build_nav_icon('theme_ejemplo.organization_events', _('Events'), name=group_dict.name, icon='calendar') }}
   {{ h.build_nav_icon(group_type + '.about', _('About'), id=group_dict.name, icon='info-circle') }}
 {% endblock %}
