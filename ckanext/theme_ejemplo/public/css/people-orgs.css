@@ -430,72 +430,270 @@
   margin: 2rem 0 3rem;
 }
 
-/* --- User Profile Enhancements --- */
-.user-professional-info {
-  margin: 0.75rem 0;
-  padding: 0.75rem 0;
-  border-top: 1px solid #eee;
-  border-bottom: 1px solid #eee;
+/* --- User Profile Card (sidebar) --- */
+.user-profile-card {
+  background: #fff;
+  border: none;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 114, 188, 0.08);
+  overflow: hidden;
+  padding: 0;
 }
-.user-professional-info p {
-  margin: 0.25rem 0;
+
+.user-profile-card:hover {
+  transform: none;
+}
+
+/* Avatar */
+.user-profile-avatar-section {
+  display: flex;
+  justify-content: center;
+  padding: 2rem 1.5rem 0;
+  background: linear-gradient(135deg, var(--unesco-blue-pale, #E3F2FD) 0%, #f0f7ff 100%);
+  padding-bottom: 1.5rem;
+}
+
+.user-profile-avatar img {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 4px solid #fff;
+  box-shadow: 0 4px 12px rgba(0, 114, 188, 0.15);
+}
+
+/* Header: name, job, institution */
+.user-profile-header {
+  text-align: center;
+  padding: 1rem 1.5rem 0;
+}
+
+.user-profile-name {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text-primary, #2c3e50);
+  margin: 0 0 0.25rem;
+  border: none;
+}
+
+.user-profile-job {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--unesco-blue, #0072BC);
+  margin: 0 0 0.2rem;
+}
+
+.user-profile-institution {
+  font-size: 0.85rem;
+  color: var(--text-secondary, #6c757d);
+  margin: 0 0 0.5rem;
+}
+
+.user-profile-institution i {
+  color: var(--unesco-blue, #0072BC);
+  margin-right: 4px;
+}
+
+.user-profile-country-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  padding: 0.2rem 0.6rem;
+  background: var(--unesco-blue-pale, #E3F2FD);
+  color: var(--unesco-blue, #0072BC);
+  border-radius: 10px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+/* Stats */
+.user-profile-stats {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  padding: 1.25rem 1.5rem;
+  margin: 1rem 1.5rem 0;
+  border-top: 1px solid #f0f4f8;
+  border-bottom: 1px solid #f0f4f8;
+}
+
+.user-profile-stat {
+  text-align: center;
+}
+
+.user-profile-stat-num {
+  display: block;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--unesco-blue, #0072BC);
+  line-height: 1.2;
+}
+
+.user-profile-stat-label {
+  display: block;
+  font-size: 0.7rem;
+  color: var(--text-secondary, #6c757d);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-weight: 600;
+}
+
+/* Follow button */
+.user-profile-follow {
+  padding: 0.75rem 1.5rem 0;
+  text-align: center;
+}
+
+.user-profile-follow .btn {
+  border-radius: 25px;
+  padding: 0.4rem 1.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+}
+
+/* Sections */
+.user-profile-section {
+  padding: 0.75rem 1.5rem;
+}
+
+.user-profile-section-title {
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: var(--text-secondary, #6c757d);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: 0 0 0.5rem;
+  border: none;
+  padding: 0;
+  background: none;
+}
+
+.user-profile-section-title i {
+  color: var(--unesco-blue, #0072BC);
+  margin-right: 5px;
+  width: 16px;
+  text-align: center;
+}
+
+/* About */
+.user-profile-about {
   font-size: 0.9rem;
   color: var(--text-secondary, #6c757d);
+  line-height: 1.6;
 }
-.user-professional-info i {
-  width: 18px;
-  text-align: center;
-  color: var(--unesco-blue, #0069B4);
-  margin-right: 6px;
+
+.user-profile-about p {
+  margin: 0;
 }
-.user-job-title {
-  font-weight: 600;
-  color: var(--text-primary, #212529) !important;
+
+/* Tags */
+.user-profile-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
 }
-.user-expertise {
-  margin: 0.75rem 0;
+
+/* Social buttons */
+.user-profile-social {
+  display: flex;
+  gap: 0.5rem;
 }
-.user-expertise h3 {
-  font-size: 0.9rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-}
-.user-social-links {
-  margin: 0.75rem 0;
-}
-.user-social-links h3 {
-  font-size: 0.9rem;
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-}
-.user-social-links ul {
-  padding-left: 0;
-}
-.user-social-links li {
-  margin-bottom: 0.35rem;
-}
-.user-social-links a {
-  color: var(--unesco-blue, #0069B4);
+
+.user-social-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--unesco-blue-pale, #E3F2FD);
+  color: var(--unesco-blue, #0072BC);
+  font-size: 1rem;
   text-decoration: none;
+  transition: all 0.2s ease;
 }
-.user-social-links a:hover {
-  text-decoration: underline;
+
+.user-social-btn:hover {
+  background: var(--unesco-blue, #0072BC);
+  color: #fff;
+  text-decoration: none;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 114, 188, 0.25);
 }
-.user-social-links i {
-  width: 18px;
-  text-align: center;
-  margin-right: 6px;
-}
-.user-orcid {
-  margin: 0.75rem 0;
-}
-.user-orcid a {
+
+/* ORCID */
+.user-profile-orcid a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
   color: #a6ce39;
   text-decoration: none;
   font-size: 0.85rem;
+  font-weight: 500;
+  padding: 0.3rem 0.6rem;
+  background: #f6fbe9;
+  border-radius: 10px;
+  transition: all 0.2s ease;
 }
-.user-orcid a:hover {
+
+.user-profile-orcid a:hover {
+  background: #edf7d0;
+  text-decoration: none;
+}
+
+/* Details */
+.user-profile-details {
+  padding-bottom: 1.5rem;
+}
+
+.user-profile-dl {
+  margin: 0;
+}
+
+.user-profile-dl dt {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary, #6c757d);
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin-top: 0.65rem;
+  padding: 0;
+  background: none !important;
+  border: none !important;
+  width: auto !important;
+}
+
+.user-profile-dl dt:first-child {
+  margin-top: 0;
+}
+
+.user-profile-dl dd {
+  font-size: 0.9rem;
+  color: var(--text-primary, #2c3e50);
+  margin: 0.1rem 0 0;
+  padding: 0 !important;
+  border: none !important;
+}
+
+.user-profile-dl dd a {
+  color: var(--unesco-blue, #0072BC);
+  text-decoration: none;
+}
+
+.user-profile-dl dd a:hover {
   text-decoration: underline;
+}
+
+.user-profile-badge-private {
+  display: inline-block;
+  font-size: 0.6rem;
+  padding: 0.1rem 0.4rem;
+  background: #e9ecef;
+  color: var(--text-secondary, #6c757d);
+  border-radius: 6px;
+  vertical-align: middle;
+  font-weight: 600;
+  text-transform: uppercase;
 }
 
 /* --- Organization Stats --- */
