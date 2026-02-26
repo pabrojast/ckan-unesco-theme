@@ -19,7 +19,145 @@
         {% set is_upload = data.image_url and not data.image_url.startswith('http') %}
         {% set is_url = data.image_url and data.image_url.startswith('http') %}
 
-        {{ form.image_upload(data, errors, is_upload_enabled=h.uploads_enabled(), is_url=is_url, is_upload=is_upload, upload_label=_('Profile picture'), url_label=_('Profile picture URL') ) }}
+        {# Drag & drop profile picture upload #}
+        <div class="form-group profile-image-upload">
+          <label class="control-label" for="field-image-upload">{{ _('Profile picture') }}</label>
+          <div class="controls">
+            <div class="profile-dropzone" id="profile-dropzone">
+              <div class="profile-dropzone-preview" id="dropzone-preview"
+                   {% if data.image_url %}style="display:block"{% endif %}>
+                {% if data.image_url %}
+                  <img src="{{ data.image_url if is_url else h.url_for_static('uploads/user/' + data.image_url) }}" alt="">
+                {% endif %}
+              </div>
+              <div class="profile-dropzone-placeholder" id="dropzone-placeholder"
+                   {% if data.image_url %}style="display:none"{% endif %}>
+                <i class="fa fa-cloud-upload-alt"></i>
+                <p>{{ _('Drag & drop your image here') }}</p>
+                <span>{{ _('or click to browse') }}</span>
+              </div>
+              <input type="file" name="image_upload" id="field-image-upload"
+                     accept="image/*" class="profile-dropzone-input">
+            </div>
+            {% if is_upload %}
+              <label class="profile-dropzone-clear">
+                <input type="checkbox" name="clear_upload" value="true">
+                {{ _('Remove current image') }}
+              </label>
+            {% endif %}
+            <input type="hidden" name="image_url" value="{{ data.image_url or '' }}">
+            {% if errors.image_url %}
+              <span class="error-block">{{ errors.image_url }}</span>
+            {% endif %}
+          </div>
+        </div>
+
+        <style>
+          .profile-dropzone {
+            position: relative;
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            padding: 24px;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.2s, background 0.2s;
+            background: #fafafa;
+            min-height: 160px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+          }
+          .profile-dropzone:hover,
+          .profile-dropzone.dragover {
+            border-color: #0072BC;
+            background: #f0f7ff;
+          }
+          .profile-dropzone-input {
+            position: absolute;
+            inset: 0;
+            opacity: 0;
+            cursor: pointer;
+          }
+          .profile-dropzone-placeholder {
+            color: #999;
+          }
+          .profile-dropzone-placeholder .fa {
+            font-size: 36px;
+            margin-bottom: 8px;
+            display: block;
+            color: #bbb;
+          }
+          .profile-dropzone-placeholder p {
+            margin: 0 0 4px;
+            font-size: 14px;
+            font-weight: 600;
+          }
+          .profile-dropzone-placeholder span {
+            font-size: 12px;
+          }
+          .profile-dropzone-preview {
+            display: none;
+          }
+          .profile-dropzone-preview img {
+            max-height: 140px;
+            max-width: 100%;
+            border-radius: 6px;
+            object-fit: contain;
+          }
+          .profile-dropzone-clear {
+            margin-top: 8px;
+            font-size: 13px;
+            color: #666;
+            cursor: pointer;
+          }
+        </style>
+
+        <script>
+          document.addEventListener('DOMContentLoaded', function() {
+            var dropzone = document.getElementById('profile-dropzone');
+            var input = document.getElementById('field-image-upload');
+            var preview = document.getElementById('dropzone-preview');
+            var placeholder = document.getElementById('dropzone-placeholder');
+            if (!dropzone) return;
+
+            ['dragenter', 'dragover'].forEach(function(evt) {
+              dropzone.addEventListener(evt, function(e) {
+                e.preventDefault();
+                dropzone.classList.add('dragover');
+              });
+            });
+            ['dragleave', 'drop'].forEach(function(evt) {
+              dropzone.addEventListener(evt, function(e) {
+                e.preventDefault();
+                dropzone.classList.remove('dragover');
+              });
+            });
+
+            dropzone.addEventListener('drop', function(e) {
+              var files = e.dataTransfer.files;
+              if (files.length && files[0].type.startsWith('image/')) {
+                input.files = files;
+                showPreview(files[0]);
+              }
+            });
+
+            input.addEventListener('change', function() {
+              if (input.files.length) {
+                showPreview(input.files[0]);
+              }
+            });
+
+            function showPreview(file) {
+              var reader = new FileReader();
+              reader.onload = function(e) {
+                preview.innerHTML = '<img src="' + e.target.result + '" alt="">';
+                preview.style.display = 'block';
+                placeholder.style.display = 'none';
+              };
+              reader.readAsDataURL(file);
+            }
+          });
+        </script>
       </fieldset>
     {% endblock %}
 
