@@ -2,6 +2,14 @@
 
 {% block subtitle %}{{ _('News') }} {{ g.template_title_delimiter }} {{ user_dict.display_name }}{% endblock %}
 
+{% block page_primary_action %}
+  {% if is_myself %}
+    <a class="btn btn-primary" href="/water-news/new">
+      <i class="fa fa-plus-square"></i> {{ _('Create News') }}
+    </a>
+  {% endif %}
+{% endblock %}
+
 {% block primary_content_inner %}
   <h2 class="hide-heading">{{ _('News') }}</h2>
 
