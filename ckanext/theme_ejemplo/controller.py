@@ -737,11 +737,20 @@ class MyLogica():
 
                 news = []
                 try:
-                    all_news = toolkit.get_action('ckanext_pages_list')(
-                        {'ignore_auth': True},
-                        {'page_type': 'water-news'}
-                    )
-                    news = [n for n in all_news if n.get('user_id') == user_dict['id']]
+                    from ckanext.pages.db import Page
+                    pages = model.Session.query(Page).filter(
+                        Page.user_id == user_dict['id'],
+                        Page.page_type == 'water-news',
+                    ).order_by(Page.created.desc()).all()
+                    for pg in pages:
+                        news.append({
+                            'title': pg.title,
+                            'name': pg.name,
+                            'content': pg.content,
+                            'publish_date': pg.publish_date.isoformat() if pg.publish_date else None,
+                            'created': pg.created.isoformat() if pg.created else None,
+                            'page_type': pg.page_type,
+                        })
                 except Exception as e:
                     log.warning(f"Error fetching news for user {id}: {e}")
 
