@@ -449,6 +449,7 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                  'get_org_statistics': helpers.get_org_statistics,
                  'get_org_publications': helpers.get_org_publications,
                  'get_country_list': helpers.get_country_list,
+                 'is_org_member': helpers.is_org_member,
                  'get_recently_added': self.get_recently_added,
                  }
 

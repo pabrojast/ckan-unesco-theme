@@ -160,6 +160,21 @@ def get_org_publications(org_id, limit=20, offset=0):
         return {'results': [], 'count': 0}
 
 
+def is_org_member(org_id):
+    """Check if the current user is already a member of the given organization."""
+    try:
+        from ckan.common import current_user
+        if not current_user or not current_user.is_authenticated:
+            return False
+        members = toolkit.get_action('member_list')(
+            {'ignore_auth': True},
+            {'id': org_id, 'object_type': 'user'}
+        )
+        return any(m[0] == current_user.id for m in members)
+    except Exception:
+        return False
+
+
 def get_country_list():
     """Return a list of countries for dropdowns."""
     return [

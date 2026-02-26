@@ -13,7 +13,7 @@
 {# Add request membership button #}
 {% block content_action %}
   {{ super() }}
-  {% if current_user.is_authenticated and not h.check_access('organization_update', {'id': group_dict.id}) %}
+  {% if current_user.is_authenticated and not h.is_org_member(group_dict.id) %}
     <a href="{{ h.url_for('theme_ejemplo.request_membership', name=group_dict.name) }}" class="btn btn-default">
       <i class="fa fa-user-plus"></i> {{ _('Request to Join') }}
     </a>

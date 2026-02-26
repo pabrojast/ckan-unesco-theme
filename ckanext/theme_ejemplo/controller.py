@@ -573,7 +573,7 @@ class MyLogica():
             try:
                 context = {'ignore_auth': True}
                 org = toolkit.get_action('organization_show')(
-                    context, {'id': name, 'include_users': True}
+                    context, {'id': name}
                 )
             except toolkit.ObjectNotFound:
                 abort(404, _('Organization not found'))
@@ -582,36 +582,53 @@ class MyLogica():
             if not current_user.is_authenticated:
                 return toolkit.redirect_to('user.login')
 
+            # Check if already a member
+            try:
+                members = toolkit.get_action('member_list')(
+                    {'ignore_auth': True},
+                    {'id': org['id'], 'object_type': 'user'}
+                )
+                if any(m[0] == current_user.id for m in members):
+                    h.flash_notice(
+                        _('You are already a member of "{org}".').format(
+                            org=org.get('title', org['name'])
+                        )
+                    )
+                    return toolkit.redirect_to('organization.read', id=name)
+            except Exception:
+                members = []
+
             if request.method == 'POST':
                 message = request.form.get('message', '')
                 user_name = current_user.name
                 user_fullname = current_user.fullname or current_user.name
 
-                # Find org admins to notify
-                admins = [u for u in org.get('users', []) if u.get('capacity') == 'admin']
-
-                for admin in admins:
-                    try:
-                        admin_obj = model.User.get(admin['id'])
-                        if admin_obj and admin_obj.email:
-                            subject = _('Membership Request for {org}').format(org=org.get('title', org['name']))
-                            body = _(
-                                'User {user} ({fullname}) has requested to join the organization "{org}".\n\n'
-                                'Message:\n{message}\n\n'
-                                'To manage members, visit: {url}'
-                            ).format(
-                                user=user_name,
-                                fullname=user_fullname,
-                                org=org.get('title', org['name']),
-                                message=message or _('No message provided'),
-                                url=toolkit.url_for('organization.member_new', id=org['name'], qualified=True),
-                            )
-                            try:
-                                mailer.mail_user(admin_obj, subject, body)
-                            except Exception as mail_err:
-                                log.warning(f"Failed to send membership request email: {mail_err}")
-                    except Exception as e:
-                        log.warning(f"Error notifying admin {admin.get('id')}: {e}")
+                # Find org admins via member_list (include_users is empty in CKAN 2.10)
+                admins_notified = 0
+                for member_id, _, capacity in members:
+                    if capacity == 'admin':
+                        try:
+                            admin_obj = model.User.get(member_id)
+                            if admin_obj and admin_obj.email:
+                                subject = _('Membership Request for {org}').format(org=org.get('title', org['name']))
+                                body = _(
+                                    'User {user} ({fullname}) has requested to join the organization "{org}".\n\n'
+                                    'Message:\n{message}\n\n'
+                                    'To manage members, visit: {url}'
+                                ).format(
+                                    user=user_name,
+                                    fullname=user_fullname,
+                                    org=org.get('title', org['name']),
+                                    message=message or _('No message provided'),
+                                    url=toolkit.url_for('organization.member_new', id=org['name'], qualified=True),
+                                )
+                                try:
+                                    mailer.mail_user(admin_obj, subject, body)
+                                    admins_notified += 1
+                                except Exception as mail_err:
+                                    log.warning(f"Failed to send membership request email: {mail_err}")
+                        except Exception as e:
+                            log.warning(f"Error notifying admin {member_id}: {e}")
 
                 h.flash_success(
                     _('Your membership request for "{org}" has been sent to the organization administrators.').format(
