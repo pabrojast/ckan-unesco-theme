@@ -1,0 +1,35 @@
+{% extends "user/read_base.html" %}
+
+{% block subtitle %}{{ _('News') }} {{ g.template_title_delimiter }} {{ user_dict.display_name }}{% endblock %}
+
+{% block primary_content_inner %}
+  <h2 class="hide-heading">{{ _('News') }}</h2>
+
+  {% if news %}
+    <ul class="media-list">
+      {% for item in news %}
+        <li class="media-item">
+          <h3 class="media-heading">
+            <a href="/water-news/{{ item.name }}">{{ item.title }}</a>
+          </h3>
+          {% if item.content %}
+            <p>{{ h.markdown_extract(item.content, 180) }}</p>
+          {% endif %}
+          {% if item.publish_date %}
+            <span class="date">{{ h.render_datetime(item.publish_date) }}</span>
+          {% elif item.created %}
+            <span class="date">{{ h.render_datetime(item.created) }}</span>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="empty">
+      {% if is_myself %}
+        {{ _("You haven't published any news.") }}
+      {% else %}
+        {{ _("This user hasn't published any news.") }}
+      {% endif %}
+    </p>
+  {% endif %}
+{% endblock %}

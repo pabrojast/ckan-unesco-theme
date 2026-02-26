@@ -1,0 +1,46 @@
+{% extends "user/read_base.html" %}
+
+{% block subtitle %}{{ _('Data Stories') }} {{ g.template_title_delimiter }} {{ user_dict.display_name }}{% endblock %}
+
+{% block page_primary_action %}
+  {% if is_myself %}
+    <a class="btn btn-primary" href="/data-stories/new">
+      <i class="fa fa-plus-square"></i> {{ _('Create Data Story') }}
+    </a>
+  {% endif %}
+{% endblock %}
+
+{% block primary_content_inner %}
+  <h2 class="hide-heading">{{ _('Data Stories') }}</h2>
+
+  {% if stories %}
+    <ul class="media-list">
+      {% for story in stories %}
+        <li class="media-item">
+          <h3 class="media-heading">
+            <a href="/data-stories/{{ story.slug or story.id }}">{{ story.title }}</a>
+            {% if story.status and story.status != 'published' %}
+              <span class="label label-warning">{{ story.status|capitalize }}</span>
+            {% endif %}
+          </h3>
+          {% if story.abstract %}
+            <p>{{ h.markdown_extract(story.abstract, 180) }}</p>
+          {% endif %}
+          {% if story.published_at %}
+            <span class="date">{{ h.render_datetime(story.published_at) }}</span>
+          {% elif story.created_at %}
+            <span class="date">{{ h.render_datetime(story.created_at) }}</span>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  {% else %}
+    <p class="empty">
+      {% if is_myself %}
+        {{ _("You haven't created any data stories.") }}
+      {% else %}
+        {{ _("This user hasn't created any data stories.") }}
+      {% endif %}
+    </p>
+  {% endif %}
+{% endblock %}

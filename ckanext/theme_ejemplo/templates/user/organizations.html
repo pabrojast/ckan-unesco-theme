@@ -1,0 +1,38 @@
+{% extends "user/read_base.html" %}
+
+{% block subtitle %}{{ _('Organizations') }} {{ g.template_title_delimiter }} {{ user_dict.display_name }}{% endblock %}
+
+{% block primary_content_inner %}
+  <h2 class="hide-heading">{{ _('Organizations') }}</h2>
+
+  {% if organizations %}
+    <div class="media-grid" data-module="media-grid">
+      {% for org in organizations %}
+        <article class="media-item">
+          <a href="{{ h.url_for('organization.read', id=org.name) }}">
+            <div class="media-image">
+              {% if org.image_display_url %}
+                <img src="{{ org.image_display_url }}" alt="{{ org.display_name or org.title }}">
+              {% else %}
+                <i class="fa fa-building media-image-placeholder"></i>
+              {% endif %}
+            </div>
+            <h3 class="media-heading">{{ org.display_name or org.title }}</h3>
+            {% if org.description %}
+              <p class="media-description">{{ h.markdown_extract(org.description, 80) }}</p>
+            {% endif %}
+            <span class="label label-{{ 'primary' if org.capacity == 'admin' else 'default' }}">{{ org.capacity|capitalize }}</span>
+          </a>
+        </article>
+      {% endfor %}
+    </div>
+  {% else %}
+    <p class="empty">
+      {% if is_myself %}
+        {{ _("You are not a member of any organizations.") }}
+      {% else %}
+        {{ _("This user is not a member of any organizations.") }}
+      {% endif %}
+    </p>
+  {% endif %}
+{% endblock %}

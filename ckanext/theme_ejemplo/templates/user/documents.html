@@ -1,0 +1,28 @@
+{% extends "user/read_base.html" %}
+
+{% block subtitle %}{{ _('Documents') }} {{ g.template_title_delimiter }} {{ user_dict.display_name }}{% endblock %}
+
+{% block page_primary_action %}
+  {% if h.check_access('package_create') %}
+    <a class="btn btn-primary" href="/documents/new">
+      <i class="fa fa-plus-square"></i> {{ _('Add Documents') }}
+    </a>
+  {% endif %}
+{% endblock %}
+
+{% block primary_content_inner %}
+  <h2 class="hide-heading">{{ _('Documents') }}</h2>
+
+  {% if documents %}
+    {% snippet 'snippets/package_list.html', packages=documents %}
+    {{ page.pager() }}
+  {% else %}
+    <p class="empty">
+      {% if is_myself %}
+        {{ _("You haven't created any documents.") }}
+      {% else %}
+        {{ _("This user hasn't created any documents.") }}
+      {% endif %}
+    </p>
+  {% endif %}
+{% endblock %}

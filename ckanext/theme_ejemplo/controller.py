@@ -625,3 +625,135 @@ class MyLogica():
                 group_dict=org,
                 group_type='organization',
             )
+
+        # --- User profile tab views ---
+
+        def _get_user_context(id):
+            """Shared helper to load user data for profile tabs."""
+            context = {'ignore_auth': True}
+            user_dict = toolkit.get_action('user_show')(context, {'id': id, 'include_plugin_extras': True})
+            is_myself = hasattr(current_user, 'name') and current_user.name == user_dict['name']
+            is_sysadmin = hasattr(current_user, 'sysadmin') and current_user.sysadmin
+            return user_dict, is_myself, is_sysadmin
+
+        def user_documents(id):
+            """User documents tab."""
+            try:
+                user_dict, is_myself, is_sysadmin = MyLogica._get_user_context(id)
+                page = h.get_page_number(request.args) or 1
+                items_per_page = 21
+
+                fq = 'creator_user_id:{} AND type:documents'.format(user_dict['id'])
+                result = toolkit.get_action('package_search')(
+                    {'ignore_auth': True},
+                    {
+                        'fq': fq,
+                        'rows': items_per_page,
+                        'start': items_per_page * (page - 1),
+                        'sort': 'metadata_modified desc',
+                    }
+                )
+                documents = result.get('results', [])
+                total = result.get('count', 0)
+
+                pager = h.Page(
+                    collection=range(total),
+                    page=page,
+                    url=h.pager_url,
+                    items_per_page=items_per_page,
+                )
+                pager.items = documents
+
+                return render_template(
+                    "user/documents.html",
+                    user_dict=user_dict,
+                    documents=documents,
+                    page=pager,
+                    total=total,
+                    is_myself=is_myself,
+                    is_sysadmin=is_sysadmin,
+                )
+            except toolkit.ObjectNotFound:
+                abort(404, _('User not found'))
+            except Exception as e:
+                log.error(f"Error in user_documents: {e}")
+                abort(500)
+
+        def user_organizations(id):
+            """User organizations tab."""
+            try:
+                user_dict, is_myself, is_sysadmin = MyLogica._get_user_context(id)
+
+                orgs = toolkit.get_action('organization_list_for_user')(
+                    {'ignore_auth': True},
+                    {'id': user_dict['id'], 'permission': 'read'}
+                )
+
+                return render_template(
+                    "user/organizations.html",
+                    user_dict=user_dict,
+                    organizations=orgs,
+                    is_myself=is_myself,
+                    is_sysadmin=is_sysadmin,
+                )
+            except toolkit.ObjectNotFound:
+                abort(404, _('User not found'))
+            except Exception as e:
+                log.error(f"Error in user_organizations: {e}")
+                abort(500)
+
+        def user_data_stories(id):
+            """User data stories tab."""
+            try:
+                user_dict, is_myself, is_sysadmin = MyLogica._get_user_context(id)
+
+                stories = []
+                try:
+                    result = toolkit.get_action('data_story_list')(
+                        {'ignore_auth': True},
+                        {'author_id': user_dict['id'], 'limit': 50}
+                    )
+                    stories = result.get('stories', [])
+                except Exception as e:
+                    log.warning(f"Error fetching data stories for user {id}: {e}")
+
+                return render_template(
+                    "user/data_stories.html",
+                    user_dict=user_dict,
+                    stories=stories,
+                    is_myself=is_myself,
+                    is_sysadmin=is_sysadmin,
+                )
+            except toolkit.ObjectNotFound:
+                abort(404, _('User not found'))
+            except Exception as e:
+                log.error(f"Error in user_data_stories: {e}")
+                abort(500)
+
+        def user_news(id):
+            """User news tab (water-news from pages plugin)."""
+            try:
+                user_dict, is_myself, is_sysadmin = MyLogica._get_user_context(id)
+
+                news = []
+                try:
+                    all_news = toolkit.get_action('ckanext_pages_list')(
+                        {'ignore_auth': True},
+                        {'page_type': 'water-news'}
+                    )
+                    news = [n for n in all_news if n.get('user_id') == user_dict['id']]
+                except Exception as e:
+                    log.warning(f"Error fetching news for user {id}: {e}")
+
+                return render_template(
+                    "user/news.html",
+                    user_dict=user_dict,
+                    news=news,
+                    is_myself=is_myself,
+                    is_sysadmin=is_sysadmin,
+                )
+            except toolkit.ObjectNotFound:
+                abort(404, _('User not found'))
+            except Exception as e:
+                log.error(f"Error in user_news: {e}")
+                abort(500)

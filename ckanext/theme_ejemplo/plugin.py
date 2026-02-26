@@ -404,6 +404,32 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 methods=['GET', 'POST']
             )
 
+            # User profile tabs
+            blueprint.add_url_rule(
+                u'/user/<id>/documents',
+                u'user_documents',
+                MyLogica.user_documents,
+                methods=['GET']
+            )
+            blueprint.add_url_rule(
+                u'/user/<id>/organizations',
+                u'user_organizations',
+                MyLogica.user_organizations,
+                methods=['GET']
+            )
+            blueprint.add_url_rule(
+                u'/user/<id>/data-stories',
+                u'user_data_stories',
+                MyLogica.user_data_stories,
+                methods=['GET']
+            )
+            blueprint.add_url_rule(
+                u'/user/<id>/news',
+                u'user_news',
+                MyLogica.user_news,
+                methods=['GET']
+            )
+
             return blueprint
         
         def get_helpers(self):
