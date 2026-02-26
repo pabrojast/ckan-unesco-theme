@@ -1,0 +1,28 @@
+{% set url = h.url_for(organization.type ~ '.read', id=organization.name) %}
+{% block item %}
+<a href="{{ url }}" class="org-grid-card" title="{{ _('View {organization_name}').format(organization_name=organization.display_name) }}">
+  <div class="org-grid-card-img">
+    {% if organization.image_display_url %}
+      <img src="{{ organization.image_display_url }}" alt="{{ organization.display_name }}">
+    {% else %}
+      <i class="fa fa-building"></i>
+    {% endif %}
+  </div>
+  <div class="org-grid-card-body">
+    <h3 class="org-grid-card-title">{{ organization.display_name }}</h3>
+    {% if organization.description %}
+      <p class="org-grid-card-desc">{{ h.markdown_extract(organization.description, extract_length=80) }}</p>
+    {% endif %}
+  </div>
+  <div class="org-grid-card-footer">
+    {% if organization.package_count %}
+      <span class="count">{{ ungettext('{num} Dataset', '{num} Datasets', organization.package_count).format(num=organization.package_count) }}</span>
+    {% else %}
+      <span class="count">{{ _('0 Datasets') }}</span>
+    {% endif %}
+    {% if show_capacity and organization.capacity %}
+      <span class="label label-{{ 'primary' if organization.capacity == 'admin' else 'default' }}">{{ h.roles_translated().get(organization.capacity, organization.capacity) }}</span>
+    {% endif %}
+  </div>
+</a>
+{% endblock %}
