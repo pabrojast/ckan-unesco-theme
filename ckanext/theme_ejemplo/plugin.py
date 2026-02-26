@@ -443,6 +443,15 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 methods=['GET']
             )
 
+            # Override CKAN core dataset read view with optimized version
+            # that uses batch SQL for resource views instead of N+1 queries
+            blueprint.add_url_rule(
+                u'/dataset/<id>',
+                u'dataset_read',
+                lambda id: MyLogica.dataset_read('dataset', id),
+                methods=['GET']
+            )
+
             return blueprint
         
         def get_helpers(self):

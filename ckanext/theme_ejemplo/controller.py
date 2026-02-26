@@ -881,3 +881,96 @@ class MyLogica():
                 'items_per_page': items_per_page,
                 'formats': all_formats,
             })
+
+        @staticmethod
+        def dataset_read(package_type, id):
+            """Optimized dataset read view.
+
+            Replaces the CKAN core read() which calls resource_view_list
+            per resource (N+1 query problem). Uses a single batch SQL query
+            instead.
+            """
+            from flask import g
+            from ckan.logic import get_action, NotFound, NotAuthorized
+            from ckan.lib.plugins import lookup_package_plugin
+            import ckan.lib.datapreview as datapreview
+
+            context = {
+                u'model': model,
+                u'session': model.Session,
+                u'user': current_user.name,
+                u'for_view': True,
+                u'auth_user_obj': current_user,
+            }
+            data_dict = {u'id': id, u'include_tracking': True}
+
+            try:
+                pkg_dict = get_action(u'package_show')(context, data_dict)
+                pkg = context[u'package']
+            except NotFound:
+                return base.abort(404, _(u'Dataset not found or you have no permission to view it'))
+            except NotAuthorized:
+                if config.get(u'ckan.auth.reveal_private_datasets'):
+                    if current_user.is_authenticated:
+                        return base.abort(403, _(u'Unauthorized to read package %s') % id)
+                    else:
+                        return h.redirect_to('user.login', came_from=h.url_for('{}.read'.format(package_type), id=id))
+                return base.abort(404, _(u'Dataset not found or you have no permission to view it'))
+
+            g.pkg_dict = pkg_dict
+            g.pkg = pkg
+
+            if plugins.plugin_loaded('activity'):
+                activity_id = request.args.get('activity_id')
+                if activity_id:
+                    return h.redirect_to('activity.package_history', id=id, activity_id=activity_id)
+
+            if data_dict['id'] == pkg_dict['id'] and data_dict['id'] != pkg_dict['name']:
+                return h.redirect_to(u'{}.read'.format(package_type), id=pkg_dict['name'])
+
+            # Batch query: get resource IDs that have views in ONE SQL query
+            resource_ids = [r['id'] for r in pkg_dict.get('resources', [])]
+            ids_with_views = set()
+            if resource_ids:
+                try:
+                    rv_query = model.Session.query(
+                        model.ResourceView.resource_id,
+                        model.ResourceView.view_type,
+                    ).filter(
+                        model.ResourceView.resource_id.in_(resource_ids)
+                    )
+                    for rv_resource_id, rv_view_type in rv_query:
+                        if datapreview.get_view_plugin(rv_view_type):
+                            ids_with_views.add(rv_resource_id)
+                except Exception as e:
+                    log.warning(f'Batch resource_view query failed, falling back: {e}')
+                    for r in pkg_dict['resources'][:20]:
+                        try:
+                            views = get_action('resource_view_list')(dict(context), {'id': r['id']})
+                            if views:
+                                ids_with_views.add(r['id'])
+                        except Exception:
+                            pass
+
+            for r in pkg_dict['resources']:
+                r['has_views'] = r['id'] in ids_with_views
+
+            actual_type = pkg_dict[u'type'] or package_type
+            pkg_plugin = lookup_package_plugin(actual_type)
+            pkg_plugin.setup_template_variables(context, {u'id': id})
+            try:
+                template = pkg_plugin.read_template()
+            except AttributeError:
+                template = 'package/read.html'
+
+            try:
+                return base.render(
+                    template, {
+                        u'dataset_type': actual_type,
+                        u'pkg_dict': pkg_dict,
+                        u'pkg': pkg,
+                    }
+                )
+            except Exception as e:
+                log.error(f'Error rendering dataset read template: {e}')
+                return base.abort(500, str(e))
