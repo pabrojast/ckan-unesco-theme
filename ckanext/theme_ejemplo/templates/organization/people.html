@@ -6,45 +6,71 @@
   <h2><i class="fa fa-users"></i> {{ _('People') }}</h2>
 
   {% if members %}
-    <div class="people-grid">
+    <div class="org-people-grid">
       {% for member in members %}
-        <div class="person-card">
-          <a href="{{ h.url_for('user.read', id=member.name) }}" class="person-card-link">
-            <div class="person-card-image">
+        <div class="person-card-modern">
+          <div class="person-card-inner">
+            <div class="person-avatar-section">
               {% if member.image_url %}
-                <img src="{{ member.image_url }}" alt="{{ member.fullname }}">
+                <img src="{{ member.image_url }}" alt="{{ member.fullname }}" class="person-avatar-img">
               {% else %}
-                <div class="person-card-avatar">
+                <div class="person-avatar-placeholder">
                   <i class="fa fa-user"></i>
                 </div>
               {% endif %}
             </div>
-            <div class="person-card-body">
-              <h3 class="person-card-name">{{ member.fullname }}</h3>
+            <div class="person-card-content">
+              {% if member.country %}
+                <div class="person-chips">
+                  <span class="person-country-chip"><i class="fa fa-globe"></i> {{ member.country }}</span>
+                </div>
+              {% endif %}
+              <h3 class="person-name">
+                <a href="{{ h.url_for('user.read', id=member.name) }}">{{ member.fullname or member.name }}</a>
+              </h3>
               {% if member.job_title %}
-                <p class="person-card-title">{{ member.job_title }}</p>
+                <p class="person-job-title">{{ member.job_title }}</p>
               {% endif %}
               {% if member.institution %}
-                <p class="person-card-institution"><i class="fa fa-building"></i> {{ member.institution }}</p>
+                <p class="person-institution"><i class="fa fa-building"></i> {{ member.institution }}</p>
               {% endif %}
-              {% if member.country %}
-                <p class="person-card-country"><i class="fa fa-globe"></i> {{ member.country }}</p>
+              {% if member.expertise_areas %}
+                <div class="person-expertise-tags">
+                  {% for area in member.expertise_areas[:3] %}
+                    <span class="person-tag">{{ area }}</span>
+                  {% endfor %}
+                  {% if member.expertise_areas|length > 3 %}
+                    <span class="person-tag person-tag-more">+{{ member.expertise_areas|length - 3 }}</span>
+                  {% endif %}
+                </div>
               {% endif %}
+              <div class="person-card-footer-role">
+                <span class="label label-{{ 'primary' if member.capacity == 'admin' else 'default' }}">
+                  {{ member.capacity|capitalize }}
+                </span>
+              </div>
+              <div class="person-card-actions">
+                <a href="{{ h.url_for('user.read', id=member.name) }}" class="btn btn-person-profile">
+                  <i class="fa fa-user"></i> {{ _('View Profile') }}
+                </a>
+              </div>
             </div>
-          </a>
-          <div class="person-card-footer">
-            <span class="label label-{{ 'primary' if member.capacity == 'admin' else 'default' }}">
-              {{ member.capacity|capitalize }}
-            </span>
-            {% if member.expertise_areas %}
-              {% for area in member.expertise_areas[:3] %}
-                <span class="tag">{{ area }}</span>
-              {% endfor %}
-            {% endif %}
           </div>
         </div>
       {% endfor %}
     </div>
+
+    <style>
+      .org-people-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 20px;
+        margin-bottom: 2rem;
+      }
+      .person-card-footer-role {
+        margin-bottom: 0.75rem;
+      }
+    </style>
   {% else %}
     <p class="empty">{{ _('This organization has no members yet.') }}</p>
   {% endif %}
