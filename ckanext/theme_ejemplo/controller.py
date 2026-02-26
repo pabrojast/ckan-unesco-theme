@@ -784,6 +784,43 @@ class MyLogica():
                 log.error(f"Error in user_news: {e}")
                 abort(500)
 
+        def user_events(id):
+            """User events tab (water-events from pages plugin)."""
+            try:
+                user_dict, is_myself, is_sysadmin = MyLogica._get_user_context(id)
+
+                events = []
+                try:
+                    from ckanext.pages.db import Page
+                    pages = model.Session.query(Page).filter(
+                        Page.user_id == user_dict['id'],
+                        Page.page_type == 'water-events',
+                    ).order_by(Page.created.desc()).all()
+                    for pg in pages:
+                        events.append({
+                            'title': pg.title,
+                            'name': pg.name,
+                            'content': pg.content,
+                            'publish_date': pg.publish_date.isoformat() if pg.publish_date else None,
+                            'created': pg.created.isoformat() if pg.created else None,
+                            'page_type': pg.page_type,
+                        })
+                except Exception as e:
+                    log.warning(f"Error fetching events for user {id}: {e}")
+
+                return render_template(
+                    "user/events.html",
+                    user_dict=user_dict,
+                    events=events,
+                    is_myself=is_myself,
+                    is_sysadmin=is_sysadmin,
+                )
+            except toolkit.ObjectNotFound:
+                abort(404, _('User not found'))
+            except Exception as e:
+                log.error(f"Error in user_events: {e}")
+                abort(500)
+
         @staticmethod
         def dataset_resources_ajax(id):
             """AJAX endpoint for paginated/filtered resource list."""

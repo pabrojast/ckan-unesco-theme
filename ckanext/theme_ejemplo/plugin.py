@@ -429,6 +429,12 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 MyLogica.user_news,
                 methods=['GET']
             )
+            blueprint.add_url_rule(
+                u'/user/<id>/events',
+                u'user_events',
+                MyLogica.user_events,
+                methods=['GET']
+            )
 
             blueprint.add_url_rule(
                 u'/dataset/<id>/resources_ajax',

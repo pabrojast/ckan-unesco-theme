@@ -6,24 +6,87 @@
   <h2><i class="fa fa-calendar"></i> {{ _('Events') }}</h2>
 
   {% if events %}
-    <div class="events-list">
+    <div class="org-grid">
       {% for event in events %}
-        <div class="event-item">
-          <h3>
-            <a href="{{ h.url_for('pages.show', page='/' + event.name) }}">{{ event.title }}</a>
-          </h3>
-          {% if event.publish_date or event.created %}
-            <p class="event-date">
-              <i class="fa fa-calendar"></i>
-              {{ h.render_datetime(event.publish_date or event.created, date_format='%Y-%m-%d') }}
-            </p>
-          {% endif %}
-          {% if event.content %}
-            <p class="event-excerpt">{{ h.markdown_extract(event.content, 200) }}</p>
-          {% endif %}
-        </div>
+        <a href="{{ h.url_for('pages.show', page='/' + event.name) }}" class="org-grid-card">
+          <div class="org-grid-card-img">
+            <i class="fa fa-calendar-alt"></i>
+          </div>
+          <div class="org-grid-card-body">
+            <h3 class="org-grid-card-title">{{ event.title }}</h3>
+            {% if event.content %}
+              <p class="org-grid-card-desc">{{ h.markdown_extract(event.content, 80) }}</p>
+            {% endif %}
+          </div>
+          <div class="org-grid-card-footer">
+            {% if event.publish_date or event.created %}
+              <span class="count">
+                <i class="fa fa-calendar"></i>
+                {{ h.render_datetime(event.publish_date or event.created, date_format='%Y-%m-%d') }}
+              </span>
+            {% endif %}
+          </div>
+        </a>
       {% endfor %}
     </div>
+
+    <style>
+      .org-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 16px;
+      }
+      .org-grid-card {
+        display: flex;
+        flex-direction: column;
+        border: 1px solid #e0e0e0;
+        border-radius: 6px;
+        overflow: hidden;
+        text-decoration: none;
+        color: inherit;
+        transition: box-shadow 0.15s;
+      }
+      .org-grid-card:hover {
+        box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+        text-decoration: none;
+        color: inherit;
+      }
+      .org-grid-card-img {
+        height: 100px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 12px;
+        background: #f9f9f9;
+      }
+      .org-grid-card-img .fa {
+        font-size: 36px;
+        color: #ccc;
+      }
+      .org-grid-card-body {
+        flex: 1;
+        padding: 10px 12px 4px;
+      }
+      .org-grid-card-title {
+        font-size: 14px;
+        font-weight: 600;
+        margin: 0 0 4px;
+        line-height: 1.3;
+      }
+      .org-grid-card-desc {
+        font-size: 12px;
+        color: #666;
+        margin: 0;
+        line-height: 1.4;
+      }
+      .org-grid-card-footer {
+        padding: 6px 12px 10px;
+      }
+      .org-grid-card-footer .count {
+        font-size: 12px;
+        color: #999;
+      }
+    </style>
   {% else %}
     <p class="empty">{{ _('No events available for this organization.') }}</p>
     <p class="empty-hint">{{ _('Events can be added through the Pages feature and associated with this organization.') }}</p>

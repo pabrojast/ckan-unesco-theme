@@ -1,0 +1,105 @@
+{% extends "user/read_base.html" %}
+
+{% block subtitle %}{{ _('Events') }} {{ g.template_title_delimiter }} {{ user_dict.display_name }}{% endblock %}
+
+{% block page_primary_action %}
+  {% if is_myself %}
+    <a class="btn btn-primary" href="/water-events/new">
+      <i class="fa fa-plus-square"></i> {{ _('Create Event') }}
+    </a>
+  {% endif %}
+{% endblock %}
+
+{% block primary_content_inner %}
+  <h2 class="hide-heading">{{ _('Events') }}</h2>
+
+  {% if events %}
+    <div class="user-card-grid">
+      {% for item in events %}
+        <a href="/water-events/{{ item.name }}" class="user-card-item">
+          <div class="user-card-icon">
+            <i class="fa fa-calendar-alt"></i>
+          </div>
+          <div class="user-card-body">
+            <h3 class="user-card-title">{{ item.title }}</h3>
+            {% if item.content %}
+              <p class="user-card-desc">{{ h.markdown_extract(item.content, 100) }}</p>
+            {% endif %}
+          </div>
+          <div class="user-card-footer">
+            {% if item.publish_date %}
+              <span class="date">{{ h.render_datetime(item.publish_date) }}</span>
+            {% elif item.created %}
+              <span class="date">{{ h.render_datetime(item.created) }}</span>
+            {% endif %}
+          </div>
+        </a>
+      {% endfor %}
+    </div>
+
+    <style>
+      .user-card-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 16px;
+      }
+      .user-card-item {
+        display: flex;
+        flex-direction: column;
+        border: 1px solid #e0e0e0;
+        border-radius: 6px;
+        overflow: hidden;
+        text-decoration: none;
+        color: inherit;
+        transition: box-shadow 0.15s;
+      }
+      .user-card-item:hover {
+        box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+        text-decoration: none;
+        color: inherit;
+      }
+      .user-card-icon {
+        height: 80px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: #f9f9f9;
+      }
+      .user-card-icon .fa {
+        font-size: 32px;
+        color: #999;
+      }
+      .user-card-body {
+        flex: 1;
+        padding: 10px 12px 4px;
+      }
+      .user-card-title {
+        font-size: 14px;
+        font-weight: 600;
+        margin: 0 0 4px;
+        line-height: 1.3;
+      }
+      .user-card-desc {
+        font-size: 12px;
+        color: #666;
+        margin: 0;
+        line-height: 1.4;
+      }
+      .user-card-footer {
+        padding: 6px 12px 10px;
+      }
+      .user-card-footer .date {
+        font-size: 11px;
+        color: #999;
+      }
+    </style>
+  {% else %}
+    <p class="empty">
+      {% if is_myself %}
+        {{ _("You haven't created any events.") }}
+      {% else %}
+        {{ _("This user hasn't created any events.") }}
+      {% endif %}
+    </p>
+  {% endif %}
+{% endblock %}
