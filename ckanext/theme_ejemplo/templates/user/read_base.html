@@ -2,10 +2,10 @@
 
 {% block content_primary_nav %}
   {{ h.build_nav_icon('user.read', _('Datasets'), id=user.name, icon='sitemap') }}
-  {{ h.build_nav_icon('theme_ejemplo.user_documents', _('Documents'), id=user.name, icon='file-text-o') }}
+  {{ h.build_nav_icon('theme_ejemplo.user_documents', _('Documents'), id=user.name, icon='file-alt') }}
   {{ h.build_nav_icon('theme_ejemplo.user_organizations', _('Organizations'), id=user.name, icon='building') }}
   {{ h.build_nav_icon('theme_ejemplo.user_data_stories', _('Data Stories'), id=user.name, icon='book') }}
-  {{ h.build_nav_icon('theme_ejemplo.user_news', _('News'), id=user.name, icon='newspaper-o') }}
+  {{ h.build_nav_icon('theme_ejemplo.user_news', _('News'), id=user.name, icon='newspaper') }}
   {% if h.check_access('api_token_list', {'user': user['name']}) %}
     {{ h.build_nav_icon('user.api_tokens', _('API Tokens'), id=user.name, icon='key') }}
   {% endif %}
