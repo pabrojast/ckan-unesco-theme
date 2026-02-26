@@ -6,76 +6,125 @@
   <li class="active">{{ h.nav_link(_('People'), named_route='theme_ejemplo.people_index') }}</li>
 {% endblock %}
 
-{% block primary_content %}
-  <article class="module">
-    <div class="module-content">
-      <h1 class="page-heading">
-        <i class="fa fa-users"></i> {{ _('People Directory') }}
-        {% if total %}
-          <span class="count">({{ total }})</span>
-        {% endif %}
-      </h1>
+{% block content %}
+<div class="homepage layout-1">
+  <div id="content" class="container">
+    {{ self.flash() }}
+  </div>
 
-      {# Search and filter bar #}
-      <div class="people-search-bar">
-        <form method="GET" action="{{ h.url_for('theme_ejemplo.people_index') }}" class="form-inline">
-          <div class="row">
-            <div class="col-md-4">
-              <input type="text" name="q" value="{{ q }}" class="form-control" placeholder="{{ _('Search by name or institution...') }}">
+  <div class="main">
+    <div class="container">
+
+      {# Breadcrumb #}
+      <nav class="toolbar people-breadcrumb" role="navigation" aria-label="Breadcrumb">
+        <ol class="breadcrumb">
+          <li class="home"><a href="/"><i class="fa fa-home"></i><span> {{ _('Home') }}</span></a></li>
+          <li class="active"><a href="{{ h.url_for('theme_ejemplo.people_index') }}">{{ _('People Directory') }}</a></li>
+        </ol>
+      </nav>
+
+      {# Header Banner #}
+      <section class="people-header-banner">
+        <div class="people-header-content">
+          <h1><i class="fa fa-users"></i> {{ _('People Directory') }}</h1>
+          <p>{{ _('Browse profiles of people involved in UNESCO water data initiatives. Connect with experts by country, organization, or area of expertise.') }}</p>
+        </div>
+      </section>
+
+      {# Search & Filter Bar #}
+      <section class="people-filters-module">
+        <div class="people-filters-inner">
+          <form method="GET" action="{{ h.url_for('theme_ejemplo.people_index') }}">
+            <div class="row">
+              <div class="col-md-4">
+                <div class="people-filter-group">
+                  <label for="people-search-q"><i class="fa fa-search"></i> {{ _('Search') }}</label>
+                  <input type="text" id="people-search-q" name="q" value="{{ q }}" class="form-control" placeholder="{{ _('Name or institution...') }}">
+                </div>
+              </div>
+              <div class="col-md-2">
+                <div class="people-filter-group">
+                  <label for="people-search-country"><i class="fa fa-globe"></i> {{ _('Country') }}</label>
+                  <select id="people-search-country" name="country" class="form-control">
+                    <option value="">{{ _('All Countries') }}</option>
+                    {% for c in countries %}
+                      <option value="{{ c }}" {{ 'selected' if country == c }}>{{ c }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-3">
+                <div class="people-filter-group">
+                  <label for="people-search-org"><i class="fa fa-building"></i> {{ _('Organization') }}</label>
+                  <select id="people-search-org" name="organization" class="form-control">
+                    <option value="">{{ _('All Organizations') }}</option>
+                    {% for org in organizations %}
+                      <option value="{{ org.name }}" {{ 'selected' if organization == org.name }}>{{ org.title or org.name }}</option>
+                    {% endfor %}
+                  </select>
+                </div>
+              </div>
+              <div class="col-md-2">
+                <div class="people-filter-group">
+                  <label for="people-search-exp"><i class="fa fa-tags"></i> {{ _('Expertise') }}</label>
+                  <input type="text" id="people-search-exp" name="expertise" value="{{ expertise }}" class="form-control" placeholder="{{ _('e.g. Hydrology') }}">
+                </div>
+              </div>
+              <div class="col-md-1">
+                <div class="people-filter-group">
+                  <label>&nbsp;</label>
+                  <button type="submit" class="btn btn-primary btn-people-search"><i class="fa fa-search"></i></button>
+                </div>
+              </div>
             </div>
-            <div class="col-md-2">
-              <select name="country" class="form-control">
-                <option value="">{{ _('All Countries') }}</option>
-                {% for c in countries %}
-                  <option value="{{ c }}" {{ 'selected' if country == c }}>{{ c }}</option>
-                {% endfor %}
-              </select>
-            </div>
-            <div class="col-md-3">
-              <select name="organization" class="form-control">
-                <option value="">{{ _('All Organizations') }}</option>
-                {% for org in organizations %}
-                  <option value="{{ org.name }}" {{ 'selected' if organization == org.name }}>{{ org.title or org.name }}</option>
-                {% endfor %}
-              </select>
-            </div>
-            <div class="col-md-2">
-              <input type="text" name="expertise" value="{{ expertise }}" class="form-control" placeholder="{{ _('Expertise...') }}">
-            </div>
-            <div class="col-md-1">
-              <button type="submit" class="btn btn-primary"><i class="fa fa-search"></i></button>
-            </div>
-          </div>
-        </form>
+          </form>
+        </div>
+      </section>
+
+      {# Results summary #}
+      {% if total %}
+      <div class="people-results-summary">
+        <span class="people-results-count">
+          <i class="fa fa-users"></i> {{ total }} {{ _('people found') }}
+        </span>
+        {% if q or country or organization or expertise %}
+        <a href="{{ h.url_for('theme_ejemplo.people_index') }}" class="people-clear-filters">
+          <i class="fa fa-times"></i> {{ _('Clear filters') }}
+        </a>
+        {% endif %}
       </div>
+      {% endif %}
 
       {# People grid #}
       {% if people %}
-        <div class="people-grid">
+        <div class="people-grid row">
           {% for person in people %}
-            {% snippet "people/snippets/person_card.html", person=person %}
+            <div class="col-md-6 col-lg-4 people-grid-item">
+              {% snippet "people/snippets/person_card.html", person=person %}
+            </div>
           {% endfor %}
         </div>
       {% else %}
-        <p class="empty">{{ _('No people found matching your criteria.') }}</p>
+        <div class="people-empty-state">
+          <i class="fa fa-user-slash"></i>
+          <h3>{{ _('No people found') }}</h3>
+          <p>{{ _('Try adjusting your search filters or browse all people.') }}</p>
+          {% if q or country or organization or expertise %}
+          <a href="{{ h.url_for('theme_ejemplo.people_index') }}" class="btn btn-primary">
+            <i class="fa fa-refresh"></i> {{ _('Show all people') }}
+          </a>
+          {% endif %}
+        </div>
       {% endif %}
 
       {# Pagination #}
       {% if page %}
-        {{ page.pager(q=q) }}
+        <div class="people-pagination">
+          {{ page.pager(q=q) }}
+        </div>
       {% endif %}
-    </div>
-  </article>
-{% endblock %}
 
-{% block secondary_content %}
-  <div class="module module-narrow module-shallow">
-    <h2 class="module-heading">
-      <i class="fa fa-info-circle"></i>
-      {{ _('People Directory') }}
-    </h2>
-    <div class="module-content">
-      <p>{{ _('Browse profiles of people involved in UNESCO data initiatives. Use the filters to find people by country, organization, or area of expertise.') }}</p>
     </div>
   </div>
+</div>
 {% endblock %}

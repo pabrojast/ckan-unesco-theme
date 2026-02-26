@@ -1,43 +1,77 @@
-{# Person card snippet for the people directory grid #}
-<div class="person-card">
-  <a href="{{ h.url_for('user.read', id=person.name) }}" class="person-card-link">
-    <div class="person-card-image">
+{# Person card — modern design matching data-stories style #}
+<div class="person-card-modern">
+  <article class="person-card-inner">
+    {# Avatar #}
+    <div class="person-image-container">
       {% if person.image_url %}
-        <img src="{{ person.image_url }}" alt="{{ person.fullname }}">
+        {% if person.image_url.startswith('http') %}
+          <img src="{{ person.image_url }}" alt="{{ person.fullname }}" class="person-image">
+        {% else %}
+          <img src="{{ h.url_for_static_or_external('/uploads/user/' ~ person.image_url) }}" alt="{{ person.fullname }}" class="person-image">
+        {% endif %}
       {% else %}
-        <div class="person-card-avatar">
+        <div class="person-placeholder">
           <i class="fa fa-user"></i>
         </div>
       {% endif %}
     </div>
-    <div class="person-card-body">
-      <h3 class="person-card-name">{{ person.fullname }}</h3>
-      {% if person.job_title %}
-        <p class="person-card-title">{{ person.job_title }}</p>
-      {% endif %}
-      {% if person.institution %}
-        <p class="person-card-institution"><i class="fa fa-building"></i> {{ person.institution }}</p>
-      {% endif %}
+
+    {# Card content #}
+    <div class="person-card-content">
+      {# Country chip #}
       {% if person.country %}
-        <p class="person-card-country"><i class="fa fa-globe"></i> {{ person.country }}</p>
+      <div class="person-chips">
+        <span class="person-country-chip"><i class="fa fa-globe"></i> {{ person.country }}</span>
+      </div>
       {% endif %}
-    </div>
-  </a>
-  {% if person.expertise_areas %}
-    <div class="person-card-tags">
-      {% for area in person.expertise_areas[:3] %}
-        <span class="tag">{{ area }}</span>
-      {% endfor %}
-      {% if person.expertise_areas|length > 3 %}
-        <span class="tag tag-more">+{{ person.expertise_areas|length - 3 }}</span>
+
+      {# Name #}
+      <h3 class="person-name">
+        <a href="{{ h.url_for('user.read', id=person.name) }}">{{ person.fullname }}</a>
+      </h3>
+
+      {# Job title #}
+      {% if person.job_title %}
+        <p class="person-job-title">{{ person.job_title }}</p>
       {% endif %}
+
+      {# Institution #}
+      {% if person.institution %}
+        <p class="person-institution"><i class="fa fa-building"></i> {{ person.institution }}</p>
+      {% endif %}
+
+      {# Expertise tags #}
+      {% if person.expertise_areas %}
+      <div class="person-expertise-tags">
+        {% for area in person.expertise_areas[:3] %}
+          <span class="person-tag">{{ area }}</span>
+        {% endfor %}
+        {% if person.expertise_areas|length > 3 %}
+          <span class="person-tag person-tag-more">+{{ person.expertise_areas|length - 3 }}</span>
+        {% endif %}
+      </div>
+      {% endif %}
+
+      {# Organizations #}
+      {% if person.organizations %}
+      <div class="person-orgs-row">
+        {% for org in person.organizations[:2] %}
+          <a href="{{ h.url_for('organization.read', id=org.name) }}" class="person-org-chip" title="{{ org.title }}">
+            <i class="fa fa-sitemap"></i> {{ org.title|truncate(25) }}
+          </a>
+        {% endfor %}
+        {% if person.organizations|length > 2 %}
+          <span class="person-org-chip person-org-more">+{{ person.organizations|length - 2 }}</span>
+        {% endif %}
+      </div>
+      {% endif %}
+
+      {# Action button #}
+      <div class="person-card-actions">
+        <a href="{{ h.url_for('user.read', id=person.name) }}" class="btn btn-primary btn-person-profile">
+          {{ _('View Profile') }} <i class="fa fa-arrow-right"></i>
+        </a>
+      </div>
     </div>
-  {% endif %}
-  {% if person.organizations %}
-    <div class="person-card-orgs">
-      {% for org in person.organizations[:2] %}
-        <a href="{{ h.url_for('organization.read', id=org.name) }}" class="person-org-badge" title="{{ org.title }}">{{ org.title|truncate(25) }}</a>
-      {% endfor %}
-    </div>
-  {% endif %}
+  </article>
 </div>
