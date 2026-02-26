@@ -1,16 +1,16 @@
 {# Person card — modern design matching data-stories style #}
 <div class="person-card-modern">
   <article class="person-card-inner">
-    {# Avatar #}
-    <div class="person-image-container">
+    {# Avatar — circular, centered #}
+    <div class="person-avatar-section">
       {% if person.image_url %}
         {% if person.image_url.startswith('http') %}
-          <img src="{{ person.image_url }}" alt="{{ person.fullname }}" class="person-image">
+          <img src="{{ person.image_url }}" alt="{{ person.fullname }}" class="person-avatar-img">
         {% else %}
-          <img src="{{ h.url_for_static_or_external('/uploads/user/' ~ person.image_url) }}" alt="{{ person.fullname }}" class="person-image">
+          <img src="{{ h.url_for_static_or_external('/uploads/user/' ~ person.image_url) }}" alt="{{ person.fullname }}" class="person-avatar-img">
         {% endif %}
       {% else %}
-        <div class="person-placeholder">
+        <div class="person-avatar-placeholder">
           <i class="fa fa-user"></i>
         </div>
       {% endif %}
@@ -18,13 +18,6 @@
 
     {# Card content #}
     <div class="person-card-content">
-      {# Country chip #}
-      {% if person.country %}
-      <div class="person-chips">
-        <span class="person-country-chip"><i class="fa fa-globe"></i> {{ person.country }}</span>
-      </div>
-      {% endif %}
-
       {# Name #}
       <h3 class="person-name">
         <a href="{{ h.url_for('user.read', id=person.name) }}">{{ person.fullname }}</a>
@@ -38,6 +31,13 @@
       {# Institution #}
       {% if person.institution %}
         <p class="person-institution"><i class="fa fa-building"></i> {{ person.institution }}</p>
+      {% endif %}
+
+      {# Country chip #}
+      {% if person.country %}
+      <div class="person-chips">
+        <span class="person-country-chip"><i class="fa fa-globe"></i> {{ person.country }}</span>
+      </div>
       {% endif %}
 
       {# Expertise tags #}
@@ -68,7 +68,7 @@
 
       {# Action button #}
       <div class="person-card-actions">
-        <a href="{{ h.url_for('user.read', id=person.name) }}" class="btn btn-primary btn-person-profile">
+        <a href="{{ h.url_for('user.read', id=person.name) }}" class="btn btn-person-profile">
           {{ _('View Profile') }} <i class="fa fa-arrow-right"></i>
         </a>
       </div>

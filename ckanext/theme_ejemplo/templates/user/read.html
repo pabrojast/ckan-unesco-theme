@@ -1,8 +1,10 @@
 {% ckan_extends %}
 
 {% block page_primary_action %}
-  {{ super() }}
   {% if h.check_access('package_create') %}
+    <a class="btn btn-primary" href="/dataset/new">
+      <i class="fa fa-plus-square"></i> {{ _('Add Dataset') }}
+    </a>
     <a class="btn btn-primary" href="/documents/new">
       <i class="fa fa-plus-square"></i> {{ _('Add Documents') }}
     </a>

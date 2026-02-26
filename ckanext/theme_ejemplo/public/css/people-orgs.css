@@ -34,72 +34,38 @@
   font-weight: 600;
 }
 
-/* --- Header Banner --- */
-.people-header-banner {
-  background: linear-gradient(135deg, var(--unesco-blue, #0072BC) 0%, var(--unesco-blue-dark, #005A9C) 100%);
-  border-radius: 20px;
-  padding: 2.5rem 3rem;
-  margin-bottom: 2rem;
-  color: #fff;
-  position: relative;
-  overflow: hidden;
+/* --- Header Banner (reuses section-title from data-stories) --- */
+.people-section-title {
+  height: 240px;
+  margin-bottom: 2rem !important;
 }
 
-.people-header-banner::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  right: -10%;
-  width: 300px;
-  height: 300px;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 50%;
+.people-section-title .section-title-bg {
+  background-image: linear-gradient(135deg, #0072BC 0%, #009EE0 100%);
 }
 
-.people-header-banner::after {
-  content: '';
-  position: absolute;
-  bottom: -30%;
-  left: 20%;
-  width: 200px;
-  height: 200px;
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 50%;
-}
-
-.people-header-content {
-  position: relative;
-  z-index: 1;
-}
-
-.people-header-content h1 {
-  margin: 0 0 0.75rem;
-  font-size: 2rem;
-  font-weight: 700;
+.people-section-title .section-title-content h1 {
   color: #fff;
   border: none;
 }
 
-.people-header-content h1 i {
+.people-section-title .section-title-content h1 i {
   margin-right: 0.5rem;
   opacity: 0.9;
 }
 
-.people-header-content p {
-  margin: 0;
-  font-size: 1.05rem;
-  opacity: 0.9;
-  max-width: 700px;
-  line-height: 1.6;
-}
-
 /* --- Search & Filter Module --- */
 .people-filters-module {
-  background: #fff;
-  border-radius: 20px;
-  box-shadow: 0 2px 8px rgba(0, 114, 188, 0.08);
-  margin-bottom: 2rem;
+  background: #fff !important;
+  border: none !important;
+  border-radius: 16px !important;
+  box-shadow: 0 2px 8px rgba(0, 114, 188, 0.08) !important;
+  margin-bottom: 2rem !important;
   overflow: hidden;
+}
+
+.people-filters-module:hover {
+  transform: none !important;
 }
 
 .people-filters-inner {
@@ -118,6 +84,9 @@
   text-transform: uppercase;
   letter-spacing: 0.5px;
   margin-bottom: 0.4rem;
+  background: none !important;
+  border: none !important;
+  padding: 0 !important;
 }
 
 .people-filter-group label i {
@@ -144,6 +113,14 @@
   border-radius: 12px !important;
   padding: 0.5rem 1rem;
   font-size: 1rem;
+  background: var(--unesco-blue, #0072BC) !important;
+  border-color: var(--unesco-blue, #0072BC) !important;
+  color: #fff !important;
+}
+
+.btn-people-search:hover {
+  background: var(--unesco-blue-dark, #005A9C) !important;
+  border-color: var(--unesco-blue-dark, #005A9C) !important;
 }
 
 /* --- Results Summary --- */
@@ -198,42 +175,46 @@
   flex-direction: column;
   height: 100%;
   background: #fff;
+  border: none;
   border-radius: 16px;
   box-shadow: 0 2px 8px rgba(0, 114, 188, 0.08);
   overflow: hidden;
-  transition: all 0.2s ease;
+  transition: all 0.3s ease;
 }
 
 .person-card-inner:hover {
-  transform: translateY(-4px);
-  box-shadow: 0 8px 24px rgba(0, 114, 188, 0.15);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 16px rgba(0, 114, 188, 0.12);
 }
 
-/* Avatar container */
-.person-image-container {
-  height: 180px;
-  background: linear-gradient(135deg, var(--unesco-blue-pale, #E3F2FD) 0%, #f8f9fa 100%);
+/* Circular avatar section */
+.person-avatar-section {
   display: flex;
-  align-items: center;
   justify-content: center;
-  overflow: hidden;
+  padding: 1.75rem 1.25rem 0;
 }
 
-.person-image {
-  width: 100%;
-  height: 100%;
+.person-avatar-img {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
   object-fit: cover;
+  border: 3px solid var(--unesco-blue-pale, #E3F2FD);
+  box-shadow: 0 2px 8px rgba(0, 114, 188, 0.12);
 }
 
-.person-placeholder {
+.person-avatar-placeholder {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--unesco-blue-pale, #E3F2FD) 0%, #f0f7ff 100%);
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100%;
-  height: 100%;
-  font-size: 4rem;
+  font-size: 2.5rem;
   color: var(--unesco-blue, #0072BC);
-  opacity: 0.3;
+  opacity: 0.5;
+  border: 3px solid var(--unesco-blue-pale, #E3F2FD);
 }
 
 /* Card content */
@@ -241,7 +222,8 @@
   flex: 1;
   display: flex;
   flex-direction: column;
-  padding: 1.25rem;
+  padding: 1rem 1.25rem 1.25rem;
+  text-align: center;
 }
 
 /* Country chip */
@@ -263,34 +245,36 @@
 
 /* Name */
 .person-name {
-  margin: 0 0 0.5rem;
-  font-size: 1.15rem;
+  margin: 0 0 0.35rem;
+  font-size: 1.1rem;
   line-height: 1.3;
+  border: none;
 }
 
 .person-name a {
-  color: var(--unesco-blue, #0072BC);
+  color: var(--text-primary, #2c3e50);
   text-decoration: none;
   font-weight: 700;
 }
 
 .person-name a:hover {
-  text-decoration: underline;
+  color: var(--unesco-blue, #0072BC);
+  text-decoration: none;
 }
 
 /* Job title */
 .person-job-title {
-  color: var(--text-primary, #2c3e50);
-  font-size: 0.9rem;
-  font-weight: 500;
-  margin: 0 0 0.35rem;
+  color: var(--unesco-blue, #0072BC);
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin: 0 0 0.25rem;
 }
 
 /* Institution */
 .person-institution {
   color: var(--text-secondary, #6c757d);
-  font-size: 0.85rem;
-  margin: 0 0 0.75rem;
+  font-size: 0.8rem;
+  margin: 0 0 0.5rem;
 }
 
 .person-institution i {
@@ -304,8 +288,9 @@
 .person-expertise-tags {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 0.3rem;
-  margin-bottom: 0.75rem;
+  margin-bottom: 0.65rem;
 }
 
 .person-tag {
@@ -329,8 +314,9 @@
 .person-orgs-row {
   display: flex;
   flex-wrap: wrap;
+  justify-content: center;
   gap: 0.3rem;
-  margin-bottom: 1rem;
+  margin-bottom: 0.75rem;
 }
 
 .person-org-chip {
@@ -365,21 +351,27 @@
 }
 
 .btn-person-profile {
-  display: flex;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
   width: 100%;
-  border-radius: 12px;
-  padding: 0.55rem 1rem;
-  font-size: 0.9rem;
+  border-radius: 25px;
+  padding: 0.5rem 1.25rem;
+  font-size: 0.85rem;
   font-weight: 600;
+  background: var(--unesco-blue, #0072BC);
+  color: #fff;
+  border: none;
   transition: all 0.2s ease;
 }
 
 .btn-person-profile:hover {
+  background: var(--unesco-blue-dark, #005A9C);
+  color: #fff;
   transform: translateY(-1px);
   box-shadow: 0 4px 12px rgba(0, 114, 188, 0.3);
+  text-decoration: none;
 }
 
 /* --- Tags (shared) --- */
@@ -410,7 +402,7 @@
   text-align: center;
   padding: 4rem 2rem;
   background: #fff;
-  border-radius: 20px;
+  border-radius: 16px;
   box-shadow: 0 2px 8px rgba(0, 114, 188, 0.08);
 }
 
@@ -621,30 +613,32 @@
 
 /* --- Responsive --- */
 @media (max-width: 991px) {
-  .people-header-banner {
-    padding: 2rem;
+  .people-section-title {
+    height: 200px;
   }
-  .people-header-content h1 {
-    font-size: 1.6rem;
+  .people-section-title .section-title-content h1 {
+    font-size: 1.8rem;
   }
   .people-filters-inner {
     padding: 1.25rem 1.5rem;
   }
-  .person-image-container {
-    height: 160px;
+  .person-avatar-img,
+  .person-avatar-placeholder {
+    width: 85px;
+    height: 85px;
   }
 }
 
 @media (max-width: 768px) {
-  .people-header-banner {
-    padding: 1.5rem;
+  .people-section-title {
+    height: 180px;
     border-radius: 12px;
   }
-  .people-header-content h1 {
+  .people-section-title .section-title-content h1 {
     font-size: 1.4rem;
   }
   .people-filters-module {
-    border-radius: 12px;
+    border-radius: 12px !important;
   }
   .people-filters-inner {
     padding: 1rem;
@@ -657,9 +651,6 @@
   }
   .person-card-inner {
     border-radius: 12px;
-  }
-  .person-image-container {
-    height: 180px;
   }
   .publication-meta {
     flex-direction: column;

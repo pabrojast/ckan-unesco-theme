@@ -23,11 +23,13 @@
         </ol>
       </nav>
 
-      {# Header Banner #}
-      <section class="people-header-banner">
-        <div class="people-header-content">
+      {# Header Banner — uses section-title pattern like data-stories #}
+      <section class="section-title people-section-title">
+        <div class="section-title-bg"></div>
+        <div class="section-title-overlay"></div>
+        <div class="section-title-content">
           <h1><i class="fa fa-users"></i> {{ _('People Directory') }}</h1>
-          <p>{{ _('Browse profiles of people involved in UNESCO water data initiatives. Connect with experts by country, organization, or area of expertise.') }}</p>
+          <p class="section-title-description">{{ _('Browse profiles of people involved in UNESCO water data initiatives. Connect with experts by country, organization, or area of expertise.') }}</p>
         </div>
       </section>
 
