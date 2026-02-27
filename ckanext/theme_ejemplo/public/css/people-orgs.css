@@ -863,6 +863,7 @@
   vertical-align: middle;
 }
 .membership-tab-content {
+  display: block !important;
   padding-top: 1.25rem;
 }
 

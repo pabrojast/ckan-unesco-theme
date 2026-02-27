@@ -25,7 +25,7 @@
 
     {# Pending Tab #}
     {% if active_tab == 'pending' %}
-    <div class="tab-content membership-tab-content">
+    <div class="membership-tab-content">
       {% if pending_requests and pending_requests|length > 0 %}
         {% for req in pending_requests %}
         <div class="membership-request-card">
@@ -101,7 +101,7 @@
 
     {# History Tab #}
     {% elif active_tab == 'history' %}
-    <div class="tab-content membership-tab-content">
+    <div class="membership-tab-content">
       {% if history_requests and history_requests|length > 0 %}
       <div class="table-responsive">
         <table class="table membership-history-table">
