@@ -8,15 +8,32 @@
   {{ h.build_nav_icon('theme_ejemplo.organization_news', _('News'), name=group_dict.name, icon='newspaper') }}
   {{ h.build_nav_icon('theme_ejemplo.organization_events', _('Events'), name=group_dict.name, icon='calendar') }}
   {{ h.build_nav_icon(group_type + '.about', _('About'), id=group_dict.name, icon='info-circle') }}
+  {% if h.is_org_admin(group_dict.id) or (current_user.is_authenticated and current_user.sysadmin) %}
+    {% set mr_count = h.get_pending_membership_requests_count() %}
+    <li {{ 'class=active' if request.endpoint == 'theme_ejemplo.membership_requests' }}>
+      <a href="{{ h.url_for('theme_ejemplo.membership_requests', name=group_dict.name) }}">
+        <i class="fa fa-user-plus"></i> {{ _('Requests') }}
+        {% if mr_count > 0 %}
+          <span class="badge membership-badge">{{ mr_count }}</span>
+        {% endif %}
+      </a>
+    </li>
+  {% endif %}
 {% endblock %}
 
 {# Add request membership button #}
 {% block content_action %}
   {{ super() }}
   {% if current_user.is_authenticated and not h.is_org_member(group_dict.id) %}
-    <a href="{{ h.url_for('theme_ejemplo.request_membership', name=group_dict.name) }}" class="btn btn-default">
-      <i class="fa fa-user-plus"></i> {{ _('Request to Join') }}
-    </a>
+    {% if h.has_pending_membership_request(group_dict.id) %}
+      <span class="btn btn-default disabled" title="{{ _('Your request is being reviewed') }}">
+        <i class="fa fa-clock-o"></i> {{ _('Request Pending') }}
+      </span>
+    {% else %}
+      <a href="{{ h.url_for('theme_ejemplo.request_membership', name=group_dict.name) }}" class="btn btn-default">
+        <i class="fa fa-user-plus"></i> {{ _('Request to Join') }}
+      </a>
+    {% endif %}
   {% endif %}
 {% endblock %}
 

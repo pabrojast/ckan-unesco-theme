@@ -14,6 +14,8 @@ from flask import Blueprint
 from ckanext.theme_ejemplo.controller import MyLogica
 from . import helpers
 from . import actions as custom_actions
+from . import auth as custom_auth
+from . import model as membership_model
 import logging
 from functools import lru_cache
 import time
@@ -52,6 +54,7 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
         plugins.implements(plugins.IPackageController, inherit=True)
         plugins.implements(plugins.ITranslation)
         plugins.implements(plugins.IActions)
+        plugins.implements(plugins.IAuthFunctions)
 
         def __init__(self, name=None):
             super().__init__(name=name)
@@ -281,6 +284,9 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
             toolkit.add_public_directory(config,'public')
             #Assets
             toolkit.add_resource('public', 'theme')
+
+            # Create membership_request table if needed
+            membership_model.init_db()
             
         def get_blueprint(self):
             
@@ -404,6 +410,14 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 methods=['GET', 'POST']
             )
 
+            # Membership requests management dashboard
+            blueprint.add_url_rule(
+                u'/organization/<name>/membership-requests',
+                u'membership_requests',
+                MyLogica.membership_requests,
+                methods=['GET', 'POST']
+            )
+
             # User profile tabs
             blueprint.add_url_rule(
                 u'/user/<id>/documents',
@@ -472,6 +486,10 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                  'get_org_publications': helpers.get_org_publications,
                  'get_country_list': helpers.get_country_list,
                  'is_org_member': helpers.is_org_member,
+                 'is_org_admin': helpers.is_org_admin,
+                 'get_pending_membership_requests_count': helpers.get_pending_membership_requests_count,
+                 'get_user_admin_orgs': helpers.get_user_admin_orgs,
+                 'has_pending_membership_request': helpers.has_pending_membership_request,
                  'get_recently_added': self.get_recently_added,
                  }
 
@@ -482,6 +500,19 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 'user_update': custom_actions.user_update,
                 'people_list': custom_actions.people_list,
                 'organization_people': custom_actions.organization_people,
+                'membership_request_create': custom_actions.membership_request_create,
+                'membership_request_list': custom_actions.membership_request_list,
+                'membership_request_process': custom_actions.membership_request_process,
+                'membership_request_count': custom_actions.membership_request_count,
+            }
+
+        # IAuthFunctions
+        def get_auth_functions(self):
+            return {
+                'membership_request_create': custom_auth.membership_request_create,
+                'membership_request_list': custom_auth.membership_request_list,
+                'membership_request_process': custom_auth.membership_request_process,
+                'membership_request_count': custom_auth.membership_request_count,
             }
         
         def get_member_states_groups_list(self):

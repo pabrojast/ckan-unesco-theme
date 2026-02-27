@@ -598,13 +598,38 @@ class MyLogica():
             except Exception:
                 members = []
 
+            # Check for existing pending request
+            from ckanext.theme_ejemplo.model import MembershipRequest
+            existing = MembershipRequest.get_pending_for_user_and_org(
+                current_user.id, org['id']
+            )
+            if existing:
+                h.flash_notice(
+                    _('You already have a pending request for "{org}". Please wait for an administrator to review it.').format(
+                        org=org.get('title', org['name'])
+                    )
+                )
+                return toolkit.redirect_to('organization.read', id=name)
+
             if request.method == 'POST':
                 message = request.form.get('message', '')
                 user_name = current_user.name
                 user_fullname = current_user.fullname or current_user.name
 
-                # Find org admins via member_list (include_users is empty in CKAN 2.10)
-                admins_notified = 0
+                # Persist the request
+                try:
+                    toolkit.get_action('membership_request_create')(
+                        {'auth_user_obj': current_user, 'user': current_user.name},
+                        {
+                            'organization_id': org['id'],
+                            'message': message,
+                        }
+                    )
+                except toolkit.ValidationError as e:
+                    h.flash_error(str(e))
+                    return toolkit.redirect_to('organization.read', id=name)
+
+                # Notify org admins via email
                 for member_id, _obj_type, capacity in members:
                     if capacity == 'admin':
                         try:
@@ -614,24 +639,23 @@ class MyLogica():
                                 body = _(
                                     'User {user} ({fullname}) has requested to join the organization "{org}".\n\n'
                                     'Message:\n{message}\n\n'
-                                    'To manage members, visit: {url}'
+                                    'To review this request, visit: {url}'
                                 ).format(
                                     user=user_name,
                                     fullname=user_fullname,
                                     org=org.get('title', org['name']),
                                     message=message or _('No message provided'),
-                                    url=toolkit.url_for('organization.member_new', id=org['name'], qualified=True),
+                                    url=toolkit.url_for('theme_ejemplo.membership_requests', name=org['name'], qualified=True),
                                 )
                                 try:
                                     mailer.mail_user(admin_obj, subject, body)
-                                    admins_notified += 1
                                 except Exception as mail_err:
                                     log.warning(f"Failed to send membership request email: {mail_err}")
                         except Exception as e:
                             log.warning(f"Error notifying admin {member_id}: {e}")
 
                 h.flash_success(
-                    _('Your membership request for "{org}" has been sent to the organization administrators.').format(
+                    _('Your membership request for "{org}" has been sent. An administrator will review it shortly.').format(
                         org=org.get('title', org['name'])
                     )
                 )
@@ -641,6 +665,94 @@ class MyLogica():
                 "organization/request_membership.html",
                 group_dict=org,
                 group_type='organization',
+            )
+
+        @staticmethod
+        def membership_requests(name):
+            """Dashboard to manage membership requests for an organization."""
+            if not current_user.is_authenticated:
+                return toolkit.redirect_to('user.login')
+
+            try:
+                org = toolkit.get_action('organization_show')(
+                    {'ignore_auth': True}, {'id': name}
+                )
+            except toolkit.ObjectNotFound:
+                abort(404, _('Organization not found'))
+                return
+
+            # Check user is org admin or sysadmin
+            is_admin = False
+            if current_user.sysadmin:
+                is_admin = True
+            else:
+                try:
+                    members = toolkit.get_action('member_list')(
+                        {'ignore_auth': True},
+                        {'id': org['id'], 'object_type': 'user'}
+                    )
+                    is_admin = any(
+                        m[0] == current_user.id and m[2] == 'admin'
+                        for m in members
+                    )
+                except Exception:
+                    pass
+
+            if not is_admin:
+                abort(403, _('Only organization administrators can manage membership requests.'))
+                return
+
+            tab = request.args.get('tab', 'pending')
+
+            # Handle approve/reject POST
+            if request.method == 'POST':
+                action = request.form.get('action', '')
+                request_id = request.form.get('request_id', '')
+                admin_note = request.form.get('admin_note', '')
+
+                if action in ('approve', 'reject') and request_id:
+                    try:
+                        toolkit.get_action('membership_request_process')(
+                            {'auth_user_obj': current_user, 'user': current_user.name},
+                            {
+                                'id': request_id,
+                                'action': action,
+                                'admin_note': admin_note,
+                            }
+                        )
+                        if action == 'approve':
+                            h.flash_success(_('Membership request approved successfully.'))
+                        else:
+                            h.flash_success(_('Membership request rejected.'))
+                    except Exception as e:
+                        h.flash_error(str(e))
+
+                return toolkit.redirect_to(
+                    'theme_ejemplo.membership_requests', name=name, tab=tab
+                )
+
+            # Fetch requests
+            ctx = {'auth_user_obj': current_user, 'user': current_user.name}
+            pending = toolkit.get_action('membership_request_list')(
+                ctx, {'organization_id': org['id'], 'status': 'pending'}
+            )
+            history = toolkit.get_action('membership_request_list')(
+                ctx, {'organization_id': org['id']}
+            )
+            # Filter history to only processed requests
+            history_results = [
+                r for r in history.get('results', [])
+                if r['status'] != 'pending'
+            ]
+
+            return render_template(
+                "organization/membership_requests.html",
+                group_dict=org,
+                group_type='organization',
+                pending_requests=pending.get('results', []),
+                pending_count=pending.get('count', 0),
+                history_requests=history_results,
+                active_tab=tab,
             )
 
         # --- User profile tab views ---

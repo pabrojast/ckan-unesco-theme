@@ -22,6 +22,20 @@
             <span class="text">{{ _('Harvest') }}</span>  </a>
         </li>
         {% endif %}
+        {% set _mr_count = h.get_pending_membership_requests_count() %}
+        {% if _mr_count > 0 %}
+        <li class="membership-requests-notify">
+          {% set _admin_orgs = h.get_user_admin_orgs() %}
+          {% if _admin_orgs|length == 1 %}
+          <a href="{{ h.url_for('theme_ejemplo.membership_requests', name=_admin_orgs[0].name) }}" title="{{ _('Pending membership requests') }}">
+          {% else %}
+          <a href="{{ h.url_for('organization.index') }}" title="{{ _('Pending membership requests') }}">
+          {% endif %}
+            <i class="fa fa-user-plus" aria-hidden="true"></i>
+            <span class="membership-notify-badge">{{ _mr_count }}</span>
+          </a>
+        </li>
+        {% endif %}
         <li>
           <a href="{{ h.url_for('user.read', id=c.user) }}" class="image" title="{{ _('View profile') }}">
                   {% if c.userobj and c.userobj.image_url %}

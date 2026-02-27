@@ -1,0 +1,167 @@
+{% extends "organization/read_base.html" %}
+
+{% block subtitle %}{{ _('Membership Requests') }} {{ g.template_title_delimiter }} {{ group_dict.display_name }}{% endblock %}
+
+{% block primary_content_inner %}
+  <div class="membership-requests-dashboard">
+    <h2><i class="fa fa-user-plus"></i> {{ _('Membership Requests') }}</h2>
+
+    {# Tabs #}
+    <ul class="nav nav-tabs membership-tabs">
+      <li class="{{ 'active' if active_tab == 'pending' }}">
+        <a href="{{ h.url_for('theme_ejemplo.membership_requests', name=group_dict.name, tab='pending') }}">
+          <i class="fa fa-clock-o"></i> {{ _('Pending') }}
+          {% if pending_count > 0 %}
+            <span class="badge membership-badge">{{ pending_count }}</span>
+          {% endif %}
+        </a>
+      </li>
+      <li class="{{ 'active' if active_tab == 'history' }}">
+        <a href="{{ h.url_for('theme_ejemplo.membership_requests', name=group_dict.name, tab='history') }}">
+          <i class="fa fa-history"></i> {{ _('History') }}
+        </a>
+      </li>
+    </ul>
+
+    {# Pending Tab #}
+    {% if active_tab == 'pending' %}
+    <div class="tab-content membership-tab-content">
+      {% if pending_requests %}
+        {% for req in pending_requests %}
+        <div class="membership-request-card">
+          <div class="request-card-header">
+            <div class="request-user-info">
+              {% if req.user_image_url %}
+                <img src="{{ req.user_image_url }}" alt="{{ req.user_fullname }}" class="request-user-avatar" />
+              {% else %}
+                <div class="request-user-avatar request-avatar-placeholder">
+                  <i class="fa fa-user"></i>
+                </div>
+              {% endif %}
+              <div class="request-user-details">
+                <a href="{{ h.url_for('user.read', id=req.user_name) }}" class="request-user-name">
+                  {{ req.user_fullname }}
+                </a>
+                <span class="request-username">@{{ req.user_name }}</span>
+              </div>
+            </div>
+            <span class="request-date">
+              <i class="fa fa-calendar"></i> {{ h.render_datetime(req.created_at, with_hours=True) }}
+            </span>
+          </div>
+
+          {% if req.message %}
+          <div class="request-message">
+            <strong>{{ _('Message') }}:</strong>
+            <p>{{ req.message }}</p>
+          </div>
+          {% endif %}
+
+          <div class="request-actions">
+            <form method="POST" class="request-action-form" style="display:inline;">
+              {{ h.csrf_input() }}
+              <input type="hidden" name="request_id" value="{{ req.id }}" />
+              <input type="hidden" name="action" value="approve" />
+              <button type="submit" class="btn btn-success btn-sm" title="{{ _('Approve') }}">
+                <i class="fa fa-check"></i> {{ _('Approve') }}
+              </button>
+            </form>
+            <button type="button" class="btn btn-danger btn-sm reject-toggle" data-request-id="{{ req.id }}" title="{{ _('Reject') }}">
+              <i class="fa fa-times"></i> {{ _('Reject') }}
+            </button>
+            <div class="reject-form" id="reject-form-{{ req.id }}" style="display:none;">
+              <form method="POST" class="request-action-form">
+                {{ h.csrf_input() }}
+                <input type="hidden" name="request_id" value="{{ req.id }}" />
+                <input type="hidden" name="action" value="reject" />
+                <div class="form-group">
+                  <textarea name="admin_note" class="form-control" rows="2"
+                            placeholder="{{ _('Reason for rejection (optional)...') }}"></textarea>
+                </div>
+                <button type="submit" class="btn btn-danger btn-sm">
+                  <i class="fa fa-times"></i> {{ _('Confirm Rejection') }}
+                </button>
+                <button type="button" class="btn btn-default btn-sm reject-cancel" data-request-id="{{ req.id }}">
+                  {{ _('Cancel') }}
+                </button>
+              </form>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      {% else %}
+        <div class="membership-empty-state">
+          <i class="fa fa-inbox"></i>
+          <p>{{ _('No pending membership requests.') }}</p>
+        </div>
+      {% endif %}
+    </div>
+
+    {# History Tab #}
+    {% elif active_tab == 'history' %}
+    <div class="tab-content membership-tab-content">
+      {% if history_requests %}
+      <div class="table-responsive">
+        <table class="table membership-history-table">
+          <thead>
+            <tr>
+              <th>{{ _('User') }}</th>
+              <th>{{ _('Date Requested') }}</th>
+              <th>{{ _('Status') }}</th>
+              <th>{{ _('Processed By') }}</th>
+              <th>{{ _('Date Processed') }}</th>
+              <th>{{ _('Note') }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for req in history_requests %}
+            <tr class="{{ 'success' if req.status == 'approved' else 'danger' }}">
+              <td>
+                <a href="{{ h.url_for('user.read', id=req.user_name) }}">
+                  {{ req.user_fullname }}
+                </a>
+              </td>
+              <td>{{ h.render_datetime(req.created_at, with_hours=True) }}</td>
+              <td>
+                {% if req.status == 'approved' %}
+                  <span class="label label-success"><i class="fa fa-check"></i> {{ _('Approved') }}</span>
+                {% else %}
+                  <span class="label label-danger"><i class="fa fa-times"></i> {{ _('Rejected') }}</span>
+                {% endif %}
+              </td>
+              <td>{{ req.handler_name or '-' }}</td>
+              <td>{{ h.render_datetime(req.handled_at, with_hours=True) if req.handled_at else '-' }}</td>
+              <td>{{ req.admin_note or '-' }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+        <div class="membership-empty-state">
+          <i class="fa fa-history"></i>
+          <p>{{ _('No processed requests yet.') }}</p>
+        </div>
+      {% endif %}
+    </div>
+    {% endif %}
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      document.querySelectorAll('.reject-toggle').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var id = this.getAttribute('data-request-id');
+          var form = document.getElementById('reject-form-' + id);
+          form.style.display = form.style.display === 'none' ? 'block' : 'none';
+        });
+      });
+      document.querySelectorAll('.reject-cancel').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+          var id = this.getAttribute('data-request-id');
+          document.getElementById('reject-form-' + id).style.display = 'none';
+        });
+      });
+    });
+  </script>
+{% endblock %}

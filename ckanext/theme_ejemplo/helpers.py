@@ -241,3 +241,62 @@ def get_country_list():
         'United States of America', 'Uruguay', 'Uzbekistan', 'Vanuatu',
         'Vatican City', 'Venezuela', 'Vietnam', 'Yemen', 'Zambia', 'Zimbabwe',
     ]
+
+
+def is_org_admin(org_id):
+    """Check if the current user is an admin of the given organization."""
+    try:
+        from ckan.common import current_user
+        if not current_user or not current_user.is_authenticated:
+            return False
+        members = toolkit.get_action('member_list')(
+            {'ignore_auth': True},
+            {'id': org_id, 'object_type': 'user'}
+        )
+        return any(m[0] == current_user.id and m[2] == 'admin' for m in members)
+    except Exception:
+        return False
+
+
+def get_pending_membership_requests_count():
+    """Get the total number of pending membership requests for orgs where current user is admin."""
+    try:
+        from ckan.common import current_user
+        if not current_user or not current_user.is_authenticated:
+            return 0
+        result = toolkit.get_action('membership_request_count')(
+            {'auth_user_obj': current_user, 'user': current_user.name},
+            {}
+        )
+        return result.get('count', 0)
+    except Exception:
+        return 0
+
+
+def get_user_admin_orgs():
+    """Return list of organizations where the current user is admin."""
+    try:
+        from ckan.common import current_user
+        if not current_user or not current_user.is_authenticated:
+            return []
+        orgs = toolkit.get_action('organization_list_for_user')(
+            {'user': current_user.name},
+            {'permission': 'admin'}
+        )
+        return orgs
+    except Exception:
+        return []
+
+
+def has_pending_membership_request(org_id):
+    """Check if the current user already has a pending request for an org."""
+    try:
+        from ckan.common import current_user
+        if not current_user or not current_user.is_authenticated:
+            return False
+        from ckanext.theme_ejemplo.model import MembershipRequest
+        return MembershipRequest.get_pending_for_user_and_org(
+            current_user.id, org_id
+        ) is not None
+    except Exception:
+        return False

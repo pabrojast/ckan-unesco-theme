@@ -7,16 +7,24 @@
   <h2><i class="fa fa-user-plus"></i> {{ _('Request to Join') }} "{{ group_dict.title or group_dict.name }}"</h2>
 
   <div class="membership-request-info">
-    <p>{{ _('Submit a request to join this organization. The organization administrators will be notified and can approve your request.') }}</p>
+    <div class="membership-request-info-icon">
+      <i class="fa fa-info-circle"></i>
+    </div>
+    <div class="membership-request-info-text">
+      <p>{{ _('Membership in this organization is managed by its administrators. Your request will be reviewed and you will be notified of the outcome.') }}</p>
+      <p class="text-muted"><small>{{ _('Please provide a brief message explaining your interest in joining and your relevant expertise or role. This helps administrators evaluate your request.') }}</small></p>
+    </div>
   </div>
 
   <form method="POST" class="dataset-form">
     {{ h.csrf_input() }}
 
-    {{ form.markdown('message', label=_('Message to administrators'), id='field-message', placeholder=_('Please explain why you would like to join this organization and what your role would be...'), value='') }}
+    {{ form.markdown('message', label=_('Message to administrators'), id='field-message', placeholder=_('Describe your interest in this organization, your professional background, and how you would like to contribute...'), value='') }}
 
     <div class="form-actions">
-      <a href="{{ h.url_for('organization.read', id=group_dict.name) }}" class="btn btn-default">{{ _('Cancel') }}</a>
+      <a href="{{ h.url_for('organization.read', id=group_dict.name) }}" class="btn btn-default">
+        <i class="fa fa-arrow-left"></i> {{ _('Cancel') }}
+      </a>
       <button type="submit" class="btn btn-primary">
         <i class="fa fa-paper-plane"></i> {{ _('Send Request') }}
       </button>

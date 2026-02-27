@@ -245,3 +245,193 @@ def organization_people(context, data_dict):
         'organization': org,
         'members': members,
     }
+
+
+# ── Membership Request Actions ──────────────────────────────────────────────
+
+from ckanext.theme_ejemplo.model import MembershipRequest
+
+
+def membership_request_create(context, data_dict):
+    """Create a membership request for an organization.
+
+    :param organization_id: the id or name of the organization
+    :param message: optional message to org admins
+    """
+    toolkit.check_access('membership_request_create', context, data_dict)
+
+    org_id_or_name = toolkit.get_or_bust(data_dict, 'organization_id')
+    message = data_dict.get('message', u'')
+
+    org = toolkit.get_action('organization_show')(
+        {'ignore_auth': True}, {'id': org_id_or_name}
+    )
+    org_id = org['id']
+    user_obj = context.get('auth_user_obj') or model.User.get(context['user'])
+    if not user_obj:
+        raise toolkit.NotAuthorized(_('Must be logged in'))
+
+    # Check not already a member
+    members = toolkit.get_action('member_list')(
+        {'ignore_auth': True},
+        {'id': org_id, 'object_type': 'user'}
+    )
+    if any(m[0] == user_obj.id for m in members):
+        raise toolkit.ValidationError(
+            {'organization': [_('You are already a member of this organization.')]}
+        )
+
+    # Check no pending request already exists
+    existing = MembershipRequest.get_pending_for_user_and_org(user_obj.id, org_id)
+    if existing:
+        raise toolkit.ValidationError(
+            {'organization': [_('You already have a pending request for this organization.')]}
+        )
+
+    req = MembershipRequest(
+        user_id=user_obj.id,
+        organization_id=org_id,
+        message=message,
+    )
+    model.Session.add(req)
+    model.Session.commit()
+
+    return {
+        'id': req.id,
+        'user_id': req.user_id,
+        'organization_id': req.organization_id,
+        'message': req.message,
+        'status': req.status,
+        'created_at': req.created_at.isoformat() if req.created_at else None,
+    }
+
+
+@toolkit.side_effect_free
+def membership_request_list(context, data_dict):
+    """List membership requests for an organization.
+
+    :param organization_id: the id or name of the organization
+    :param status: optional filter (pending/approved/rejected)
+    """
+    toolkit.check_access('membership_request_list', context, data_dict)
+
+    org_id_or_name = toolkit.get_or_bust(data_dict, 'organization_id')
+    status_filter = data_dict.get('status', None)
+
+    org = toolkit.get_action('organization_show')(
+        {'ignore_auth': True}, {'id': org_id_or_name}
+    )
+
+    requests_list = MembershipRequest.get_for_org(org['id'], status=status_filter)
+
+    results = []
+    for req in requests_list:
+        user_obj = model.User.get(req.user_id)
+        handler_obj = model.User.get(req.handled_by) if req.handled_by else None
+
+        results.append({
+            'id': req.id,
+            'user_id': req.user_id,
+            'user_name': user_obj.name if user_obj else u'',
+            'user_fullname': (user_obj.fullname or user_obj.name) if user_obj else u'',
+            'user_image_url': user_obj.image_url if user_obj else u'',
+            'organization_id': req.organization_id,
+            'message': req.message or u'',
+            'status': req.status,
+            'handled_by': req.handled_by,
+            'handler_name': (handler_obj.fullname or handler_obj.name) if handler_obj else u'',
+            'handled_at': req.handled_at.isoformat() if req.handled_at else None,
+            'admin_note': req.admin_note or u'',
+            'created_at': req.created_at.isoformat() if req.created_at else None,
+        })
+
+    return {
+        'organization': org,
+        'results': results,
+        'count': len(results),
+    }
+
+
+def membership_request_process(context, data_dict):
+    """Approve or reject a membership request.
+
+    :param id: the membership request id
+    :param action: 'approve' or 'reject'
+    :param admin_note: optional note
+    """
+    import datetime
+    toolkit.check_access('membership_request_process', context, data_dict)
+
+    request_id = toolkit.get_or_bust(data_dict, 'id')
+    action = toolkit.get_or_bust(data_dict, 'action')
+    admin_note = data_dict.get('admin_note', u'')
+
+    if action not in ('approve', 'reject'):
+        raise toolkit.ValidationError({'action': [_('Must be "approve" or "reject"')]})
+
+    req = MembershipRequest.get(request_id)
+    if not req:
+        raise toolkit.ObjectNotFound(_('Membership request not found'))
+
+    if req.status != MembershipRequest.STATUS_PENDING:
+        raise toolkit.ValidationError(
+            {'status': [_('This request has already been processed.')]}
+        )
+
+    user_obj = context.get('auth_user_obj') or model.User.get(context['user'])
+
+    req.status = MembershipRequest.STATUS_APPROVED if action == 'approve' else MembershipRequest.STATUS_REJECTED
+    req.handled_by = user_obj.id if user_obj else None
+    req.handled_at = datetime.datetime.utcnow()
+    req.admin_note = admin_note
+
+    if action == 'approve':
+        # Add user as member of the organization
+        toolkit.get_action('member_create')(
+            {'ignore_auth': True},
+            {
+                'id': req.organization_id,
+                'object': req.user_id,
+                'object_type': 'user',
+                'capacity': 'member',
+            }
+        )
+
+    model.Session.commit()
+
+    return {
+        'id': req.id,
+        'status': req.status,
+        'handled_by': req.handled_by,
+        'handled_at': req.handled_at.isoformat() if req.handled_at else None,
+    }
+
+
+@toolkit.side_effect_free
+def membership_request_count(context, data_dict):
+    """Count pending membership requests across organizations where user is admin.
+
+    Called without params — uses current user context.
+    """
+    user_obj = context.get('auth_user_obj') or model.User.get(context.get('user'))
+    if not user_obj:
+        return {'count': 0}
+
+    # Find orgs where user is admin
+    org_ids = _get_admin_org_ids(user_obj.id)
+    if not org_ids:
+        return {'count': 0}
+
+    count = MembershipRequest.count_pending_for_orgs(org_ids)
+    return {'count': count}
+
+
+def _get_admin_org_ids(user_id):
+    """Return list of org IDs where user is admin."""
+    orgs = model.Session.query(model.Member).filter(
+        model.Member.table_name == 'user',
+        model.Member.table_id == user_id,
+        model.Member.capacity == 'admin',
+        model.Member.state == 'active',
+    ).all()
+    return [m.group_id for m in orgs]
