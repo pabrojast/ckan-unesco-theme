@@ -435,3 +435,69 @@ def _get_admin_org_ids(user_id):
         model.Member.state == 'active',
     ).all()
     return [m.group_id for m in orgs]
+
+
+# ── Featured Dataset Actions ────────────────────────────────────────────────
+
+FEATURED_TAG = 'FeaturedDataset'
+
+
+@toolkit.side_effect_free
+def featured_dataset_list(context, data_dict):
+    """List all datasets tagged as featured. Sysadmin only."""
+    toolkit.check_access('featured_dataset_list', context, data_dict)
+
+    search_result = toolkit.get_action('package_search')(
+        {'ignore_auth': True},
+        {'fq': 'tags:{}'.format(FEATURED_TAG), 'rows': 100}
+    )
+    results = []
+    for pkg in search_result.get('results', []):
+        org = pkg.get('organization') or {}
+        results.append({
+            'id': pkg['id'],
+            'name': pkg['name'],
+            'title': pkg.get('title', pkg['name']),
+            'notes': pkg.get('notes', ''),
+            'organization_title': org.get('title', ''),
+            'metadata_modified': pkg.get('metadata_modified', ''),
+        })
+    return {'results': results, 'count': search_result.get('count', 0)}
+
+
+def featured_dataset_add(context, data_dict):
+    """Add the FeaturedDataset tag to a dataset. Sysadmin only."""
+    toolkit.check_access('featured_dataset_add', context, data_dict)
+    dataset_id = toolkit.get_or_bust(data_dict, 'id')
+
+    pkg = toolkit.get_action('package_show')(
+        {'ignore_auth': True}, {'id': dataset_id}
+    )
+
+    tags = pkg.get('tags', [])
+    if any(t['name'] == FEATURED_TAG for t in tags):
+        return {'success': True, 'message': 'Already featured'}
+
+    tags.append({'name': FEATURED_TAG})
+    toolkit.get_action('package_patch')(
+        {'ignore_auth': True},
+        {'id': pkg['id'], 'tags': tags}
+    )
+    return {'success': True}
+
+
+def featured_dataset_remove(context, data_dict):
+    """Remove the FeaturedDataset tag from a dataset. Sysadmin only."""
+    toolkit.check_access('featured_dataset_remove', context, data_dict)
+    dataset_id = toolkit.get_or_bust(data_dict, 'id')
+
+    pkg = toolkit.get_action('package_show')(
+        {'ignore_auth': True}, {'id': dataset_id}
+    )
+
+    tags = [t for t in pkg.get('tags', []) if t['name'] != FEATURED_TAG]
+    toolkit.get_action('package_patch')(
+        {'ignore_auth': True},
+        {'id': pkg['id'], 'tags': tags}
+    )
+    return {'success': True}

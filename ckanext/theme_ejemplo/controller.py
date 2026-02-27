@@ -1116,3 +1116,118 @@ class MyLogica():
             except Exception as e:
                 log.error(f'Error rendering dataset read template: {e}')
                 return base.abort(500, str(e))
+
+        # ── Featured Datasets Admin Panel ─────────────────────────────────
+
+        @staticmethod
+        def featured_datasets_admin():
+            """Render the featured datasets admin panel. Sysadmin only."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('featured_dataset_list', context, {})
+            except toolkit.NotAuthorized:
+                return base.abort(403, _('Not authorized'))
+
+            featured = toolkit.get_action('featured_dataset_list')(context, {})
+            extra_vars = {
+                'featured_datasets': featured.get('results', []),
+                'featured_count': featured.get('count', 0),
+            }
+            return base.render('admin/featured_datasets.html', extra_vars=extra_vars)
+
+        @staticmethod
+        def featured_datasets_search():
+            """AJAX: Search datasets to add as featured."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('featured_dataset_list', context, {})
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+
+            q = request.args.get('q', '')
+            if not q or len(q) < 2:
+                return jsonify({'results': []})
+
+            try:
+                search_result = toolkit.get_action('package_search')(
+                    {'ignore_auth': True},
+                    {'q': q, 'rows': 10}
+                )
+                results = []
+                for pkg in search_result.get('results', []):
+                    is_featured = any(
+                        t['name'] == 'FeaturedDataset'
+                        for t in pkg.get('tags', [])
+                    )
+                    org = pkg.get('organization') or {}
+                    results.append({
+                        'id': pkg['id'],
+                        'name': pkg['name'],
+                        'title': pkg.get('title', pkg['name']),
+                        'organization_title': org.get('title', ''),
+                        'is_featured': is_featured,
+                    })
+                return jsonify({'results': results})
+            except Exception as e:
+                log.error(f'Error searching datasets: {e}')
+                return jsonify({'results': [], 'error': str(e)})
+
+        @staticmethod
+        def featured_datasets_add():
+            """AJAX: Add a dataset as featured."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('featured_dataset_add', context, {})
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+
+            dataset_id = request.form.get('id', '')
+            if not dataset_id:
+                return jsonify({'success': False, 'error': 'Missing dataset id'}), 400
+
+            try:
+                result = toolkit.get_action('featured_dataset_add')(
+                    context, {'id': dataset_id}
+                )
+                return jsonify(result)
+            except toolkit.ObjectNotFound:
+                return jsonify({'success': False, 'error': 'Dataset not found'}), 404
+            except Exception as e:
+                log.error(f'Error adding featured dataset: {e}')
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        @staticmethod
+        def featured_datasets_remove():
+            """AJAX: Remove a dataset from featured."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('featured_dataset_remove', context, {})
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+
+            dataset_id = request.form.get('id', '')
+            if not dataset_id:
+                return jsonify({'success': False, 'error': 'Missing dataset id'}), 400
+
+            try:
+                result = toolkit.get_action('featured_dataset_remove')(
+                    context, {'id': dataset_id}
+                )
+                return jsonify(result)
+            except toolkit.ObjectNotFound:
+                return jsonify({'success': False, 'error': 'Dataset not found'}), 404
+            except Exception as e:
+                log.error(f'Error removing featured dataset: {e}')
+                return jsonify({'success': False, 'error': str(e)}), 500

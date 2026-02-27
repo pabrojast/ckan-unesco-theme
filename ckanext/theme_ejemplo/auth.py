@@ -59,3 +59,24 @@ def membership_request_count(context, data_dict):
     if not context.get('auth_user_obj'):
         return {'success': False}
     return {'success': True}
+
+
+# ── Featured Dataset Auth ────────────────────────────────────────────────────
+
+def _sysadmin_only(context, data_dict):
+    user_obj = context.get('auth_user_obj')
+    if user_obj and user_obj.sysadmin:
+        return {'success': True}
+    return {'success': False, 'msg': toolkit._('Only sysadmins can manage featured datasets')}
+
+
+def featured_dataset_list(context, data_dict):
+    return _sysadmin_only(context, data_dict)
+
+
+def featured_dataset_add(context, data_dict):
+    return _sysadmin_only(context, data_dict)
+
+
+def featured_dataset_remove(context, data_dict):
+    return _sysadmin_only(context, data_dict)

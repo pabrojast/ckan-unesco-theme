@@ -463,6 +463,32 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 methods=['GET']
             )
 
+            # Featured datasets admin panel (sysadmin only)
+            blueprint.add_url_rule(
+                u'/ckan-admin/featured-datasets',
+                u'featured_datasets_admin',
+                MyLogica.featured_datasets_admin,
+                methods=['GET']
+            )
+            blueprint.add_url_rule(
+                u'/ckan-admin/featured-datasets/search',
+                u'featured_datasets_search',
+                MyLogica.featured_datasets_search,
+                methods=['GET']
+            )
+            blueprint.add_url_rule(
+                u'/ckan-admin/featured-datasets/add',
+                u'featured_datasets_add',
+                MyLogica.featured_datasets_add,
+                methods=['POST']
+            )
+            blueprint.add_url_rule(
+                u'/ckan-admin/featured-datasets/remove',
+                u'featured_datasets_remove',
+                MyLogica.featured_datasets_remove,
+                methods=['POST']
+            )
+
             # Override CKAN core dataset read view with optimized version
             # that uses batch SQL for resource views instead of N+1 queries
             blueprint.add_url_rule(
@@ -510,6 +536,9 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 'membership_request_list': custom_actions.membership_request_list,
                 'membership_request_process': custom_actions.membership_request_process,
                 'membership_request_count': custom_actions.membership_request_count,
+                'featured_dataset_list': custom_actions.featured_dataset_list,
+                'featured_dataset_add': custom_actions.featured_dataset_add,
+                'featured_dataset_remove': custom_actions.featured_dataset_remove,
             }
 
         # IAuthFunctions
@@ -519,6 +548,9 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 'membership_request_list': custom_auth.membership_request_list,
                 'membership_request_process': custom_auth.membership_request_process,
                 'membership_request_count': custom_auth.membership_request_count,
+                'featured_dataset_list': custom_auth.featured_dataset_list,
+                'featured_dataset_add': custom_auth.featured_dataset_add,
+                'featured_dataset_remove': custom_auth.featured_dataset_remove,
             }
         
         def get_member_states_groups_list(self):
