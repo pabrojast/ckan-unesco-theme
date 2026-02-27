@@ -785,6 +785,49 @@ class MyLogica():
                 active_tab=tab,
             )
 
+        @staticmethod
+        def membership_requests_overview():
+            """Overview of pending membership requests across all orgs the user administers."""
+            if not current_user.is_authenticated:
+                return toolkit.redirect_to('user.login')
+
+            from ckanext.theme_ejemplo.model import MembershipRequest
+
+            # Get orgs where user is admin
+            if current_user.sysadmin:
+                # Sysadmins see all orgs with pending requests
+                all_orgs = toolkit.get_action('organization_list')(
+                    {'ignore_auth': True}, {'all_fields': True, 'limit': 1000}
+                )
+            else:
+                all_orgs = toolkit.get_action('organization_list_for_user')(
+                    {'user': current_user.name},
+                    {'permission': 'admin'}
+                )
+
+            orgs_with_requests = []
+            for org in all_orgs:
+                count = MembershipRequest.count_pending_for_orgs([org['id']])
+                if count > 0:
+                    orgs_with_requests.append({
+                        'name': org['name'],
+                        'title': org.get('title') or org['name'],
+                        'image_display_url': org.get('image_display_url', ''),
+                        'pending_count': count,
+                    })
+
+            # If only one org has requests, redirect directly
+            if len(orgs_with_requests) == 1:
+                return toolkit.redirect_to(
+                    'theme_ejemplo.membership_requests',
+                    name=orgs_with_requests[0]['name']
+                )
+
+            return render_template(
+                "organization/membership_requests_overview.html",
+                orgs_with_requests=orgs_with_requests,
+            )
+
         # --- User profile tab views ---
 
         def _get_user_context(id):

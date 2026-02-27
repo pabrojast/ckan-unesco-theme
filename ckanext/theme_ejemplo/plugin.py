@@ -424,6 +424,14 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 methods=['GET', 'POST']
             )
 
+            # Membership requests overview (multi-org landing page)
+            blueprint.add_url_rule(
+                u'/membership-requests',
+                u'membership_requests_overview',
+                MyLogica.membership_requests_overview,
+                methods=['GET']
+            )
+
             # User profile tabs
             blueprint.add_url_rule(
                 u'/user/<id>/documents',
