@@ -761,14 +761,23 @@ class MyLogica():
                     'theme_ejemplo.membership_requests', name=name, tab=tab
                 )
 
-            # Fetch requests
-            ctx = {'auth_user_obj': current_user, 'user': current_user.name}
-            pending = toolkit.get_action('membership_request_list')(
-                ctx, {'organization_id': org['id'], 'status': 'pending'}
-            )
-            history = toolkit.get_action('membership_request_list')(
-                ctx, {'organization_id': org['id']}
-            )
+            # Fetch requests — bypass auth since we verified admin above
+            ctx = {'ignore_auth': True}
+            try:
+                pending = toolkit.get_action('membership_request_list')(
+                    ctx, {'organization_id': org['id'], 'status': 'pending'}
+                )
+            except Exception as e:
+                log.error(f"Error fetching pending membership requests: {e}")
+                pending = {'results': [], 'count': 0}
+
+            try:
+                history = toolkit.get_action('membership_request_list')(
+                    ctx, {'organization_id': org['id']}
+                )
+            except Exception as e:
+                log.error(f"Error fetching membership request history: {e}")
+                history = {'results': [], 'count': 0}
             # Filter history to only processed requests
             history_results = [
                 r for r in history.get('results', [])

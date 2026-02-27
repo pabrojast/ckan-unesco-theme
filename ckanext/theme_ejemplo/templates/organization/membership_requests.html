@@ -26,12 +26,12 @@
     {# Pending Tab #}
     {% if active_tab == 'pending' %}
     <div class="tab-content membership-tab-content">
-      {% if pending_requests %}
+      {% if pending_requests and pending_requests|length > 0 %}
         {% for req in pending_requests %}
         <div class="membership-request-card">
           <div class="request-card-header">
             <div class="request-user-info">
-              {% if req.user_image_url %}
+              {% if req.get('user_image_url') %}
                 <img src="{{ req.user_image_url }}" alt="{{ req.user_fullname }}" class="request-user-avatar" />
               {% else %}
                 <div class="request-user-avatar request-avatar-placeholder">
@@ -45,9 +45,11 @@
                 <span class="request-username">@{{ req.user_name }}</span>
               </div>
             </div>
+            {% if req.created_at %}
             <span class="request-date">
-              <i class="fa fa-calendar"></i> {{ h.render_datetime(req.created_at, with_hours=True) }}
+              <i class="fa fa-calendar"></i> {{ h.render_datetime(req.created_at) }}
             </span>
+            {% endif %}
           </div>
 
           {% if req.message %}
@@ -58,7 +60,7 @@
           {% endif %}
 
           <div class="request-actions">
-            <form method="POST" class="request-action-form" style="display:inline;">
+            <form method="POST" style="display:inline;">
               {{ h.csrf_input() }}
               <input type="hidden" name="request_id" value="{{ req.id }}" />
               <input type="hidden" name="action" value="approve" />
@@ -70,7 +72,7 @@
               <i class="fa fa-times"></i> {{ _('Reject') }}
             </button>
             <div class="reject-form" id="reject-form-{{ req.id }}" style="display:none;">
-              <form method="POST" class="request-action-form">
+              <form method="POST">
                 {{ h.csrf_input() }}
                 <input type="hidden" name="request_id" value="{{ req.id }}" />
                 <input type="hidden" name="action" value="reject" />
@@ -100,7 +102,7 @@
     {# History Tab #}
     {% elif active_tab == 'history' %}
     <div class="tab-content membership-tab-content">
-      {% if history_requests %}
+      {% if history_requests and history_requests|length > 0 %}
       <div class="table-responsive">
         <table class="table membership-history-table">
           <thead>
@@ -121,7 +123,7 @@
                   {{ req.user_fullname }}
                 </a>
               </td>
-              <td>{{ h.render_datetime(req.created_at, with_hours=True) }}</td>
+              <td>{{ h.render_datetime(req.created_at) if req.created_at else '-' }}</td>
               <td>
                 {% if req.status == 'approved' %}
                   <span class="label label-success"><i class="fa fa-check"></i> {{ _('Approved') }}</span>
@@ -130,7 +132,7 @@
                 {% endif %}
               </td>
               <td>{{ req.handler_name or '-' }}</td>
-              <td>{{ h.render_datetime(req.handled_at, with_hours=True) if req.handled_at else '-' }}</td>
+              <td>{{ h.render_datetime(req.handled_at) if req.handled_at else '-' }}</td>
               <td>{{ req.admin_note or '-' }}</td>
             </tr>
             {% endfor %}
