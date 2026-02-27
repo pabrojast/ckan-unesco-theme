@@ -401,6 +401,12 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 MyLogica.organization_events,
                 methods=['GET']
             )
+            blueprint.add_url_rule(
+                u'/organization/<name>/data-stories',
+                u'organization_data_stories',
+                MyLogica.organization_data_stories,
+                methods=['GET']
+            )
 
             # Membership request
             blueprint.add_url_rule(

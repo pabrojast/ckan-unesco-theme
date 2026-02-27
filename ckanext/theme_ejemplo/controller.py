@@ -568,6 +568,36 @@ class MyLogica():
                 log.error(f"Error in organization_events: {e}")
                 abort(500)
 
+        def organization_data_stories(name):
+            """Organization data stories tab."""
+            try:
+                context = {'ignore_auth': True}
+                org = toolkit.get_action('organization_show')(
+                    context, {'id': name}
+                )
+
+                stories = []
+                try:
+                    result = toolkit.get_action('data_story_list')(
+                        {'ignore_auth': True},
+                        {'owner_org': org['id'], 'limit': 50}
+                    )
+                    stories = result.get('stories', [])
+                except Exception as e:
+                    log.warning(f"Error fetching data stories for org {name}: {e}")
+
+                return render_template(
+                    "organization/data_stories.html",
+                    group_dict=org,
+                    group_type='organization',
+                    stories=stories,
+                )
+            except toolkit.ObjectNotFound:
+                abort(404, _('Organization not found'))
+            except Exception as e:
+                log.error(f"Error in organization_data_stories: {e}")
+                abort(500)
+
         def request_membership(name):
             """Handle membership request for an organization."""
             try:
