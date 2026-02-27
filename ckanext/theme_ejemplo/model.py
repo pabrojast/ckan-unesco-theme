@@ -5,8 +5,7 @@ import datetime
 import uuid
 import logging
 
-from sqlalchemy import Column, UnicodeText, DateTime, types
-from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy import Table, Column, UnicodeText, DateTime
 
 import ckan.model as model
 import ckan.model.meta as meta
@@ -77,8 +76,12 @@ def init_db():
     """Create the membership_request table if it doesn't exist."""
     if membership_request_table is None:
         define_membership_request_table()
-    if not membership_request_table.exists():
-        membership_request_table.create()
+
+    from sqlalchemy import inspect as sa_inspect
+    engine = meta.engine
+    inspector = sa_inspect(engine)
+    if 'membership_request' not in inspector.get_table_names():
+        membership_request_table.create(engine)
         log.info(u'membership_request table created')
     else:
         log.debug(u'membership_request table already exists')
@@ -87,7 +90,7 @@ def init_db():
 def define_membership_request_table():
     global membership_request_table
 
-    membership_request_table = model.meta.Table(
+    membership_request_table = Table(
         'membership_request',
         meta.metadata,
         Column('id', UnicodeText, primary_key=True,
@@ -102,4 +105,9 @@ def define_membership_request_table():
         Column('created_at', DateTime, default=datetime.datetime.utcnow),
     )
 
-    meta.mapper(MembershipRequest, membership_request_table)
+    # Use registry mapper if available (SQLAlchemy 1.4+/CKAN 2.10),
+    # fall back to classic mapper for CKAN 2.9
+    try:
+        meta.registry.map_imperatively(MembershipRequest, membership_request_table)
+    except AttributeError:
+        meta.mapper(MembershipRequest, membership_request_table)
