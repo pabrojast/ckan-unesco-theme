@@ -300,3 +300,15 @@ def has_pending_membership_request(org_id):
         ) is not None
     except Exception:
         return False
+
+
+def get_featured_publications():
+    """Get featured publications for the homepage."""
+    try:
+        from ckanext.theme_ejemplo.model import FeaturedPublication, init_featured_publications_db
+        init_featured_publications_db()
+        pubs = FeaturedPublication.get_all()
+        return [p.as_dict() for p in pubs]
+    except Exception as e:
+        log.error(f'Error getting featured publications: {e}')
+        return []

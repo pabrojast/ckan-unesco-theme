@@ -1274,3 +1274,172 @@ class MyLogica():
             except Exception as e:
                 log.error(f'Error removing featured dataset: {e}')
                 return jsonify({'success': False, 'error': str(e)}), 500
+
+        # ── Featured Publications Admin Panel ─────────────────────────────
+
+        @staticmethod
+        def featured_publications_admin():
+            """Render the featured publications admin panel. Sysadmin only."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('featured_publication_list', context, {})
+            except toolkit.NotAuthorized:
+                return base.abort(403, _('Not authorized'))
+
+            pubs = toolkit.get_action('featured_publication_list')(context, {})
+            extra_vars = {
+                'publications': pubs.get('results', []),
+                'publications_count': pubs.get('count', 0),
+            }
+            return base.render('admin/featured_publications.html', extra_vars=extra_vars)
+
+        @staticmethod
+        def featured_publications_create():
+            """AJAX: Create a featured publication."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('featured_publication_create', context, {})
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+
+            data = {
+                'title': request.form.get('title', ''),
+                'link': request.form.get('link', ''),
+                'description': request.form.get('description', ''),
+                'image_url': request.form.get('image_url', ''),
+            }
+
+            if not data['title'] or not data['link']:
+                return jsonify({'success': False, 'error': 'Title and link are required'}), 400
+
+            try:
+                result = toolkit.get_action('featured_publication_create')(context, data)
+                return jsonify(result)
+            except Exception as e:
+                log.error(f'Error creating featured publication: {e}')
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        @staticmethod
+        def featured_publications_update():
+            """AJAX: Update a featured publication."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('featured_publication_update', context, {})
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+
+            pub_id = request.form.get('id', '')
+            if not pub_id:
+                return jsonify({'success': False, 'error': 'Missing id'}), 400
+
+            data = {'id': pub_id}
+            for field in ('title', 'link', 'description', 'image_url'):
+                if field in request.form:
+                    data[field] = request.form[field]
+
+            try:
+                result = toolkit.get_action('featured_publication_update')(context, data)
+                return jsonify(result)
+            except toolkit.ObjectNotFound:
+                return jsonify({'success': False, 'error': 'Not found'}), 404
+            except Exception as e:
+                log.error(f'Error updating featured publication: {e}')
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        @staticmethod
+        def featured_publications_delete():
+            """AJAX: Delete a featured publication."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('featured_publication_delete', context, {})
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+
+            pub_id = request.form.get('id', '')
+            if not pub_id:
+                return jsonify({'success': False, 'error': 'Missing id'}), 400
+
+            try:
+                result = toolkit.get_action('featured_publication_delete')(context, {'id': pub_id})
+                return jsonify(result)
+            except toolkit.ObjectNotFound:
+                return jsonify({'success': False, 'error': 'Not found'}), 404
+            except Exception as e:
+                log.error(f'Error deleting featured publication: {e}')
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        @staticmethod
+        def featured_publications_reorder():
+            """AJAX: Reorder featured publications."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('featured_publication_reorder', context, {})
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+
+            try:
+                order = request.get_json(force=True).get('order', [])
+            except Exception:
+                order = request.form.getlist('order[]')
+
+            try:
+                result = toolkit.get_action('featured_publication_reorder')(
+                    context, {'order': order}
+                )
+                return jsonify(result)
+            except Exception as e:
+                log.error(f'Error reordering featured publications: {e}')
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        @staticmethod
+        def featured_publications_upload_image():
+            """AJAX: Upload an image for a featured publication.
+            Uses CKAN's storage to save the file and returns the URL.
+            """
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('featured_publication_create', context, {})
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+
+            if 'file' not in request.files:
+                return jsonify({'success': False, 'error': 'No file uploaded'}), 400
+
+            upload_file = request.files['file']
+            if not upload_file.filename:
+                return jsonify({'success': False, 'error': 'Empty filename'}), 400
+
+            try:
+                import ckan.lib.uploader as uploader
+                upload = uploader.get_uploader('featured_publications')
+                upload.update_data_dict(
+                    {'upload': upload_file, 'url': '', 'clear_upload': ''},
+                    'url', 'upload', 'clear_upload'
+                )
+                upload.upload()
+                image_url = h.url_for_static(
+                    'uploads/featured_publications/{}'.format(upload.filename),
+                    qualified=False
+                )
+                return jsonify({'success': True, 'image_url': image_url})
+            except Exception as e:
+                log.error(f'Error uploading image: {e}')
+                return jsonify({'success': False, 'error': str(e)}), 500

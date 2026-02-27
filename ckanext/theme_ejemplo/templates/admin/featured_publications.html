@@ -1,0 +1,944 @@
+{% extends "page.html" %}
+
+{% block title %}
+{{ _('Featured Publications') }} - {{ super() }}
+{% endblock %}
+
+{% block content %}
+<div class="homepage layout-1">
+    <div id="content" class="container">
+      {{ self.flash() }}
+    </div>
+
+    {% block primary_content %}
+    <div class="main">
+        <div class="container">
+            <!-- Breadcrumb -->
+            <div class="toolbar" role="navigation" aria-label="Breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="home"><a href="/"><i class="fa fa-home"></i><span> Home</span></a></li>
+                    <li><a href="{{ h.url_for(controller='admin', action='index') }}">{{ _('Admin') }}</a></li>
+                    <li class="active">{{ _('Featured Publications') }}</li>
+                </ol>
+            </div>
+
+            <!-- Header Banner -->
+            <section class="module module-narrow module-shallow">
+              <div class="fpub-banner">
+                <div class="fpub-banner-overlay"></div>
+                <div class="fpub-banner-content">
+                  <h1><i class="fa fa-book"></i> {{ _('Featured Publications') }}</h1>
+                  <p>{{ _('Manage UNESDOC and Water Family publications displayed on the homepage.') }}</p>
+                </div>
+              </div>
+            </section>
+        </div>
+
+        <div class="container">
+          <div class="row">
+            <div class="col-md-12">
+
+              <!-- Add New Publication -->
+              <div class="fpub-action-bar">
+                <section class="module module-narrow">
+                  <div class="module-content" style="padding: 2rem 2.5rem;">
+                    <h2 class="fpub-section-title"><i class="fa fa-plus-circle"></i> {{ _('Add New Publication') }}</h2>
+                    <form id="fpub-add-form" class="fpub-form" onsubmit="return false;">
+                      <div class="row">
+                        <div class="col-md-4">
+                          <div class="fpub-drop-zone" id="fpub-drop-zone">
+                            <div class="fpub-drop-content" id="fpub-drop-content">
+                              <i class="fa fa-cloud-upload fa-3x"></i>
+                              <p>{{ _('Drag & drop an image here') }}</p>
+                              <p class="text-muted small">{{ _('or click to browse') }}</p>
+                            </div>
+                            <img id="fpub-preview-img" class="fpub-preview-img" style="display:none;" />
+                            <input type="file" id="fpub-file-input" accept="image/*" style="display:none;" />
+                            <input type="hidden" id="fpub-image-url" name="image_url" value="" />
+                          </div>
+                          <div class="fpub-or-divider">
+                            <span>{{ _('or paste image URL') }}</span>
+                          </div>
+                          <input type="text" id="fpub-image-url-text" class="form-control fpub-input"
+                                 placeholder="https://..." />
+                        </div>
+                        <div class="col-md-8">
+                          <div class="form-group">
+                            <label>{{ _('Title') }} <span class="text-danger">*</span></label>
+                            <input type="text" id="fpub-title" class="form-control fpub-input"
+                                   placeholder="{{ _('Publication title') }}" required />
+                          </div>
+                          <div class="form-group">
+                            <label>{{ _('Link') }} <span class="text-danger">*</span></label>
+                            <input type="url" id="fpub-link" class="form-control fpub-input"
+                                   placeholder="https://unesdoc.unesco.org/..." required />
+                          </div>
+                          <div class="form-group">
+                            <label>{{ _('Description') }}</label>
+                            <textarea id="fpub-description" class="form-control fpub-input" rows="3"
+                                      placeholder="{{ _('Brief description of the publication...') }}"></textarea>
+                          </div>
+                          <div class="text-right">
+                            <button type="button" id="fpub-add-btn" class="btn btn-primary btn-lg">
+                              <i class="fa fa-plus"></i> {{ _('Add Publication') }}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </section>
+              </div>
+
+              <!-- Publications List -->
+              <div class="fpub-list-header">
+                <div class="row">
+                  <div class="col-md-8">
+                    <h2 class="fpub-section-title">
+                      <i class="fa fa-book"></i> {{ _('Current Publications') }}
+                      <span class="fpub-count-badge" id="fpub-count">{{ publications_count }}</span>
+                    </h2>
+                  </div>
+                  <div class="col-md-4 text-right">
+                    <button type="button" id="fpub-save-order-btn" class="btn btn-default" style="display:none;">
+                      <i class="fa fa-save"></i> {{ _('Save Order') }}
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <div id="fpub-list" class="fpub-sortable-list">
+                {% if publications %}
+                  {% for pub in publications %}
+                  <div class="fpub-card" id="fpub-card-{{ pub.id }}" data-id="{{ pub.id }}" draggable="true">
+                    <article class="module module-narrow">
+                      <div class="module-content" style="padding: 1.5rem 2rem;">
+                        <div class="row">
+                          <div class="col-md-1 col-sm-1 fpub-drag-handle">
+                            <i class="fa fa-bars fa-lg" title="{{ _('Drag to reorder') }}"></i>
+                          </div>
+                          <div class="col-md-2 col-sm-3">
+                            {% if pub.image_url %}
+                            <img src="{{ pub.image_url }}" class="fpub-card-img" alt="{{ pub.title }}" />
+                            {% else %}
+                            <div class="fpub-card-img-placeholder">
+                              <i class="fa fa-image fa-2x"></i>
+                            </div>
+                            {% endif %}
+                          </div>
+                          <div class="col-md-6 col-sm-5">
+                            <h3 class="fpub-card-title">{{ pub.title }}</h3>
+                            {% if pub.description %}
+                            <p class="fpub-card-desc">{{ pub.description[:150] }}{% if pub.description|length > 150 %}...{% endif %}</p>
+                            {% endif %}
+                            <div class="fpub-card-meta">
+                              <span class="meta-item">
+                                <i class="fa fa-link"></i>
+                                <a href="{{ pub.link }}" target="_blank" class="fpub-card-link">{{ pub.link[:60] }}{% if pub.link|length > 60 %}...{% endif %}</a>
+                              </span>
+                            </div>
+                          </div>
+                          <div class="col-md-3 col-sm-3">
+                            <div class="fpub-card-actions">
+                              <button class="btn btn-default btn-sm fpub-edit-btn"
+                                      data-id="{{ pub.id }}"
+                                      data-title="{{ pub.title }}"
+                                      data-link="{{ pub.link }}"
+                                      data-description="{{ pub.description }}"
+                                      data-image="{{ pub.image_url }}">
+                                <i class="fa fa-edit"></i> {{ _('Edit') }}
+                              </button>
+                              <button class="btn btn-danger btn-sm fpub-delete-btn"
+                                      data-id="{{ pub.id }}"
+                                      data-title="{{ pub.title }}">
+                                <i class="fa fa-trash"></i> {{ _('Delete') }}
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </article>
+                  </div>
+                  {% endfor %}
+                {% else %}
+                  <div class="fpub-empty-state" id="fpub-empty">
+                    <section class="module module-narrow">
+                      <div class="module-content text-center" style="padding: 4rem 2.5rem;">
+                        <div class="fpub-empty-icon">
+                          <i class="fa fa-book fa-4x"></i>
+                        </div>
+                        <h3>{{ _('No Featured Publications') }}</h3>
+                        <p class="text-muted">{{ _('Use the form above to add publications to the homepage.') }}</p>
+                      </div>
+                    </section>
+                  </div>
+                {% endif %}
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+    </div>
+    {% endblock %}
+</div>
+
+<!-- Edit Modal -->
+<div id="fpub-edit-modal" class="fpub-modal" style="display:none;">
+  <div class="fpub-modal-backdrop"></div>
+  <div class="fpub-modal-dialog">
+    <div class="fpub-modal-content">
+      <div class="fpub-modal-header">
+        <h3><i class="fa fa-edit"></i> {{ _('Edit Publication') }}</h3>
+        <button type="button" class="fpub-modal-close" id="fpub-modal-close">&times;</button>
+      </div>
+      <div class="fpub-modal-body">
+        <input type="hidden" id="fpub-edit-id" />
+        <div class="form-group">
+          <label>{{ _('Title') }}</label>
+          <input type="text" id="fpub-edit-title" class="form-control fpub-input" />
+        </div>
+        <div class="form-group">
+          <label>{{ _('Link') }}</label>
+          <input type="url" id="fpub-edit-link" class="form-control fpub-input" />
+        </div>
+        <div class="form-group">
+          <label>{{ _('Description') }}</label>
+          <textarea id="fpub-edit-description" class="form-control fpub-input" rows="3"></textarea>
+        </div>
+        <div class="form-group">
+          <label>{{ _('Image URL') }}</label>
+          <input type="text" id="fpub-edit-image" class="form-control fpub-input" />
+          <div class="fpub-edit-img-preview" id="fpub-edit-img-preview" style="display:none; margin-top:10px;">
+            <img id="fpub-edit-preview-img" style="max-width:200px; border-radius:8px;" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>{{ _('Or upload new image') }}</label>
+          <input type="file" id="fpub-edit-file" accept="image/*" class="form-control" />
+        </div>
+      </div>
+      <div class="fpub-modal-footer">
+        <button type="button" class="btn btn-default" id="fpub-modal-cancel">{{ _('Cancel') }}</button>
+        <button type="button" class="btn btn-primary" id="fpub-modal-save">
+          <i class="fa fa-save"></i> {{ _('Save Changes') }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CSS -->
+<style>
+/* Banner */
+.fpub-banner {
+  position: relative;
+  height: 200px;
+  overflow: hidden;
+  border-radius: 16px;
+  margin-bottom: 2.5rem;
+  box-shadow: 0 8px 32px rgba(0, 114, 188, 0.16);
+}
+
+.fpub-banner-overlay {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: linear-gradient(135deg, rgba(0, 90, 156, 0.95) 0%, rgba(0, 114, 188, 0.85) 50%, rgba(0, 158, 224, 0.8) 100%);
+}
+
+.fpub-banner-content {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: white;
+  z-index: 10;
+  width: 90%;
+  max-width: 700px;
+}
+
+.fpub-banner-content h1 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 0.8rem;
+  text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+  color: white;
+}
+
+.fpub-banner-content h1 .fa-book {
+  margin-right: 10px;
+}
+
+.fpub-banner-content p {
+  font-size: 1.1rem;
+  margin-bottom: 0;
+  opacity: 0.95;
+  text-shadow: 1px 1px 4px rgba(0,0,0,0.3);
+  font-weight: 300;
+}
+
+/* Breadcrumb */
+.toolbar { margin-bottom: 2rem; padding: 1rem 0; }
+.breadcrumb {
+  background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+  padding: 12px 20px; margin: 0; border-radius: 12px;
+  border: 1px solid #e9ecef;
+  box-shadow: 0 2px 8px rgba(0, 114, 188, 0.08);
+}
+.breadcrumb > li + li:before { content: "\203A"; padding: 0 12px; color: #6c757d; font-weight: 600; }
+
+/* Section Titles */
+.fpub-section-title {
+  margin: 0; border: none; font-size: 1.3rem;
+  font-weight: 700; color: #0072BC;
+}
+.fpub-section-title .fa { margin-right: 8px; }
+
+.fpub-count-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #0072BC 0%, #005A9C 100%);
+  color: white; padding: 3px 12px; border-radius: 20px;
+  font-size: 0.85rem; font-weight: 600; margin-left: 8px; vertical-align: middle;
+}
+
+/* Form Inputs */
+.fpub-input {
+  border-radius: 10px !important;
+  border: 2px solid #e0e0e0 !important;
+  padding: 10px 16px !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.fpub-input:focus {
+  border-color: #0072BC !important;
+  box-shadow: 0 0 0 3px rgba(0, 114, 188, 0.15) !important;
+}
+
+/* Drop Zone */
+.fpub-drop-zone {
+  border: 3px dashed #ccc;
+  border-radius: 16px;
+  padding: 30px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: #fafbfc;
+  min-height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.fpub-drop-zone:hover, .fpub-drop-zone.dragover {
+  border-color: #0072BC;
+  background: #E3F2FD;
+}
+
+.fpub-drop-content {
+  color: #999;
+}
+
+.fpub-drop-content .fa { color: #0072BC; margin-bottom: 10px; }
+.fpub-drop-content p { margin: 5px 0; }
+
+.fpub-preview-img {
+  max-width: 100%;
+  max-height: 170px;
+  border-radius: 12px;
+  object-fit: cover;
+}
+
+.fpub-or-divider {
+  text-align: center;
+  margin: 12px 0;
+  color: #999;
+  font-size: 0.85rem;
+}
+
+/* Buttons */
+.fpub-action-bar .btn-primary,
+.fpub-modal-footer .btn-primary {
+  border-radius: 25px;
+  padding: 10px 28px;
+  font-weight: 600;
+  background: linear-gradient(135deg, #0072BC 0%, #005A9C 100%);
+  border: none;
+  color: white;
+  transition: all 0.2s ease;
+}
+.fpub-action-bar .btn-primary:hover,
+.fpub-modal-footer .btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 114, 188, 0.3);
+  color: white;
+}
+
+/* Modules */
+.fpub-action-bar { margin-bottom: 2rem; }
+.fpub-list-header { margin-bottom: 1.5rem; margin-top: 1rem; }
+
+.fpub-action-bar .module,
+.fpub-card .module,
+.fpub-empty-state .module {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 114, 188, 0.12);
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+/* Publication Cards */
+.fpub-card { margin-bottom: 1rem; }
+.fpub-card .module { border-left: 5px solid #005A9C; margin-bottom: 0; }
+.fpub-card .module:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(0, 114, 188, 0.16);
+}
+
+.fpub-drag-handle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+  color: #ccc;
+  transition: color 0.2s ease;
+}
+.fpub-drag-handle:hover { color: #0072BC; }
+.fpub-card.dragging { opacity: 0.5; }
+.fpub-card.drag-over .module { border-left-color: #ffc107; }
+
+.fpub-card-img {
+  width: 100%;
+  max-height: 100px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.fpub-card-img-placeholder {
+  width: 100%;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f0f0f0;
+  border-radius: 10px;
+  color: #ccc;
+}
+
+.fpub-card-title {
+  margin: 0 0 6px 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0072BC;
+}
+
+.fpub-card-desc {
+  color: #6c757d;
+  font-size: 0.9rem;
+  margin-bottom: 6px;
+}
+
+.fpub-card-meta { font-size: 0.85rem; color: #6c757d; }
+.fpub-card-meta .meta-item i { margin-right: 5px; color: #0072BC; }
+.fpub-card-link { color: #0072BC; text-decoration: none; }
+.fpub-card-link:hover { text-decoration: underline; }
+
+.fpub-card-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+  flex-wrap: wrap;
+}
+
+.fpub-card-actions .btn {
+  border-radius: 20px;
+  padding: 7px 16px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.fpub-card-actions .btn-danger {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  border: none; color: white;
+}
+.fpub-card-actions .btn-danger:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+  color: white;
+}
+.fpub-card-actions .btn-default {
+  background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+  border: 2px solid #e9ecef; color: #2c3e50;
+}
+.fpub-card-actions .btn-default:hover {
+  background: #E3F2FD; border-color: #0072BC; color: #0072BC;
+}
+
+/* Empty State */
+.fpub-empty-state .module { border-left: 5px solid #005A9C; }
+.fpub-empty-icon { color: #005A9C; opacity: 0.7; margin-bottom: 1.5rem; }
+.fpub-empty-state h3 { color: #2c3e50; font-weight: 700; margin-bottom: 0.8rem; }
+
+/* Modal */
+.fpub-modal {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.fpub-modal-backdrop {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5);
+}
+.fpub-modal-dialog {
+  position: relative;
+  z-index: 10001;
+  width: 90%;
+  max-width: 600px;
+}
+.fpub-modal-content {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 16px 48px rgba(0,0,0,0.2);
+  overflow: hidden;
+}
+.fpub-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  background: linear-gradient(135deg, #0072BC 0%, #005A9C 100%);
+  color: white;
+}
+.fpub-modal-header h3 { margin: 0; font-size: 1.3rem; color: white; }
+.fpub-modal-close {
+  background: none; border: none; color: white; font-size: 1.8rem;
+  cursor: pointer; opacity: 0.8;
+}
+.fpub-modal-close:hover { opacity: 1; }
+.fpub-modal-body { padding: 2rem; }
+.fpub-modal-footer {
+  padding: 1rem 2rem;
+  background: #f8f9fa;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* Save Order Button */
+#fpub-save-order-btn {
+  border-radius: 25px;
+  padding: 8px 20px;
+  font-weight: 600;
+  border: 2px solid #28a745;
+  color: #28a745;
+  background: white;
+}
+#fpub-save-order-btn:hover {
+  background: #28a745;
+  color: white;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .fpub-banner { height: 160px; }
+  .fpub-banner-content h1 { font-size: 1.7rem; }
+  .fpub-card-actions { justify-content: flex-start; margin-top: 10px; }
+  .fpub-drag-handle { display: none; }
+}
+</style>
+
+<!-- JavaScript -->
+<script>
+(function() {
+  // URLs
+  var URLS = {
+    create: '{{ h.url_for("theme_ejemplo.featured_publications_create") }}',
+    update: '{{ h.url_for("theme_ejemplo.featured_publications_update") }}',
+    delete: '{{ h.url_for("theme_ejemplo.featured_publications_delete") }}',
+    reorder: '{{ h.url_for("theme_ejemplo.featured_publications_reorder") }}',
+    upload: '{{ h.url_for("theme_ejemplo.featured_publications_upload_image") }}',
+  };
+
+  // ── Image Upload / Drop Zone ──
+  var dropZone = document.getElementById('fpub-drop-zone');
+  var dropContent = document.getElementById('fpub-drop-content');
+  var fileInput = document.getElementById('fpub-file-input');
+  var previewImg = document.getElementById('fpub-preview-img');
+  var imageUrlField = document.getElementById('fpub-image-url');
+  var imageUrlText = document.getElementById('fpub-image-url-text');
+
+  dropZone.addEventListener('click', function() { fileInput.click(); });
+  dropZone.addEventListener('dragover', function(e) { e.preventDefault(); dropZone.classList.add('dragover'); });
+  dropZone.addEventListener('dragleave', function() { dropZone.classList.remove('dragover'); });
+  dropZone.addEventListener('drop', function(e) {
+    e.preventDefault();
+    dropZone.classList.remove('dragover');
+    if (e.dataTransfer.files.length > 0) {
+      handleFileUpload(e.dataTransfer.files[0]);
+    }
+  });
+
+  fileInput.addEventListener('change', function() {
+    if (fileInput.files.length > 0) {
+      handleFileUpload(fileInput.files[0]);
+    }
+  });
+
+  imageUrlText.addEventListener('change', function() {
+    var url = imageUrlText.value.trim();
+    if (url) {
+      imageUrlField.value = url;
+      previewImg.src = url;
+      previewImg.style.display = 'block';
+      dropContent.style.display = 'none';
+    }
+  });
+
+  function handleFileUpload(file) {
+    if (!file.type.startsWith('image/')) {
+      alert('{{ _("Please upload an image file") }}');
+      return;
+    }
+    // Show preview immediately
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      previewImg.src = e.target.result;
+      previewImg.style.display = 'block';
+      dropContent.style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+
+    // Upload to server
+    var formData = new FormData();
+    formData.append('file', file);
+    fetch(URLS.upload, { method: 'POST', body: formData })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.success) {
+          imageUrlField.value = data.image_url;
+          imageUrlText.value = data.image_url;
+        } else {
+          alert('Upload error: ' + (data.error || ''));
+        }
+      })
+      .catch(function(e) { alert('Upload error: ' + e); });
+  }
+
+  // ── Add Publication ──
+  document.getElementById('fpub-add-btn').addEventListener('click', function() {
+    var title = document.getElementById('fpub-title').value.trim();
+    var link = document.getElementById('fpub-link').value.trim();
+    var description = document.getElementById('fpub-description').value.trim();
+    var image_url = imageUrlField.value || imageUrlText.value.trim();
+
+    if (!title || !link) {
+      alert('{{ _("Title and link are required") }}');
+      return;
+    }
+
+    var btn = this;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> {{ _("Adding...") }}';
+
+    var formData = new FormData();
+    formData.append('title', title);
+    formData.append('link', link);
+    formData.append('description', description);
+    formData.append('image_url', image_url);
+
+    fetch(URLS.create, { method: 'POST', body: formData })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.id) {
+          addCardToList(data);
+          // Reset form
+          document.getElementById('fpub-title').value = '';
+          document.getElementById('fpub-link').value = '';
+          document.getElementById('fpub-description').value = '';
+          imageUrlField.value = '';
+          imageUrlText.value = '';
+          previewImg.style.display = 'none';
+          dropContent.style.display = '';
+        } else {
+          alert('Error: ' + (data.error || 'Unknown'));
+        }
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa fa-plus"></i> {{ _("Add Publication") }}';
+      })
+      .catch(function(e) {
+        alert('Error: ' + e);
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa fa-plus"></i> {{ _("Add Publication") }}';
+      });
+  });
+
+  function addCardToList(pub) {
+    var empty = document.getElementById('fpub-empty');
+    if (empty) empty.remove();
+
+    var card = document.createElement('div');
+    card.className = 'fpub-card';
+    card.id = 'fpub-card-' + pub.id;
+    card.setAttribute('data-id', pub.id);
+    card.setAttribute('draggable', 'true');
+
+    var imgHtml = pub.image_url
+      ? '<img src="' + esc(pub.image_url) + '" class="fpub-card-img" />'
+      : '<div class="fpub-card-img-placeholder"><i class="fa fa-image fa-2x"></i></div>';
+
+    var descHtml = pub.description
+      ? '<p class="fpub-card-desc">' + esc(pub.description.substring(0, 150)) + '</p>'
+      : '';
+
+    card.innerHTML = '<article class="module module-narrow"><div class="module-content" style="padding: 1.5rem 2rem;">'
+      + '<div class="row">'
+      + '<div class="col-md-1 col-sm-1 fpub-drag-handle"><i class="fa fa-bars fa-lg" title="{{ _("Drag to reorder") }}"></i></div>'
+      + '<div class="col-md-2 col-sm-3">' + imgHtml + '</div>'
+      + '<div class="col-md-6 col-sm-5">'
+      + '<h3 class="fpub-card-title">' + esc(pub.title) + '</h3>'
+      + descHtml
+      + '<div class="fpub-card-meta"><span class="meta-item"><i class="fa fa-link"></i> <a href="' + esc(pub.link) + '" target="_blank" class="fpub-card-link">' + esc(pub.link.substring(0,60)) + '</a></span></div>'
+      + '</div>'
+      + '<div class="col-md-3 col-sm-3"><div class="fpub-card-actions">'
+      + '<button class="btn btn-default btn-sm fpub-edit-btn" data-id="' + pub.id + '" data-title="' + esc(pub.title) + '" data-link="' + esc(pub.link) + '" data-description="' + esc(pub.description || '') + '" data-image="' + esc(pub.image_url || '') + '"><i class="fa fa-edit"></i> {{ _("Edit") }}</button>'
+      + '<button class="btn btn-danger btn-sm fpub-delete-btn" data-id="' + pub.id + '" data-title="' + esc(pub.title) + '"><i class="fa fa-trash"></i> {{ _("Delete") }}</button>'
+      + '</div></div></div></div></article>';
+
+    document.getElementById('fpub-list').appendChild(card);
+    initCardEvents(card);
+    initDragForCard(card);
+    updateCount(1);
+  }
+
+  // ── Delete ──
+  function initCardEvents(card) {
+    card.querySelectorAll('.fpub-delete-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() { deletePub(btn); });
+    });
+    card.querySelectorAll('.fpub-edit-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() { openEditModal(btn); });
+    });
+  }
+
+  document.querySelectorAll('.fpub-card').forEach(function(card) {
+    initCardEvents(card);
+  });
+
+  function deletePub(btn) {
+    var id = btn.getAttribute('data-id');
+    var title = btn.getAttribute('data-title');
+    if (!confirm('{{ _("Delete") }} "' + title + '"?')) return;
+
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i>';
+
+    var formData = new FormData();
+    formData.append('id', id);
+
+    fetch(URLS.delete, { method: 'POST', body: formData })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.success) {
+          var card = document.getElementById('fpub-card-' + id);
+          if (card) {
+            card.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+            card.style.opacity = '0';
+            card.style.transform = 'translateX(20px)';
+            setTimeout(function() { card.remove(); checkEmpty(); }, 300);
+          }
+          updateCount(-1);
+        } else {
+          btn.innerHTML = '<i class="fa fa-trash"></i> {{ _("Delete") }}';
+          btn.disabled = false;
+          alert('Error: ' + (data.error || ''));
+        }
+      });
+  }
+
+  // ── Edit Modal ──
+  var modal = document.getElementById('fpub-edit-modal');
+  var modalClose = document.getElementById('fpub-modal-close');
+  var modalCancel = document.getElementById('fpub-modal-cancel');
+  var modalSave = document.getElementById('fpub-modal-save');
+  var editFileInput = document.getElementById('fpub-edit-file');
+
+  function openEditModal(btn) {
+    document.getElementById('fpub-edit-id').value = btn.getAttribute('data-id');
+    document.getElementById('fpub-edit-title').value = btn.getAttribute('data-title');
+    document.getElementById('fpub-edit-link').value = btn.getAttribute('data-link');
+    document.getElementById('fpub-edit-description').value = btn.getAttribute('data-description');
+    document.getElementById('fpub-edit-image').value = btn.getAttribute('data-image');
+
+    var imgUrl = btn.getAttribute('data-image');
+    var previewEl = document.getElementById('fpub-edit-img-preview');
+    if (imgUrl) {
+      document.getElementById('fpub-edit-preview-img').src = imgUrl;
+      previewEl.style.display = 'block';
+    } else {
+      previewEl.style.display = 'none';
+    }
+
+    modal.style.display = 'flex';
+  }
+
+  function closeModal() { modal.style.display = 'none'; }
+  modalClose.addEventListener('click', closeModal);
+  modalCancel.addEventListener('click', closeModal);
+  document.querySelector('.fpub-modal-backdrop').addEventListener('click', closeModal);
+
+  // Handle file upload in edit modal
+  editFileInput.addEventListener('change', function() {
+    if (editFileInput.files.length > 0) {
+      var formData = new FormData();
+      formData.append('file', editFileInput.files[0]);
+      fetch(URLS.upload, { method: 'POST', body: formData })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (data.success) {
+            document.getElementById('fpub-edit-image').value = data.image_url;
+            document.getElementById('fpub-edit-preview-img').src = data.image_url;
+            document.getElementById('fpub-edit-img-preview').style.display = 'block';
+          }
+        });
+    }
+  });
+
+  modalSave.addEventListener('click', function() {
+    var id = document.getElementById('fpub-edit-id').value;
+    var formData = new FormData();
+    formData.append('id', id);
+    formData.append('title', document.getElementById('fpub-edit-title').value);
+    formData.append('link', document.getElementById('fpub-edit-link').value);
+    formData.append('description', document.getElementById('fpub-edit-description').value);
+    formData.append('image_url', document.getElementById('fpub-edit-image').value);
+
+    modalSave.disabled = true;
+    modalSave.innerHTML = '<i class="fa fa-spinner fa-spin"></i>';
+
+    fetch(URLS.update, { method: 'POST', body: formData })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.id) {
+          // Refresh page to show changes
+          window.location.reload();
+        } else {
+          alert('Error: ' + (data.error || ''));
+          modalSave.disabled = false;
+          modalSave.innerHTML = '<i class="fa fa-save"></i> {{ _("Save Changes") }}';
+        }
+      });
+  });
+
+  // ── Drag & Drop Reorder ──
+  var dragSrcEl = null;
+  var saveOrderBtn = document.getElementById('fpub-save-order-btn');
+  var orderChanged = false;
+
+  function initDragForCard(card) {
+    card.addEventListener('dragstart', function(e) {
+      dragSrcEl = card;
+      card.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', card.getAttribute('data-id'));
+    });
+    card.addEventListener('dragend', function() {
+      card.classList.remove('dragging');
+      document.querySelectorAll('.fpub-card').forEach(function(c) { c.classList.remove('drag-over'); });
+    });
+    card.addEventListener('dragover', function(e) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      if (card !== dragSrcEl) card.classList.add('drag-over');
+    });
+    card.addEventListener('dragleave', function() { card.classList.remove('drag-over'); });
+    card.addEventListener('drop', function(e) {
+      e.preventDefault();
+      card.classList.remove('drag-over');
+      if (dragSrcEl && dragSrcEl !== card) {
+        var list = document.getElementById('fpub-list');
+        var allCards = Array.from(list.querySelectorAll('.fpub-card'));
+        var srcIdx = allCards.indexOf(dragSrcEl);
+        var tgtIdx = allCards.indexOf(card);
+        if (srcIdx < tgtIdx) {
+          list.insertBefore(dragSrcEl, card.nextSibling);
+        } else {
+          list.insertBefore(dragSrcEl, card);
+        }
+        orderChanged = true;
+        saveOrderBtn.style.display = 'inline-block';
+      }
+    });
+  }
+
+  document.querySelectorAll('.fpub-card').forEach(function(card) {
+    initDragForCard(card);
+  });
+
+  saveOrderBtn.addEventListener('click', function() {
+    var cards = document.querySelectorAll('.fpub-card');
+    var order = [];
+    cards.forEach(function(c) { order.push(c.getAttribute('data-id')); });
+
+    saveOrderBtn.disabled = true;
+    saveOrderBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> {{ _("Saving...") }}';
+
+    fetch(URLS.reorder, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ order: order })
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (data.success) {
+        saveOrderBtn.innerHTML = '<i class="fa fa-check"></i> {{ _("Saved!") }}';
+        saveOrderBtn.classList.add('btn-success');
+        setTimeout(function() {
+          saveOrderBtn.style.display = 'none';
+          saveOrderBtn.innerHTML = '<i class="fa fa-save"></i> {{ _("Save Order") }}';
+          saveOrderBtn.classList.remove('btn-success');
+          saveOrderBtn.disabled = false;
+        }, 2000);
+      } else {
+        saveOrderBtn.innerHTML = '<i class="fa fa-save"></i> {{ _("Save Order") }}';
+        saveOrderBtn.disabled = false;
+        alert('Error: ' + (data.error || ''));
+      }
+    });
+  });
+
+  // ── Helpers ──
+  function updateCount(delta) {
+    var el = document.getElementById('fpub-count');
+    el.textContent = Math.max(0, parseInt(el.textContent || '0') + delta);
+  }
+
+  function checkEmpty() {
+    var list = document.getElementById('fpub-list');
+    if (!list.querySelector('.fpub-card')) {
+      list.innerHTML = '<div class="fpub-empty-state" id="fpub-empty">'
+        + '<section class="module module-narrow"><div class="module-content text-center" style="padding: 4rem 2.5rem;">'
+        + '<div class="fpub-empty-icon"><i class="fa fa-book fa-4x"></i></div>'
+        + '<h3>{{ _("No Featured Publications") }}</h3>'
+        + '<p class="text-muted">{{ _("Use the form above to add publications to the homepage.") }}</p>'
+        + '</div></section></div>';
+    }
+  }
+
+  function esc(str) {
+    if (!str) return '';
+    var div = document.createElement('div');
+    div.appendChild(document.createTextNode(str));
+    return div.innerHTML;
+  }
+})();
+</script>
+{% endblock %}

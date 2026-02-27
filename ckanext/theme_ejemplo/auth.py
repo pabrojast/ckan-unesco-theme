@@ -80,3 +80,25 @@ def featured_dataset_add(context, data_dict):
 
 def featured_dataset_remove(context, data_dict):
     return _sysadmin_only(context, data_dict)
+
+
+# ── Featured Publication Auth ────────────────────────────────────────────────
+
+def featured_publication_list(context, data_dict):
+    return _sysadmin_only(context, data_dict)
+
+
+def featured_publication_create(context, data_dict):
+    return _sysadmin_only(context, data_dict)
+
+
+def featured_publication_update(context, data_dict):
+    return _sysadmin_only(context, data_dict)
+
+
+def featured_publication_delete(context, data_dict):
+    return _sysadmin_only(context, data_dict)
+
+
+def featured_publication_reorder(context, data_dict):
+    return _sysadmin_only(context, data_dict)

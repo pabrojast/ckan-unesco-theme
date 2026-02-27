@@ -501,3 +501,95 @@ def featured_dataset_remove(context, data_dict):
         {'id': pkg['id'], 'tags': tags}
     )
     return {'success': True}
+
+
+# ── Featured Publication Actions ─────────────────────────────────────────────
+
+from ckanext.theme_ejemplo.model import FeaturedPublication, init_featured_publications_db
+
+
+@toolkit.side_effect_free
+def featured_publication_list(context, data_dict):
+    """List all featured publications."""
+    toolkit.check_access('featured_publication_list', context, data_dict)
+    init_featured_publications_db()
+    pubs = FeaturedPublication.get_all()
+    return {'results': [p.as_dict() for p in pubs], 'count': len(pubs)}
+
+
+def featured_publication_create(context, data_dict):
+    """Create a new featured publication. Sysadmin only."""
+    toolkit.check_access('featured_publication_create', context, data_dict)
+    init_featured_publications_db()
+
+    title = toolkit.get_or_bust(data_dict, 'title')
+    link = toolkit.get_or_bust(data_dict, 'link')
+    description = data_dict.get('description', u'')
+    image_url = data_dict.get('image_url', u'')
+    display_order = int(data_dict.get('display_order', 0))
+
+    pub = FeaturedPublication(
+        title=title,
+        link=link,
+        description=description,
+        image_url=image_url,
+        display_order=display_order,
+    )
+    model.Session.add(pub)
+    model.Session.commit()
+    return pub.as_dict()
+
+
+def featured_publication_update(context, data_dict):
+    """Update a featured publication. Sysadmin only."""
+    toolkit.check_access('featured_publication_update', context, data_dict)
+    init_featured_publications_db()
+
+    pub_id = toolkit.get_or_bust(data_dict, 'id')
+    pub = FeaturedPublication.get(pub_id)
+    if not pub:
+        raise toolkit.ObjectNotFound('Featured publication not found')
+
+    for field in ('title', 'link', 'description', 'image_url'):
+        if field in data_dict:
+            setattr(pub, field, data_dict[field])
+    if 'display_order' in data_dict:
+        pub.display_order = int(data_dict['display_order'])
+
+    model.Session.commit()
+    return pub.as_dict()
+
+
+def featured_publication_delete(context, data_dict):
+    """Delete a featured publication. Sysadmin only."""
+    toolkit.check_access('featured_publication_delete', context, data_dict)
+    init_featured_publications_db()
+
+    pub_id = toolkit.get_or_bust(data_dict, 'id')
+    pub = FeaturedPublication.get(pub_id)
+    if not pub:
+        raise toolkit.ObjectNotFound('Featured publication not found')
+
+    model.Session.delete(pub)
+    model.Session.commit()
+    return {'success': True}
+
+
+def featured_publication_reorder(context, data_dict):
+    """Reorder featured publications. Sysadmin only.
+    Expects 'order': list of publication IDs in desired order.
+    """
+    toolkit.check_access('featured_publication_reorder', context, data_dict)
+    init_featured_publications_db()
+
+    order = data_dict.get('order', [])
+    if not order:
+        return {'success': True}
+
+    for idx, pub_id in enumerate(order):
+        pub = FeaturedPublication.get(pub_id)
+        if pub:
+            pub.display_order = idx
+
+    model.Session.commit()
+    return {'success': True}

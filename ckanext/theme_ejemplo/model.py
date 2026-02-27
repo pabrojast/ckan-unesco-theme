@@ -5,7 +5,7 @@ import datetime
 import uuid
 import logging
 
-from sqlalchemy import Table, Column, UnicodeText, DateTime
+from sqlalchemy import Table, Column, UnicodeText, DateTime, Integer
 
 import ckan.model as model
 import ckan.model.meta as meta
@@ -111,3 +111,79 @@ def define_membership_request_table():
         meta.registry.map_imperatively(MembershipRequest, membership_request_table)
     except AttributeError:
         meta.mapper(MembershipRequest, membership_request_table)
+
+
+# ── Featured Publication Model ───────────────────────────────────────────────
+
+featured_publication_table = None
+
+
+class FeaturedPublication(model.DomainObject):
+    """A featured UNESDOC publication for the homepage."""
+
+    def __init__(self, title, link, description=u'', image_url=u'',
+                 display_order=0):
+        self.id = str(uuid.uuid4())
+        self.title = title
+        self.link = link
+        self.description = description
+        self.image_url = image_url
+        self.display_order = display_order
+        self.created_at = datetime.datetime.utcnow()
+
+    @classmethod
+    def get(cls, id):
+        return meta.Session.query(cls).get(id)
+
+    @classmethod
+    def get_all(cls):
+        return meta.Session.query(cls).order_by(
+            cls.display_order.asc(), cls.created_at.desc()
+        ).all()
+
+    def as_dict(self):
+        return {
+            'id': self.id,
+            'title': self.title,
+            'description': self.description,
+            'image_url': self.image_url,
+            'link': self.link,
+            'display_order': self.display_order,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+        }
+
+
+def init_featured_publications_db():
+    """Create the featured_publication table if it doesn't exist."""
+    if featured_publication_table is None:
+        define_featured_publication_table()
+
+    from sqlalchemy import inspect as sa_inspect
+    inspector = sa_inspect(meta.engine)
+    if 'featured_publication' not in inspector.get_table_names():
+        featured_publication_table.create(meta.engine)
+        log.info(u'featured_publication table created')
+    else:
+        log.debug(u'featured_publication table already exists')
+
+
+def define_featured_publication_table():
+    global featured_publication_table
+
+    featured_publication_table = Table(
+        'featured_publication',
+        meta.metadata,
+        Column('id', UnicodeText, primary_key=True,
+               default=lambda: str(uuid.uuid4())),
+        Column('title', UnicodeText, nullable=False),
+        Column('description', UnicodeText, default=u''),
+        Column('image_url', UnicodeText, default=u''),
+        Column('link', UnicodeText, nullable=False),
+        Column('display_order', Integer, default=0),
+        Column('created_at', DateTime, default=datetime.datetime.utcnow),
+    )
+
+    try:
+        meta.registry.map_imperatively(FeaturedPublication, featured_publication_table)
+    except AttributeError:
+        meta.mapper(FeaturedPublication, featured_publication_table)

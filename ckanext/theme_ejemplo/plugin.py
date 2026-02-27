@@ -287,6 +287,8 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
 
             # Create membership_request table if needed
             membership_model.init_db()
+            # Create featured_publication table if needed
+            membership_model.init_featured_publications_db()
             
         def get_blueprint(self):
             
@@ -497,6 +499,44 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 methods=['POST']
             )
 
+            # Featured publications admin panel (sysadmin only)
+            blueprint.add_url_rule(
+                u'/ckan-admin/featured-publications',
+                u'featured_publications_admin',
+                MyLogica.featured_publications_admin,
+                methods=['GET']
+            )
+            blueprint.add_url_rule(
+                u'/ckan-admin/featured-publications/create',
+                u'featured_publications_create',
+                MyLogica.featured_publications_create,
+                methods=['POST']
+            )
+            blueprint.add_url_rule(
+                u'/ckan-admin/featured-publications/update',
+                u'featured_publications_update',
+                MyLogica.featured_publications_update,
+                methods=['POST']
+            )
+            blueprint.add_url_rule(
+                u'/ckan-admin/featured-publications/delete',
+                u'featured_publications_delete',
+                MyLogica.featured_publications_delete,
+                methods=['POST']
+            )
+            blueprint.add_url_rule(
+                u'/ckan-admin/featured-publications/reorder',
+                u'featured_publications_reorder',
+                MyLogica.featured_publications_reorder,
+                methods=['POST']
+            )
+            blueprint.add_url_rule(
+                u'/ckan-admin/featured-publications/upload-image',
+                u'featured_publications_upload_image',
+                MyLogica.featured_publications_upload_image,
+                methods=['POST']
+            )
+
             # Override CKAN core dataset read view with optimized version
             # that uses batch SQL for resource views instead of N+1 queries
             blueprint.add_url_rule(
@@ -531,6 +571,7 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                  'get_user_admin_orgs': helpers.get_user_admin_orgs,
                  'has_pending_membership_request': helpers.has_pending_membership_request,
                  'get_recently_added': self.get_recently_added,
+                 'get_featured_publications': helpers.get_featured_publications,
                  }
 
         # IActions
@@ -547,6 +588,11 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 'featured_dataset_list': custom_actions.featured_dataset_list,
                 'featured_dataset_add': custom_actions.featured_dataset_add,
                 'featured_dataset_remove': custom_actions.featured_dataset_remove,
+                'featured_publication_list': custom_actions.featured_publication_list,
+                'featured_publication_create': custom_actions.featured_publication_create,
+                'featured_publication_update': custom_actions.featured_publication_update,
+                'featured_publication_delete': custom_actions.featured_publication_delete,
+                'featured_publication_reorder': custom_actions.featured_publication_reorder,
             }
 
         # IAuthFunctions
@@ -559,6 +605,11 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 'featured_dataset_list': custom_auth.featured_dataset_list,
                 'featured_dataset_add': custom_auth.featured_dataset_add,
                 'featured_dataset_remove': custom_auth.featured_dataset_remove,
+                'featured_publication_list': custom_auth.featured_publication_list,
+                'featured_publication_create': custom_auth.featured_publication_create,
+                'featured_publication_update': custom_auth.featured_publication_update,
+                'featured_publication_delete': custom_auth.featured_publication_delete,
+                'featured_publication_reorder': custom_auth.featured_publication_reorder,
             }
         
         def get_member_states_groups_list(self):
