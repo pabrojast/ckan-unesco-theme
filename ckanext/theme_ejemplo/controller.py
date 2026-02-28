@@ -739,6 +739,7 @@ class MyLogica():
                 action = request.form.get('action', '')
                 request_id = request.form.get('request_id', '')
                 admin_note = request.form.get('admin_note', '')
+                role = request.form.get('role', 'member')
 
                 if action in ('approve', 'reject') and request_id:
                     try:
@@ -748,6 +749,7 @@ class MyLogica():
                                 'id': request_id,
                                 'action': action,
                                 'admin_note': admin_note,
+                                'role': role,
                             }
                         )
                         if action == 'approve':

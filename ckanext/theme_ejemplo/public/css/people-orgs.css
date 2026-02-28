@@ -1136,6 +1136,42 @@
   background: #f8d7da;
   color: #721c24;
 }
+.status-role {
+  background: #e8f4f8;
+  color: #0072BC;
+}
+
+/* Approve form with role selector */
+.approve-form {
+  display: inline;
+}
+.approve-role-group {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+.role-label {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #6c757d;
+  margin: 0;
+  white-space: nowrap;
+}
+.role-select {
+  padding: 0.3rem 0.5rem;
+  font-size: 0.82rem;
+  border: 1px solid #dee2e6;
+  border-radius: 20px;
+  background: #fff;
+  color: #2c3e50;
+  cursor: pointer;
+  outline: none;
+  transition: border-color 0.2s;
+}
+.role-select:focus {
+  border-color: #0072BC;
+  box-shadow: 0 0 0 0.15rem rgba(0, 114, 188, 0.15);
+}
 .history-card-meta {
   display: flex;
   gap: 1rem;

@@ -342,6 +342,7 @@ def membership_request_list(context, data_dict):
             'handler_name': (handler_obj.fullname or handler_obj.name) if handler_obj else u'',
             'handled_at': req.handled_at.isoformat() if req.handled_at else None,
             'admin_note': req.admin_note or u'',
+            'role': req.role or u'member',
             'created_at': req.created_at.isoformat() if req.created_at else None,
         })
 
@@ -365,6 +366,9 @@ def membership_request_process(context, data_dict):
     request_id = toolkit.get_or_bust(data_dict, 'id')
     action = toolkit.get_or_bust(data_dict, 'action')
     admin_note = data_dict.get('admin_note', u'')
+    role = data_dict.get('role', 'member')
+    if role not in ('member', 'editor', 'admin'):
+        role = 'member'
 
     if action not in ('approve', 'reject'):
         raise toolkit.ValidationError({'action': [_('Must be "approve" or "reject"')]})
@@ -386,6 +390,7 @@ def membership_request_process(context, data_dict):
     req.admin_note = admin_note
 
     if action == 'approve':
+        req.role = role
         # Add user as member of the organization
         toolkit.get_action('member_create')(
             {'ignore_auth': True},
@@ -393,7 +398,7 @@ def membership_request_process(context, data_dict):
                 'id': req.organization_id,
                 'object': req.user_id,
                 'object_type': 'user',
-                'capacity': 'member',
+                'capacity': role,
             }
         )
 

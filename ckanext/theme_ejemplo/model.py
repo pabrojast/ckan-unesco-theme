@@ -31,6 +31,7 @@ class MembershipRequest(model.DomainObject):
         self.handled_by = None
         self.handled_at = None
         self.admin_note = u''
+        self.role = u'member'
         self.created_at = datetime.datetime.utcnow()
 
     @classmethod
@@ -84,6 +85,13 @@ def init_db():
         membership_request_table.create(engine)
         log.info(u'membership_request table created')
     else:
+        # Migrate: add 'role' column if missing
+        columns = [c['name'] for c in inspector.get_columns('membership_request')]
+        if 'role' not in columns:
+            engine.execute(
+                "ALTER TABLE membership_request ADD COLUMN role TEXT DEFAULT 'member'"
+            )
+            log.info(u'membership_request table: added role column')
         log.debug(u'membership_request table already exists')
 
 
@@ -102,6 +110,7 @@ def define_membership_request_table():
         Column('handled_by', UnicodeText, nullable=True),
         Column('handled_at', DateTime, nullable=True),
         Column('admin_note', UnicodeText, default=u''),
+        Column('role', UnicodeText, default=u'member'),
         Column('created_at', DateTime, default=datetime.datetime.utcnow),
     )
 

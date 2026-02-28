@@ -69,13 +69,21 @@
             {% endif %}
 
             <div class="request-actions">
-              <form method="POST" style="display:inline;">
+              <form method="POST" class="approve-form">
                 {{ h.csrf_input() }}
                 <input type="hidden" name="request_id" value="{{ req.id }}" />
                 <input type="hidden" name="action" value="approve" />
-                <button type="submit" class="btn-request btn-request-approve" title="{{ _('Approve') }}">
-                  <i class="fa fa-check"></i> {{ _('Approve') }}
-                </button>
+                <div class="approve-role-group">
+                  <label class="role-label" for="role-{{ req.id }}">{{ _('Role') }}:</label>
+                  <select name="role" id="role-{{ req.id }}" class="role-select">
+                    <option value="member" selected>Member</option>
+                    <option value="editor">Editor</option>
+                    <option value="admin">Admin</option>
+                  </select>
+                  <button type="submit" class="btn-request btn-request-approve" title="{{ _('Approve') }}">
+                    <i class="fa fa-check"></i> {{ _('Approve') }}
+                  </button>
+                </div>
               </form>
               <button type="button" class="btn-request btn-request-reject reject-toggle" data-request-id="{{ req.id }}" title="{{ _('Reject') }}">
                 <i class="fa fa-times"></i> {{ _('Reject') }}
@@ -135,6 +143,9 @@
               </a>
               {% if req.status == 'approved' %}
                 <span class="status-pill status-approved"><i class="fa fa-check"></i> {{ _('Approved') }}</span>
+                {% if req.get('role') and req.role != 'member' %}
+                  <span class="status-pill status-role"><i class="fa fa-id-badge"></i> {{ req.role|capitalize }}</span>
+                {% endif %}
               {% else %}
                 <span class="status-pill status-rejected"><i class="fa fa-times"></i> {{ _('Rejected') }}</span>
               {% endif %}
