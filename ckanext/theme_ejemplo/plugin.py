@@ -541,49 +541,10 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
             # Flask does not capture "new" as a dataset id.  We delegate to
             # the scheming CreateView which is what IDatasetForm would use.
             from ckanext.scheming.views import SchemingCreateView
-            from flask import request as flask_request
-            from flask.views import MethodView
-            from ckan.common import current_user
-
-            class DebugCreateView(SchemingCreateView):
-                def post(self, package_type):
-                    _log = logging.getLogger(__name__)
-                    _log.warning(
-                        "[DEBUG CREATE] POST /dataset/new user=%s is_authenticated=%s",
-                        getattr(current_user, 'name', None),
-                        getattr(current_user, 'is_authenticated', None),
-                    )
-                    # Monkey-patch check_access to log auth calls
-                    import ckan.logic as _logic
-                    _orig_check = _logic.check_access
-                    def _debug_check(action, context, data_dict=None):
-                        try:
-                            result = _orig_check(action, context, data_dict)
-                            _log.warning("[DEBUG AUTH] %s OK user=%s", action, context.get('user'))
-                            return result
-                        except _logic.NotAuthorized as e:
-                            _log.error("[DEBUG AUTH] %s DENIED user=%s msg=%s", action, context.get('user'), e)
-                            raise
-                    _logic.check_access = _debug_check
-                    try:
-                        result = super().post(package_type)
-                        status = getattr(result, 'status_code', '?')
-                        _log.warning("[DEBUG CREATE] Result status=%s", status)
-                        return result
-                    except Exception as e:
-                        import traceback
-                        _log.error(
-                            "[DEBUG CREATE] Exception in post: %s: %s\n%s",
-                            type(e).__name__, e, traceback.format_exc()
-                        )
-                        raise
-                    finally:
-                        _logic.check_access = _orig_check
-
             blueprint.add_url_rule(
                 u'/dataset/new',
                 u'dataset_new',
-                DebugCreateView.as_view(str(u'theme_dataset_new')),
+                SchemingCreateView.as_view(str(u'theme_dataset_new')),
                 methods=['GET', 'POST'],
                 defaults={u'package_type': u'dataset'},
             )
