@@ -1086,17 +1086,6 @@ class MyLogica():
             per resource (N+1 query problem). Uses a single batch SQL query
             instead.
             """
-            # Delegate reserved CKAN dataset paths (e.g. /dataset/new)
-            # to the original CKAN views to avoid shadowing IDatasetForm routes
-            _RESERVED_PATHS = frozenset({
-                'new', 'activity', 'changes', 'collaborators',
-                'delete', 'edit', 'follow', 'followers',
-                'groups', 'resources', 'unfollow',
-            })
-            if id in _RESERVED_PATHS:
-                from ckan.views.dataset import read as _ckan_read
-                return _ckan_read(package_type, id)
-
             from flask import g
             from ckan.logic import get_action, NotFound, NotAuthorized
             from ckan.lib.plugins import lookup_package_plugin

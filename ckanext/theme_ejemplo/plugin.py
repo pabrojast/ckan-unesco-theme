@@ -537,6 +537,18 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 methods=['POST']
             )
 
+            # Register /dataset/new explicitly BEFORE /dataset/<id> so that
+            # Flask does not capture "new" as a dataset id.  We delegate to
+            # the scheming CreateView which is what IDatasetForm would use.
+            from ckanext.scheming.views import SchemingCreateView
+            blueprint.add_url_rule(
+                u'/dataset/new',
+                u'dataset_new',
+                SchemingCreateView.as_view(str(u'theme_dataset_new')),
+                methods=['GET', 'POST'],
+                defaults={u'package_type': u'dataset'},
+            )
+
             # Override CKAN core dataset read view with optimized version
             # that uses batch SQL for resource views instead of N+1 queries
             blueprint.add_url_rule(
