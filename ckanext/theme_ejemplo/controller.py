@@ -528,20 +528,25 @@ class MyLogica():
                     context, {'id': name}
                 )
 
-                # Try to get pages tagged with org name
                 news = []
                 try:
-                    pages = toolkit.get_action('ckanext_pages_list')(
-                        context, {'page_type': 'page'}
-                    )
-                    org_name = org.get('name', '')
-                    for p in pages:
-                        extras = p.get('extras', {})
-                        page_org = extras.get('organization', '') if isinstance(extras, dict) else ''
-                        if page_org == org_name or org_name in p.get('name', ''):
-                            news.append(p)
-                except Exception:
-                    pass
+                    from ckanext.pages.db import Page
+                    org_id = org.get('id', '')
+                    pages = model.Session.query(Page).filter(
+                        Page.page_type == 'water-news',
+                        Page.ihp_organization == org_id,
+                    ).order_by(Page.created.desc()).all()
+                    for pg in pages:
+                        news.append({
+                            'title': pg.title,
+                            'name': pg.name,
+                            'content': pg.content,
+                            'publish_date': pg.publish_date.isoformat() if pg.publish_date else None,
+                            'created': pg.created.isoformat() if pg.created else None,
+                            'page_type': pg.page_type,
+                        })
+                except Exception as e:
+                    log.warning(f"Error fetching news for org {name}: {e}")
 
                 return render_template(
                     "organization/news.html",
@@ -565,18 +570,23 @@ class MyLogica():
 
                 events = []
                 try:
-                    pages = toolkit.get_action('ckanext_pages_list')(
-                        context, {'page_type': 'page'}
-                    )
-                    org_name = org.get('name', '')
-                    for p in pages:
-                        extras = p.get('extras', {})
-                        page_org = extras.get('organization', '') if isinstance(extras, dict) else ''
-                        page_type = extras.get('type', '') if isinstance(extras, dict) else ''
-                        if (page_org == org_name or org_name in p.get('name', '')) and page_type == 'event':
-                            events.append(p)
-                except Exception:
-                    pass
+                    from ckanext.pages.db import Page
+                    org_id = org.get('id', '')
+                    pages = model.Session.query(Page).filter(
+                        Page.page_type == 'water-events',
+                        Page.ihp_organization == org_id,
+                    ).order_by(Page.created.desc()).all()
+                    for pg in pages:
+                        events.append({
+                            'title': pg.title,
+                            'name': pg.name,
+                            'content': pg.content,
+                            'publish_date': pg.publish_date.isoformat() if pg.publish_date else None,
+                            'created': pg.created.isoformat() if pg.created else None,
+                            'page_type': pg.page_type,
+                        })
+                except Exception as e:
+                    log.warning(f"Error fetching events for org {name}: {e}")
 
                 return render_template(
                     "organization/events.html",

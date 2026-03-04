@@ -10,7 +10,7 @@
       {% for item in news %}
         <div class="news-item">
           <h3>
-            <a href="{{ h.url_for('pages.show', page='/' + item.name) }}">{{ item.title }}</a>
+            <a href="/water-news/{{ item.name }}">{{ item.title }}</a>
           </h3>
           {% if item.publish_date or item.created %}
             <p class="news-date">

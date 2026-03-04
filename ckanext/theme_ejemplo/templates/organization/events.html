@@ -8,7 +8,7 @@
   {% if events %}
     <div class="org-grid">
       {% for event in events %}
-        <a href="{{ h.url_for('pages.show', page='/' + event.name) }}" class="org-grid-card">
+        <a href="/water-events/{{ event.name }}" class="org-grid-card">
           <div class="org-grid-card-img">
             <i class="fa fa-calendar-alt"></i>
           </div>
