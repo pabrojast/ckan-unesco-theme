@@ -49,17 +49,30 @@ def timed_lru_cache(seconds: int, maxsize: int = 128):
 
 @timed_lru_cache(seconds=300, maxsize=10)  # Cache de 5 minutos
 def get_member_states_groups():
-    """Obtiene los grupos hijos de member-states con cache"""
+    """Obtiene los grupos hijos de member-states con cache.
+    Uses a direct DB query to avoid N+1 overhead from group_show(include_groups=True).
+    """
     try:
-        member_states = toolkit.get_action('group_show')(
-            data_dict={'id': 'member-states', 'include_groups': True}
+        ms_group = model.Group.get('member-states')
+        if not ms_group:
+            return ['member-states']
+        members = (
+            model.Session.query(model.Group.name)
+            .join(model.Member, model.Member.table_id == model.Group.id)
+            .filter(
+                model.Member.group_id == ms_group.id,
+                model.Member.state == 'active',
+                model.Member.table_name == 'group',
+                model.Group.state == 'active',
+            )
+            .all()
         )
-        group_names = [item['name'] for item in member_states.get("groups", [])]
-        group_names.append('member-states')  # Añadir el grupo principal
+        group_names = [g.name for g in members if g.name]
+        group_names.append('member-states')
         return group_names
     except Exception as e:
         log.error(f"Error obteniendo member-states: {e}")
-        return ['member-states']  # Retornar al menos el grupo principal
+        return ['member-states']
 
 @timed_lru_cache(seconds=300, maxsize=20)  # Cache de 5 minutos
 def get_all_groups_cached(sort_by=None):
@@ -101,7 +114,7 @@ class MyLogica():
                                 'include_dataset_count': True,
                                 'all_fields': True,
                                 'groups': initiatives_groups,
-                                'include_groups': True,
+                                'include_groups': False,
                                 'limit': items_per_page,
                                 'offset': items_per_page * (page - 1),
                                 'sort': sort_by
@@ -131,7 +144,7 @@ class MyLogica():
                                 'include_dataset_count': True,
                                 'all_fields': True,
                                 'groups': page_groups,
-                                'include_groups': True,
+                                'include_groups': False,
                                 'limit': items_per_page,
                                 'sort': sort_by
                             }
@@ -201,7 +214,7 @@ class MyLogica():
                                 'include_dataset_count': True,
                                 'all_fields': True,
                                 'groups': member_states_only,
-                                'include_groups': True,
+                                'include_groups': False,
                                 'limit': items_per_page,
                                 'offset': items_per_page * (page - 1),
                                 'sort': sort_by
@@ -232,7 +245,7 @@ class MyLogica():
                                     'include_dataset_count': True,
                                     'all_fields': True,
                                     'groups': page_groups,
-                                    'include_groups': True,
+                                    'include_groups': False,
                                     'limit': items_per_page,
                                     'sort': sort_by
                                 }
@@ -388,10 +401,19 @@ class MyLogica():
                 total = result.get('count', 0)
 
                 # Get filter options
-                orgs = toolkit.get_action('organization_list')(
-                    {'ignore_auth': True},
-                    {'all_fields': True, 'sort': 'title asc'}
-                )
+                try:
+                    org_query = (
+                        model.Session.query(model.Group.id, model.Group.name, model.Group.title)
+                        .filter(model.Group.type == 'organization', model.Group.state == 'active')
+                        .order_by(model.Group.title)
+                        .all()
+                    )
+                    orgs = [{'id': o.id, 'name': o.name, 'title': o.title or o.name, 'display_name': o.title or o.name} for o in org_query]
+                except Exception:
+                    orgs = toolkit.get_action('organization_list')(
+                        {'ignore_auth': True},
+                        {'all_fields': True, 'sort': 'title asc'}
+                    )
 
                 from ckanext.theme_ejemplo.helpers import get_country_list
                 countries = get_country_list()
@@ -807,9 +829,23 @@ class MyLogica():
             # Get orgs where user is admin
             if current_user.sysadmin:
                 # Sysadmins see all orgs with pending requests
-                all_orgs = toolkit.get_action('organization_list')(
-                    {'ignore_auth': True}, {'all_fields': True, 'limit': 1000}
-                )
+                try:
+                    org_rows = (
+                        model.Session.query(
+                            model.Group.id, model.Group.name, model.Group.title, model.Group.image_url
+                        )
+                        .filter(model.Group.type == 'organization', model.Group.state == 'active')
+                        .all()
+                    )
+                    all_orgs = [
+                        {'id': o.id, 'name': o.name, 'title': o.title or o.name,
+                         'image_display_url': o.image_url or ''}
+                        for o in org_rows
+                    ]
+                except Exception:
+                    all_orgs = toolkit.get_action('organization_list')(
+                        {'ignore_auth': True}, {'all_fields': True, 'limit': 1000}
+                    )
             else:
                 all_orgs = toolkit.get_action('organization_list_for_user')(
                     {'user': current_user.name},

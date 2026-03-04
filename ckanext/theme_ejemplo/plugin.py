@@ -625,20 +625,33 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
             }
         
         def get_member_states_groups_list(self):
-            """Obtiene los grupos de member-states como lista de tuplas (id, name)"""
+            """Obtiene los grupos de member-states como lista de tuplas (name, display_name).
+            Uses a direct DB query to avoid N+1 overhead from group_show(include_groups=True).
+            """
             cache_ttl = _get_cache_ttl('ckanext.theme_ejemplo.groups_cache_ttl', 300)
             now = time.time()
             if cache_ttl > 0 and _member_states_cache['data'] is not None and now < _member_states_cache['expires']:
                 return _member_states_cache['data']
 
             try:
-                member_states = toolkit.get_action('group_show')(
-                    {'ignore_auth': True},
-                    {'id': 'member-states', 'include_groups': True}
+                from ckan import model as ckan_model
+                ms_group = ckan_model.Group.get('member-states')
+                if not ms_group:
+                    raise toolkit.ObjectNotFound("Group 'member-states' not found")
+                members = (
+                    ckan_model.Session.query(ckan_model.Group.name, ckan_model.Group.title)
+                    .join(ckan_model.Member, ckan_model.Member.table_id == ckan_model.Group.id)
+                    .filter(
+                        ckan_model.Member.group_id == ms_group.id,
+                        ckan_model.Member.state == 'active',
+                        ckan_model.Member.table_name == 'group',
+                        ckan_model.Group.state == 'active',
+                    )
+                    .order_by(ckan_model.Group.title)
+                    .all()
                 )
-                groups = member_states.get("groups", [])
-                log.debug(f"Member states groups found: {len(groups)}")
-                result = [(g['name'], g.get('display_name', g['name'])) for g in groups]
+                result = [(g.name, g.title or g.name) for g in members if g.name]
+                log.debug(f"Member states groups found: {len(result)}")
                 if cache_ttl > 0:
                     _member_states_cache['data'] = result
                     _member_states_cache['expires'] = now + cache_ttl
@@ -655,30 +668,33 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 return _member_states_cache['data'] or []
         
         def get_initiatives_groups_list(self):
-            """Obtiene los grupos de initiatives (excluyendo member-states)"""
+            """Obtiene los grupos de initiatives (excluyendo member-states).
+            Uses a direct DB query to avoid N+1 overhead from group_list(all_fields=True).
+            """
             cache_ttl = _get_cache_ttl('ckanext.theme_ejemplo.groups_cache_ttl', 300)
             now = time.time()
             if cache_ttl > 0 and _initiatives_cache['data'] is not None and now < _initiatives_cache['expires']:
                 return _initiatives_cache['data']
 
             try:
+                from ckan import model as ckan_model
                 # Intentar obtener member-states group names
                 member_states = self.get_member_states_groups_list()
                 member_states_names = {name for name, _ in member_states}
                 member_states_names.add('member-states')
                 
-                # Obtener todos los grupos
-                all_groups = toolkit.get_action('group_list')(
-                    {'ignore_auth': True},
-                    {'all_fields': True, 'include_dataset_count': True}
+                groups = (
+                    ckan_model.Session.query(ckan_model.Group.name, ckan_model.Group.title)
+                    .filter(
+                        ckan_model.Group.type == 'group',
+                        ckan_model.Group.state == 'active',
+                        ~ckan_model.Group.name.in_(member_states_names) if member_states_names else True,
+                    )
+                    .order_by(ckan_model.Group.title)
+                    .all()
                 )
                 
-                # Filtrar para obtener solo initiatives
-                initiatives = [
-                    (g['name'], g.get('display_name', g['name'])) 
-                    for g in all_groups 
-                    if g['name'] not in member_states_names
-                ]
+                initiatives = [(g.name, g.title or g.name) for g in groups]
                 log.debug(f"Initiatives groups found: {len(initiatives)}")
                 if cache_ttl > 0:
                     _initiatives_cache['data'] = initiatives
