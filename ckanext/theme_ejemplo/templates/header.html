@@ -12,11 +12,36 @@
             <span class="text">{{ _('Admin') }}</span>
           </a>
         </li>
+        {% set _pw = h.get_pending_water_count() if 'get_pending_water_count' in h %}
+        {% set _po = h.get_pending_oss_count() if 'get_pending_oss_count' in h %}
+        {% set _ps = h.get_pending_stories_count() if 'get_pending_stories_count' in h %}
+        {% if _pw %}
         <li>
-          <a href="#" title="{{ _('Approval Workflow') }}">
-            <i class="fa fa-list"></i>
+          <a href="{{ h.url_for('pages.water_admin_dashboard') }}" title="{{ _('Pending water family approvals') }}" style="position: relative; display: inline-block;">
+            <i class="fa fa-tint" aria-hidden="true"></i>
+            <span class="text">{{ _('Water') }}</span>
+            <span style="position: absolute; top: -4px; right: -8px; background: #dc3545; color: #fff; border-radius: 50%; font-size: 10px; min-width: 18px; height: 18px; line-height: 18px; text-align: center; padding: 0 4px; font-weight: 700; box-shadow: 0 1px 3px rgba(0,0,0,0.3);">{{ _pw }}</span>
           </a>
         </li>
+        {% endif %}
+        {% if _po %}
+        <li>
+          <a href="{{ h.url_for('pages.open_source_admin_dashboard') }}" title="{{ _('Pending open-source tools') }}" style="position: relative; display: inline-block;">
+            <i class="fa fa-code" aria-hidden="true"></i>
+            <span class="text">{{ _('Tools') }}</span>
+            <span style="position: absolute; top: -4px; right: -8px; background: #17a2b8; color: #fff; border-radius: 50%; font-size: 10px; min-width: 18px; height: 18px; line-height: 18px; text-align: center; padding: 0 4px; font-weight: 700; box-shadow: 0 1px 3px rgba(0,0,0,0.3);">{{ _po }}</span>
+          </a>
+        </li>
+        {% endif %}
+        {% if _ps %}
+        <li>
+          <a href="{{ h.url_for('data_stories.pending_review') }}" title="{{ _('Pending data stories') }}" style="position: relative; display: inline-block;">
+            <i class="fa fa-book" aria-hidden="true"></i>
+            <span class="text">{{ _('Stories') }}</span>
+            <span style="position: absolute; top: -4px; right: -8px; background: #ffc107; color: #2c3e50; border-radius: 50%; font-size: 10px; min-width: 18px; height: 18px; line-height: 18px; text-align: center; padding: 0 4px; font-weight: 700; box-shadow: 0 1px 3px rgba(0,0,0,0.3);">{{ _ps }}</span>
+          </a>
+        </li>
+        {% endif %}
         <li>
           <a href="{{ h.url_for('theme_ejemplo.featured_datasets_admin') }}" title="{{ _('Featured Datasets') }}">
             <i class="fa fa-star" aria-hidden="true"></i>
