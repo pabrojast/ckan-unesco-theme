@@ -544,6 +544,7 @@ class MyLogica():
                             'publish_date': pg.publish_date.isoformat() if pg.publish_date else None,
                             'created': pg.created.isoformat() if pg.created else None,
                             'page_type': pg.page_type,
+                            'image_url': pg.image_url if hasattr(pg, 'image_url') else None,
                         })
                 except Exception as e:
                     log.warning(f"Error fetching news for org {name}: {e}")
@@ -1009,6 +1010,7 @@ class MyLogica():
                             'publish_date': pg.publish_date.isoformat() if pg.publish_date else None,
                             'created': pg.created.isoformat() if pg.created else None,
                             'page_type': pg.page_type,
+                            'image_url': pg.image_url if hasattr(pg, 'image_url') else None,
                         })
                 except Exception as e:
                     log.warning(f"Error fetching news for user {id}: {e}")

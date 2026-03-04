@@ -17,9 +17,14 @@
     <div class="user-card-grid">
       {% for item in news %}
         <a href="/water-news/{{ item.name }}" class="user-card-item">
-          <div class="user-card-icon">
-            <i class="fa fa-newspaper"></i>
-          </div>
+          {% if item.image_url %}
+            <div class="user-card-icon user-card-icon-img" style="background-image: url('{{ item.image_url }}');">
+            </div>
+          {% else %}
+            <div class="user-card-icon">
+              <i class="fa fa-newspaper"></i>
+            </div>
+          {% endif %}
           <div class="user-card-body">
             <h3 class="user-card-title">{{ item.title }}</h3>
             {% if item.content %}
@@ -68,6 +73,10 @@
       .user-card-icon .fa {
         font-size: 32px;
         color: #999;
+      }
+      .user-card-icon-img {
+        background-size: cover;
+        background-position: center;
       }
       .user-card-body {
         flex: 1;
