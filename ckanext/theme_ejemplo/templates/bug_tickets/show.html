@@ -1,0 +1,192 @@
+{% extends "page.html" %}
+
+{% block title %}{{ ticket.title }} - {{ _('Bug Ticket') }} - {{ super() }}{% endblock %}
+
+{% block content %}
+<div class="homepage layout-1">
+  <div id="content" class="container">
+    {{ self.flash() }}
+  </div>
+
+  <div class="main">
+    <div class="container">
+
+      <div class="toolbar" role="navigation" aria-label="Breadcrumb">
+        <ol class="breadcrumb">
+          <li class="home"><a href="/"><i class="fa fa-home"></i><span> {{ _('Home') }}</span></a></li>
+          <li><a href="{{ h.url_for('theme_ejemplo.bug_tickets_list') }}">{{ _('Bug Tickets') }}</a></li>
+          <li class="active">{{ ticket.title|truncate(50) }}</li>
+        </ol>
+      </div>
+
+      <div class="row">
+        {# Main content #}
+        <div class="col-md-8">
+          <div class="module" style="background: #fff; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); margin-bottom: 1.5rem;">
+
+            {# Status badge + title #}
+            <div style="display: flex; align-items: center; gap: 1rem; margin-bottom: 1.5rem; flex-wrap: wrap;">
+              {% if ticket.status == 'open' %}
+                <span style="background: #e74c3c; color: #fff; padding: 6px 16px; border-radius: 20px; font-size: 13px; font-weight: 600;">
+                  <i class="fa fa-exclamation-circle"></i> {{ _('Open') }}
+                </span>
+              {% elif ticket.status == 'in_progress' %}
+                <span style="background: #f39c12; color: #fff; padding: 6px 16px; border-radius: 20px; font-size: 13px; font-weight: 600;">
+                  <i class="fa fa-spinner"></i> {{ _('In Progress') }}
+                </span>
+              {% elif ticket.status == 'resolved_by_user' %}
+                <span style="background: #27ae60; color: #fff; padding: 6px 16px; border-radius: 20px; font-size: 13px; font-weight: 600;">
+                  <i class="fa fa-check"></i> {{ _('Resolved by User') }}
+                </span>
+              {% elif ticket.status == 'resolved_by_admin' %}
+                <span style="background: #2980b9; color: #fff; padding: 6px 16px; border-radius: 20px; font-size: 13px; font-weight: 600;">
+                  <i class="fa fa-check-circle"></i> {{ _('Resolved by Admin') }}
+                </span>
+              {% endif %}
+              <h1 style="margin: 0; font-size: 1.6rem;">{{ ticket.title }}</h1>
+            </div>
+
+            {# Description #}
+            <div style="margin-bottom: 1.5rem;">
+              <h4 style="color: #555; margin-bottom: 0.5rem;"><i class="fa fa-align-left"></i> {{ _('Description') }}</h4>
+              <div style="background: #f8f9fa; padding: 1rem; border-radius: 6px; white-space: pre-wrap; line-height: 1.6;">{{ ticket.description }}</div>
+            </div>
+
+            {# URL #}
+            {% if ticket.url %}
+            <div style="margin-bottom: 1.5rem;">
+              <h4 style="color: #555; margin-bottom: 0.5rem;"><i class="fa fa-link"></i> {{ _('Page URL') }}</h4>
+              <a href="{{ ticket.url }}" target="_blank" style="word-break: break-all;">{{ ticket.url }}</a>
+            </div>
+            {% endif %}
+
+            {# Screenshot #}
+            {% if ticket.image_filename %}
+            <div style="margin-bottom: 1.5rem;">
+              <h4 style="color: #555; margin-bottom: 0.5rem;"><i class="fa fa-camera"></i> {{ _('Screenshot') }}</h4>
+              <a href="/uploads/bug_tickets/{{ ticket.image_filename }}" target="_blank">
+                <img src="/uploads/bug_tickets/{{ ticket.image_filename }}"
+                     alt="{{ _('Screenshot') }}"
+                     style="max-width: 100%; border-radius: 6px; border: 1px solid #ddd; cursor: zoom-in;" />
+              </a>
+            </div>
+            {% endif %}
+
+            {# Admin notes #}
+            {% if ticket.admin_notes %}
+            <div style="margin-bottom: 1.5rem;">
+              <h4 style="color: #2980b9; margin-bottom: 0.5rem;"><i class="fa fa-commenting"></i> {{ _('Admin Notes') }}</h4>
+              <div style="background: #eaf4fd; padding: 1rem; border-radius: 6px; border-left: 4px solid #2980b9; white-space: pre-wrap;">{{ ticket.admin_notes }}</div>
+            </div>
+            {% endif %}
+
+            {# Browser info (collapsible) #}
+            {% if ticket.browser_info %}
+            <div style="margin-bottom: 1rem;">
+              <details>
+                <summary style="cursor: pointer; color: #888; font-size: 13px;">
+                  <i class="fa fa-info-circle"></i> {{ _('Browser / Environment Info') }}
+                </summary>
+                <pre style="background: #f4f4f4; padding: 0.8rem; border-radius: 4px; font-size: 12px; margin-top: 0.5rem; overflow-x: auto;">{{ ticket.browser_info }}</pre>
+              </details>
+            </div>
+            {% endif %}
+
+            {# Log snapshot (collapsible) #}
+            {% if ticket.log_snapshot %}
+            <div style="margin-bottom: 1rem;">
+              <details>
+                <summary style="cursor: pointer; color: #888; font-size: 13px;">
+                  <i class="fa fa-terminal"></i> {{ _('Console Log Snapshot') }}
+                </summary>
+                <pre style="background: #2c3e50; color: #ecf0f1; padding: 0.8rem; border-radius: 4px; font-size: 12px; margin-top: 0.5rem; overflow-x: auto;">{{ ticket.log_snapshot }}</pre>
+              </details>
+            </div>
+            {% endif %}
+
+          </div>
+        </div>
+
+        {# Sidebar: metadata + actions #}
+        <div class="col-md-4">
+
+          {# Metadata #}
+          <div class="module" style="background: #fff; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); margin-bottom: 1.5rem;">
+            <h3 style="margin-top: 0; font-size: 1.1rem;"><i class="fa fa-info-circle"></i> {{ _('Details') }}</h3>
+            <dl style="margin: 0;">
+              <dt style="color: #888; font-size: 12px; margin-top: 0.8rem;">{{ _('Reported by') }}</dt>
+              <dd>{{ ticket.user_name }}</dd>
+
+              <dt style="color: #888; font-size: 12px; margin-top: 0.8rem;">{{ _('Created') }}</dt>
+              <dd>{{ h.render_datetime(ticket.created_at, with_hours=true) if ticket.created_at else '—' }}</dd>
+
+              <dt style="color: #888; font-size: 12px; margin-top: 0.8rem;">{{ _('Last Updated') }}</dt>
+              <dd>{{ h.render_datetime(ticket.updated_at, with_hours=true) if ticket.updated_at else '—' }}</dd>
+
+              {% if ticket.resolved_at %}
+              <dt style="color: #888; font-size: 12px; margin-top: 0.8rem;">{{ _('Resolved at') }}</dt>
+              <dd>{{ h.render_datetime(ticket.resolved_at, with_hours=true) }}</dd>
+              {% endif %}
+
+              {% if ticket.resolved_by_name %}
+              <dt style="color: #888; font-size: 12px; margin-top: 0.8rem;">{{ _('Resolved by') }}</dt>
+              <dd>{{ ticket.resolved_by_name }}</dd>
+              {% endif %}
+
+              <dt style="color: #888; font-size: 12px; margin-top: 0.8rem;">{{ _('Ticket ID') }}</dt>
+              <dd style="font-size: 11px; color: #aaa; word-break: break-all;">{{ ticket.id }}</dd>
+            </dl>
+          </div>
+
+          {# Actions #}
+          {% if ticket.status in ('open', 'in_progress') %}
+          <div class="module" style="background: #fff; padding: 1.5rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); margin-bottom: 1.5rem;">
+            <h3 style="margin-top: 0; font-size: 1.1rem;"><i class="fa fa-cogs"></i> {{ _('Actions') }}</h3>
+
+            {# User close #}
+            {% if is_owner and ticket.status != 'resolved_by_user' %}
+            <form method="post" action="{{ h.url_for('theme_ejemplo.bug_tickets_close', id=ticket.id) }}" style="margin-bottom: 1rem;">
+              <button type="submit" class="btn btn-success btn-block">
+                <i class="fa fa-check"></i> {{ _('Mark as Resolved') }}
+              </button>
+            </form>
+            {% endif %}
+
+            {# Admin actions #}
+            {% if is_sysadmin %}
+            <hr />
+            <h4 style="font-size: 0.95rem; color: #2980b9;"><i class="fa fa-shield"></i> {{ _('Admin Actions') }}</h4>
+            <form method="post" action="{{ h.url_for('theme_ejemplo.bug_tickets_update_status', id=ticket.id) }}">
+              <div class="form-group">
+                <label for="admin-status">{{ _('Change Status') }}</label>
+                <select name="status" id="admin-status" class="form-control">
+                  <option value="open" {{ 'selected' if ticket.status == 'open' }}>{{ _('Open') }}</option>
+                  <option value="in_progress" {{ 'selected' if ticket.status == 'in_progress' }}>{{ _('In Progress') }}</option>
+                  <option value="resolved_by_admin" {{ 'selected' if ticket.status == 'resolved_by_admin' }}>{{ _('Resolved (Admin)') }}</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label for="admin-notes">{{ _('Admin Notes') }}</label>
+                <textarea name="admin_notes" id="admin-notes" class="form-control" rows="3"
+                          placeholder="{{ _('Notes about the fix, investigation, etc.') }}">{{ ticket.admin_notes }}</textarea>
+              </div>
+              <button type="submit" class="btn btn-primary btn-block">
+                <i class="fa fa-save"></i> {{ _('Update Ticket') }}
+              </button>
+            </form>
+            {% endif %}
+          </div>
+          {% endif %}
+
+          {# Back button #}
+          <a href="{{ h.url_for('theme_ejemplo.bug_tickets_list') }}" class="btn btn-default btn-block">
+            <i class="fa fa-arrow-left"></i> {{ _('Back to Tickets') }}
+          </a>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

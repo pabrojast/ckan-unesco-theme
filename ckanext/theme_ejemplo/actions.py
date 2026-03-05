@@ -598,3 +598,170 @@ def featured_publication_reorder(context, data_dict):
 
     model.Session.commit()
     return {'success': True}
+
+
+# ── Bug Ticket Actions ───────────────────────────────────────────────────────
+
+from ckanext.theme_ejemplo.model import BugTicket, init_bug_tickets_db
+
+
+def bug_ticket_create(context, data_dict):
+    """Create a new bug ticket. Any authenticated user."""
+    toolkit.check_access('bug_ticket_create', context, data_dict)
+    init_bug_tickets_db()
+
+    user_obj = context.get('auth_user_obj') or model.User.get(context['user'])
+    if not user_obj:
+        raise toolkit.NotAuthorized('Must be logged in')
+
+    title = toolkit.get_or_bust(data_dict, 'title')
+    description = toolkit.get_or_bust(data_dict, 'description')
+    url = data_dict.get('url', u'')
+    image_filename = data_dict.get('image_filename', u'')
+    browser_info = data_dict.get('browser_info', u'')
+    log_snapshot = data_dict.get('log_snapshot', u'')
+
+    ticket = BugTicket(
+        user_id=user_obj.id,
+        title=title,
+        description=description,
+        url=url,
+        image_filename=image_filename,
+        browser_info=browser_info,
+        log_snapshot=log_snapshot,
+    )
+    model.Session.add(ticket)
+    model.Session.commit()
+
+    result = ticket.as_dict()
+    result['user_name'] = user_obj.fullname or user_obj.name
+    return result
+
+
+@toolkit.side_effect_free
+def bug_ticket_list(context, data_dict):
+    """List bug tickets. Users see their own; sysadmins see all."""
+    toolkit.check_access('bug_ticket_list', context, data_dict)
+    init_bug_tickets_db()
+
+    user_obj = context.get('auth_user_obj') or model.User.get(context.get('user'))
+    status = data_dict.get('status', None)
+    limit = int(data_dict.get('limit', 50))
+    offset = int(data_dict.get('offset', 0))
+
+    # Sysadmins see all; regular users see only their own
+    user_filter = None
+    if not (user_obj and user_obj.sysadmin):
+        user_filter = user_obj.id if user_obj else '__none__'
+
+    tickets, total = BugTicket.get_all(
+        status=status, user_id=user_filter,
+        limit=limit, offset=offset
+    )
+
+    results = []
+    for t in tickets:
+        d = t.as_dict()
+        u = model.User.get(t.user_id)
+        d['user_name'] = (u.fullname or u.name) if u else t.user_id
+        results.append(d)
+
+    return {'results': results, 'count': total}
+
+
+@toolkit.side_effect_free
+def bug_ticket_show(context, data_dict):
+    """Show a single bug ticket."""
+    toolkit.check_access('bug_ticket_show', context, data_dict)
+    init_bug_tickets_db()
+
+    ticket_id = toolkit.get_or_bust(data_dict, 'id')
+    ticket = BugTicket.get(ticket_id)
+    if not ticket:
+        raise toolkit.ObjectNotFound('Bug ticket not found')
+
+    user_obj = context.get('auth_user_obj') or model.User.get(context.get('user'))
+    if not (user_obj and (user_obj.sysadmin or user_obj.id == ticket.user_id)):
+        raise toolkit.NotAuthorized('Not authorized to view this ticket')
+
+    result = ticket.as_dict()
+    u = model.User.get(ticket.user_id)
+    result['user_name'] = (u.fullname or u.name) if u else ticket.user_id
+    if ticket.resolved_by:
+        resolver = model.User.get(ticket.resolved_by)
+        result['resolved_by_name'] = (resolver.fullname or resolver.name) if resolver else ticket.resolved_by
+    return result
+
+
+def bug_ticket_update(context, data_dict):
+    """Update a bug ticket status/notes. Sysadmin can change status; user can close."""
+    toolkit.check_access('bug_ticket_update', context, data_dict)
+    init_bug_tickets_db()
+    import datetime as dt
+
+    ticket_id = toolkit.get_or_bust(data_dict, 'id')
+    ticket = BugTicket.get(ticket_id)
+    if not ticket:
+        raise toolkit.ObjectNotFound('Bug ticket not found')
+
+    user_obj = context.get('auth_user_obj') or model.User.get(context['user'])
+    new_status = data_dict.get('status')
+
+    if new_status:
+        if new_status not in BugTicket.VALID_STATUSES:
+            raise toolkit.ValidationError(
+                {'status': ['Must be one of: {}'.format(', '.join(BugTicket.VALID_STATUSES))]}
+            )
+        # Regular users can only close their own tickets
+        if not user_obj.sysadmin:
+            if ticket.user_id != user_obj.id:
+                raise toolkit.NotAuthorized('Cannot update others\' tickets')
+            if new_status != BugTicket.STATUS_RESOLVED_USER:
+                raise toolkit.NotAuthorized('Users can only close their own tickets')
+            new_status = BugTicket.STATUS_RESOLVED_USER
+
+        ticket.status = new_status
+        if new_status in (BugTicket.STATUS_RESOLVED_USER, BugTicket.STATUS_RESOLVED_ADMIN):
+            ticket.resolved_by = user_obj.id
+            ticket.resolved_at = dt.datetime.utcnow()
+
+    if 'admin_notes' in data_dict and user_obj.sysadmin:
+        ticket.admin_notes = data_dict['admin_notes']
+
+    ticket.updated_at = dt.datetime.utcnow()
+    model.Session.commit()
+
+    result = ticket.as_dict()
+    u = model.User.get(ticket.user_id)
+    result['user_name'] = (u.fullname or u.name) if u else ticket.user_id
+    return result
+
+
+@toolkit.side_effect_free
+def bug_ticket_api_list(context, data_dict):
+    """API endpoint for external AI systems to fetch open tickets.
+
+    Returns open/in_progress tickets with full detail for automated analysis.
+    Sysadmin-only access (use API key).
+    """
+    toolkit.check_access('bug_ticket_api_list', context, data_dict)
+    init_bug_tickets_db()
+
+    status = data_dict.get('status', BugTicket.STATUS_OPEN)
+    limit = int(data_dict.get('limit', 100))
+    offset = int(data_dict.get('offset', 0))
+
+    tickets, total = BugTicket.get_all(
+        status=status, limit=limit, offset=offset
+    )
+
+    results = []
+    for t in tickets:
+        d = t.as_dict()
+        u = model.User.get(t.user_id)
+        d['user_name'] = (u.fullname or u.name) if u else t.user_id
+        if t.image_filename:
+            d['image_url'] = '/uploads/bug_tickets/' + t.image_filename
+        results.append(d)
+
+    return {'results': results, 'count': total}

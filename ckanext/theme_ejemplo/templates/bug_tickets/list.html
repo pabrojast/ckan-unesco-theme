@@ -1,0 +1,114 @@
+{% extends "page.html" %}
+
+{% block title %}{{ _('Bug Tickets') }} - {{ super() }}{% endblock %}
+
+{% block content %}
+<div class="homepage layout-1">
+  <div id="content" class="container">
+    {{ self.flash() }}
+  </div>
+
+  <div class="main">
+    <div class="container">
+
+      <div class="toolbar" role="navigation" aria-label="Breadcrumb">
+        <ol class="breadcrumb">
+          <li class="home"><a href="/"><i class="fa fa-home"></i><span> {{ _('Home') }}</span></a></li>
+          <li class="active">{{ _('Bug Tickets') }}</li>
+        </ol>
+      </div>
+
+      <section class="module module-narrow module-shallow">
+        <div class="featured-banner" style="background: linear-gradient(135deg, #e74c3c, #c0392b); padding: 2rem; border-radius: 8px; color: #fff; margin-bottom: 2rem;">
+          <h1><i class="fa fa-bug"></i> {{ _('Bug Tickets') }}</h1>
+          <p>{{ _('Report issues and track their resolution.') }}</p>
+        </div>
+      </section>
+
+      {# Toolbar: filter + new button #}
+      <div class="row" style="margin-bottom: 1.5rem;">
+        <div class="col-md-8">
+          <form method="get" class="form-inline">
+            <label for="status-filter" style="margin-right: 0.5rem;">{{ _('Filter by status:') }}</label>
+            <select name="status" id="status-filter" class="form-control" onchange="this.form.submit()">
+              <option value="">{{ _('All') }}</option>
+              <option value="open" {{ 'selected' if status_filter == 'open' }}>{{ _('Open') }}</option>
+              <option value="in_progress" {{ 'selected' if status_filter == 'in_progress' }}>{{ _('In Progress') }}</option>
+              <option value="resolved_by_user" {{ 'selected' if status_filter == 'resolved_by_user' }}>{{ _('Resolved by User') }}</option>
+              <option value="resolved_by_admin" {{ 'selected' if status_filter == 'resolved_by_admin' }}>{{ _('Resolved by Admin') }}</option>
+            </select>
+          </form>
+        </div>
+        <div class="col-md-4 text-right">
+          <a href="{{ h.url_for('theme_ejemplo.bug_tickets_new') }}" class="btn btn-primary">
+            <i class="fa fa-plus"></i> {{ _('Report a Bug') }}
+          </a>
+        </div>
+      </div>
+
+      {# Ticket list #}
+      {% if tickets %}
+      <div class="module-content">
+        <table class="table table-striped table-hover" style="background: #fff; border-radius: 8px; overflow: hidden;">
+          <thead>
+            <tr>
+              <th style="width: 5%;">{{ _('Status') }}</th>
+              <th style="width: 35%;">{{ _('Title') }}</th>
+              <th style="width: 20%;">{{ _('Reported by') }}</th>
+              <th style="width: 20%;">{{ _('URL') }}</th>
+              <th style="width: 20%;">{{ _('Created') }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for ticket in tickets %}
+            <tr>
+              <td>
+                {% if ticket.status == 'open' %}
+                  <span class="label" style="background: #e74c3c; color: #fff; padding: 4px 10px; border-radius: 12px; font-size: 11px;">{{ _('Open') }}</span>
+                {% elif ticket.status == 'in_progress' %}
+                  <span class="label" style="background: #f39c12; color: #fff; padding: 4px 10px; border-radius: 12px; font-size: 11px;">{{ _('In Progress') }}</span>
+                {% elif ticket.status == 'resolved_by_user' %}
+                  <span class="label" style="background: #27ae60; color: #fff; padding: 4px 10px; border-radius: 12px; font-size: 11px;">{{ _('Resolved') }}</span>
+                {% elif ticket.status == 'resolved_by_admin' %}
+                  <span class="label" style="background: #2980b9; color: #fff; padding: 4px 10px; border-radius: 12px; font-size: 11px;">{{ _('Resolved (Admin)') }}</span>
+                {% endif %}
+              </td>
+              <td>
+                <a href="{{ h.url_for('theme_ejemplo.bug_tickets_show', id=ticket.id) }}" style="font-weight: 600;">
+                  {{ ticket.title }}
+                </a>
+              </td>
+              <td>{{ ticket.user_name }}</td>
+              <td>
+                {% if ticket.url %}
+                  <a href="{{ ticket.url }}" target="_blank" title="{{ ticket.url }}" style="word-break: break-all; font-size: 12px;">
+                    {{ ticket.url|truncate(40) }}
+                  </a>
+                {% else %}
+                  <span class="text-muted">—</span>
+                {% endif %}
+              </td>
+              <td style="font-size: 12px; color: #777;">
+                {{ h.render_datetime(ticket.created_at, with_hours=true) if ticket.created_at else '—' }}
+              </td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      {% else %}
+      <div class="module-content" style="text-align: center; padding: 3rem;">
+        <i class="fa fa-check-circle" style="font-size: 3rem; color: #27ae60; margin-bottom: 1rem;"></i>
+        <h3>{{ _('No tickets found') }}</h3>
+        <p class="text-muted">{{ _('No bug tickets match the current filter.') }}</p>
+      </div>
+      {% endif %}
+
+      <div class="text-muted" style="margin-top: 1rem;">
+        {{ _('Total:') }} {{ count }} {{ _('ticket(s)') }}
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

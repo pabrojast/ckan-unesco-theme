@@ -1,0 +1,160 @@
+{% extends "page.html" %}
+
+{% block title %}{{ _('Report a Bug') }} - {{ super() }}{% endblock %}
+
+{% block content %}
+<div class="homepage layout-1">
+  <div id="content" class="container">
+    {{ self.flash() }}
+  </div>
+
+  <div class="main">
+    <div class="container">
+
+      <div class="toolbar" role="navigation" aria-label="Breadcrumb">
+        <ol class="breadcrumb">
+          <li class="home"><a href="/"><i class="fa fa-home"></i><span> {{ _('Home') }}</span></a></li>
+          <li><a href="{{ h.url_for('theme_ejemplo.bug_tickets_list') }}">{{ _('Bug Tickets') }}</a></li>
+          <li class="active">{{ _('Report a Bug') }}</li>
+        </ol>
+      </div>
+
+      <section class="module module-narrow module-shallow">
+        <div class="featured-banner" style="background: linear-gradient(135deg, #e74c3c, #c0392b); padding: 2rem; border-radius: 8px; color: #fff; margin-bottom: 2rem;">
+          <h1><i class="fa fa-bug"></i> {{ _('Report a Bug') }}</h1>
+          <p>{{ _('Describe the issue you encountered. Include as much detail as possible.') }}</p>
+        </div>
+      </section>
+
+      <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+          <div class="module" style="background: #fff; padding: 2rem; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.08);">
+
+            <form method="post" enctype="multipart/form-data" id="bug-ticket-form">
+
+              {# Title #}
+              <div class="form-group {{ 'has-error' if errors.get('title') }}">
+                <label for="field-title" class="control-label">
+                  <i class="fa fa-heading"></i> {{ _('Title') }} <span class="text-danger">*</span>
+                </label>
+                <input id="field-title" type="text" name="title" class="form-control"
+                       placeholder="{{ _('Short description of the problem') }}"
+                       value="{{ data.get('title', '') }}" required />
+                {% if errors.get('title') %}
+                  <span class="help-block text-danger">{{ errors.title[0] }}</span>
+                {% endif %}
+              </div>
+
+              {# Description #}
+              <div class="form-group {{ 'has-error' if errors.get('description') }}">
+                <label for="field-description" class="control-label">
+                  <i class="fa fa-align-left"></i> {{ _('Description') }} <span class="text-danger">*</span>
+                </label>
+                <textarea id="field-description" name="description" class="form-control" rows="6"
+                          placeholder="{{ _('Describe what happened, what you expected, and steps to reproduce...') }}"
+                          required>{{ data.get('description', '') }}</textarea>
+                {% if errors.get('description') %}
+                  <span class="help-block text-danger">{{ errors.description[0] }}</span>
+                {% endif %}
+              </div>
+
+              {# URL #}
+              <div class="form-group">
+                <label for="field-url" class="control-label">
+                  <i class="fa fa-link"></i> {{ _('Page URL where the error occurred') }}
+                </label>
+                <input id="field-url" type="url" name="url" class="form-control"
+                       placeholder="https://..."
+                       value="{{ data.get('url', '') or referrer_url }}" />
+                <span class="help-block text-muted" style="font-size: 12px;">
+                  {{ _('The URL is auto-filled from the page you came from.') }}
+                </span>
+              </div>
+
+              {# Screenshot #}
+              <div class="form-group">
+                <label for="field-image" class="control-label">
+                  <i class="fa fa-camera"></i> {{ _('Screenshot (optional)') }}
+                </label>
+                <input id="field-image" type="file" name="image" accept="image/*" class="form-control" />
+                <span class="help-block text-muted" style="font-size: 12px;">
+                  {{ _('Upload a screenshot showing the error.') }}
+                </span>
+                <div id="image-preview" style="margin-top: 0.5rem; display: none;">
+                  <img id="preview-img" src="" alt="Preview" style="max-width: 100%; max-height: 300px; border-radius: 4px; border: 1px solid #ddd;" />
+                </div>
+              </div>
+
+              {# Hidden: browser info + log snapshot collected by JS #}
+              <input type="hidden" name="browser_info" id="field-browser-info" value="" />
+              <input type="hidden" name="log_snapshot" id="field-log-snapshot" value="" />
+
+              <hr />
+
+              <div class="form-actions text-right">
+                <a href="{{ h.url_for('theme_ejemplo.bug_tickets_list') }}" class="btn btn-default" style="margin-right: 0.5rem;">
+                  {{ _('Cancel') }}
+                </a>
+                <button type="submit" class="btn btn-danger">
+                  <i class="fa fa-bug"></i> {{ _('Submit Bug Report') }}
+                </button>
+              </div>
+
+            </form>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  // Collect browser info
+  var info = {
+    userAgent: navigator.userAgent,
+    language: navigator.language,
+    platform: navigator.platform,
+    screenSize: screen.width + 'x' + screen.height,
+    windowSize: window.innerWidth + 'x' + window.innerHeight,
+    timestamp: new Date().toISOString(),
+    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone
+  };
+  document.getElementById('field-browser-info').value = JSON.stringify(info);
+
+  // Capture console errors as log snapshot
+  var logs = [];
+  var origError = console.error;
+  console.error = function() {
+    logs.push({level: 'error', msg: Array.from(arguments).join(' '), ts: new Date().toISOString()});
+    origError.apply(console, arguments);
+  };
+  var origWarn = console.warn;
+  console.warn = function() {
+    logs.push({level: 'warn', msg: Array.from(arguments).join(' '), ts: new Date().toISOString()});
+    origWarn.apply(console, arguments);
+  };
+  window.addEventListener('error', function(e) {
+    logs.push({level: 'uncaught', msg: e.message, file: e.filename, line: e.lineno, ts: new Date().toISOString()});
+  });
+
+  document.getElementById('bug-ticket-form').addEventListener('submit', function() {
+    document.getElementById('field-log-snapshot').value = JSON.stringify(logs.slice(-50));
+  });
+
+  // Image preview
+  document.getElementById('field-image').addEventListener('change', function(e) {
+    var file = e.target.files[0];
+    if (file) {
+      var reader = new FileReader();
+      reader.onload = function(ev) {
+        document.getElementById('preview-img').src = ev.target.result;
+        document.getElementById('image-preview').style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+    }
+  });
+})();
+</script>
+{% endblock %}

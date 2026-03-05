@@ -102,3 +102,38 @@ def featured_publication_delete(context, data_dict):
 
 def featured_publication_reorder(context, data_dict):
     return _sysadmin_only(context, data_dict)
+
+
+# ── Bug Ticket Auth ──────────────────────────────────────────────────────────
+
+def bug_ticket_create(context, data_dict):
+    """Any authenticated user can create a bug ticket."""
+    if not context.get('auth_user_obj'):
+        return {'success': False, 'msg': toolkit._('Must be logged in')}
+    return {'success': True}
+
+
+def bug_ticket_list(context, data_dict):
+    """Any authenticated user can list tickets (filtered to own)."""
+    if not context.get('auth_user_obj'):
+        return {'success': False, 'msg': toolkit._('Must be logged in')}
+    return {'success': True}
+
+
+def bug_ticket_show(context, data_dict):
+    """Any authenticated user can view tickets (checked in action)."""
+    if not context.get('auth_user_obj'):
+        return {'success': False, 'msg': toolkit._('Must be logged in')}
+    return {'success': True}
+
+
+def bug_ticket_update(context, data_dict):
+    """Any authenticated user can update (action enforces ownership)."""
+    if not context.get('auth_user_obj'):
+        return {'success': False, 'msg': toolkit._('Must be logged in')}
+    return {'success': True}
+
+
+def bug_ticket_api_list(context, data_dict):
+    """Only sysadmins can access the AI API endpoint."""
+    return _sysadmin_only(context, data_dict)

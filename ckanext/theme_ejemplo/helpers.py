@@ -312,3 +312,23 @@ def get_featured_publications():
     except Exception as e:
         log.error(f'Error getting featured publications: {e}')
         return []
+
+
+def get_open_bug_tickets_count():
+    """Get count of open bug tickets for the current user (or all for sysadmin)."""
+    try:
+        from ckan.common import current_user
+        if not current_user or not current_user.is_authenticated:
+            return 0
+        from ckanext.theme_ejemplo.model import BugTicket, init_bug_tickets_db
+        init_bug_tickets_db()
+        if current_user.sysadmin:
+            _, total = BugTicket.get_all(status=BugTicket.STATUS_OPEN)
+        else:
+            _, total = BugTicket.get_all(
+                status=BugTicket.STATUS_OPEN, user_id=current_user.id
+            )
+        return total
+    except Exception as e:
+        log.error(f'Error getting open bug tickets count: {e}')
+        return 0

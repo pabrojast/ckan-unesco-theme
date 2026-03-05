@@ -196,3 +196,113 @@ def define_featured_publication_table():
         meta.registry.map_imperatively(FeaturedPublication, featured_publication_table)
     except AttributeError:
         meta.mapper(FeaturedPublication, featured_publication_table)
+
+
+# ── Bug Ticket Model ─────────────────────────────────────────────────────────
+
+bug_ticket_table = None
+
+
+class BugTicket(model.DomainObject):
+    """A bug/issue ticket submitted by a user."""
+
+    STATUS_OPEN = u'open'
+    STATUS_IN_PROGRESS = u'in_progress'
+    STATUS_RESOLVED_USER = u'resolved_by_user'
+    STATUS_RESOLVED_ADMIN = u'resolved_by_admin'
+
+    VALID_STATUSES = (STATUS_OPEN, STATUS_IN_PROGRESS,
+                      STATUS_RESOLVED_USER, STATUS_RESOLVED_ADMIN)
+
+    def __init__(self, user_id, title, description, url=u'',
+                 image_filename=u'', browser_info=u'', log_snapshot=u''):
+        self.id = str(uuid.uuid4())
+        self.user_id = user_id
+        self.title = title
+        self.description = description
+        self.url = url
+        self.image_filename = image_filename
+        self.browser_info = browser_info
+        self.log_snapshot = log_snapshot
+        self.status = self.STATUS_OPEN
+        self.admin_notes = u''
+        self.resolved_by = None
+        self.resolved_at = None
+        self.created_at = datetime.datetime.utcnow()
+        self.updated_at = datetime.datetime.utcnow()
+
+    @classmethod
+    def get(cls, id):
+        return meta.Session.query(cls).get(id)
+
+    @classmethod
+    def get_all(cls, status=None, user_id=None, limit=100, offset=0):
+        q = meta.Session.query(cls)
+        if status:
+            q = q.filter(cls.status == status)
+        if user_id:
+            q = q.filter(cls.user_id == user_id)
+        total = q.count()
+        results = q.order_by(cls.created_at.desc()).offset(offset).limit(limit).all()
+        return results, total
+
+    def as_dict(self):
+        return {
+            'id': self.id,
+            'user_id': self.user_id,
+            'title': self.title,
+            'description': self.description,
+            'url': self.url,
+            'image_filename': self.image_filename,
+            'browser_info': self.browser_info,
+            'log_snapshot': self.log_snapshot,
+            'status': self.status,
+            'admin_notes': self.admin_notes,
+            'resolved_by': self.resolved_by,
+            'resolved_at': self.resolved_at.isoformat() if self.resolved_at else None,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'updated_at': self.updated_at.isoformat() if self.updated_at else None,
+        }
+
+
+def init_bug_tickets_db():
+    """Create the bug_ticket table if it doesn't exist."""
+    if bug_ticket_table is None:
+        define_bug_ticket_table()
+
+    from sqlalchemy import inspect as sa_inspect
+    inspector = sa_inspect(meta.engine)
+    if 'bug_ticket' not in inspector.get_table_names():
+        bug_ticket_table.create(meta.engine)
+        log.info(u'bug_ticket table created')
+    else:
+        log.debug(u'bug_ticket table already exists')
+
+
+def define_bug_ticket_table():
+    global bug_ticket_table
+
+    bug_ticket_table = Table(
+        'bug_ticket',
+        meta.metadata,
+        Column('id', UnicodeText, primary_key=True,
+               default=lambda: str(uuid.uuid4())),
+        Column('user_id', UnicodeText, nullable=False),
+        Column('title', UnicodeText, nullable=False),
+        Column('description', UnicodeText, nullable=False),
+        Column('url', UnicodeText, default=u''),
+        Column('image_filename', UnicodeText, default=u''),
+        Column('browser_info', UnicodeText, default=u''),
+        Column('log_snapshot', UnicodeText, default=u''),
+        Column('status', UnicodeText, default=u'open'),
+        Column('admin_notes', UnicodeText, default=u''),
+        Column('resolved_by', UnicodeText, nullable=True),
+        Column('resolved_at', DateTime, nullable=True),
+        Column('created_at', DateTime, default=datetime.datetime.utcnow),
+        Column('updated_at', DateTime, default=datetime.datetime.utcnow),
+    )
+
+    try:
+        meta.registry.map_imperatively(BugTicket, bug_ticket_table)
+    except AttributeError:
+        meta.mapper(BugTicket, bug_ticket_table)

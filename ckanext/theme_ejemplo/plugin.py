@@ -289,6 +289,8 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
             membership_model.init_db()
             # Create featured_publication table if needed
             membership_model.init_featured_publications_db()
+            # Create bug_ticket table if needed
+            membership_model.init_bug_tickets_db()
             
         def get_blueprint(self):
             
@@ -537,6 +539,38 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 methods=['POST']
             )
 
+            # Bug ticket system
+            blueprint.add_url_rule(
+                u'/bug-tickets',
+                u'bug_tickets_list',
+                MyLogica.bug_tickets_list,
+                methods=['GET']
+            )
+            blueprint.add_url_rule(
+                u'/bug-tickets/new',
+                u'bug_tickets_new',
+                MyLogica.bug_tickets_new,
+                methods=['GET', 'POST']
+            )
+            blueprint.add_url_rule(
+                u'/bug-tickets/<id>',
+                u'bug_tickets_show',
+                MyLogica.bug_tickets_show,
+                methods=['GET']
+            )
+            blueprint.add_url_rule(
+                u'/bug-tickets/<id>/close',
+                u'bug_tickets_close',
+                MyLogica.bug_tickets_close,
+                methods=['POST']
+            )
+            blueprint.add_url_rule(
+                u'/bug-tickets/<id>/update-status',
+                u'bug_tickets_update_status',
+                MyLogica.bug_tickets_update_status,
+                methods=['POST']
+            )
+
             # Register /dataset/new explicitly BEFORE /dataset/<id> so that
             # Flask does not capture "new" as a dataset id.  We delegate to
             # the scheming CreateView which is what IDatasetForm would use.
@@ -584,6 +618,7 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                  'has_pending_membership_request': helpers.has_pending_membership_request,
                  'get_recently_added': self.get_recently_added,
                  'get_featured_publications': helpers.get_featured_publications,
+                 'get_open_bug_tickets_count': helpers.get_open_bug_tickets_count,
                  }
 
         # IActions
@@ -605,6 +640,11 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 'featured_publication_update': custom_actions.featured_publication_update,
                 'featured_publication_delete': custom_actions.featured_publication_delete,
                 'featured_publication_reorder': custom_actions.featured_publication_reorder,
+                'bug_ticket_create': custom_actions.bug_ticket_create,
+                'bug_ticket_list': custom_actions.bug_ticket_list,
+                'bug_ticket_show': custom_actions.bug_ticket_show,
+                'bug_ticket_update': custom_actions.bug_ticket_update,
+                'bug_ticket_api_list': custom_actions.bug_ticket_api_list,
             }
 
         # IAuthFunctions
@@ -622,6 +662,11 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 'featured_publication_update': custom_auth.featured_publication_update,
                 'featured_publication_delete': custom_auth.featured_publication_delete,
                 'featured_publication_reorder': custom_auth.featured_publication_reorder,
+                'bug_ticket_create': custom_auth.bug_ticket_create,
+                'bug_ticket_list': custom_auth.bug_ticket_list,
+                'bug_ticket_show': custom_auth.bug_ticket_show,
+                'bug_ticket_update': custom_auth.bug_ticket_update,
+                'bug_ticket_api_list': custom_auth.bug_ticket_api_list,
             }
         
         def get_member_states_groups_list(self):

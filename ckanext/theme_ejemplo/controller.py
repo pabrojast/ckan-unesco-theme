@@ -1502,3 +1502,169 @@ class MyLogica():
             except Exception as e:
                 log.error(f'Error uploading image: {e}')
                 return jsonify({'success': False, 'error': str(e)}), 500
+
+        # ── Bug Ticket Views ──────────────────────────────────────────────────
+
+        @staticmethod
+        def bug_tickets_list():
+            """List all bug tickets (own for users, all for sysadmin)."""
+            context = {
+                'model': model, 'session': model.Session,
+                'user': c.user, 'auth_user_obj': c.userobj,
+            }
+            if not c.userobj:
+                return toolkit.redirect_to('user.login')
+
+            status_filter = request.args.get('status', '')
+            try:
+                result = toolkit.get_action('bug_ticket_list')(
+                    context, {'status': status_filter or None}
+                )
+            except toolkit.NotAuthorized:
+                return toolkit.abort(403, _('Not authorized'))
+
+            extra_vars = {
+                'tickets': result['results'],
+                'count': result['count'],
+                'status_filter': status_filter,
+                'is_sysadmin': c.userobj.sysadmin if c.userobj else False,
+            }
+            return toolkit.render('bug_tickets/list.html', extra_vars=extra_vars)
+
+        @staticmethod
+        def bug_tickets_new():
+            """Show the new ticket form or create a ticket on POST."""
+            context = {
+                'model': model, 'session': model.Session,
+                'user': c.user, 'auth_user_obj': c.userobj,
+            }
+            if not c.userobj:
+                return toolkit.redirect_to('user.login')
+
+            errors = {}
+            data = {}
+
+            if request.method == 'POST':
+                data = {
+                    'title': request.form.get('title', '').strip(),
+                    'description': request.form.get('description', '').strip(),
+                    'url': request.form.get('url', '').strip(),
+                    'browser_info': request.form.get('browser_info', ''),
+                    'log_snapshot': request.form.get('log_snapshot', ''),
+                }
+
+                # Handle image upload
+                image_filename = u''
+                upload_file = request.files.get('image')
+                if upload_file and upload_file.filename:
+                    try:
+                        import ckan.lib.uploader as uploader
+                        upload = uploader.get_uploader('bug_tickets')
+                        upload.update_data_dict(
+                            {'upload': upload_file, 'url': '', 'clear_upload': ''},
+                            'url', 'upload', 'clear_upload'
+                        )
+                        upload.upload()
+                        image_filename = upload.filename
+                    except Exception as e:
+                        log.error('Error uploading bug ticket image: %s', e)
+
+                data['image_filename'] = image_filename
+
+                if not data['title']:
+                    errors['title'] = [_('Title is required')]
+                if not data['description']:
+                    errors['description'] = [_('Description is required')]
+
+                if not errors:
+                    try:
+                        ticket = toolkit.get_action('bug_ticket_create')(context, data)
+                        h.flash_success(_('Bug ticket created successfully'))
+                        return toolkit.redirect_to('theme_ejemplo.bug_tickets_show',
+                                                   id=ticket['id'])
+                    except toolkit.ValidationError as e:
+                        errors = e.error_dict
+
+            extra_vars = {
+                'data': data,
+                'errors': errors,
+                'referrer_url': request.referrer or '',
+            }
+            return toolkit.render('bug_tickets/new.html', extra_vars=extra_vars)
+
+        @staticmethod
+        def bug_tickets_show(id):
+            """Show a single bug ticket detail."""
+            context = {
+                'model': model, 'session': model.Session,
+                'user': c.user, 'auth_user_obj': c.userobj,
+            }
+            if not c.userobj:
+                return toolkit.redirect_to('user.login')
+
+            try:
+                ticket = toolkit.get_action('bug_ticket_show')(context, {'id': id})
+            except toolkit.ObjectNotFound:
+                return toolkit.abort(404, _('Ticket not found'))
+            except toolkit.NotAuthorized:
+                return toolkit.abort(403, _('Not authorized'))
+
+            extra_vars = {
+                'ticket': ticket,
+                'is_sysadmin': c.userobj.sysadmin if c.userobj else False,
+                'is_owner': c.userobj.id == ticket['user_id'] if c.userobj else False,
+            }
+            return toolkit.render('bug_tickets/show.html', extra_vars=extra_vars)
+
+        @staticmethod
+        def bug_tickets_close(id):
+            """Close a ticket (user resolves it)."""
+            context = {
+                'model': model, 'session': model.Session,
+                'user': c.user, 'auth_user_obj': c.userobj,
+            }
+            if not c.userobj:
+                return toolkit.redirect_to('user.login')
+
+            from ckanext.theme_ejemplo.model import BugTicket
+            status = BugTicket.STATUS_RESOLVED_USER
+            if c.userobj.sysadmin:
+                status = request.form.get('status', BugTicket.STATUS_RESOLVED_ADMIN)
+
+            admin_notes = request.form.get('admin_notes', '')
+
+            try:
+                data = {'id': id, 'status': status}
+                if admin_notes:
+                    data['admin_notes'] = admin_notes
+                toolkit.get_action('bug_ticket_update')(context, data)
+                h.flash_success(_('Ticket updated successfully'))
+            except (toolkit.NotAuthorized, toolkit.ObjectNotFound) as e:
+                h.flash_error(str(e))
+
+            return toolkit.redirect_to('theme_ejemplo.bug_tickets_show', id=id)
+
+        @staticmethod
+        def bug_tickets_update_status(id):
+            """Admin: change ticket status (in_progress, resolved_by_admin, etc.)."""
+            context = {
+                'model': model, 'session': model.Session,
+                'user': c.user, 'auth_user_obj': c.userobj,
+            }
+            if not c.userobj or not c.userobj.sysadmin:
+                return toolkit.abort(403, _('Not authorized'))
+
+            new_status = request.form.get('status', '')
+            admin_notes = request.form.get('admin_notes', '')
+
+            try:
+                data = {'id': id, 'status': new_status}
+                if admin_notes:
+                    data['admin_notes'] = admin_notes
+                toolkit.get_action('bug_ticket_update')(context, data)
+                h.flash_success(_('Ticket status updated'))
+            except (toolkit.ValidationError, toolkit.NotAuthorized,
+                    toolkit.ObjectNotFound) as e:
+                h.flash_error(str(e))
+
+            return toolkit.redirect_to('theme_ejemplo.bug_tickets_show', id=id)
