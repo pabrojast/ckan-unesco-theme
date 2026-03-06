@@ -214,11 +214,11 @@
     <li><a href="/">{% trans %}Home{% endtrans %}</a></li>
 
 		    <li{% if request.endpoint == 'dataset.search' %} class="active"{% endif %}><a href="{{ h.url_for('dataset.search') }}">{{ _('Datasets') }}</a></li>
+      <li><a href="/documents">{% trans %}Documents{% endtrans %}</a></li>
 		    <li{% if request.endpoint == 'organization.index' %} class="active"{% endif %}><a href="{{ h.url_for('organization.index') }}">{{ _('Organizations') }}</a></li>
 	    
       <li><a href="/memberstates">{% trans %}Member States{% endtrans %}</a></li>
       <li><a href="/initiatives">{% trans %}Initiatives{% endtrans %}</a></li>
-      <li><a href="/documents">{% trans %}Documents{% endtrans %}</a></li>
       <li><a href="https://www.unesco.org/en/ihp">{{ _('About') }} IHP</a></li>
       {% endblock %}
         </ul>
