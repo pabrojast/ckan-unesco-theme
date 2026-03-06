@@ -143,7 +143,7 @@ def get_org_statistics(org_id):
         # Publications count (documents type)
         pub_search = toolkit.get_action('package_search')(
             {},
-            {'fq': f'owner_org:{org_id} AND dcat_type:*document*', 'rows': 0}
+            {'fq': f'owner_org:{org_id} AND (type:documents OR dcat_type:*marcgt*)', 'rows': 0}
         )
         stats['publications'] = pub_search.get('count', 0)
 
@@ -169,7 +169,7 @@ def get_org_publications(org_id, limit=20, offset=0):
         search = toolkit.get_action('package_search')(
             {},
             {
-                'fq': f'owner_org:{org_id} AND dcat_type:*document*',
+                'fq': f'owner_org:{org_id} AND (type:documents OR dcat_type:*marcgt*)',
                 'rows': limit,
                 'start': offset,
                 'sort': 'metadata_modified desc',
