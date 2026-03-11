@@ -580,7 +580,6 @@
 
 /* Actions dropdown */
 .um-actions-group .btn { border: 1px solid #ddd; }
-.um-actions-group { position: static; }
 .um-dropdown li a {
   padding: 6px 16px;
   font-size: 13px;
@@ -834,21 +833,38 @@ document.addEventListener('DOMContentLoaded', function() {
   // ── Fix dropdown clipping in overflow container ──
   var tableWrap = document.querySelector('.um-table-wrap');
   if (tableWrap) {
-    $(tableWrap).on('shown.bs.dropdown', '.um-actions-group', function() {
+    // Pre-position before Bootstrap makes it visible to avoid flash
+    $(tableWrap).on('show.bs.dropdown', '.um-actions-group', function() {
       var btn = this.querySelector('.dropdown-toggle');
       var menu = this.querySelector('.um-dropdown');
       if (!btn || !menu) return;
 
       var rect = btn.getBoundingClientRect();
+
+      // Measure menu width while temporarily visible but hidden
+      menu.style.visibility = 'hidden';
+      menu.style.display = 'block';
+      var menuWidth = menu.offsetWidth;
+      var menuHeight = menu.offsetHeight;
+      menu.style.display = '';
+      menu.style.visibility = '';
+
+      // Apply fixed positioning to escape overflow container
       menu.classList.add('um-dropdown-fixed');
-      menu.style.top = (rect.bottom + 2) + 'px';
-      menu.style.left = (rect.right - menu.offsetWidth) + 'px';
+      var top = rect.bottom + 2;
+      var left = rect.right - menuWidth;
 
       // Ensure menu doesn't overflow below viewport
-      var menuRect = menu.getBoundingClientRect();
-      if (menuRect.bottom > window.innerHeight) {
-        menu.style.top = (rect.top - menuRect.height - 2) + 'px';
+      if (top + menuHeight > window.innerHeight) {
+        top = rect.top - menuHeight - 2;
       }
+      // Ensure menu doesn't overflow left of viewport
+      if (left < 4) {
+        left = 4;
+      }
+
+      menu.style.top = top + 'px';
+      menu.style.left = left + 'px';
     });
 
     $(tableWrap).on('hidden.bs.dropdown', '.um-actions-group', function() {
@@ -862,9 +878,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Close fixed dropdown on scroll to prevent misalignment
     tableWrap.addEventListener('scroll', function() {
-      var openDropdown = tableWrap.querySelector('.um-dropdown-fixed');
-      if (openDropdown) {
-        $(openDropdown).closest('.um-actions-group').find('.dropdown-toggle').dropdown('toggle');
+      var openGroup = tableWrap.querySelector('.um-actions-group.open');
+      if (openGroup) {
+        $(openGroup).find('.dropdown-toggle').dropdown('toggle');
       }
     });
   }
