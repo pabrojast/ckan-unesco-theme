@@ -137,3 +137,33 @@ def bug_ticket_update(context, data_dict):
 def bug_ticket_api_list(context, data_dict):
     """Only sysadmins can access the AI API endpoint."""
     return _sysadmin_only(context, data_dict)
+
+
+# ── Sysadmin User Management Auth ───────────────────────────────────────────
+
+def admin_user_list(context, data_dict):
+    return _sysadmin_only(context, data_dict)
+
+
+def admin_user_reset_password(context, data_dict):
+    return _sysadmin_only(context, data_dict)
+
+
+def admin_user_delete(context, data_dict):
+    return _sysadmin_only(context, data_dict)
+
+
+def admin_user_purge(context, data_dict):
+    return _sysadmin_only(context, data_dict)
+
+
+def admin_user_reactivate(context, data_dict):
+    return _sysadmin_only(context, data_dict)
+
+
+def admin_user_toggle_sysadmin(context, data_dict):
+    return _sysadmin_only(context, data_dict)
+
+
+def admin_user_create(context, data_dict):
+    return _sysadmin_only(context, data_dict)

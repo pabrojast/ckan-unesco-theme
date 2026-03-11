@@ -765,3 +765,344 @@ def bug_ticket_api_list(context, data_dict):
         results.append(d)
 
     return {'results': results, 'count': total}
+
+
+# ── Sysadmin User Management Actions ────────────────────────────────────────
+
+def _get_sysadmin_context(context):
+    """Verifica que el usuario actual es sysadmin y retorna el user_obj."""
+    user_obj = context.get('auth_user_obj') or model.User.get(context.get('user', ''))
+    if not user_obj or not user_obj.sysadmin:
+        raise toolkit.NotAuthorized('Only sysadmins can perform this action')
+    return user_obj
+
+
+@toolkit.side_effect_free
+def admin_user_list(context, data_dict):
+    """Lista paginada de usuarios con filtros para el panel de administración.
+
+    Solo accesible por sysadmins. Incluye usuarios eliminados y campos
+    extendidos del perfil.
+    """
+    toolkit.check_access('admin_user_list', context, data_dict)
+
+    q = data_dict.get('q', '').strip()
+    state_filter = data_dict.get('state', '')
+    sysadmin_filter = data_dict.get('sysadmin', None)
+    limit = min(int(data_dict.get('limit', 25)), 100)
+    offset = max(int(data_dict.get('offset', 0)), 0)
+    order_by = data_dict.get('order_by', 'created')
+
+    query = model.Session.query(model.User).filter(
+        model.User.name != 'default',
+        model.User.name != 'harvest',
+    )
+
+    if state_filter:
+        query = query.filter(model.User.state == state_filter)
+
+    if sysadmin_filter is not None:
+        if isinstance(sysadmin_filter, str):
+            sysadmin_filter = sysadmin_filter.lower() in ('true', '1', 'yes')
+        query = query.filter(model.User.sysadmin == sysadmin_filter)
+
+    if q:
+        q_like = f'%{q}%'
+        query = query.filter(
+            model.User.name.ilike(q_like) |
+            model.User.fullname.ilike(q_like) |
+            model.User.email.ilike(q_like)
+        )
+
+    # Ordenamiento
+    order_map = {
+        'name': model.User.name.asc(),
+        'name_desc': model.User.name.desc(),
+        'created': model.User.created.desc(),
+        'created_asc': model.User.created.asc(),
+        'email': model.User.email.asc(),
+    }
+    query = query.order_by(order_map.get(order_by, model.User.created.desc()))
+
+    total = query.count()
+    users = query.offset(offset).limit(limit).all()
+
+    results = []
+    for user_obj in users:
+        extras = user_obj.plugin_extras or {}
+        profile = extras.get('theme_ejemplo', {})
+
+        orgs = []
+        try:
+            for g in user_obj.get_groups('organization'):
+                orgs.append({'name': g.name, 'title': g.title or g.name})
+        except Exception:
+            pass
+
+        num_datasets = 0
+        try:
+            num_datasets = model.Session.query(model.Package).filter(
+                model.Package.creator_user_id == user_obj.id,
+                model.Package.state == 'active',
+            ).count()
+        except Exception:
+            pass
+
+        results.append({
+            'id': user_obj.id,
+            'name': user_obj.name,
+            'fullname': user_obj.fullname or '',
+            'email': user_obj.email or '',
+            'image_url': user_obj.image_url or '',
+            'state': user_obj.state,
+            'sysadmin': user_obj.sysadmin,
+            'created': user_obj.created.isoformat() if user_obj.created else '',
+            'job_title': profile.get('job_title', ''),
+            'institution': profile.get('institution', ''),
+            'country': profile.get('country', ''),
+            'organizations': orgs,
+            'num_datasets': num_datasets,
+        })
+
+    return {
+        'results': results,
+        'count': total,
+    }
+
+
+def admin_user_reset_password(context, data_dict):
+    """Permite a un sysadmin cambiar la contraseña de cualquier usuario.
+
+    Requiere verificar la contraseña del sysadmin que ejecuta la acción
+    como medida de seguridad adicional.
+    """
+    toolkit.check_access('admin_user_reset_password', context, data_dict)
+
+    user_id = toolkit.get_or_bust(data_dict, 'id')
+    new_password = toolkit.get_or_bust(data_dict, 'password')
+    sysadmin_password = toolkit.get_or_bust(data_dict, 'sysadmin_password')
+
+    if len(new_password) < 8:
+        raise toolkit.ValidationError(
+            {'password': ['Password must be at least 8 characters']}
+        )
+
+    # Verificar la contraseña del sysadmin que ejecuta la acción
+    sysadmin_obj = _get_sysadmin_context(context)
+    if not sysadmin_obj.validate_password(sysadmin_password):
+        raise toolkit.ValidationError(
+            {'sysadmin_password': ['Invalid sysadmin password']}
+        )
+
+    target_user = model.User.get(user_id)
+    if not target_user:
+        raise toolkit.ObjectNotFound('User not found')
+
+    target_user.password = new_password
+    model.Session.commit()
+
+    return {
+        'success': True,
+        'user_name': target_user.name,
+        'message': f'Password updated for {target_user.name}',
+    }
+
+
+def admin_user_delete(context, data_dict):
+    """Soft-delete de un usuario (estado -> deleted). Eliminación inmediata."""
+    toolkit.check_access('admin_user_delete', context, data_dict)
+
+    user_id = toolkit.get_or_bust(data_dict, 'id')
+    target_user = model.User.get(user_id)
+    if not target_user:
+        raise toolkit.ObjectNotFound('User not found')
+
+    if target_user.state == 'deleted':
+        raise toolkit.ValidationError(
+            {'id': ['User is already deleted']}
+        )
+
+    # No permitir eliminar al propio sysadmin
+    sysadmin_obj = _get_sysadmin_context(context)
+    if target_user.id == sysadmin_obj.id:
+        raise toolkit.ValidationError(
+            {'id': ['Cannot delete your own account']}
+        )
+
+    # Usar la acción core de CKAN para soft-delete
+    toolkit.get_action('user_delete')(
+        {'user': sysadmin_obj.name, 'ignore_auth': True},
+        {'id': target_user.id}
+    )
+
+    return {
+        'success': True,
+        'user_name': target_user.name,
+        'message': f'User {target_user.name} has been deleted',
+    }
+
+
+def admin_user_purge(context, data_dict):
+    """Eliminación permanente de un usuario de la base de datos.
+
+    Solo se permite purgar usuarios que ya están en estado 'deleted'.
+    Esta acción es IRREVERSIBLE.
+    """
+    toolkit.check_access('admin_user_purge', context, data_dict)
+
+    user_id = toolkit.get_or_bust(data_dict, 'id')
+    sysadmin_password = toolkit.get_or_bust(data_dict, 'sysadmin_password')
+
+    sysadmin_obj = _get_sysadmin_context(context)
+    if not sysadmin_obj.validate_password(sysadmin_password):
+        raise toolkit.ValidationError(
+            {'sysadmin_password': ['Invalid sysadmin password']}
+        )
+
+    target_user = model.User.get(user_id)
+    if not target_user:
+        raise toolkit.ObjectNotFound('User not found')
+
+    if target_user.state != 'deleted':
+        raise toolkit.ValidationError(
+            {'id': ['User must be in deleted state before purging. '
+                    'Delete the user first.']}
+        )
+
+    user_name = target_user.name
+
+    # Eliminar membresías de grupos/organizaciones residuales
+    model.Session.query(model.Member).filter(
+        model.Member.table_id == target_user.id,
+        model.Member.table_name == 'user',
+    ).delete(synchronize_session=False)
+
+    # Eliminar el usuario permanentemente
+    model.Session.delete(target_user)
+    model.Session.commit()
+
+    return {
+        'success': True,
+        'user_name': user_name,
+        'message': f'User {user_name} has been permanently purged',
+    }
+
+
+def admin_user_reactivate(context, data_dict):
+    """Reactivar un usuario eliminado (estado deleted -> active).
+
+    Sin período de espera — reactivación inmediata.
+    """
+    toolkit.check_access('admin_user_reactivate', context, data_dict)
+
+    user_id = toolkit.get_or_bust(data_dict, 'id')
+    target_user = model.User.get(user_id)
+    if not target_user:
+        raise toolkit.ObjectNotFound('User not found')
+
+    if target_user.state != 'deleted':
+        raise toolkit.ValidationError(
+            {'id': ['User is not in deleted state']}
+        )
+
+    target_user.state = model.State.ACTIVE
+    model.Session.commit()
+
+    return {
+        'success': True,
+        'user_name': target_user.name,
+        'message': f'User {target_user.name} has been reactivated',
+    }
+
+
+def admin_user_toggle_sysadmin(context, data_dict):
+    """Promover o degradar un usuario como sysadmin."""
+    toolkit.check_access('admin_user_toggle_sysadmin', context, data_dict)
+
+    user_id = toolkit.get_or_bust(data_dict, 'id')
+    make_sysadmin = data_dict.get('sysadmin', False)
+    if isinstance(make_sysadmin, str):
+        make_sysadmin = make_sysadmin.lower() in ('true', '1', 'yes')
+
+    target_user = model.User.get(user_id)
+    if not target_user:
+        raise toolkit.ObjectNotFound('User not found')
+
+    sysadmin_obj = _get_sysadmin_context(context)
+
+    # Protección contra auto-degradación
+    if target_user.id == sysadmin_obj.id and not make_sysadmin:
+        raise toolkit.ValidationError(
+            {'id': ['Cannot remove your own sysadmin privileges']}
+        )
+
+    # Verificar que no se quede sin sysadmins (con lock para evitar race conditions)
+    if not make_sysadmin and target_user.sysadmin:
+        from sqlalchemy import func
+        sysadmin_count = model.Session.query(func.count(model.User.id)).filter(
+            model.User.sysadmin == True,
+            model.User.state == 'active',
+        ).with_for_update().scalar()
+        if sysadmin_count <= 1:
+            raise toolkit.ValidationError(
+                {'id': ['Cannot remove the last sysadmin']}
+            )
+
+    target_user.sysadmin = make_sysadmin
+    model.Session.commit()
+
+    action_label = 'promoted to' if make_sysadmin else 'removed from'
+    return {
+        'success': True,
+        'user_name': target_user.name,
+        'sysadmin': make_sysadmin,
+        'message': f'User {target_user.name} {action_label} sysadmin',
+    }
+
+
+def admin_user_create(context, data_dict):
+    """Crear un nuevo usuario desde el panel de administración.
+
+    Útil cuando el registro público está deshabilitado.
+    """
+    toolkit.check_access('admin_user_create', context, data_dict)
+
+    name = toolkit.get_or_bust(data_dict, 'name')
+    email = toolkit.get_or_bust(data_dict, 'email')
+    password = toolkit.get_or_bust(data_dict, 'password')
+
+    if len(password) < 8:
+        raise toolkit.ValidationError(
+            {'password': ['Password must be at least 8 characters']}
+        )
+
+    sysadmin_obj = _get_sysadmin_context(context)
+
+    user_data = {
+        'name': name,
+        'email': email,
+        'password': password,
+        'fullname': data_dict.get('fullname', ''),
+    }
+
+    new_user = toolkit.get_action('user_create')(
+        {'user': sysadmin_obj.name, 'ignore_auth': True},
+        user_data
+    )
+
+    # Si se indicó que sea sysadmin, actualizarlo
+    make_sysadmin = data_dict.get('sysadmin', False)
+    if isinstance(make_sysadmin, str):
+        make_sysadmin = make_sysadmin.lower() in ('true', '1', 'yes')
+
+    if make_sysadmin:
+        created_user = model.User.get(new_user['id'])
+        if created_user:
+            created_user.sysadmin = True
+            model.Session.commit()
+
+    return {
+        'success': True,
+        'user': new_user,
+        'message': f'User {name} created successfully',
+    }

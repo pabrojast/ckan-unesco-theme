@@ -571,6 +571,56 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 methods=['POST']
             )
 
+            # Sysadmin user management panel
+            blueprint.add_url_rule(
+                u'/ckan-admin/users',
+                u'users_admin',
+                MyLogica.users_admin,
+                methods=['GET']
+            )
+            blueprint.add_url_rule(
+                u'/ckan-admin/users/search',
+                u'users_admin_search',
+                MyLogica.users_admin_search,
+                methods=['GET']
+            )
+            blueprint.add_url_rule(
+                u'/ckan-admin/users/create',
+                u'users_admin_create',
+                MyLogica.users_admin_create,
+                methods=['POST']
+            )
+            blueprint.add_url_rule(
+                u'/ckan-admin/users/reset-password',
+                u'users_admin_reset_password',
+                MyLogica.users_admin_reset_password,
+                methods=['POST']
+            )
+            blueprint.add_url_rule(
+                u'/ckan-admin/users/delete',
+                u'users_admin_delete',
+                MyLogica.users_admin_delete,
+                methods=['POST']
+            )
+            blueprint.add_url_rule(
+                u'/ckan-admin/users/purge',
+                u'users_admin_purge',
+                MyLogica.users_admin_purge,
+                methods=['POST']
+            )
+            blueprint.add_url_rule(
+                u'/ckan-admin/users/reactivate',
+                u'users_admin_reactivate',
+                MyLogica.users_admin_reactivate,
+                methods=['POST']
+            )
+            blueprint.add_url_rule(
+                u'/ckan-admin/users/toggle-sysadmin',
+                u'users_admin_toggle_sysadmin',
+                MyLogica.users_admin_toggle_sysadmin,
+                methods=['POST']
+            )
+
             # Register /dataset/new explicitly BEFORE /dataset/<id> so that
             # Flask does not capture "new" as a dataset id.  We delegate to
             # the scheming CreateView which is what IDatasetForm would use.
@@ -645,6 +695,13 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 'bug_ticket_show': custom_actions.bug_ticket_show,
                 'bug_ticket_update': custom_actions.bug_ticket_update,
                 'bug_ticket_api_list': custom_actions.bug_ticket_api_list,
+                'admin_user_list': custom_actions.admin_user_list,
+                'admin_user_reset_password': custom_actions.admin_user_reset_password,
+                'admin_user_delete': custom_actions.admin_user_delete,
+                'admin_user_purge': custom_actions.admin_user_purge,
+                'admin_user_reactivate': custom_actions.admin_user_reactivate,
+                'admin_user_toggle_sysadmin': custom_actions.admin_user_toggle_sysadmin,
+                'admin_user_create': custom_actions.admin_user_create,
             }
 
         # IAuthFunctions
@@ -667,6 +724,13 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 'bug_ticket_show': custom_auth.bug_ticket_show,
                 'bug_ticket_update': custom_auth.bug_ticket_update,
                 'bug_ticket_api_list': custom_auth.bug_ticket_api_list,
+                'admin_user_list': custom_auth.admin_user_list,
+                'admin_user_reset_password': custom_auth.admin_user_reset_password,
+                'admin_user_delete': custom_auth.admin_user_delete,
+                'admin_user_purge': custom_auth.admin_user_purge,
+                'admin_user_reactivate': custom_auth.admin_user_reactivate,
+                'admin_user_toggle_sysadmin': custom_auth.admin_user_toggle_sysadmin,
+                'admin_user_create': custom_auth.admin_user_create,
             }
         
         def get_member_states_groups_list(self):

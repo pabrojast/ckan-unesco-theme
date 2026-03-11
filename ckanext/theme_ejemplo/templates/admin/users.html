@@ -1,0 +1,884 @@
+{% extends "page.html" %}
+
+{% block title %}
+{{ _('User Management') }} - {{ super() }}
+{% endblock %}
+
+{% block content %}
+<div class="homepage layout-1">
+    <div id="content" class="container">
+      {{ self.flash() }}
+    </div>
+
+    {% block primary_content %}
+    <div class="main">
+        <div class="container">
+
+            <!-- Breadcrumb -->
+            <div class="toolbar" role="navigation" aria-label="Breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="home"><a href="/"><i class="fa fa-home"></i><span> Home</span></a></li>
+                    <li><a href="{{ h.url_for(controller='admin', action='index') }}">{{ _('Admin') }}</a></li>
+                    <li class="active">{{ _('User Management') }}</li>
+                </ol>
+            </div>
+
+            <!-- Header Banner -->
+            <section class="module module-narrow module-shallow">
+              <div class="um-banner">
+                <div class="um-banner-overlay"></div>
+                <div class="um-banner-content">
+                  <h1><i class="fa fa-users"></i> {{ _('User Management') }}</h1>
+                  <p>{{ _('Manage users, reset passwords, control access and permissions.') }}</p>
+                  <span class="um-banner-stat">{{ total }} {{ _('users total') }}</span>
+                </div>
+              </div>
+            </section>
+        </div>
+
+        <div class="container">
+          <div class="row">
+            <div class="col-md-12">
+
+              <!-- Toolbar: Search + Filters + Create -->
+              <div class="um-toolbar">
+                <form method="get" action="{{ h.url_for('theme_ejemplo.users_admin') }}" class="um-toolbar-form">
+                  <div class="um-toolbar-search">
+                    <div class="input-group">
+                      <span class="input-group-addon"><i class="fa fa-search"></i></span>
+                      <input type="text" name="q" class="form-control" placeholder="{{ _('Search by name, email or username...') }}" value="{{ q }}" />
+                    </div>
+                  </div>
+                  <div class="um-toolbar-filters">
+                    <select name="state" class="form-control" onchange="this.form.submit()">
+                      <option value="">{{ _('All States') }}</option>
+                      <option value="active" {{ 'selected' if state == 'active' }}>{{ _('Active') }}</option>
+                      <option value="deleted" {{ 'selected' if state == 'deleted' }}>{{ _('Deleted') }}</option>
+                    </select>
+                    <select name="sysadmin" class="form-control" onchange="this.form.submit()">
+                      <option value="">{{ _('All Roles') }}</option>
+                      <option value="true" {{ 'selected' if sysadmin_filter == 'true' }}>{{ _('Sysadmins') }}</option>
+                      <option value="false" {{ 'selected' if sysadmin_filter == 'false' }}>{{ _('Regular Users') }}</option>
+                    </select>
+                    <select name="order_by" class="form-control" onchange="this.form.submit()">
+                      <option value="created" {{ 'selected' if order_by == 'created' }}>{{ _('Newest First') }}</option>
+                      <option value="created_asc" {{ 'selected' if order_by == 'created_asc' }}>{{ _('Oldest First') }}</option>
+                      <option value="name" {{ 'selected' if order_by == 'name' }}>{{ _('Name A-Z') }}</option>
+                      <option value="name_desc" {{ 'selected' if order_by == 'name_desc' }}>{{ _('Name Z-A') }}</option>
+                    </select>
+                  </div>
+                  <div class="um-toolbar-actions">
+                    <button type="submit" class="btn btn-default"><i class="fa fa-search"></i> {{ _('Search') }}</button>
+                    <a href="{{ h.url_for('theme_ejemplo.users_admin') }}" class="btn btn-default"><i class="fa fa-times"></i> {{ _('Clear') }}</a>
+                    <button type="button" class="btn btn-success" data-toggle="modal" data-target="#createUserModal">
+                      <i class="fa fa-plus"></i> {{ _('New User') }}
+                    </button>
+                  </div>
+                </form>
+              </div>
+
+              <!-- Users Table -->
+              <div class="um-table-wrap">
+                <table class="table um-table" id="users-table">
+                  <thead>
+                    <tr>
+                      <th class="um-col-user">{{ _('User') }}</th>
+                      <th class="um-col-email">{{ _('Email') }}</th>
+                      <th class="um-col-state">{{ _('Status') }}</th>
+                      <th class="um-col-role">{{ _('Role') }}</th>
+                      <th class="um-col-orgs">{{ _('Organizations') }}</th>
+                      <th class="um-col-datasets">{{ _('Datasets') }}</th>
+                      <th class="um-col-created">{{ _('Created') }}</th>
+                      <th class="um-col-actions">{{ _('Actions') }}</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {% for user in users %}
+                    <tr class="um-row {{ 'um-row-deleted' if user.state == 'deleted' }}" data-user-id="{{ user.id }}" data-user-name="{{ user.name }}">
+                      <td class="um-col-user">
+                        <div class="um-user-cell">
+                          <div class="um-avatar">
+                            {% if user.image_url %}
+                              {% if user.image_url.startswith('http') %}
+                                <img src="{{ user.image_url }}" alt="{{ user.fullname or user.name }}" />
+                              {% else %}
+                                <img src="{{ h.url_for_static('uploads/user/' + user.image_url) }}" alt="{{ user.fullname or user.name }}" />
+                              {% endif %}
+                            {% else %}
+                              <span class="um-avatar-placeholder"><i class="fa fa-user"></i></span>
+                            {% endif %}
+                          </div>
+                          <div class="um-user-info">
+                            <a href="{{ h.url_for('user.read', id=user.name) }}" class="um-user-name">{{ user.fullname or user.name }}</a>
+                            <span class="um-user-username">@{{ user.name }}</span>
+                            {% if user.job_title %}
+                              <span class="um-user-job">{{ user.job_title }}</span>
+                            {% endif %}
+                          </div>
+                        </div>
+                      </td>
+                      <td class="um-col-email">
+                        <span class="um-email">{{ user.email }}</span>
+                      </td>
+                      <td class="um-col-state">
+                        {% if user.state == 'active' %}
+                          <span class="label label-success um-badge">{{ _('Active') }}</span>
+                        {% elif user.state == 'deleted' %}
+                          <span class="label label-danger um-badge">{{ _('Deleted') }}</span>
+                        {% else %}
+                          <span class="label label-warning um-badge">{{ user.state }}</span>
+                        {% endif %}
+                      </td>
+                      <td class="um-col-role">
+                        {% if user.sysadmin %}
+                          <span class="label label-primary um-badge"><i class="fa fa-shield"></i> {{ _('Sysadmin') }}</span>
+                        {% else %}
+                          <span class="label label-default um-badge">{{ _('User') }}</span>
+                        {% endif %}
+                      </td>
+                      <td class="um-col-orgs">
+                        {% if user.organizations %}
+                          {% for org in user.organizations[:3] %}
+                            <span class="um-org-tag" title="{{ org.title }}">{{ org.title|truncate(20) }}</span>
+                          {% endfor %}
+                          {% if user.organizations|length > 3 %}
+                            <span class="um-org-more">+{{ user.organizations|length - 3 }}</span>
+                          {% endif %}
+                        {% else %}
+                          <span class="text-muted">—</span>
+                        {% endif %}
+                      </td>
+                      <td class="um-col-datasets">
+                        <span class="um-datasets-count">{{ user.num_datasets }}</span>
+                      </td>
+                      <td class="um-col-created">
+                        <span class="um-date">{{ user.created[:10] if user.created else '—' }}</span>
+                      </td>
+                      <td class="um-col-actions">
+                        <div class="btn-group um-actions-group">
+                          <button type="button" class="btn btn-sm btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fa fa-ellipsis-v"></i>
+                          </button>
+                          <ul class="dropdown-menu dropdown-menu-right um-dropdown">
+                            <li>
+                              <a href="{{ h.url_for('user.edit', id=user.name) }}">
+                                <i class="fa fa-pencil"></i> {{ _('Edit Profile') }}
+                              </a>
+                            </li>
+                            <li>
+                              <a href="#" class="um-action-password" data-user-id="{{ user.id }}" data-user-name="{{ user.name }}">
+                                <i class="fa fa-key"></i> {{ _('Reset Password') }}
+                              </a>
+                            </li>
+                            <li class="divider"></li>
+                            {% if user.sysadmin %}
+                            <li>
+                              <a href="#" class="um-action-toggle-sysadmin" data-user-id="{{ user.id }}" data-user-name="{{ user.name }}" data-sysadmin="false">
+                                <i class="fa fa-arrow-down"></i> {{ _('Remove Sysadmin') }}
+                              </a>
+                            </li>
+                            {% else %}
+                            <li>
+                              <a href="#" class="um-action-toggle-sysadmin" data-user-id="{{ user.id }}" data-user-name="{{ user.name }}" data-sysadmin="true">
+                                <i class="fa fa-arrow-up"></i> {{ _('Make Sysadmin') }}
+                              </a>
+                            </li>
+                            {% endif %}
+                            <li class="divider"></li>
+                            {% if user.state == 'active' %}
+                            <li>
+                              <a href="#" class="um-action-delete" data-user-id="{{ user.id }}" data-user-name="{{ user.name }}">
+                                <i class="fa fa-trash text-danger"></i> <span class="text-danger">{{ _('Delete User') }}</span>
+                              </a>
+                            </li>
+                            {% elif user.state == 'deleted' %}
+                            <li>
+                              <a href="#" class="um-action-reactivate" data-user-id="{{ user.id }}" data-user-name="{{ user.name }}">
+                                <i class="fa fa-undo text-success"></i> <span class="text-success">{{ _('Reactivate') }}</span>
+                              </a>
+                            </li>
+                            <li>
+                              <a href="#" class="um-action-purge" data-user-id="{{ user.id }}" data-user-name="{{ user.name }}">
+                                <i class="fa fa-bomb text-danger"></i> <span class="text-danger">{{ _('Purge Permanently') }}</span>
+                              </a>
+                            </li>
+                            {% endif %}
+                          </ul>
+                        </div>
+                      </td>
+                    </tr>
+                    {% endfor %}
+                    {% if not users %}
+                    <tr>
+                      <td colspan="8" class="um-empty">
+                        <i class="fa fa-info-circle"></i> {{ _('No users found matching your criteria.') }}
+                      </td>
+                    </tr>
+                    {% endif %}
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Pagination -->
+              {% if total_pages > 1 %}
+              <div class="um-pagination">
+                <ul class="pagination">
+                  {% if page > 1 %}
+                  <li><a href="{{ h.url_for('theme_ejemplo.users_admin', q=q, state=state, sysadmin=sysadmin_filter, order_by=order_by, page=page-1) }}">&laquo;</a></li>
+                  {% else %}
+                  <li class="disabled"><span>&laquo;</span></li>
+                  {% endif %}
+
+                  {% for p in range(1, total_pages + 1) %}
+                    {% if p == page %}
+                      <li class="active"><span>{{ p }}</span></li>
+                    {% elif p <= 3 or p > total_pages - 3 or (p >= page - 2 and p <= page + 2) %}
+                      <li><a href="{{ h.url_for('theme_ejemplo.users_admin', q=q, state=state, sysadmin=sysadmin_filter, order_by=order_by, page=p) }}">{{ p }}</a></li>
+                    {% elif p == 4 or p == total_pages - 3 %}
+                      <li class="disabled"><span>…</span></li>
+                    {% endif %}
+                  {% endfor %}
+
+                  {% if page < total_pages %}
+                  <li><a href="{{ h.url_for('theme_ejemplo.users_admin', q=q, state=state, sysadmin=sysadmin_filter, order_by=order_by, page=page+1) }}">&raquo;</a></li>
+                  {% else %}
+                  <li class="disabled"><span>&raquo;</span></li>
+                  {% endif %}
+                </ul>
+                <span class="um-pagination-info">
+                  {{ _('Showing %(start)s–%(end)s of %(total)s users', start=((page-1)*limit+1), end=([page*limit, total]|min), total=total) }}
+                </span>
+              </div>
+              {% endif %}
+
+            </div>
+          </div>
+        </div>
+    </div>
+    {% endblock %}
+</div>
+
+{# ── Modals ─────────────────────────────────────────────────────────────── #}
+
+<!-- Create User Modal -->
+<div class="modal fade" id="createUserModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+        <h4 class="modal-title"><i class="fa fa-user-plus"></i> {{ _('Create New User') }}</h4>
+      </div>
+      <div class="modal-body">
+        <div class="um-modal-alert" id="create-alert" style="display:none"></div>
+        <form id="create-user-form">
+          <div class="form-group">
+            <label for="create-username">{{ _('Username') }} <span class="text-danger">*</span></label>
+            <input type="text" class="form-control" id="create-username" name="name" required
+                   placeholder="{{ _('lowercase-no-spaces') }}" pattern="[a-z0-9_\-]+" />
+            <span class="help-block">{{ _('Lowercase letters, numbers, hyphens and underscores only.') }}</span>
+          </div>
+          <div class="form-group">
+            <label for="create-fullname">{{ _('Full Name') }}</label>
+            <input type="text" class="form-control" id="create-fullname" name="fullname" placeholder="{{ _('John Doe') }}" />
+          </div>
+          <div class="form-group">
+            <label for="create-email">{{ _('Email') }} <span class="text-danger">*</span></label>
+            <input type="email" class="form-control" id="create-email" name="email" required placeholder="{{ _('user@example.com') }}" />
+          </div>
+          <div class="form-group">
+            <label for="create-password">{{ _('Password') }} <span class="text-danger">*</span></label>
+            <input type="password" class="form-control" id="create-password" name="password" required minlength="8" />
+            <span class="help-block">{{ _('Minimum 8 characters.') }}</span>
+          </div>
+          <div class="checkbox">
+            <label>
+              <input type="checkbox" id="create-sysadmin" name="sysadmin" value="true" />
+              {{ _('Make this user a Sysadmin') }}
+            </label>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{ _('Cancel') }}</button>
+        <button type="button" class="btn btn-success" id="btn-create-user"><i class="fa fa-plus"></i> {{ _('Create User') }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Reset Password Modal -->
+<div class="modal fade" id="passwordModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+        <h4 class="modal-title"><i class="fa fa-key"></i> {{ _('Reset Password') }}</h4>
+      </div>
+      <div class="modal-body">
+        <div class="um-modal-alert" id="password-alert" style="display:none"></div>
+        <p>{{ _('Change password for') }} <strong id="password-user-label"></strong></p>
+        <input type="hidden" id="password-user-id" />
+        <form id="password-form">
+          <div class="form-group">
+            <label for="new-password">{{ _('New Password') }} <span class="text-danger">*</span></label>
+            <input type="password" class="form-control" id="new-password" name="password" required minlength="8" />
+          </div>
+          <div class="form-group">
+            <label for="confirm-password">{{ _('Confirm Password') }} <span class="text-danger">*</span></label>
+            <input type="password" class="form-control" id="confirm-password" required minlength="8" />
+          </div>
+          <hr />
+          <div class="form-group">
+            <label for="sysadmin-password-pw">{{ _('Your Sysadmin Password') }} <span class="text-danger">*</span></label>
+            <input type="password" class="form-control" id="sysadmin-password-pw" name="sysadmin_password" required />
+            <span class="help-block">{{ _('Required for security verification.') }}</span>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{ _('Cancel') }}</button>
+        <button type="button" class="btn btn-warning" id="btn-reset-password"><i class="fa fa-key"></i> {{ _('Reset Password') }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Delete Confirm Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header um-modal-header-danger">
+        <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+        <h4 class="modal-title"><i class="fa fa-trash"></i> {{ _('Delete User') }}</h4>
+      </div>
+      <div class="modal-body">
+        <div class="um-modal-alert" id="delete-alert" style="display:none"></div>
+        <div class="um-danger-warning">
+          <i class="fa fa-exclamation-triangle"></i>
+          <p>{{ _('Are you sure you want to delete user') }} <strong id="delete-user-label"></strong>?</p>
+          <p class="text-muted">{{ _('The user will be soft-deleted and can be reactivated later.') }}</p>
+        </div>
+        <input type="hidden" id="delete-user-id" />
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{ _('Cancel') }}</button>
+        <button type="button" class="btn btn-danger" id="btn-delete-user"><i class="fa fa-trash"></i> {{ _('Delete User') }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Reactivate Confirm Modal -->
+<div class="modal fade" id="reactivateModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+        <h4 class="modal-title"><i class="fa fa-undo"></i> {{ _('Reactivate User') }}</h4>
+      </div>
+      <div class="modal-body">
+        <div class="um-modal-alert" id="reactivate-alert" style="display:none"></div>
+        <p>{{ _('Reactivate user') }} <strong id="reactivate-user-label"></strong>?</p>
+        <p class="text-muted">{{ _('The user will be immediately restored to active status.') }}</p>
+        <input type="hidden" id="reactivate-user-id" />
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{ _('Cancel') }}</button>
+        <button type="button" class="btn btn-success" id="btn-reactivate-user"><i class="fa fa-undo"></i> {{ _('Reactivate') }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Purge Confirm Modal -->
+<div class="modal fade" id="purgeModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header um-modal-header-danger">
+        <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+        <h4 class="modal-title"><i class="fa fa-bomb"></i> {{ _('Purge User Permanently') }}</h4>
+      </div>
+      <div class="modal-body">
+        <div class="um-modal-alert" id="purge-alert" style="display:none"></div>
+        <div class="um-danger-warning um-danger-critical">
+          <i class="fa fa-exclamation-triangle"></i>
+          <p><strong>{{ _('WARNING: This action is IRREVERSIBLE!') }}</strong></p>
+          <p>{{ _('Permanently remove user') }} <strong id="purge-user-label"></strong> {{ _('from the database?') }}</p>
+          <p class="text-muted">{{ _('All user data will be permanently deleted. This cannot be undone.') }}</p>
+        </div>
+        <input type="hidden" id="purge-user-id" />
+        <form id="purge-form">
+          <div class="form-group">
+            <label for="sysadmin-password-purge">{{ _('Your Sysadmin Password') }} <span class="text-danger">*</span></label>
+            <input type="password" class="form-control" id="sysadmin-password-purge" name="sysadmin_password" required />
+            <span class="help-block">{{ _('Required for security verification.') }}</span>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{ _('Cancel') }}</button>
+        <button type="button" class="btn btn-danger" id="btn-purge-user"><i class="fa fa-bomb"></i> {{ _('Purge Permanently') }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Toggle Sysadmin Confirm Modal -->
+<div class="modal fade" id="sysadminModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+        <h4 class="modal-title"><i class="fa fa-shield"></i> <span id="sysadmin-modal-title"></span></h4>
+      </div>
+      <div class="modal-body">
+        <div class="um-modal-alert" id="sysadmin-alert" style="display:none"></div>
+        <p id="sysadmin-modal-body"></p>
+        <input type="hidden" id="sysadmin-user-id" />
+        <input type="hidden" id="sysadmin-value" />
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{ _('Cancel') }}</button>
+        <button type="button" class="btn btn-primary" id="btn-toggle-sysadmin"><i class="fa fa-shield"></i> {{ _('Confirm') }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+{# ── Styles ─────────────────────────────────────────────────────────────── #}
+<style>
+/* Banner */
+.um-banner {
+  position: relative;
+  background: linear-gradient(135deg, #1a5276 0%, #2e86c1 50%, #3498db 100%);
+  border-radius: 8px;
+  padding: 32px 36px;
+  color: #fff;
+  margin-bottom: 24px;
+  overflow: hidden;
+}
+.um-banner-overlay {
+  position: absolute;
+  inset: 0;
+  background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+.um-banner-content { position: relative; z-index: 1; }
+.um-banner h1 { margin: 0 0 8px; font-size: 26px; font-weight: 700; }
+.um-banner p { margin: 0; opacity: 0.9; font-size: 15px; }
+.um-banner-stat {
+  display: inline-block;
+  margin-top: 12px;
+  background: rgba(255,255,255,0.2);
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+/* Toolbar */
+.um-toolbar {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  padding: 16px 20px;
+  margin-bottom: 20px;
+}
+.um-toolbar-form {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  align-items: center;
+}
+.um-toolbar-search { flex: 1; min-width: 220px; }
+.um-toolbar-search .input-group { width: 100%; }
+.um-toolbar-filters {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.um-toolbar-filters select { width: auto; min-width: 130px; }
+.um-toolbar-actions { display: flex; gap: 6px; }
+
+/* Table */
+.um-table-wrap {
+  background: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  overflow-x: auto;
+}
+.um-table {
+  margin: 0;
+  border: none;
+}
+.um-table thead th {
+  background: #f8f9fa;
+  border-bottom: 2px solid #dee2e6;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #666;
+  padding: 12px 14px;
+  white-space: nowrap;
+}
+.um-table tbody td {
+  padding: 12px 14px;
+  vertical-align: middle;
+  border-bottom: 1px solid #f0f0f0;
+}
+.um-table tbody tr:hover { background: #f8fbff; }
+.um-row-deleted { background: #fdf2f2 !important; }
+.um-row-deleted:hover { background: #fbe8e8 !important; }
+
+/* User cell */
+.um-user-cell { display: flex; align-items: center; gap: 10px; }
+.um-avatar {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: #e8e8e8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.um-avatar img { width: 36px; height: 36px; object-fit: cover; }
+.um-avatar-placeholder { color: #999; font-size: 16px; }
+.um-user-info { display: flex; flex-direction: column; }
+.um-user-name { font-weight: 600; color: #2c3e50; font-size: 13px; }
+.um-user-name:hover { color: #0072bc; }
+.um-user-username { font-size: 11px; color: #999; }
+.um-user-job { font-size: 11px; color: #7f8c8d; font-style: italic; }
+
+/* Badges */
+.um-badge { font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 3px; }
+.um-email { font-size: 12px; color: #555; }
+.um-date { font-size: 12px; color: #999; }
+.um-datasets-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #ecf0f1;
+  color: #555;
+  border-radius: 10px;
+  padding: 2px 10px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.um-org-tag {
+  display: inline-block;
+  background: #eaf2f8;
+  color: #2980b9;
+  padding: 1px 7px;
+  border-radius: 3px;
+  font-size: 11px;
+  margin: 1px 2px;
+}
+.um-org-more {
+  font-size: 11px;
+  color: #999;
+}
+
+/* Actions dropdown */
+.um-actions-group .btn { border: 1px solid #ddd; }
+.um-dropdown li a {
+  padding: 6px 16px;
+  font-size: 13px;
+}
+.um-dropdown li a i { width: 18px; text-align: center; }
+
+/* Empty state */
+.um-empty {
+  text-align: center;
+  padding: 40px !important;
+  color: #999;
+  font-size: 14px;
+}
+
+/* Pagination */
+.um-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.um-pagination-info { font-size: 13px; color: #888; }
+
+/* Modals */
+.um-modal-header-danger { background: #e74c3c; color: #fff; }
+.um-modal-header-danger .close { color: #fff; opacity: 0.8; }
+.um-danger-warning {
+  text-align: center;
+  padding: 16px;
+}
+.um-danger-warning > i {
+  font-size: 40px;
+  color: #e74c3c;
+  margin-bottom: 12px;
+}
+.um-danger-critical > i { color: #c0392b; }
+.um-modal-alert {
+  padding: 10px 14px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+  font-size: 13px;
+}
+.um-modal-alert.alert-success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+.um-modal-alert.alert-danger { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+
+/* Responsive */
+@media (max-width: 992px) {
+  .um-col-orgs, .um-col-datasets, .um-col-created { display: none; }
+  .um-toolbar-form { flex-direction: column; }
+  .um-toolbar-search { width: 100%; }
+  .um-toolbar-filters { width: 100%; }
+  .um-toolbar-actions { width: 100%; justify-content: flex-end; }
+}
+@media (max-width: 768px) {
+  .um-col-email { display: none; }
+  .um-banner { padding: 20px; }
+  .um-banner h1 { font-size: 20px; }
+}
+</style>
+
+{# ── JavaScript ─────────────────────────────────────────────────────────── #}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  var csrfToken = '';
+  var csrfMeta = document.querySelector('meta[name=_csrf_token]');
+  if (csrfMeta) csrfToken = csrfMeta.getAttribute('content');
+  // Also try hidden CSRF input
+  var csrfInput = document.querySelector('input[name=_csrf_token]');
+  if (!csrfToken && csrfInput) csrfToken = csrfInput.value;
+
+  function showAlert(containerId, type, message) {
+    var el = document.getElementById(containerId);
+    if (!el) return;
+    el.className = 'um-modal-alert alert-' + type;
+    el.textContent = message;
+    el.style.display = 'block';
+  }
+  function hideAlert(containerId) {
+    var el = document.getElementById(containerId);
+    if (el) el.style.display = 'none';
+  }
+  function formatError(err) {
+    if (typeof err === 'object') {
+      var msgs = [];
+      for (var k in err) {
+        if (err.hasOwnProperty(k)) {
+          var v = err[k];
+          msgs.push(k + ': ' + (Array.isArray(v) ? v.join(', ') : v));
+        }
+      }
+      return msgs.join('; ');
+    }
+    return String(err);
+  }
+  function postAction(url, data, alertId, onSuccess) {
+    var fd = new FormData();
+    for (var k in data) {
+      if (data.hasOwnProperty(k)) fd.append(k, data[k]);
+    }
+    if (csrfToken) fd.append('_csrf_token', csrfToken);
+
+    fetch(url, { method: 'POST', body: fd, credentials: 'same-origin' })
+      .then(function(r) { return r.json().then(function(d) { return {ok: r.ok, data: d}; }); })
+      .then(function(res) {
+        if (res.data.success) {
+          showAlert(alertId, 'success', res.data.message || 'Success');
+          if (onSuccess) onSuccess(res.data);
+          setTimeout(function() { location.reload(); }, 1200);
+        } else {
+          showAlert(alertId, 'danger', formatError(res.data.error || 'Unknown error'));
+        }
+      })
+      .catch(function(e) {
+        showAlert(alertId, 'danger', 'Request failed: ' + e.message);
+      });
+  }
+
+  // ── Create User ──
+  document.getElementById('btn-create-user').addEventListener('click', function() {
+    hideAlert('create-alert');
+    var name = document.getElementById('create-username').value.trim();
+    var email = document.getElementById('create-email').value.trim();
+    var password = document.getElementById('create-password').value;
+    var fullname = document.getElementById('create-fullname').value.trim();
+    var sysadmin = document.getElementById('create-sysadmin').checked ? 'true' : 'false';
+
+    if (!name || !email || !password) {
+      showAlert('create-alert', 'danger', '{{ _("Please fill in all required fields.") }}');
+      return;
+    }
+    if (password.length < 8) {
+      showAlert('create-alert', 'danger', '{{ _("Password must be at least 8 characters.") }}');
+      return;
+    }
+    postAction(
+      '{{ h.url_for("theme_ejemplo.users_admin_create") }}',
+      { name: name, email: email, password: password, fullname: fullname, sysadmin: sysadmin },
+      'create-alert'
+    );
+  });
+
+  // ── Reset Password ──
+  document.querySelectorAll('.um-action-password').forEach(function(el) {
+    el.addEventListener('click', function(e) {
+      e.preventDefault();
+      hideAlert('password-alert');
+      document.getElementById('password-user-id').value = this.dataset.userId;
+      document.getElementById('password-user-label').textContent = '@' + this.dataset.userName;
+      document.getElementById('new-password').value = '';
+      document.getElementById('confirm-password').value = '';
+      document.getElementById('sysadmin-password-pw').value = '';
+      $('#passwordModal').modal('show');
+    });
+  });
+  document.getElementById('btn-reset-password').addEventListener('click', function() {
+    hideAlert('password-alert');
+    var pw = document.getElementById('new-password').value;
+    var cpw = document.getElementById('confirm-password').value;
+    var spw = document.getElementById('sysadmin-password-pw').value;
+    if (!pw || !cpw || !spw) {
+      showAlert('password-alert', 'danger', '{{ _("Please fill in all fields.") }}');
+      return;
+    }
+    if (pw !== cpw) {
+      showAlert('password-alert', 'danger', '{{ _("Passwords do not match.") }}');
+      return;
+    }
+    if (pw.length < 8) {
+      showAlert('password-alert', 'danger', '{{ _("Password must be at least 8 characters.") }}');
+      return;
+    }
+    postAction(
+      '{{ h.url_for("theme_ejemplo.users_admin_reset_password") }}',
+      { id: document.getElementById('password-user-id').value, password: pw, sysadmin_password: spw },
+      'password-alert'
+    );
+  });
+
+  // ── Delete User ──
+  document.querySelectorAll('.um-action-delete').forEach(function(el) {
+    el.addEventListener('click', function(e) {
+      e.preventDefault();
+      hideAlert('delete-alert');
+      document.getElementById('delete-user-id').value = this.dataset.userId;
+      document.getElementById('delete-user-label').textContent = '@' + this.dataset.userName;
+      $('#deleteModal').modal('show');
+    });
+  });
+  document.getElementById('btn-delete-user').addEventListener('click', function() {
+    hideAlert('delete-alert');
+    postAction(
+      '{{ h.url_for("theme_ejemplo.users_admin_delete") }}',
+      { id: document.getElementById('delete-user-id').value },
+      'delete-alert'
+    );
+  });
+
+  // ── Reactivate User ──
+  document.querySelectorAll('.um-action-reactivate').forEach(function(el) {
+    el.addEventListener('click', function(e) {
+      e.preventDefault();
+      hideAlert('reactivate-alert');
+      document.getElementById('reactivate-user-id').value = this.dataset.userId;
+      document.getElementById('reactivate-user-label').textContent = '@' + this.dataset.userName;
+      $('#reactivateModal').modal('show');
+    });
+  });
+  document.getElementById('btn-reactivate-user').addEventListener('click', function() {
+    hideAlert('reactivate-alert');
+    postAction(
+      '{{ h.url_for("theme_ejemplo.users_admin_reactivate") }}',
+      { id: document.getElementById('reactivate-user-id').value },
+      'reactivate-alert'
+    );
+  });
+
+  // ── Purge User ──
+  document.querySelectorAll('.um-action-purge').forEach(function(el) {
+    el.addEventListener('click', function(e) {
+      e.preventDefault();
+      hideAlert('purge-alert');
+      document.getElementById('purge-user-id').value = this.dataset.userId;
+      document.getElementById('purge-user-label').textContent = '@' + this.dataset.userName;
+      document.getElementById('sysadmin-password-purge').value = '';
+      $('#purgeModal').modal('show');
+    });
+  });
+  document.getElementById('btn-purge-user').addEventListener('click', function() {
+    hideAlert('purge-alert');
+    var spw = document.getElementById('sysadmin-password-purge').value;
+    if (!spw) {
+      showAlert('purge-alert', 'danger', '{{ _("Please enter your sysadmin password.") }}');
+      return;
+    }
+    postAction(
+      '{{ h.url_for("theme_ejemplo.users_admin_purge") }}',
+      { id: document.getElementById('purge-user-id').value, sysadmin_password: spw },
+      'purge-alert'
+    );
+  });
+
+  // ── Toggle Sysadmin ──
+  document.querySelectorAll('.um-action-toggle-sysadmin').forEach(function(el) {
+    el.addEventListener('click', function(e) {
+      e.preventDefault();
+      hideAlert('sysadmin-alert');
+      var userId = this.dataset.userId;
+      var userName = this.dataset.userName;
+      var makeSysadmin = this.dataset.sysadmin === 'true';
+
+      document.getElementById('sysadmin-user-id').value = userId;
+      document.getElementById('sysadmin-value').value = makeSysadmin ? 'true' : 'false';
+
+      if (makeSysadmin) {
+        document.getElementById('sysadmin-modal-title').textContent = '{{ _("Promote to Sysadmin") }}';
+        var body = document.getElementById('sysadmin-modal-body');
+        body.textContent = '';
+        body.appendChild(document.createTextNode('{{ _("Promote") }} @'));
+        var strong = document.createElement('strong');
+        strong.textContent = userName;
+        body.appendChild(strong);
+        body.appendChild(document.createTextNode(' {{ _("to sysadmin?") }}'));
+        body.appendChild(document.createElement('br'));
+        var small = document.createElement('small');
+        small.className = 'text-muted';
+        small.textContent = '{{ _("This user will have full administrative access.") }}';
+        body.appendChild(small);
+      } else {
+        document.getElementById('sysadmin-modal-title').textContent = '{{ _("Remove Sysadmin") }}';
+        var body = document.getElementById('sysadmin-modal-body');
+        body.textContent = '';
+        body.appendChild(document.createTextNode('{{ _("Remove sysadmin privileges from") }} @'));
+        var strong = document.createElement('strong');
+        strong.textContent = userName;
+        body.appendChild(strong);
+        body.appendChild(document.createTextNode('?'));
+        body.appendChild(document.createElement('br'));
+        var small = document.createElement('small');
+        small.className = 'text-muted';
+        small.textContent = '{{ _("This user will become a regular user.") }}';
+        body.appendChild(small);
+      }
+      $('#sysadminModal').modal('show');
+    });
+  });
+  document.getElementById('btn-toggle-sysadmin').addEventListener('click', function() {
+    hideAlert('sysadmin-alert');
+    postAction(
+      '{{ h.url_for("theme_ejemplo.users_admin_toggle_sysadmin") }}',
+      {
+        id: document.getElementById('sysadmin-user-id').value,
+        sysadmin: document.getElementById('sysadmin-value').value,
+      },
+      'sysadmin-alert'
+    );
+  });
+});
+</script>
+
+{% endblock %}

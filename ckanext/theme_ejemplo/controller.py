@@ -1668,3 +1668,240 @@ class MyLogica():
                 h.flash_error(str(e))
 
             return toolkit.redirect_to('theme_ejemplo.bug_tickets_show', id=id)
+
+        # ── Sysadmin User Management Panel ────────────────────────────────
+
+        @staticmethod
+        def users_admin():
+            """Render the sysadmin user management panel."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('admin_user_list', context, {})
+            except toolkit.NotAuthorized:
+                return base.abort(403, _('Not authorized'))
+
+            # Leer parámetros de filtro desde query string
+            q = request.args.get('q', '')
+            state = request.args.get('state', '')
+            sysadmin = request.args.get('sysadmin', '')
+            order_by = request.args.get('order_by', 'created')
+            page = max(int(request.args.get('page', 1)), 1)
+            limit = 25
+            offset = (page - 1) * limit
+
+            data_dict = {
+                'q': q,
+                'state': state,
+                'order_by': order_by,
+                'limit': limit,
+                'offset': offset,
+            }
+            if sysadmin:
+                data_dict['sysadmin'] = sysadmin
+
+            result = toolkit.get_action('admin_user_list')(context, data_dict)
+            total = result.get('count', 0)
+            total_pages = max(1, (total + limit - 1) // limit)
+
+            extra_vars = {
+                'users': result.get('results', []),
+                'total': total,
+                'q': q,
+                'state': state,
+                'sysadmin_filter': sysadmin,
+                'order_by': order_by,
+                'page': page,
+                'limit': limit,
+                'total_pages': total_pages,
+            }
+            return base.render('admin/users.html', extra_vars=extra_vars)
+
+        @staticmethod
+        def users_admin_search():
+            """AJAX: Search users for autocomplete/quick search."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('admin_user_list', context, {})
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+
+            q = request.args.get('q', '')
+            if not q or len(q) < 2:
+                return jsonify({'results': []})
+
+            try:
+                result = toolkit.get_action('admin_user_list')(
+                    context,
+                    {'q': q, 'limit': 10, 'offset': 0}
+                )
+                return jsonify({
+                    'results': result.get('results', []),
+                    'count': result.get('count', 0),
+                })
+            except Exception as e:
+                log.error(f'Error searching users: {e}')
+                return jsonify({'results': [], 'error': str(e)})
+
+        @staticmethod
+        def users_admin_create():
+            """AJAX: Create a new user."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('admin_user_create', context, {})
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+
+            try:
+                data = {
+                    'name': request.form.get('name', ''),
+                    'email': request.form.get('email', ''),
+                    'fullname': request.form.get('fullname', ''),
+                    'password': request.form.get('password', ''),
+                    'sysadmin': request.form.get('sysadmin', 'false'),
+                }
+                result = toolkit.get_action('admin_user_create')(context, data)
+                return jsonify(result)
+            except toolkit.ValidationError as e:
+                return jsonify({'success': False, 'error': e.error_dict}), 400
+            except Exception as e:
+                log.error(f'Error creating user: {e}')
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        @staticmethod
+        def users_admin_reset_password():
+            """AJAX: Reset a user's password."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('admin_user_reset_password', context, {})
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+
+            try:
+                data = {
+                    'id': request.form.get('id', ''),
+                    'password': request.form.get('password', ''),
+                    'sysadmin_password': request.form.get('sysadmin_password', ''),
+                }
+                result = toolkit.get_action('admin_user_reset_password')(context, data)
+                return jsonify(result)
+            except toolkit.ValidationError as e:
+                return jsonify({'success': False, 'error': e.error_dict}), 400
+            except toolkit.ObjectNotFound:
+                return jsonify({'success': False, 'error': 'User not found'}), 404
+            except Exception as e:
+                log.error(f'Error resetting password: {e}')
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        @staticmethod
+        def users_admin_delete():
+            """AJAX: Soft-delete a user."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('admin_user_delete', context, {})
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+
+            try:
+                data = {'id': request.form.get('id', '')}
+                result = toolkit.get_action('admin_user_delete')(context, data)
+                return jsonify(result)
+            except toolkit.ValidationError as e:
+                return jsonify({'success': False, 'error': e.error_dict}), 400
+            except toolkit.ObjectNotFound:
+                return jsonify({'success': False, 'error': 'User not found'}), 404
+            except Exception as e:
+                log.error(f'Error deleting user: {e}')
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        @staticmethod
+        def users_admin_purge():
+            """AJAX: Permanently purge a deleted user."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('admin_user_purge', context, {})
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+
+            try:
+                data = {
+                    'id': request.form.get('id', ''),
+                    'sysadmin_password': request.form.get('sysadmin_password', ''),
+                }
+                result = toolkit.get_action('admin_user_purge')(context, data)
+                return jsonify(result)
+            except toolkit.ValidationError as e:
+                return jsonify({'success': False, 'error': e.error_dict}), 400
+            except toolkit.ObjectNotFound:
+                return jsonify({'success': False, 'error': 'User not found'}), 404
+            except Exception as e:
+                log.error(f'Error purging user: {e}')
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        @staticmethod
+        def users_admin_reactivate():
+            """AJAX: Reactivate a deleted user."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('admin_user_reactivate', context, {})
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+
+            try:
+                data = {'id': request.form.get('id', '')}
+                result = toolkit.get_action('admin_user_reactivate')(context, data)
+                return jsonify(result)
+            except toolkit.ValidationError as e:
+                return jsonify({'success': False, 'error': e.error_dict}), 400
+            except toolkit.ObjectNotFound:
+                return jsonify({'success': False, 'error': 'User not found'}), 404
+            except Exception as e:
+                log.error(f'Error reactivating user: {e}')
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        @staticmethod
+        def users_admin_toggle_sysadmin():
+            """AJAX: Promote or demote a user as sysadmin."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('admin_user_toggle_sysadmin', context, {})
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+
+            try:
+                data = {
+                    'id': request.form.get('id', ''),
+                    'sysadmin': request.form.get('sysadmin', 'false'),
+                }
+                result = toolkit.get_action('admin_user_toggle_sysadmin')(context, data)
+                return jsonify(result)
+            except toolkit.ValidationError as e:
+                return jsonify({'success': False, 'error': e.error_dict}), 400
+            except toolkit.ObjectNotFound:
+                return jsonify({'success': False, 'error': 'User not found'}), 404
+            except Exception as e:
+                log.error(f'Error toggling sysadmin: {e}')
+                return jsonify({'success': False, 'error': str(e)}), 500
