@@ -1,8 +1,62 @@
+# IHP-WINS robots.txt
+# Block faceted search abuse and protect backend resources
+
 User-agent: *
-Crawl-delay: 20
-Disallow: /dataset/?  # bloquea facetadas
-Allow: /dataset/*/    # permite páginas de cada dataset
+Crawl-delay: 30
+Allow: /dataset/*/
+Allow: /organization/*/
+Allow: /group/*/
+Disallow: /dataset?
+Disallow: /dataset/?
+Disallow: /es/dataset?
+Disallow: /es/dataset/?
+Disallow: /fr/dataset?
+Disallow: /fr/dataset/?
+Disallow: /group?
+Disallow: /group/?
+Disallow: /es/group?
+Disallow: /es/group/?
+Disallow: /fr/group?
+Disallow: /fr/group/?
+Disallow: /organization?
+Disallow: /organization/?
+Disallow: /es/organization?
+Disallow: /es/organization/?
+Disallow: /fr/organization?
+Disallow: /fr/organization/?
 Disallow: /dataset/rate/
-Disallow: /revision/
 Disallow: /dataset/*/history
+Disallow: /revision/
 Disallow: /api/
+Disallow: /ckan-admin/
+Disallow: /user/
+
+# Aggressive bots — block everything
+User-agent: AhrefsBot
+Disallow: /
+
+User-agent: SemrushBot
+Disallow: /
+
+User-agent: MJ12bot
+Disallow: /
+
+User-agent: Bytespider
+Disallow: /
+
+User-agent: PetalBot
+Disallow: /
+
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ClaudeBot
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: DotBot
+Disallow: /
+
+Sitemap: https://ihp-wins.unesco.org/sitemap.xml
