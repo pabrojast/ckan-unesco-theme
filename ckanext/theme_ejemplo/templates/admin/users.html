@@ -580,11 +580,19 @@
 
 /* Actions dropdown */
 .um-actions-group .btn { border: 1px solid #ddd; }
+.um-actions-group { position: static; }
 .um-dropdown li a {
   padding: 6px 16px;
   font-size: 13px;
 }
 .um-dropdown li a i { width: 18px; text-align: center; }
+.um-dropdown.um-dropdown-fixed {
+  position: fixed;
+  top: auto;
+  left: auto;
+  z-index: 1050;
+  display: block;
+}
 
 /* Empty state */
 .um-empty {
@@ -822,6 +830,44 @@ document.addEventListener('DOMContentLoaded', function() {
       'purge-alert'
     );
   });
+
+  // ── Fix dropdown clipping in overflow container ──
+  var tableWrap = document.querySelector('.um-table-wrap');
+  if (tableWrap) {
+    $(tableWrap).on('shown.bs.dropdown', '.um-actions-group', function() {
+      var btn = this.querySelector('.dropdown-toggle');
+      var menu = this.querySelector('.um-dropdown');
+      if (!btn || !menu) return;
+
+      var rect = btn.getBoundingClientRect();
+      menu.classList.add('um-dropdown-fixed');
+      menu.style.top = (rect.bottom + 2) + 'px';
+      menu.style.left = (rect.right - menu.offsetWidth) + 'px';
+
+      // Ensure menu doesn't overflow below viewport
+      var menuRect = menu.getBoundingClientRect();
+      if (menuRect.bottom > window.innerHeight) {
+        menu.style.top = (rect.top - menuRect.height - 2) + 'px';
+      }
+    });
+
+    $(tableWrap).on('hidden.bs.dropdown', '.um-actions-group', function() {
+      var menu = this.querySelector('.um-dropdown');
+      if (menu) {
+        menu.classList.remove('um-dropdown-fixed');
+        menu.style.top = '';
+        menu.style.left = '';
+      }
+    });
+
+    // Close fixed dropdown on scroll to prevent misalignment
+    tableWrap.addEventListener('scroll', function() {
+      var openDropdown = tableWrap.querySelector('.um-dropdown-fixed');
+      if (openDropdown) {
+        $(openDropdown).closest('.um-actions-group').find('.dropdown-toggle').dropdown('toggle');
+      }
+    });
+  }
 
   // ── Toggle Sysadmin ──
   document.querySelectorAll('.um-action-toggle-sysadmin').forEach(function(el) {
