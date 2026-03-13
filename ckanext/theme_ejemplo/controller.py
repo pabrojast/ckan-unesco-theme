@@ -359,19 +359,34 @@ class MyLogica():
                                        items_per_page=items_per_page)
 
         def iot_portal():
-            
             if request.method == 'GET':
-                return render_template("iot_portal/index.html")
+                from ckanext.theme_ejemplo.model import PortalCard, init_portal_cards_db
+                init_portal_cards_db()
+                cards = PortalCard.get_by_portal('iot')
+                is_sysadmin = c.userobj and c.userobj.sysadmin
+                return render_template("iot_portal/index.html",
+                                       cards=[cd.as_dict() for cd in cards],
+                                       is_sysadmin=is_sysadmin)
 
         def flood_drought_portal():
-            
             if request.method == 'GET':
-                return render_template("flood_drought_portal/index.html")
+                from ckanext.theme_ejemplo.model import PortalCard, init_portal_cards_db
+                init_portal_cards_db()
+                cards = PortalCard.get_by_portal('flood_drought')
+                is_sysadmin = c.userobj and c.userobj.sysadmin
+                return render_template("flood_drought_portal/index.html",
+                                       cards=[cd.as_dict() for cd in cards],
+                                       is_sysadmin=is_sysadmin)
 
         def citizen_science_portal():
-            
             if request.method == 'GET':
-                return render_template("citizen_science_portal/index.html")
+                from ckanext.theme_ejemplo.model import PortalCard, init_portal_cards_db
+                init_portal_cards_db()
+                cards = PortalCard.get_by_portal('citizen_science')
+                is_sysadmin = c.userobj and c.userobj.sysadmin
+                return render_template("citizen_science_portal/index.html",
+                                       cards=[cd.as_dict() for cd in cards],
+                                       is_sysadmin=is_sysadmin)
 
         # --- People & Organizations views ---
 
@@ -1503,7 +1518,204 @@ class MyLogica():
                 log.error(f'Error uploading image: {e}')
                 return jsonify({'success': False, 'error': str(e)}), 500
 
-        # ── Bug Ticket Views ──────────────────────────────────────────────────
+        # ── Portal Card Admin Views ──────────────────────────────────────────
+
+        PORTAL_META = {
+            'flood_drought': {
+                'name': 'Flood and Drought Monitoring Portal',
+                'icon': 'fa-tint',
+                'url': '/flood-drought-portal',
+            },
+            'iot': {
+                'name': 'Internet of Things Portal',
+                'icon': 'fa-microchip',
+                'url': '/iot-portal',
+            },
+            'citizen_science': {
+                'name': 'Citizen Science Portal',
+                'icon': 'fa-users',
+                'url': '/citizen-science-portal',
+            },
+        }
+
+        @staticmethod
+        def portal_cards_admin(portal_id):
+            """Render the portal cards admin panel. Sysadmin only."""
+            if portal_id not in MyLogica.PORTAL_META:
+                return base.abort(404, _('Portal not found'))
+
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('portal_card_list', context, {})
+            except toolkit.NotAuthorized:
+                return base.abort(403, _('Not authorized'))
+
+            cards = toolkit.get_action('portal_card_list')(
+                context, {'portal_id': portal_id}
+            )
+            portal_info = MyLogica.PORTAL_META[portal_id]
+            extra_vars = {
+                'cards': cards.get('results', []),
+                'cards_count': cards.get('count', 0),
+                'portal_id': portal_id,
+                'portal_name': portal_info['name'],
+                'portal_icon': portal_info['icon'],
+                'portal_url': portal_info['url'],
+            }
+            return base.render('admin/portal_cards.html', extra_vars=extra_vars)
+
+        @staticmethod
+        def portal_cards_create():
+            """AJAX: Create a portal card."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('portal_card_create', context, {})
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+
+            data = {
+                'portal_id': request.form.get('portal_id', ''),
+                'title': request.form.get('title', ''),
+                'link': request.form.get('link', ''),
+                'description': request.form.get('description', ''),
+                'image_url': request.form.get('image_url', ''),
+                'is_coming_soon': request.form.get('is_coming_soon', ''),
+            }
+
+            if not data['title'] or not data['link'] or not data['portal_id']:
+                return jsonify({'success': False, 'error': 'Title, link, and portal_id are required'}), 400
+
+            try:
+                result = toolkit.get_action('portal_card_create')(context, data)
+                return jsonify(result)
+            except toolkit.ValidationError as e:
+                return jsonify({'success': False, 'error': str(e)}), 400
+            except Exception as e:
+                log.error(f'Error creating portal card: {e}')
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        @staticmethod
+        def portal_cards_update():
+            """AJAX: Update a portal card."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('portal_card_update', context, {})
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+
+            card_id = request.form.get('id', '')
+            if not card_id:
+                return jsonify({'success': False, 'error': 'Missing id'}), 400
+
+            data = {'id': card_id}
+            for field in ('title', 'link', 'description', 'image_url', 'is_coming_soon'):
+                if field in request.form:
+                    data[field] = request.form[field]
+
+            try:
+                result = toolkit.get_action('portal_card_update')(context, data)
+                return jsonify(result)
+            except toolkit.ObjectNotFound:
+                return jsonify({'success': False, 'error': 'Not found'}), 404
+            except Exception as e:
+                log.error(f'Error updating portal card: {e}')
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        @staticmethod
+        def portal_cards_delete():
+            """AJAX: Delete a portal card."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('portal_card_delete', context, {})
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+
+            card_id = request.form.get('id', '')
+            if not card_id:
+                return jsonify({'success': False, 'error': 'Missing id'}), 400
+
+            try:
+                result = toolkit.get_action('portal_card_delete')(context, {'id': card_id})
+                return jsonify(result)
+            except toolkit.ObjectNotFound:
+                return jsonify({'success': False, 'error': 'Not found'}), 404
+            except Exception as e:
+                log.error(f'Error deleting portal card: {e}')
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        @staticmethod
+        def portal_cards_reorder():
+            """AJAX: Reorder portal cards."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('portal_card_reorder', context, {})
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+
+            try:
+                order = request.get_json(force=True).get('order', [])
+            except Exception:
+                order = request.form.getlist('order[]')
+
+            try:
+                result = toolkit.get_action('portal_card_reorder')(
+                    context, {'order': order}
+                )
+                return jsonify(result)
+            except Exception as e:
+                log.error(f'Error reordering portal cards: {e}')
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        @staticmethod
+        def portal_cards_upload_image():
+            """AJAX: Upload an image for a portal card."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('portal_card_create', context, {})
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+
+            if 'file' not in request.files:
+                return jsonify({'success': False, 'error': 'No file uploaded'}), 400
+
+            upload_file = request.files['file']
+            if not upload_file.filename:
+                return jsonify({'success': False, 'error': 'Empty filename'}), 400
+
+            try:
+                import ckan.lib.uploader as uploader
+                upload = uploader.get_uploader('portal_cards')
+                upload.update_data_dict(
+                    {'upload': upload_file, 'url': '', 'clear_upload': ''},
+                    'url', 'upload', 'clear_upload'
+                )
+                upload.upload()
+                image_url = h.url_for_static(
+                    'uploads/portal_cards/{}'.format(upload.filename),
+                    qualified=False
+                )
+                return jsonify({'success': True, 'image_url': image_url})
+            except Exception as e:
+                log.error(f'Error uploading portal card image: {e}')
+                return jsonify({'success': False, 'error': str(e)}), 500
 
         @staticmethod
         def bug_tickets_list():

@@ -104,6 +104,28 @@ def featured_publication_reorder(context, data_dict):
     return _sysadmin_only(context, data_dict)
 
 
+# ── Portal Card Auth ─────────────────────────────────────────────────────────
+
+def portal_card_list(context, data_dict):
+    return _sysadmin_only(context, data_dict)
+
+
+def portal_card_create(context, data_dict):
+    return _sysadmin_only(context, data_dict)
+
+
+def portal_card_update(context, data_dict):
+    return _sysadmin_only(context, data_dict)
+
+
+def portal_card_delete(context, data_dict):
+    return _sysadmin_only(context, data_dict)
+
+
+def portal_card_reorder(context, data_dict):
+    return _sysadmin_only(context, data_dict)
+
+
 # ── Bug Ticket Auth ──────────────────────────────────────────────────────────
 
 def bug_ticket_create(context, data_dict):

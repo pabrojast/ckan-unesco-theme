@@ -5,7 +5,7 @@ import datetime
 import uuid
 import logging
 
-from sqlalchemy import Table, Column, UnicodeText, DateTime, Integer
+from sqlalchemy import Table, Column, UnicodeText, DateTime, Integer, Boolean
 
 import ckan.model as model
 import ckan.model.meta as meta
@@ -306,3 +306,87 @@ def define_bug_ticket_table():
         meta.registry.map_imperatively(BugTicket, bug_ticket_table)
     except AttributeError:
         meta.mapper(BugTicket, bug_ticket_table)
+
+
+# ── Portal Card Model ────────────────────────────────────────────────────────
+
+portal_card_table = None
+
+VALID_PORTAL_IDS = ('flood_drought', 'iot', 'citizen_science')
+
+
+class PortalCard(model.DomainObject):
+    """A card displayed on one of the portal pages (IoT, Flood/Drought, Citizen Science)."""
+
+    def __init__(self, portal_id, title, link, description=u'',
+                 image_url=u'', display_order=0, is_coming_soon=False):
+        self.id = str(uuid.uuid4())
+        self.portal_id = portal_id
+        self.title = title
+        self.link = link
+        self.description = description
+        self.image_url = image_url
+        self.display_order = display_order
+        self.is_coming_soon = is_coming_soon
+        self.created_at = datetime.datetime.utcnow()
+
+    @classmethod
+    def get(cls, id):
+        return meta.Session.query(cls).get(id)
+
+    @classmethod
+    def get_by_portal(cls, portal_id):
+        return meta.Session.query(cls).filter(
+            cls.portal_id == portal_id
+        ).order_by(cls.display_order.asc(), cls.created_at.desc()).all()
+
+    def as_dict(self):
+        return {
+            'id': self.id,
+            'portal_id': self.portal_id,
+            'title': self.title,
+            'description': self.description,
+            'image_url': self.image_url,
+            'link': self.link,
+            'display_order': self.display_order,
+            'is_coming_soon': self.is_coming_soon,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+        }
+
+
+def init_portal_cards_db():
+    """Create the portal_card table if it doesn't exist."""
+    if portal_card_table is None:
+        define_portal_card_table()
+
+    from sqlalchemy import inspect as sa_inspect
+    inspector = sa_inspect(meta.engine)
+    if 'portal_card' not in inspector.get_table_names():
+        portal_card_table.create(meta.engine)
+        log.info(u'portal_card table created')
+    else:
+        log.debug(u'portal_card table already exists')
+
+
+def define_portal_card_table():
+    global portal_card_table
+
+    portal_card_table = Table(
+        'portal_card',
+        meta.metadata,
+        Column('id', UnicodeText, primary_key=True,
+               default=lambda: str(uuid.uuid4())),
+        Column('portal_id', UnicodeText, nullable=False),
+        Column('title', UnicodeText, nullable=False),
+        Column('description', UnicodeText, default=u''),
+        Column('image_url', UnicodeText, default=u''),
+        Column('link', UnicodeText, nullable=False),
+        Column('display_order', Integer, default=0),
+        Column('is_coming_soon', Boolean, default=False),
+        Column('created_at', DateTime, default=datetime.datetime.utcnow),
+    )
+
+    try:
+        meta.registry.map_imperatively(PortalCard, portal_card_table)
+    except AttributeError:
+        meta.mapper(PortalCard, portal_card_table)

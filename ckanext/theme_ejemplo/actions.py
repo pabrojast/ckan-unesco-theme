@@ -600,7 +600,113 @@ def featured_publication_reorder(context, data_dict):
     return {'success': True}
 
 
-# ── Bug Ticket Actions ───────────────────────────────────────────────────────
+# ── Portal Card Actions ──────────────────────────────────────────────────────
+
+from ckanext.theme_ejemplo.model import (
+    PortalCard, init_portal_cards_db, VALID_PORTAL_IDS
+)
+
+
+@toolkit.side_effect_free
+def portal_card_list(context, data_dict):
+    """List all cards for a given portal. Sysadmin only."""
+    toolkit.check_access('portal_card_list', context, data_dict)
+    init_portal_cards_db()
+    portal_id = data_dict.get('portal_id', '')
+    if portal_id and portal_id not in VALID_PORTAL_IDS:
+        raise toolkit.ValidationError({'portal_id': 'Invalid portal_id'})
+    cards = PortalCard.get_by_portal(portal_id) if portal_id else []
+    return {'results': [c.as_dict() for c in cards], 'count': len(cards)}
+
+
+def portal_card_create(context, data_dict):
+    """Create a new portal card. Sysadmin only."""
+    toolkit.check_access('portal_card_create', context, data_dict)
+    init_portal_cards_db()
+
+    portal_id = toolkit.get_or_bust(data_dict, 'portal_id')
+    if portal_id not in VALID_PORTAL_IDS:
+        raise toolkit.ValidationError({'portal_id': 'Invalid portal_id'})
+
+    title = toolkit.get_or_bust(data_dict, 'title')
+    link = toolkit.get_or_bust(data_dict, 'link')
+    description = data_dict.get('description', u'')
+    image_url = data_dict.get('image_url', u'')
+    display_order = int(data_dict.get('display_order', 0))
+    is_coming_soon = data_dict.get('is_coming_soon', False)
+    if isinstance(is_coming_soon, str):
+        is_coming_soon = is_coming_soon.lower() in ('true', '1', 'yes', 'on')
+
+    card = PortalCard(
+        portal_id=portal_id,
+        title=title,
+        link=link,
+        description=description,
+        image_url=image_url,
+        display_order=display_order,
+        is_coming_soon=is_coming_soon,
+    )
+    model.Session.add(card)
+    model.Session.commit()
+    return card.as_dict()
+
+
+def portal_card_update(context, data_dict):
+    """Update a portal card. Sysadmin only."""
+    toolkit.check_access('portal_card_update', context, data_dict)
+    init_portal_cards_db()
+
+    card_id = toolkit.get_or_bust(data_dict, 'id')
+    card = PortalCard.get(card_id)
+    if not card:
+        raise toolkit.ObjectNotFound('Portal card not found')
+
+    for field in ('title', 'link', 'description', 'image_url'):
+        if field in data_dict:
+            setattr(card, field, data_dict[field])
+    if 'display_order' in data_dict:
+        card.display_order = int(data_dict['display_order'])
+    if 'is_coming_soon' in data_dict:
+        val = data_dict['is_coming_soon']
+        if isinstance(val, str):
+            val = val.lower() in ('true', '1', 'yes', 'on')
+        card.is_coming_soon = val
+
+    model.Session.commit()
+    return card.as_dict()
+
+
+def portal_card_delete(context, data_dict):
+    """Delete a portal card. Sysadmin only."""
+    toolkit.check_access('portal_card_delete', context, data_dict)
+    init_portal_cards_db()
+
+    card_id = toolkit.get_or_bust(data_dict, 'id')
+    card = PortalCard.get(card_id)
+    if not card:
+        raise toolkit.ObjectNotFound('Portal card not found')
+
+    model.Session.delete(card)
+    model.Session.commit()
+    return {'success': True}
+
+
+def portal_card_reorder(context, data_dict):
+    """Reorder portal cards. Expects 'order': list of card IDs."""
+    toolkit.check_access('portal_card_reorder', context, data_dict)
+    init_portal_cards_db()
+
+    order = data_dict.get('order', [])
+    if not order:
+        return {'success': True}
+
+    for idx, card_id in enumerate(order):
+        card = PortalCard.get(card_id)
+        if card:
+            card.display_order = idx
+
+    model.Session.commit()
+    return {'success': True}
 
 from ckanext.theme_ejemplo.model import BugTicket, init_bug_tickets_db
 

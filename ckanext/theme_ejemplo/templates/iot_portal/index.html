@@ -55,62 +55,45 @@
                     <li>{% trans %}Wind Speed{% endtrans %}</li>
                   </ul>
                 </div>
-        
-                <!-- Portal Cards Section -->
-                <div class="row">
-                  <div class="col-md-4">
-                    <div class="col-small">
-                      <div class="cardsmall cardsmall-thematic cardsmall-cta cardsmall-hero"> 
-                        <img class="cardsmall-img-top image-style-cardsmall-1-column" src="./Landing_page/Content/unesco_global_iot.png" alt="" loading="lazy">
-                        <div class="cardsmall-body">
-                          <h3 class="cardsmall-title">{% trans %}UNESCO Global Internet of Things Portal{% endtrans %}</h3>
-                          <div class="cardsmall-text">
-                            <p>{% trans %}Access comprehensive IoT data and monitoring systems for water resource management globally.{% endtrans %}</p>
-                          </div>
-                          <div class="field field--name-field-link field--type-link field--label-hidden field__item">
-                            <a href="#" class="btn btn-primary btn-arrow-right">{{ _("Access") }}</a>
-                          </div>
-                        </div>
-                        <span class="coming-soon-badge">{% trans %}Coming Soon{% endtrans %}</span>
-                      </div>
-                    </div>
-                  </div>
-        
-                  <div class="col-md-4">
-                    <div class="col-small">
-                      <div class="cardsmall cardsmall-thematic cardsmall-cta cardsmall-hero"> 
-                        <img class="cardsmall-img-top image-style-cardsmall-1-column" src="./Landing_page/Content/be_resilient_southern_africa.png" alt="" loading="lazy">
-                        <div class="cardsmall-body">
-                          <h3 class="cardsmall-title">{% trans %}Be-Resilient Southern African Biosphere Reserves Portal{% endtrans %}</h3>
-                          <div class="cardsmall-text">
-                            <p>{% trans %}Monitoring and early warning systems for Southern African biosphere reserves.{% endtrans %}</p>
-                          </div>
-                          <div class="field field--name-field-link field--type-link field--label-hidden field__item">
-                            <a href="https://tb.ihp-wins.unesco.org/dashboard/4922c770-13c0-11f0-8913-cf831348fa91?publicId=260967b0-4e9c-11ef-b517-e7921ca0fba9" class="btn btn-primary btn-arrow-right">{{ _("Access") }}</a>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-        
-                  <div class="col-md-4">
-                    <div class="col-small">
-                      <div class="cardsmall cardsmall-thematic cardsmall-cta cardsmall-hero"> 
-                        <img class="cardsmall-img-top image-style-cardsmall-1-column" src="./Landing_page/Content/be_resilient_bupusa.png" alt="" loading="lazy">
-                        <div class="cardsmall-body">
-                          <h3 class="cardsmall-title">{% trans %}Be-Resilient BuPuSa Portal (Mozambique and Zimbabwe){% endtrans %}</h3>
-                          <div class="cardsmall-text">
-                            <p>{% trans %}Regional monitoring portal for Mozambique and Zimbabwe water systems.{% endtrans %}</p>
-                          </div>
-                          <div class="field field--name-field-link field--type-link field--label-hidden field__item">
-                            <a href="#" class="btn btn-primary btn-arrow-right">{{ _("Access") }}</a>
-                          </div>
-                        </div>
-                        <span class="coming-soon-badge">{% trans %}Coming Soon{% endtrans %}</span>
-                      </div>
-                    </div>
-                  </div>
+
+                {% if is_sysadmin %}
+                <div style="margin-bottom: 2rem; text-align: right;">
+                  <a href="{{ h.url_for('theme_ejemplo.portal_cards_admin', portal_id='iot') }}" class="btn btn-primary">
+                    <i class="fa fa-pencil"></i> {{ _('Edit Cards') }}
+                  </a>
                 </div>
+                {% endif %}
+
+                {% if cards %}
+                <!-- Portal Cards Section (dynamic from DB) -->
+                <div class="row">
+                  {% for card in cards %}
+                  <div class="col-md-4">
+                    <div class="col-small">
+                      <div class="cardsmall cardsmall-thematic cardsmall-cta cardsmall-hero"> 
+                        {% if card.image_url %}
+                        <img class="cardsmall-img-top image-style-cardsmall-1-column" src="{{ card.image_url }}" alt="{{ card.title }}" loading="lazy">
+                        {% endif %}
+                        <div class="cardsmall-body">
+                          <h3 class="cardsmall-title">{{ card.title }}</h3>
+                          {% if card.description %}
+                          <div class="cardsmall-text">
+                            <p>{{ card.description }}</p>
+                          </div>
+                          {% endif %}
+                          <div class="field field--name-field-link field--type-link field--label-hidden field__item">
+                            <a href="{{ card.link }}" class="btn btn-primary btn-arrow-right" {% if not card.is_coming_soon %}target="_blank"{% endif %}>{{ _("Access") }}</a>
+                          </div>
+                        </div>
+                        {% if card.is_coming_soon %}
+                        <span class="coming-soon-badge">{% trans %}Coming Soon{% endtrans %}</span>
+                        {% endif %}
+                      </div>
+                    </div>
+                  </div>
+                  {% endfor %}
+                </div>
+                {% endif %}
         
         
               </div>

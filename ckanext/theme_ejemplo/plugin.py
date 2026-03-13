@@ -329,6 +329,8 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
             membership_model.init_featured_publications_db()
             # Create bug_ticket table if needed
             membership_model.init_bug_tickets_db()
+            # Create portal_card table if needed
+            membership_model.init_portal_cards_db()
             
         def get_blueprint(self):
             
@@ -577,6 +579,45 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 methods=['POST']
             )
 
+            # Portal cards admin panel (sysadmin only)
+            # Static routes must be registered before the wildcard <portal_id>
+            blueprint.add_url_rule(
+                u'/ckan-admin/portal-cards/create',
+                u'portal_cards_create',
+                MyLogica.portal_cards_create,
+                methods=['POST']
+            )
+            blueprint.add_url_rule(
+                u'/ckan-admin/portal-cards/update',
+                u'portal_cards_update',
+                MyLogica.portal_cards_update,
+                methods=['POST']
+            )
+            blueprint.add_url_rule(
+                u'/ckan-admin/portal-cards/delete',
+                u'portal_cards_delete',
+                MyLogica.portal_cards_delete,
+                methods=['POST']
+            )
+            blueprint.add_url_rule(
+                u'/ckan-admin/portal-cards/reorder',
+                u'portal_cards_reorder',
+                MyLogica.portal_cards_reorder,
+                methods=['POST']
+            )
+            blueprint.add_url_rule(
+                u'/ckan-admin/portal-cards/upload-image',
+                u'portal_cards_upload_image',
+                MyLogica.portal_cards_upload_image,
+                methods=['POST']
+            )
+            blueprint.add_url_rule(
+                u'/ckan-admin/portal-cards/<portal_id>',
+                u'portal_cards_admin',
+                MyLogica.portal_cards_admin,
+                methods=['GET']
+            )
+
             # Bug ticket system
             blueprint.add_url_rule(
                 u'/bug-tickets',
@@ -733,6 +774,11 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 'featured_publication_update': custom_actions.featured_publication_update,
                 'featured_publication_delete': custom_actions.featured_publication_delete,
                 'featured_publication_reorder': custom_actions.featured_publication_reorder,
+                'portal_card_list': custom_actions.portal_card_list,
+                'portal_card_create': custom_actions.portal_card_create,
+                'portal_card_update': custom_actions.portal_card_update,
+                'portal_card_delete': custom_actions.portal_card_delete,
+                'portal_card_reorder': custom_actions.portal_card_reorder,
                 'bug_ticket_create': custom_actions.bug_ticket_create,
                 'bug_ticket_list': custom_actions.bug_ticket_list,
                 'bug_ticket_show': custom_actions.bug_ticket_show,
@@ -762,6 +808,11 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 'featured_publication_update': custom_auth.featured_publication_update,
                 'featured_publication_delete': custom_auth.featured_publication_delete,
                 'featured_publication_reorder': custom_auth.featured_publication_reorder,
+                'portal_card_list': custom_auth.portal_card_list,
+                'portal_card_create': custom_auth.portal_card_create,
+                'portal_card_update': custom_auth.portal_card_update,
+                'portal_card_delete': custom_auth.portal_card_delete,
+                'portal_card_reorder': custom_auth.portal_card_reorder,
                 'bug_ticket_create': custom_auth.bug_ticket_create,
                 'bug_ticket_list': custom_auth.bug_ticket_list,
                 'bug_ticket_show': custom_auth.bug_ticket_show,
