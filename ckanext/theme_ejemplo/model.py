@@ -364,8 +364,166 @@ def init_portal_cards_db():
     if 'portal_card' not in inspector.get_table_names():
         portal_card_table.create(meta.engine)
         log.info(u'portal_card table created')
+        _seed_default_portal_cards()
     else:
         log.debug(u'portal_card table already exists')
+
+
+def _seed_default_portal_cards():
+    """Populate the portal_card table with the original hardcoded cards."""
+    defaults = _get_default_portal_cards()
+    for card_data in defaults:
+        card = PortalCard(
+            portal_id=card_data['portal_id'],
+            title=card_data['title'],
+            link=card_data['link'],
+            description=card_data.get('description', u''),
+            image_url=card_data.get('image_url', u''),
+            display_order=card_data.get('display_order', 0),
+            is_coming_soon=card_data.get('is_coming_soon', False),
+        )
+        meta.Session.add(card)
+    meta.Session.commit()
+    log.info(u'portal_card table seeded with %d default cards', len(defaults))
+
+
+def _get_default_portal_cards():
+    """Return the list of default portal cards matching the original templates."""
+    return [
+        # ── Flood & Drought Portal (11 cards) ────────────────────────────
+        {
+            'portal_id': 'flood_drought',
+            'title': 'African Flood and Drought Monitor',
+            'description': 'Continental monitoring system for flood and drought conditions across Africa.',
+            'image_url': './Landing_page/Content/african_flood_and_drought_monitor.avif',
+            'link': 'https://hydrology.soton.ac.uk/apps/afdm/',
+            'display_order': 0,
+        },
+        {
+            'portal_id': 'flood_drought',
+            'title': 'Botswana Flood and Drought Monitor',
+            'description': "National monitoring system for Botswana's flood and drought conditions.",
+            'image_url': './Landing_page/Content/botswana_flood_and_drought_monitor.avif',
+            'link': 'https://hydrology.soton.ac.uk/apps/bot_app/',
+            'display_order': 1,
+        },
+        {
+            'portal_id': 'flood_drought',
+            'title': 'Busi-Pungwe-Save (BuPuSa) Flood and Drought Monitor',
+            'description': "Regional monitoring system for the Busi-Pungwe-Save river basins' flood and drought conditions.",
+            'image_url': './Landing_page/Content/bupusa_flood_and_drought_monitor.jpg',
+            'link': 'https://hydrology.soton.ac.uk/apps/bupusa_app',
+            'display_order': 2,
+        },
+        {
+            'portal_id': 'flood_drought',
+            'title': 'Madagascar Flood and Drought Monitor',
+            'description': "National monitoring system for Madagascar's flood and drought conditions.",
+            'image_url': './Landing_page/Content/madagascar_flood_and_drought_monitor.avif',
+            'link': 'https://hydrology.soton.ac.uk/apps/mdg_app/',
+            'display_order': 3,
+        },
+        {
+            'portal_id': 'flood_drought',
+            'title': 'Malawi Flood and Drought Monitor',
+            'description': "National monitoring system for Malawi's flood and drought conditions.",
+            'image_url': './Landing_page/Content/malawi_flood_and_drought_monitor.avif',
+            'link': 'https://hydrology.soton.ac.uk/apps/mal_app/',
+            'display_order': 4,
+        },
+        {
+            'portal_id': 'flood_drought',
+            'title': 'Morocco Flood and Drought Monitor',
+            'description': "National monitoring system for Morocco's flood and drought conditions.",
+            'image_url': './Landing_page/Content/morocco_flood_and_drought_monitor.avif',
+            'link': 'https://hydrology.soton.ac.uk/apps/mor_app/',
+            'display_order': 5,
+        },
+        {
+            'portal_id': 'flood_drought',
+            'title': 'Mozambique Flood and Drought Monitor',
+            'description': "National monitoring system for Mozambique's flood and drought conditions.",
+            'image_url': './Landing_page/Content/mozambique_flood_and_drought_monitor.avif',
+            'link': 'https://hydrology.soton.ac.uk/apps/moz_app/',
+            'display_order': 6,
+        },
+        {
+            'portal_id': 'flood_drought',
+            'title': 'Namibia Flood and Drought Monitor',
+            'description': "National monitoring system for Namibia's flood and drought conditions.",
+            'image_url': './Landing_page/Content/namibia_flood_and_drought_monitor.avif',
+            'link': 'https://hydrology.soton.ac.uk/apps/nam_app/',
+            'display_order': 7,
+        },
+        {
+            'portal_id': 'flood_drought',
+            'title': 'South Africa Flood and Drought Monitor',
+            'description': "National monitoring system for South Africa's flood and drought conditions.",
+            'image_url': './Landing_page/Content/south_africa_flood_and_drought_monitor.avif',
+            'link': 'https://hydrology.soton.ac.uk/apps/saf_app/',
+            'display_order': 8,
+        },
+        {
+            'portal_id': 'flood_drought',
+            'title': 'Zambia Flood and Drought Monitor',
+            'description': "National monitoring system for Zambia's flood and drought conditions.",
+            'image_url': './Landing_page/Content/zambia_flood_and_drought_monitor.avif',
+            'link': 'https://hydrology.soton.ac.uk/apps/zam_app/',
+            'display_order': 9,
+        },
+        {
+            'portal_id': 'flood_drought',
+            'title': 'Zimbabwe Flood and Drought Monitor',
+            'description': 'Access comprehensive flood and drought monitoring data for Zimbabwe.',
+            'image_url': './Landing_page/Content/zimbabwe_flood_and_drought_monitor.avif',
+            'link': 'https://hydrology.soton.ac.uk/apps/zim_app/',
+            'display_order': 10,
+        },
+        # ── IoT Portal (3 cards) ─────────────────────────────────────────
+        {
+            'portal_id': 'iot',
+            'title': 'UNESCO Global Internet of Things Portal',
+            'description': 'Access comprehensive IoT data and monitoring systems for water resource management globally.',
+            'image_url': './Landing_page/Content/unesco_global_iot.png',
+            'link': '#',
+            'display_order': 0,
+            'is_coming_soon': True,
+        },
+        {
+            'portal_id': 'iot',
+            'title': 'Be-Resilient Southern African Biosphere Reserves Portal',
+            'description': 'Monitoring and early warning systems for Southern African biosphere reserves.',
+            'image_url': './Landing_page/Content/be_resilient_southern_africa.png',
+            'link': 'https://tb.ihp-wins.unesco.org/dashboard/4922c770-13c0-11f0-8913-cf831348fa91?publicId=260967b0-4e9c-11ef-b517-e7921ca0fba9',
+            'display_order': 1,
+        },
+        {
+            'portal_id': 'iot',
+            'title': 'Be-Resilient BuPuSa Portal (Mozambique and Zimbabwe)',
+            'description': 'Regional monitoring portal for Mozambique and Zimbabwe water systems.',
+            'image_url': './Landing_page/Content/be_resilient_bupusa.png',
+            'link': '#',
+            'display_order': 2,
+            'is_coming_soon': True,
+        },
+        # ── Citizen Science Portal (2 cards) ─────────────────────────────
+        {
+            'portal_id': 'citizen_science',
+            'title': 'Citizens4Water platform',
+            'description': 'Centralized digital database with citizen scientist initiatives for water management around the world.',
+            'image_url': './Landing_page/Content/Citizen4Water_platform.png',
+            'link': '/citizens4water/',
+            'display_order': 0,
+        },
+        {
+            'portal_id': 'citizen_science',
+            'title': 'Citizen Science toolbox',
+            'description': 'Mobile application and data portal for citizen science data collection and open access data visualization.',
+            'image_url': './Landing_page/Content/Citizen_Science_toolbox.png',
+            'link': 'https://cs.ihp-wins.unesco.org/',
+            'display_order': 1,
+        },
+    ]
 
 
 def define_portal_card_table():
