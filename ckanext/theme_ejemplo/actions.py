@@ -1014,6 +1014,52 @@ def admin_user_reset_password(context, data_dict):
     }
 
 
+def admin_user_request_password_reset(context, data_dict):
+    """Envía un correo de restablecimiento de contraseña al usuario.
+
+    Utiliza el mecanismo nativo de CKAN (ckan.lib.mailer.send_reset_link)
+    para generar un token y enviar el email con el enlace de reset.
+    """
+    from ckan.lib import mailer
+
+    toolkit.check_access('admin_user_request_password_reset', context, data_dict)
+
+    user_id = toolkit.get_or_bust(data_dict, 'id')
+
+    target_user = model.User.get(user_id)
+    if not target_user:
+        raise toolkit.ObjectNotFound('User not found')
+
+    if target_user.state != 'active':
+        raise toolkit.ValidationError(
+            {'id': ['Cannot send reset email to a non-active user']}
+        )
+
+    if not target_user.email:
+        raise toolkit.ValidationError(
+            {'id': ['User does not have an email address']}
+        )
+
+    try:
+        mailer.send_reset_link(target_user)
+    except mailer.MailerException as e:
+        log.error(f'Error sending password reset email to {target_user.name}: {e}')
+        raise toolkit.ValidationError(
+            {'email': [str(e)]}
+        )
+
+    log.info(
+        f'Sysadmin {context.get("user")} requested password reset for '
+        f'{target_user.name} ({target_user.email})'
+    )
+
+    return {
+        'success': True,
+        'user_name': target_user.name,
+        'message': f'Password reset email sent to {target_user.email}',
+    }
+
+
 def admin_user_delete(context, data_dict):
     """Soft-delete de un usuario (estado -> deleted). Eliminación inmediata."""
     toolkit.check_access('admin_user_delete', context, data_dict)

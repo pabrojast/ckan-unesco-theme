@@ -170,6 +170,11 @@
                                 <i class="fa fa-key"></i> {{ _('Reset Password') }}
                               </a>
                             </li>
+                            <li>
+                              <a href="#" class="um-action-request-reset" data-user-id="{{ user.id }}" data-user-name="{{ user.name }}" data-user-email="{{ user.email }}">
+                                <i class="fa fa-envelope"></i> {{ _('Send Reset Email') }}
+                              </a>
+                            </li>
                             <li class="divider"></li>
                             {% if user.sysadmin %}
                             <li>
@@ -338,6 +343,35 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">{{ _('Cancel') }}</button>
         <button type="button" class="btn btn-warning" id="btn-reset-password"><i class="fa fa-key"></i> {{ _('Reset Password') }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Request Password Reset Email Modal -->
+<div class="modal fade" id="requestResetModal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+        <h4 class="modal-title"><i class="fa fa-envelope"></i> {{ _('Send Password Reset Email') }}</h4>
+      </div>
+      <div class="modal-body">
+        <div class="um-modal-alert" id="request-reset-alert" style="display:none"></div>
+        <input type="hidden" id="request-reset-user-id" />
+        <div class="text-center" style="padding: 10px 0;">
+          <i class="fa fa-envelope-o" style="font-size: 48px; color: #5B8C71; margin-bottom: 15px;"></i>
+          <p>{{ _('Send a password reset email to') }} <strong id="request-reset-user-label"></strong>?</p>
+          <p class="text-muted" style="font-size: 13px;">
+            <i class="fa fa-info-circle"></i>
+            {{ _('The user will receive an email at') }} <strong id="request-reset-email-label"></strong>
+            {{ _('with a link to set a new password.') }}
+          </p>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">{{ _('Cancel') }}</button>
+        <button type="button" class="btn btn-success" id="btn-request-reset"><i class="fa fa-paper-plane"></i> {{ _('Send Reset Email') }}</button>
       </div>
     </div>
   </div>
@@ -765,6 +799,42 @@ document.addEventListener('DOMContentLoaded', function() {
       { id: document.getElementById('password-user-id').value, password: pw, sysadmin_password: spw },
       'password-alert'
     );
+  });
+
+  // ── Request Password Reset Email ──
+  document.querySelectorAll('.um-action-request-reset').forEach(function(el) {
+    el.addEventListener('click', function(e) {
+      e.preventDefault();
+      hideAlert('request-reset-alert');
+      document.getElementById('request-reset-user-id').value = this.dataset.userId;
+      document.getElementById('request-reset-user-label').textContent = '@' + this.dataset.userName;
+      document.getElementById('request-reset-email-label').textContent = this.dataset.userEmail || '—';
+      $('#requestResetModal').modal('show');
+    });
+  });
+  document.getElementById('btn-request-reset').addEventListener('click', function() {
+    hideAlert('request-reset-alert');
+    var userId = document.getElementById('request-reset-user-id').value;
+    if (!userId) {
+      showAlert('request-reset-alert', 'danger', '{{ _("No user selected.") }}');
+      return;
+    }
+    this.disabled = true;
+    this.innerHTML = '<i class="fa fa-spinner fa-spin"></i> {{ _("Sending...") }}';
+    var btn = this;
+    postAction(
+      '{{ h.url_for("theme_ejemplo.users_admin_request_password_reset") }}',
+      { id: userId },
+      'request-reset-alert',
+      function() { btn.disabled = false; btn.innerHTML = '<i class="fa fa-paper-plane"></i> {{ _("Send Reset Email") }}'; }
+    );
+    // Re-enable button on error too
+    setTimeout(function() {
+      if (btn.disabled) {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa fa-paper-plane"></i> {{ _("Send Reset Email") }}';
+      }
+    }, 10000);
   });
 
   // ── Delete User ──

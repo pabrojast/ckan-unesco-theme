@@ -171,6 +171,10 @@ def admin_user_reset_password(context, data_dict):
     return _sysadmin_only(context, data_dict)
 
 
+def admin_user_request_password_reset(context, data_dict):
+    return _sysadmin_only(context, data_dict)
+
+
 def admin_user_delete(context, data_dict):
     return _sysadmin_only(context, data_dict)
 

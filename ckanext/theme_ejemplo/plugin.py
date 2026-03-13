@@ -676,6 +676,12 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 methods=['POST']
             )
             blueprint.add_url_rule(
+                u'/ckan-admin/users/request-password-reset',
+                u'users_admin_request_password_reset',
+                MyLogica.users_admin_request_password_reset,
+                methods=['POST']
+            )
+            blueprint.add_url_rule(
                 u'/ckan-admin/users/delete',
                 u'users_admin_delete',
                 MyLogica.users_admin_delete,
@@ -786,6 +792,7 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 'bug_ticket_api_list': custom_actions.bug_ticket_api_list,
                 'admin_user_list': custom_actions.admin_user_list,
                 'admin_user_reset_password': custom_actions.admin_user_reset_password,
+                'admin_user_request_password_reset': custom_actions.admin_user_request_password_reset,
                 'admin_user_delete': custom_actions.admin_user_delete,
                 'admin_user_purge': custom_actions.admin_user_purge,
                 'admin_user_reactivate': custom_actions.admin_user_reactivate,
@@ -820,6 +827,7 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 'bug_ticket_api_list': custom_auth.bug_ticket_api_list,
                 'admin_user_list': custom_auth.admin_user_list,
                 'admin_user_reset_password': custom_auth.admin_user_reset_password,
+                'admin_user_request_password_reset': custom_auth.admin_user_request_password_reset,
                 'admin_user_delete': custom_auth.admin_user_delete,
                 'admin_user_purge': custom_auth.admin_user_purge,
                 'admin_user_reactivate': custom_auth.admin_user_reactivate,

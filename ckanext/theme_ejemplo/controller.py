@@ -2017,6 +2017,30 @@ class MyLogica():
                 return jsonify({'success': False, 'error': str(e)}), 500
 
         @staticmethod
+        def users_admin_request_password_reset():
+            """AJAX: Send password reset email to a user."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('admin_user_request_password_reset', context, {})
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+
+            try:
+                data = {'id': request.form.get('id', '')}
+                result = toolkit.get_action('admin_user_request_password_reset')(context, data)
+                return jsonify(result)
+            except toolkit.ValidationError as e:
+                return jsonify({'success': False, 'error': e.error_dict}), 400
+            except toolkit.ObjectNotFound:
+                return jsonify({'success': False, 'error': 'User not found'}), 404
+            except Exception as e:
+                log.error(f'Error sending password reset email: {e}')
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        @staticmethod
         def users_admin_delete():
             """AJAX: Soft-delete a user."""
             context = {
