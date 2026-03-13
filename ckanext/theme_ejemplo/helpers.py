@@ -4,8 +4,182 @@ from ckan.lib import helpers as core_helpers
 import ckan.model as model
 import json
 import logging
+import time
+from functools import lru_cache
+from sqlalchemy import text
 
 log = logging.getLogger(__name__)
+
+# ── Tracking helpers ──────────────────────────────────────────────────
+
+_tracking_cache = {'dataset': {}, 'resource': {}, 'totals': None, 'expires': 0}
+_TRACKING_CACHE_TTL = 300  # 5 minutes
+
+
+def _get_tracking_cache_ttl():
+    try:
+        return max(60, int(toolkit.config.get(
+            'ckanext.theme_ejemplo.tracking_cache_ttl', _TRACKING_CACHE_TTL)))
+    except Exception:
+        return _TRACKING_CACHE_TTL
+
+
+def _invalidate_tracking_cache_if_expired():
+    """Invalidate cache if TTL has passed."""
+    now = time.time()
+    if now > _tracking_cache['expires']:
+        _tracking_cache['dataset'].clear()
+        _tracking_cache['resource'].clear()
+        _tracking_cache['totals'] = None
+        _tracking_cache['expires'] = now + _get_tracking_cache_ttl()
+
+
+def get_dataset_tracking(package_name):
+    """
+    Get page-view tracking stats for a dataset.
+    Returns dict with 'total' (all-time) and 'recent' (last 14 days) views.
+    Queries tracking_raw directly with caching.
+    """
+    _invalidate_tracking_cache_if_expired()
+
+    if package_name in _tracking_cache['dataset']:
+        return _tracking_cache['dataset'][package_name]
+
+    result = {'total': 0, 'recent': 0}
+    try:
+        engine = model.meta.engine
+        sql = text("""
+            SELECT
+                count(*) AS total,
+                count(*) FILTER (WHERE access_timestamp > now() - interval '14 days') AS recent
+            FROM tracking_raw
+            WHERE tracking_type = 'page'
+              AND url LIKE :pattern
+        """)
+        pattern = f'/dataset/{package_name}%'
+        with engine.connect() as conn:
+            row = conn.execute(sql, {'pattern': pattern}).fetchone()
+            if row:
+                result = {'total': row[0] or 0, 'recent': row[1] or 0}
+    except Exception as e:
+        log.warning(f"Error fetching tracking for dataset {package_name}: {e}")
+
+    _tracking_cache['dataset'][package_name] = result
+    return result
+
+
+def get_resource_downloads(resource_id):
+    """
+    Get download count for a resource.
+    Returns dict with 'total' and 'recent' downloads.
+    """
+    _invalidate_tracking_cache_if_expired()
+
+    if resource_id in _tracking_cache['resource']:
+        return _tracking_cache['resource'][resource_id]
+
+    result = {'total': 0, 'recent': 0}
+    try:
+        engine = model.meta.engine
+        sql = text("""
+            SELECT
+                count(*) AS total,
+                count(*) FILTER (WHERE access_timestamp > now() - interval '14 days') AS recent
+            FROM tracking_raw
+            WHERE tracking_type = 'resource'
+              AND url LIKE :pattern
+        """)
+        pattern = f'%/resource/{resource_id}/%'
+        with engine.connect() as conn:
+            row = conn.execute(sql, {'pattern': pattern}).fetchone()
+            if row:
+                result = {'total': row[0] or 0, 'recent': row[1] or 0}
+    except Exception as e:
+        log.warning(f"Error fetching downloads for resource {resource_id}: {e}")
+
+    _tracking_cache['resource'][resource_id] = result
+    return result
+
+
+def get_tracking_totals():
+    """
+    Get aggregated tracking totals for the entire site.
+    Returns dict with total page views and total downloads.
+    """
+    _invalidate_tracking_cache_if_expired()
+
+    if _tracking_cache['totals'] is not None:
+        return _tracking_cache['totals']
+
+    result = {'page_views': 0, 'downloads': 0}
+    try:
+        engine = model.meta.engine
+        sql = text("""
+            SELECT
+                count(*) FILTER (WHERE tracking_type = 'page') AS page_views,
+                count(*) FILTER (WHERE tracking_type = 'resource') AS downloads
+            FROM tracking_raw
+            WHERE tracking_type IN ('page', 'resource')
+        """)
+        with engine.connect() as conn:
+            row = conn.execute(sql).fetchone()
+            if row:
+                result = {
+                    'page_views': row[0] or 0,
+                    'downloads': row[1] or 0,
+                }
+    except Exception as e:
+        log.warning(f"Error fetching tracking totals: {e}")
+
+    _tracking_cache['totals'] = result
+    return result
+
+
+@lru_cache(maxsize=1)
+def _popular_datasets_cached(cache_buster):
+    """Internal cached query for popular datasets."""
+    results = []
+    try:
+        engine = model.meta.engine
+        sql = text("""
+            SELECT
+                regexp_replace(url, '^(/[a-z][a-z]/)?/dataset/', '') AS dataset_name,
+                count(*) AS views
+            FROM tracking_raw
+            WHERE tracking_type = 'page'
+              AND url ~ '^(/[a-z][a-z]/)?/dataset/[^/]+$'
+            GROUP BY dataset_name
+            ORDER BY views DESC
+            LIMIT 10
+        """)
+        with engine.connect() as conn:
+            rows = conn.execute(sql).fetchall()
+            for row in rows:
+                name = row[0]
+                views = row[1]
+                try:
+                    pkg = toolkit.get_action('package_show')(
+                        {'ignore_auth': True}, {'id': name})
+                    results.append({
+                        'name': pkg['name'],
+                        'title': pkg.get('title', pkg['name']),
+                        'views': views,
+                        'id': pkg['id'],
+                        'organization': pkg.get('organization'),
+                    })
+                except Exception:
+                    pass
+    except Exception as e:
+        log.warning(f"Error fetching popular datasets: {e}")
+    return results
+
+
+def get_popular_datasets(limit=5):
+    """Get the most viewed datasets (cached)."""
+    ttl = _get_tracking_cache_ttl()
+    cache_buster = int(time.time() / ttl) if ttl > 0 else 0
+    all_popular = _popular_datasets_cached(cache_buster)
+    return all_popular[:limit]
 
 def get_paged_resources(package_id, page=1, items_per_page=20, q='', format_filter=''):
     """

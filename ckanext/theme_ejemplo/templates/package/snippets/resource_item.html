@@ -49,8 +49,13 @@
     <span class="format-label" property="dc:format" data-format="{{ res.format.lower() or 'data' }}">{{ h.get_translated(res, 'format') }}</span>
     <a class="heading" href="{{ url }}" title="{{ res.name or res.description }}">
       {{ h.resource_display_name(res) }}
-      {{ h.popular('views', res.tracking_summary.total, min=10) if res.tracking_summary }}
     </a>
+    {% set dl = h.get_resource_downloads(res.id) %}
+    {% if dl.total > 0 %}
+    <span class="resource-downloads-badge" title="{{ _('Downloads') }}">
+      <i class="fa fa-download"></i> {{ dl.total }}
+    </span>
+    {% endif %}
   </div>
   {% endblock %}
   {% block resource_item_description %}

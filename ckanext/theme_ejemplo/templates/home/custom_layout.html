@@ -29,6 +29,11 @@
             {% snippet 'home/snippets/recently_added.html' %}
           {% endblock %}
         </div>
+        <div class="col-md-12 col1">
+          {% block popular_datasets %}
+            {% snippet 'snippets/popular_datasets.html' %}
+          {% endblock %}
+        </div>
         {# 
         <div class="col-md-12 col1" style="border-top: 0 !important;">
           {% block IHPIX %}

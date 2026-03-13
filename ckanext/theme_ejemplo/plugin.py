@@ -669,6 +669,10 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                  'get_recently_added': self.get_recently_added,
                  'get_featured_publications': helpers.get_featured_publications,
                  'get_open_bug_tickets_count': helpers.get_open_bug_tickets_count,
+                 'get_dataset_tracking': helpers.get_dataset_tracking,
+                 'get_resource_downloads': helpers.get_resource_downloads,
+                 'get_tracking_totals': helpers.get_tracking_totals,
+                 'get_popular_datasets': helpers.get_popular_datasets,
                  }
 
         # IActions

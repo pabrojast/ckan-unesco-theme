@@ -1,0 +1,14 @@
+{#
+  Override of schemingdcat package_item to add view counts.
+#}
+{% ckan_extends %}
+
+{% block heading_meta %}
+  {{ super() }}
+  {% set ds_tracking = h.get_dataset_tracking(package.name) %}
+  {% if ds_tracking.total > 0 %}
+  <span class="dataset-views-badge" title="{{ _('Page views') }}">
+    <i class="fa fa-eye"></i> {{ ds_tracking.total }}
+  </span>
+  {% endif %}
+{% endblock %}

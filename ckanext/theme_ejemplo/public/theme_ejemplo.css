@@ -5967,3 +5967,128 @@ body .download-links .btn-group .btn i {
   margin-top: 0.8rem;
   text-align: right;
 }
+
+/* ── Tracking stats ─────────────────────────────────────────────────── */
+
+/* Stats bar on dataset detail page */
+.tracking-stats-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.2rem;
+  padding: 0.6rem 0;
+  margin: 0.5rem 0 1rem;
+  border-top: 1px solid #e8e8e8;
+  border-bottom: 1px solid #e8e8e8;
+}
+.tracking-stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.92rem;
+  color: #555;
+}
+.tracking-stat i {
+  color: #1a6b8a;
+  font-size: 1rem;
+}
+.tracking-stat strong {
+  color: #333;
+}
+.tracking-recent {
+  color: #888;
+  font-size: 0.82rem;
+}
+
+/* Views badge in search results */
+.dataset-views-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.78rem;
+  color: #666;
+  background: #f0f4f7;
+  padding: 0.15rem 0.55rem;
+  border-radius: 10px;
+  margin-left: 0.3rem;
+  vertical-align: middle;
+  font-weight: 500;
+}
+.dataset-views-badge i {
+  font-size: 0.72rem;
+  color: #1a6b8a;
+}
+
+/* Downloads badge on resource items */
+.resource-downloads-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.78rem;
+  color: #555;
+  background: #eef6ee;
+  padding: 0.15rem 0.55rem;
+  border-radius: 10px;
+  margin-left: 0.4rem;
+  vertical-align: middle;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.resource-downloads-badge i {
+  font-size: 0.72rem;
+  color: #2e7d32;
+}
+
+/* Popular datasets widget */
+.popular-datasets-widget {
+  margin-top: 1rem;
+}
+.popular-datasets-widget h3 {
+  font-size: 1rem;
+  margin-bottom: 0.7rem;
+  color: #333;
+}
+.popular-datasets-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.popular-datasets-list li {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.45rem 0;
+  border-bottom: 1px solid #f0f0f0;
+}
+.popular-datasets-list li:last-child {
+  border-bottom: none;
+}
+.popular-datasets-list a {
+  flex: 1;
+  color: #333;
+  text-decoration: none;
+  font-size: 0.88rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-right: 0.5rem;
+}
+.popular-datasets-list a:hover {
+  color: #1a6b8a;
+}
+.popular-datasets-views {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  font-size: 0.78rem;
+  color: #888;
+  white-space: nowrap;
+}
+.popular-datasets-views i {
+  font-size: 0.7rem;
+}
+
+/* Stats widget enhancements for tracking counters */
+.box.stats li i.fa {
+  margin-right: 0.3rem;
+  color: #1a6b8a;
+}

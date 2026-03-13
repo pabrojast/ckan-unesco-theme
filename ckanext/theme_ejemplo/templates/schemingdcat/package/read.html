@@ -1,0 +1,6 @@
+{% ckan_extends %}
+
+{% block package_description %}
+  {{ super() }}
+  {% snippet "snippets/tracking_stats.html", pkg=pkg %}
+{% endblock %}

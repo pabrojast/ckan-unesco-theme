@@ -1,4 +1,5 @@
 {% set stats = h.theme_ejemplo_site_statistics() %}
+{% set tracking_totals = h.get_tracking_totals() %}
 
 <div class="box stats">
   <div class="inner">
@@ -23,6 +24,24 @@
           {{ _('group') if stats.group_count == 1 else _('groups') }}
         </a>
       </li>
+      {% if tracking_totals.page_views > 0 %}
+      <li>
+        <a href="{{ h.url_for('dataset.search') }}">
+          <i class="fa fa-eye"></i>
+          <strong>{{ h.SI_number_span(tracking_totals.page_views) }}</strong>
+          {{ _('page views') }}
+        </a>
+      </li>
+      {% endif %}
+      {% if tracking_totals.downloads > 0 %}
+      <li>
+        <a href="{{ h.url_for('dataset.search') }}">
+          <i class="fa fa-download"></i>
+          <strong>{{ h.SI_number_span(tracking_totals.downloads) }}</strong>
+          {{ _('downloads') }}
+        </a>
+      </li>
+      {% endif %}
       {% endblock %}
     </ul>
   </div>
