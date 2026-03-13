@@ -11,7 +11,7 @@ log = logging.getLogger(__name__)
 
 # ── Tracking helpers ──────────────────────────────────────────────────
 
-_tracking_cache = {'dataset': {}, 'resource': {}, 'totals': None, 'popular': None, 'expires': 0}
+_tracking_cache = {'dataset': {}, 'resource': {}, 'totals': None, 'popular': None, 'popular_resources': None, 'expires': 0}
 _TRACKING_CACHE_TTL = 300  # 5 minutes
 
 
@@ -31,6 +31,7 @@ def _invalidate_tracking_cache_if_expired():
         _tracking_cache['resource'].clear()
         _tracking_cache['totals'] = None
         _tracking_cache['popular'] = None
+        _tracking_cache['popular_resources'] = None
         _tracking_cache['expires'] = now + _get_tracking_cache_ttl()
 
 
@@ -209,6 +210,49 @@ def get_popular_datasets(limit=5):
         log.warning(f"Error fetching popular datasets: {e}")
 
     _tracking_cache['popular'] = results
+    return results[:limit]
+
+
+def get_popular_resources(limit=5):
+    """Get the most downloaded resources (from materialized view, cached)."""
+    _invalidate_tracking_cache_if_expired()
+
+    if _tracking_cache['popular_resources'] is not None:
+        return _tracking_cache['popular_resources'][:limit]
+
+    results = []
+    try:
+        engine = model.meta.engine
+        with engine.connect() as conn:
+            check = conn.execute(text(
+                "SELECT to_regclass('tracking_resource_stats')")).fetchone()
+            if check[0] is not None:
+                sql = text("""
+                    SELECT s.resource_id, s.total_downloads,
+                           r.name AS resource_name, r.format,
+                           p.title AS dataset_title, p.name AS dataset_name
+                    FROM tracking_resource_stats s
+                    JOIN resource r ON r.id::text = s.resource_id
+                         AND r.state = 'active'
+                    JOIN package p ON r.package_id = p.id
+                         AND p.state = 'active'
+                    ORDER BY s.total_downloads DESC
+                    LIMIT 10
+                """)
+                rows = conn.execute(sql).fetchall()
+                for row in rows:
+                    results.append({
+                        'resource_id': row[0],
+                        'downloads': row[1],
+                        'resource_name': row[2] or 'Unnamed resource',
+                        'format': (row[3] or '').upper(),
+                        'dataset_title': row[4] or row[5],
+                        'dataset_name': row[5],
+                    })
+    except Exception as e:
+        log.warning(f"Error fetching popular resources: {e}")
+
+    _tracking_cache['popular_resources'] = results
     return results[:limit]
 
 def get_paged_resources(package_id, page=1, items_per_page=20, q='', format_filter=''):

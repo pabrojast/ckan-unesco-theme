@@ -711,6 +711,7 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                  'get_resource_downloads': helpers.get_resource_downloads,
                  'get_tracking_totals': helpers.get_tracking_totals,
                  'get_popular_datasets': helpers.get_popular_datasets,
+                 'get_popular_resources': helpers.get_popular_resources,
                  }
 
         # IActions

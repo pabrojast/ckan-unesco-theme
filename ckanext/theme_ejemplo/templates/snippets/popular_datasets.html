@@ -1,99 +1,94 @@
 {#
-  Popular datasets widget showing most-viewed datasets.
+  Trending section: most viewed datasets + most downloaded resources.
   Placed on the homepage.
 #}
 {% set popular = h.get_popular_datasets(5) %}
+{% set popular_res = h.get_popular_resources(5) %}
 {% set tracking_totals = h.get_tracking_totals() %}
 
-{% if popular %}
-<div class="module-content box">
-  <section class="module module-narrow module-shallow">
-    <div class="section-title section-title-enhanced" style="margin-bottom: 0.5rem;">
-      <div class="section-title-overlay" style="background: linear-gradient(135deg, #1a6b8a 0%, #2196F3 100%);"></div>
-      <div class="section-title-content">
-        <h2><i class="fa fa-line-chart"></i> {{ _('Most Viewed Datasets') }}</h2>
-        {% if tracking_totals.page_views > 0 %}
-        <p class="section-title-description">
-          {{ h.SI_number_span(tracking_totals.page_views) }} {{ _('total page views') }}
-          {% if tracking_totals.downloads > 0 %}
-            · {{ h.SI_number_span(tracking_totals.downloads) }} {{ _('file downloads') }}
-          {% endif %}
-        </p>
+{% if popular or popular_res %}
+<section class="module module-narrow module-shallow">
+  <div class="section-title section-title-enhanced" style="margin-bottom: 0.5rem;">
+    <div class="section-title-overlay" style="background: linear-gradient(135deg, #1a6b8a 0%, #2196F3 100%);"></div>
+    <div class="section-title-content">
+      <h2><i class="fa fa-line-chart"></i> {{ _('Trending on IHP-WINS') }}</h2>
+      {% if tracking_totals.page_views > 0 %}
+      <p class="section-title-description">
+        {{ h.SI_number_span(tracking_totals.page_views) }} {{ _('total page views') }}
+        {% if tracking_totals.downloads > 0 %}
+          · {{ h.SI_number_span(tracking_totals.downloads) }} {{ _('file downloads') }}
         {% endif %}
-      </div>
+      </p>
+      {% endif %}
     </div>
-  </section>
-  <div class="popular-datasets-grid">
-    {% for ds in popular %}
-    <div class="popular-dataset-card hover-lift">
-      <span class="popular-rank">#{{ loop.index }}</span>
-      <div class="popular-dataset-info">
-        <a href="{{ h.url_for('dataset.read', id=ds.name) }}" title="{{ ds.title }}">
-          {{ ds.title|truncate(80) }}
+  </div>
+</section>
+
+<div class="module-content box trending-section">
+  <div class="row">
+    {# ── Most Viewed Datasets ── #}
+    {% if popular %}
+    <div class="col-md-6">
+      <h3 class="trending-heading">
+        <i class="fa fa-eye"></i> {{ _('Most Viewed Datasets') }}
+      </h3>
+      <ul class="trending-list">
+        {% for ds in popular %}
+        <li class="trending-item">
+          <span class="trending-rank">#{{ loop.index }}</span>
+          <div class="trending-info">
+            <a href="{{ h.url_for('dataset.read', id=ds.name) }}" title="{{ ds.title }}">
+              {{ ds.title|truncate(70) }}
+            </a>
+            {% if ds.organization %}
+            <span class="trending-meta">
+              <i class="fa fa-building-o"></i> {{ ds.organization.title|default(ds.organization.name, true)|truncate(35) }}
+            </span>
+            {% endif %}
+          </div>
+          <span class="trending-count trending-views" title="{{ ds.views }} {{ _('views') }}">
+            <i class="fa fa-eye"></i> {{ h.SI_number_span(ds.views) }}
+          </span>
+        </li>
+        {% endfor %}
+      </ul>
+      <div class="trending-more">
+        <a href="/dataset/?sort=views_recent+desc" class="btn btn-sm btn-default">
+          {{ _('View all datasets') }} <i class="fa fa-arrow-right"></i>
         </a>
-        {% if ds.organization %}
-        <span class="popular-dataset-org">
-          <i class="fa fa-building-o"></i> {{ ds.organization.title|default(ds.organization.name, true)|truncate(40) }}
-        </span>
-        {% endif %}
       </div>
-      <span class="popular-datasets-views">
-        <i class="fa fa-eye"></i> {{ ds.views }}
-      </span>
     </div>
-    {% endfor %}
+    {% endif %}
+
+    {# ── Most Downloaded Resources ── #}
+    {% if popular_res %}
+    <div class="col-md-6">
+      <h3 class="trending-heading">
+        <i class="fa fa-download"></i> {{ _('Most Downloaded Resources') }}
+      </h3>
+      <ul class="trending-list">
+        {% for res in popular_res %}
+        <li class="trending-item">
+          <span class="trending-rank">#{{ loop.index }}</span>
+          <div class="trending-info">
+            <a href="{{ h.url_for('dataset.read', id=res.dataset_name) }}" title="{{ res.resource_name }}">
+              {{ res.resource_name|truncate(55) }}
+            </a>
+            <span class="trending-meta">
+              {% if res.format %}
+              <span class="trending-format-badge">{{ res.format }}</span>
+              {% endif %}
+              {{ res.dataset_title|truncate(40) }}
+            </span>
+          </div>
+          <span class="trending-count trending-downloads" title="{{ res.downloads }} {{ _('downloads') }}">
+            <i class="fa fa-download"></i> {{ h.SI_number_span(res.downloads) }}
+          </span>
+        </li>
+        {% endfor %}
+      </ul>
+    </div>
+    {% endif %}
   </div>
 </div>
-
-<style>
-.popular-datasets-grid {
-  padding: 1rem;
-}
-.popular-dataset-card {
-  display: flex;
-  align-items: center;
-  gap: 0.8rem;
-  padding: 0.75rem 1rem;
-  border-bottom: 1px solid #f0f0f0;
-  transition: background 0.15s;
-}
-.popular-dataset-card:last-child {
-  border-bottom: none;
-}
-.popular-dataset-card:hover {
-  background: #f8fbfd;
-}
-.popular-rank {
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: #1a6b8a;
-  min-width: 2rem;
-  text-align: center;
-}
-.popular-dataset-info {
-  flex: 1;
-  min-width: 0;
-}
-.popular-dataset-info a {
-  display: block;
-  color: #333;
-  font-weight: 500;
-  text-decoration: none;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-.popular-dataset-info a:hover {
-  color: #1a6b8a;
-}
-.popular-dataset-org {
-  display: block;
-  font-size: 0.78rem;
-  color: #888;
-  margin-top: 0.15rem;
-}
-.popular-dataset-org i {
-  margin-right: 0.2rem;
-}
-</style>
 {% endif %}
