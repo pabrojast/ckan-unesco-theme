@@ -578,6 +578,12 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 MyLogica.featured_publications_upload_image,
                 methods=['POST']
             )
+            blueprint.add_url_rule(
+                u'/ckan-admin/featured-publications/import-legacy',
+                u'featured_publications_import_legacy',
+                MyLogica.featured_publications_import_legacy,
+                methods=['POST']
+            )
 
             # Portal cards admin panel (sysadmin only)
             # Static routes must be registered before the wildcard <portal_id>
@@ -780,6 +786,7 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 'featured_publication_update': custom_actions.featured_publication_update,
                 'featured_publication_delete': custom_actions.featured_publication_delete,
                 'featured_publication_reorder': custom_actions.featured_publication_reorder,
+                'featured_publication_import_legacy': custom_actions.featured_publication_import_legacy,
                 'portal_card_list': custom_actions.portal_card_list,
                 'portal_card_create': custom_actions.portal_card_create,
                 'portal_card_update': custom_actions.portal_card_update,
@@ -815,6 +822,7 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 'featured_publication_update': custom_auth.featured_publication_update,
                 'featured_publication_delete': custom_auth.featured_publication_delete,
                 'featured_publication_reorder': custom_auth.featured_publication_reorder,
+                'featured_publication_import_legacy': custom_auth.featured_publication_import_legacy,
                 'portal_card_list': custom_auth.portal_card_list,
                 'portal_card_create': custom_auth.portal_card_create,
                 'portal_card_update': custom_auth.portal_card_update,

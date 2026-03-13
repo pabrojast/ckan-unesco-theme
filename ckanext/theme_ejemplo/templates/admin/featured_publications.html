@@ -90,6 +90,35 @@
                 </section>
               </div>
 
+              <!-- Import Legacy Publications -->
+              {% if legacy_count and legacy_count > 0 %}
+              <div class="fpub-legacy-banner" id="fpub-legacy-banner">
+                <section class="module module-narrow">
+                  <div class="module-content" style="padding: 1.5rem 2.5rem;">
+                    <div class="row" style="display:flex; align-items:center;">
+                      <div class="col-md-1 text-center">
+                        <i class="fa fa-database fa-2x" style="color: #e67e22;"></i>
+                      </div>
+                      <div class="col-md-7">
+                        <h3 style="margin: 0 0 0.3rem 0; font-size: 1.1rem; font-weight: 600; color: #333;">
+                          <i class="fa fa-info-circle" style="color: #e67e22;"></i>
+                          {{ _('Legacy Publications Detected') }}
+                        </h3>
+                        <p style="margin: 0; color: #666; font-size: 0.95rem;">
+                          {{ _('Found %(count)d publication(s) added using the old tag-based system (UNESDOC datasets). Import them here to manage from this panel.')|format(count=legacy_count) }}
+                        </p>
+                      </div>
+                      <div class="col-md-4 text-right">
+                        <button type="button" id="fpub-import-legacy-btn" class="btn btn-warning btn-lg">
+                          <i class="fa fa-download"></i> {{ _('Import Legacy Publications') }}
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+              </div>
+              {% endif %}
+
               <!-- Publications List -->
               <div class="fpub-list-header">
                 <div class="row">
@@ -279,6 +308,18 @@
 
 /* Breadcrumb */
 .toolbar { margin-bottom: 2rem; padding: 1rem 0; }
+
+/* Legacy banner */
+.fpub-legacy-banner {
+  margin-bottom: 2rem;
+}
+.fpub-legacy-banner .module {
+  border-left: 4px solid #e67e22;
+  background: linear-gradient(135deg, #fff9f0 0%, #fff5e6 100%);
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(230, 126, 34, 0.12);
+}
+
 .breadcrumb {
   background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
   padding: 12px 20px; margin: 0; border-radius: 12px;
@@ -566,6 +607,7 @@
     delete: '{{ h.url_for("theme_ejemplo.featured_publications_delete") }}',
     reorder: '{{ h.url_for("theme_ejemplo.featured_publications_reorder") }}',
     upload: '{{ h.url_for("theme_ejemplo.featured_publications_upload_image") }}',
+    importLegacy: '{{ h.url_for("theme_ejemplo.featured_publications_import_legacy") }}',
   };
 
   // ── Image Upload / Drop Zone ──
@@ -938,6 +980,77 @@
     var div = document.createElement('div');
     div.appendChild(document.createTextNode(str));
     return div.innerHTML;
+  }
+
+  // ── Import Legacy Publications ──
+  var importBtn = document.getElementById('fpub-import-legacy-btn');
+  if (importBtn) {
+    importBtn.addEventListener('click', function() {
+      if (!confirm('{{ _("Import all legacy UNESDOC publications into this panel? Duplicates will be skipped.") }}')) {
+        return;
+      }
+      importBtn.disabled = true;
+      importBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> {{ _("Importing...") }}';
+
+      fetch(URLS.importLegacy, { method: 'POST' })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (data.success) {
+            var msg = '{{ _("Imported") }}: ' + data.imported + ' | {{ _("Skipped (duplicates)") }}: ' + data.skipped;
+            importBtn.innerHTML = '<i class="fa fa-check"></i> ' + msg;
+            importBtn.classList.remove('btn-warning');
+            importBtn.classList.add('btn-success');
+
+            // Add imported publications to the list
+            if (data.results && data.results.length > 0) {
+              var emptyEl = document.getElementById('fpub-empty');
+              if (emptyEl) emptyEl.remove();
+
+              var list = document.getElementById('fpub-list');
+              data.results.forEach(function(pub) {
+                var imgHtml = pub.image_url
+                  ? '<img src="' + esc(pub.image_url) + '" class="fpub-card-img" alt="' + esc(pub.title) + '" />'
+                  : '<div class="fpub-card-img-placeholder"><i class="fa fa-image fa-2x"></i></div>';
+                var descHtml = pub.description
+                  ? '<p class="fpub-card-desc">' + esc(pub.description.substring(0, 150)) + (pub.description.length > 150 ? '...' : '') + '</p>'
+                  : '';
+                var linkText = pub.link.length > 60 ? pub.link.substring(0, 60) + '...' : pub.link;
+
+                var html = '<div class="fpub-card" id="fpub-card-' + pub.id + '" data-id="' + pub.id + '" draggable="true">'
+                  + '<article class="module module-narrow"><div class="module-content" style="padding: 1.5rem 2rem;"><div class="row">'
+                  + '<div class="col-md-1 col-sm-1 fpub-drag-handle"><i class="fa fa-bars fa-lg" title="{{ _("Drag to reorder") }}"></i></div>'
+                  + '<div class="col-md-2 col-sm-3">' + imgHtml + '</div>'
+                  + '<div class="col-md-6 col-sm-5">'
+                  + '<h3 class="fpub-card-title">' + esc(pub.title) + '</h3>'
+                  + descHtml
+                  + '<div class="fpub-card-meta"><span class="meta-item"><i class="fa fa-link"></i> <a href="' + esc(pub.link) + '" target="_blank" class="fpub-card-link">' + esc(linkText) + '</a></span></div>'
+                  + '</div>'
+                  + '<div class="col-md-3 col-sm-3"><div class="fpub-card-actions">'
+                  + '<button class="btn btn-default btn-sm fpub-edit-btn" data-id="' + pub.id + '" data-title="' + esc(pub.title) + '" data-link="' + esc(pub.link) + '" data-description="' + esc(pub.description || '') + '" data-image="' + esc(pub.image_url || '') + '"><i class="fa fa-edit"></i> {{ _("Edit") }}</button>'
+                  + ' <button class="btn btn-danger btn-sm fpub-delete-btn" data-id="' + pub.id + '" data-title="' + esc(pub.title) + '"><i class="fa fa-trash"></i> {{ _("Delete") }}</button>'
+                  + '</div></div>'
+                  + '</div></div></article></div>';
+
+                list.insertAdjacentHTML('beforeend', html);
+                updateCount(1);
+              });
+            }
+
+            // Hide the legacy banner after a delay
+            setTimeout(function() {
+              var banner = document.getElementById('fpub-legacy-banner');
+              if (banner) banner.style.display = 'none';
+            }, 3000);
+          } else {
+            importBtn.innerHTML = '<i class="fa fa-exclamation-triangle"></i> Error: ' + (data.error || '');
+            importBtn.disabled = false;
+          }
+        })
+        .catch(function(err) {
+          importBtn.innerHTML = '<i class="fa fa-exclamation-triangle"></i> Error';
+          importBtn.disabled = false;
+        });
+    });
   }
 })();
 </script>

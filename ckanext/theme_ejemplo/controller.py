@@ -1364,9 +1364,27 @@ class MyLogica():
                 return base.abort(403, _('Not authorized'))
 
             pubs = toolkit.get_action('featured_publication_list')(context, {})
+
+            # Check for legacy UNESDOC datasets so we can show an import button
+            legacy_count = 0
+            try:
+                legacy_user = '8ad64841-340c-49dc-8716-c6b61ea4b111'
+                query = (
+                    '( followers:yes AND tags:UNESDOC ) OR '
+                    '( tags:UNESDOC AND creator_user_id:{user} )'
+                ).format(user=legacy_user)
+                search_result = toolkit.get_action('package_search')(
+                    {'ignore_auth': True},
+                    {'q': query, 'rows': 0}
+                )
+                legacy_count = search_result.get('count', 0)
+            except Exception:
+                legacy_count = 0
+
             extra_vars = {
                 'publications': pubs.get('results', []),
                 'publications_count': pubs.get('count', 0),
+                'legacy_count': legacy_count,
             }
             return base.render('admin/featured_publications.html', extra_vars=extra_vars)
 
@@ -1516,6 +1534,30 @@ class MyLogica():
                 return jsonify({'success': True, 'image_url': image_url})
             except Exception as e:
                 log.error(f'Error uploading image: {e}')
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        @staticmethod
+        def featured_publications_import_legacy():
+            """AJAX: Import legacy UNESDOC datasets as featured publications."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('featured_publication_import_legacy', context, {})
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+
+            try:
+                result = toolkit.get_action('featured_publication_import_legacy')(context, {})
+                return jsonify({
+                    'success': True,
+                    'imported': result.get('imported', 0),
+                    'skipped': result.get('skipped', 0),
+                    'results': result.get('results', []),
+                })
+            except Exception as e:
+                log.error(f'Error importing legacy publications: {e}')
                 return jsonify({'success': False, 'error': str(e)}), 500
 
         # ── Portal Card Admin Views ──────────────────────────────────────────

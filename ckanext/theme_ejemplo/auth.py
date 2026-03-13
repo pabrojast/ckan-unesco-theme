@@ -104,6 +104,10 @@ def featured_publication_reorder(context, data_dict):
     return _sysadmin_only(context, data_dict)
 
 
+def featured_publication_import_legacy(context, data_dict):
+    return _sysadmin_only(context, data_dict)
+
+
 # ── Portal Card Auth ─────────────────────────────────────────────────────────
 
 def portal_card_list(context, data_dict):

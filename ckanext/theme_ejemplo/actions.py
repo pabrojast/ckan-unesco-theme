@@ -600,6 +600,95 @@ def featured_publication_reorder(context, data_dict):
     return {'success': True}
 
 
+def featured_publication_import_legacy(context, data_dict):
+    """Import legacy UNESDOC publications (tag-based datasets) into the
+    featured_publication table.  Sysadmin only.
+
+    Legacy datasets are found by searching for packages tagged 'UNESDOC'
+    that are either followed or created by a specific user.  Each dataset
+    is mapped to a FeaturedPublication row so it can be managed from the
+    admin panel.
+
+    Returns: dict with 'imported' count and 'skipped' count.
+    """
+    toolkit.check_access('featured_publication_import_legacy', context, data_dict)
+    init_featured_publications_db()
+
+    # The hardcoded user / org from the original template fallback
+    legacy_user = data_dict.get('user_id', '8ad64841-340c-49dc-8716-c6b61ea4b111')
+    tag = data_dict.get('tag', 'UNESDOC')
+
+    # Fetch legacy datasets via package_search
+    try:
+        query = (
+            '( followers:yes AND tags:{tag} ) OR '
+            '( tags:{tag} AND creator_user_id:{user} )'
+        ).format(tag=tag, user=legacy_user)
+
+        search_result = toolkit.get_action('package_search')(
+            {'ignore_auth': True},
+            {'q': query, 'rows': 50}
+        )
+        datasets = search_result.get('results', [])
+    except Exception as e:
+        log.error(u'Error fetching legacy publications: %s', e)
+        datasets = []
+
+    if not datasets:
+        return {'imported': 0, 'skipped': 0, 'results': []}
+
+    # Collect existing links to avoid duplicates
+    existing_links = set()
+    for pub in FeaturedPublication.get_all():
+        if pub.link:
+            existing_links.add(pub.link.strip().rstrip('/'))
+
+    existing_count = len(FeaturedPublication.get_all())
+    imported = 0
+    skipped = 0
+    results = []
+
+    for ds in datasets:
+        # Extract fields using same priority as the legacy template
+        extras = {e['key']: e['value'] for e in ds.get('extras', [])} if ds.get('extras') else {}
+
+        image_url = (
+            ds.get('image')
+            or extras.get('unesdocimage')
+            or '/Landing_page/Content/data_catalogue_button1.png'
+        )
+        link = (
+            extras.get('unesdocurl')
+            or ds.get('url')
+            or 'https://unesdoc.unesco.org/'
+        )
+        title = ds.get('title', '')
+        description = ds.get('notes', '')
+
+        # Skip if link already exists
+        normalised = link.strip().rstrip('/')
+        if normalised in existing_links:
+            skipped += 1
+            continue
+
+        pub = FeaturedPublication(
+            title=title,
+            link=link,
+            description=description,
+            image_url=image_url,
+            display_order=existing_count + imported,
+        )
+        model.Session.add(pub)
+        existing_links.add(normalised)
+        imported += 1
+        results.append(pub.as_dict())
+
+    if imported:
+        model.Session.commit()
+
+    return {'imported': imported, 'skipped': skipped, 'results': results}
+
+
 # ── Portal Card Actions ──────────────────────────────────────────────────────
 
 from ckanext.theme_ejemplo.model import (
