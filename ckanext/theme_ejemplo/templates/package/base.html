@@ -24,3 +24,21 @@
     <li class="active"><a href="">{{ _('Create') }} {{ dataset_type.title() }}</a></li>
   {% endif %}
 {% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  {% if pkg and pkg.tracking_summary and pkg.tracking_summary.total %}
+  <script id="tracking-data" type="application/json">
+    {
+      "total": {{ pkg.tracking_summary.total }},
+      "recent": {{ pkg.tracking_summary.recent|default(0) }},
+      "resources": {
+        {% for res in pkg.resources %}
+        "{{ res.id }}": {{ res.tracking_summary.total if res.tracking_summary else 0 }}{{ "," if not loop.last }}
+        {% endfor %}
+      }
+    }
+  </script>
+  <script src="{{ h.url_for_static('/tracking-display.js') }}"></script>
+  {% endif %}
+{% endblock %}

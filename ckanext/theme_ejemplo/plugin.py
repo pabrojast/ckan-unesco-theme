@@ -274,6 +274,44 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 log.warning(f"Error sanitizing field {field_name}: {e}")
                 return value
 
+        # ── Tracking injection hooks ──────────────────────────────────────
+
+        def after_dataset_show(self, context, pkg_dict):
+            """Inject tracking_summary from materialized views into pkg_dict."""
+            try:
+                name = pkg_dict.get('name')
+                if name:
+                    tracking = helpers.get_dataset_tracking(name)
+                    pkg_dict['tracking_summary'] = {
+                        'total': tracking.get('total', 0),
+                        'recent': tracking.get('recent', 0),
+                    }
+                for res in pkg_dict.get('resources', []):
+                    rid = res.get('id')
+                    if rid:
+                        dl = helpers.get_resource_downloads(rid)
+                        res['tracking_summary'] = {
+                            'total': dl.get('total', 0),
+                            'recent': 0,
+                        }
+            except Exception as e:
+                log.debug(f"Tracking injection skipped: {e}")
+
+        def after_dataset_search(self, search_results, search_params):
+            """Inject tracking_summary into search results for view-count badges."""
+            try:
+                for pkg_dict in search_results.get('results', []):
+                    name = pkg_dict.get('name')
+                    if name:
+                        tracking = helpers.get_dataset_tracking(name)
+                        pkg_dict['tracking_summary'] = {
+                            'total': tracking.get('total', 0),
+                            'recent': tracking.get('recent', 0),
+                        }
+            except Exception as e:
+                log.debug(f"Tracking injection in search skipped: {e}")
+            return search_results
+
         def update_config(self, config):
             # Add this plugin's templates dir to CKAN's extra_template_paths, so
             # that CKAN will use this plugin's custom templates.
