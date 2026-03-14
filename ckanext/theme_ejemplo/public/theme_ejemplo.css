@@ -5921,6 +5921,14 @@ body .download-links .btn-group .btn i {
 .recently-added-section {
   padding: 1.5rem 2rem;
 }
+.recently-added-section > .row {
+  display: flex;
+  flex-wrap: wrap;
+}
+.recently-added-section > .row > [class*="col-"] {
+  display: flex;
+  flex-direction: column;
+}
 .recently-added-heading {
   font-size: 1.15rem;
   font-weight: 600;
@@ -5936,6 +5944,7 @@ body .download-links .btn-group .btn i {
   list-style: none;
   padding: 0;
   margin: 0;
+  flex: 1;
 }
 .recently-added-item {
   padding: 0.6rem 0;
@@ -5964,7 +5973,8 @@ body .download-links .btn-group .btn i {
   margin-right: 0.3rem;
 }
 .recently-added-more {
-  margin-top: 0.8rem;
+  margin-top: auto;
+  padding-top: 0.8rem;
   text-align: right;
 }
 
