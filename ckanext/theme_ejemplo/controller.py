@@ -362,7 +362,7 @@ class MyLogica():
             if request.method == 'GET':
                 from ckanext.theme_ejemplo.model import PortalCard, init_portal_cards_db
                 init_portal_cards_db()
-                cards = PortalCard.get_by_portal('iot')
+                cards = PortalCard.get_active_by_portal('iot')
                 is_sysadmin = c.userobj and c.userobj.sysadmin
                 return render_template("iot_portal/index.html",
                                        cards=[cd.as_dict() for cd in cards],
@@ -372,7 +372,7 @@ class MyLogica():
             if request.method == 'GET':
                 from ckanext.theme_ejemplo.model import PortalCard, init_portal_cards_db
                 init_portal_cards_db()
-                cards = PortalCard.get_by_portal('flood_drought')
+                cards = PortalCard.get_active_by_portal('flood_drought')
                 is_sysadmin = c.userobj and c.userobj.sysadmin
                 return render_template("flood_drought_portal/index.html",
                                        cards=[cd.as_dict() for cd in cards],
@@ -382,7 +382,7 @@ class MyLogica():
             if request.method == 'GET':
                 from ckanext.theme_ejemplo.model import PortalCard, init_portal_cards_db
                 init_portal_cards_db()
-                cards = PortalCard.get_by_portal('citizen_science')
+                cards = PortalCard.get_active_by_portal('citizen_science')
                 is_sysadmin = c.userobj and c.userobj.sysadmin
                 return render_template("citizen_science_portal/index.html",
                                        cards=[cd.as_dict() for cd in cards],
@@ -1659,7 +1659,7 @@ class MyLogica():
                 return jsonify({'success': False, 'error': 'Missing id'}), 400
 
             data = {'id': card_id}
-            for field in ('title', 'link', 'description', 'image_url', 'is_coming_soon'):
+            for field in ('title', 'link', 'description', 'image_url', 'is_coming_soon', 'is_archived'):
                 if field in request.form:
                     data[field] = request.form[field]
 

@@ -119,7 +119,7 @@
               <div id="pcard-list" class="pcard-sortable-list">
                 {% if cards %}
                   {% for card in cards %}
-                  <div class="pcard-card" id="pcard-card-{{ card.id }}" data-id="{{ card.id }}" draggable="true">
+                  <div class="pcard-card{% if card.is_archived %} pcard-archived{% endif %}" id="pcard-card-{{ card.id }}" data-id="{{ card.id }}" draggable="true">
                     <article class="module module-narrow">
                       <div class="module-content" style="padding: 1.5rem 2rem;">
                         <div class="row">
@@ -138,6 +138,9 @@
                           <div class="col-md-6 col-sm-5">
                             <h3 class="pcard-card-title">
                               {{ card.title }}
+                              {% if card.is_archived %}
+                              <span class="label label-default" style="font-size: 0.7em; margin-left: 8px;">{{ _('Archived') }}</span>
+                              {% endif %}
                               {% if card.is_coming_soon %}
                               <span class="label label-warning" style="font-size: 0.7em; margin-left: 8px;">{{ _('Coming Soon') }}</span>
                               {% endif %}
@@ -154,13 +157,20 @@
                           </div>
                           <div class="col-md-3 col-sm-3">
                             <div class="pcard-card-actions">
+                              <button class="btn btn-{{ 'success' if card.is_archived else 'warning' }} btn-sm pcard-archive-btn"
+                                      data-id="{{ card.id }}"
+                                      data-archived="{{ 'true' if card.is_archived else 'false' }}"
+                                      title="{{ _('Unarchive') if card.is_archived else _('Archive') }}">
+                                <i class="fa fa-{{ 'undo' if card.is_archived else 'archive' }}"></i> {{ _('Unarchive') if card.is_archived else _('Archive') }}
+                              </button>
                               <button class="btn btn-default btn-sm pcard-edit-btn"
                                       data-id="{{ card.id }}"
                                       data-title="{{ card.title }}"
                                       data-link="{{ card.link }}"
                                       data-description="{{ card.description }}"
                                       data-image="{{ card.image_url }}"
-                                      data-coming-soon="{{ 'true' if card.is_coming_soon else 'false' }}">
+                                      data-coming-soon="{{ 'true' if card.is_coming_soon else 'false' }}"
+                                      data-archived="{{ 'true' if card.is_archived else 'false' }}">
                                 <i class="fa fa-edit"></i> {{ _('Edit') }}
                               </button>
                               <button class="btn btn-danger btn-sm pcard-delete-btn"
@@ -235,6 +245,11 @@
         <div class="form-group">
           <label class="checkbox-inline" style="font-weight: normal;">
             <input type="checkbox" id="pcard-edit-coming-soon" /> {{ _('Coming Soon badge') }}
+          </label>
+        </div>
+        <div class="form-group">
+          <label class="checkbox-inline" style="font-weight: normal;">
+            <input type="checkbox" id="pcard-edit-archived" /> {{ _('Archived (hidden from public portal)') }}
           </label>
         </div>
       </div>
@@ -447,6 +462,33 @@
 .pcard-card-actions .btn-default:hover {
   background: #E3F2FD; border-color: #0072BC; color: #0072BC;
 }
+.pcard-card-actions .btn-warning {
+  background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%);
+  border: 2px solid #f0c75e; color: #856404;
+}
+.pcard-card-actions .btn-warning:hover {
+  background: #ffeeba; border-color: #d4a017; color: #664d03;
+  transform: translateY(-1px);
+}
+.pcard-card-actions .btn-success {
+  background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+  border: 2px solid #82c991; color: #155724;
+}
+.pcard-card-actions .btn-success:hover {
+  background: #c3e6cb; border-color: #28a745; color: #0b2e13;
+  transform: translateY(-1px);
+}
+
+.pcard-archived {
+  opacity: 0.55;
+  position: relative;
+}
+.pcard-archived:hover {
+  opacity: 0.85;
+}
+.pcard-archived .module-content {
+  border-left: 4px solid #adb5bd;
+}
 
 .pcard-empty-state .module { border-left: 5px solid #005A9C; }
 .pcard-empty-icon { color: #005A9C; opacity: 0.7; margin-bottom: 1.5rem; }
@@ -627,8 +669,34 @@
     card.querySelectorAll('.pcard-edit-btn').forEach(function(btn) {
       btn.addEventListener('click', function() { openEditModal(btn); });
     });
+    card.querySelectorAll('.pcard-archive-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() { toggleArchive(btn); });
+    });
   }
   document.querySelectorAll('.pcard-card').forEach(function(card) { initCardEvents(card); });
+
+  function toggleArchive(btn) {
+    var id = btn.getAttribute('data-id');
+    var isArchived = btn.getAttribute('data-archived') === 'true';
+    var newState = !isArchived;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i>';
+    var formData = new FormData();
+    formData.append('id', id);
+    formData.append('is_archived', newState ? 'true' : 'false');
+    fetch(URLS.update, { method: 'POST', body: formData })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.id) { window.location.reload(); }
+        else {
+          btn.disabled = false;
+          btn.innerHTML = isArchived
+            ? '<i class="fa fa-undo"></i> {{ _("Unarchive") }}'
+            : '<i class="fa fa-archive"></i> {{ _("Archive") }}';
+          alert('Error: ' + (data.error || ''));
+        }
+      });
+  }
 
   function deletePcard(btn) {
     var id = btn.getAttribute('data-id');
@@ -668,6 +736,7 @@
     document.getElementById('pcard-edit-description').value = btn.getAttribute('data-description');
     document.getElementById('pcard-edit-image').value = btn.getAttribute('data-image');
     document.getElementById('pcard-edit-coming-soon').checked = btn.getAttribute('data-coming-soon') === 'true';
+    document.getElementById('pcard-edit-archived').checked = btn.getAttribute('data-archived') === 'true';
 
     var imgUrl = btn.getAttribute('data-image');
     var previewEl = document.getElementById('pcard-edit-img-preview');
@@ -708,6 +777,7 @@
     formData.append('description', document.getElementById('pcard-edit-description').value);
     formData.append('image_url', document.getElementById('pcard-edit-image').value);
     formData.append('is_coming_soon', document.getElementById('pcard-edit-coming-soon').checked ? 'true' : 'false');
+    formData.append('is_archived', document.getElementById('pcard-edit-archived').checked ? 'true' : 'false');
 
     var btn = this;
     btn.disabled = true;

@@ -319,7 +319,8 @@ class PortalCard(model.DomainObject):
     """A card displayed on one of the portal pages (IoT, Flood/Drought, Citizen Science)."""
 
     def __init__(self, portal_id, title, link, description=u'',
-                 image_url=u'', display_order=0, is_coming_soon=False):
+                 image_url=u'', display_order=0, is_coming_soon=False,
+                 is_archived=False):
         self.id = str(uuid.uuid4())
         self.portal_id = portal_id
         self.title = title
@@ -328,6 +329,7 @@ class PortalCard(model.DomainObject):
         self.image_url = image_url
         self.display_order = display_order
         self.is_coming_soon = is_coming_soon
+        self.is_archived = is_archived
         self.created_at = datetime.datetime.utcnow()
 
     @classmethod
@@ -336,8 +338,17 @@ class PortalCard(model.DomainObject):
 
     @classmethod
     def get_by_portal(cls, portal_id):
+        """Return all cards for a portal (including archived)."""
         return meta.Session.query(cls).filter(
             cls.portal_id == portal_id
+        ).order_by(cls.display_order.asc(), cls.created_at.desc()).all()
+
+    @classmethod
+    def get_active_by_portal(cls, portal_id):
+        """Return only non-archived cards for a portal (public view)."""
+        return meta.Session.query(cls).filter(
+            cls.portal_id == portal_id,
+            cls.is_archived == False  # noqa: E712
         ).order_by(cls.display_order.asc(), cls.created_at.desc()).all()
 
     def as_dict(self):
@@ -350,6 +361,7 @@ class PortalCard(model.DomainObject):
             'link': self.link,
             'display_order': self.display_order,
             'is_coming_soon': self.is_coming_soon,
+            'is_archived': self.is_archived,
             'created_at': self.created_at.isoformat() if self.created_at else None,
         }
 
@@ -366,6 +378,12 @@ def init_portal_cards_db():
         log.info(u'portal_card table created')
         _seed_default_portal_cards()
     else:
+        columns = {col['name'] for col in inspector.get_columns('portal_card')}
+        if 'is_archived' not in columns:
+            meta.engine.execute(
+                'ALTER TABLE portal_card ADD COLUMN is_archived BOOLEAN DEFAULT FALSE'
+            )
+            log.info(u'portal_card: added is_archived column')
         log.debug(u'portal_card table already exists')
 
 
@@ -541,6 +559,7 @@ def define_portal_card_table():
         Column('link', UnicodeText, nullable=False),
         Column('display_order', Integer, default=0),
         Column('is_coming_soon', Boolean, default=False),
+        Column('is_archived', Boolean, default=False),
         Column('created_at', DateTime, default=datetime.datetime.utcnow),
     )
 

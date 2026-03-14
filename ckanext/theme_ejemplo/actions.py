@@ -760,6 +760,11 @@ def portal_card_update(context, data_dict):
         if isinstance(val, str):
             val = val.lower() in ('true', '1', 'yes', 'on')
         card.is_coming_soon = val
+    if 'is_archived' in data_dict:
+        val = data_dict['is_archived']
+        if isinstance(val, str):
+            val = val.lower() in ('true', '1', 'yes', 'on')
+        card.is_archived = val
 
     model.Session.commit()
     return card.as_dict()
