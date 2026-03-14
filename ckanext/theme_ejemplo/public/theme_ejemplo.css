@@ -864,6 +864,57 @@ border-radius: 0 0 3px 3px;
     border-left: 1px solid #fff !important;
 }
 
+/* Admin dropdown in account masthead */
+.admin-dropdown-wrapper {
+    position: relative;
+}
+.admin-dropdown-toggle {
+    cursor: pointer;
+}
+.admin-dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 9999;
+    min-width: 200px;
+    padding: 6px 0;
+    margin: 0;
+    list-style: none;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.18);
+}
+.admin-dropdown-wrapper:hover .admin-dropdown-menu,
+.admin-dropdown-wrapper.open .admin-dropdown-menu {
+    display: block;
+}
+.admin-dropdown-menu li {
+    float: none !important;
+    display: block !important;
+    border-left: none !important;
+}
+.admin-dropdown-menu li a {
+    display: block !important;
+    padding: 8px 16px !important;
+    color: #333 !important;
+    font-size: 13px;
+    white-space: nowrap;
+    text-decoration: none !important;
+    line-height: 1.5;
+}
+.admin-dropdown-menu li a:hover {
+    background: #f0f6fc !important;
+    color: #0069B4 !important;
+}
+.admin-dropdown-menu li a .fa {
+    width: 18px;
+    text-align: center;
+    margin-right: 6px;
+    color: #0069B4;
+}
+
 /* bottom rectangles*/
 .col-xs-1, .col-sm-1, .col-md-1, .col-lg-1, .col-xs-2, .col-sm-2, .col-md-2, .col-lg-2, .col-xs-3, .col-sm-3, .col-md-3, .col-lg-3, .col-xs-4, .col-sm-4, .col-md-4, .col-lg-4, .col-xs-5, .col-sm-5, .col-md-5, .col-lg-5, .col-xs-6, .col-sm-6, .col-md-6, .col-lg-6, .col-xs-7, .col-sm-7, .col-md-7, .col-lg-7, .col-xs-8, .col-sm-8, .col-md-8, .col-lg-8, .col-xs-9, .col-sm-9, .col-md-9, .col-lg-9, .col-xs-10, .col-sm-10, .col-md-10, .col-lg-10, .col-xs-11, .col-sm-11, .col-md-11, .col-lg-11, .col-xs-12, .col-sm-12, .col-md-12, .col-lg-12 {
     position: relative;
