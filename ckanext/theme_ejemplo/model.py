@@ -78,7 +78,7 @@ def init_db():
     if membership_request_table is None:
         define_membership_request_table()
 
-    from sqlalchemy import inspect as sa_inspect
+    from sqlalchemy import inspect as sa_inspect, text as sa_text
     engine = meta.engine
     inspector = sa_inspect(engine)
     if 'membership_request' not in inspector.get_table_names():
@@ -88,9 +88,10 @@ def init_db():
         # Migrate: add 'role' column if missing
         columns = [c['name'] for c in inspector.get_columns('membership_request')]
         if 'role' not in columns:
-            engine.execute(
-                "ALTER TABLE membership_request ADD COLUMN role TEXT DEFAULT 'member'"
-            )
+            with engine.connect() as conn:
+                conn.execute(sa_text(
+                    "ALTER TABLE membership_request ADD COLUMN role TEXT DEFAULT 'member'"
+                ))
             log.info(u'membership_request table: added role column')
         log.debug(u'membership_request table already exists')
 
@@ -371,7 +372,7 @@ def init_portal_cards_db():
     if portal_card_table is None:
         define_portal_card_table()
 
-    from sqlalchemy import inspect as sa_inspect
+    from sqlalchemy import inspect as sa_inspect, text as sa_text
     inspector = sa_inspect(meta.engine)
     if 'portal_card' not in inspector.get_table_names():
         portal_card_table.create(meta.engine)
@@ -380,15 +381,17 @@ def init_portal_cards_db():
     else:
         columns = {col['name'] for col in inspector.get_columns('portal_card')}
         if 'is_archived' not in columns:
-            meta.engine.execute(
-                'ALTER TABLE portal_card ADD COLUMN is_archived BOOLEAN DEFAULT FALSE'
-            )
+            with meta.engine.connect() as conn:
+                conn.execute(sa_text(
+                    'ALTER TABLE portal_card ADD COLUMN is_archived BOOLEAN DEFAULT FALSE'
+                ))
             log.info(u'portal_card: added is_archived column')
         # Fix relative image paths stored in existing rows
-        meta.engine.execute(
-            "UPDATE portal_card SET image_url = REPLACE(image_url, './Landing_page/', '/Landing_page/') "
-            "WHERE image_url LIKE '%./Landing_page/%'"
-        )
+        with meta.engine.connect() as conn:
+            conn.execute(sa_text(
+                "UPDATE portal_card SET image_url = REPLACE(image_url, './Landing_page/', '/Landing_page/') "
+                "WHERE image_url LIKE '%./Landing_page/%'"
+            ))
         log.debug(u'portal_card table already exists')
 
 
