@@ -384,6 +384,11 @@ def init_portal_cards_db():
                 'ALTER TABLE portal_card ADD COLUMN is_archived BOOLEAN DEFAULT FALSE'
             )
             log.info(u'portal_card: added is_archived column')
+        # Fix relative image paths stored in existing rows
+        meta.engine.execute(
+            "UPDATE portal_card SET image_url = REPLACE(image_url, './Landing_page/', '/Landing_page/') "
+            "WHERE image_url LIKE '%./Landing_page/%'"
+        )
         log.debug(u'portal_card table already exists')
 
 
