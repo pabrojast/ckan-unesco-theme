@@ -15,6 +15,11 @@ _tracking_cache = {'dataset': {}, 'resource': {}, 'totals': None, 'popular': Non
 _TRACKING_CACHE_TTL = 300  # 5 minutes
 
 
+def _is_tracking_enabled():
+    """Check if CKAN tracking is enabled. When disabled, skip all DB queries."""
+    return toolkit.asbool(toolkit.config.get('ckan.tracking_enabled', False))
+
+
 def _get_tracking_cache_ttl():
     try:
         return max(60, int(toolkit.config.get(
@@ -56,6 +61,9 @@ def get_dataset_tracking(package_name):
     Returns dict with 'total' and 'recent' views.
     Uses materialized view for speed, falls back to tracking_raw.
     """
+    if not _is_tracking_enabled():
+        return {'total': 0, 'recent': 0}
+
     _invalidate_tracking_cache_if_expired()
 
     if package_name in _tracking_cache['dataset']:
@@ -97,6 +105,9 @@ def get_resource_downloads(resource_id):
     Get download count for a resource.
     Uses materialized view for speed.
     """
+    if not _is_tracking_enabled():
+        return {'total': 0}
+
     _invalidate_tracking_cache_if_expired()
 
     if resource_id in _tracking_cache['resource']:
@@ -137,6 +148,9 @@ def get_tracking_totals():
     Get aggregated tracking totals for the entire site.
     Uses materialized view for speed.
     """
+    if not _is_tracking_enabled():
+        return {'page_views': 0, 'downloads': 0}
+
     _invalidate_tracking_cache_if_expired()
 
     if _tracking_cache['totals'] is not None:
@@ -173,6 +187,9 @@ def get_tracking_totals():
 
 def get_popular_datasets(limit=5):
     """Get the most viewed datasets (from materialized view, cached)."""
+    if not _is_tracking_enabled():
+        return []
+
     _invalidate_tracking_cache_if_expired()
 
     if _tracking_cache['popular'] is not None:
@@ -215,6 +232,9 @@ def get_popular_datasets(limit=5):
 
 def get_popular_resources(limit=5):
     """Get the most downloaded resources (from materialized view, cached)."""
+    if not _is_tracking_enabled():
+        return []
+
     _invalidate_tracking_cache_if_expired()
 
     if _tracking_cache['popular_resources'] is not None:
