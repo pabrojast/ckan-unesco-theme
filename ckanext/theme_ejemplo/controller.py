@@ -646,6 +646,100 @@ class MyLogica():
                 log.error(f"Error in organization_data_stories: {e}")
                 abort(500)
 
+        def group_news(name):
+            """Group/Initiative news tab — shows water-news pages associated via initiative_groups."""
+            try:
+                context = {'ignore_auth': True}
+                group = toolkit.get_action('group_show')(
+                    context, {'id': name}
+                )
+
+                news = []
+                try:
+                    news = h.get_pages_by_initiative(name, page_type='water-news')
+                except Exception as e:
+                    log.warning(f"Error fetching news for group {name}: {e}")
+
+                return render_template(
+                    "group/news.html",
+                    group_dict=group,
+                    group_type='group',
+                    news=news,
+                )
+            except toolkit.ObjectNotFound:
+                abort(404, _('Group not found'))
+            except Exception as e:
+                log.error(f"Error in group_news: {e}")
+                abort(500)
+
+        def group_events(name):
+            """Group/Initiative events tab — shows water-events pages associated via initiative_groups."""
+            try:
+                context = {'ignore_auth': True}
+                group = toolkit.get_action('group_show')(
+                    context, {'id': name}
+                )
+
+                events = []
+                try:
+                    events = h.get_pages_by_initiative(name, page_type='water-events')
+                except Exception as e:
+                    log.warning(f"Error fetching events for group {name}: {e}")
+
+                return render_template(
+                    "group/events.html",
+                    group_dict=group,
+                    group_type='group',
+                    events=events,
+                )
+            except toolkit.ObjectNotFound:
+                abort(404, _('Group not found'))
+            except Exception as e:
+                log.error(f"Error in group_events: {e}")
+                abort(500)
+
+        def group_publications(name):
+            """Group/Initiative publications tab — shows water-publications and datasets associated via initiative_groups."""
+            try:
+                context = {'ignore_auth': True}
+                group = toolkit.get_action('group_show')(
+                    context, {'id': name}
+                )
+
+                publications = []
+                try:
+                    publications = h.get_pages_by_initiative(name, page_type='water-publications')
+                except Exception as e:
+                    log.warning(f"Error fetching publications for group {name}: {e}")
+
+                # Also fetch datasets associated with this group
+                datasets = []
+                try:
+                    result = toolkit.get_action('package_search')(
+                        {'ignore_auth': True},
+                        {
+                            'fq': f'groups:{name} AND (type:documents OR dcat_type:*marcgt*)',
+                            'rows': 50,
+                            'sort': 'metadata_modified desc',
+                        }
+                    )
+                    datasets = result.get('results', [])
+                except Exception as e:
+                    log.warning(f"Error fetching datasets for group {name}: {e}")
+
+                return render_template(
+                    "group/publications.html",
+                    group_dict=group,
+                    group_type='group',
+                    publications=publications,
+                    datasets=datasets,
+                )
+            except toolkit.ObjectNotFound:
+                abort(404, _('Group not found'))
+            except Exception as e:
+                log.error(f"Error in group_publications: {e}")
+                abort(500)
+
         def request_membership(name):
             """Handle membership request for an organization."""
             try:
