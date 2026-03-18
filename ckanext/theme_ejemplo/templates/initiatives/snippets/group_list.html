@@ -5,15 +5,81 @@ groups - A list of groups.
 
 Example:
 
-    {% snippet "group/snippets/group_list.html" %}
+    {% snippet "initiatives/snippets/group_list.html", groups=groups %}
 
 #}
 {% block group_list %}
-<ul class="media-grid" data-module="media-grid">
+<div class="org-grid">
 	{% block group_list_inner %}
   {% for group in groups %}
     {% snippet "initiatives/snippets/group_item.html", group=group, position=loop.index %}
   {% endfor %}
   {% endblock %}
-</ul>
+</div>
+
+<style>
+  .org-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+  }
+  .org-grid-card {
+    display: flex;
+    flex-direction: column;
+    border: 1px solid #e0e0e0;
+    border-radius: 6px;
+    overflow: hidden;
+    text-decoration: none;
+    color: inherit;
+    transition: box-shadow 0.15s;
+  }
+  .org-grid-card:hover {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    text-decoration: none;
+    color: inherit;
+  }
+  .org-grid-card-img {
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px;
+    background: #f9f9f9;
+  }
+  .org-grid-card-img img {
+    max-height: 76px;
+    max-width: 100%;
+    object-fit: contain;
+  }
+  .org-grid-card-img .fa {
+    font-size: 36px;
+    color: #ccc;
+  }
+  .org-grid-card-body {
+    flex: 1;
+    padding: 10px 12px 4px;
+  }
+  .org-grid-card-title {
+    font-size: 14px;
+    font-weight: 600;
+    margin: 0 0 4px;
+    line-height: 1.3;
+  }
+  .org-grid-card-desc {
+    font-size: 12px;
+    color: #666;
+    margin: 0;
+    line-height: 1.4;
+  }
+  .org-grid-card-footer {
+    padding: 6px 12px 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .org-grid-card-footer .count {
+    font-size: 12px;
+    color: #999;
+  }
+</style>
 {% endblock %}
