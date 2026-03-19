@@ -686,6 +686,12 @@
 {# ── JavaScript ─────────────────────────────────────────────────────────── #}
 <script>
 document.addEventListener('DOMContentLoaded', function() {
+  // Bootstrap data-dismiss="modal" may not work in CKAN's JS environment,
+  // so we add an explicit delegated handler for all dismiss buttons.
+  $(document).on('click', '[data-dismiss="modal"]', function() {
+    $(this).closest('.modal').modal('hide');
+  });
+
   var csrfToken = '';
   var csrfMeta = document.querySelector('meta[name=_csrf_token]');
   if (csrfMeta) csrfToken = csrfMeta.getAttribute('content');
