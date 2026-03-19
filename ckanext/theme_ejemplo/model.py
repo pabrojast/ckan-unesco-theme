@@ -392,7 +392,16 @@ def init_portal_cards_db():
                 "UPDATE portal_card SET image_url = REPLACE(image_url, './Landing_page/', '/Landing_page/') "
                 "WHERE image_url LIKE '%./Landing_page/%'"
             ))
-        log.debug(u'portal_card table already exists')
+        # Re-seed if the table exists but is empty (e.g. created before
+        # seeding logic was added, or cards were accidentally purged).
+        count = meta.Session.execute(
+            sa_text('SELECT count(*) FROM portal_card')
+        ).scalar()
+        if count == 0:
+            log.info(u'portal_card table is empty – seeding defaults')
+            _seed_default_portal_cards()
+        else:
+            log.debug(u'portal_card table already exists with %d cards', count)
 
 
 def _seed_default_portal_cards():
