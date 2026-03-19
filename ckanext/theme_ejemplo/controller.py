@@ -1661,16 +1661,19 @@ class MyLogica():
                 'name': 'Flood and Drought Monitoring Portal',
                 'icon': 'fa-tint',
                 'url': '/flood-drought-portal',
+                'banner_image': '/Landing_page/Content/flood_and_drought_monitoring_button_image.jpg',
             },
             'iot': {
                 'name': 'Internet of Things Portal',
                 'icon': 'fa-microchip',
                 'url': '/iot-portal',
+                'banner_image': '/Landing_page/Content/03IHP-INTERNET.jpg',
             },
             'citizen_science': {
                 'name': 'Citizen Science Portal',
                 'icon': 'fa-users',
                 'url': '/citizen-science-portal',
+                'banner_image': '/Landing_page/Content/02IHP-CITIZEN.jpg',
             },
         }
 
@@ -1700,6 +1703,7 @@ class MyLogica():
                 'portal_name': portal_info['name'],
                 'portal_icon': portal_info['icon'],
                 'portal_url': portal_info['url'],
+                'portal_banner_image': portal_info.get('banner_image', ''),
             }
             return base.render('admin/portal_cards.html', extra_vars=extra_vars)
 

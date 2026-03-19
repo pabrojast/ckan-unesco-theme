@@ -25,6 +25,9 @@
             <!-- Header Banner -->
             <section class="module module-narrow module-shallow">
               <div class="pcard-banner">
+                {% if portal_banner_image %}
+                <div class="pcard-banner-bg" style="background-image: url('{{ portal_banner_image }}');"></div>
+                {% endif %}
                 <div class="pcard-banner-overlay"></div>
                 <div class="pcard-banner-content">
                   <h1><i class="fa {{ portal_icon }}"></i> {{ _(portal_name) }}</h1>
@@ -272,21 +275,29 @@
   border-radius: 16px;
   margin-bottom: 2.5rem;
   box-shadow: 0 8px 32px rgba(0, 114, 188, 0.16);
+  display: flex;
+  align-items: center;
+}
+.pcard-banner-bg {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 1;
 }
 .pcard-banner-overlay {
   position: absolute;
   top: 0; left: 0; width: 100%; height: 100%;
-  background: linear-gradient(135deg, rgba(0, 90, 156, 0.95) 0%, rgba(0, 114, 188, 0.85) 50%, rgba(0, 158, 224, 0.8) 100%);
+  background: linear-gradient(to right, rgba(0, 105, 180, 0.9) 0%, rgba(0, 105, 180, 0.7) 50%, rgba(0, 105, 180, 0.4) 100%);
+  z-index: 2;
 }
 .pcard-banner-content {
-  position: absolute;
-  top: 50%; left: 50%;
-  transform: translate(-50%, -50%);
-  text-align: center;
+  position: relative;
+  z-index: 3;
+  padding: 2rem 2.5rem;
   color: white;
-  z-index: 10;
-  width: 90%;
-  max-width: 700px;
+  width: 100%;
 }
 .pcard-banner-content h1 {
   font-size: 2.2rem;
@@ -302,6 +313,8 @@
   opacity: 0.95;
   text-shadow: 1px 1px 4px rgba(0,0,0,0.3);
   font-weight: 300;
+  color: #fff;
+  max-width: 90%;
 }
 .toolbar { margin-bottom: 2rem; padding: 1rem 0; }
 
