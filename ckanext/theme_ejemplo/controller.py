@@ -646,6 +646,54 @@ class MyLogica():
                 log.error(f"Error in organization_data_stories: {e}")
                 abort(500)
 
+        def _get_pages_by_initiative(initiative_name, page_type=None):
+            """Query pages associated with an initiative via the initiative_groups extras field."""
+            try:
+                from ckanext.pages.db import Page
+                search_pattern = '"%s"' % initiative_name
+                query = model.Session.query(Page).filter(
+                    Page.extras.like('%' + search_pattern + '%')
+                )
+                if page_type:
+                    query = query.filter(Page.page_type == page_type)
+                else:
+                    query = query.filter(
+                        Page.page_type.in_(['water-news', 'water-events', 'water-publications'])
+                    )
+                query = query.order_by(Page.created.desc())
+                results = []
+                for pg in query.all():
+                    extras = {}
+                    if pg.extras:
+                        try:
+                            extras = json.loads(pg.extras)
+                        except (ValueError, TypeError):
+                            pass
+                    initiative_groups = extras.get('initiative_groups', '[]')
+                    if isinstance(initiative_groups, str):
+                        try:
+                            initiative_groups = json.loads(initiative_groups)
+                        except (ValueError, TypeError):
+                            initiative_groups = []
+                    names = [g.get('name', '') if isinstance(g, dict) else str(g)
+                             for g in initiative_groups]
+                    if initiative_name not in names:
+                        continue
+                    page_dict = {
+                        'title': pg.title,
+                        'name': pg.name,
+                        'content': pg.content,
+                        'publish_date': pg.publish_date.isoformat() if pg.publish_date else None,
+                        'created': pg.created.isoformat() if pg.created else None,
+                        'page_type': pg.page_type,
+                    }
+                    page_dict.update(extras)
+                    results.append(page_dict)
+                return results
+            except Exception as e:
+                log.warning(f"_get_pages_by_initiative error: {e}")
+                return []
+
         def group_news(name):
             """Group/Initiative news tab — shows water-news pages associated via initiative_groups."""
             try:
@@ -656,7 +704,7 @@ class MyLogica():
 
                 news = []
                 try:
-                    news = h.get_pages_by_initiative(name, page_type='water-news')
+                    news = _get_pages_by_initiative(name, page_type='water-news')
                 except Exception as e:
                     log.warning(f"Error fetching news for group {name}: {e}")
 
@@ -682,7 +730,7 @@ class MyLogica():
 
                 events = []
                 try:
-                    events = h.get_pages_by_initiative(name, page_type='water-events')
+                    events = _get_pages_by_initiative(name, page_type='water-events')
                 except Exception as e:
                     log.warning(f"Error fetching events for group {name}: {e}")
 
@@ -708,7 +756,7 @@ class MyLogica():
 
                 publications = []
                 try:
-                    publications = h.get_pages_by_initiative(name, page_type='water-publications')
+                    publications = _get_pages_by_initiative(name, page_type='water-publications')
                 except Exception as e:
                     log.warning(f"Error fetching publications for group {name}: {e}")
 
