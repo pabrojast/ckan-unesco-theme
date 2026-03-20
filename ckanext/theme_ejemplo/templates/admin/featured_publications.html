@@ -105,7 +105,7 @@
                           {{ _('Legacy Publications Detected') }}
                         </h3>
                         <p style="margin: 0; color: #666; font-size: 0.95rem;">
-                          {{ _('Found %(count)d publication(s) added using the old tag-based system (UNESDOC datasets). Import them here to manage from this panel.')|format(count=legacy_count) }}
+                          {% trans count=legacy_count %}Found {{ count }} publication(s) added using the old tag-based system (UNESDOC datasets). Import them here to manage from this panel.{% endtrans %}
                         </p>
                       </div>
                       <div class="col-md-4 text-right">
