@@ -113,6 +113,22 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 log.error(f"Error in before_dataset_index for dataset {dataset_dict.get('id', 'unknown')}: {e}")
                 return dataset_dict
 
+        # for ckan v2.9
+        def before_search(self, search_params):
+            return self.before_dataset_search(search_params)
+        # for ckan v2.10
+        def before_dataset_search(self, search_params):
+            """Exclude documents from the Datasets tab on group/org pages."""
+            try:
+                from flask import request as flask_request
+                endpoint = flask_request.endpoint or ''
+                if endpoint in ('group.read', 'organization.read'):
+                    fq = search_params.get('fq', '')
+                    search_params['fq'] = fq + ' -type:documents -dcat_type:*marcgt*'
+            except RuntimeError:
+                pass
+            return search_params
+
         def _process_spatial_data(self, dataset_dict):
             """Procesamiento optimizado de datos espaciales"""
             if 'spatial' in dataset_dict and dataset_dict['spatial']:

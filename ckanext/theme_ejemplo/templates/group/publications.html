@@ -47,7 +47,7 @@
 
   {# Dataset-based documents associated with this group #}
   {% if datasets %}
-    <h3 style="margin-top: 1.5rem;">{{ _('Documents & Datasets') }}</h3>
+    <h3 style="margin-top: 1.5rem;">{{ _('Documents') }}</h3>
     <div class="user-card-grid">
       {% for pkg in datasets %}
         <a href="{{ h.url_for('dataset.read', id=pkg.name) }}" class="user-card-item">
