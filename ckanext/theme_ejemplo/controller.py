@@ -695,6 +695,61 @@ class MyLogica():
                 log.error(f"Error in organization_data_stories: {e}")
                 abort(500)
 
+        def group_members(name):
+            """Group/Initiative members tab."""
+            try:
+                context = {'ignore_auth': True}
+                group = toolkit.get_action('group_show')(
+                    context, {'id': name}
+                )
+
+                member_tuples = toolkit.get_action('member_list')(
+                    context, {'id': group['id'], 'object_type': 'user'}
+                )
+
+                members = []
+                for user_id, _obj_type, capacity in member_tuples:
+                    try:
+                        user_obj = model.User.get(user_id)
+                        if not user_obj or user_obj.state != 'active':
+                            continue
+
+                        extras = user_obj.plugin_extras or {}
+                        profile = extras.get('theme_ejemplo', {})
+
+                        expertise_areas = profile.get('expertise_areas', '[]')
+                        if isinstance(expertise_areas, str):
+                            try:
+                                expertise_areas = json.loads(expertise_areas)
+                            except (json.JSONDecodeError, TypeError):
+                                expertise_areas = []
+
+                        members.append({
+                            'id': user_obj.id,
+                            'name': user_obj.name,
+                            'fullname': user_obj.fullname or user_obj.name,
+                            'image_url': user_obj.image_url,
+                            'job_title': profile.get('job_title', ''),
+                            'institution': profile.get('institution', ''),
+                            'country': profile.get('country', ''),
+                            'expertise_areas': expertise_areas,
+                            'capacity': capacity or 'member',
+                        })
+                    except Exception as e:
+                        log.warning(f"Error getting user profile for {user_id}: {e}")
+
+                return render_template(
+                    "group/members.html",
+                    group_dict=group,
+                    group_type='group',
+                    members=members,
+                )
+            except toolkit.ObjectNotFound:
+                abort(404, _('Group not found'))
+            except Exception as e:
+                log.error(f"Error in group_members: {e}")
+                abort(500)
+
         def group_news(name):
             """Group/Initiative news tab — shows water-news pages associated via initiative_groups."""
             try:
