@@ -134,6 +134,47 @@ def _get_pages_by_initiative(initiative_name, page_type=None):
         return []
 
 
+def _get_pages_by_organization(org_id, page_type=None):
+    """Query pages associated with an organization via the organization_id extras field."""
+    try:
+        from ckanext.pages.db import Page
+        query = model.Session.query(Page).filter(
+            Page.extras.like('%"organization_id"%'),
+            Page.extras.like(f'%{org_id}%')
+        )
+        if page_type:
+            query = query.filter(Page.page_type == page_type)
+        else:
+            query = query.filter(
+                Page.page_type.in_(['water-news', 'water-events', 'water-publications'])
+            )
+        query = query.order_by(Page.created.desc())
+        results = []
+        for pg in query.all():
+            extras = {}
+            if pg.extras:
+                try:
+                    extras = json.loads(pg.extras)
+                except (ValueError, TypeError):
+                    pass
+            if extras.get('organization_id') != org_id:
+                continue
+            page_dict = {
+                'title': pg.title,
+                'name': pg.name,
+                'content': pg.content,
+                'publish_date': pg.publish_date.isoformat() if pg.publish_date else None,
+                'created': pg.created.isoformat() if pg.created else None,
+                'page_type': pg.page_type,
+            }
+            page_dict.update(extras)
+            results.append(page_dict)
+        return results
+    except Exception as e:
+        log.warning(f"_get_pages_by_organization error: {e}")
+        return []
+
+
 class MyLogica():  
         
         def initiatives():
@@ -539,12 +580,19 @@ class MyLogica():
                 abort(500)
 
         def organization_publications(name):
-            """Organization publications tab."""
+            """Organization publications tab — shows water-family publications and dataset-based documents."""
             try:
                 context = {'ignore_auth': True}
                 org = toolkit.get_action('organization_show')(
                     context, {'id': name}
                 )
+
+                # Water Family publications from ckanext-pages
+                water_publications = []
+                try:
+                    water_publications = _get_pages_by_organization(org['id'], page_type='water-publications')
+                except Exception as e:
+                    log.warning(f"Error fetching water publications for org {name}: {e}")
 
                 page = h.get_page_number(request.args) or 1
                 items_per_page = 20
@@ -559,7 +607,7 @@ class MyLogica():
                     }
                 )
 
-                publications = pub_search.get('results', [])
+                documents = pub_search.get('results', [])
                 total = pub_search.get('count', 0)
 
                 pager = h.Page(
@@ -568,13 +616,14 @@ class MyLogica():
                     url=h.pager_url,
                     items_per_page=items_per_page,
                 )
-                pager.items = publications
+                pager.items = documents
 
                 return render_template(
                     "organization/publications.html",
                     group_dict=org,
                     group_type='organization',
-                    publications=publications,
+                    water_publications=water_publications,
+                    documents=documents,
                     page=pager,
                     total=total,
                 )

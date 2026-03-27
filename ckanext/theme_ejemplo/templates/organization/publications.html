@@ -3,45 +3,151 @@
 {% block subtitle %}{{ _('Publications') }} {{ g.template_title_delimiter }} {{ group_dict.display_name }}{% endblock %}
 
 {% block primary_content_inner %}
-  <h2><i class="fa fa-book"></i> {{ _('Publications') }}</h2>
+  <h2 class="hide-heading">{{ _('Publications') }}</h2>
 
-  {% if publications %}
-    <div class="publications-list">
-      {% for pub in publications %}
-        <div class="publication-item">
-          <h3>
-            <a href="{{ h.url_for('dataset.read', id=pub.name) }}">{{ pub.title }}</a>
-          </h3>
-          <div class="publication-meta">
-            {% if pub.author %}
-              <span class="publication-author"><i class="fa fa-user"></i> {{ pub.author }}</span>
-            {% endif %}
-            {% if pub.metadata_modified %}
-              <span class="publication-date"><i class="fa fa-calendar"></i> {{ h.render_datetime(pub.metadata_modified, date_format='%Y-%m-%d') }}</span>
-            {% endif %}
-            {% if pub.get('doi') %}
-              <span class="publication-doi"><a href="https://doi.org/{{ pub.doi }}" target="_blank" rel="noopener"><i class="fa fa-link"></i> DOI: {{ pub.doi }}</a></span>
-            {% endif %}
-          </div>
-          {% if pub.notes %}
-            <p class="publication-notes">{{ h.markdown_extract(pub.notes, 200) }}</p>
-          {% endif %}
-          {% if pub.tags %}
-            <div class="publication-tags">
-              {% for tag in pub.tags[:5] %}
-                <span class="tag">{{ tag.display_name }}</span>
-              {% endfor %}
+  {# Water Family publications (from ckanext-pages) #}
+  {% if water_publications %}
+    <h3>{{ _('Water Family Publications') }}</h3>
+    <div class="user-card-grid">
+      {% for item in water_publications %}
+        <a href="/water-publications/{{ item.name }}" class="user-card-item">
+          {% if item.header_image %}
+            <div class="user-card-icon user-card-icon-img" style="background-image: url('{{ item.header_image }}');">
+            </div>
+          {% else %}
+            <div class="user-card-icon">
+              <i class="fa fa-book"></i>
             </div>
           {% endif %}
-        </div>
+          <div class="user-card-body">
+            <h3 class="user-card-title">{{ item.title }}</h3>
+            {% if item.authors %}
+              <p class="user-card-authors">{{ item.authors }}</p>
+            {% endif %}
+            {% if item.excerpt %}
+              <p class="user-card-desc">{{ h.markdown_extract(item.excerpt, 100) }}</p>
+            {% elif item.abstract %}
+              <p class="user-card-desc">{{ h.markdown_extract(item.abstract, 100) }}</p>
+            {% endif %}
+          </div>
+          <div class="user-card-footer">
+            {% if item.year %}
+              <span class="date">{{ item.year }}</span>
+            {% elif item.publish_date %}
+              <span class="date">{{ h.render_datetime(item.publish_date) }}</span>
+            {% endif %}
+            {% if item.publication_type %}
+              <span class="badge badge-default" style="margin-left: 6px; font-size: 10px;">{{ item.publication_type }}</span>
+            {% endif %}
+          </div>
+        </a>
+      {% endfor %}
+    </div>
+  {% endif %}
+
+  {# Dataset-based documents associated with this organization #}
+  {% if documents %}
+    <h3 style="margin-top: 1.5rem;">{{ _('Documents') }}</h3>
+    <div class="user-card-grid">
+      {% for pkg in documents %}
+        <a href="{{ h.url_for('dataset.read', id=pkg.name) }}" class="user-card-item">
+          <div class="user-card-icon">
+            <i class="fa fa-file-text"></i>
+          </div>
+          <div class="user-card-body">
+            <h3 class="user-card-title">{{ pkg.title or pkg.name }}</h3>
+            {% if pkg.author %}
+              <p class="user-card-authors">{{ pkg.author }}</p>
+            {% endif %}
+            {% if pkg.notes %}
+              <p class="user-card-desc">{{ h.markdown_extract(pkg.notes, 100) }}</p>
+            {% endif %}
+          </div>
+          <div class="user-card-footer">
+            {% if pkg.metadata_modified %}
+              <span class="date">{{ h.render_datetime(pkg.metadata_modified) }}</span>
+            {% endif %}
+          </div>
+        </a>
       {% endfor %}
     </div>
 
-    {# Pagination #}
+    {# Pagination for documents #}
     {% if page %}
       {{ page.pager() }}
     {% endif %}
-  {% else %}
+  {% endif %}
+
+  {% if not water_publications and not documents %}
     <p class="empty">{{ _('This organization has no publications yet.') }}</p>
   {% endif %}
+
+  <style>
+    .user-card-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 16px;
+    }
+    .user-card-item {
+      display: flex;
+      flex-direction: column;
+      border: 1px solid #e0e0e0;
+      border-radius: 6px;
+      overflow: hidden;
+      text-decoration: none;
+      color: inherit;
+      transition: box-shadow 0.15s;
+    }
+    .user-card-item:hover {
+      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+      text-decoration: none;
+      color: inherit;
+    }
+    .user-card-icon {
+      height: 80px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #f9f9f9;
+    }
+    .user-card-icon .fa {
+      font-size: 32px;
+      color: #999;
+    }
+    .user-card-icon-img {
+      background-size: cover;
+      background-position: center;
+    }
+    .user-card-body {
+      flex: 1;
+      padding: 10px 12px 4px;
+    }
+    .user-card-title {
+      font-size: 14px;
+      font-weight: 600;
+      margin: 0 0 4px;
+      line-height: 1.3;
+    }
+    .user-card-authors {
+      font-size: 11px;
+      color: #888;
+      margin: 0 0 4px;
+      font-style: italic;
+    }
+    .user-card-desc {
+      font-size: 12px;
+      color: #666;
+      margin: 0;
+      line-height: 1.4;
+    }
+    .user-card-footer {
+      padding: 6px 12px 10px;
+      display: flex;
+      align-items: center;
+    }
+    .user-card-footer .date {
+      font-size: 11px;
+      color: #999;
+    }
+  </style>
 {% endblock %}
