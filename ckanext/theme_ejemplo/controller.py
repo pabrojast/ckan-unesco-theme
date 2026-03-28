@@ -15,6 +15,7 @@ from functools import lru_cache
 import time
 import json
 import logging
+from ckanext.theme_ejemplo.utils import normalize_user_image_url
 
 log = logging.getLogger(__name__)
 group_type = u'group'
@@ -769,7 +770,7 @@ class MyLogica():
                             'id': user_obj.id,
                             'name': user_obj.name,
                             'fullname': user_obj.fullname or user_obj.name,
-                            'image_url': user_obj.image_url,
+                            'image_url': normalize_user_image_url(user_obj.image_url),
                             'job_title': profile.get('job_title', ''),
                             'institution': profile.get('institution', ''),
                             'country': profile.get('country', ''),

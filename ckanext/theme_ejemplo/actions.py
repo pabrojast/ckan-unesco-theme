@@ -8,6 +8,7 @@ import ckan.logic as logic
 import ckan.model as model
 from ckan.common import current_user
 from sqlalchemy.orm.attributes import flag_modified
+from ckanext.theme_ejemplo.utils import normalize_user_image_url
 
 log = logging.getLogger(__name__)
 
@@ -174,7 +175,7 @@ def people_list(context, data_dict):
             'id': user_obj.id,
             'name': user_obj.name,
             'fullname': user_obj.fullname or user_obj.name,
-            'image_url': user_obj.image_url,
+            'image_url': normalize_user_image_url(user_obj.image_url),
             'job_title': profile.get('job_title', ''),
             'institution': profile.get('institution', ''),
             'country': profile.get('country', ''),
@@ -231,7 +232,7 @@ def organization_people(context, data_dict):
                 'id': user_obj.id,
                 'name': user_obj.name,
                 'fullname': user_obj.fullname or user_obj.name,
-                'image_url': user_obj.image_url,
+                'image_url': normalize_user_image_url(user_obj.image_url),
                 'job_title': profile.get('job_title', ''),
                 'institution': profile.get('institution', ''),
                 'country': profile.get('country', ''),
@@ -334,7 +335,7 @@ def membership_request_list(context, data_dict):
             'user_id': req.user_id,
             'user_name': user_obj.name if user_obj else u'',
             'user_fullname': (user_obj.fullname or user_obj.name) if user_obj else u'',
-            'user_image_url': user_obj.image_url if user_obj else u'',
+            'user_image_url': normalize_user_image_url(user_obj.image_url) if user_obj else u'',
             'organization_id': req.organization_id,
             'message': req.message or u'',
             'status': req.status,
@@ -1053,7 +1054,7 @@ def admin_user_list(context, data_dict):
             'name': user_obj.name,
             'fullname': user_obj.fullname or '',
             'email': user_obj.email or '',
-            'image_url': user_obj.image_url or '',
+            'image_url': normalize_user_image_url(user_obj.image_url),
             'state': user_obj.state,
             'sysadmin': user_obj.sysadmin,
             'created': user_obj.created.isoformat() if user_obj.created else '',

@@ -4,11 +4,7 @@
     {# Avatar — circular, centered #}
     <div class="person-avatar-section">
       {% if person.image_url %}
-        {% if person.image_url.startswith('http') %}
-          <img src="{{ person.image_url }}" alt="{{ person.fullname }}" class="person-avatar-img">
-        {% else %}
-          <img src="{{ h.url_for_static_or_external('/uploads/user/' ~ person.image_url) }}" alt="{{ person.fullname }}" class="person-avatar-img">
-        {% endif %}
+        <img src="{{ person.image_url }}" alt="{{ person.fullname }}" class="person-avatar-img">
       {% else %}
         <div class="person-avatar-placeholder">
           <i class="fa fa-user"></i>

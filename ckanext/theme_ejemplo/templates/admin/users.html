@@ -99,11 +99,7 @@
                         <div class="um-user-cell">
                           <div class="um-avatar">
                             {% if user.image_url %}
-                              {% if user.image_url.startswith('http') %}
-                                <img src="{{ user.image_url }}" alt="{{ user.fullname or user.name }}" />
-                              {% else %}
-                                <img src="{{ h.url_for_static('uploads/user/' + user.image_url) }}" alt="{{ user.fullname or user.name }}" />
-                              {% endif %}
+                              <img src="{{ user.image_url }}" alt="{{ user.fullname or user.name }}" />
                             {% else %}
                               <span class="um-avatar-placeholder"><i class="fa fa-user"></i></span>
                             {% endif %}
