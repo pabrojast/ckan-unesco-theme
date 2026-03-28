@@ -468,7 +468,7 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 methods=['GET']
             )
 
-            # Group/Initiative tabs (News, Events, Publications, Members)
+            # Group/Initiative tabs (News, Events, Publications, Members, Data Stories)
             blueprint.add_url_rule(
                 u'/group/<name>/members',
                 u'group_members',
@@ -491,6 +491,12 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 u'/group/<name>/publications',
                 u'group_publications',
                 MyLogica.group_publications,
+                methods=['GET']
+            )
+            blueprint.add_url_rule(
+                u'/group/<name>/data-stories',
+                u'group_data_stories',
+                MyLogica.group_data_stories,
                 methods=['GET']
             )
 

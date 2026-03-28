@@ -176,6 +176,23 @@ def _get_pages_by_organization(org_id, page_type=None):
         return []
 
 
+def _get_data_stories_by_group(group_id, limit=50):
+    """Query data stories associated with a CKAN group or organization."""
+    try:
+        result = toolkit.get_action('data_story_list')(
+            {'ignore_auth': True},
+            {
+                'organization_id': group_id,
+                'limit': limit,
+                'sort': 'recent',
+            }
+        )
+        return result.get('stories', [])
+    except Exception as e:
+        log.warning(f"Error fetching data stories for group {group_id}: {e}")
+        return []
+
+
 class MyLogica():  
         
         def initiatives():
@@ -715,15 +732,7 @@ class MyLogica():
                     context, {'id': name}
                 )
 
-                stories = []
-                try:
-                    result = toolkit.get_action('data_story_list')(
-                        {'ignore_auth': True},
-                        {'owner_org': org['id'], 'limit': 50}
-                    )
-                    stories = result.get('stories', [])
-                except Exception as e:
-                    log.warning(f"Error fetching data stories for org {name}: {e}")
+                stories = _get_data_stories_by_group(org['id'])
 
                 return render_template(
                     "organization/data_stories.html",
@@ -735,6 +744,28 @@ class MyLogica():
                 abort(404, _('Organization not found'))
             except Exception as e:
                 log.error(f"Error in organization_data_stories: {e}")
+                abort(500)
+
+        def group_data_stories(name):
+            """Group/member state/initiative data stories tab."""
+            try:
+                context = {'ignore_auth': True}
+                group = toolkit.get_action('group_show')(
+                    context, {'id': name}
+                )
+
+                stories = _get_data_stories_by_group(group['id'])
+
+                return render_template(
+                    "group/data_stories.html",
+                    group_dict=group,
+                    group_type='group',
+                    stories=stories,
+                )
+            except toolkit.ObjectNotFound:
+                abort(404, _('Group not found'))
+            except Exception as e:
+                log.error(f"Error in group_data_stories: {e}")
                 abort(500)
 
         def group_members(name):
