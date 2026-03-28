@@ -580,19 +580,12 @@ class MyLogica():
                 abort(500)
 
         def organization_publications(name):
-            """Organization publications tab — shows water-family publications and dataset-based documents."""
+            """Organization publications tab — shows documents."""
             try:
                 context = {'ignore_auth': True}
                 org = toolkit.get_action('organization_show')(
                     context, {'id': name}
                 )
-
-                # Water Family publications from ckanext-pages
-                water_publications = []
-                try:
-                    water_publications = _get_pages_by_organization(org['id'], page_type='water-publications')
-                except Exception as e:
-                    log.warning(f"Error fetching water publications for org {name}: {e}")
 
                 page = h.get_page_number(request.args) or 1
                 items_per_page = 20
@@ -622,7 +615,6 @@ class MyLogica():
                     "organization/publications.html",
                     group_dict=org,
                     group_type='organization',
-                    water_publications=water_publications,
                     documents=documents,
                     page=pager,
                     total=total,
@@ -852,20 +844,13 @@ class MyLogica():
                 abort(500)
 
         def group_publications(name):
-            """Group/Initiative publications tab — shows water-publications and datasets associated via initiative_groups."""
+            """Group/Initiative publications tab — shows documents associated with the group."""
             try:
                 context = {'ignore_auth': True}
                 group = toolkit.get_action('group_show')(
                     context, {'id': name}
                 )
 
-                publications = []
-                try:
-                    publications = _get_pages_by_initiative(name, page_type='water-publications')
-                except Exception as e:
-                    log.warning(f"Error fetching publications for group {name}: {e}")
-
-                # Also fetch datasets associated with this group
                 datasets = []
                 try:
                     result = toolkit.get_action('package_search')(
@@ -884,7 +869,6 @@ class MyLogica():
                     "group/publications.html",
                     group_dict=group,
                     group_type='group',
-                    publications=publications,
                     datasets=datasets,
                 )
             except toolkit.ObjectNotFound:

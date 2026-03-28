@@ -1,53 +1,11 @@
 {% extends "group/read_base.html" %}
 
-{% block subtitle %}{{ _('Publications') }} {{ g.template_title_delimiter }} {{ group_dict.display_name }}{% endblock %}
+{% block subtitle %}{{ _('Documents') }} {{ g.template_title_delimiter }} {{ group_dict.display_name }}{% endblock %}
 
 {% block primary_content_inner %}
-  <h2 class="hide-heading">{{ _('Publications') }}</h2>
+  <h2 class="hide-heading">{{ _('Documents') }}</h2>
 
-  {# Water Family publications (from ckanext-pages) #}
-  {% if publications %}
-    <h3>{{ _('Water Family Publications') }}</h3>
-    <div class="user-card-grid">
-      {% for item in publications %}
-        <a href="/water-publications/{{ item.name }}" class="user-card-item">
-          {% if item.header_image %}
-            <div class="user-card-icon user-card-icon-img" style="background-image: url('{{ item.header_image }}');">
-            </div>
-          {% else %}
-            <div class="user-card-icon">
-              <i class="fa fa-book"></i>
-            </div>
-          {% endif %}
-          <div class="user-card-body">
-            <h3 class="user-card-title">{{ item.title }}</h3>
-            {% if item.authors %}
-              <p class="user-card-authors">{{ item.authors }}</p>
-            {% endif %}
-            {% if item.excerpt %}
-              <p class="user-card-desc">{{ h.markdown_extract(item.excerpt, 100) }}</p>
-            {% elif item.abstract %}
-              <p class="user-card-desc">{{ h.markdown_extract(item.abstract, 100) }}</p>
-            {% endif %}
-          </div>
-          <div class="user-card-footer">
-            {% if item.year %}
-              <span class="date">{{ item.year }}</span>
-            {% elif item.publish_date %}
-              <span class="date">{{ h.render_datetime(item.publish_date) }}</span>
-            {% endif %}
-            {% if item.publication_type %}
-              <span class="badge badge-default" style="margin-left: 6px; font-size: 10px;">{{ item.publication_type }}</span>
-            {% endif %}
-          </div>
-        </a>
-      {% endfor %}
-    </div>
-  {% endif %}
-
-  {# Dataset-based documents associated with this group #}
   {% if datasets %}
-    <h3 style="margin-top: 1.5rem;">{{ _('Documents') }}</h3>
     <div class="user-card-grid">
       {% for pkg in datasets %}
         <a href="{{ h.url_for('dataset.read', id=pkg.name) }}" class="user-card-item">
@@ -71,11 +29,8 @@
         </a>
       {% endfor %}
     </div>
-  {% endif %}
-
-  {% if not publications and not datasets %}
-    <p class="empty">{{ _('No publications available for this initiative.') }}</p>
-    <p class="empty-hint">{{ _('Publications can be associated with this initiative when creating or editing water publications.') }}</p>
+  {% else %}
+    <p class="empty">{{ _('No documents available for this initiative.') }}</p>
   {% endif %}
 
   <style>
@@ -109,10 +64,6 @@
     .user-card-icon .fa {
       font-size: 32px;
       color: #999;
-    }
-    .user-card-icon-img {
-      background-size: cover;
-      background-position: center;
     }
     .user-card-body {
       flex: 1;
