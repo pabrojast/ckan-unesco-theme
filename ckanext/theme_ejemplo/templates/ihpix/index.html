@@ -58,9 +58,9 @@
             <img class="cardsmall-img-top image-style-cardsmall-1-column" src="{{ card.image_url }}" alt="" loading="lazy">
             {% endif %}
             <div class="cardsmall-body">
-              <h3 class="cardsmall-title">{% trans %}{{ card.title }}{% endtrans %}</h3>
+              <h3 class="cardsmall-title">{{ card.title }}</h3>
               <div class="cardsmall-text">
-                <p>{% trans %}{{ card.description }}{% endtrans %}</p>
+                <p>{{ card.description }}</p>
               </div>
               <div class="field field--name-field-link field--type-link field--label-hidden field__item">
                 <a href="{{ card.link }}" class="btn btn-primary btn-arrow-right" {% if card.link and card.link != '#' %}target="_blank"{% endif %}>{{ _("Access") }}</a>
@@ -68,9 +68,9 @@
             </div>
             {% if card.badge_text %}
               {% if card.badge_text == 'Coming Soon' %}
-              <span class="coming-soon-badge">{% trans %}{{ card.badge_text }}{% endtrans %}</span>
+              <span class="coming-soon-badge">{{ card.badge_text }}</span>
               {% else %}
-              <span class="members-badge">{% trans %}{{ card.badge_text }}{% endtrans %}</span>
+              <span class="members-badge">{{ card.badge_text }}</span>
               {% endif %}
             {% endif %}
           </div>
@@ -123,8 +123,8 @@
           <img class="cardsmall-img-top image-style-cardsmall-1-column" src="{{ pa.image_url }}" width="289" height="424" alt="" loading="lazy">
           {% endif %}
           <div class="cardsmall-body">
-            <div class="cardsmall-title">{% trans %}{{ pa.title }}{% endtrans %}</div>
-            <div class="cardsmall-text" style="padding-top:1rem">{% trans %}{{ pa.description }}{% endtrans %}</div>
+            <div class="cardsmall-title">{{ pa.title }}</div>
+            <div class="cardsmall-text" style="padding-top:1rem">{{ pa.description }}</div>
             {{ render_pa_activities(pa_key) }}
           </div>
           {% if pa.link %}
