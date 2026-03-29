@@ -403,54 +403,70 @@ class MyLogica():
         def ihpix():
             
             if request.method == 'GET':
+                from ckanext.theme_ejemplo.model import (
+                    IhpixContent, init_ihpix_content_db,
+                    IhpixActivity, init_ihpix_activities_db,
+                )
+                init_ihpix_content_db()
+                init_ihpix_activities_db()
+
+                # Load page content from DB
+                cta_cards = [item.as_dict() for item in
+                             IhpixContent.get_by_type('cta_card')
+                             if item.is_active]
+                pa_sections = [item.as_dict() for item in
+                               IhpixContent.get_by_type('priority_area')
+                               if item.is_active]
+
+                # Load recent activities per priority area
                 priority_areas = {}
                 for pa_num in range(1, 6):
                     pa_key = 'PA{}'.format(pa_num)
                     try:
-                        result = toolkit.get_action('package_search')(
-                            {'ignore_auth': True},
-                            {
-                                'fq': 'ihpix_priority_area:{}'.format(pa_key),
-                                'sort': 'metadata_created desc',
-                                'rows': 3,
-                            }
+                        activities = IhpixActivity.get_by_priority_area(
+                            pa_key, status='published', limit=3
                         )
-                        priority_areas[pa_key] = result.get('results', [])
+                        priority_areas[pa_key] = [a.as_dict() for a in activities]
                     except Exception:
                         priority_areas[pa_key] = []
 
+                is_sysadmin = False
+                try:
+                    if c.userobj and c.userobj.sysadmin:
+                        is_sysadmin = True
+                except Exception:
+                    pass
+
                 return render_template("ihpix/index.html",
-                                       priority_areas=priority_areas)
+                                       cta_cards=cta_cards,
+                                       pa_sections=pa_sections,
+                                       priority_areas=priority_areas,
+                                       is_sysadmin=is_sysadmin)
 
         def ihpix_outputs():
             if request.method == 'GET':
+                from ckanext.theme_ejemplo.model import (
+                    IhpixActivity, init_ihpix_activities_db,
+                )
+                init_ihpix_activities_db()
+
                 pa_filter = request.args.get('pa', '')
+                output_filter = request.args.get('output', '')
                 q = request.args.get('q', '')
                 page = int(request.args.get('page', 1))
                 items_per_page = 20
-
-                fq_parts = []
-                if pa_filter:
-                    fq_parts.append('ihpix_priority_area:{}'.format(pa_filter))
-                else:
-                    fq_parts.append('ihpix_priority_area:[* TO *]')
+                offset = items_per_page * (page - 1)
 
                 try:
-                    result = toolkit.get_action('package_search')(
-                        {'ignore_auth': True},
-                        {
-                            'q': q,
-                            'fq': ' AND '.join(fq_parts),
-                            'sort': 'metadata_created desc',
-                            'rows': items_per_page,
-                            'start': items_per_page * (page - 1),
-                            'facet.field': ['ihpix_priority_area', 'ihpix_output'],
-                            'facet': 'true',
-                        }
+                    results, total = IhpixActivity.get_published(
+                        priority_area=pa_filter or None,
+                        output=output_filter or None,
+                        q_text=q or None,
+                        limit=items_per_page,
+                        offset=offset,
                     )
-                    activities = result.get('results', [])
-                    facets = result.get('search_facets', {})
-                    total = result.get('count', 0)
+                    activities = [a.as_dict() for a in results]
+                    facets = IhpixActivity.get_facets()
                 except Exception as e:
                     log.error('Error fetching IHP-IX outputs: %s', e)
                     activities = []
@@ -462,6 +478,7 @@ class MyLogica():
                                        facets=facets,
                                        total=total,
                                        pa_filter=pa_filter,
+                                       output_filter=output_filter,
                                        q=q,
                                        page=page,
                                        items_per_page=items_per_page)
@@ -2449,4 +2466,238 @@ class MyLogica():
                 return jsonify({'success': False, 'error': 'User not found'}), 404
             except Exception as e:
                 log.error(f'Error toggling sysadmin: {e}')
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        # ── IHP-IX Admin Controller Methods ──────────────────────────────────
+
+        @staticmethod
+        def ihpix_content_admin():
+            """Render IHP-IX content admin panel. Sysadmin only."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('ihpix_content_list', context, {})
+            except toolkit.NotAuthorized:
+                return base.abort(403, _('Not authorized'))
+
+            result = toolkit.get_action('ihpix_content_list')(context, {})
+            cta_cards = [i for i in result['results']
+                         if i['section_type'] == 'cta_card']
+            priority_areas = [i for i in result['results']
+                              if i['section_type'] == 'priority_area']
+
+            return render_template(
+                'admin/ihpix_content.html',
+                cta_cards=cta_cards,
+                priority_areas=priority_areas,
+            )
+
+        @staticmethod
+        def ihpix_content_update():
+            """AJAX: Update an IHP-IX content section."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                data = {}
+                for key in ('id', 'section_key', 'title', 'description',
+                            'image_url', 'link', 'badge_text', 'is_active',
+                            'extra_fields'):
+                    val = request.form.get(key)
+                    if val is not None:
+                        data[key] = val
+
+                result = toolkit.get_action('ihpix_content_update')(context, data)
+                return jsonify({'success': True, 'data': result})
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+            except toolkit.ObjectNotFound:
+                return jsonify({'success': False, 'error': 'Content not found'}), 404
+            except toolkit.ValidationError as e:
+                return jsonify({'success': False, 'error': e.error_dict}), 400
+            except Exception as e:
+                log.error('Error updating IHP-IX content: %s', e)
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        @staticmethod
+        def ihpix_content_upload_image():
+            """AJAX: Upload an image for IHP-IX content."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('ihpix_content_update', context, {})
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+
+            if 'file' not in request.files:
+                return jsonify({'success': False, 'error': 'No file uploaded'}), 400
+
+            upload_file = request.files['file']
+            if not upload_file.filename:
+                return jsonify({'success': False, 'error': 'Empty filename'}), 400
+
+            try:
+                import ckan.lib.uploader as uploader
+                upload = uploader.get_uploader('ihpix')
+                upload.update_data_dict(
+                    {'upload': upload_file, 'url': '', 'clear_upload': ''},
+                    'url', 'upload', 'clear_upload'
+                )
+                upload.upload()
+                image_url = h.url_for_static(
+                    'uploads/ihpix/{}'.format(upload.filename),
+                    qualified=False
+                )
+                return jsonify({'success': True, 'image_url': image_url})
+            except Exception as e:
+                log.error('Error uploading IHP-IX image: %s', e)
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        @staticmethod
+        def ihpix_activities_admin():
+            """Render IHP-IX activities admin panel. Sysadmin only."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('ihpix_activity_create', context, {})
+            except toolkit.NotAuthorized:
+                return base.abort(403, _('Not authorized'))
+
+            pa_filter = request.args.get('pa', '')
+            page = int(request.args.get('page', 1))
+            limit = 20
+            offset = (page - 1) * limit
+
+            data = {'limit': limit, 'offset': offset}
+            if pa_filter:
+                data['priority_area'] = pa_filter
+
+            result = toolkit.get_action('ihpix_activity_list')(context, data)
+
+            return render_template(
+                'admin/ihpix_activities.html',
+                activities=result['results'],
+                total=result['count'],
+                facets=result.get('facets', {}),
+                pa_filter=pa_filter,
+                page=page,
+                items_per_page=limit,
+            )
+
+        @staticmethod
+        def ihpix_activities_create():
+            """AJAX: Create an IHP-IX activity."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                data = {}
+                for key in ('title', 'description', 'priority_area', 'output',
+                            'country', 'institution', 'link', 'image_url',
+                            'status', 'reported_date'):
+                    val = request.form.get(key)
+                    if val is not None and val != '':
+                        data[key] = val
+
+                result = toolkit.get_action('ihpix_activity_create')(context, data)
+                return jsonify({'success': True, 'data': result})
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+            except toolkit.ValidationError as e:
+                return jsonify({'success': False, 'error': e.error_dict}), 400
+            except Exception as e:
+                log.error('Error creating IHP-IX activity: %s', e)
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        @staticmethod
+        def ihpix_activities_update():
+            """AJAX: Update an IHP-IX activity."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                data = {}
+                for key in ('id', 'title', 'description', 'priority_area',
+                            'output', 'country', 'institution', 'link',
+                            'image_url', 'status', 'reported_date'):
+                    val = request.form.get(key)
+                    if val is not None:
+                        data[key] = val
+
+                result = toolkit.get_action('ihpix_activity_update')(context, data)
+                return jsonify({'success': True, 'data': result})
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+            except toolkit.ObjectNotFound:
+                return jsonify({'success': False, 'error': 'Activity not found'}), 404
+            except toolkit.ValidationError as e:
+                return jsonify({'success': False, 'error': e.error_dict}), 400
+            except Exception as e:
+                log.error('Error updating IHP-IX activity: %s', e)
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        @staticmethod
+        def ihpix_activities_delete():
+            """AJAX: Delete an IHP-IX activity."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                activity_id = request.form.get('id', '')
+                result = toolkit.get_action('ihpix_activity_delete')(
+                    context, {'id': activity_id}
+                )
+                return jsonify(result)
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+            except toolkit.ObjectNotFound:
+                return jsonify({'success': False, 'error': 'Activity not found'}), 404
+            except Exception as e:
+                log.error('Error deleting IHP-IX activity: %s', e)
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        @staticmethod
+        def ihpix_activities_upload_image():
+            """AJAX: Upload an image for an IHP-IX activity."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('ihpix_activity_create', context, {})
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+
+            if 'file' not in request.files:
+                return jsonify({'success': False, 'error': 'No file uploaded'}), 400
+
+            upload_file = request.files['file']
+            if not upload_file.filename:
+                return jsonify({'success': False, 'error': 'Empty filename'}), 400
+
+            try:
+                import ckan.lib.uploader as uploader
+                upload = uploader.get_uploader('ihpix_activities')
+                upload.update_data_dict(
+                    {'upload': upload_file, 'url': '', 'clear_upload': ''},
+                    'url', 'upload', 'clear_upload'
+                )
+                upload.upload()
+                image_url = h.url_for_static(
+                    'uploads/ihpix_activities/{}'.format(upload.filename),
+                    qualified=False
+                )
+                return jsonify({'success': True, 'image_url': image_url})
+            except Exception as e:
+                log.error('Error uploading IHP-IX activity image: %s', e)
                 return jsonify({'success': False, 'error': str(e)}), 500

@@ -1,0 +1,839 @@
+{% extends "page.html" %}
+
+{% block title %}
+{{ _('IHP-IX Content Management') }} - {{ super() }}
+{% endblock %}
+
+{% block content %}
+<div class="homepage layout-1">
+    <div id="content" class="container">
+      {{ self.flash() }}
+    </div>
+
+    {% block primary_content %}
+    <div class="main">
+        <div class="container">
+            <!-- Breadcrumb -->
+            <div class="toolbar" role="navigation" aria-label="Breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="home"><a href="/"><i class="fa fa-home"></i><span> Home</span></a></li>
+                    <li><a href="{{ h.url_for(controller='admin', action='index') }}">{{ _('Admin') }}</a></li>
+                    <li class="active">{{ _('IHP-IX Content') }}</li>
+                </ol>
+            </div>
+
+            <!-- Header Banner -->
+            <section class="module module-narrow module-shallow">
+              <div class="ihpix-banner">
+                <div class="ihpix-banner-overlay"></div>
+                <div class="ihpix-banner-content">
+                  <h1><i class="fa fa-university"></i> {{ _('IHP-IX Content Management') }}</h1>
+                  <p>{{ _('Manage the content displayed on the IHP-IX portal page.') }}</p>
+                </div>
+              </div>
+            </section>
+
+            <!-- Navigation Tabs -->
+            <ul class="ihpix-nav-tabs">
+              <li class="active">
+                <a href="#"><i class="fa fa-file-text-o"></i> {{ _('Page Content') }}</a>
+              </li>
+              <li>
+                <a href="/ckan-admin/ihpix/activities"><i class="fa fa-calendar"></i> {{ _('Activities') }}</a>
+              </li>
+            </ul>
+        </div>
+
+        <div class="container">
+          <div class="row">
+            <div class="col-md-12">
+
+              <!-- ═══════════════════════════════════════════ -->
+              <!-- Call to Action Cards Section               -->
+              <!-- ═══════════════════════════════════════════ -->
+              <div class="ihpix-section-header">
+                <h2 class="ihpix-section-title">
+                  <i class="fa fa-bullhorn"></i> {{ _('Call to Action Cards') }}
+                  <span class="ihpix-count-badge">{{ cta_cards|length }}</span>
+                </h2>
+                <p class="text-muted">{{ _('Manage the call-to-action cards displayed on the IHP-IX landing page.') }}</p>
+              </div>
+
+              <div class="row" id="ihpix-cta-list">
+                {% for card in cta_cards %}
+                <div class="col-md-4" id="ihpix-cta-{{ card.id }}">
+                  <div class="ihpix-card{% if not card.is_active %} ihpix-inactive{% endif %}">
+                    <article class="module module-narrow">
+                      <div class="module-content" style="padding: 1.5rem;">
+                        <!-- Status indicator -->
+                        <div class="ihpix-card-status">
+                          <span class="label label-{{ 'success' if card.is_active else 'default' }}">
+                            {{ _('Active') if card.is_active else _('Inactive') }}
+                          </span>
+                          <span class="ihpix-card-key text-muted">{{ card.section_key }}</span>
+                        </div>
+
+                        <!-- Image Preview -->
+                        <div class="ihpix-img-preview" id="ihpix-preview-{{ card.id }}">
+                          {% if card.image_url %}
+                          <img src="{{ card.image_url }}" alt="{{ card.title }}" class="ihpix-card-img" />
+                          {% else %}
+                          <div class="ihpix-card-img-placeholder">
+                            <i class="fa fa-image fa-2x"></i>
+                            <span>{{ _('No image') }}</span>
+                          </div>
+                          {% endif %}
+                        </div>
+
+                        <!-- Image Upload Zone -->
+                        <div class="ihpix-drop-zone" data-target="{{ card.id }}">
+                          <div class="ihpix-drop-content">
+                            <i class="fa fa-cloud-upload"></i>
+                            <span>{{ _('Drop image or click') }}</span>
+                          </div>
+                          <input type="file" class="ihpix-file-input" accept="image/*" style="display:none;" />
+                        </div>
+                        <input type="text" class="form-control ihpix-input ihpix-image-url-input"
+                               data-id="{{ card.id }}"
+                               value="{{ card.image_url or '' }}"
+                               placeholder="{{ _('Or paste image URL...') }}" />
+
+                        <!-- Editable Fields -->
+                        <div class="form-group">
+                          <label>{{ _('Title') }}</label>
+                          <input type="text" class="form-control ihpix-input ihpix-field-title"
+                                 data-id="{{ card.id }}"
+                                 value="{{ card.title }}"
+                                 placeholder="{{ _('Card title') }}" />
+                        </div>
+                        <div class="form-group">
+                          <label>{{ _('Description') }}</label>
+                          <textarea class="form-control ihpix-input ihpix-field-description"
+                                    data-id="{{ card.id }}" rows="3"
+                                    placeholder="{{ _('Brief description...') }}">{{ card.description or '' }}</textarea>
+                        </div>
+                        <div class="form-group">
+                          <label>{{ _('Link') }}</label>
+                          <input type="url" class="form-control ihpix-input ihpix-field-link"
+                                 data-id="{{ card.id }}"
+                                 value="{{ card.link or '' }}"
+                                 placeholder="https://..." />
+                        </div>
+                        <div class="form-group">
+                          <label>{{ _('Badge Text') }}</label>
+                          <input type="text" class="form-control ihpix-input ihpix-field-badge"
+                                 data-id="{{ card.id }}"
+                                 value="{{ card.badge_text or '' }}"
+                                 placeholder="{{ _('e.g. New, Coming Soon') }}" />
+                        </div>
+
+                        <!-- Active Toggle -->
+                        <div class="form-group">
+                          <label class="ihpix-toggle-label">
+                            <input type="checkbox" class="ihpix-field-active"
+                                   data-id="{{ card.id }}"
+                                   {{ 'checked' if card.is_active }} />
+                            <span class="ihpix-toggle-text">{{ _('Active') }}</span>
+                          </label>
+                        </div>
+
+                        <!-- Save Button -->
+                        <div class="text-right">
+                          <button type="button" class="btn btn-primary ihpix-save-btn" data-id="{{ card.id }}">
+                            <i class="fa fa-save"></i> {{ _('Save') }}
+                          </button>
+                        </div>
+                      </div>
+                    </article>
+                  </div>
+                </div>
+                {% endfor %}
+
+                {% if not cta_cards %}
+                <div class="col-md-12">
+                  <div class="ihpix-empty-state">
+                    <section class="module module-narrow">
+                      <div class="module-content text-center" style="padding: 3rem 2rem;">
+                        <i class="fa fa-bullhorn fa-3x" style="color: #005A9C; opacity: 0.5;"></i>
+                        <h3>{{ _('No Call to Action Cards') }}</h3>
+                        <p class="text-muted">{{ _('No CTA cards have been configured yet.') }}</p>
+                      </div>
+                    </section>
+                  </div>
+                </div>
+                {% endif %}
+              </div>
+
+              <!-- ═══════════════════════════════════════════ -->
+              <!-- Priority Areas Section                     -->
+              <!-- ═══════════════════════════════════════════ -->
+              <div class="ihpix-section-header" style="margin-top: 3rem;">
+                <h2 class="ihpix-section-title">
+                  <i class="fa fa-star"></i> {{ _('Priority Areas') }}
+                  <span class="ihpix-count-badge">{{ priority_areas|length }}</span>
+                </h2>
+                <p class="text-muted">{{ _('Manage the IHP-IX priority areas displayed on the portal.') }}</p>
+              </div>
+
+              <div id="ihpix-pa-list" class="ihpix-accordion-list">
+                {% for pa in priority_areas %}
+                <div class="ihpix-accordion-item{% if not pa.is_active %} ihpix-inactive{% endif %}" id="ihpix-pa-{{ pa.id }}">
+                  <article class="module module-narrow">
+                    <!-- Accordion Header -->
+                    <div class="ihpix-accordion-header" data-target="ihpix-pa-body-{{ pa.id }}">
+                      <div class="row">
+                        <div class="col-md-1 col-sm-1">
+                          {% if pa.image_url %}
+                          <img src="{{ pa.image_url }}" class="ihpix-pa-thumb" alt="{{ pa.title }}" />
+                          {% else %}
+                          <div class="ihpix-pa-thumb-placeholder">
+                            <i class="fa fa-star"></i>
+                          </div>
+                          {% endif %}
+                        </div>
+                        <div class="col-md-8 col-sm-7">
+                          <h3 class="ihpix-accordion-title">
+                            {{ pa.title }}
+                            <span class="ihpix-card-key text-muted">{{ pa.section_key }}</span>
+                          </h3>
+                        </div>
+                        <div class="col-md-3 col-sm-4 text-right">
+                          <span class="label label-{{ 'success' if pa.is_active else 'default' }}" style="margin-right: 10px;">
+                            {{ _('Active') if pa.is_active else _('Inactive') }}
+                          </span>
+                          <i class="fa fa-chevron-down ihpix-accordion-icon"></i>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Accordion Body -->
+                    <div class="ihpix-accordion-body" id="ihpix-pa-body-{{ pa.id }}" style="display: none;">
+                      <div class="module-content" style="padding: 1.5rem 2rem;">
+                        <div class="row">
+                          <!-- Image Column -->
+                          <div class="col-md-4">
+                            <div class="ihpix-img-preview" id="ihpix-preview-{{ pa.id }}">
+                              {% if pa.image_url %}
+                              <img src="{{ pa.image_url }}" alt="{{ pa.title }}" class="ihpix-card-img" />
+                              {% else %}
+                              <div class="ihpix-card-img-placeholder">
+                                <i class="fa fa-image fa-2x"></i>
+                                <span>{{ _('No image') }}</span>
+                              </div>
+                              {% endif %}
+                            </div>
+                            <div class="ihpix-drop-zone" data-target="{{ pa.id }}">
+                              <div class="ihpix-drop-content">
+                                <i class="fa fa-cloud-upload"></i>
+                                <span>{{ _('Drop image or click') }}</span>
+                              </div>
+                              <input type="file" class="ihpix-file-input" accept="image/*" style="display:none;" />
+                            </div>
+                            <input type="text" class="form-control ihpix-input ihpix-image-url-input"
+                                   data-id="{{ pa.id }}"
+                                   value="{{ pa.image_url or '' }}"
+                                   placeholder="{{ _('Or paste image URL...') }}" />
+                          </div>
+
+                          <!-- Fields Column -->
+                          <div class="col-md-8">
+                            <div class="form-group">
+                              <label>{{ _('Title') }}</label>
+                              <input type="text" class="form-control ihpix-input ihpix-field-title"
+                                     data-id="{{ pa.id }}"
+                                     value="{{ pa.title }}"
+                                     placeholder="{{ _('Priority area title') }}" />
+                            </div>
+                            <div class="form-group">
+                              <label>{{ _('Description') }}</label>
+                              <textarea class="form-control ihpix-input ihpix-field-description"
+                                        data-id="{{ pa.id }}" rows="4"
+                                        placeholder="{{ _('Priority area description...') }}">{{ pa.description or '' }}</textarea>
+                            </div>
+                            <div class="form-group">
+                              <label>{{ _('Link') }} <small class="text-muted">({{ _('UNESCO document URL') }})</small></label>
+                              <input type="url" class="form-control ihpix-input ihpix-field-link"
+                                     data-id="{{ pa.id }}"
+                                     value="{{ pa.link or '' }}"
+                                     placeholder="https://unesdoc.unesco.org/..." />
+                            </div>
+                            <div class="form-group">
+                              <label>{{ _('Badge Text') }}</label>
+                              <input type="text" class="form-control ihpix-input ihpix-field-badge"
+                                     data-id="{{ pa.id }}"
+                                     value="{{ pa.badge_text or '' }}"
+                                     placeholder="{{ _('e.g. New, Updated') }}" />
+                            </div>
+
+                            <!-- Active Toggle -->
+                            <div class="form-group">
+                              <label class="ihpix-toggle-label">
+                                <input type="checkbox" class="ihpix-field-active"
+                                       data-id="{{ pa.id }}"
+                                       {{ 'checked' if pa.is_active }} />
+                                <span class="ihpix-toggle-text">{{ _('Active') }}</span>
+                              </label>
+                            </div>
+
+                            <!-- Save Button -->
+                            <div class="text-right">
+                              <button type="button" class="btn btn-primary ihpix-save-btn" data-id="{{ pa.id }}">
+                                <i class="fa fa-save"></i> {{ _('Save') }}
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </article>
+                </div>
+                {% endfor %}
+
+                {% if not priority_areas %}
+                <div class="ihpix-empty-state">
+                  <section class="module module-narrow">
+                    <div class="module-content text-center" style="padding: 3rem 2rem;">
+                      <i class="fa fa-star fa-3x" style="color: #005A9C; opacity: 0.5;"></i>
+                      <h3>{{ _('No Priority Areas') }}</h3>
+                      <p class="text-muted">{{ _('No priority areas have been configured yet.') }}</p>
+                    </div>
+                  </section>
+                </div>
+                {% endif %}
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+    </div>
+    {% endblock %}
+</div>
+
+<!-- Toast Notification Container -->
+<div id="ihpix-toast-container"></div>
+
+<!-- CSS -->
+<style>
+/* ── Banner ── */
+.ihpix-banner {
+  position: relative;
+  height: 200px;
+  overflow: hidden;
+  border-radius: 16px;
+  margin-bottom: 2.5rem;
+  box-shadow: 0 8px 32px rgba(0, 114, 188, 0.16);
+  display: flex;
+  align-items: center;
+  background: linear-gradient(135deg, #0072BC 0%, #005A9C 100%);
+}
+.ihpix-banner-overlay {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: linear-gradient(to right, rgba(0, 90, 156, 0.3) 0%, rgba(0, 114, 188, 0.1) 100%);
+  z-index: 1;
+}
+.ihpix-banner-content {
+  position: relative;
+  z-index: 2;
+  padding: 2rem 2.5rem;
+  color: white;
+  width: 100%;
+}
+.ihpix-banner-content h1 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 0.8rem;
+  text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+  color: white;
+}
+.ihpix-banner-content h1 .fa { margin-right: 10px; }
+.ihpix-banner-content p {
+  font-size: 1.1rem;
+  margin-bottom: 0;
+  opacity: 0.95;
+  text-shadow: 1px 1px 4px rgba(0,0,0,0.3);
+  font-weight: 300;
+  color: #fff !important;
+  max-width: 90%;
+}
+
+/* ── Navigation Tabs ── */
+.ihpix-nav-tabs {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 2rem 0;
+  display: flex;
+  gap: 4px;
+  border-bottom: 2px solid #e9ecef;
+}
+.ihpix-nav-tabs li {
+  margin: 0;
+}
+.ihpix-nav-tabs li a {
+  display: inline-block;
+  padding: 10px 22px;
+  color: #6c757d;
+  font-weight: 600;
+  font-size: 0.95rem;
+  text-decoration: none;
+  border-bottom: 3px solid transparent;
+  margin-bottom: -2px;
+  transition: all 0.2s ease;
+}
+.ihpix-nav-tabs li a:hover {
+  color: #0072BC;
+  border-bottom-color: rgba(0, 114, 188, 0.3);
+}
+.ihpix-nav-tabs li.active a {
+  color: #0072BC;
+  border-bottom-color: #0072BC;
+}
+.ihpix-nav-tabs li a .fa { margin-right: 6px; }
+
+/* ── Toolbar / Breadcrumb ── */
+.toolbar { margin-bottom: 2rem; padding: 1rem 0; }
+
+/* ── Section Headers ── */
+.ihpix-section-header { margin-bottom: 1.5rem; padding: 0 0.5rem; }
+.ihpix-section-title {
+  margin: 0 0 0.3rem 0;
+  border: none;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: #0072BC;
+}
+.ihpix-section-title .fa { margin-right: 8px; }
+.ihpix-count-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #0072BC 0%, #005A9C 100%);
+  color: white;
+  padding: 3px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  margin-left: 10px;
+  font-weight: 600;
+}
+
+/* ── Cards (CTA) ── */
+.ihpix-card {
+  margin-bottom: 1.5rem;
+  transition: all 0.3s ease;
+}
+.ihpix-card:hover { transform: translateY(-2px); }
+.ihpix-card .module {
+  border-radius: 12px;
+  border: 1px solid #e9ecef;
+  box-shadow: 0 2px 8px rgba(0, 114, 188, 0.06);
+  margin: 0;
+}
+.ihpix-card-status {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+.ihpix-card-key {
+  font-size: 0.8rem;
+  font-family: monospace;
+}
+
+/* ── Image Preview ── */
+.ihpix-img-preview {
+  margin-bottom: 10px;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.ihpix-card-img {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.ihpix-card-img-placeholder {
+  width: 100%;
+  height: 100px;
+  border-radius: 10px;
+  background: #f8f9fa;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #adb5bd;
+  gap: 6px;
+}
+.ihpix-card-img-placeholder span { font-size: 0.8rem; }
+
+/* ── Drop Zone ── */
+.ihpix-drop-zone {
+  border: 2px dashed #dee2e6;
+  border-radius: 10px;
+  padding: 12px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  background: #f8f9fa;
+  margin-bottom: 8px;
+}
+.ihpix-drop-zone:hover, .ihpix-drop-zone.dragover {
+  border-color: #0072BC;
+  background: #E3F2FD;
+}
+.ihpix-drop-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.ihpix-drop-content i { color: #0072BC; }
+.ihpix-drop-content span { color: #6c757d; font-size: 0.85rem; font-weight: 500; }
+
+/* ── Forms ── */
+.ihpix-card .form-group,
+.ihpix-accordion-body .form-group { margin-bottom: 1rem; }
+.ihpix-card label,
+.ihpix-accordion-body label { font-weight: 600; color: #2c3e50; margin-bottom: 4px; font-size: 0.9rem; }
+.ihpix-input {
+  border-radius: 10px !important;
+  border: 2px solid #e9ecef !important;
+  padding: 8px 12px !important;
+  font-size: 0.9rem !important;
+  transition: border-color 0.2s ease !important;
+}
+.ihpix-input:focus {
+  border-color: #0072BC !important;
+  box-shadow: 0 0 0 3px rgba(0, 114, 188, 0.1) !important;
+}
+
+/* ── Toggle ── */
+.ihpix-toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: normal !important;
+  cursor: pointer;
+}
+.ihpix-toggle-text { font-size: 0.9rem; color: #2c3e50; }
+
+/* ── Save Button ── */
+.ihpix-save-btn {
+  border-radius: 20px;
+  padding: 7px 20px;
+  font-weight: 600;
+  font-size: 0.9rem;
+  background: linear-gradient(135deg, #0072BC 0%, #005A9C 100%);
+  border: none;
+  transition: all 0.2s ease;
+}
+.ihpix-save-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 114, 188, 0.3);
+}
+
+/* ── Inactive State ── */
+.ihpix-inactive { opacity: 0.55; }
+.ihpix-inactive:hover { opacity: 0.85; }
+.ihpix-inactive .module-content { border-left: 4px solid #adb5bd; }
+
+/* ── Accordion (Priority Areas) ── */
+.ihpix-accordion-list { margin-bottom: 3rem; }
+.ihpix-accordion-item {
+  margin-bottom: 1rem;
+  transition: all 0.3s ease;
+}
+.ihpix-accordion-item .module {
+  border-radius: 12px;
+  border: 1px solid #e9ecef;
+  box-shadow: 0 2px 8px rgba(0, 114, 188, 0.06);
+  margin: 0;
+}
+.ihpix-accordion-header {
+  padding: 1rem 1.5rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+.ihpix-accordion-header:hover { background: #f8f9fa; }
+.ihpix-accordion-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0;
+  line-height: 1.4;
+}
+.ihpix-accordion-title .ihpix-card-key { margin-left: 10px; font-weight: 400; }
+.ihpix-accordion-icon {
+  color: #6c757d;
+  transition: transform 0.3s ease;
+}
+.ihpix-accordion-item.open .ihpix-accordion-icon {
+  transform: rotate(180deg);
+}
+.ihpix-accordion-body {
+  border-top: 1px solid #e9ecef;
+}
+
+/* ── Priority Area Thumbnail ── */
+.ihpix-pa-thumb {
+  width: 48px;
+  height: 48px;
+  object-fit: cover;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+}
+.ihpix-pa-thumb-placeholder {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  background: #f0f4f8;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #0072BC;
+  font-size: 1.1rem;
+}
+
+/* ── Empty State ── */
+.ihpix-empty-state .module { border-left: 5px solid #005A9C; }
+.ihpix-empty-state h3 { color: #2c3e50; font-weight: 700; margin: 1rem 0 0.5rem 0; }
+
+/* ── Toast Notifications ── */
+#ihpix-toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 10100;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.ihpix-toast {
+  padding: 14px 22px;
+  border-radius: 10px;
+  color: white;
+  font-weight: 600;
+  font-size: 0.9rem;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+  animation: ihpixToastIn 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 380px;
+}
+.ihpix-toast.success { background: linear-gradient(135deg, #28a745 0%, #218838 100%); }
+.ihpix-toast.error { background: linear-gradient(135deg, #dc3545 0%, #c82333 100%); }
+.ihpix-toast .fa { font-size: 1.1rem; }
+
+@keyframes ihpixToastIn {
+  from { opacity: 0; transform: translateX(40px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes ihpixToastOut {
+  from { opacity: 1; transform: translateX(0); }
+  to { opacity: 0; transform: translateX(40px); }
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .ihpix-banner { height: 160px; }
+  .ihpix-banner-content h1 { font-size: 1.7rem; }
+  .ihpix-nav-tabs { flex-wrap: wrap; }
+  .ihpix-accordion-header .col-md-1 { display: none; }
+}
+</style>
+
+<!-- JavaScript -->
+<script>
+(function() {
+  var URLS = {
+    update: '/ckan-admin/ihpix/content/update',
+    upload: '/ckan-admin/ihpix/content/upload-image'
+  };
+
+  // ── Toast Notifications ──
+  function showToast(message, type) {
+    var container = document.getElementById('ihpix-toast-container');
+    var toast = document.createElement('div');
+    toast.className = 'ihpix-toast ' + (type || 'success');
+    var icon = type === 'error' ? 'fa-exclamation-circle' : 'fa-check-circle';
+    toast.innerHTML = '<i class="fa ' + icon + '"></i> ' + message;
+    container.appendChild(toast);
+    setTimeout(function() {
+      toast.style.animation = 'ihpixToastOut 0.3s ease forwards';
+      setTimeout(function() { toast.remove(); }, 300);
+    }, 3500);
+  }
+
+  // ── Image Upload Helper ──
+  function uploadImage(file, callback) {
+    if (!file.type.startsWith('image/')) {
+      showToast('{{ _("Please upload an image file") }}', 'error');
+      return;
+    }
+    var formData = new FormData();
+    formData.append('file', file);
+    fetch(URLS.upload, { method: 'POST', body: formData })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.success) {
+          callback(data.image_url);
+          showToast('{{ _("Image uploaded successfully") }}');
+        } else {
+          showToast('{{ _("Upload error") }}: ' + (data.error || ''), 'error');
+        }
+      })
+      .catch(function(e) {
+        showToast('{{ _("Upload error") }}: ' + e, 'error');
+      });
+  }
+
+  // ── Init Drop Zones ──
+  document.querySelectorAll('.ihpix-drop-zone').forEach(function(zone) {
+    var fileInput = zone.querySelector('.ihpix-file-input');
+    var targetId = zone.getAttribute('data-target');
+
+    zone.addEventListener('click', function(e) {
+      if (e.target !== fileInput) fileInput.click();
+    });
+
+    zone.addEventListener('dragover', function(e) {
+      e.preventDefault();
+      zone.classList.add('dragover');
+    });
+    zone.addEventListener('dragleave', function() {
+      zone.classList.remove('dragover');
+    });
+    zone.addEventListener('drop', function(e) {
+      e.preventDefault();
+      zone.classList.remove('dragover');
+      if (e.dataTransfer.files.length > 0) {
+        uploadImage(e.dataTransfer.files[0], function(url) {
+          updateImagePreview(targetId, url);
+          var urlInput = document.querySelector('.ihpix-image-url-input[data-id="' + targetId + '"]');
+          if (urlInput) urlInput.value = url;
+        });
+      }
+    });
+
+    fileInput.addEventListener('change', function() {
+      if (fileInput.files.length > 0) {
+        uploadImage(fileInput.files[0], function(url) {
+          updateImagePreview(targetId, url);
+          var urlInput = document.querySelector('.ihpix-image-url-input[data-id="' + targetId + '"]');
+          if (urlInput) urlInput.value = url;
+        });
+      }
+    });
+  });
+
+  // ── Image URL paste ──
+  document.querySelectorAll('.ihpix-image-url-input').forEach(function(input) {
+    input.addEventListener('change', function() {
+      var url = input.value.trim();
+      if (url) {
+        updateImagePreview(input.getAttribute('data-id'), url);
+      }
+    });
+  });
+
+  function updateImagePreview(targetId, url) {
+    var previewContainer = document.getElementById('ihpix-preview-' + targetId);
+    if (previewContainer) {
+      previewContainer.innerHTML = '<img src="' + url + '" class="ihpix-card-img" alt="" />';
+    }
+  }
+
+  // ── Save Button Handler ──
+  document.querySelectorAll('.ihpix-save-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var id = btn.getAttribute('data-id');
+      var titleEl = document.querySelector('.ihpix-field-title[data-id="' + id + '"]');
+      var descEl = document.querySelector('.ihpix-field-description[data-id="' + id + '"]');
+      var linkEl = document.querySelector('.ihpix-field-link[data-id="' + id + '"]');
+      var badgeEl = document.querySelector('.ihpix-field-badge[data-id="' + id + '"]');
+      var activeEl = document.querySelector('.ihpix-field-active[data-id="' + id + '"]');
+      var imageUrlEl = document.querySelector('.ihpix-image-url-input[data-id="' + id + '"]');
+
+      if (!titleEl || !titleEl.value.trim()) {
+        showToast('{{ _("Title is required") }}', 'error');
+        return;
+      }
+
+      btn.disabled = true;
+      var originalHTML = btn.innerHTML;
+      btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> {{ _("Saving...") }}';
+
+      var formData = new FormData();
+      formData.append('id', id);
+      formData.append('title', titleEl.value.trim());
+      formData.append('description', descEl ? descEl.value.trim() : '');
+      formData.append('image_url', imageUrlEl ? imageUrlEl.value.trim() : '');
+      formData.append('link', linkEl ? linkEl.value.trim() : '');
+      formData.append('badge_text', badgeEl ? badgeEl.value.trim() : '');
+      formData.append('is_active', activeEl && activeEl.checked ? 'true' : 'false');
+
+      fetch(URLS.update, { method: 'POST', body: formData })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (data.success) {
+            showToast('{{ _("Changes saved successfully") }}');
+            // Update status label
+            var card = document.getElementById('ihpix-cta-' + id) || document.getElementById('ihpix-pa-' + id);
+            if (card) {
+              var isActive = activeEl && activeEl.checked;
+              if (isActive) {
+                card.querySelector('.ihpix-card, .ihpix-accordion-item') &&
+                  card.classList.remove('ihpix-inactive');
+              } else {
+                card.classList.add('ihpix-inactive');
+              }
+              var statusLabel = card.querySelector('.label');
+              if (statusLabel) {
+                statusLabel.className = 'label label-' + (isActive ? 'success' : 'default');
+                statusLabel.textContent = isActive ? '{{ _("Active") }}' : '{{ _("Inactive") }}';
+              }
+            }
+
+            btn.innerHTML = '<i class="fa fa-check"></i> {{ _("Saved!") }}';
+            btn.classList.remove('btn-primary');
+            btn.classList.add('btn-success');
+            setTimeout(function() {
+              btn.innerHTML = originalHTML;
+              btn.classList.remove('btn-success');
+              btn.classList.add('btn-primary');
+              btn.disabled = false;
+            }, 2000);
+          } else {
+            showToast('{{ _("Error") }}: ' + (data.error || '{{ _("Unknown error") }}'), 'error');
+            btn.innerHTML = originalHTML;
+            btn.disabled = false;
+          }
+        })
+        .catch(function(e) {
+          showToast('{{ _("Error") }}: ' + e, 'error');
+          btn.innerHTML = originalHTML;
+          btn.disabled = false;
+        });
+    });
+  });
+
+  // ── Accordion Toggle ──
+  document.querySelectorAll('.ihpix-accordion-header').forEach(function(header) {
+    header.addEventListener('click', function() {
+      var targetId = header.getAttribute('data-target');
+      var body = document.getElementById(targetId);
+      var item = header.closest('.ihpix-accordion-item');
+      if (!body) return;
+
+      if (body.style.display === 'none') {
+        body.style.display = 'block';
+        item.classList.add('open');
+      } else {
+        body.style.display = 'none';
+        item.classList.remove('open');
+      }
+    });
+  });
+})();
+</script>
+{% endblock %}

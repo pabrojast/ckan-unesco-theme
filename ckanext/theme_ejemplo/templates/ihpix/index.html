@@ -11,6 +11,17 @@
 {% block primary_content_inner %}
   <h1>{{ _('IHP IX') }}</h1>
   
+  {% if is_sysadmin %}
+  <div style="margin-bottom: 1rem; text-align: right;">
+    <a href="/ckan-admin/ihpix" class="btn btn-default btn-sm">
+      <i class="fa fa-cog"></i> {{ _('Manage Content') }}
+    </a>
+    <a href="/ckan-admin/ihpix/activities" class="btn btn-default btn-sm">
+      <i class="fa fa-flag"></i> {{ _('Manage Activities') }}
+    </a>
+  </div>
+  {% endif %}
+
   <div class="module-content box">
     <div>
 
@@ -18,61 +29,38 @@
         {% trans %}The ninth phase of the Intergovernmental Hydrological Programme (IHP-IX) covering 2022-2029 is UNESCO's strategic framework for addressing complex water challenges through scientific knowledge and innovation. IHP-IX identifies key water priority areas to support Member States in achieving the 2030 Agenda and Sustainable Development Goals, particularly SDG6. It provides a methodological approach towards transdisciplinarity aimed at generating effective water solutions for resilient societies and sustainable development.{% endtrans %}
       </p>
 
+      {# CTA Cards from database #}
+      {% if cta_cards %}
       <div class="row">
+      {% for card in cta_cards %}
       <div class="col-md-4 col3">
         <div class="col-small">
           <div class="cardsmall cardsmall-thematic cardsmall-cta cardsmall-hero"> 
-            <img class="cardsmall-img-top image-style-cardsmall-1-column" src="/Landing_page/Content/ihpix_1.png" alt="" loading="lazy">
+            {% if card.image_url %}
+            <img class="cardsmall-img-top image-style-cardsmall-1-column" src="{{ card.image_url }}" alt="" loading="lazy">
+            {% endif %}
             <div class="cardsmall-body">
-              <h3 class="cardsmall-title">{% trans %}IHP IX Reporting{% endtrans %}</h3>
+              <h3 class="cardsmall-title">{% trans %}{{ card.title }}{% endtrans %}</h3>
               <div class="cardsmall-text">
-                <p>{% trans %}Submit your reports and view progress on IHP IX implementation.{% endtrans %}</p>
+                <p>{% trans %}{{ card.description }}{% endtrans %}</p>
               </div>
               <div class="field field--name-field-link field--type-link field--label-hidden field__item">
-                <a href="https://forms.office.com/Pages/ResponsePage.aspx?Host=Teams&lang={locale}&groupId={groupId}&tid={tid}&teamsTheme={theme}&upn={upn}&id=Uq5PHbM5-kuwswIpVrERlPV3XlCBEXFBjwvcm5ZTrWNUNlYxQTFQRUgxUjBSNUJNMUlJVTBBTDFBQSQlQCN0PWcu" class="btn btn-primary btn-arrow-right" target="_blank">{{ _("Access") }}</a>
+                <a href="{{ card.link }}" class="btn btn-primary btn-arrow-right" {% if card.link and card.link != '#' %}target="_blank"{% endif %}>{{ _("Access") }}</a>
               </div>
             </div>
-            <span class="members-badge">{% trans %}Members Only{% endtrans %}</span>
+            {% if card.badge_text %}
+              {% if card.badge_text == 'Coming Soon' %}
+              <span class="coming-soon-badge">{% trans %}{{ card.badge_text }}{% endtrans %}</span>
+              {% else %}
+              <span class="members-badge">{% trans %}{{ card.badge_text }}{% endtrans %}</span>
+              {% endif %}
+            {% endif %}
           </div>
         </div>
       </div>
-
-      <div class="col-md-4 col3">
-        <div class="col-small">
-          <div class="cardsmall cardsmall-thematic cardsmall-cta cardsmall-hero"> 
-            <img class="cardsmall-img-top image-style-cardsmall-1-column" src="/Landing_page/Content/ihpix_2.png" alt="" loading="lazy">
-            <div class="cardsmall-body">
-              <h3 class="cardsmall-title">{% trans %}IHP IX Implementation Progress{% endtrans %}</h3>
-              <div class="cardsmall-text">
-                <p>{% trans %}Track implementation progress and view results across priority areas.{% endtrans %}</p>
-              </div>
-              <div class="field field--name-field-link field--type-link field--label-hidden field__item">
-                <a href="https://unesco.sharepoint.com/sites/IntergovernmentalHydrologicalProgrammeIHP/SitePages/IHP-IX-Implementation-Progress.aspx?OR=Teams-HL&CT=1736211052496&clickparams=eyJBcHBOYW1lIjoiVGVhbXMtRGVza3RvcCIsIkFwcFZlcnNpb24iOiI0OS8yNDEyMDEwMDIxMSJ9" class="btn btn-primary btn-arrow-right" target="_blank">{{ _("View") }}</a>
-              </div>
-            </div>
-            <span class="members-badge">{% trans %}Members Only{% endtrans %}</span>
-          </div>
-        </div>
+      {% endfor %}
       </div>
-
-      <div class="col-md-4 col3">
-        <div class="col-small">
-          <div class="cardsmall cardsmall-thematic cardsmall-cta cardsmall-hero"> 
-            <img class="cardsmall-img-top image-style-cardsmall-1-column" src="/Landing_page/Content/ihpix_3.png" alt="" loading="lazy">
-            <div class="cardsmall-body">
-              <h3 class="cardsmall-title">{% trans %}AI Chatbot on IHP-IX Implementation Progress{% endtrans %}</h3>
-              <div class="cardsmall-text">
-                <p>{% trans %}Interactive AI assistant for IHP-IX information and progress queries.{% endtrans %}</p>
-              </div>
-              <div class="field field--name-field-link field--type-link field--label-hidden field__item">
-                <a href="#" class="btn btn-primary btn-arrow-right" >{{ _("View") }}</a>
-              </div>
-            </div>
-            <span class="coming-soon-badge">{% trans %}Coming Soon{% endtrans %}</span>
-          </div>
-        </div>
-      </div>
-      </div>
+      {% endif %}
 
       <h2 class="page-heading">{% trans %}IHP IX: Priority Areas{% endtrans %}</h2>
       <p>
@@ -88,56 +76,47 @@
           </h5>
           {% for activity in priority_areas[pa_key] %}
           <div style="padding: 0.3rem 0; border-bottom: 1px solid #eee; font-size: 0.85rem;">
-            <a href="{{ h.url_for('dataset.read', id=activity.name) }}" style="color: #333; text-decoration: none;">
+            {% if activity.link %}
+            <a href="{{ activity.link }}" style="color: #333; text-decoration: none;" target="_blank">
               {{ h.truncate(activity.title, 60) }}
             </a>
+            {% else %}
+            <span style="color: #333;">{{ h.truncate(activity.title, 60) }}</span>
+            {% endif %}
             <span style="color: #999; font-size: 0.78rem; margin-left: 0.3rem;">
-              {{ h.render_datetime(activity.metadata_created, date_format='%d %b %Y') }}
+              {{ activity.created_at[:10] if activity.created_at else '' }}
             </span>
           </div>
           {% endfor %}
-          <a href="/dataset/?ihpix_priority_area={{ pa_key }}" style="font-size: 0.82rem; color: #0069B4; display: block; margin-top: 0.4rem;">
+          <a href="/ihpix/outputs?pa={{ pa_key }}" style="font-size: 0.82rem; color: #0069B4; display: block; margin-top: 0.4rem;">
             {{ _('View all') }} →
           </a>
         </div>
         {% endif %}
       {% endmacro %}
       
-      <div class="row">  
+      {# Priority Areas from database #}
+      <div class="row">
+      {% for pa in pa_sections %}
+        {% set pa_key = 'PA' ~ (pa.display_order + 1) %}
       <div class="col-md-6 col2">
-        <div class="col-small"><div class="cardsmall cardsmall-thematic cardsmall-cta cardsmall-hero" style="min-height:28rem;"> <img class="cardsmall-img-top image-style-cardsmall-1-column" src="/Landing_page/Content/area_1.png" width="289" height="424" alt="" loading="lazy"><div class="cardsmall-body"><div class="cardsmall-title">{% trans %}Priority Area 1: Scientific Research and Innovation{% endtrans %}</div><div class="cardsmall-text" style="padding-top:1rem">{% trans %}Advancing scientific knowledge and developing innovative approaches to understand water cycles, improve water management and address water-related challenges through interdisciplinary research.{% endtrans %}</div>
-          {{ render_pa_activities('PA1') }}
-        </div>            <div class="field field--name-field-link field--type-link field--label-hidden field__item"><a href="https://unesdoc.unesco.org/in/documentViewer.xhtml?v=2.1.196&id=p%3A%3Ausmarcdef_0000381318&file=/in/rest/annotationSVC/DownloadWatermarkedAttachment/attach_import_9aabb773-6ee5-4fd1-b6a4-6b3a55a7766a%3F_%3D381318eng.pdf&locale=en&multi=true&ark=/ark%3A/48223/pf0000381318/PDF/381318eng.pdf#page=18" class="btn btn-primary btn-arrow-right" target="_blank">{{ _("Discover") }}</a></div>
+        <div class="col-small"><div class="cardsmall cardsmall-thematic cardsmall-cta cardsmall-hero" style="min-height:28rem;">
+          {% if pa.image_url %}
+          <img class="cardsmall-img-top image-style-cardsmall-1-column" src="{{ pa.image_url }}" width="289" height="424" alt="" loading="lazy">
+          {% endif %}
+          <div class="cardsmall-body">
+            <div class="cardsmall-title">{% trans %}{{ pa.title }}{% endtrans %}</div>
+            <div class="cardsmall-text" style="padding-top:1rem">{% trans %}{{ pa.description }}{% endtrans %}</div>
+            {{ render_pa_activities(pa_key) }}
+          </div>
+          {% if pa.link %}
+          <div class="field field--name-field-link field--type-link field--label-hidden field__item">
+            <a href="{{ pa.link }}" class="btn btn-primary btn-arrow-right" target="_blank">{{ _("Discover") }}</a>
+          </div>
+          {% endif %}
         </div></div>
       </div>
-
-      <div class="col-md-6 col2">
-        <div class="col-small"><div class="cardsmall cardsmall-thematic cardsmall-cta cardsmall-hero" style="min-height:28rem;"> <img class="cardsmall-img-top image-style-cardsmall-1-column" src="/Landing_page/Content/priority_area_2_water_education_in_the_fourth_industrial_revolution.png" width="289" height="424" alt="" loading="lazy"><div class="cardsmall-body"><div class="cardsmall-title">{% trans %}Priority Area 2: Water Education in the Fourth Industrial Revolution including Sustainability{% endtrans %}</div><div class="cardsmall-text" style="padding-top:1rem">{% trans %}Developing educational approaches that integrate traditional knowledge with emerging technologies to prepare the next generation of water professionals and informed citizens.{% endtrans %}
-          {{ render_pa_activities('PA2') }}
-        </div>            </div><div class="field field--name-field-link field--type-link field--label-hidden field__item"><a href="https://unesdoc.unesco.org/in/documentViewer.xhtml?v=2.1.196&id=p%3A%3Ausmarcdef_0000381318&file=/in/rest/annotationSVC/DownloadWatermarkedAttachment/attach_import_9aabb773-6ee5-4fd1-b6a4-6b3a55a7766a%3F_%3D381318eng.pdf&locale=en&multi=true&ark=/ark%3A/48223/pf0000381318/PDF/381318eng.pdf#page=24" class="btn btn-primary btn-arrow-right" target="_blank">{{ _("Discover") }}</a></div>
-        </div></div>
-      </div>
-
-      <div class="col-md-6 col2">
-        <div class="col-small"><div class="cardsmall cardsmall-thematic cardsmall-cta cardsmall-hero" style="min-height:28rem;"> <img class="cardsmall-img-top image-style-cardsmall-1-column" src="/Landing_page/Content/priority_area_3.png" width="289" height="424" alt="" loading="lazy"><div class="cardsmall-body"><div class="cardsmall-title">{% trans %}Priority Area 3: Bridging the Data-Knowledge Gap{% endtrans %}</div><div class="cardsmall-text" style="padding-top:1rem">{% trans %}Enhancing data accessibility, interoperability, and knowledge sharing to improve water resource management through open science principles and collaborative information systems.{% endtrans %}</div>
-          {{ render_pa_activities('PA3') }}
-        </div>            <div class="field field--name-field-link field--type-link field--label-hidden field__item"><a href="https://unesdoc.unesco.org/in/documentViewer.xhtml?v=2.1.196&id=p%3A%3Ausmarcdef_0000381318&file=/in/rest/annotationSVC/DownloadWatermarkedAttachment/attach_import_9aabb773-6ee5-4fd1-b6a4-6b3a55a7766a%3F_%3D381318eng.pdf&locale=en&multi=true&ark=/ark%3A/48223/pf0000381318/PDF/381318eng.pdf#page=28" class="btn btn-primary btn-arrow-right" target="_blank">{{ _("Discover") }}</a></div>
-        </div></div>
-      </div>  
-
-      <div class="col-md-6 col2">
-        <div class="col-small"><div class="cardsmall cardsmall-thematic cardsmall-cta cardsmall-hero" style="min-height:28rem;"> <img class="cardsmall-img-top image-style-cardsmall-1-column" src="/Landing_page/Content/area_4.png" width="289" height="424" alt="" loading="lazy"><div class="cardsmall-body"><div class="cardsmall-title">{% trans %}Priority Area 4: Integrated Water Resources Management under Conditions of Global Change{% endtrans %}</div><div class="cardsmall-text" style="padding-top:1rem">{% trans %}Developing holistic approaches to manage water resources considering climate change impacts, growing demands, and environmental pressures through nature-based solutions and adaptive strategies.{% endtrans %}</div>
-          {{ render_pa_activities('PA4') }}
-        </div>            <div class="field field--name-field-link field--type-link field--label-hidden field__item"><a href="https://unesdoc.unesco.org/in/documentViewer.xhtml?v=2.1.196&id=p%3A%3Ausmarcdef_0000381318&file=/in/rest/annotationSVC/DownloadWatermarkedAttachment/attach_import_9aabb773-6ee5-4fd1-b6a4-6b3a55a7766a%3F_%3D381318eng.pdf&locale=en&multi=true&ark=/ark%3A/48223/pf0000381318/PDF/381318eng.pdf#page=31" class="btn btn-primary btn-arrow-right" target="_blank">{{ _("Discover") }}</a></div>
-        </div></div>
-      </div>  
-
-      <div class="col-md-6 col2">
-        <div class="col-small"><div class="cardsmall cardsmall-thematic cardsmall-cta cardsmall-hero" style="min-height:28rem;"> <img class="cardsmall-img-top image-style-cardsmall-1-column" src="/Landing_page/Content/area_5.png" width="289" height="424" alt="" loading="lazy"><div class="cardsmall-body"><div class="cardsmall-title">{% trans %}Priority Area 5: Water Governance based on Science for Mitigation, Adaptation, and Resilience{% endtrans %}</div><div class="cardsmall-text" style="padding-top:1rem">{% trans %}Strengthening water governance frameworks through scientific knowledge to build resilient societies, enhance adaptation capacities, and promote participatory decision-making processes at all levels.{% endtrans %}</div>
-          {{ render_pa_activities('PA5') }}
-        </div>            <div class="field field--name-field-link field--type-link field--label-hidden field__item"><a href="https://unesdoc.unesco.org/in/documentViewer.xhtml?v=2.1.196&id=p%3A%3Ausmarcdef_0000381318&file=/in/rest/annotationSVC/DownloadWatermarkedAttachment/attach_import_9aabb773-6ee5-4fd1-b6a4-6b3a55a7766a%3F_%3D381318eng.pdf&locale=en&multi=true&ark=/ark%3A/48223/pf0000381318/PDF/381318eng.pdf#page=36" class="btn btn-primary btn-arrow-right" target="_blank">{{ _("Discover") }}</a></div>
-        </div></div>
-      </div>
+      {% endfor %}
       </div>
 
       {# Link to browsable outputs page #}

@@ -1,0 +1,1017 @@
+{% extends "page.html" %}
+
+{% block title %}
+{{ _('IHP-IX Activities Management') }} - {{ super() }}
+{% endblock %}
+
+{% block content %}
+<div class="homepage layout-1">
+    <div id="content" class="container">
+      {{ self.flash() }}
+    </div>
+
+    {% block primary_content %}
+    <div class="main">
+        <div class="container">
+            <!-- Breadcrumb -->
+            <div class="toolbar" role="navigation" aria-label="Breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="home"><a href="/"><i class="fa fa-home"></i><span> Home</span></a></li>
+                    <li><a href="{{ h.url_for(controller='admin', action='index') }}">{{ _('Admin') }}</a></li>
+                    <li class="active">{{ _('IHP-IX Activities') }}</li>
+                </ol>
+            </div>
+
+            <!-- Header Banner -->
+            <section class="module module-narrow module-shallow">
+              <div class="ihpact-banner">
+                <div class="ihpact-banner-overlay"></div>
+                <div class="ihpact-banner-content">
+                  <h1><i class="fa fa-flag"></i> {{ _('IHP-IX Activities Management') }}</h1>
+                  <p>{{ _('Manage IHP-IX activities reported by member states and institutions.') }}</p>
+                </div>
+              </div>
+            </section>
+        </div>
+
+        <div class="container">
+          <!-- Navigation Tabs -->
+          <ul class="nav nav-tabs ihpact-nav-tabs">
+            <li><a href="/ckan-admin/ihpix">{{ _('Page Content') }}</a></li>
+            <li class="active"><a href="/ckan-admin/ihpix/activities">{{ _('Activities') }}</a></li>
+          </ul>
+
+          <div class="row">
+            <div class="col-md-12">
+
+              <!-- Add New Activity -->
+              <div class="ihpact-action-bar">
+                <section class="module module-narrow">
+                  <div class="module-content" style="padding: 2rem 2.5rem;">
+                    <h2 class="ihpact-section-title"><i class="fa fa-plus-circle"></i> {{ _('Add New Activity') }}</h2>
+                    <form id="ihpact-add-form" class="ihpact-form" onsubmit="return false;">
+                      <div class="row">
+                        <div class="col-md-4">
+                          <div class="ihpact-drop-zone" id="ihpact-drop-zone">
+                            <div class="ihpact-drop-content" id="ihpact-drop-content">
+                              <i class="fa fa-cloud-upload fa-3x"></i>
+                              <p>{{ _('Drag & drop an image here') }}</p>
+                              <p class="text-muted small">{{ _('or click to browse') }}</p>
+                            </div>
+                            <img id="ihpact-preview-img" class="ihpact-preview-img" style="display:none;" />
+                            <input type="file" id="ihpact-file-input" accept="image/*" style="display:none;" />
+                            <input type="hidden" id="ihpact-image-url" name="image_url" value="" />
+                          </div>
+                          <div class="ihpact-or-divider">
+                            <span>{{ _('or paste image URL') }}</span>
+                          </div>
+                          <input type="text" id="ihpact-image-url-text" class="form-control ihpact-input"
+                                 placeholder="https://..." />
+                        </div>
+                        <div class="col-md-8">
+                          <div class="row">
+                            <div class="col-md-12">
+                              <div class="form-group">
+                                <label>{{ _('Title') }} <span class="text-danger">*</span></label>
+                                <input type="text" id="ihpact-title" class="form-control ihpact-input"
+                                       placeholder="{{ _('Activity title') }}" required />
+                              </div>
+                            </div>
+                          </div>
+                          <div class="form-group">
+                            <label>{{ _('Description') }}</label>
+                            <textarea id="ihpact-description" class="form-control ihpact-input" rows="3"
+                                      placeholder="{{ _('Brief description of the activity...') }}"></textarea>
+                          </div>
+                          <div class="row">
+                            <div class="col-md-6">
+                              <div class="form-group">
+                                <label>{{ _('Priority Area') }} <span class="text-danger">*</span></label>
+                                <select id="ihpact-priority-area" class="form-control ihpact-input" required>
+                                  <option value="">{{ _('Select priority area') }}</option>
+                                  <option value="PA1">PA1</option>
+                                  <option value="PA2">PA2</option>
+                                  <option value="PA3">PA3</option>
+                                  <option value="PA4">PA4</option>
+                                  <option value="PA5">PA5</option>
+                                </select>
+                              </div>
+                            </div>
+                            <div class="col-md-6">
+                              <div class="form-group">
+                                <label>{{ _('Output') }}</label>
+                                <input type="text" id="ihpact-output" class="form-control ihpact-input"
+                                       placeholder="{{ _('e.g. Output 1.1') }}" />
+                              </div>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-md-6">
+                              <div class="form-group">
+                                <label>{{ _('Country') }}</label>
+                                <input type="text" id="ihpact-country" class="form-control ihpact-input"
+                                       placeholder="{{ _('Country name') }}" />
+                              </div>
+                            </div>
+                            <div class="col-md-6">
+                              <div class="form-group">
+                                <label>{{ _('Institution') }}</label>
+                                <input type="text" id="ihpact-institution" class="form-control ihpact-input"
+                                       placeholder="{{ _('Institution name') }}" />
+                              </div>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-md-6">
+                              <div class="form-group">
+                                <label>{{ _('Link') }}</label>
+                                <input type="url" id="ihpact-link" class="form-control ihpact-input"
+                                       placeholder="https://..." />
+                              </div>
+                            </div>
+                            <div class="col-md-6">
+                              <div class="form-group">
+                                <label>{{ _('Reported Date') }}</label>
+                                <input type="date" id="ihpact-reported-date" class="form-control ihpact-input" />
+                              </div>
+                            </div>
+                          </div>
+                          <div class="row">
+                            <div class="col-md-6">
+                              <div class="form-group">
+                                <label>{{ _('Status') }}</label>
+                                <select id="ihpact-status" class="form-control ihpact-input">
+                                  <option value="published">{{ _('Published') }}</option>
+                                  <option value="draft">{{ _('Draft') }}</option>
+                                </select>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="text-right">
+                            <button type="button" id="ihpact-add-btn" class="btn btn-primary btn-lg">
+                              <i class="fa fa-plus"></i> {{ _('Add Activity') }}
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </form>
+                  </div>
+                </section>
+              </div>
+
+              <!-- Filter Bar -->
+              <div class="ihpact-filter-bar">
+                <div class="row">
+                  <div class="col-md-8">
+                    <h2 class="ihpact-section-title">
+                      <i class="fa fa-flag"></i> {{ _('Activities') }}
+                      <span class="ihpact-count-badge" id="ihpact-count">{{ total }}</span>
+                    </h2>
+                  </div>
+                  <div class="col-md-4 text-right">
+                    <form method="get" action="" class="form-inline" style="display:inline-block;">
+                      <select name="pa_filter" class="form-control ihpact-input" onchange="this.form.submit()" style="width:auto; display:inline-block;">
+                        <option value="">{{ _('All Priority Areas') }}</option>
+                        {% for pa in ['PA1', 'PA2', 'PA3', 'PA4', 'PA5'] %}
+                        <option value="{{ pa }}" {{ 'selected' if pa_filter == pa else '' }}>{{ pa }}</option>
+                        {% endfor %}
+                      </select>
+                    </form>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Activities List -->
+              <div id="ihpact-list" class="ihpact-list">
+                {% if activities %}
+                  {% for activity in activities %}
+                  <div class="ihpact-card" id="ihpact-card-{{ activity.id }}" data-id="{{ activity.id }}">
+                    <article class="module module-narrow">
+                      <div class="module-content" style="padding: 1.5rem 2rem;">
+                        <div class="row">
+                          <div class="col-md-2 col-sm-3">
+                            {% if activity.image_url %}
+                            <img src="{{ activity.image_url }}" class="ihpact-card-img" alt="{{ activity.title }}" />
+                            {% else %}
+                            <div class="ihpact-card-img-placeholder">
+                              <i class="fa fa-flag fa-2x"></i>
+                            </div>
+                            {% endif %}
+                          </div>
+                          <div class="col-md-7 col-sm-6">
+                            <h3 class="ihpact-card-title">
+                              {{ activity.title }}
+                              {% if activity.priority_area %}
+                              <span class="label label-primary ihpact-badge-pa">{{ activity.priority_area }}</span>
+                              {% endif %}
+                              {% if activity.output %}
+                              <span class="label label-info ihpact-badge-output">{{ activity.output }}</span>
+                              {% endif %}
+                              {% if activity.status == 'draft' %}
+                              <span class="label label-default ihpact-badge-status-draft">{{ _('Draft') }}</span>
+                              {% else %}
+                              <span class="label label-success ihpact-badge-status-published">{{ _('Published') }}</span>
+                              {% endif %}
+                            </h3>
+                            {% if activity.description %}
+                            <p class="ihpact-card-desc">{{ activity.description[:200] }}{% if activity.description|length > 200 %}...{% endif %}</p>
+                            {% endif %}
+                            <div class="ihpact-card-meta">
+                              {% if activity.country %}
+                              <span class="meta-item">
+                                <i class="fa fa-globe"></i> {{ activity.country }}
+                              </span>
+                              {% endif %}
+                              {% if activity.institution %}
+                              <span class="meta-item">
+                                <i class="fa fa-university"></i> {{ activity.institution }}
+                              </span>
+                              {% endif %}
+                              {% if activity.reported_date %}
+                              <span class="meta-item">
+                                <i class="fa fa-calendar"></i> {{ activity.reported_date }}
+                              </span>
+                              {% endif %}
+                              {% if activity.link %}
+                              <span class="meta-item">
+                                <i class="fa fa-link"></i>
+                                <a href="{{ activity.link }}" target="_blank" class="ihpact-card-link">{{ activity.link[:50] }}{% if activity.link|length > 50 %}...{% endif %}</a>
+                              </span>
+                              {% endif %}
+                            </div>
+                          </div>
+                          <div class="col-md-3 col-sm-3">
+                            <div class="ihpact-card-actions">
+                              <button class="btn btn-default btn-sm ihpact-edit-btn"
+                                      data-id="{{ activity.id }}"
+                                      data-title="{{ activity.title }}"
+                                      data-description="{{ activity.description or '' }}"
+                                      data-priority-area="{{ activity.priority_area or '' }}"
+                                      data-output="{{ activity.output or '' }}"
+                                      data-country="{{ activity.country or '' }}"
+                                      data-institution="{{ activity.institution or '' }}"
+                                      data-link="{{ activity.link or '' }}"
+                                      data-image="{{ activity.image_url or '' }}"
+                                      data-reported-date="{{ activity.reported_date or '' }}"
+                                      data-status="{{ activity.status or 'draft' }}">
+                                <i class="fa fa-edit"></i> {{ _('Edit') }}
+                              </button>
+                              <button class="btn btn-danger btn-sm ihpact-delete-btn"
+                                      data-id="{{ activity.id }}"
+                                      data-title="{{ activity.title }}">
+                                <i class="fa fa-trash"></i> {{ _('Delete') }}
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </article>
+                  </div>
+                  {% endfor %}
+                {% else %}
+                  <div class="ihpact-empty-state" id="ihpact-empty">
+                    <section class="module module-narrow">
+                      <div class="module-content text-center" style="padding: 4rem 2.5rem;">
+                        <div class="ihpact-empty-icon">
+                          <i class="fa fa-flag fa-4x"></i>
+                        </div>
+                        <h3>{{ _('No Activities Yet') }}</h3>
+                        <p class="text-muted">{{ _('Use the form above to add IHP-IX activities.') }}</p>
+                      </div>
+                    </section>
+                  </div>
+                {% endif %}
+              </div>
+
+              <!-- Pagination -->
+              {% set total_pages = (total / items_per_page) | round(0, 'ceil') | int %}
+              {% if total_pages > 1 %}
+              <div class="ihpact-pagination">
+                <ul class="pagination">
+                  {% if page > 1 %}
+                  <li><a href="?page={{ page - 1 }}{% if pa_filter %}&pa_filter={{ pa_filter }}{% endif %}">&laquo;</a></li>
+                  {% else %}
+                  <li class="disabled"><span>&laquo;</span></li>
+                  {% endif %}
+
+                  {% for p in range(1, total_pages + 1) %}
+                    {% if p == page %}
+                    <li class="active"><span>{{ p }}</span></li>
+                    {% elif p == 1 or p == total_pages or (p >= page - 2 and p <= page + 2) %}
+                    <li><a href="?page={{ p }}{% if pa_filter %}&pa_filter={{ pa_filter }}{% endif %}">{{ p }}</a></li>
+                    {% elif p == page - 3 or p == page + 3 %}
+                    <li class="disabled"><span>&hellip;</span></li>
+                    {% endif %}
+                  {% endfor %}
+
+                  {% if page < total_pages %}
+                  <li><a href="?page={{ page + 1 }}{% if pa_filter %}&pa_filter={{ pa_filter }}{% endif %}">&raquo;</a></li>
+                  {% else %}
+                  <li class="disabled"><span>&raquo;</span></li>
+                  {% endif %}
+                </ul>
+                <span class="ihpact-pagination-info">
+                  {{ _('Showing %(start)s–%(end)s of %(total)s activities', start=((page-1)*items_per_page+1), end=([page*items_per_page, total]|min), total=total) }}
+                </span>
+              </div>
+              {% endif %}
+
+            </div>
+          </div>
+        </div>
+
+    </div>
+    {% endblock %}
+</div>
+
+<!-- Edit Modal -->
+<div id="ihpact-edit-modal" class="ihpact-modal" style="display:none;">
+  <div class="ihpact-modal-backdrop"></div>
+  <div class="ihpact-modal-dialog">
+    <div class="ihpact-modal-content">
+      <div class="ihpact-modal-header">
+        <h3><i class="fa fa-edit"></i> {{ _('Edit Activity') }}</h3>
+        <button type="button" class="ihpact-modal-close" id="ihpact-modal-close">&times;</button>
+      </div>
+      <div class="ihpact-modal-body">
+        <input type="hidden" id="ihpact-edit-id" />
+        <div class="form-group">
+          <label>{{ _('Title') }} <span class="text-danger">*</span></label>
+          <input type="text" id="ihpact-edit-title" class="form-control ihpact-input" />
+        </div>
+        <div class="form-group">
+          <label>{{ _('Description') }}</label>
+          <textarea id="ihpact-edit-description" class="form-control ihpact-input" rows="3"></textarea>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>{{ _('Priority Area') }} <span class="text-danger">*</span></label>
+              <select id="ihpact-edit-priority-area" class="form-control ihpact-input">
+                <option value="">{{ _('Select priority area') }}</option>
+                <option value="PA1">PA1</option>
+                <option value="PA2">PA2</option>
+                <option value="PA3">PA3</option>
+                <option value="PA4">PA4</option>
+                <option value="PA5">PA5</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>{{ _('Output') }}</label>
+              <input type="text" id="ihpact-edit-output" class="form-control ihpact-input" />
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>{{ _('Country') }}</label>
+              <input type="text" id="ihpact-edit-country" class="form-control ihpact-input" />
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>{{ _('Institution') }}</label>
+              <input type="text" id="ihpact-edit-institution" class="form-control ihpact-input" />
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>{{ _('Link') }}</label>
+              <input type="url" id="ihpact-edit-link" class="form-control ihpact-input" />
+            </div>
+          </div>
+          <div class="col-md-6">
+            <div class="form-group">
+              <label>{{ _('Reported Date') }}</label>
+              <input type="date" id="ihpact-edit-reported-date" class="form-control ihpact-input" />
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>{{ _('Image URL') }}</label>
+          <input type="text" id="ihpact-edit-image" class="form-control ihpact-input" />
+          <div class="ihpact-edit-img-preview" id="ihpact-edit-img-preview" style="display:none; margin-top:10px;">
+            <img id="ihpact-edit-preview-img" style="max-width:200px; border-radius:8px;" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label>{{ _('Or upload new image') }}</label>
+          <input type="file" id="ihpact-edit-file" accept="image/*" class="form-control" />
+        </div>
+        <div class="form-group">
+          <label>{{ _('Status') }}</label>
+          <select id="ihpact-edit-status" class="form-control ihpact-input">
+            <option value="published">{{ _('Published') }}</option>
+            <option value="draft">{{ _('Draft') }}</option>
+          </select>
+        </div>
+      </div>
+      <div class="ihpact-modal-footer">
+        <button type="button" class="btn btn-default" id="ihpact-modal-cancel">{{ _('Cancel') }}</button>
+        <button type="button" class="btn btn-primary" id="ihpact-modal-save">
+          <i class="fa fa-save"></i> {{ _('Save Changes') }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CSS -->
+<style>
+.ihpact-banner {
+  position: relative;
+  height: 200px;
+  overflow: hidden;
+  border-radius: 16px;
+  margin-bottom: 2.5rem;
+  box-shadow: 0 8px 32px rgba(0, 114, 188, 0.16);
+  display: flex;
+  align-items: center;
+  background: linear-gradient(135deg, #0072BC 0%, #005A9C 100%);
+}
+.ihpact-banner-overlay {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: linear-gradient(to right, rgba(0, 90, 156, 0.95) 0%, rgba(0, 114, 188, 0.7) 50%, rgba(0, 114, 188, 0.4) 100%);
+  z-index: 2;
+}
+.ihpact-banner-content {
+  position: relative;
+  z-index: 3;
+  padding: 2rem 2.5rem;
+  color: white;
+  width: 100%;
+}
+.ihpact-banner-content h1 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 0.8rem;
+  text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+  color: white;
+}
+.ihpact-banner-content h1 .fa { margin-right: 10px; }
+.ihpact-banner .ihpact-banner-content p {
+  font-size: 1.1rem;
+  margin-bottom: 0;
+  opacity: 0.95;
+  text-shadow: 1px 1px 4px rgba(0,0,0,0.3);
+  font-weight: 300;
+  color: #fff !important;
+  max-width: 90%;
+}
+.toolbar { margin-bottom: 2rem; padding: 1rem 0; }
+
+/* Nav Tabs */
+.ihpact-nav-tabs {
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #e9ecef;
+}
+.ihpact-nav-tabs > li > a {
+  border-radius: 8px 8px 0 0;
+  font-weight: 600;
+  color: #6c757d;
+  padding: 10px 20px;
+  border: 2px solid transparent;
+  border-bottom: none;
+  margin-bottom: -2px;
+}
+.ihpact-nav-tabs > li > a:hover {
+  color: #0072BC;
+  background: #f8f9fa;
+  border-color: #e9ecef #e9ecef transparent;
+}
+.ihpact-nav-tabs > li.active > a,
+.ihpact-nav-tabs > li.active > a:hover,
+.ihpact-nav-tabs > li.active > a:focus {
+  color: #0072BC;
+  background: white;
+  border-color: #0072BC #0072BC transparent;
+  font-weight: 700;
+}
+
+.ihpact-section-title {
+  margin: 0; border: none; font-size: 1.3rem;
+  font-weight: 700; color: #0072BC;
+}
+.ihpact-section-title .fa { margin-right: 8px; }
+.ihpact-count-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #0072BC 0%, #005A9C 100%);
+  color: white; padding: 3px 12px; border-radius: 20px;
+  font-size: 0.85rem; margin-left: 10px; font-weight: 600;
+}
+
+.ihpact-action-bar { margin-bottom: 2.5rem; }
+.ihpact-action-bar .module {
+  border-radius: 16px;
+  border: 2px dashed #e9ecef;
+  box-shadow: 0 4px 16px rgba(0, 114, 188, 0.08);
+}
+
+.ihpact-form .form-group { margin-bottom: 1.2rem; }
+.ihpact-form label { font-weight: 600; color: #2c3e50; margin-bottom: 6px; }
+.ihpact-input {
+  border-radius: 10px !important;
+  border: 2px solid #e9ecef !important;
+  padding: 10px 14px !important;
+  transition: border-color 0.2s ease !important;
+}
+.ihpact-input:focus {
+  border-color: #0072BC !important;
+  box-shadow: 0 0 0 3px rgba(0, 114, 188, 0.1) !important;
+}
+
+.ihpact-drop-zone {
+  border: 3px dashed #dee2e6;
+  border-radius: 16px;
+  padding: 2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  background: #f8f9fa;
+}
+.ihpact-drop-zone:hover, .ihpact-drop-zone.dragover {
+  border-color: #0072BC;
+  background: #E3F2FD;
+}
+.ihpact-drop-zone i { color: #0072BC; margin-bottom: 10px; }
+.ihpact-drop-zone p { margin: 0; color: #6c757d; font-weight: 500; }
+.ihpact-preview-img {
+  max-width: 100%;
+  max-height: 160px;
+  border-radius: 12px;
+  object-fit: cover;
+}
+.ihpact-or-divider {
+  text-align: center;
+  margin: 12px 0;
+  color: #6c757d;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.ihpact-filter-bar { margin-bottom: 1.5rem; padding: 0 0.5rem; }
+.ihpact-list { margin-bottom: 3rem; }
+
+.ihpact-card {
+  margin-bottom: 1rem;
+  transition: all 0.3s ease;
+}
+.ihpact-card:hover { transform: translateY(-2px); }
+.ihpact-card .module {
+  border-radius: 12px;
+  border: 1px solid #e9ecef;
+  box-shadow: 0 2px 8px rgba(0, 114, 188, 0.06);
+  margin: 0;
+}
+
+.ihpact-card-img {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.ihpact-card-img-placeholder {
+  width: 100%;
+  height: 100px;
+  border-radius: 10px;
+  background: #f8f9fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #adb5bd;
+}
+
+.ihpact-card-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0 0 6px 0;
+}
+.ihpact-badge-pa {
+  font-size: 0.7em;
+  margin-left: 8px;
+  background: linear-gradient(135deg, #0072BC, #005A9C);
+  border-radius: 10px;
+  padding: 3px 10px;
+}
+.ihpact-badge-output {
+  font-size: 0.7em;
+  margin-left: 4px;
+  border-radius: 10px;
+  padding: 3px 10px;
+}
+.ihpact-badge-status-published {
+  font-size: 0.7em;
+  margin-left: 4px;
+  background: #28a745;
+  border-radius: 10px;
+  padding: 3px 10px;
+}
+.ihpact-badge-status-draft {
+  font-size: 0.7em;
+  margin-left: 4px;
+  background: #6c757d;
+  border-radius: 10px;
+  padding: 3px 10px;
+}
+.ihpact-card-desc {
+  color: #6c757d;
+  font-size: 0.9rem;
+  margin-bottom: 6px;
+}
+.ihpact-card-meta { font-size: 0.85rem; }
+.ihpact-card-meta .meta-item {
+  display: inline-block;
+  margin-right: 14px;
+  color: #6c757d;
+}
+.ihpact-card-meta .meta-item .fa { margin-right: 4px; color: #0072BC; }
+.ihpact-card-link { color: #0072BC; }
+
+.ihpact-card-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+  flex-wrap: wrap;
+}
+.ihpact-card-actions .btn {
+  border-radius: 20px;
+  padding: 7px 16px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+.ihpact-card-actions .btn-danger {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  border: none; color: white;
+}
+.ihpact-card-actions .btn-danger:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+  color: white;
+}
+.ihpact-card-actions .btn-default {
+  background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+  border: 2px solid #e9ecef; color: #2c3e50;
+}
+.ihpact-card-actions .btn-default:hover {
+  background: #E3F2FD; border-color: #0072BC; color: #0072BC;
+}
+
+.ihpact-empty-state .module { border-left: 5px solid #005A9C; }
+.ihpact-empty-icon { color: #005A9C; opacity: 0.7; margin-bottom: 1.5rem; }
+.ihpact-empty-state h3 { color: #2c3e50; font-weight: 700; margin-bottom: 0.8rem; }
+
+/* Pagination */
+.ihpact-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.ihpact-pagination .pagination { margin: 0; }
+.ihpact-pagination .pagination > li > a,
+.ihpact-pagination .pagination > li > span {
+  border-radius: 8px;
+  margin: 0 2px;
+  border: 1px solid #e9ecef;
+  color: #0072BC;
+}
+.ihpact-pagination .pagination > li.active > span {
+  background: linear-gradient(135deg, #0072BC, #005A9C);
+  border-color: #0072BC;
+  color: white;
+}
+.ihpact-pagination-info { font-size: 13px; color: #888; }
+
+/* Modal */
+.ihpact-modal {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ihpact-modal-backdrop {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5);
+}
+.ihpact-modal-dialog {
+  position: relative;
+  z-index: 10001;
+  width: 90%;
+  max-width: 700px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+.ihpact-modal-content {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 16px 48px rgba(0,0,0,0.2);
+  overflow: hidden;
+}
+.ihpact-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  background: linear-gradient(135deg, #0072BC 0%, #005A9C 100%);
+  color: white;
+}
+.ihpact-modal-header h3 { margin: 0; font-size: 1.3rem; color: white; }
+.ihpact-modal-close {
+  background: none; border: none; color: white; font-size: 1.8rem;
+  cursor: pointer; opacity: 0.8;
+}
+.ihpact-modal-close:hover { opacity: 1; }
+.ihpact-modal-body { padding: 2rem; }
+.ihpact-modal-footer {
+  padding: 1rem 2rem;
+  background: #f8f9fa;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+@media (max-width: 768px) {
+  .ihpact-banner { height: 160px; }
+  .ihpact-banner-content h1 { font-size: 1.7rem; }
+  .ihpact-card-actions { justify-content: flex-start; margin-top: 10px; }
+  .ihpact-filter-bar .text-right { text-align: left; margin-top: 10px; }
+}
+</style>
+
+<!-- JavaScript -->
+<script>
+(function() {
+  var URLS = {
+    create: '/ckan-admin/ihpix/activities/create',
+    update: '/ckan-admin/ihpix/activities/update',
+    delete: '/ckan-admin/ihpix/activities/delete',
+    upload: '/ckan-admin/ihpix/activities/upload-image'
+  };
+
+  // ── Image Upload / Drop Zone ──
+  var dropZone = document.getElementById('ihpact-drop-zone');
+  var dropContent = document.getElementById('ihpact-drop-content');
+  var fileInput = document.getElementById('ihpact-file-input');
+  var previewImg = document.getElementById('ihpact-preview-img');
+  var imageUrlField = document.getElementById('ihpact-image-url');
+  var imageUrlText = document.getElementById('ihpact-image-url-text');
+
+  dropZone.addEventListener('click', function() { fileInput.click(); });
+  dropZone.addEventListener('dragover', function(e) { e.preventDefault(); dropZone.classList.add('dragover'); });
+  dropZone.addEventListener('dragleave', function() { dropZone.classList.remove('dragover'); });
+  dropZone.addEventListener('drop', function(e) {
+    e.preventDefault();
+    dropZone.classList.remove('dragover');
+    if (e.dataTransfer.files.length > 0) handleFileUpload(e.dataTransfer.files[0]);
+  });
+  fileInput.addEventListener('change', function() {
+    if (fileInput.files.length > 0) handleFileUpload(fileInput.files[0]);
+  });
+  imageUrlText.addEventListener('change', function() {
+    var url = imageUrlText.value.trim();
+    if (url) {
+      imageUrlField.value = url;
+      previewImg.src = url;
+      previewImg.style.display = 'block';
+      dropContent.style.display = 'none';
+    }
+  });
+
+  function handleFileUpload(file) {
+    if (!file.type.startsWith('image/')) { alert('{{ _("Please upload an image file") }}'); return; }
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      previewImg.src = e.target.result;
+      previewImg.style.display = 'block';
+      dropContent.style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+    var formData = new FormData();
+    formData.append('file', file);
+    fetch(URLS.upload, { method: 'POST', body: formData })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.success) { imageUrlField.value = data.image_url; imageUrlText.value = data.image_url; }
+        else { alert('{{ _("Upload error") }}: ' + (data.error || '')); }
+      })
+      .catch(function(e) { alert('{{ _("Upload error") }}: ' + e); });
+  }
+
+  // ── Add Activity ──
+  document.getElementById('ihpact-add-btn').addEventListener('click', function() {
+    var title = document.getElementById('ihpact-title').value.trim();
+    var priorityArea = document.getElementById('ihpact-priority-area').value;
+    var description = document.getElementById('ihpact-description').value.trim();
+    var output = document.getElementById('ihpact-output').value.trim();
+    var country = document.getElementById('ihpact-country').value.trim();
+    var institution = document.getElementById('ihpact-institution').value.trim();
+    var link = document.getElementById('ihpact-link').value.trim();
+    var imageUrl = imageUrlField.value || imageUrlText.value.trim();
+    var reportedDate = document.getElementById('ihpact-reported-date').value;
+    var status = document.getElementById('ihpact-status').value;
+
+    if (!title || !priorityArea) {
+      alert('{{ _("Title and Priority Area are required") }}');
+      return;
+    }
+
+    var btn = this;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> {{ _("Adding...") }}';
+
+    var formData = new FormData();
+    formData.append('title', title);
+    formData.append('description', description);
+    formData.append('priority_area', priorityArea);
+    formData.append('output', output);
+    formData.append('country', country);
+    formData.append('institution', institution);
+    formData.append('link', link);
+    formData.append('image_url', imageUrl);
+    formData.append('reported_date', reportedDate);
+    formData.append('status', status);
+
+    fetch(URLS.create, { method: 'POST', body: formData })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.success) {
+          window.location.reload();
+        } else {
+          alert('{{ _("Error") }}: ' + (data.error || '{{ _("Unknown error") }}'));
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fa fa-plus"></i> {{ _("Add Activity") }}';
+        }
+      })
+      .catch(function(e) {
+        alert('{{ _("Error") }}: ' + e);
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa fa-plus"></i> {{ _("Add Activity") }}';
+      });
+  });
+
+  // ── Card Event Binding ──
+  function initCardEvents(card) {
+    card.querySelectorAll('.ihpact-delete-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() { deleteActivity(btn); });
+    });
+    card.querySelectorAll('.ihpact-edit-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() { openEditModal(btn); });
+    });
+  }
+  document.querySelectorAll('.ihpact-card').forEach(function(card) { initCardEvents(card); });
+
+  // ── Delete ──
+  function deleteActivity(btn) {
+    var id = btn.getAttribute('data-id');
+    var title = btn.getAttribute('data-title');
+    if (!confirm('{{ _("Delete") }} "' + title + '"?')) return;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i>';
+    var formData = new FormData();
+    formData.append('id', id);
+    fetch(URLS.delete, { method: 'POST', body: formData })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.success) {
+          var card = document.getElementById('ihpact-card-' + id);
+          if (card) {
+            card.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+            card.style.opacity = '0';
+            card.style.transform = 'translateX(20px)';
+            setTimeout(function() { card.remove(); updateCount(-1); checkEmpty(); }, 300);
+          }
+        } else {
+          btn.innerHTML = '<i class="fa fa-trash"></i> {{ _("Delete") }}';
+          btn.disabled = false;
+          alert('{{ _("Error") }}: ' + (data.error || ''));
+        }
+      });
+  }
+
+  // ── Edit Modal ──
+  var modal = document.getElementById('ihpact-edit-modal');
+  var editFileInput = document.getElementById('ihpact-edit-file');
+
+  function openEditModal(btn) {
+    document.getElementById('ihpact-edit-id').value = btn.getAttribute('data-id');
+    document.getElementById('ihpact-edit-title').value = btn.getAttribute('data-title');
+    document.getElementById('ihpact-edit-description').value = btn.getAttribute('data-description');
+    document.getElementById('ihpact-edit-priority-area').value = btn.getAttribute('data-priority-area');
+    document.getElementById('ihpact-edit-output').value = btn.getAttribute('data-output');
+    document.getElementById('ihpact-edit-country').value = btn.getAttribute('data-country');
+    document.getElementById('ihpact-edit-institution').value = btn.getAttribute('data-institution');
+    document.getElementById('ihpact-edit-link').value = btn.getAttribute('data-link');
+    document.getElementById('ihpact-edit-reported-date').value = btn.getAttribute('data-reported-date');
+    document.getElementById('ihpact-edit-image').value = btn.getAttribute('data-image');
+    document.getElementById('ihpact-edit-status').value = btn.getAttribute('data-status');
+
+    var imgUrl = btn.getAttribute('data-image');
+    var previewEl = document.getElementById('ihpact-edit-img-preview');
+    if (imgUrl) {
+      document.getElementById('ihpact-edit-preview-img').src = imgUrl;
+      previewEl.style.display = 'block';
+    } else { previewEl.style.display = 'none'; }
+    modal.style.display = 'flex';
+  }
+
+  function closeModal() { modal.style.display = 'none'; }
+  document.getElementById('ihpact-modal-close').addEventListener('click', closeModal);
+  document.getElementById('ihpact-modal-cancel').addEventListener('click', closeModal);
+  document.querySelector('.ihpact-modal-backdrop').addEventListener('click', closeModal);
+
+  editFileInput.addEventListener('change', function() {
+    if (editFileInput.files.length > 0) {
+      var formData = new FormData();
+      formData.append('file', editFileInput.files[0]);
+      fetch(URLS.upload, { method: 'POST', body: formData })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (data.success) {
+            document.getElementById('ihpact-edit-image').value = data.image_url;
+            document.getElementById('ihpact-edit-preview-img').src = data.image_url;
+            document.getElementById('ihpact-edit-img-preview').style.display = 'block';
+          }
+        });
+    }
+  });
+
+  document.getElementById('ihpact-modal-save').addEventListener('click', function() {
+    var id = document.getElementById('ihpact-edit-id').value;
+    var title = document.getElementById('ihpact-edit-title').value.trim();
+    var priorityArea = document.getElementById('ihpact-edit-priority-area').value;
+
+    if (!title || !priorityArea) {
+      alert('{{ _("Title and Priority Area are required") }}');
+      return;
+    }
+
+    var formData = new FormData();
+    formData.append('id', id);
+    formData.append('title', title);
+    formData.append('description', document.getElementById('ihpact-edit-description').value);
+    formData.append('priority_area', priorityArea);
+    formData.append('output', document.getElementById('ihpact-edit-output').value);
+    formData.append('country', document.getElementById('ihpact-edit-country').value);
+    formData.append('institution', document.getElementById('ihpact-edit-institution').value);
+    formData.append('link', document.getElementById('ihpact-edit-link').value);
+    formData.append('image_url', document.getElementById('ihpact-edit-image').value);
+    formData.append('reported_date', document.getElementById('ihpact-edit-reported-date').value);
+    formData.append('status', document.getElementById('ihpact-edit-status').value);
+
+    var btn = this;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i>';
+
+    fetch(URLS.update, { method: 'POST', body: formData })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.success) { window.location.reload(); }
+        else {
+          alert('{{ _("Error") }}: ' + (data.error || ''));
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fa fa-save"></i> {{ _("Save Changes") }}';
+        }
+      });
+  });
+
+  // ── Helpers ──
+  function updateCount(delta) {
+    var el = document.getElementById('ihpact-count');
+    el.textContent = Math.max(0, parseInt(el.textContent || '0') + delta);
+  }
+  function checkEmpty() {
+    var list = document.getElementById('ihpact-list');
+    if (!list.querySelector('.ihpact-card')) {
+      list.innerHTML = '<div class="ihpact-empty-state" id="ihpact-empty">'
+        + '<section class="module module-narrow"><div class="module-content text-center" style="padding: 4rem 2.5rem;">'
+        + '<div class="ihpact-empty-icon"><i class="fa fa-flag fa-4x"></i></div>'
+        + '<h3>{{ _("No Activities Yet") }}</h3>'
+        + '<p class="text-muted">{{ _("Use the form above to add IHP-IX activities.") }}</p>'
+        + '</div></section></div>';
+    }
+  }
+})();
+</script>
+{% endblock %}

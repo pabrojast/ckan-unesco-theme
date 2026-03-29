@@ -197,3 +197,37 @@ def admin_user_toggle_sysadmin(context, data_dict):
 
 def admin_user_create(context, data_dict):
     return _sysadmin_only(context, data_dict)
+
+
+# ── IHP-IX Content Auth ─────────────────────────────────────────────────────
+
+def ihpix_content_list(context, data_dict):
+    return _sysadmin_only(context, data_dict)
+
+
+def ihpix_content_update(context, data_dict):
+    return _sysadmin_only(context, data_dict)
+
+
+# ── IHP-IX Activity Auth ────────────────────────────────────────────────────
+
+def ihpix_activity_list(context, data_dict):
+    """Public read access to published activities."""
+    return {'success': True}
+
+
+def ihpix_activity_show(context, data_dict):
+    """Public read access to a single activity."""
+    return {'success': True}
+
+
+def ihpix_activity_create(context, data_dict):
+    return _sysadmin_only(context, data_dict)
+
+
+def ihpix_activity_update(context, data_dict):
+    return _sysadmin_only(context, data_dict)
+
+
+def ihpix_activity_delete(context, data_dict):
+    return _sysadmin_only(context, data_dict)

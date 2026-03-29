@@ -1353,3 +1353,240 @@ def admin_user_create(context, data_dict):
         'user': new_user,
         'message': f'User {name} created successfully',
     }
+
+
+# ── IHP-IX Content Actions ──────────────────────────────────────────────────
+
+from ckanext.theme_ejemplo.model import (
+    IhpixContent, init_ihpix_content_db, VALID_IHPIX_SECTION_KEYS,
+    IhpixActivity, init_ihpix_activities_db, VALID_PRIORITY_AREAS,
+)
+
+
+@toolkit.side_effect_free
+def ihpix_content_list(context, data_dict):
+    """List all IHP-IX page content sections. Sysadmin only."""
+    toolkit.check_access('ihpix_content_list', context, data_dict)
+    init_ihpix_content_db()
+
+    section_type = data_dict.get('section_type', '')
+    if section_type:
+        items = IhpixContent.get_by_type(section_type)
+    else:
+        items = IhpixContent.get_all()
+    return {'results': [i.as_dict() for i in items], 'count': len(items)}
+
+
+def ihpix_content_update(context, data_dict):
+    """Update an IHP-IX content section. Sysadmin only."""
+    toolkit.check_access('ihpix_content_update', context, data_dict)
+    init_ihpix_content_db()
+
+    item_id = data_dict.get('id', '')
+    section_key = data_dict.get('section_key', '')
+
+    item = None
+    if item_id:
+        item = IhpixContent.get(item_id)
+    elif section_key:
+        item = IhpixContent.get_by_key(section_key)
+
+    if not item:
+        raise toolkit.ObjectNotFound('IHP-IX content section not found')
+
+    for field in ('title', 'description', 'image_url', 'link',
+                  'badge_text', 'extra_fields'):
+        if field in data_dict:
+            setattr(item, field, data_dict[field])
+    if 'display_order' in data_dict:
+        item.display_order = int(data_dict['display_order'])
+    if 'is_active' in data_dict:
+        val = data_dict['is_active']
+        if isinstance(val, str):
+            val = val.lower() in ('true', '1', 'yes', 'on')
+        item.is_active = val
+
+    import datetime as _dt
+    item.updated_at = _dt.datetime.utcnow()
+    model.Session.commit()
+    return item.as_dict()
+
+
+# ── IHP-IX Activity Actions ─────────────────────────────────────────────────
+
+@toolkit.side_effect_free
+def ihpix_activity_list(context, data_dict):
+    """List IHP-IX activities. Public for published, sysadmin for all."""
+    toolkit.check_access('ihpix_activity_list', context, data_dict)
+    init_ihpix_activities_db()
+
+    priority_area = data_dict.get('priority_area', '')
+    output = data_dict.get('output', '')
+    q_text = data_dict.get('q', '')
+    status = data_dict.get('status', '')
+    limit = min(int(data_dict.get('limit', 20)), 100)
+    offset = max(int(data_dict.get('offset', 0)), 0)
+
+    user_obj = context.get('auth_user_obj')
+    is_sysadmin = user_obj and user_obj.sysadmin
+
+    if is_sysadmin and status:
+        results, total = IhpixActivity.get_all(
+            status=status, priority_area=priority_area,
+            limit=limit, offset=offset
+        )
+    elif is_sysadmin and not status:
+        results, total = IhpixActivity.get_all(
+            priority_area=priority_area, limit=limit, offset=offset
+        )
+    else:
+        results, total = IhpixActivity.get_published(
+            priority_area=priority_area, output=output,
+            q_text=q_text, limit=limit, offset=offset
+        )
+
+    facets = IhpixActivity.get_facets()
+
+    return {
+        'results': [r.as_dict() for r in results],
+        'count': total,
+        'facets': facets,
+    }
+
+
+@toolkit.side_effect_free
+def ihpix_activity_show(context, data_dict):
+    """Show a single IHP-IX activity. Public."""
+    toolkit.check_access('ihpix_activity_show', context, data_dict)
+    init_ihpix_activities_db()
+
+    activity_id = toolkit.get_or_bust(data_dict, 'id')
+    activity = IhpixActivity.get(activity_id)
+    if not activity:
+        raise toolkit.ObjectNotFound('IHP-IX activity not found')
+
+    user_obj = context.get('auth_user_obj')
+    is_sysadmin = user_obj and user_obj.sysadmin
+    if activity.status != 'published' and not is_sysadmin:
+        raise toolkit.ObjectNotFound('IHP-IX activity not found')
+
+    return activity.as_dict()
+
+
+def ihpix_activity_create(context, data_dict):
+    """Create a new IHP-IX activity. Sysadmin only."""
+    toolkit.check_access('ihpix_activity_create', context, data_dict)
+    init_ihpix_activities_db()
+
+    title = toolkit.get_or_bust(data_dict, 'title')
+    priority_area = toolkit.get_or_bust(data_dict, 'priority_area')
+    if priority_area not in VALID_PRIORITY_AREAS:
+        raise toolkit.ValidationError(
+            {'priority_area': 'Must be one of: {}'.format(
+                ', '.join(VALID_PRIORITY_AREAS))}
+        )
+
+    reported_date = data_dict.get('reported_date', None)
+    if reported_date and isinstance(reported_date, str):
+        import datetime as _dt
+        try:
+            reported_date = _dt.datetime.strptime(
+                reported_date, '%Y-%m-%d'
+            ).date()
+        except ValueError:
+            raise toolkit.ValidationError(
+                {'reported_date': 'Invalid date format. Use YYYY-MM-DD'}
+            )
+
+    status = data_dict.get('status', 'published')
+    if status not in ('draft', 'published'):
+        raise toolkit.ValidationError(
+            {'status': 'Must be draft or published'}
+        )
+
+    user_obj = context.get('auth_user_obj')
+    reported_by = data_dict.get('reported_by', '')
+    if not reported_by and user_obj:
+        reported_by = user_obj.id
+
+    activity = IhpixActivity(
+        title=title,
+        priority_area=priority_area,
+        description=data_dict.get('description', u''),
+        output=data_dict.get('output', u''),
+        country=data_dict.get('country', u''),
+        institution=data_dict.get('institution', u''),
+        link=data_dict.get('link', u''),
+        image_url=data_dict.get('image_url', u''),
+        status=status,
+        reported_by=reported_by,
+        reported_date=reported_date,
+    )
+    model.Session.add(activity)
+    model.Session.commit()
+    return activity.as_dict()
+
+
+def ihpix_activity_update(context, data_dict):
+    """Update an IHP-IX activity. Sysadmin only."""
+    toolkit.check_access('ihpix_activity_update', context, data_dict)
+    init_ihpix_activities_db()
+
+    activity_id = toolkit.get_or_bust(data_dict, 'id')
+    activity = IhpixActivity.get(activity_id)
+    if not activity:
+        raise toolkit.ObjectNotFound('IHP-IX activity not found')
+
+    for field in ('title', 'description', 'output', 'country',
+                  'institution', 'link', 'image_url', 'reported_by'):
+        if field in data_dict:
+            setattr(activity, field, data_dict[field])
+
+    if 'priority_area' in data_dict:
+        pa = data_dict['priority_area']
+        if pa not in VALID_PRIORITY_AREAS:
+            raise toolkit.ValidationError(
+                {'priority_area': 'Must be one of: {}'.format(
+                    ', '.join(VALID_PRIORITY_AREAS))}
+            )
+        activity.priority_area = pa
+
+    if 'status' in data_dict:
+        status = data_dict['status']
+        if status not in ('draft', 'published'):
+            raise toolkit.ValidationError(
+                {'status': 'Must be draft or published'}
+            )
+        activity.status = status
+
+    if 'reported_date' in data_dict:
+        rd = data_dict['reported_date']
+        if rd and isinstance(rd, str):
+            import datetime as _dt
+            try:
+                rd = _dt.datetime.strptime(rd, '%Y-%m-%d').date()
+            except ValueError:
+                raise toolkit.ValidationError(
+                    {'reported_date': 'Invalid date format. Use YYYY-MM-DD'}
+                )
+        activity.reported_date = rd
+
+    import datetime as _dt
+    activity.updated_at = _dt.datetime.utcnow()
+    model.Session.commit()
+    return activity.as_dict()
+
+
+def ihpix_activity_delete(context, data_dict):
+    """Delete an IHP-IX activity. Sysadmin only."""
+    toolkit.check_access('ihpix_activity_delete', context, data_dict)
+    init_ihpix_activities_db()
+
+    activity_id = toolkit.get_or_bust(data_dict, 'id')
+    activity = IhpixActivity.get(activity_id)
+    if not activity:
+        raise toolkit.ObjectNotFound('IHP-IX activity not found')
+
+    model.Session.delete(activity)
+    model.Session.commit()
+    return {'success': True}

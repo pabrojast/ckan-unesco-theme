@@ -347,6 +347,10 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
             membership_model.init_bug_tickets_db()
             # Create portal_card table if needed
             membership_model.init_portal_cards_db()
+            # Create ihpix_content table if needed
+            membership_model.init_ihpix_content_db()
+            # Create ihpix_activity table if needed
+            membership_model.init_ihpix_activities_db()
             
         def get_blueprint(self):
             
@@ -672,6 +676,56 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 methods=['GET']
             )
 
+            # IHP-IX admin panel (sysadmin only)
+            blueprint.add_url_rule(
+                u'/ckan-admin/ihpix',
+                u'ihpix_content_admin',
+                MyLogica.ihpix_content_admin,
+                methods=['GET']
+            )
+            blueprint.add_url_rule(
+                u'/ckan-admin/ihpix/content/update',
+                u'ihpix_content_update',
+                MyLogica.ihpix_content_update,
+                methods=['POST']
+            )
+            blueprint.add_url_rule(
+                u'/ckan-admin/ihpix/content/upload-image',
+                u'ihpix_content_upload_image',
+                MyLogica.ihpix_content_upload_image,
+                methods=['POST']
+            )
+            blueprint.add_url_rule(
+                u'/ckan-admin/ihpix/activities',
+                u'ihpix_activities_admin',
+                MyLogica.ihpix_activities_admin,
+                methods=['GET']
+            )
+            blueprint.add_url_rule(
+                u'/ckan-admin/ihpix/activities/create',
+                u'ihpix_activities_create',
+                MyLogica.ihpix_activities_create,
+                methods=['POST']
+            )
+            blueprint.add_url_rule(
+                u'/ckan-admin/ihpix/activities/update',
+                u'ihpix_activities_update',
+                MyLogica.ihpix_activities_update,
+                methods=['POST']
+            )
+            blueprint.add_url_rule(
+                u'/ckan-admin/ihpix/activities/delete',
+                u'ihpix_activities_delete',
+                MyLogica.ihpix_activities_delete,
+                methods=['POST']
+            )
+            blueprint.add_url_rule(
+                u'/ckan-admin/ihpix/activities/upload-image',
+                u'ihpix_activities_upload_image',
+                MyLogica.ihpix_activities_upload_image,
+                methods=['POST']
+            )
+
             # Bug ticket system
             blueprint.add_url_rule(
                 u'/bug-tickets',
@@ -853,6 +907,14 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 'admin_user_reactivate': custom_actions.admin_user_reactivate,
                 'admin_user_toggle_sysadmin': custom_actions.admin_user_toggle_sysadmin,
                 'admin_user_create': custom_actions.admin_user_create,
+                # IHP-IX content & activities
+                'ihpix_content_list': custom_actions.ihpix_content_list,
+                'ihpix_content_update': custom_actions.ihpix_content_update,
+                'ihpix_activity_list': custom_actions.ihpix_activity_list,
+                'ihpix_activity_show': custom_actions.ihpix_activity_show,
+                'ihpix_activity_create': custom_actions.ihpix_activity_create,
+                'ihpix_activity_update': custom_actions.ihpix_activity_update,
+                'ihpix_activity_delete': custom_actions.ihpix_activity_delete,
             }
 
         # IAuthFunctions
@@ -889,6 +951,14 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 'admin_user_reactivate': custom_auth.admin_user_reactivate,
                 'admin_user_toggle_sysadmin': custom_auth.admin_user_toggle_sysadmin,
                 'admin_user_create': custom_auth.admin_user_create,
+                # IHP-IX content & activities
+                'ihpix_content_list': custom_auth.ihpix_content_list,
+                'ihpix_content_update': custom_auth.ihpix_content_update,
+                'ihpix_activity_list': custom_auth.ihpix_activity_list,
+                'ihpix_activity_show': custom_auth.ihpix_activity_show,
+                'ihpix_activity_create': custom_auth.ihpix_activity_create,
+                'ihpix_activity_update': custom_auth.ihpix_activity_update,
+                'ihpix_activity_delete': custom_auth.ihpix_activity_delete,
             }
         
         def get_member_states_groups_list(self):

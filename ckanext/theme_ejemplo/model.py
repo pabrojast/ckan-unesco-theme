@@ -5,7 +5,7 @@ import datetime
 import uuid
 import logging
 
-from sqlalchemy import Table, Column, UnicodeText, DateTime, Integer, Boolean
+from sqlalchemy import Table, Column, UnicodeText, DateTime, Integer, Boolean, Date, Text
 
 import ckan.model as model
 import ckan.model.meta as meta
@@ -584,3 +584,400 @@ def define_portal_card_table():
         meta.registry.map_imperatively(PortalCard, portal_card_table)
     except AttributeError:
         meta.mapper(PortalCard, portal_card_table)
+
+
+# ── IHP-IX Content Model ────────────────────────────────────────────────────
+
+ihpix_content_table = None
+
+VALID_IHPIX_SECTION_TYPES = ('cta_card', 'priority_area')
+
+VALID_IHPIX_SECTION_KEYS = (
+    'cta_1', 'cta_2', 'cta_3',
+    'pa_1', 'pa_2', 'pa_3', 'pa_4', 'pa_5',
+)
+
+
+class IhpixContent(model.DomainObject):
+    """Editable content section for the IHP-IX page."""
+
+    def __init__(self, section_type, section_key, title=u'',
+                 description=u'', image_url=u'', link=u'',
+                 badge_text=u'', display_order=0, is_active=True,
+                 extra_fields=u''):
+        self.id = str(uuid.uuid4())
+        self.section_type = section_type
+        self.section_key = section_key
+        self.title = title
+        self.description = description
+        self.image_url = image_url
+        self.link = link
+        self.badge_text = badge_text
+        self.display_order = display_order
+        self.is_active = is_active
+        self.extra_fields = extra_fields
+        self.created_at = datetime.datetime.utcnow()
+        self.updated_at = datetime.datetime.utcnow()
+
+    @classmethod
+    def get(cls, id):
+        return meta.Session.query(cls).get(id)
+
+    @classmethod
+    def get_by_key(cls, section_key):
+        return meta.Session.query(cls).filter(
+            cls.section_key == section_key
+        ).first()
+
+    @classmethod
+    def get_by_type(cls, section_type):
+        return meta.Session.query(cls).filter(
+            cls.section_type == section_type
+        ).order_by(cls.display_order.asc()).all()
+
+    @classmethod
+    def get_all(cls):
+        return meta.Session.query(cls).order_by(
+            cls.section_type.asc(), cls.display_order.asc()
+        ).all()
+
+    def as_dict(self):
+        return {
+            'id': self.id,
+            'section_type': self.section_type,
+            'section_key': self.section_key,
+            'title': self.title,
+            'description': self.description,
+            'image_url': self.image_url,
+            'link': self.link,
+            'badge_text': self.badge_text,
+            'display_order': self.display_order,
+            'is_active': self.is_active,
+            'extra_fields': self.extra_fields,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'updated_at': self.updated_at.isoformat() if self.updated_at else None,
+        }
+
+
+def define_ihpix_content_table():
+    global ihpix_content_table
+
+    ihpix_content_table = Table(
+        'ihpix_content',
+        meta.metadata,
+        Column('id', UnicodeText, primary_key=True,
+               default=lambda: str(uuid.uuid4())),
+        Column('section_type', UnicodeText, nullable=False),
+        Column('section_key', UnicodeText, nullable=False, unique=True),
+        Column('title', UnicodeText, default=u''),
+        Column('description', UnicodeText, default=u''),
+        Column('image_url', UnicodeText, default=u''),
+        Column('link', UnicodeText, default=u''),
+        Column('badge_text', UnicodeText, default=u''),
+        Column('display_order', Integer, default=0),
+        Column('is_active', Boolean, default=True),
+        Column('extra_fields', UnicodeText, default=u''),
+        Column('created_at', DateTime, default=datetime.datetime.utcnow),
+        Column('updated_at', DateTime, default=datetime.datetime.utcnow),
+    )
+
+    try:
+        meta.registry.map_imperatively(IhpixContent, ihpix_content_table)
+    except AttributeError:
+        meta.mapper(IhpixContent, ihpix_content_table)
+
+
+def init_ihpix_content_db():
+    """Create the ihpix_content table if it doesn't exist."""
+    if ihpix_content_table is None:
+        define_ihpix_content_table()
+
+    from sqlalchemy import inspect as sa_inspect, text as sa_text
+    inspector = sa_inspect(meta.engine)
+    if 'ihpix_content' not in inspector.get_table_names():
+        ihpix_content_table.create(meta.engine)
+        log.info(u'ihpix_content table created')
+        _seed_default_ihpix_content()
+    else:
+        count = meta.Session.execute(
+            sa_text('SELECT count(*) FROM ihpix_content')
+        ).scalar()
+        if count == 0:
+            log.info(u'ihpix_content table is empty – seeding defaults')
+            _seed_default_ihpix_content()
+        else:
+            log.debug(u'ihpix_content table already exists with %d rows', count)
+
+
+def _seed_default_ihpix_content():
+    """Populate ihpix_content with the content currently hardcoded in templates."""
+    defaults = _get_default_ihpix_content()
+    for item in defaults:
+        content = IhpixContent(
+            section_type=item['section_type'],
+            section_key=item['section_key'],
+            title=item.get('title', u''),
+            description=item.get('description', u''),
+            image_url=item.get('image_url', u''),
+            link=item.get('link', u''),
+            badge_text=item.get('badge_text', u''),
+            display_order=item.get('display_order', 0),
+            is_active=item.get('is_active', True),
+            extra_fields=item.get('extra_fields', u''),
+        )
+        meta.Session.add(content)
+    meta.Session.commit()
+    log.info(u'ihpix_content table seeded with %d default sections', len(defaults))
+
+
+def _get_default_ihpix_content():
+    """Return the default IHP-IX page content matching the original templates."""
+    return [
+        # ── CTA Cards (3) ────────────────────────────────────────────────
+        {
+            'section_type': 'cta_card',
+            'section_key': 'cta_1',
+            'title': 'IHP IX Reporting',
+            'description': 'Submit your reports and view progress on IHP IX implementation.',
+            'image_url': '/Landing_page/Content/ihpix_1.png',
+            'link': 'https://forms.office.com/Pages/ResponsePage.aspx?Host=Teams&lang={locale}&groupId={groupId}&tid={tid}&teamsTheme={theme}&upn={upn}&id=Uq5PHbM5-kuwswIpVrERlPV3XlCBEXFBjwvcm5ZTrWNUNlYxQTFQRUgxUjBSNUJNMUlJVTBBTDFBQSQlQCN0PWcu',
+            'badge_text': 'Members Only',
+            'display_order': 0,
+        },
+        {
+            'section_type': 'cta_card',
+            'section_key': 'cta_2',
+            'title': 'IHP IX Implementation Progress',
+            'description': 'Track implementation progress and view results across priority areas.',
+            'image_url': '/Landing_page/Content/ihpix_2.png',
+            'link': 'https://unesco.sharepoint.com/sites/IntergovernmentalHydrologicalProgrammeIHP/SitePages/IHP-IX-Implementation-Progress.aspx?OR=Teams-HL&CT=1736211052496&clickparams=eyJBcHBOYW1lIjoiVGVhbXMtRGVza3RvcCIsIkFwcFZlcnNpb24iOiI0OS8yNDEyMDEwMDIxMSJ9',
+            'badge_text': 'Members Only',
+            'display_order': 1,
+        },
+        {
+            'section_type': 'cta_card',
+            'section_key': 'cta_3',
+            'title': 'AI Chatbot on IHP-IX Implementation Progress',
+            'description': 'Interactive AI assistant for IHP-IX information and progress queries.',
+            'image_url': '/Landing_page/Content/ihpix_3.png',
+            'link': '#',
+            'badge_text': 'Coming Soon',
+            'display_order': 2,
+        },
+        # ── Priority Areas (5) ───────────────────────────────────────────
+        {
+            'section_type': 'priority_area',
+            'section_key': 'pa_1',
+            'title': 'Priority Area 1: Scientific Research and Innovation',
+            'description': 'Advancing scientific knowledge and developing innovative approaches to understand water cycles, improve water management and address water-related challenges through interdisciplinary research.',
+            'image_url': '/Landing_page/Content/area_1.png',
+            'link': 'https://unesdoc.unesco.org/in/documentViewer.xhtml?v=2.1.196&id=p%3A%3Ausmarcdef_0000381318&file=/in/rest/annotationSVC/DownloadWatermarkedAttachment/attach_import_9aabb773-6ee5-4fd1-b6a4-6b3a55a7766a%3F_%3D381318eng.pdf&locale=en&multi=true&ark=/ark%3A/48223/pf0000381318/PDF/381318eng.pdf#page=18',
+            'display_order': 0,
+        },
+        {
+            'section_type': 'priority_area',
+            'section_key': 'pa_2',
+            'title': 'Priority Area 2: Water Education in the Fourth Industrial Revolution including Sustainability',
+            'description': 'Developing educational approaches that integrate traditional knowledge with emerging technologies to prepare the next generation of water professionals and informed citizens.',
+            'image_url': '/Landing_page/Content/priority_area_2_water_education_in_the_fourth_industrial_revolution.png',
+            'link': 'https://unesdoc.unesco.org/in/documentViewer.xhtml?v=2.1.196&id=p%3A%3Ausmarcdef_0000381318&file=/in/rest/annotationSVC/DownloadWatermarkedAttachment/attach_import_9aabb773-6ee5-4fd1-b6a4-6b3a55a7766a%3F_%3D381318eng.pdf&locale=en&multi=true&ark=/ark%3A/48223/pf0000381318/PDF/381318eng.pdf#page=24',
+            'display_order': 1,
+        },
+        {
+            'section_type': 'priority_area',
+            'section_key': 'pa_3',
+            'title': 'Priority Area 3: Bridging the Data-Knowledge Gap',
+            'description': 'Enhancing data accessibility, interoperability, and knowledge sharing to improve water resource management through open science principles and collaborative information systems.',
+            'image_url': '/Landing_page/Content/priority_area_3.png',
+            'link': 'https://unesdoc.unesco.org/in/documentViewer.xhtml?v=2.1.196&id=p%3A%3Ausmarcdef_0000381318&file=/in/rest/annotationSVC/DownloadWatermarkedAttachment/attach_import_9aabb773-6ee5-4fd1-b6a4-6b3a55a7766a%3F_%3D381318eng.pdf&locale=en&multi=true&ark=/ark%3A/48223/pf0000381318/PDF/381318eng.pdf#page=28',
+            'display_order': 2,
+        },
+        {
+            'section_type': 'priority_area',
+            'section_key': 'pa_4',
+            'title': 'Priority Area 4: Integrated Water Resources Management under Conditions of Global Change',
+            'description': 'Developing holistic approaches to manage water resources considering climate change impacts, growing demands, and environmental pressures through nature-based solutions and adaptive strategies.',
+            'image_url': '/Landing_page/Content/area_4.png',
+            'link': 'https://unesdoc.unesco.org/in/documentViewer.xhtml?v=2.1.196&id=p%3A%3Ausmarcdef_0000381318&file=/in/rest/annotationSVC/DownloadWatermarkedAttachment/attach_import_9aabb773-6ee5-4fd1-b6a4-6b3a55a7766a%3F_%3D381318eng.pdf&locale=en&multi=true&ark=/ark%3A/48223/pf0000381318/PDF/381318eng.pdf#page=31',
+            'display_order': 3,
+        },
+        {
+            'section_type': 'priority_area',
+            'section_key': 'pa_5',
+            'title': 'Priority Area 5: Water Governance based on Science for Mitigation, Adaptation, and Resilience',
+            'description': 'Strengthening water governance frameworks through scientific knowledge to build resilient societies, enhance adaptation capacities, and promote participatory decision-making processes at all levels.',
+            'image_url': '/Landing_page/Content/area_5.png',
+            'link': 'https://unesdoc.unesco.org/in/documentViewer.xhtml?v=2.1.196&id=p%3A%3Ausmarcdef_0000381318&file=/in/rest/annotationSVC/DownloadWatermarkedAttachment/attach_import_9aabb773-6ee5-4fd1-b6a4-6b3a55a7766a%3F_%3D381318eng.pdf&locale=en&multi=true&ark=/ark%3A/48223/pf0000381318/PDF/381318eng.pdf#page=36',
+            'display_order': 4,
+        },
+    ]
+
+
+# ── IHP-IX Activity Model ───────────────────────────────────────────────────
+
+ihpix_activity_table = None
+
+VALID_PRIORITY_AREAS = ('PA1', 'PA2', 'PA3', 'PA4', 'PA5')
+
+
+class IhpixActivity(model.DomainObject):
+    """An activity reported under an IHP-IX Priority Area / Output."""
+
+    STATUS_DRAFT = u'draft'
+    STATUS_PUBLISHED = u'published'
+
+    def __init__(self, title, priority_area, description=u'', output=u'',
+                 country=u'', institution=u'', link=u'', image_url=u'',
+                 status=u'published', reported_by=u'', reported_date=None):
+        self.id = str(uuid.uuid4())
+        self.title = title
+        self.priority_area = priority_area
+        self.description = description
+        self.output = output
+        self.country = country
+        self.institution = institution
+        self.link = link
+        self.image_url = image_url
+        self.status = status
+        self.reported_by = reported_by
+        self.reported_date = reported_date
+        self.created_at = datetime.datetime.utcnow()
+        self.updated_at = datetime.datetime.utcnow()
+
+    @classmethod
+    def get(cls, id):
+        return meta.Session.query(cls).get(id)
+
+    @classmethod
+    def get_by_priority_area(cls, priority_area, status=None, limit=None):
+        q = meta.Session.query(cls).filter(
+            cls.priority_area == priority_area
+        )
+        if status:
+            q = q.filter(cls.status == status)
+        q = q.order_by(cls.created_at.desc())
+        if limit:
+            q = q.limit(limit)
+        return q.all()
+
+    @classmethod
+    def get_published(cls, priority_area=None, output=None, q_text=None,
+                      limit=20, offset=0):
+        """Return published activities with optional filters."""
+        q = meta.Session.query(cls).filter(cls.status == cls.STATUS_PUBLISHED)
+        if priority_area:
+            q = q.filter(cls.priority_area == priority_area)
+        if output:
+            q = q.filter(cls.output == output)
+        if q_text:
+            like = u'%{}%'.format(q_text)
+            q = q.filter(
+                (cls.title.ilike(like)) | (cls.description.ilike(like))
+            )
+        total = q.count()
+        results = q.order_by(cls.created_at.desc()).offset(offset).limit(limit).all()
+        return results, total
+
+    @classmethod
+    def get_all(cls, status=None, priority_area=None, limit=100, offset=0):
+        """Return activities with optional filters (admin view)."""
+        q = meta.Session.query(cls)
+        if status:
+            q = q.filter(cls.status == status)
+        if priority_area:
+            q = q.filter(cls.priority_area == priority_area)
+        total = q.count()
+        results = q.order_by(cls.created_at.desc()).offset(offset).limit(limit).all()
+        return results, total
+
+    @classmethod
+    def get_facets(cls):
+        """Return facet counts for priority_area and output (published only)."""
+        from sqlalchemy import func
+        pa_facets = meta.Session.query(
+            cls.priority_area, func.count(cls.id)
+        ).filter(
+            cls.status == cls.STATUS_PUBLISHED
+        ).group_by(cls.priority_area).all()
+
+        output_facets = meta.Session.query(
+            cls.output, func.count(cls.id)
+        ).filter(
+            cls.status == cls.STATUS_PUBLISHED,
+            cls.output != u'',
+            cls.output != None  # noqa: E711
+        ).group_by(cls.output).all()
+
+        return {
+            'ihpix_priority_area': {
+                'title': 'ihpix_priority_area',
+                'items': [{'name': pa, 'count': c, 'display_name': pa}
+                          for pa, c in pa_facets],
+            },
+            'ihpix_output': {
+                'title': 'ihpix_output',
+                'items': [{'name': out, 'count': c, 'display_name': out}
+                          for out, c in output_facets],
+            },
+        }
+
+    def as_dict(self):
+        return {
+            'id': self.id,
+            'title': self.title,
+            'description': self.description,
+            'priority_area': self.priority_area,
+            'output': self.output,
+            'country': self.country,
+            'institution': self.institution,
+            'link': self.link,
+            'image_url': self.image_url,
+            'status': self.status,
+            'reported_by': self.reported_by,
+            'reported_date': self.reported_date.isoformat() if self.reported_date else None,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'updated_at': self.updated_at.isoformat() if self.updated_at else None,
+        }
+
+
+def define_ihpix_activity_table():
+    global ihpix_activity_table
+
+    ihpix_activity_table = Table(
+        'ihpix_activity',
+        meta.metadata,
+        Column('id', UnicodeText, primary_key=True,
+               default=lambda: str(uuid.uuid4())),
+        Column('title', UnicodeText, nullable=False),
+        Column('description', UnicodeText, default=u''),
+        Column('priority_area', UnicodeText, nullable=False),
+        Column('output', UnicodeText, default=u''),
+        Column('country', UnicodeText, default=u''),
+        Column('institution', UnicodeText, default=u''),
+        Column('link', UnicodeText, default=u''),
+        Column('image_url', UnicodeText, default=u''),
+        Column('status', UnicodeText, default=u'published'),
+        Column('reported_by', UnicodeText, default=u''),
+        Column('reported_date', Date, nullable=True),
+        Column('created_at', DateTime, default=datetime.datetime.utcnow),
+        Column('updated_at', DateTime, default=datetime.datetime.utcnow),
+    )
+
+    try:
+        meta.registry.map_imperatively(IhpixActivity, ihpix_activity_table)
+    except AttributeError:
+        meta.mapper(IhpixActivity, ihpix_activity_table)
+
+
+def init_ihpix_activities_db():
+    """Create the ihpix_activity table if it doesn't exist."""
+    if ihpix_activity_table is None:
+        define_ihpix_activity_table()
+
+    from sqlalchemy import inspect as sa_inspect
+    inspector = sa_inspect(meta.engine)
+    if 'ihpix_activity' not in inspector.get_table_names():
+        ihpix_activity_table.create(meta.engine)
+        log.info(u'ihpix_activity table created')
+    else:
+        log.debug(u'ihpix_activity table already exists')
