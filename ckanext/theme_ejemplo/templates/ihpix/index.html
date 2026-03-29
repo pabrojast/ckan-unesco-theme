@@ -19,8 +19,26 @@
     <a href="/ckan-admin/ihpix/activities" class="btn btn-default btn-sm">
       <i class="fa fa-flag"></i> {{ _('Manage Activities') }}
     </a>
+    <a href="/ckan-admin/ihpix/reports" class="btn btn-default btn-sm">
+      <i class="fa fa-inbox"></i> {{ _('Review Reports') }}
+    </a>
   </div>
   {% endif %}
+
+  {# Quick action bar #}
+  <div style="margin-bottom: 1.5rem; padding: 1rem; background: linear-gradient(135deg, #E8F4F8, #f0f8ff); border-radius: 10px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.8rem;">
+    <div>
+      <a href="/ihpix/dashboard" class="btn btn-primary btn-sm" style="margin-right: 0.5rem;">
+        <i class="fa fa-bar-chart"></i> {{ _('Dashboard') }}
+      </a>
+      <a href="/ihpix/outputs" class="btn btn-default btn-sm" style="margin-right: 0.5rem;">
+        <i class="fa fa-list-alt"></i> {{ _('Browse Activities') }}
+      </a>
+    </div>
+    <a href="/ihpix/report" class="btn btn-success btn-sm">
+      <i class="fa fa-plus-circle"></i> {{ _('Submit Activity Report') }}
+    </a>
+  </div>
 
   <div class="module-content box">
     <div>
@@ -119,10 +137,16 @@
       {% endfor %}
       </div>
 
-      {# Link to browsable outputs page #}
+      {# Bottom action buttons #}
       <div style="text-align: center; margin-top: 2rem;">
-        <a href="/ihpix/outputs" class="btn btn-primary btn-lg">
+        <a href="/ihpix/outputs" class="btn btn-primary btn-lg" style="margin: 0.3rem;">
           <i class="fa fa-list-alt"></i> {{ _('Browse All Activities by Output') }}
+        </a>
+        <a href="/ihpix/dashboard" class="btn btn-default btn-lg" style="margin: 0.3rem;">
+          <i class="fa fa-bar-chart"></i> {{ _('Dashboard') }}
+        </a>
+        <a href="/ihpix/report" class="btn btn-success btn-lg" style="margin: 0.3rem;">
+          <i class="fa fa-plus-circle"></i> {{ _('Submit Report') }}
         </a>
       </div>
 

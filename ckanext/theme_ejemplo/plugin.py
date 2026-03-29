@@ -16,6 +16,7 @@ from . import helpers
 from . import actions as custom_actions
 from . import auth as custom_auth
 from . import model as membership_model
+from .utils import normalize_user_image_url
 import logging
 from functools import lru_cache
 import time
@@ -385,6 +386,20 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
             )
 
             blueprint.add_url_rule(
+                u'/ihpix/report',
+                u'ihpix_report',
+                MyLogica.ihpix_report,
+                methods=['GET', 'POST']
+            )
+
+            blueprint.add_url_rule(
+                u'/ihpix/dashboard',
+                u'ihpix_dashboard',
+                MyLogica.ihpix_dashboard,
+                methods=['GET']
+            )
+
+            blueprint.add_url_rule(
                 u'/iot-portal',
                 u'iot_portal',
                 MyLogica.iot_portal,
@@ -726,6 +741,20 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 methods=['POST']
             )
 
+            # IHP-IX reports review (sysadmin)
+            blueprint.add_url_rule(
+                u'/ckan-admin/ihpix/reports',
+                u'ihpix_reports_admin',
+                MyLogica.ihpix_reports_admin,
+                methods=['GET']
+            )
+            blueprint.add_url_rule(
+                u'/ckan-admin/ihpix/reports/review',
+                u'ihpix_report_review_admin',
+                MyLogica.ihpix_report_review_admin,
+                methods=['POST']
+            )
+
             # Bug ticket system
             blueprint.add_url_rule(
                 u'/bug-tickets',
@@ -856,6 +885,7 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                  'get_country_list': helpers.get_country_list,
                  'is_org_member': helpers.is_org_member,
                  'is_org_admin': helpers.is_org_admin,
+                 'theme_ejemplo_normalize_user_image_url': normalize_user_image_url,
                  'get_pending_membership_requests_count': helpers.get_pending_membership_requests_count,
                  'get_user_admin_orgs': helpers.get_user_admin_orgs,
                  'has_pending_membership_request': helpers.has_pending_membership_request,
@@ -915,6 +945,10 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 'ihpix_activity_create': custom_actions.ihpix_activity_create,
                 'ihpix_activity_update': custom_actions.ihpix_activity_update,
                 'ihpix_activity_delete': custom_actions.ihpix_activity_delete,
+                # IHP-IX reporting & dashboard
+                'ihpix_report_submit': custom_actions.ihpix_report_submit,
+                'ihpix_report_review': custom_actions.ihpix_report_review,
+                'ihpix_dashboard_stats': custom_actions.ihpix_dashboard_stats,
             }
 
         # IAuthFunctions
@@ -959,6 +993,10 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 'ihpix_activity_create': custom_auth.ihpix_activity_create,
                 'ihpix_activity_update': custom_auth.ihpix_activity_update,
                 'ihpix_activity_delete': custom_auth.ihpix_activity_delete,
+                # IHP-IX reporting & dashboard
+                'ihpix_report_submit': custom_auth.ihpix_report_submit,
+                'ihpix_report_review': custom_auth.ihpix_report_review,
+                'ihpix_dashboard_stats': custom_auth.ihpix_dashboard_stats,
             }
         
         def get_member_states_groups_list(self):

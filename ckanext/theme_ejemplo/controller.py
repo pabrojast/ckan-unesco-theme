@@ -2701,3 +2701,187 @@ class MyLogica():
             except Exception as e:
                 log.error('Error uploading IHP-IX activity image: %s', e)
                 return jsonify({'success': False, 'error': str(e)}), 500
+
+        # ── IHP-IX Reporting Form ──────────────────────────────────────────
+
+        @staticmethod
+        def ihpix_report():
+            """Public form: logged-in users can submit IHP-IX activity reports."""
+            from ckanext.theme_ejemplo.model import (
+                IhpixActivity, init_ihpix_activities_db, VALID_PRIORITY_AREAS,
+            )
+            init_ihpix_activities_db()
+
+            if request.method == 'POST':
+                if not c.user:
+                    return jsonify({'success': False,
+                                    'error': 'You must be logged in'}), 403
+                try:
+                    context = {'user': c.user, 'model': model}
+                    data_dict = {
+                        'title': request.form.get('title', ''),
+                        'description': request.form.get('description', ''),
+                        'priority_area': request.form.get('priority_area', ''),
+                        'output': request.form.get('output', ''),
+                        'country': request.form.get('country', ''),
+                        'institution': request.form.get('institution', ''),
+                        'link': request.form.get('link', ''),
+                        'contact_name': request.form.get('contact_name', ''),
+                        'contact_email': request.form.get('contact_email', ''),
+                        'reported_date': request.form.get('reported_date', ''),
+                        'start_date': request.form.get('start_date', ''),
+                        'end_date': request.form.get('end_date', ''),
+                    }
+                    result = toolkit.get_action('ihpix_report_submit')(
+                        context, data_dict
+                    )
+                    return jsonify({'success': True, 'data': result})
+                except toolkit.ValidationError as e:
+                    return jsonify({'success': False,
+                                    'error': str(e.error_dict)}), 400
+                except toolkit.NotAuthorized:
+                    return jsonify({'success': False,
+                                    'error': 'Not authorized'}), 403
+                except Exception as e:
+                    log.error('Error submitting IHP-IX report: %s', e)
+                    return jsonify({'success': False, 'error': str(e)}), 500
+
+            # GET: render the form
+            is_logged_in = bool(c.user)
+            return render_template(
+                'ihpix/report.html',
+                is_logged_in=is_logged_in,
+                priority_areas=list(VALID_PRIORITY_AREAS),
+            )
+
+        # ── IHP-IX Dashboard ──────────────────────────────────────────────
+
+        @staticmethod
+        def ihpix_dashboard():
+            """Public dashboard with interactive charts."""
+            from ckanext.theme_ejemplo.model import (
+                IhpixActivity, init_ihpix_activities_db,
+            )
+            init_ihpix_activities_db()
+
+            pa_filter = request.args.get('pa', '')
+            try:
+                context = {'user': c.user, 'model': model}
+                stats = toolkit.get_action('ihpix_dashboard_stats')(
+                    context, {'priority_area': pa_filter}
+                )
+            except Exception as e:
+                log.error('Error fetching IHP-IX dashboard stats: %s', e)
+                stats = {
+                    'total_activities': 0, 'total_countries': 0,
+                    'total_institutions': 0, 'pending_reports': 0,
+                    'by_priority_area': [], 'by_output': [],
+                    'timeline': [], 'by_country': [],
+                }
+
+            is_sysadmin = False
+            try:
+                if c.userobj and c.userobj.sysadmin:
+                    is_sysadmin = True
+            except Exception:
+                pass
+
+            return render_template(
+                'ihpix/dashboard.html',
+                stats=stats,
+                pa_filter=pa_filter,
+                is_sysadmin=is_sysadmin,
+            )
+
+        # ── IHP-IX Admin: Review Reports ──────────────────────────────────
+
+        @staticmethod
+        def ihpix_reports_admin():
+            """Admin panel to review pending/rejected reports."""
+            try:
+                context = {'user': c.user, 'model': model}
+                toolkit.check_access('ihpix_report_review', context, {})
+            except toolkit.NotAuthorized:
+                return abort(403)
+
+            from ckanext.theme_ejemplo.model import (
+                IhpixActivity, init_ihpix_activities_db,
+            )
+            init_ihpix_activities_db()
+
+            status_filter = request.args.get('status', 'pending')
+            page = int(request.args.get('page', 1))
+            items_per_page = 20
+            offset = items_per_page * (page - 1)
+
+            try:
+                if status_filter == 'all':
+                    results, total = IhpixActivity.get_all(
+                        limit=items_per_page, offset=offset
+                    )
+                elif status_filter == 'rejected':
+                    results, total = IhpixActivity.get_all(
+                        status='rejected',
+                        limit=items_per_page, offset=offset
+                    )
+                else:
+                    results, total = IhpixActivity.get_all(
+                        status='pending',
+                        limit=items_per_page, offset=offset
+                    )
+                reports = [r.as_dict() for r in results]
+            except Exception as e:
+                log.error('Error fetching IHP-IX reports: %s', e)
+                reports = []
+                total = 0
+
+            try:
+                _, pending_count = IhpixActivity.get_all(status='pending',
+                                                          limit=1, offset=0)
+                _, rejected_count = IhpixActivity.get_all(status='rejected',
+                                                           limit=1, offset=0)
+            except Exception:
+                pending_count = 0
+                rejected_count = 0
+
+            return render_template(
+                'admin/ihpix_reports.html',
+                reports=reports,
+                total=total,
+                status_filter=status_filter,
+                page=page,
+                items_per_page=items_per_page,
+                pending_count=pending_count,
+                rejected_count=rejected_count,
+            )
+
+        @staticmethod
+        def ihpix_report_review_admin():
+            """AJAX endpoint: approve or reject a report."""
+            try:
+                context = {'user': c.user, 'model': model}
+                toolkit.check_access('ihpix_report_review', context, {})
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False,
+                                'error': 'Not authorized'}), 403
+
+            try:
+                data_dict = {
+                    'id': request.form.get('id', ''),
+                    'action': request.form.get('action', ''),
+                    'review_notes': request.form.get('review_notes', ''),
+                }
+                context = {'user': c.user, 'model': model}
+                result = toolkit.get_action('ihpix_report_review')(
+                    context, data_dict
+                )
+                return jsonify({'success': True, 'data': result})
+            except toolkit.ValidationError as e:
+                return jsonify({'success': False,
+                                'error': str(e.error_dict)}), 400
+            except toolkit.ObjectNotFound:
+                return jsonify({'success': False,
+                                'error': 'Report not found'}), 404
+            except Exception as e:
+                log.error('Error reviewing IHP-IX report: %s', e)
+                return jsonify({'success': False, 'error': str(e)}), 500

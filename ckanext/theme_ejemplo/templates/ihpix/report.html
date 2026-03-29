@@ -1,0 +1,913 @@
+{% extends "page.html" %}
+
+{% block title %}{{ _('Submit IHP-IX Report') }} - {{ super() }}{% endblock %}
+
+{% block breadcrumb_content %}
+<li><a href="{{ h.url_for('/ihpix') }}">{{ _('IHP IX') }}</a></li>
+<li class="active">{{ _('Submit Report') }}</li>
+{% endblock %}
+
+{% block primary_content_inner %}
+<style>
+  .ihpix-report-banner {
+    background: linear-gradient(135deg, #0069B4 0%, #005A9C 60%, #003d6b 100%);
+    color: #fff;
+    padding: 2rem 2rem 1.8rem;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .ihpix-report-banner::after {
+    content: '';
+    position: absolute;
+    top: -40%;
+    right: -10%;
+    width: 300px;
+    height: 300px;
+    background: rgba(255,255,255,0.06);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  .ihpix-report-banner h1 {
+    margin: 0 0 0.4rem;
+    font-size: 1.7rem;
+    font-weight: 700;
+    color: #fff;
+  }
+  .ihpix-report-banner p {
+    margin: 0;
+    opacity: 0.92;
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+
+  .ihpix-report-section {
+    background: #fff;
+    border: 1px solid #e0e6ed;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+    transition: box-shadow 0.2s ease;
+  }
+  .ihpix-report-section:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  }
+  .ihpix-report-section-header {
+    background: #f7fafc;
+    border-bottom: 1px solid #e0e6ed;
+    padding: 1rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+  }
+  .ihpix-report-section-header i {
+    font-size: 1.2rem;
+    color: #0069B4;
+  }
+  .ihpix-report-section-header h3 {
+    margin: 0;
+    font-size: 1.05rem;
+    font-weight: 600;
+    color: #1a2b3c;
+  }
+  .ihpix-report-section-body {
+    padding: 1.5rem;
+  }
+
+  .ihpix-report-field {
+    margin-bottom: 1.2rem;
+  }
+  .ihpix-report-field:last-child {
+    margin-bottom: 0;
+  }
+  .ihpix-report-label {
+    display: block;
+    font-weight: 600;
+    font-size: 0.88rem;
+    color: #344563;
+    margin-bottom: 0.4rem;
+  }
+  .ihpix-report-label .ihpix-report-required {
+    color: #e53e3e;
+    margin-left: 2px;
+  }
+  .ihpix-report-input,
+  .ihpix-report-select,
+  .ihpix-report-textarea {
+    width: 100%;
+    padding: 0.6rem 0.9rem;
+    font-size: 0.92rem;
+    border: 1px solid #cbd5e0;
+    border-radius: 8px;
+    background: #fff;
+    color: #2d3748;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    box-sizing: border-box;
+    -webkit-appearance: none;
+  }
+  .ihpix-report-input:focus,
+  .ihpix-report-select:focus,
+  .ihpix-report-textarea:focus {
+    outline: none;
+    border-color: #0069B4;
+    box-shadow: 0 0 0 3px rgba(0,105,180,0.12);
+  }
+  .ihpix-report-input.ihpix-report-field-error,
+  .ihpix-report-select.ihpix-report-field-error {
+    border-color: #e53e3e;
+    box-shadow: 0 0 0 3px rgba(229,62,62,0.12);
+  }
+  .ihpix-report-textarea {
+    resize: vertical;
+    min-height: 80px;
+  }
+  .ihpix-report-select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.8rem center;
+    padding-right: 2.2rem;
+  }
+
+  .ihpix-report-row {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+  .ihpix-report-row .ihpix-report-field {
+    flex: 1;
+    min-width: 200px;
+  }
+
+  .ihpix-report-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.7rem 2rem;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #fff;
+    background: linear-gradient(135deg, #0069B4, #005A9C);
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: transform 0.15s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+  }
+  .ihpix-report-btn:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,105,180,0.35);
+  }
+  .ihpix-report-btn:active {
+    transform: translateY(0);
+  }
+  .ihpix-report-btn:disabled {
+    opacity: 0.65;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+  }
+  .ihpix-report-btn .fa-spinner {
+    display: none;
+  }
+  .ihpix-report-btn.ihpix-report-loading .fa-spinner {
+    display: inline-block;
+  }
+  .ihpix-report-btn.ihpix-report-loading .fa-paper-plane {
+    display: none;
+  }
+
+  .ihpix-report-actions {
+    text-align: right;
+    padding-top: 0.5rem;
+  }
+
+  /* Toast notifications */
+  .ihpix-report-toast-container {
+    position: fixed;
+    top: 1.5rem;
+    right: 1.5rem;
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    gap: 0.6rem;
+    max-width: 400px;
+  }
+  .ihpix-report-toast {
+    padding: 1rem 1.2rem;
+    border-radius: 10px;
+    color: #fff;
+    font-size: 0.9rem;
+    line-height: 1.4;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.18);
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+    animation: ihpix-report-slideIn 0.35s ease;
+    position: relative;
+  }
+  .ihpix-report-toast i {
+    font-size: 1.1rem;
+    margin-top: 1px;
+    flex-shrink: 0;
+  }
+  .ihpix-report-toast-success {
+    background: linear-gradient(135deg, #38a169, #2f855a);
+  }
+  .ihpix-report-toast-error {
+    background: linear-gradient(135deg, #e53e3e, #c53030);
+  }
+  .ihpix-report-toast-close {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.7rem;
+    background: none;
+    border: none;
+    color: rgba(255,255,255,0.8);
+    font-size: 1rem;
+    cursor: pointer;
+    padding: 0;
+    line-height: 1;
+  }
+  .ihpix-report-toast-close:hover {
+    color: #fff;
+  }
+
+  @keyframes ihpix-report-slideIn {
+    from { opacity: 0; transform: translateX(60px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+  @keyframes ihpix-report-slideOut {
+    from { opacity: 1; transform: translateX(0); }
+    to   { opacity: 0; transform: translateX(60px); }
+  }
+
+  /* Success state */
+  .ihpix-report-success-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    display: none;
+  }
+  .ihpix-report-success-state.ihpix-report-visible {
+    display: block;
+    animation: ihpix-report-fadeIn 0.4s ease;
+  }
+  .ihpix-report-success-checkmark {
+    width: 72px;
+    height: 72px;
+    margin: 0 auto 1.2rem;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #38a169, #2f855a);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: ihpix-report-scaleIn 0.5s ease;
+  }
+  .ihpix-report-success-checkmark i {
+    font-size: 2rem;
+    color: #fff;
+  }
+  .ihpix-report-success-state h2 {
+    color: #2f855a;
+    font-size: 1.4rem;
+    margin-bottom: 0.5rem;
+  }
+  .ihpix-report-success-state p {
+    color: #666;
+    font-size: 0.95rem;
+  }
+  @keyframes ihpix-report-fadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  @keyframes ihpix-report-scaleIn {
+    0%   { transform: scale(0); opacity: 0; }
+    60%  { transform: scale(1.15); }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  /* Login message */
+  .ihpix-report-login-msg {
+    text-align: center;
+    padding: 3rem 2rem;
+    background: #fff;
+    border: 1px solid #e0e6ed;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  }
+  .ihpix-report-login-msg i.fa-lock {
+    font-size: 2.5rem;
+    color: #a0aec0;
+    margin-bottom: 1rem;
+    display: block;
+  }
+  .ihpix-report-login-msg h2 {
+    color: #344563;
+    font-size: 1.3rem;
+    margin-bottom: 0.5rem;
+  }
+  .ihpix-report-login-msg p {
+    color: #718096;
+    margin-bottom: 1.5rem;
+  }
+  .ihpix-report-login-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.6rem 1.6rem;
+    background: linear-gradient(135deg, #0069B4, #005A9C);
+    color: #fff;
+    border-radius: 8px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: box-shadow 0.2s ease, transform 0.15s ease;
+  }
+  .ihpix-report-login-link:hover {
+    color: #fff;
+    text-decoration: none;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(0,105,180,0.35);
+  }
+
+  .ihpix-report-error-text {
+    color: #e53e3e;
+    font-size: 0.8rem;
+    margin-top: 0.25rem;
+    display: none;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .ihpix-report-banner {
+      padding: 1.4rem 1.2rem;
+    }
+    .ihpix-report-banner h1 {
+      font-size: 1.3rem;
+    }
+    .ihpix-report-section-body {
+      padding: 1rem;
+    }
+    .ihpix-report-row {
+      flex-direction: column;
+      gap: 0;
+    }
+    .ihpix-report-row .ihpix-report-field {
+      min-width: 100%;
+    }
+    .ihpix-report-toast-container {
+      left: 1rem;
+      right: 1rem;
+      max-width: none;
+    }
+    .ihpix-report-actions {
+      text-align: center;
+    }
+  }
+</style>
+
+<div class="ihpix-report-toast-container" id="ihpix-report-toasts"></div>
+
+<div class="ihpix-report-banner">
+  <h1><i class="fa fa-file-text-o"></i> {{ _('Submit IHP-IX Activity Report') }}</h1>
+  <p>{{ _('Share your contributions to the Intergovernmental Hydrological Programme. Submitted reports are reviewed before publication.') }}</p>
+</div>
+
+{% if not is_logged_in %}
+  <div class="ihpix-report-login-msg">
+    <i class="fa fa-lock"></i>
+    <h2>{{ _('Authentication Required') }}</h2>
+    <p>{{ _('You need to be logged in to submit an IHP-IX activity report.') }}</p>
+    <a href="/user/login?came_from=/ihpix/report" class="ihpix-report-login-link">
+      <i class="fa fa-sign-in"></i> {{ _('Log in to continue') }}
+    </a>
+  </div>
+{% else %}
+
+  {# Success state shown after submission #}
+  <div class="ihpix-report-success-state" id="ihpix-report-success">
+    <div class="ihpix-report-success-checkmark">
+      <i class="fa fa-check"></i>
+    </div>
+    <h2>{{ _('Report Submitted Successfully') }}</h2>
+    <p>{{ _('Thank you for your contribution. Your report will be reviewed by an administrator before publication.') }}</p>
+    <button type="button" class="ihpix-report-btn" onclick="ihpixReportReset()" style="margin-top: 1rem;">
+      <i class="fa fa-plus"></i> {{ _('Submit Another Report') }}
+    </button>
+  </div>
+
+  {# Report form #}
+  <form id="ihpix-report-form" novalidate>
+
+    {# Section 1: Activity Information #}
+    <div class="ihpix-report-section">
+      <div class="ihpix-report-section-header">
+        <i class="fa fa-info-circle"></i>
+        <h3>{{ _('Activity Information') }}</h3>
+      </div>
+      <div class="ihpix-report-section-body">
+
+        <div class="ihpix-report-field">
+          <label class="ihpix-report-label" for="ihpix-field-title">
+            {{ _('Title') }} <span class="ihpix-report-required">*</span>
+          </label>
+          <input type="text" id="ihpix-field-title" name="title"
+                 class="ihpix-report-input" required
+                 placeholder="{{ _('Activity title') }}">
+          <div class="ihpix-report-error-text" id="ihpix-error-title">{{ _('Title is required.') }}</div>
+        </div>
+
+        <div class="ihpix-report-field">
+          <label class="ihpix-report-label" for="ihpix-field-description">
+            {{ _('Description') }}
+          </label>
+          <textarea id="ihpix-field-description" name="description"
+                    class="ihpix-report-textarea" rows="4"
+                    placeholder="{{ _('Describe the activity...') }}"></textarea>
+        </div>
+
+        <div class="ihpix-report-row">
+          <div class="ihpix-report-field">
+            <label class="ihpix-report-label" for="ihpix-field-priority-area">
+              {{ _('Priority Area') }} <span class="ihpix-report-required">*</span>
+            </label>
+            <select id="ihpix-field-priority-area" name="priority_area"
+                    class="ihpix-report-select" required>
+              <option value="">-- {{ _('Select a Priority Area') }} --</option>
+              {% for pa in priority_areas %}
+                {% if pa == 'PA1' %}
+                <option value="PA1">{{ _('Priority Area 1 – Scientific Research and Innovation') }}</option>
+                {% elif pa == 'PA2' %}
+                <option value="PA2">{{ _('Priority Area 2 – Water Education') }}</option>
+                {% elif pa == 'PA3' %}
+                <option value="PA3">{{ _('Priority Area 3 – Bridging the Data-Knowledge Gap') }}</option>
+                {% elif pa == 'PA4' %}
+                <option value="PA4">{{ _('Priority Area 4 – Integrated Water Resources Management') }}</option>
+                {% elif pa == 'PA5' %}
+                <option value="PA5">{{ _('Priority Area 5 – Water Governance') }}</option>
+                {% endif %}
+              {% endfor %}
+            </select>
+            <div class="ihpix-report-error-text" id="ihpix-error-priority-area">{{ _('Please select a priority area.') }}</div>
+          </div>
+
+          <div class="ihpix-report-field">
+            <label class="ihpix-report-label" for="ihpix-field-output">
+              {{ _('Output') }}
+            </label>
+            <input type="text" id="ihpix-field-output" name="output"
+                   class="ihpix-report-input"
+                   placeholder="{{ _('e.g., Output 1.1') }}">
+          </div>
+        </div>
+
+        <div class="ihpix-report-field">
+          <label class="ihpix-report-label" for="ihpix-field-link">
+            {{ _('Link / URL') }}
+          </label>
+          <input type="text" id="ihpix-field-link" name="link"
+                 class="ihpix-report-input"
+                 placeholder="https://...">
+        </div>
+
+      </div>
+    </div>
+
+    {# Section 2: Location & Institution #}
+    <div class="ihpix-report-section">
+      <div class="ihpix-report-section-header">
+        <i class="fa fa-globe"></i>
+        <h3>{{ _('Location & Institution') }}</h3>
+      </div>
+      <div class="ihpix-report-section-body">
+        <div class="ihpix-report-row">
+          <div class="ihpix-report-field">
+            <label class="ihpix-report-label" for="ihpix-field-country">
+              {{ _('Country') }}
+            </label>
+            <select id="ihpix-field-country" name="country" class="ihpix-report-select">
+              <option value="">-- {{ _('Select a country') }} --</option>
+              <option value="AF">{{ _('Afghanistan') }}</option>
+              <option value="AL">{{ _('Albania') }}</option>
+              <option value="DZ">{{ _('Algeria') }}</option>
+              <option value="AD">{{ _('Andorra') }}</option>
+              <option value="AO">{{ _('Angola') }}</option>
+              <option value="AG">{{ _('Antigua and Barbuda') }}</option>
+              <option value="AR">{{ _('Argentina') }}</option>
+              <option value="AM">{{ _('Armenia') }}</option>
+              <option value="AU">{{ _('Australia') }}</option>
+              <option value="AT">{{ _('Austria') }}</option>
+              <option value="AZ">{{ _('Azerbaijan') }}</option>
+              <option value="BS">{{ _('Bahamas') }}</option>
+              <option value="BH">{{ _('Bahrain') }}</option>
+              <option value="BD">{{ _('Bangladesh') }}</option>
+              <option value="BB">{{ _('Barbados') }}</option>
+              <option value="BY">{{ _('Belarus') }}</option>
+              <option value="BE">{{ _('Belgium') }}</option>
+              <option value="BZ">{{ _('Belize') }}</option>
+              <option value="BJ">{{ _('Benin') }}</option>
+              <option value="BT">{{ _('Bhutan') }}</option>
+              <option value="BO">{{ _('Bolivia') }}</option>
+              <option value="BA">{{ _('Bosnia and Herzegovina') }}</option>
+              <option value="BW">{{ _('Botswana') }}</option>
+              <option value="BR">{{ _('Brazil') }}</option>
+              <option value="BN">{{ _('Brunei') }}</option>
+              <option value="BG">{{ _('Bulgaria') }}</option>
+              <option value="BF">{{ _('Burkina Faso') }}</option>
+              <option value="BI">{{ _('Burundi') }}</option>
+              <option value="CV">{{ _('Cabo Verde') }}</option>
+              <option value="KH">{{ _('Cambodia') }}</option>
+              <option value="CM">{{ _('Cameroon') }}</option>
+              <option value="CA">{{ _('Canada') }}</option>
+              <option value="CF">{{ _('Central African Republic') }}</option>
+              <option value="TD">{{ _('Chad') }}</option>
+              <option value="CL">{{ _('Chile') }}</option>
+              <option value="CN">{{ _('China') }}</option>
+              <option value="CO">{{ _('Colombia') }}</option>
+              <option value="KM">{{ _('Comoros') }}</option>
+              <option value="CG">{{ _('Congo') }}</option>
+              <option value="CD">{{ _('Congo (Democratic Republic)') }}</option>
+              <option value="CR">{{ _('Costa Rica') }}</option>
+              <option value="CI">{{ _("Côte d'Ivoire") }}</option>
+              <option value="HR">{{ _('Croatia') }}</option>
+              <option value="CU">{{ _('Cuba') }}</option>
+              <option value="CY">{{ _('Cyprus') }}</option>
+              <option value="CZ">{{ _('Czechia') }}</option>
+              <option value="DK">{{ _('Denmark') }}</option>
+              <option value="DJ">{{ _('Djibouti') }}</option>
+              <option value="DM">{{ _('Dominica') }}</option>
+              <option value="DO">{{ _('Dominican Republic') }}</option>
+              <option value="EC">{{ _('Ecuador') }}</option>
+              <option value="EG">{{ _('Egypt') }}</option>
+              <option value="SV">{{ _('El Salvador') }}</option>
+              <option value="GQ">{{ _('Equatorial Guinea') }}</option>
+              <option value="ER">{{ _('Eritrea') }}</option>
+              <option value="EE">{{ _('Estonia') }}</option>
+              <option value="SZ">{{ _('Eswatini') }}</option>
+              <option value="ET">{{ _('Ethiopia') }}</option>
+              <option value="FJ">{{ _('Fiji') }}</option>
+              <option value="FI">{{ _('Finland') }}</option>
+              <option value="FR">{{ _('France') }}</option>
+              <option value="GA">{{ _('Gabon') }}</option>
+              <option value="GM">{{ _('Gambia') }}</option>
+              <option value="GE">{{ _('Georgia') }}</option>
+              <option value="DE">{{ _('Germany') }}</option>
+              <option value="GH">{{ _('Ghana') }}</option>
+              <option value="GR">{{ _('Greece') }}</option>
+              <option value="GD">{{ _('Grenada') }}</option>
+              <option value="GT">{{ _('Guatemala') }}</option>
+              <option value="GN">{{ _('Guinea') }}</option>
+              <option value="GW">{{ _('Guinea-Bissau') }}</option>
+              <option value="GY">{{ _('Guyana') }}</option>
+              <option value="HT">{{ _('Haiti') }}</option>
+              <option value="HN">{{ _('Honduras') }}</option>
+              <option value="HU">{{ _('Hungary') }}</option>
+              <option value="IS">{{ _('Iceland') }}</option>
+              <option value="IN">{{ _('India') }}</option>
+              <option value="ID">{{ _('Indonesia') }}</option>
+              <option value="IR">{{ _('Iran') }}</option>
+              <option value="IQ">{{ _('Iraq') }}</option>
+              <option value="IE">{{ _('Ireland') }}</option>
+              <option value="IL">{{ _('Israel') }}</option>
+              <option value="IT">{{ _('Italy') }}</option>
+              <option value="JM">{{ _('Jamaica') }}</option>
+              <option value="JP">{{ _('Japan') }}</option>
+              <option value="JO">{{ _('Jordan') }}</option>
+              <option value="KZ">{{ _('Kazakhstan') }}</option>
+              <option value="KE">{{ _('Kenya') }}</option>
+              <option value="KI">{{ _('Kiribati') }}</option>
+              <option value="KP">{{ _('Korea (North)') }}</option>
+              <option value="KR">{{ _('Korea (South)') }}</option>
+              <option value="KW">{{ _('Kuwait') }}</option>
+              <option value="KG">{{ _('Kyrgyzstan') }}</option>
+              <option value="LA">{{ _('Laos') }}</option>
+              <option value="LV">{{ _('Latvia') }}</option>
+              <option value="LB">{{ _('Lebanon') }}</option>
+              <option value="LS">{{ _('Lesotho') }}</option>
+              <option value="LR">{{ _('Liberia') }}</option>
+              <option value="LY">{{ _('Libya') }}</option>
+              <option value="LI">{{ _('Liechtenstein') }}</option>
+              <option value="LT">{{ _('Lithuania') }}</option>
+              <option value="LU">{{ _('Luxembourg') }}</option>
+              <option value="MG">{{ _('Madagascar') }}</option>
+              <option value="MW">{{ _('Malawi') }}</option>
+              <option value="MY">{{ _('Malaysia') }}</option>
+              <option value="MV">{{ _('Maldives') }}</option>
+              <option value="ML">{{ _('Mali') }}</option>
+              <option value="MT">{{ _('Malta') }}</option>
+              <option value="MH">{{ _('Marshall Islands') }}</option>
+              <option value="MR">{{ _('Mauritania') }}</option>
+              <option value="MU">{{ _('Mauritius') }}</option>
+              <option value="MX">{{ _('Mexico') }}</option>
+              <option value="FM">{{ _('Micronesia') }}</option>
+              <option value="MD">{{ _('Moldova') }}</option>
+              <option value="MC">{{ _('Monaco') }}</option>
+              <option value="MN">{{ _('Mongolia') }}</option>
+              <option value="ME">{{ _('Montenegro') }}</option>
+              <option value="MA">{{ _('Morocco') }}</option>
+              <option value="MZ">{{ _('Mozambique') }}</option>
+              <option value="MM">{{ _('Myanmar') }}</option>
+              <option value="NA">{{ _('Namibia') }}</option>
+              <option value="NR">{{ _('Nauru') }}</option>
+              <option value="NP">{{ _('Nepal') }}</option>
+              <option value="NL">{{ _('Netherlands') }}</option>
+              <option value="NZ">{{ _('New Zealand') }}</option>
+              <option value="NI">{{ _('Nicaragua') }}</option>
+              <option value="NE">{{ _('Niger') }}</option>
+              <option value="NG">{{ _('Nigeria') }}</option>
+              <option value="MK">{{ _('North Macedonia') }}</option>
+              <option value="NO">{{ _('Norway') }}</option>
+              <option value="OM">{{ _('Oman') }}</option>
+              <option value="PK">{{ _('Pakistan') }}</option>
+              <option value="PW">{{ _('Palau') }}</option>
+              <option value="PS">{{ _('Palestine') }}</option>
+              <option value="PA">{{ _('Panama') }}</option>
+              <option value="PG">{{ _('Papua New Guinea') }}</option>
+              <option value="PY">{{ _('Paraguay') }}</option>
+              <option value="PE">{{ _('Peru') }}</option>
+              <option value="PH">{{ _('Philippines') }}</option>
+              <option value="PL">{{ _('Poland') }}</option>
+              <option value="PT">{{ _('Portugal') }}</option>
+              <option value="QA">{{ _('Qatar') }}</option>
+              <option value="RO">{{ _('Romania') }}</option>
+              <option value="RU">{{ _('Russia') }}</option>
+              <option value="RW">{{ _('Rwanda') }}</option>
+              <option value="KN">{{ _('Saint Kitts and Nevis') }}</option>
+              <option value="LC">{{ _('Saint Lucia') }}</option>
+              <option value="VC">{{ _('Saint Vincent and the Grenadines') }}</option>
+              <option value="WS">{{ _('Samoa') }}</option>
+              <option value="SM">{{ _('San Marino') }}</option>
+              <option value="ST">{{ _('Sao Tome and Principe') }}</option>
+              <option value="SA">{{ _('Saudi Arabia') }}</option>
+              <option value="SN">{{ _('Senegal') }}</option>
+              <option value="RS">{{ _('Serbia') }}</option>
+              <option value="SC">{{ _('Seychelles') }}</option>
+              <option value="SL">{{ _('Sierra Leone') }}</option>
+              <option value="SG">{{ _('Singapore') }}</option>
+              <option value="SK">{{ _('Slovakia') }}</option>
+              <option value="SI">{{ _('Slovenia') }}</option>
+              <option value="SB">{{ _('Solomon Islands') }}</option>
+              <option value="SO">{{ _('Somalia') }}</option>
+              <option value="ZA">{{ _('South Africa') }}</option>
+              <option value="SS">{{ _('South Sudan') }}</option>
+              <option value="ES">{{ _('Spain') }}</option>
+              <option value="LK">{{ _('Sri Lanka') }}</option>
+              <option value="SD">{{ _('Sudan') }}</option>
+              <option value="SR">{{ _('Suriname') }}</option>
+              <option value="SE">{{ _('Sweden') }}</option>
+              <option value="CH">{{ _('Switzerland') }}</option>
+              <option value="SY">{{ _('Syria') }}</option>
+              <option value="TJ">{{ _('Tajikistan') }}</option>
+              <option value="TZ">{{ _('Tanzania') }}</option>
+              <option value="TH">{{ _('Thailand') }}</option>
+              <option value="TL">{{ _('Timor-Leste') }}</option>
+              <option value="TG">{{ _('Togo') }}</option>
+              <option value="TO">{{ _('Tonga') }}</option>
+              <option value="TT">{{ _('Trinidad and Tobago') }}</option>
+              <option value="TN">{{ _('Tunisia') }}</option>
+              <option value="TR">{{ _('Turkey') }}</option>
+              <option value="TM">{{ _('Turkmenistan') }}</option>
+              <option value="TV">{{ _('Tuvalu') }}</option>
+              <option value="UG">{{ _('Uganda') }}</option>
+              <option value="UA">{{ _('Ukraine') }}</option>
+              <option value="AE">{{ _('United Arab Emirates') }}</option>
+              <option value="GB">{{ _('United Kingdom') }}</option>
+              <option value="US">{{ _('United States') }}</option>
+              <option value="UY">{{ _('Uruguay') }}</option>
+              <option value="UZ">{{ _('Uzbekistan') }}</option>
+              <option value="VU">{{ _('Vanuatu') }}</option>
+              <option value="VA">{{ _('Vatican City') }}</option>
+              <option value="VE">{{ _('Venezuela') }}</option>
+              <option value="VN">{{ _('Viet Nam') }}</option>
+              <option value="YE">{{ _('Yemen') }}</option>
+              <option value="ZM">{{ _('Zambia') }}</option>
+              <option value="ZW">{{ _('Zimbabwe') }}</option>
+            </select>
+          </div>
+
+          <div class="ihpix-report-field">
+            <label class="ihpix-report-label" for="ihpix-field-institution">
+              {{ _('Institution') }}
+            </label>
+            <input type="text" id="ihpix-field-institution" name="institution"
+                   class="ihpix-report-input"
+                   placeholder="{{ _('Institution or organization name') }}">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {# Section 3: Dates #}
+    <div class="ihpix-report-section">
+      <div class="ihpix-report-section-header">
+        <i class="fa fa-calendar"></i>
+        <h3>{{ _('Dates') }}</h3>
+      </div>
+      <div class="ihpix-report-section-body">
+        <div class="ihpix-report-row">
+          <div class="ihpix-report-field">
+            <label class="ihpix-report-label" for="ihpix-field-reported-date">
+              {{ _('Reported Date') }}
+            </label>
+            <input type="date" id="ihpix-field-reported-date" name="reported_date"
+                   class="ihpix-report-input">
+          </div>
+          <div class="ihpix-report-field">
+            <label class="ihpix-report-label" for="ihpix-field-start-date">
+              {{ _('Activity Start Date') }}
+            </label>
+            <input type="date" id="ihpix-field-start-date" name="start_date"
+                   class="ihpix-report-input">
+          </div>
+          <div class="ihpix-report-field">
+            <label class="ihpix-report-label" for="ihpix-field-end-date">
+              {{ _('Activity End Date') }}
+            </label>
+            <input type="date" id="ihpix-field-end-date" name="end_date"
+                   class="ihpix-report-input">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {# Section 4: Contact Information #}
+    <div class="ihpix-report-section">
+      <div class="ihpix-report-section-header">
+        <i class="fa fa-envelope"></i>
+        <h3>{{ _('Contact Information') }}</h3>
+      </div>
+      <div class="ihpix-report-section-body">
+        <div class="ihpix-report-row">
+          <div class="ihpix-report-field">
+            <label class="ihpix-report-label" for="ihpix-field-contact-name">
+              {{ _('Contact Name') }}
+            </label>
+            <input type="text" id="ihpix-field-contact-name" name="contact_name"
+                   class="ihpix-report-input"
+                   placeholder="{{ _('Full name') }}">
+          </div>
+          <div class="ihpix-report-field">
+            <label class="ihpix-report-label" for="ihpix-field-contact-email">
+              {{ _('Contact Email') }}
+            </label>
+            <input type="email" id="ihpix-field-contact-email" name="contact_email"
+                   class="ihpix-report-input"
+                   placeholder="{{ _('email@example.com') }}">
+            <div class="ihpix-report-error-text" id="ihpix-error-email">{{ _('Please enter a valid email address.') }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    {# Submit #}
+    <div class="ihpix-report-actions">
+      <button type="submit" class="ihpix-report-btn" id="ihpix-report-submit-btn">
+        <i class="fa fa-paper-plane"></i>
+        <i class="fa fa-spinner fa-spin"></i>
+        {{ _('Submit Report') }}
+      </button>
+    </div>
+
+  </form>
+
+  <script>
+  (function() {
+    'use strict';
+
+    var form = document.getElementById('ihpix-report-form');
+    var submitBtn = document.getElementById('ihpix-report-submit-btn');
+    var successState = document.getElementById('ihpix-report-success');
+    var toastContainer = document.getElementById('ihpix-report-toasts');
+
+    function showToast(message, type) {
+      var toast = document.createElement('div');
+      toast.className = 'ihpix-report-toast ihpix-report-toast-' + type;
+      var icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
+      toast.innerHTML = '<i class="fa ' + icon + '"></i><span>' + message + '</span>' +
+        '<button class="ihpix-report-toast-close" type="button">&times;</button>';
+
+      toast.querySelector('.ihpix-report-toast-close').addEventListener('click', function() {
+        removeToast(toast);
+      });
+
+      toastContainer.appendChild(toast);
+
+      setTimeout(function() {
+        removeToast(toast);
+      }, 6000);
+    }
+
+    function removeToast(toast) {
+      if (!toast.parentNode) return;
+      toast.style.animation = 'ihpix-report-slideOut 0.3s ease forwards';
+      setTimeout(function() {
+        if (toast.parentNode) toast.parentNode.removeChild(toast);
+      }, 300);
+    }
+
+    function clearFieldErrors() {
+      var errorFields = form.querySelectorAll('.ihpix-report-field-error');
+      for (var i = 0; i < errorFields.length; i++) {
+        errorFields[i].classList.remove('ihpix-report-field-error');
+      }
+      var errorTexts = form.querySelectorAll('.ihpix-report-error-text');
+      for (var j = 0; j < errorTexts.length; j++) {
+        errorTexts[j].style.display = 'none';
+      }
+    }
+
+    function showFieldError(fieldId, errorId) {
+      var field = document.getElementById(fieldId);
+      var error = document.getElementById(errorId);
+      if (field) field.classList.add('ihpix-report-field-error');
+      if (error) error.style.display = 'block';
+    }
+
+    function validateForm() {
+      clearFieldErrors();
+      var valid = true;
+
+      var title = form.querySelector('[name="title"]');
+      if (!title.value.trim()) {
+        showFieldError('ihpix-field-title', 'ihpix-error-title');
+        valid = false;
+      }
+
+      var pa = form.querySelector('[name="priority_area"]');
+      if (!pa.value) {
+        showFieldError('ihpix-field-priority-area', 'ihpix-error-priority-area');
+        valid = false;
+      }
+
+      var email = form.querySelector('[name="contact_email"]');
+      if (email.value.trim()) {
+        var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailPattern.test(email.value.trim())) {
+          showFieldError('ihpix-field-contact-email', 'ihpix-error-email');
+          valid = false;
+        }
+      }
+
+      return valid;
+    }
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      if (!validateForm()) {
+        showToast('{{ _("Please fix the highlighted fields.") }}', 'error');
+        return;
+      }
+
+      submitBtn.classList.add('ihpix-report-loading');
+      submitBtn.disabled = true;
+
+      var formData = new FormData(form);
+
+      fetch('/ihpix/report', {
+        method: 'POST',
+        body: formData,
+        headers: {
+          'X-Requested-With': 'XMLHttpRequest'
+        }
+      })
+      .then(function(response) {
+        return response.json().then(function(data) {
+          return { ok: response.ok, data: data };
+        });
+      })
+      .then(function(result) {
+        submitBtn.classList.remove('ihpix-report-loading');
+        submitBtn.disabled = false;
+
+        if (result.ok && result.data.success) {
+          showToast(result.data.message || '{{ _("Report submitted successfully!") }}', 'success');
+          form.style.display = 'none';
+          successState.classList.add('ihpix-report-visible');
+          form.reset();
+        } else {
+          var msg = result.data.error || result.data.message || '{{ _("An error occurred. Please try again.") }}';
+          showToast(msg, 'error');
+        }
+      })
+      .catch(function(err) {
+        submitBtn.classList.remove('ihpix-report-loading');
+        submitBtn.disabled = false;
+        showToast('{{ _("Network error. Please check your connection and try again.") }}', 'error');
+      });
+    });
+
+    /* Allow resetting to submit another report */
+    window.ihpixReportReset = function() {
+      successState.classList.remove('ihpix-report-visible');
+      form.style.display = '';
+      clearFieldErrors();
+    };
+  })();
+  </script>
+
+{% endif %}
+{% endblock %}
+
+{% block secondary_content %}
+  {% snippet "ihpix/snippets/helper.html" %}
+{% endblock %}

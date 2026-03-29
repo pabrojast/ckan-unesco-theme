@@ -1,0 +1,936 @@
+{% extends "page.html" %}
+
+{% block title %}{{ _('IHP-IX Report Review') }} - {{ super() }}{% endblock %}
+
+{% block content %}
+<div class="homepage layout-1">
+    <div id="content" class="container">
+      {{ self.flash() }}
+    </div>
+
+    {% block primary_content %}
+    <div class="main">
+        <div class="container">
+            <!-- Breadcrumb -->
+            <div class="toolbar" role="navigation" aria-label="Breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="home"><a href="/"><i class="fa fa-home"></i><span> Home</span></a></li>
+                    <li><a href="{{ h.url_for(controller='admin', action='index') }}">{{ _('Admin') }}</a></li>
+                    <li><a href="/ckan-admin/ihpix">{{ _('IHP-IX') }}</a></li>
+                    <li class="active">{{ _('Reports') }}</li>
+                </ol>
+            </div>
+
+            <!-- Header Banner -->
+            <section class="module module-narrow module-shallow">
+              <div class="ihpix-rev-banner">
+                <div class="ihpix-rev-banner-overlay"></div>
+                <div class="ihpix-rev-banner-content">
+                  <h1><i class="fa fa-clipboard"></i> {{ _('IHP-IX Report Review') }}</h1>
+                  <p>
+                    {{ _('%(pending)d pending', pending=pending_count) }}
+                    &middot;
+                    {{ _('%(rejected)d rejected', rejected=rejected_count) }}
+                  </p>
+                  <a href="/ckan-admin/ihpix" class="ihpix-rev-back-link">
+                    <i class="fa fa-arrow-left"></i> {{ _('Back to IHP-IX Admin') }}
+                  </a>
+                </div>
+              </div>
+            </section>
+        </div>
+
+        <div class="container">
+          <!-- Navigation Tabs -->
+          <ul class="nav nav-tabs ihpix-rev-nav-tabs">
+            <li><a href="/ckan-admin/ihpix">{{ _('Page Content') }}</a></li>
+            <li><a href="/ckan-admin/ihpix/activities">{{ _('Activities') }}</a></li>
+            <li class="active"><a href="/ckan-admin/ihpix/reports?status=pending">{{ _('Reports') }}</a></li>
+          </ul>
+
+          <!-- Status Filter Tabs -->
+          <div class="ihpix-rev-status-tabs">
+            <a href="?status=pending"
+               class="ihpix-rev-status-tab {% if status_filter == 'pending' %}active{% endif %}">
+              <i class="fa fa-clock-o"></i> {{ _('Pending') }}
+              <span class="ihpix-rev-tab-count ihpix-rev-tab-count-amber">{{ pending_count }}</span>
+            </a>
+            <a href="?status=rejected"
+               class="ihpix-rev-status-tab {% if status_filter == 'rejected' %}active{% endif %}">
+              <i class="fa fa-times-circle"></i> {{ _('Rejected') }}
+              <span class="ihpix-rev-tab-count ihpix-rev-tab-count-red">{{ rejected_count }}</span>
+            </a>
+            <a href="?status=all"
+               class="ihpix-rev-status-tab {% if status_filter == 'all' %}active{% endif %}">
+              <i class="fa fa-list"></i> {{ _('All') }}
+            </a>
+          </div>
+
+          <!-- Quick Stats Bar -->
+          <div class="ihpix-rev-stats-bar">
+            <div class="ihpix-rev-stat">
+              <span class="ihpix-rev-stat-badge ihpix-rev-stat-badge-amber">
+                <i class="fa fa-clock-o"></i> {{ pending_count }}
+              </span>
+              <span class="ihpix-rev-stat-label">{{ _('Pending Review') }}</span>
+            </div>
+            <div class="ihpix-rev-stat">
+              <span class="ihpix-rev-stat-badge ihpix-rev-stat-badge-red">
+                <i class="fa fa-times-circle"></i> {{ rejected_count }}
+              </span>
+              <span class="ihpix-rev-stat-label">{{ _('Rejected') }}</span>
+            </div>
+            <div class="ihpix-rev-stat">
+              <span class="ihpix-rev-stat-badge ihpix-rev-stat-badge-blue">
+                <i class="fa fa-file-text-o"></i> {{ total }}
+              </span>
+              <span class="ihpix-rev-stat-label">{{ _('Total Shown') }}</span>
+            </div>
+          </div>
+
+          <div class="row">
+            <div class="col-md-12">
+
+              {% if reports %}
+                {% for report in reports %}
+                <div class="ihpix-rev-card" id="ihpix-rev-card-{{ report.id }}" data-id="{{ report.id }}">
+                  <section class="module module-narrow">
+                    <div class="module-content ihpix-rev-card-body">
+
+                      {# Status Badge #}
+                      <span class="ihpix-rev-badge ihpix-rev-badge-{{ report.status | default('pending') }}">
+                        {% if report.status == 'published' %}
+                          <i class="fa fa-check-circle"></i> {{ _('Published') }}
+                        {% elif report.status == 'rejected' %}
+                          <i class="fa fa-times-circle"></i> {{ _('Rejected') }}
+                        {% elif report.status == 'draft' %}
+                          <i class="fa fa-pencil"></i> {{ _('Draft') }}
+                        {% else %}
+                          <i class="fa fa-clock-o"></i> {{ _('Pending') }}
+                        {% endif %}
+                      </span>
+
+                      {# Title #}
+                      <h3 class="ihpix-rev-card-title">{{ report.title }}</h3>
+
+                      {# Description #}
+                      {% if report.description %}
+                      <p class="ihpix-rev-card-desc">
+                        {{ report.description[:200] }}{% if report.description | length > 200 %}&hellip;{% endif %}
+                      </p>
+                      {% endif %}
+
+                      {# Metadata Grid #}
+                      <div class="row ihpix-rev-meta-grid">
+                        <div class="col-md-6">
+                          {% if report.priority_area %}
+                          <div class="ihpix-rev-meta-item">
+                            <span class="ihpix-rev-meta-label">{{ _('Priority Area') }}</span>
+                            <span class="ihpix-rev-meta-value">
+                              <span class="ihpix-rev-pa-badge">{{ report.priority_area }}</span>
+                            </span>
+                          </div>
+                          {% endif %}
+                          {% if report.country %}
+                          <div class="ihpix-rev-meta-item">
+                            <span class="ihpix-rev-meta-label"><i class="fa fa-flag"></i> {{ _('Country') }}</span>
+                            <span class="ihpix-rev-meta-value">{{ report.country }}</span>
+                          </div>
+                          {% endif %}
+                          {% if report.contact_name or report.contact_email %}
+                          <div class="ihpix-rev-meta-item">
+                            <span class="ihpix-rev-meta-label"><i class="fa fa-user"></i> {{ _('Contact') }}</span>
+                            <span class="ihpix-rev-meta-value">
+                              {{ report.contact_name }}
+                              {% if report.contact_email %}
+                                <a href="mailto:{{ report.contact_email }}" class="ihpix-rev-email-link">{{ report.contact_email }}</a>
+                              {% endif %}
+                            </span>
+                          </div>
+                          {% endif %}
+                          {% if report.reported_by %}
+                          <div class="ihpix-rev-meta-item">
+                            <span class="ihpix-rev-meta-label"><i class="fa fa-paper-plane"></i> {{ _('Submitted by') }}</span>
+                            <span class="ihpix-rev-meta-value">{{ report.reported_by }}</span>
+                          </div>
+                          {% endif %}
+                        </div>
+                        <div class="col-md-6">
+                          {% if report.output %}
+                          <div class="ihpix-rev-meta-item">
+                            <span class="ihpix-rev-meta-label">{{ _('Output') }}</span>
+                            <span class="ihpix-rev-meta-value">{{ report.output }}</span>
+                          </div>
+                          {% endif %}
+                          {% if report.institution %}
+                          <div class="ihpix-rev-meta-item">
+                            <span class="ihpix-rev-meta-label"><i class="fa fa-building"></i> {{ _('Institution') }}</span>
+                            <span class="ihpix-rev-meta-value">{{ report.institution }}</span>
+                          </div>
+                          {% endif %}
+                          <div class="ihpix-rev-meta-item">
+                            <span class="ihpix-rev-meta-label"><i class="fa fa-calendar"></i> {{ _('Dates') }}</span>
+                            <span class="ihpix-rev-meta-value">
+                              {% if report.reported_date %}
+                                {{ _('Reported') }}: {{ report.reported_date }}
+                              {% endif %}
+                              {% if report.start_date %}
+                                <br>{{ _('Start') }}: {{ report.start_date }}
+                              {% endif %}
+                              {% if report.end_date %}
+                                &ndash; {{ _('End') }}: {{ report.end_date }}
+                              {% endif %}
+                            </span>
+                          </div>
+                          {% if report.link %}
+                          <div class="ihpix-rev-meta-item">
+                            <span class="ihpix-rev-meta-label"><i class="fa fa-link"></i> {{ _('Link') }}</span>
+                            <span class="ihpix-rev-meta-value">
+                              <a href="{{ report.link }}" target="_blank" rel="noopener">{{ report.link | truncate(50) }}</a>
+                            </span>
+                          </div>
+                          {% endif %}
+                          {% if report.created_at %}
+                          <div class="ihpix-rev-meta-item">
+                            <span class="ihpix-rev-meta-label"><i class="fa fa-clock-o"></i> {{ _('Submitted') }}</span>
+                            <span class="ihpix-rev-meta-value">{{ report.created_at }}</span>
+                          </div>
+                          {% endif %}
+                        </div>
+                      </div>
+
+                      {# Rejection Info #}
+                      {% if report.status == 'rejected' and report.review_notes %}
+                      <div class="ihpix-rev-rejection-info">
+                        <h5><i class="fa fa-exclamation-triangle"></i> {{ _('Rejection Details') }}</h5>
+                        <p class="ihpix-rev-review-notes">{{ report.review_notes }}</p>
+                        {% if report.reviewed_by %}
+                        <span class="ihpix-rev-reviewed-by">
+                          <i class="fa fa-user-circle"></i> {{ _('Reviewed by') }}: {{ report.reviewed_by }}
+                          {% if report.reviewed_at %} &mdash; {{ report.reviewed_at }}{% endif %}
+                        </span>
+                        {% endif %}
+                      </div>
+                      {% endif %}
+
+                      {# Action Buttons #}
+                      {% if report.status == 'pending' %}
+                      <div class="ihpix-rev-actions">
+                        <button type="button" class="btn ihpix-rev-btn-approve"
+                                data-id="{{ report.id }}" data-title="{{ report.title }}">
+                          <i class="fa fa-check"></i> {{ _('Approve') }}
+                        </button>
+                        <button type="button" class="btn ihpix-rev-btn-reject"
+                                data-id="{{ report.id }}" data-title="{{ report.title }}">
+                          <i class="fa fa-times"></i> {{ _('Reject') }}
+                        </button>
+                      </div>
+
+                      {# Inline Reject Form (hidden by default) #}
+                      <div class="ihpix-rev-reject-form" id="ihpix-rev-reject-form-{{ report.id }}" style="display:none;">
+                        <div class="form-group">
+                          <label>{{ _('Review Notes') }} <span class="text-danger">*</span></label>
+                          <textarea class="form-control ihpix-rev-input" rows="3"
+                                    id="ihpix-rev-notes-{{ report.id }}"
+                                    placeholder="{{ _('Explain why this report is being rejected...') }}"></textarea>
+                        </div>
+                        <div class="ihpix-rev-reject-form-actions">
+                          <button type="button" class="btn ihpix-rev-btn-confirm-reject"
+                                  data-id="{{ report.id }}">
+                            <i class="fa fa-times-circle"></i> {{ _('Confirm Reject') }}
+                          </button>
+                          <button type="button" class="btn btn-default ihpix-rev-btn-cancel-reject"
+                                  data-id="{{ report.id }}">
+                            {{ _('Cancel') }}
+                          </button>
+                        </div>
+                      </div>
+                      {% endif %}
+
+                      {% if report.status == 'rejected' %}
+                      <div class="ihpix-rev-actions">
+                        <button type="button" class="btn ihpix-rev-btn-approve"
+                                data-id="{{ report.id }}" data-title="{{ report.title }}">
+                          <i class="fa fa-check"></i> {{ _('Re-approve') }}
+                        </button>
+                      </div>
+                      {% endif %}
+
+                    </div>
+                  </section>
+                </div>
+                {% endfor %}
+
+                {# Pagination #}
+                {% set total_pages = (total / items_per_page) | round(0, 'ceil') | int %}
+                {% if total_pages > 1 %}
+                <div class="ihpix-rev-pagination">
+                  <ul class="pagination">
+                    {% if page > 1 %}
+                    <li><a href="?status={{ status_filter }}&page={{ page - 1 }}">&laquo;</a></li>
+                    {% else %}
+                    <li class="disabled"><span>&laquo;</span></li>
+                    {% endif %}
+
+                    {% for p in range(1, total_pages + 1) %}
+                      {% if p == page %}
+                      <li class="active"><span>{{ p }}</span></li>
+                      {% elif p == 1 or p == total_pages or (p >= page - 2 and p <= page + 2) %}
+                      <li><a href="?status={{ status_filter }}&page={{ p }}">{{ p }}</a></li>
+                      {% elif p == page - 3 or p == page + 3 %}
+                      <li class="disabled"><span>&hellip;</span></li>
+                      {% endif %}
+                    {% endfor %}
+
+                    {% if page < total_pages %}
+                    <li><a href="?status={{ status_filter }}&page={{ page + 1 }}">&raquo;</a></li>
+                    {% else %}
+                    <li class="disabled"><span>&raquo;</span></li>
+                    {% endif %}
+                  </ul>
+                  <span class="ihpix-rev-pagination-info">
+                    {{ _('Showing %(start)s–%(end)s of %(total)s reports', start=((page-1)*items_per_page+1), end=([page*items_per_page, total]|min), total=total) }}
+                  </span>
+                </div>
+                {% endif %}
+
+              {% else %}
+                {# Empty State #}
+                <div class="ihpix-rev-empty-state">
+                  <section class="module module-narrow">
+                    <div class="module-content text-center" style="padding: 4rem 2.5rem;">
+                      <div class="ihpix-rev-empty-icon">
+                        <i class="fa fa-clipboard fa-4x"></i>
+                      </div>
+                      <h3>{{ _('No Reports to Review') }}</h3>
+                      <p class="text-muted">
+                        {% if status_filter == 'pending' %}
+                          {{ _('There are no pending reports at this time.') }}
+                        {% elif status_filter == 'rejected' %}
+                          {{ _('There are no rejected reports.') }}
+                        {% else %}
+                          {{ _('No reports match the current filter.') }}
+                        {% endif %}
+                      </p>
+                    </div>
+                  </section>
+                </div>
+              {% endif %}
+
+            </div>
+          </div>
+        </div>
+
+    </div>
+    {% endblock %}
+</div>
+
+{# Toast Container #}
+<div id="ihpix-rev-toast-container"></div>
+
+<!-- CSS -->
+<style>
+/* ── Banner ── */
+.ihpix-rev-banner {
+  position: relative;
+  height: 200px;
+  overflow: hidden;
+  border-radius: 16px;
+  margin-bottom: 2.5rem;
+  box-shadow: 0 8px 32px rgba(0, 114, 188, 0.16);
+  display: flex;
+  align-items: center;
+  background: linear-gradient(135deg, #0072BC 0%, #005A9C 100%);
+}
+.ihpix-rev-banner-overlay {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: linear-gradient(to right, rgba(0, 90, 156, 0.95) 0%, rgba(0, 114, 188, 0.7) 50%, rgba(0, 114, 188, 0.4) 100%);
+  z-index: 2;
+}
+.ihpix-rev-banner-content {
+  position: relative;
+  z-index: 3;
+  padding: 2rem 2.5rem;
+  color: white;
+  width: 100%;
+}
+.ihpix-rev-banner-content h1 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 0.8rem;
+  text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+  color: white;
+}
+.ihpix-rev-banner-content h1 .fa { margin-right: 10px; }
+.ihpix-rev-banner-content p {
+  font-size: 1.1rem;
+  margin-bottom: 0.8rem;
+  opacity: 0.95;
+  text-shadow: 1px 1px 4px rgba(0,0,0,0.3);
+  font-weight: 300;
+  color: #fff !important;
+}
+.ihpix-rev-back-link {
+  color: rgba(255,255,255,0.85);
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+.ihpix-rev-back-link:hover { color: #fff; text-decoration: none; }
+.ihpix-rev-back-link .fa { margin-right: 4px; }
+.toolbar { margin-bottom: 2rem; padding: 1rem 0; }
+
+/* ── Nav Tabs ── */
+.ihpix-rev-nav-tabs {
+  margin-bottom: 0;
+  border-bottom: 2px solid #e9ecef;
+}
+.ihpix-rev-nav-tabs > li > a {
+  border-radius: 8px 8px 0 0;
+  font-weight: 600;
+  color: #6c757d;
+  padding: 10px 20px;
+  border: 2px solid transparent;
+  border-bottom: none;
+  margin-bottom: -2px;
+}
+.ihpix-rev-nav-tabs > li > a:hover {
+  color: #0072BC;
+  background: #f8f9fa;
+  border-color: #e9ecef #e9ecef transparent;
+}
+.ihpix-rev-nav-tabs > li.active > a,
+.ihpix-rev-nav-tabs > li.active > a:hover,
+.ihpix-rev-nav-tabs > li.active > a:focus {
+  color: #0072BC;
+  background: white;
+  border-color: #0072BC #0072BC transparent;
+  font-weight: 700;
+}
+
+/* ── Status Filter Tabs ── */
+.ihpix-rev-status-tabs {
+  display: flex;
+  gap: 6px;
+  padding: 1rem 0 0.5rem 0;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid #e9ecef;
+  flex-wrap: wrap;
+}
+.ihpix-rev-status-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 18px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #6c757d;
+  background: #f8f9fa;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
+}
+.ihpix-rev-status-tab:hover {
+  color: #0072BC;
+  background: #E3F2FD;
+  text-decoration: none;
+}
+.ihpix-rev-status-tab.active {
+  color: #fff;
+  background: linear-gradient(135deg, #0072BC, #005A9C);
+  border-color: transparent;
+}
+.ihpix-rev-status-tab.active:hover { text-decoration: none; color: #fff; }
+.ihpix-rev-tab-count {
+  display: inline-block;
+  padding: 1px 8px;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  line-height: 1.5;
+}
+.ihpix-rev-tab-count-amber { background: #FFF3CD; color: #856404; }
+.ihpix-rev-tab-count-red { background: #F8D7DA; color: #721C24; }
+.ihpix-rev-status-tab.active .ihpix-rev-tab-count {
+  background: rgba(255,255,255,0.25);
+  color: #fff;
+}
+
+/* ── Quick Stats Bar ── */
+.ihpix-rev-stats-bar {
+  display: flex;
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+}
+.ihpix-rev-stat {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.ihpix-rev-stat-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 10px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: #fff;
+}
+.ihpix-rev-stat-badge-amber { background: linear-gradient(135deg, #F0AD4E, #EC971F); }
+.ihpix-rev-stat-badge-red { background: linear-gradient(135deg, #dc3545, #c82333); }
+.ihpix-rev-stat-badge-blue { background: linear-gradient(135deg, #0072BC, #005A9C); }
+.ihpix-rev-stat-badge .fa { font-size: 0.85rem; }
+.ihpix-rev-stat-label { font-size: 0.85rem; color: #6c757d; font-weight: 500; }
+
+/* ── Report Cards ── */
+.ihpix-rev-card {
+  margin-bottom: 1.5rem;
+  transition: all 0.4s ease;
+}
+.ihpix-rev-card:hover { transform: translateY(-2px); }
+.ihpix-rev-card .module {
+  border-radius: 12px;
+  border: 1px solid #e9ecef;
+  box-shadow: 0 2px 8px rgba(0, 114, 188, 0.06);
+}
+.ihpix-rev-card-body {
+  padding: 1.5rem 2rem;
+  position: relative;
+}
+
+/* Status Badge */
+.ihpix-rev-badge {
+  position: absolute;
+  top: 1.2rem;
+  right: 1.5rem;
+  padding: 4px 14px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 700;
+  color: #fff;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.ihpix-rev-badge-pending { background: linear-gradient(135deg, #F0AD4E, #EC971F); }
+.ihpix-rev-badge-rejected { background: linear-gradient(135deg, #dc3545, #c82333); }
+.ihpix-rev-badge-published { background: linear-gradient(135deg, #28a745, #218838); }
+.ihpix-rev-badge-draft { background: #6c757d; }
+
+/* Card Title & Description */
+.ihpix-rev-card-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0 0 0.5rem 0;
+  padding-right: 120px;
+}
+.ihpix-rev-card-desc {
+  color: #6c757d;
+  font-size: 0.9rem;
+  line-height: 1.6;
+  margin-bottom: 1rem;
+}
+
+/* Metadata Grid */
+.ihpix-rev-meta-grid {
+  margin-bottom: 1rem;
+  padding: 1rem 0;
+  border-top: 1px solid #f0f0f0;
+  border-bottom: 1px solid #f0f0f0;
+}
+.ihpix-rev-meta-item {
+  margin-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+}
+.ihpix-rev-meta-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #6c757d;
+  text-transform: uppercase;
+  letter-spacing: 0.3px;
+  margin-bottom: 2px;
+}
+.ihpix-rev-meta-label .fa {
+  margin-right: 4px;
+  color: #0072BC;
+}
+.ihpix-rev-meta-value {
+  font-size: 0.9rem;
+  color: #2c3e50;
+}
+.ihpix-rev-pa-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #0072BC, #005A9C);
+  color: #fff;
+  padding: 2px 10px;
+  border-radius: 10px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+.ihpix-rev-email-link {
+  color: #0072BC;
+  font-size: 0.85rem;
+  margin-left: 4px;
+}
+
+/* Rejection Info */
+.ihpix-rev-rejection-info {
+  background: #FFF5F5;
+  border: 1px solid #F8D7DA;
+  border-left: 4px solid #dc3545;
+  border-radius: 8px;
+  padding: 1rem 1.2rem;
+  margin-bottom: 1rem;
+}
+.ihpix-rev-rejection-info h5 {
+  color: #721C24;
+  font-weight: 700;
+  font-size: 0.9rem;
+  margin: 0 0 6px 0;
+}
+.ihpix-rev-rejection-info h5 .fa { margin-right: 6px; }
+.ihpix-rev-review-notes {
+  color: #856404;
+  font-size: 0.9rem;
+  margin-bottom: 6px;
+  line-height: 1.6;
+}
+.ihpix-rev-reviewed-by {
+  font-size: 0.8rem;
+  color: #6c757d;
+}
+.ihpix-rev-reviewed-by .fa { margin-right: 4px; }
+
+/* Action Buttons */
+.ihpix-rev-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 1rem;
+  flex-wrap: wrap;
+}
+.ihpix-rev-btn-approve {
+  border-radius: 20px;
+  padding: 7px 20px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  background: linear-gradient(135deg, #28a745, #218838);
+  border: none;
+  color: #fff;
+  transition: all 0.2s ease;
+}
+.ihpix-rev-btn-approve:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(40, 167, 69, 0.3);
+  color: #fff;
+}
+.ihpix-rev-btn-approve:disabled { opacity: 0.6; transform: none; box-shadow: none; }
+.ihpix-rev-btn-reject {
+  border-radius: 20px;
+  padding: 7px 20px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  background: linear-gradient(135deg, #dc3545, #c82333);
+  border: none;
+  color: #fff;
+  transition: all 0.2s ease;
+}
+.ihpix-rev-btn-reject:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+  color: #fff;
+}
+.ihpix-rev-btn-reject:disabled { opacity: 0.6; transform: none; box-shadow: none; }
+
+/* Reject Form */
+.ihpix-rev-reject-form {
+  margin-top: 1rem;
+  padding: 1rem 1.2rem;
+  background: #f8f9fa;
+  border-radius: 10px;
+  border: 1px solid #e9ecef;
+  animation: ihpixRevSlideDown 0.25s ease;
+}
+.ihpix-rev-reject-form .form-group { margin-bottom: 0.8rem; }
+.ihpix-rev-reject-form label {
+  font-weight: 600;
+  color: #2c3e50;
+  font-size: 0.9rem;
+  margin-bottom: 4px;
+}
+.ihpix-rev-input {
+  border-radius: 10px !important;
+  border: 2px solid #e9ecef !important;
+  padding: 8px 12px !important;
+  font-size: 0.9rem !important;
+  transition: border-color 0.2s ease !important;
+}
+.ihpix-rev-input:focus {
+  border-color: #0072BC !important;
+  box-shadow: 0 0 0 3px rgba(0, 114, 188, 0.1) !important;
+}
+.ihpix-rev-reject-form-actions {
+  display: flex;
+  gap: 8px;
+}
+.ihpix-rev-btn-confirm-reject {
+  border-radius: 20px;
+  padding: 7px 18px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  background: linear-gradient(135deg, #dc3545, #c82333);
+  border: none;
+  color: #fff;
+  transition: all 0.2s ease;
+}
+.ihpix-rev-btn-confirm-reject:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3); color: #fff; }
+.ihpix-rev-btn-confirm-reject:disabled { opacity: 0.6; transform: none; box-shadow: none; }
+.ihpix-rev-btn-cancel-reject {
+  border-radius: 20px;
+  padding: 7px 18px;
+  font-weight: 600;
+  font-size: 0.85rem;
+}
+
+/* ── Pagination ── */
+.ihpix-rev-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.ihpix-rev-pagination .pagination { margin: 0; }
+.ihpix-rev-pagination .pagination > li > a,
+.ihpix-rev-pagination .pagination > li > span {
+  border-radius: 8px;
+  margin: 0 2px;
+  border: 1px solid #e9ecef;
+  color: #0072BC;
+}
+.ihpix-rev-pagination .pagination > li.active > span {
+  background: linear-gradient(135deg, #0072BC, #005A9C);
+  border-color: #0072BC;
+  color: white;
+}
+.ihpix-rev-pagination-info { font-size: 13px; color: #888; }
+
+/* ── Empty State ── */
+.ihpix-rev-empty-state .module {
+  border-left: 5px solid #005A9C;
+  border-radius: 12px;
+}
+.ihpix-rev-empty-icon {
+  color: #005A9C;
+  opacity: 0.7;
+  margin-bottom: 1.5rem;
+}
+.ihpix-rev-empty-state h3 {
+  color: #2c3e50;
+  font-weight: 700;
+  margin: 1rem 0 0.5rem 0;
+}
+
+/* ── Toast Notifications ── */
+#ihpix-rev-toast-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 10100;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.ihpix-rev-toast {
+  padding: 14px 22px;
+  border-radius: 10px;
+  color: white;
+  font-weight: 600;
+  font-size: 0.9rem;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+  animation: ihpixRevToastIn 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  max-width: 380px;
+}
+.ihpix-rev-toast.success { background: linear-gradient(135deg, #28a745, #218838); }
+.ihpix-rev-toast.error { background: linear-gradient(135deg, #dc3545, #c82333); }
+
+/* ── Animations ── */
+@keyframes ihpixRevToastIn {
+  from { opacity: 0; transform: translateX(40px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+@keyframes ihpixRevToastOut {
+  from { opacity: 1; transform: translateX(0); }
+  to { opacity: 0; transform: translateX(40px); }
+}
+@keyframes ihpixRevCardOut {
+  from { opacity: 1; max-height: 600px; margin-bottom: 1.5rem; }
+  to { opacity: 0; max-height: 0; margin-bottom: 0; overflow: hidden; }
+}
+@keyframes ihpixRevSlideDown {
+  from { opacity: 0; max-height: 0; }
+  to { opacity: 1; max-height: 300px; }
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+  .ihpix-rev-banner { height: 160px; }
+  .ihpix-rev-banner-content h1 { font-size: 1.7rem; }
+  .ihpix-rev-card-title { padding-right: 0; }
+  .ihpix-rev-badge { position: static; margin-bottom: 8px; }
+  .ihpix-rev-status-tabs { flex-direction: column; gap: 4px; }
+  .ihpix-rev-stats-bar { flex-direction: column; gap: 0.8rem; }
+  .ihpix-rev-actions { flex-direction: column; }
+  .ihpix-rev-actions .btn { width: 100%; }
+  .ihpix-rev-reject-form-actions { flex-direction: column; }
+  .ihpix-rev-reject-form-actions .btn { width: 100%; }
+  .ihpix-rev-meta-grid .col-md-6 { margin-bottom: 0.5rem; }
+  .ihpix-rev-pagination { flex-direction: column; align-items: flex-start; }
+}
+</style>
+
+<!-- JavaScript -->
+<script>
+(function() {
+  'use strict';
+
+  var REVIEW_URL = '/ckan-admin/ihpix/reports/review';
+
+  // ── Toast ──
+  function showToast(message, type) {
+    var container = document.getElementById('ihpix-rev-toast-container');
+    var toast = document.createElement('div');
+    toast.className = 'ihpix-rev-toast ' + (type || 'success');
+    toast.innerHTML = '<i class="fa fa-' + (type === 'error' ? 'exclamation-circle' : 'check-circle') + '"></i> ' + message;
+    container.appendChild(toast);
+    setTimeout(function() {
+      toast.style.animation = 'ihpixRevToastOut 0.3s ease forwards';
+      setTimeout(function() { toast.remove(); }, 300);
+    }, 4000);
+  }
+
+  // ── Card Removal Animation ──
+  function removeCard(id) {
+    var card = document.getElementById('ihpix-rev-card-' + id);
+    if (!card) return;
+    card.style.animation = 'ihpixRevCardOut 0.5s ease forwards';
+    setTimeout(function() { card.remove(); checkEmpty(); }, 500);
+  }
+
+  function checkEmpty() {
+    var remaining = document.querySelectorAll('.ihpix-rev-card');
+    if (remaining.length === 0) {
+      var container = document.querySelector('.col-md-12');
+      if (container) {
+        container.innerHTML =
+          '<div class="ihpix-rev-empty-state">' +
+            '<section class="module module-narrow">' +
+              '<div class="module-content text-center" style="padding: 4rem 2.5rem;">' +
+                '<div class="ihpix-rev-empty-icon"><i class="fa fa-clipboard fa-4x"></i></div>' +
+                '<h3>{{ _("No Reports to Review") }}</h3>' +
+                '<p class="text-muted">{{ _("All reports have been reviewed.") }}</p>' +
+              '</div>' +
+            '</section>' +
+          '</div>';
+      }
+    }
+  }
+
+  // ── POST Helper ──
+  function postReview(reportId, action, notes, btn, originalHtml) {
+    var formData = new FormData();
+    formData.append('report_id', reportId);
+    formData.append('action', action);
+    if (notes) { formData.append('review_notes', notes); }
+
+    fetch(REVIEW_URL, { method: 'POST', body: formData })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.success) {
+          var label = action === 'approve' ? '{{ _("approved") }}' : '{{ _("rejected") }}';
+          showToast('{{ _("Report") }} ' + label + '.', 'success');
+          removeCard(reportId);
+        } else {
+          showToast(data.error || '{{ _("An error occurred.") }}', 'error');
+          btn.disabled = false;
+          btn.innerHTML = originalHtml;
+        }
+      })
+      .catch(function(e) {
+        showToast('{{ _("Network error. Please try again.") }}', 'error');
+        btn.disabled = false;
+        btn.innerHTML = originalHtml;
+      });
+  }
+
+  // ── Event Delegation ──
+  document.addEventListener('click', function(e) {
+    var target = e.target.closest('button');
+    if (!target) return;
+
+    // Approve / Re-approve
+    if (target.classList.contains('ihpix-rev-btn-approve')) {
+      var id = target.getAttribute('data-id');
+      var title = target.getAttribute('data-title');
+      if (!confirm('{{ _("Approve this report?") }}\n\n' + title)) return;
+      var origHtml = target.innerHTML;
+      target.disabled = true;
+      target.innerHTML = '<i class="fa fa-spinner fa-spin"></i> {{ _("Approving...") }}';
+      postReview(id, 'approve', null, target, origHtml);
+    }
+
+    // Show Reject Form
+    if (target.classList.contains('ihpix-rev-btn-reject')) {
+      var id = target.getAttribute('data-id');
+      var form = document.getElementById('ihpix-rev-reject-form-' + id);
+      if (form) {
+        form.style.display = 'block';
+        target.style.display = 'none';
+        form.querySelector('textarea').focus();
+      }
+    }
+
+    // Cancel Reject
+    if (target.classList.contains('ihpix-rev-btn-cancel-reject')) {
+      var id = target.getAttribute('data-id');
+      var form = document.getElementById('ihpix-rev-reject-form-' + id);
+      if (form) {
+        form.style.display = 'none';
+        var card = document.getElementById('ihpix-rev-card-' + id);
+        if (card) {
+          var rejectBtn = card.querySelector('.ihpix-rev-btn-reject');
+          if (rejectBtn) rejectBtn.style.display = '';
+        }
+      }
+    }
+
+    // Confirm Reject
+    if (target.classList.contains('ihpix-rev-btn-confirm-reject')) {
+      var id = target.getAttribute('data-id');
+      var notes = document.getElementById('ihpix-rev-notes-' + id);
+      var notesValue = notes ? notes.value.trim() : '';
+      if (!notesValue) {
+        notes.style.borderColor = '#dc3545';
+        notes.focus();
+        return;
+      }
+      var origHtml = target.innerHTML;
+      target.disabled = true;
+      target.innerHTML = '<i class="fa fa-spinner fa-spin"></i> {{ _("Rejecting...") }}';
+      postReview(id, 'reject', notesValue, target, origHtml);
+    }
+  });
+
+})();
+</script>
+
+{% endblock %}

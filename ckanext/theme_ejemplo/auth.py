@@ -231,3 +231,23 @@ def ihpix_activity_update(context, data_dict):
 
 def ihpix_activity_delete(context, data_dict):
     return _sysadmin_only(context, data_dict)
+
+
+# ── IHP-IX Reporting & Dashboard Auth ──────────────────────────────────────
+
+def ihpix_report_submit(context, data_dict):
+    """Any logged-in user can submit a report."""
+    user = context.get('user')
+    if not user:
+        return {'success': False,
+                'msg': 'You must be logged in to submit a report'}
+    return {'success': True}
+
+
+def ihpix_report_review(context, data_dict):
+    return _sysadmin_only(context, data_dict)
+
+
+def ihpix_dashboard_stats(context, data_dict):
+    """Public read access to dashboard statistics."""
+    return {'success': True}

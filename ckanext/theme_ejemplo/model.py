@@ -825,10 +825,16 @@ class IhpixActivity(model.DomainObject):
 
     STATUS_DRAFT = u'draft'
     STATUS_PUBLISHED = u'published'
+    STATUS_PENDING = u'pending'
+    STATUS_REJECTED = u'rejected'
+    VALID_STATUSES = (STATUS_DRAFT, STATUS_PUBLISHED, STATUS_PENDING,
+                      STATUS_REJECTED)
 
     def __init__(self, title, priority_area, description=u'', output=u'',
                  country=u'', institution=u'', link=u'', image_url=u'',
-                 status=u'published', reported_by=u'', reported_date=None):
+                 status=u'published', reported_by=u'', reported_date=None,
+                 contact_name=u'', contact_email=u'',
+                 start_date=None, end_date=None):
         self.id = str(uuid.uuid4())
         self.title = title
         self.priority_area = priority_area
@@ -841,6 +847,13 @@ class IhpixActivity(model.DomainObject):
         self.status = status
         self.reported_by = reported_by
         self.reported_date = reported_date
+        self.contact_name = contact_name
+        self.contact_email = contact_email
+        self.start_date = start_date
+        self.end_date = end_date
+        self.review_notes = u''
+        self.reviewed_by = u''
+        self.reviewed_at = None
         self.created_at = datetime.datetime.utcnow()
         self.updated_at = datetime.datetime.utcnow()
 
@@ -891,6 +904,16 @@ class IhpixActivity(model.DomainObject):
         return results, total
 
     @classmethod
+    def get_pending(cls, limit=100, offset=0):
+        """Return pending submissions for admin review."""
+        q = meta.Session.query(cls).filter(
+            cls.status.in_([cls.STATUS_PENDING, cls.STATUS_REJECTED])
+        )
+        total = q.count()
+        results = q.order_by(cls.created_at.desc()).offset(offset).limit(limit).all()
+        return results, total
+
+    @classmethod
     def get_facets(cls):
         """Return facet counts for priority_area and output (published only)."""
         from sqlalchemy import func
@@ -921,6 +944,95 @@ class IhpixActivity(model.DomainObject):
             },
         }
 
+    @classmethod
+    def get_stats(cls):
+        """Aggregated statistics for the dashboard."""
+        from sqlalchemy import func, distinct
+        base = meta.Session.query(cls).filter(
+            cls.status == cls.STATUS_PUBLISHED
+        )
+        total = base.count()
+        countries = meta.Session.query(
+            func.count(distinct(cls.country))
+        ).filter(
+            cls.status == cls.STATUS_PUBLISHED,
+            cls.country != u'',
+            cls.country != None  # noqa: E711
+        ).scalar() or 0
+        institutions = meta.Session.query(
+            func.count(distinct(cls.institution))
+        ).filter(
+            cls.status == cls.STATUS_PUBLISHED,
+            cls.institution != u'',
+            cls.institution != None  # noqa: E711
+        ).scalar() or 0
+        pending = meta.Session.query(cls).filter(
+            cls.status == cls.STATUS_PENDING
+        ).count()
+
+        pa_counts = meta.Session.query(
+            cls.priority_area, func.count(cls.id)
+        ).filter(
+            cls.status == cls.STATUS_PUBLISHED
+        ).group_by(cls.priority_area).all()
+
+        output_counts = meta.Session.query(
+            cls.output, func.count(cls.id)
+        ).filter(
+            cls.status == cls.STATUS_PUBLISHED,
+            cls.output != u'',
+            cls.output != None  # noqa: E711
+        ).group_by(cls.output).order_by(func.count(cls.id).desc()).all()
+
+        return {
+            'total_activities': total,
+            'total_countries': countries,
+            'total_institutions': institutions,
+            'pending_reports': pending,
+            'by_priority_area': [
+                {'name': pa, 'count': c} for pa, c in pa_counts
+            ],
+            'by_output': [
+                {'name': out or 'Unspecified', 'count': c}
+                for out, c in output_counts
+            ],
+        }
+
+    @classmethod
+    def get_timeline(cls, priority_area=None):
+        """Monthly activity counts for timeline chart."""
+        from sqlalchemy import func, extract
+        q = meta.Session.query(
+            extract('year', cls.created_at).label('year'),
+            extract('month', cls.created_at).label('month'),
+            func.count(cls.id).label('count')
+        ).filter(cls.status == cls.STATUS_PUBLISHED)
+        if priority_area:
+            q = q.filter(cls.priority_area == priority_area)
+        q = q.group_by('year', 'month').order_by('year', 'month')
+        return [
+            {'year': int(r.year), 'month': int(r.month), 'count': r.count}
+            for r in q.all()
+        ]
+
+    @classmethod
+    def get_country_stats(cls, priority_area=None, limit=20):
+        """Top countries by activity count."""
+        from sqlalchemy import func
+        q = meta.Session.query(
+            cls.country, func.count(cls.id).label('count')
+        ).filter(
+            cls.status == cls.STATUS_PUBLISHED,
+            cls.country != u'',
+            cls.country != None  # noqa: E711
+        )
+        if priority_area:
+            q = q.filter(cls.priority_area == priority_area)
+        q = q.group_by(cls.country).order_by(func.count(cls.id).desc())
+        if limit:
+            q = q.limit(limit)
+        return [{'name': r.country, 'count': r.count} for r in q.all()]
+
     def as_dict(self):
         return {
             'id': self.id,
@@ -935,6 +1047,13 @@ class IhpixActivity(model.DomainObject):
             'status': self.status,
             'reported_by': self.reported_by,
             'reported_date': self.reported_date.isoformat() if self.reported_date else None,
+            'contact_name': self.contact_name,
+            'contact_email': self.contact_email,
+            'start_date': self.start_date.isoformat() if self.start_date else None,
+            'end_date': self.end_date.isoformat() if self.end_date else None,
+            'review_notes': self.review_notes,
+            'reviewed_by': self.reviewed_by,
+            'reviewed_at': self.reviewed_at.isoformat() if self.reviewed_at else None,
             'created_at': self.created_at.isoformat() if self.created_at else None,
             'updated_at': self.updated_at.isoformat() if self.updated_at else None,
         }
@@ -959,6 +1078,13 @@ def define_ihpix_activity_table():
         Column('status', UnicodeText, default=u'published'),
         Column('reported_by', UnicodeText, default=u''),
         Column('reported_date', Date, nullable=True),
+        Column('contact_name', UnicodeText, default=u''),
+        Column('contact_email', UnicodeText, default=u''),
+        Column('start_date', Date, nullable=True),
+        Column('end_date', Date, nullable=True),
+        Column('review_notes', UnicodeText, default=u''),
+        Column('reviewed_by', UnicodeText, default=u''),
+        Column('reviewed_at', DateTime, nullable=True),
         Column('created_at', DateTime, default=datetime.datetime.utcnow),
         Column('updated_at', DateTime, default=datetime.datetime.utcnow),
     )
@@ -970,7 +1096,7 @@ def define_ihpix_activity_table():
 
 
 def init_ihpix_activities_db():
-    """Create the ihpix_activity table if it doesn't exist."""
+    """Create the ihpix_activity table if it doesn't exist, then migrate."""
     if ihpix_activity_table is None:
         define_ihpix_activity_table()
 
@@ -980,4 +1106,36 @@ def init_ihpix_activities_db():
         ihpix_activity_table.create(meta.engine)
         log.info(u'ihpix_activity table created')
     else:
+        _migrate_ihpix_activities(inspector)
         log.debug(u'ihpix_activity table already exists')
+
+
+def _migrate_ihpix_activities(inspector):
+    """Add new columns to existing ihpix_activity table if missing."""
+    existing = {col['name'] for col in inspector.get_columns('ihpix_activity')}
+    new_columns = [
+        ('contact_name', "UnicodeText DEFAULT ''"),
+        ('contact_email', "UnicodeText DEFAULT ''"),
+        ('start_date', 'Date'),
+        ('end_date', 'Date'),
+        ('review_notes', "UnicodeText DEFAULT ''"),
+        ('reviewed_by', "UnicodeText DEFAULT ''"),
+        ('reviewed_at', 'TIMESTAMP'),
+    ]
+    conn = meta.engine.connect()
+    for col_name, col_type in new_columns:
+        if col_name not in existing:
+            try:
+                conn.execute(
+                    'ALTER TABLE ihpix_activity ADD COLUMN {} {}'.format(
+                        col_name, col_type
+                    )
+                )
+                log.info(u'ihpix_activity: added column %s', col_name)
+            except Exception as e:
+                log.warning(u'ihpix_activity: could not add column %s: %s',
+                            col_name, e)
+    try:
+        conn.close()
+    except Exception:
+        pass

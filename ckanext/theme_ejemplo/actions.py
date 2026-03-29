@@ -8,7 +8,11 @@ import ckan.logic as logic
 import ckan.model as model
 from ckan.common import current_user
 from sqlalchemy.orm.attributes import flag_modified
-from ckanext.theme_ejemplo.utils import normalize_user_image_url
+from ckanext.theme_ejemplo.utils import (
+    get_invalid_user_image_upload_reason,
+    is_valid_user_image_reference,
+    normalize_user_image_url,
+)
 
 log = logging.getLogger(__name__)
 
@@ -66,6 +70,27 @@ def user_update(context, data_dict):
                 social_from_form[sk] = val.strip()
     if social_from_form:
         profile_data['social_links'] = json.dumps(social_from_form)
+
+    invalid_image_upload_reason = get_invalid_user_image_upload_reason(
+        data_dict.get('image_upload')
+    )
+    if invalid_image_upload_reason:
+        log.warning(
+            'Rejected invalid profile image upload for user %s: %s',
+            context.get('user'),
+            invalid_image_upload_reason,
+        )
+        raise toolkit.ValidationError({
+            'image_upload': [toolkit._(
+                'Profile picture must be a valid image file. Allowed formats: '
+                'PNG, JPG, JPEG, GIF, WEBP, BMP, TIFF and AVIF.'
+            )]
+        })
+
+    if data_dict.get('image_url') and not is_valid_user_image_reference(
+        data_dict['image_url']
+    ):
+        data_dict['image_url'] = ''
 
     # Call core user_update
     result = logic.action.update.user_update(context, data_dict)
@@ -1590,3 +1615,104 @@ def ihpix_activity_delete(context, data_dict):
     model.Session.delete(activity)
     model.Session.commit()
     return {'success': True}
+
+
+# ── IHP-IX Reporting & Dashboard ────────────────────────────────────────────
+
+def ihpix_report_submit(context, data_dict):
+    """Submit an IHP-IX activity report. Any logged-in user.
+    Creates an activity with status=pending for admin review."""
+    toolkit.check_access('ihpix_report_submit', context, data_dict)
+    init_ihpix_activities_db()
+
+    title = data_dict.get('title', u'').strip()
+    priority_area = data_dict.get('priority_area', u'').strip()
+    if not title:
+        raise toolkit.ValidationError({'title': 'Title is required'})
+    if priority_area not in VALID_PRIORITY_AREAS:
+        raise toolkit.ValidationError(
+            {'priority_area': 'Must be one of: {}'.format(
+                ', '.join(VALID_PRIORITY_AREAS))}
+        )
+
+    import datetime as _dt
+    activity = IhpixActivity(
+        title=title,
+        priority_area=priority_area,
+        description=data_dict.get('description', u'').strip(),
+        output=data_dict.get('output', u'').strip(),
+        country=data_dict.get('country', u'').strip(),
+        institution=data_dict.get('institution', u'').strip(),
+        link=data_dict.get('link', u'').strip(),
+        image_url=data_dict.get('image_url', u''),
+        status=IhpixActivity.STATUS_PENDING,
+        reported_by=context.get('user', u''),
+        contact_name=data_dict.get('contact_name', u'').strip(),
+        contact_email=data_dict.get('contact_email', u'').strip(),
+    )
+
+    # Parse dates
+    for field in ('reported_date', 'start_date', 'end_date'):
+        val = data_dict.get(field, u'').strip()
+        if val:
+            try:
+                setattr(activity, field, _dt.datetime.strptime(val, '%Y-%m-%d').date())
+            except (ValueError, TypeError):
+                raise toolkit.ValidationError(
+                    {field: 'Invalid date format. Use YYYY-MM-DD'}
+                )
+
+    model.Session.add(activity)
+    model.Session.commit()
+    return activity.as_dict()
+
+
+def ihpix_report_review(context, data_dict):
+    """Approve or reject a pending report. Sysadmin only.
+    action: 'approve' → published, 'reject' → rejected."""
+    toolkit.check_access('ihpix_report_review', context, data_dict)
+    init_ihpix_activities_db()
+
+    activity_id = toolkit.get_or_bust(data_dict, 'id')
+    action = data_dict.get('action', u'').strip().lower()
+    if action not in ('approve', 'reject'):
+        raise toolkit.ValidationError(
+            {'action': "Must be 'approve' or 'reject'"}
+        )
+
+    activity = IhpixActivity.get(activity_id)
+    if not activity:
+        raise toolkit.ObjectNotFound('IHP-IX activity not found')
+
+    import datetime as _dt
+    if action == 'approve':
+        activity.status = IhpixActivity.STATUS_PUBLISHED
+    else:
+        activity.status = IhpixActivity.STATUS_REJECTED
+
+    activity.review_notes = data_dict.get('review_notes', u'').strip()
+    activity.reviewed_by = context.get('user', u'')
+    activity.reviewed_at = _dt.datetime.utcnow()
+    activity.updated_at = _dt.datetime.utcnow()
+
+    model.Session.commit()
+    return activity.as_dict()
+
+
+@toolkit.side_effect_free
+def ihpix_dashboard_stats(context, data_dict):
+    """Aggregated statistics for IHP-IX dashboard. Public access."""
+    toolkit.check_access('ihpix_dashboard_stats', context, data_dict)
+    init_ihpix_activities_db()
+
+    pa_filter = data_dict.get('priority_area', u'').strip() or None
+
+    stats = IhpixActivity.get_stats()
+    timeline = IhpixActivity.get_timeline(priority_area=pa_filter)
+    country_stats = IhpixActivity.get_country_stats(
+        priority_area=pa_filter, limit=20
+    )
+
+    stats['timeline'] = timeline
+    stats['by_country'] = country_stats
+    return stats
