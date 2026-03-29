@@ -16,12 +16,17 @@
 {% set profile = user.get('profile', {}) %}
 {% set social = user.get('social_links', {}) %}
 {% set expertise = user.get('expertise_areas', []) %}
+{% set safe_user_image_url = h.theme_ejemplo_normalize_user_image_url(user.image_url) %}
 
 <div class="user-profile-card">
   {# Avatar #}
   <div class="user-profile-avatar-section">
     <div class="user-profile-avatar">
-      {{ h.user_image(user.id, size=270) }}
+      {% if safe_user_image_url %}
+        <img src="{{ safe_user_image_url }}" alt="{{ user.display_name }}">
+      {% else %}
+        {{ h.gravatar(user.email_hash if user.email_hash else '', size=270) }}
+      {% endif %}
     </div>
   </div>
 

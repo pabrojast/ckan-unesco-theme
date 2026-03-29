@@ -17,7 +17,8 @@
         {{ form.markdown('about', label=_('About'), id='field-about', value=data.about, error=errors.about, placeholder=_('A little information about yourself')) }}
 
         {% set is_upload = data.image_url and not data.image_url.startswith('http') %}
-        {% set is_url = data.image_url and data.image_url.startswith('http') %}
+        {% set safe_image_url = h.theme_ejemplo_normalize_user_image_url(data.image_url) %}
+        {% set image_error = errors.image_upload if errors.image_upload else errors.image_url %}
 
         {# Drag & drop profile picture upload #}
         <div class="form-group profile-image-upload">
@@ -25,19 +26,20 @@
           <div class="controls">
             <div class="profile-dropzone" id="profile-dropzone">
               <div class="profile-dropzone-preview" id="dropzone-preview"
-                   {% if data.image_url %}style="display:block"{% endif %}>
-                {% if data.image_url %}
-                  <img src="{{ data.image_url if is_url else h.url_for_static('uploads/user/' + data.image_url) }}" alt="">
+                   {% if safe_image_url %}style="display:block"{% endif %}>
+                {% if safe_image_url %}
+                  <img src="{{ safe_image_url }}" alt="">
                 {% endif %}
               </div>
               <div class="profile-dropzone-placeholder" id="dropzone-placeholder"
-                   {% if data.image_url %}style="display:none"{% endif %}>
+                   {% if safe_image_url %}style="display:none"{% endif %}>
                 <i class="fa fa-cloud-upload-alt"></i>
                 <p>{{ _('Drag & drop your image here') }}</p>
                 <span>{{ _('or click to browse') }}</span>
               </div>
               <input type="file" name="image_upload" id="field-image-upload"
-                     accept="image/*" class="profile-dropzone-input">
+                     accept=".png,.jpg,.jpeg,.jpe,.jfif,.gif,.webp,.bmp,.tif,.tiff,.avif,image/png,image/jpeg,image/gif,image/webp,image/bmp,image/tiff,image/avif"
+                     class="profile-dropzone-input">
             </div>
             {% if is_upload %}
               <label class="profile-dropzone-clear">
@@ -45,10 +47,12 @@
                 {{ _('Remove current image') }}
               </label>
             {% endif %}
-            <input type="hidden" name="image_url" value="{{ data.image_url or '' }}">
-            {% if errors.image_url %}
-              <span class="error-block">{{ errors.image_url }}</span>
-            {% endif %}
+            <input type="hidden" name="image_url" value="{{ data.image_url if safe_image_url else '' }}">
+            <span class="error-block" id="profile-image-error" {% if not image_error %}style="display:none"{% endif %}>
+              {% if image_error %}
+                {{ image_error|join(', ') if image_error is iterable and image_error is not string else image_error }}
+              {% endif %}
+            </span>
           </div>
         </div>
 
@@ -118,7 +122,47 @@
             var input = document.getElementById('field-image-upload');
             var preview = document.getElementById('dropzone-preview');
             var placeholder = document.getElementById('dropzone-placeholder');
+            var errorBlock = document.getElementById('profile-image-error');
+            var allowedMimeTypes = [
+              'image/png',
+              'image/jpeg',
+              'image/jpg',
+              'image/pjpeg',
+              'image/gif',
+              'image/webp',
+              'image/bmp',
+              'image/x-ms-bmp',
+              'image/tiff',
+              'image/avif'
+            ];
+            var allowedExtensions = ['png', 'jpg', 'jpeg', 'jpe', 'jfif', 'gif', 'webp', 'bmp', 'tif', 'tiff', 'avif'];
+            var invalidImageMessage = {{ _("Please upload a valid image file. Allowed formats: PNG, JPG, JPEG, GIF, WEBP, BMP, TIFF and AVIF.") | tojson }};
             if (!dropzone) return;
+
+            function getFileExtension(filename) {
+              var parts = (filename || '').toLowerCase().split('.');
+              return parts.length > 1 ? parts.pop() : '';
+            }
+
+            function showImageError(message) {
+              if (!errorBlock) return;
+              errorBlock.textContent = message;
+              errorBlock.style.display = 'block';
+            }
+
+            function clearImageError() {
+              if (!errorBlock) return;
+              errorBlock.textContent = '';
+              errorBlock.style.display = 'none';
+            }
+
+            function isAllowedImage(file) {
+              var extension = getFileExtension(file && file.name);
+              var mimeType = ((file && file.type) || '').toLowerCase();
+              var hasAllowedExtension = allowedExtensions.indexOf(extension) !== -1;
+              var hasAllowedMimeType = !mimeType || allowedMimeTypes.indexOf(mimeType) !== -1;
+              return hasAllowedExtension && hasAllowedMimeType;
+            }
 
             ['dragenter', 'dragover'].forEach(function(evt) {
               dropzone.addEventListener(evt, function(e) {
@@ -135,15 +179,25 @@
 
             dropzone.addEventListener('drop', function(e) {
               var files = e.dataTransfer.files;
-              if (files.length && files[0].type.startsWith('image/')) {
+              if (files.length && isAllowedImage(files[0])) {
                 input.files = files;
+                clearImageError();
                 showPreview(files[0]);
+              } else if (files.length) {
+                input.value = '';
+                showImageError(invalidImageMessage);
               }
             });
 
             input.addEventListener('change', function() {
               if (input.files.length) {
-                showPreview(input.files[0]);
+                if (isAllowedImage(input.files[0])) {
+                  clearImageError();
+                  showPreview(input.files[0]);
+                } else {
+                  input.value = '';
+                  showImageError(invalidImageMessage);
+                }
               }
             });
 
