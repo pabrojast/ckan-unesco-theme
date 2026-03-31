@@ -2288,6 +2288,41 @@ span.format-label[data-format="css"] {
   color: #0969da !important;
 }
 
+/* ===== PAGE PRIMARY ACTION DROPDOWN FIXES ===== */
+/* Keep edit-page action dropdowns visible outside the rounded module card */
+
+html body .primary > .module:has(.page_primary_action .dropdown-menu),
+html body .primary > article.module:has(.page_primary_action .dropdown-menu),
+html body .primary > section.module:has(.page_primary_action .dropdown-menu) {
+  overflow: visible !important;
+}
+
+html body .page_primary_action,
+html body .page_primary_action .dropdown,
+html body .page_primary_action .btn-group {
+  position: relative !important;
+  overflow: visible !important;
+}
+
+html body .page_primary_action {
+  z-index: 1100 !important;
+}
+
+html body .page_primary_action .dropdown,
+html body .page_primary_action .btn-group {
+  z-index: 1110 !important;
+}
+
+html body .page_primary_action .dropdown-menu,
+html body .page_primary_action .btn-group .dropdown-menu {
+  position: absolute !important;
+  top: calc(100% + 6px) !important;
+  left: 0 !important;
+  right: auto !important;
+  z-index: 1120 !important;
+  margin-top: 0 !important;
+}
+
 .download-links .btn-group .dropdown-menu li a:active {
   background-color: #e1e4e8 !important;
 }
