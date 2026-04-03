@@ -533,18 +533,37 @@ def get_member_state_title(slug):
 def get_user_organizations(user_id):
     """Return the list of active organisations a user belongs to.
 
-    Each entry is a dict with ``name``, ``title`` and ``image_url``.
+    Each entry is a dict with ``name``, ``title``, ``image_url`` and
+    ``capacity`` (member/editor/admin).
     """
     try:
         user_obj = model.User.get(user_id)
         if not user_obj:
             return []
+
+        # Build a map of org_id → capacity from member_list calls
+        capacity_map = {}
+        for g in user_obj.get_groups('organization'):
+            try:
+                members = toolkit.get_action('member_list')(
+                    {'ignore_auth': True},
+                    {'id': g.id, 'object_type': 'user'},
+                )
+                for uid, _otype, cap in members:
+                    if uid == user_obj.id:
+                        capacity_map[g.id] = cap
+                        break
+            except Exception:
+                pass
+
         orgs = []
         for g in user_obj.get_groups('organization'):
             orgs.append({
+                'id': g.id,
                 'name': g.name,
                 'title': g.title or g.name,
                 'image_url': g.image_url or '',
+                'capacity': capacity_map.get(g.id, 'member'),
             })
         return orgs
     except Exception:

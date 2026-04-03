@@ -223,22 +223,46 @@
 
         {{ form.input('institution', label=_('Institution / Organization'), id='field-institution', value=data.get('institution', ''), placeholder=_('eg. UNESCO-IHP'), classes=['control-medium']) }}
 
-        {# Organizations — read-only display of CKAN org memberships #}
+        {# Organizations — show role dropdowns for sysadmin, badges for everyone else #}
         {% set user_orgs = h.get_user_organizations(data.get('id', '')) %}
         {% if user_orgs %}
         <div class="form-group control-medium">
           <label class="control-label"><i class="fa fa-sitemap"></i> {{ _('Organizations') }}</label>
           <div class="controls">
-            <div class="user-orgs-display">
-              {% for org in user_orgs %}
-                <a href="{{ h.url_for('organization.read', id=org.name) }}" class="user-org-badge" title="{{ org.title }}">
-                  <i class="fa fa-building"></i> {{ org.title }}
-                </a>
-              {% endfor %}
-            </div>
+            {% if is_sysadmin and current_user.name != data.name %}
+              {# Sysadmin editing another user: show role dropdowns #}
+              <div class="user-orgs-manage">
+                {% for org in user_orgs %}
+                  <div class="user-org-role-row">
+                    <a href="{{ h.url_for('organization.read', id=org.name) }}" class="user-org-badge" title="{{ org.title }}">
+                      <i class="fa fa-building"></i> {{ org.title }}
+                    </a>
+                    <select name="org_role_{{ org.id }}" class="form-control user-org-role-select">
+                      <option value="member" {{ 'selected' if org.capacity == 'member' }}>{{ _('Member') }}</option>
+                      <option value="editor" {{ 'selected' if org.capacity == 'editor' }}>{{ _('Editor') }}</option>
+                      <option value="admin" {{ 'selected' if org.capacity == 'admin' }}>{{ _('Admin') }}</option>
+                    </select>
+                  </div>
+                {% endfor %}
+              </div>
+            {% else %}
+              {# Regular view: read-only badges with role label #}
+              <div class="user-orgs-display">
+                {% for org in user_orgs %}
+                  <a href="{{ h.url_for('organization.read', id=org.name) }}" class="user-org-badge" title="{{ org.title }}">
+                    <i class="fa fa-building"></i> {{ org.title }}
+                    <span class="user-org-capacity-label">{{ org.capacity|capitalize }}</span>
+                  </a>
+                {% endfor %}
+              </div>
+            {% endif %}
             <span class="info-block info-inline">
               <i class="fa fa-info-circle"></i>
-              {{ _('Organization membership is managed through organization pages.') }}
+              {% if is_sysadmin and current_user.name != data.name %}
+                {{ _('Change the role of this user in each organization.') }}
+              {% else %}
+                {{ _('Organization membership is managed through organization pages.') }}
+              {% endif %}
             </span>
           </div>
         </div>

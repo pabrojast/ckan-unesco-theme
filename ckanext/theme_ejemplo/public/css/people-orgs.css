@@ -1387,3 +1387,44 @@ a.person-country-chip:hover {
   text-decoration: none;
   opacity: 0.85;
 }
+
+/* ── Sysadmin: org role management rows ────────────────────────────── */
+.user-orgs-manage {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 0.35rem;
+}
+.user-org-role-row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+}
+.user-org-role-row .user-org-badge {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.user-org-role-select {
+  width: 120px !important;
+  flex: 0 0 120px;
+  font-size: 0.82rem;
+  padding: 0.3rem 0.5rem;
+  height: auto;
+  border-radius: 8px;
+}
+.user-org-capacity-label {
+  display: inline-block;
+  font-size: 0.68rem;
+  font-weight: 600;
+  background: rgba(255,255,255,0.5);
+  padding: 0.05rem 0.35rem;
+  border-radius: 6px;
+  margin-left: 0.25rem;
+  text-transform: capitalize;
+}
+.user-org-badge:hover .user-org-capacity-label {
+  background: rgba(255,255,255,0.3);
+}

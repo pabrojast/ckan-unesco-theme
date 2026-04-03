@@ -50,16 +50,33 @@ def user_show(context, data_dict):
     country_slug = result.get('country', '')
     result['country_display'] = get_member_state_title(country_slug) if country_slug else ''
 
-    # Expose user's CKAN organizations
+    # Expose user's CKAN organizations (with capacity/role)
     try:
         user_obj2 = user_obj or model.User.get(result['id'])
         if user_obj2:
+            # Build capacity map
+            capacity_map = {}
+            for g in user_obj2.get_groups('organization'):
+                try:
+                    members = toolkit.get_action('member_list')(
+                        {'ignore_auth': True},
+                        {'id': g.id, 'object_type': 'user'},
+                    )
+                    for uid, _otype, cap in members:
+                        if uid == user_obj2.id:
+                            capacity_map[g.id] = cap
+                            break
+                except Exception:
+                    pass
+
             orgs = []
             for g in user_obj2.get_groups('organization'):
                 orgs.append({
+                    'id': g.id,
                     'name': g.name,
                     'title': g.title or g.name,
                     'image_url': g.image_url or '',
+                    'capacity': capacity_map.get(g.id, 'member'),
                 })
             result['organizations'] = orgs
         else:
@@ -81,6 +98,15 @@ def user_update(context, data_dict):
                 areas = [a.strip() for a in val.split(',') if a.strip()]
                 val = json.dumps(areas)
             profile_data[field] = val
+
+    # Extract org role changes (sysadmin only, keys like org_role_<org_id>)
+    org_role_changes = {}
+    keys_to_pop = [k for k in data_dict if k.startswith('org_role_')]
+    for key in keys_to_pop:
+        org_id = key[len('org_role_'):]
+        new_capacity = data_dict.pop(key)
+        if new_capacity in ('member', 'editor', 'admin'):
+            org_role_changes[org_id] = new_capacity
 
     # Assemble social_links from individual form fields (social_links_linkedin, etc.)
     social_keys = ['linkedin', 'twitter', 'researchgate', 'github', 'website']
@@ -151,6 +177,13 @@ def user_update(context, data_dict):
                 result[field] = val
             result['profile'] = extras.get('theme_ejemplo', {})
 
+    # Apply org role changes (sysadmin only)
+    if org_role_changes:
+        calling_user = context.get('user')
+        caller = model.User.get(calling_user) if calling_user else None
+        if caller and caller.sysadmin:
+            _apply_org_role_changes(result['id'], org_role_changes)
+
     return result
 
 
@@ -210,6 +243,38 @@ def _sync_member_state_membership(user_id, old_group_name, new_group_name):
             log.warning(
                 'Could not add user %s to group %s: %s',
                 user_id, new_group_name, e,
+            )
+
+
+def _apply_org_role_changes(user_id, org_role_changes):
+    """Update the user's capacity in each organisation.
+
+    ``org_role_changes`` is a dict mapping organisation **id** to the
+    desired capacity (member / editor / admin).  Uses ``member_create``
+    which upserts the membership record.
+    """
+    site_user = toolkit.get_action('get_site_user')({'ignore_auth': True}, {})
+    admin_context = {'user': site_user['name'], 'ignore_auth': True}
+
+    for org_id, new_capacity in org_role_changes.items():
+        try:
+            toolkit.get_action('member_create')(
+                dict(admin_context),
+                {
+                    'id': org_id,
+                    'object': user_id,
+                    'object_type': 'user',
+                    'capacity': new_capacity,
+                },
+            )
+            log.info(
+                'Updated user %s role in org %s to %s',
+                user_id, org_id, new_capacity,
+            )
+        except Exception as e:
+            log.warning(
+                'Could not update user %s role in org %s: %s',
+                user_id, org_id, e,
             )
 
 
