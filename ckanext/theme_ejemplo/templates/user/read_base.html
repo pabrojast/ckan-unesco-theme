@@ -40,7 +40,20 @@
       <p class="user-profile-institution"><i class="fa fa-building"></i> {{ profile.institution }}</p>
     {% endif %}
     {% if profile.get('country') %}
-      <span class="user-profile-country-chip"><i class="fa fa-globe"></i> {{ profile.country }}</span>
+      <a href="{{ h.url_for('group.read', id=profile.country) }}" class="user-profile-country-chip" title="{{ h.get_member_state_title(profile.country) }}">
+        <i class="fa fa-globe"></i> {{ h.get_member_state_title(profile.country) }}
+      </a>
+    {% endif %}
+    {# Organizations #}
+    {% set user_orgs = user.get('organizations', h.get_user_organizations(user.id)) %}
+    {% if user_orgs %}
+    <div class="user-profile-orgs">
+      {% for org in user_orgs %}
+        <a href="{{ h.url_for('organization.read', id=org.name) }}" class="user-org-badge" title="{{ org.title }}">
+          <i class="fa fa-sitemap"></i> {{ org.title }}
+        </a>
+      {% endfor %}
+    </div>
     {% endif %}
   </div>
 

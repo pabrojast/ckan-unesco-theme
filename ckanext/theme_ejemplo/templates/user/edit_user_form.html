@@ -223,13 +223,34 @@
 
         {{ form.input('institution', label=_('Institution / Organization'), id='field-institution', value=data.get('institution', ''), placeholder=_('eg. UNESCO-IHP'), classes=['control-medium']) }}
 
+        {# Organizations — read-only display of CKAN org memberships #}
+        {% set user_orgs = h.get_user_organizations(data.get('id', '')) %}
+        {% if user_orgs %}
         <div class="form-group control-medium">
-          <label class="control-label" for="field-country">{{ _('Country') }}</label>
+          <label class="control-label"><i class="fa fa-sitemap"></i> {{ _('Organizations') }}</label>
+          <div class="controls">
+            <div class="user-orgs-display">
+              {% for org in user_orgs %}
+                <a href="{{ h.url_for('organization.read', id=org.name) }}" class="user-org-badge" title="{{ org.title }}">
+                  <i class="fa fa-building"></i> {{ org.title }}
+                </a>
+              {% endfor %}
+            </div>
+            <span class="info-block info-inline">
+              <i class="fa fa-info-circle"></i>
+              {{ _('Organization membership is managed through organization pages.') }}
+            </span>
+          </div>
+        </div>
+        {% endif %}
+
+        <div class="form-group control-medium">
+          <label class="control-label" for="field-country">{{ _('Country (Member State)') }}</label>
           <div class="controls">
             <select id="field-country" name="country" class="form-control">
-              <option value="">{{ _('Select a country...') }}</option>
-              {% for c in h.get_country_list() %}
-                <option value="{{ c }}" {{ 'selected' if data.get('country', '') == c }}>{{ c }}</option>
+              <option value="">{{ _('Select a member state...') }}</option>
+              {% for ms_name, ms_title in h.get_member_states_groups_list() %}
+                <option value="{{ ms_name }}" {{ 'selected' if data.get('country', '') == ms_name }}>{{ ms_title }}</option>
               {% endfor %}
             </select>
           </div>

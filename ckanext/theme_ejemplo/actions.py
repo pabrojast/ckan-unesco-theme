@@ -13,6 +13,7 @@ from ckanext.theme_ejemplo.utils import (
     is_valid_user_image_reference,
     normalize_user_image_url,
 )
+from ckanext.theme_ejemplo.helpers import get_member_state_title
 
 log = logging.getLogger(__name__)
 
@@ -44,6 +45,28 @@ def user_show(context, data_dict):
 
     # Always expose plugin_extras.theme_ejemplo as 'profile' for convenience
     result['profile'] = profile
+
+    # Resolve member state slug to display title
+    country_slug = result.get('country', '')
+    result['country_display'] = get_member_state_title(country_slug) if country_slug else ''
+
+    # Expose user's CKAN organizations
+    try:
+        user_obj2 = user_obj or model.User.get(result['id'])
+        if user_obj2:
+            orgs = []
+            for g in user_obj2.get_groups('organization'):
+                orgs.append({
+                    'name': g.name,
+                    'title': g.title or g.name,
+                    'image_url': g.image_url or '',
+                })
+            result['organizations'] = orgs
+        else:
+            result['organizations'] = []
+    except Exception:
+        result['organizations'] = []
+
     return result
 
 
@@ -194,8 +217,9 @@ def people_list(context, data_dict):
 
         orgs = []
         for g in user_obj.get_groups('organization'):
-            orgs.append({'name': g.name, 'title': g.title or g.name})
+            orgs.append({'name': g.name, 'title': g.title or g.name, 'image_url': g.image_url or ''})
 
+        country_val = profile.get('country', '')
         results.append({
             'id': user_obj.id,
             'name': user_obj.name,
@@ -203,7 +227,8 @@ def people_list(context, data_dict):
             'image_url': normalize_user_image_url(user_obj.image_url),
             'job_title': profile.get('job_title', ''),
             'institution': profile.get('institution', ''),
-            'country': profile.get('country', ''),
+            'country': country_val,
+            'country_display': get_member_state_title(country_val) if country_val else '',
             'orcid': profile.get('orcid', ''),
             'expertise_areas': expertise_areas,
             'social_links': social_links,
@@ -253,6 +278,7 @@ def organization_people(context, data_dict):
                 except (json.JSONDecodeError, TypeError):
                     expertise_areas = []
 
+            country_val = profile.get('country', '')
             members.append({
                 'id': user_obj.id,
                 'name': user_obj.name,
@@ -260,7 +286,8 @@ def organization_people(context, data_dict):
                 'image_url': normalize_user_image_url(user_obj.image_url),
                 'job_title': profile.get('job_title', ''),
                 'institution': profile.get('institution', ''),
-                'country': profile.get('country', ''),
+                'country': country_val,
+                'country_display': get_member_state_title(country_val) if country_val else '',
                 'expertise_areas': expertise_areas,
                 'capacity': capacity or 'member',
             })

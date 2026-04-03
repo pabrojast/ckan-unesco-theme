@@ -46,11 +46,11 @@
               </div>
               <div class="col-md-2">
                 <div class="people-filter-group">
-                  <label for="people-search-country"><i class="fa fa-globe"></i> {{ _('Country') }}</label>
+                  <label for="people-search-country"><i class="fa fa-globe"></i> {{ _('Member State') }}</label>
                   <select id="people-search-country" name="country" class="form-control">
-                    <option value="">{{ _('All Countries') }}</option>
-                    {% for c in countries %}
-                      <option value="{{ c }}" {{ 'selected' if country == c }}>{{ c }}</option>
+                    <option value="">{{ _('All Member States') }}</option>
+                    {% for ms_name, ms_title in member_states|default([]) %}
+                      <option value="{{ ms_name }}" {{ 'selected' if country == ms_name }}>{{ ms_title }}</option>
                     {% endfor %}
                   </select>
                 </div>

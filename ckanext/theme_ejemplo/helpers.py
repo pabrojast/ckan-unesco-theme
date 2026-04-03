@@ -511,6 +511,46 @@ def get_country_list():
     ]
 
 
+def get_member_state_title(slug):
+    """Resolve a member state slug (group name) to its display title.
+
+    Uses the cached member states list from the plugin so no extra DB query
+    is needed.  Falls back to a title-cased slug when the group is not found.
+    """
+    if not slug:
+        return ''
+    try:
+        ms_list = toolkit.h.get_member_states_groups_list()
+        for name, title in ms_list:
+            if name == slug:
+                return title
+    except Exception:
+        pass
+    # Fallback: prettify the slug
+    return slug.replace('-', ' ').title()
+
+
+def get_user_organizations(user_id):
+    """Return the list of active organisations a user belongs to.
+
+    Each entry is a dict with ``name``, ``title`` and ``image_url``.
+    """
+    try:
+        user_obj = model.User.get(user_id)
+        if not user_obj:
+            return []
+        orgs = []
+        for g in user_obj.get_groups('organization'):
+            orgs.append({
+                'name': g.name,
+                'title': g.title or g.name,
+                'image_url': g.image_url or '',
+            })
+        return orgs
+    except Exception:
+        return []
+
+
 def is_org_admin(org_id):
     """Check if the current user is an admin of the given organization."""
     try:

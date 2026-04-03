@@ -29,10 +29,17 @@
         <p class="person-institution"><i class="fa fa-building"></i> {{ person.institution }}</p>
       {% endif %}
 
-      {# Country chip #}
-      {% if person.country %}
+      {# Country chip — links to member state page #}
+      {% set country_display = person.country_display|default(person.country) %}
+      {% if country_display %}
       <div class="person-chips">
-        <span class="person-country-chip"><i class="fa fa-globe"></i> {{ person.country }}</span>
+        {% if person.country %}
+          <a href="{{ h.url_for('group.read', id=person.country) }}" class="person-country-chip" title="{{ country_display }}">
+            <i class="fa fa-globe"></i> {{ country_display }}
+          </a>
+        {% else %}
+          <span class="person-country-chip"><i class="fa fa-globe"></i> {{ country_display }}</span>
+        {% endif %}
       </div>
       {% endif %}
 

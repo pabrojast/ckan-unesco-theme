@@ -1345,3 +1345,45 @@
     gap: 0.25rem;
   }
 }
+
+/* ── User profile form: organization badges ────────────────────────── */
+.user-orgs-display {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-bottom: 0.35rem;
+}
+.user-org-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  font-size: 0.82rem;
+  padding: 0.3rem 0.7rem;
+  background: #f0f6ff;
+  color: var(--unesco-blue, #0072BC);
+  border-radius: 12px;
+  text-decoration: none;
+  border: 1px solid #d0e2f5;
+  transition: all 0.2s ease;
+}
+.user-org-badge:hover {
+  background: var(--unesco-blue, #0072BC);
+  color: #fff;
+  text-decoration: none;
+  border-color: var(--unesco-blue, #0072BC);
+}
+
+.user-profile-orgs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.5rem;
+}
+
+.person-country-chip {
+  text-decoration: none;
+}
+a.person-country-chip:hover {
+  text-decoration: none;
+  opacity: 0.85;
+}

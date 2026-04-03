@@ -883,6 +883,8 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                  'get_org_statistics': helpers.get_org_statistics,
                  'get_org_publications': helpers.get_org_publications,
                  'get_country_list': helpers.get_country_list,
+                 'get_member_state_title': helpers.get_member_state_title,
+                 'get_user_organizations': helpers.get_user_organizations,
                  'is_org_member': helpers.is_org_member,
                  'is_org_admin': helpers.is_org_admin,
                  'theme_ejemplo_normalize_user_image_url': normalize_user_image_url,

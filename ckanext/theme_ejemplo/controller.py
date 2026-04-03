@@ -558,6 +558,12 @@ class MyLogica():
                 from ckanext.theme_ejemplo.helpers import get_country_list
                 countries = get_country_list()
 
+                # Member states list for filter dropdown
+                try:
+                    ms_list = h.get_member_states_groups_list()
+                except Exception:
+                    ms_list = []
+
                 # Build pagination
                 dummy_collection = range(total)
                 pager = h.Page(
@@ -578,6 +584,7 @@ class MyLogica():
                     expertise=expertise,
                     organizations=orgs,
                     countries=countries,
+                    member_states=ms_list,
                     total=total,
                 )
             except Exception as e:
@@ -587,7 +594,7 @@ class MyLogica():
                     people=[],
                     page=h.Page(collection=[], page=1, url=h.pager_url, items_per_page=items_per_page),
                     q=q, country='', organization='', expertise='',
-                    organizations=[], countries=[], total=0,
+                    organizations=[], countries=[], member_states=[], total=0,
                 )
 
         def organization_people(name):
