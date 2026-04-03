@@ -20,9 +20,16 @@
               {% endif %}
             </div>
             <div class="person-card-content">
-              {% if member.country %}
+              {% set member_country_display = member.country_display|default(member.country) %}
+              {% if member_country_display %}
                 <div class="person-chips">
-                  <span class="person-country-chip"><i class="fa fa-globe"></i> {{ member.country }}</span>
+                  {% if member.country %}
+                    <a href="{{ h.url_for('group.read', id=member.country) }}" class="person-country-chip" title="{{ member_country_display }}">
+                      <i class="fa fa-globe"></i> {{ member_country_display }}
+                    </a>
+                  {% else %}
+                    <span class="person-country-chip"><i class="fa fa-globe"></i> {{ member_country_display }}</span>
+                  {% endif %}
                 </div>
               {% endif %}
               <h3 class="person-name">

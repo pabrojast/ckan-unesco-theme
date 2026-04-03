@@ -16,6 +16,7 @@ import time
 import json
 import logging
 from ckanext.theme_ejemplo.utils import normalize_user_image_url
+from ckanext.theme_ejemplo.helpers import get_member_state_title
 
 log = logging.getLogger(__name__)
 group_type = u'group'
@@ -829,6 +830,7 @@ class MyLogica():
                             'job_title': profile.get('job_title', ''),
                             'institution': profile.get('institution', ''),
                             'country': profile.get('country', ''),
+                            'country_display': get_member_state_title(profile.get('country', '')) if profile.get('country') else '',
                             'expertise_areas': expertise_areas,
                             'capacity': capacity or 'member',
                         })

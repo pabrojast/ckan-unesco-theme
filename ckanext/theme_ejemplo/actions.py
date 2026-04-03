@@ -125,10 +125,20 @@ def user_update(context, data_dict):
             extras = user_obj.plugin_extras or {}
             if 'theme_ejemplo' not in extras:
                 extras['theme_ejemplo'] = {}
+
+            old_country = extras['theme_ejemplo'].get('country', '')
+            new_country = profile_data.get('country', old_country)
+
             extras['theme_ejemplo'].update(profile_data)
             user_obj.plugin_extras = extras
             flag_modified(user_obj, 'plugin_extras')
             model.Session.commit()
+
+            # Sync member state group membership
+            if 'country' in profile_data and old_country != new_country:
+                _sync_member_state_membership(
+                    user_obj.id, old_country, new_country
+                )
 
             # Update result with saved profile
             for field in PROFILE_FIELDS:
@@ -142,6 +152,65 @@ def user_update(context, data_dict):
             result['profile'] = extras.get('theme_ejemplo', {})
 
     return result
+
+
+def _sync_member_state_membership(user_id, old_group_name, new_group_name):
+    """Add/remove user from member state CKAN groups when profile country changes.
+
+    This keeps the ``/group/<name>/members`` tab in sync with the profile
+    country field so users who select a member state actually appear listed.
+    """
+    site_user = toolkit.get_action('get_site_user')({'ignore_auth': True}, {})
+    admin_context = {'user': site_user['name'], 'ignore_auth': True}
+
+    # Remove from old member state group
+    if old_group_name:
+        try:
+            old_group = model.Group.get(old_group_name)
+            if old_group and old_group.type == 'group':
+                toolkit.get_action('member_delete')(
+                    dict(admin_context),
+                    {
+                        'id': old_group.id,
+                        'object': user_id,
+                        'object_type': 'user',
+                    },
+                )
+                log.info(
+                    'Removed user %s from member state group %s',
+                    user_id, old_group_name,
+                )
+        except toolkit.ObjectNotFound:
+            pass
+        except Exception as e:
+            log.warning(
+                'Could not remove user %s from group %s: %s',
+                user_id, old_group_name, e,
+            )
+
+    # Add to new member state group
+    if new_group_name:
+        try:
+            new_group = model.Group.get(new_group_name)
+            if new_group and new_group.type == 'group':
+                toolkit.get_action('member_create')(
+                    dict(admin_context),
+                    {
+                        'id': new_group.id,
+                        'object': user_id,
+                        'object_type': 'user',
+                        'capacity': 'member',
+                    },
+                )
+                log.info(
+                    'Added user %s to member state group %s',
+                    user_id, new_group_name,
+                )
+        except Exception as e:
+            log.warning(
+                'Could not add user %s to group %s: %s',
+                user_id, new_group_name, e,
+            )
 
 
 @toolkit.side_effect_free
