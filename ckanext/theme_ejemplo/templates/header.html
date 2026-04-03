@@ -165,9 +165,26 @@
         <li>
           <a href="/blog" alt="Blog">Blog</a>
         </li>
+        {% set _colab_count = h.colab_pending_count() if 'colab_pending_count' in h else 0 %}
+        {% set _tb_count = h.tb_pending_count() if 'tb_pending_count' in h else 0 %}
+        {% if _colab_count %}
         <li>
-          <a href="/colab/admin" alt="Colab Admin">Colab Admin</a>
+          <a href="{{ h.url_for('colab.show_admin') }}" title="{{ _('Pending user approvals') }}" style="position: relative; display: inline-block;">
+            <i class="fa fa-user-plus" aria-hidden="true"></i>
+            <span class="text">{{ _('Users') }}</span>
+            <span style="position: absolute; top: -4px; right: -8px; background: #dc3545; color: #fff; border-radius: 50%; font-size: 10px; min-width: 18px; height: 18px; line-height: 18px; text-align: center; padding: 0 4px; font-weight: 700; box-shadow: 0 1px 3px rgba(0,0,0,0.3);">{{ _colab_count }}</span>
+          </a>
         </li>
+        {% endif %}
+        {% if _tb_count %}
+        <li>
+          <a href="{{ h.url_for('thingsboard.admin_dashboard') }}" title="{{ _('Pending device approvals') }}" style="position: relative; display: inline-block;">
+            <i class="fa fa-microchip" aria-hidden="true"></i>
+            <span class="text">{{ _('Devices') }}</span>
+            <span style="position: absolute; top: -4px; right: -8px; background: #f0ad4e; color: #fff; border-radius: 50%; font-size: 10px; min-width: 18px; height: 18px; line-height: 18px; text-align: center; padding: 0 4px; font-weight: 700; box-shadow: 0 1px 3px rgba(0,0,0,0.3);">{{ _tb_count }}</span>
+          </a>
+        </li>
+        {% endif %}
         <li>
           <a href="/pages" alt="Pages">Pages</a>
         </li>
