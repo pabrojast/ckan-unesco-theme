@@ -1,0 +1,251 @@
+# Módulos
+
+> Detalle de cada módulo Python en `ckanext/theme_ejemplo/`.
+
+---
+
+## plugin.py (~1,274 líneas)
+
+**Rol**: Clase principal del plugin. Punto de entrada de CKAN.
+
+**Clase**: `ThemeEjemploPlugin`
+
+### Interfaces implementadas
+- `IConfigurer` — `update_config()`: registra templates, public dir, fanstatic
+- `IBlueprint` — `get_blueprint()`: registra 30+ rutas Flask
+- `ITemplateHelpers` — `get_helpers()`: expone ~30 funciones helper
+- `IPackageController` — `before_dataset_index()`: pipeline espacial + facetas
+- `ITranslation` — `i18n_directory()`, `i18n_locales()`, `i18n_domain()`: i18n
+- `IActions` — `get_actions()`: registra acciones custom
+- `IAuthFunctions` — `get_auth_functions()`: registra funciones de autorización
+
+### Caches definidos a nivel de módulo
+- `_courses_cache` — cursos UNESCO
+- `_member_states_cache` — estados miembros
+- `_initiatives_cache` — iniciativas
+- `_recently_added_datasets_cache` — datasets recientes
+- `_recently_added_documents_cache` — documentos recientes
+- `http_session` — `requests.Session()` compartida
+
+### Métodos de instancia con @lru_cache
+- `_get_featured_datasets_filtered_cached(cache_buster)` — datasets destacados filtrados
+- `_get_site_statistics_cached(cache_buster)` — estadísticas del sitio
+
+---
+
+## controller.py (~2,896 líneas)
+
+**Rol**: Todas las funciones de vista Flask.
+
+**Clase**: `MyLogica` (métodos estáticos)
+
+### Categorías de vistas (67 funciones)
+
+**Portales** (11 funciones):
+`initiatives()`, `redirect_to_group()`, `memberstates()`, `thematicbuilder()`, `ihpix()`, `ihpix_outputs()`, `ihpix_report()`, `ihpix_dashboard()`, `iot_portal()`, `flood_drought_portal()`, `citizen_science_portal()`
+
+**Directorio de personas** (1):
+`people_index()` — con filtros: q, country, organization, expertise
+
+**Vistas de organización** (5):
+`organization_people()`, `organization_publications()`, `organization_news()`, `organization_events()`, `organization_data_stories()`
+
+**Vistas de grupo** (5):
+`group_members()`, `group_news()`, `group_events()`, `group_publications()`, `group_data_stories()`
+
+**Vistas de usuario** (5):
+`user_documents()`, `user_organizations()`, `user_data_stories()`, `user_news()`, `user_events()`
+
+**Membresías** (3):
+`request_membership()`, `membership_requests()`, `membership_requests_overview()`
+
+**Dataset** (2):
+`dataset_resources_ajax()`, `dataset_read()`
+
+**Admin** (35 funciones):
+Ver [[Flujos Importantes#Paneles de administración]] para la lista completa.
+
+### Funciones auxiliares del módulo
+- `timed_lru_cache(seconds, maxsize)` — decorador de cache TTL
+- `get_member_states_groups()` — cache de subgrupos (query DB directo)
+- `get_all_groups_cached()` — cache de todos los grupos
+- `_get_pages_by_initiative()` — consulta extensión Pages
+- `_get_pages_by_organization()` — consulta extensión Pages
+- `_get_data_stories_by_group()` — consulta data stories
+
+---
+
+## actions.py (~1,879 líneas)
+
+**Rol**: Acciones CKAN custom y overrides.
+
+### Acciones por categoría (45 acciones)
+
+**Overrides de CKAN core** (2):
+- `user_show` — expone campos extendidos de `plugin_extras`
+- `user_update` — guarda campos extendidos en `plugin_extras`
+
+**Personas y organizaciones** (2):
+- `people_list` — búsqueda de usuarios con filtros
+- `organization_people` — miembros de org con perfiles
+
+**Solicitudes de membresía** (4):
+- `membership_request_create`, `membership_request_list`, `membership_request_process`, `membership_request_count`
+
+**Datasets destacados** (3):
+- `featured_dataset_list`, `featured_dataset_add`, `featured_dataset_remove`
+
+**Publicaciones destacadas** (6):
+- `featured_publication_list`, `featured_publication_create`, `featured_publication_update`, `featured_publication_delete`, `featured_publication_reorder`, `featured_publication_import_legacy`
+
+**Portal cards** (5):
+- `portal_card_list`, `portal_card_create`, `portal_card_update`, `portal_card_delete`, `portal_card_reorder`
+
+**Bug tickets** (5):
+- `bug_ticket_create`, `bug_ticket_list`, `bug_ticket_show`, `bug_ticket_update`, `bug_ticket_api_list`
+
+**Admin de usuarios** (8):
+- `admin_user_list`, `admin_user_create`, `admin_user_reset_password`, `admin_user_request_password_reset`, `admin_user_delete`, `admin_user_purge`, `admin_user_reactivate`, `admin_user_toggle_sysadmin`
+
+**IHP-IX contenido** (2):
+- `ihpix_content_list`, `ihpix_content_update`
+
+**IHP-IX actividades** (5):
+- `ihpix_activity_list`, `ihpix_activity_show`, `ihpix_activity_create`, `ihpix_activity_update`, `ihpix_activity_delete`
+
+**IHP-IX reportes** (3):
+- `ihpix_report_submit`, `ihpix_report_review`, `ihpix_dashboard_stats`
+
+---
+
+## helpers.py (~661 líneas)
+
+**Rol**: Funciones helper independientes para templates Jinja2.
+
+### Funciones por categoría (25 funciones)
+
+**Tracking y analíticas** (9):
+`_is_tracking_enabled()`, `_get_tracking_cache_ttl()`, `_invalidate_tracking_cache_if_expired()`, `_ensure_materialized_views()`, `get_dataset_tracking()`, `get_resource_downloads()`, `get_tracking_totals()`, `get_popular_datasets()`, `get_popular_resources()`
+
+**Paginación** (1):
+`get_paged_resources(package_id, page, items_per_page, q, format_filter)`
+
+**Formato de contenido** (1):
+`markdown_excerpt(text, length, killwords, end)`
+
+**Personas y organizaciones** (5):
+`get_user_profile()`, `get_people_directory()`, `get_org_members_with_profiles()`, `get_org_statistics()`, `get_org_publications()`
+
+**Permisos** (4):
+`is_org_member()`, `is_org_admin()`, `get_user_organizations()`, `get_user_admin_orgs()`
+
+**Estados miembros** (2):
+`get_country_list()`, `get_member_state_title()`
+
+**Membresías** (2):
+`get_pending_membership_requests_count()`, `has_pending_membership_request()`
+
+**Contenido destacado** (2):
+`get_featured_publications()`, `get_open_bug_tickets_count()`
+
+### Cache interno
+- `_tracking_cache` — dict con claves: dataset, resource, totals, popular, popular_resources, expires
+- TTL configurable vía `ckanext.theme_ejemplo.tracking_cache_ttl`
+- Vistas materializadas de PostgreSQL para estadísticas de tracking
+
+---
+
+## model.py (~1,141 líneas)
+
+**Rol**: Modelos SQLAlchemy para tablas custom.
+
+### Modelos (6)
+
+**MembershipRequest**: Solicitudes de membresía a organizaciones
+- Campos: id, user_id, organization_id, message, status (pending/approved/rejected), handled_by, handled_at, admin_note, role, created_at
+- Métodos: `get()`, `get_pending_for_org()`, `get_for_org()`, `get_pending_for_user_and_org()`, `count_pending_for_orgs()`
+
+**FeaturedPublication**: Publicaciones destacadas en homepage
+- Campos: id, title, link, description, image_url, display_order, created_at
+- Métodos: `get()`, `get_all()`, `as_dict()`
+
+**BugTicket**: Tickets de errores reportados por usuarios
+- Campos: id, user_id, title, description, url, image_filename, browser_info, log_snapshot, status (open/in_progress/resolved_by_user/resolved_by_admin), admin_notes, resolved_by, resolved_at, created_at, updated_at
+- Métodos: `get()`, `get_all()`, `as_dict()`
+
+**PortalCard**: Tarjetas configurables para portales temáticos
+- Campos: id, portal_id (flood_drought/iot/citizen_science), title, link, description, image_url, display_order, is_coming_soon, is_archived, created_at
+- Métodos: `get()`, `get_by_portal()`, `get_active_by_portal()`, `as_dict()`
+- Auto-seed: 27 tarjetas por defecto
+
+**IhpixContent**: Contenido editable del portal IHP-IX
+- Campos: id, section_type, section_key (unique), title, description, content (JSON), created_at, updated_at
+- Métodos: `get()`, `get_by_key()`, `get_by_type()`, `get_all()`, `as_dict()`
+- Auto-seed: 18 secciones por defecto
+
+**IhpixActivity**: Actividades del programa IHP-IX
+- Campos: id, title, priority_area, description, output, stakeholders (JSON), partner_organizations, start_date, end_date, status (planned/ongoing/completed), responsible_party, responsible_country, url, country_stats (JSON), created_at, updated_at
+- Métodos: `get()`, `get_by_priority_area()`, `get_published()`, `get_all()`, `get_pending()`, `get_facets()`, `get_stats()`, `get_timeline()`, `get_country_stats()`, `as_dict()`
+
+### Inicialización
+Cada modelo tiene `init_*_db()` y `define_*_table()`. Son idempotentes (verifican schema con inspector). Incluyen lógica de migración para agregar columnas nuevas a tablas existentes.
+
+---
+
+## auth.py (~254 líneas)
+
+**Rol**: Funciones de autorización para acciones custom.
+
+### Patrones de autorización
+
+| Patrón | Acciones |
+|---|---|
+| **Sysadmin only** | featured_dataset_*, featured_publication_*, portal_card_*, admin_user_*, ihpix_content_*, ihpix_activity_create/update/delete, ihpix_report_review, bug_ticket_api_list |
+| **Autenticado** | membership_request_create, membership_request_count, bug_ticket_create/list/show/update, ihpix_report_submit |
+| **Admin de org o sysadmin** | membership_request_list, membership_request_process |
+| **Público** | ihpix_activity_list, ihpix_activity_show, ihpix_dashboard_stats |
+
+### Función helper
+- `_sysadmin_only(context, data_dict)` — verifica `context['auth_user_obj'].sysadmin`
+
+---
+
+## validators.py (~89 líneas)
+
+**Rol**: Validadores para campos de perfil de usuario extendido.
+
+| Validador | Input | Output | Comportamiento |
+|---|---|---|---|
+| `user_profile_field` | string | string | Strip whitespace, Missing/None → "" |
+| `user_expertise_areas` | list, JSON string, o CSV | JSON array string | Normaliza a JSON array, default `[]` |
+| `user_social_links` | dict o JSON string | JSON dict string | Filtra a claves permitidas (linkedin, twitter, researchgate, github, website), elimina vacíos, default `{}` |
+
+---
+
+## utils.py (~273 líneas)
+
+**Rol**: Validación y detección de imágenes para uploads de usuario.
+
+### Constantes
+- **Extensiones permitidas**: PNG, JPG, JPEG, JPE, JFIF, GIF, WEBP, BMP, TIF, TIFF, AVIF
+- **MIME types permitidos**: image/png, image/jpeg, image/gif, image/webp, image/bmp, image/tiff, image/avif
+- **Aliases MIME**: image/jpg → image/jpeg, image/pjpeg → image/jpeg, image/x-png → image/png, image/x-ms-bmp → image/bmp
+
+### Funciones principales
+- `is_valid_user_image_reference(image_url)` — valida URLs almacenadas de avatar
+- `get_invalid_user_image_upload_reason(upload)` — retorna código de error para uploads inválidos
+- `normalize_user_image_url(image_url, url_resolver)` — convierte filenames a URLs completas
+
+### Pipeline de detección
+1. Verificar extensión del archivo
+2. Verificar MIME type declarado (con normalización)
+3. Detectar MIME real vía magic bytes del header
+4. Fallback: PIL/Pillow para casos no concluyentes
+
+---
+
+## Ver también
+
+- [[Arquitectura]] — Diseño general y relaciones
+- [[Flujos Importantes]] — Flujos de negocio
+- [[Estructura del Repo]] — Organización de archivos

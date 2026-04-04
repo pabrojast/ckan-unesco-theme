@@ -1,0 +1,208 @@
+# Flujos Importantes
+
+> Flujos de negocio clave del sistema `ckanext-theme-ejemplo`.
+
+---
+
+## 1. Indexación de datasets (Pipeline espacial)
+
+**Trigger**: CKAN indexa un dataset en Solr
+**Hook**: `before_dataset_index` en `plugin.py`
+
+```
+1. CKAN llama before_dataset_index(pkg_dict)
+2. Plugin extrae campos extras: xmin, ymin, xmax, ymax
+3. Si existen las 4 coordenadas:
+   a. Shapely genera: box(xmin, ymin, xmax, ymax)
+   b. Convierte a WKT string
+   c. Asigna a pkg_dict['spatial_geom']
+4. Sanitiza facetas multilingües:
+   a. Detecta campos con prefijos de idioma (ej: title_es, title_fr)
+   b. Limpia valores que podrían causar errores en Solr atomic update
+5. Si index_followers está habilitado:
+   a. Cuenta seguidores del dataset
+   b. Marca como "featured" si alcanza umbral de admin followers
+6. Retorna pkg_dict modificado a Solr
+```
+
+---
+
+## 2. Solicitud de membresía a organización
+
+**Ruta**: `/organization/<name>/request-membership`
+**Módulos involucrados**: `controller.py`, `actions.py`, `model.py`, `auth.py`
+
+```
+1. Usuario visita /organization/<name>/request-membership (GET)
+   → controller.py: request_membership() renderiza formulario
+2. Usuario envía solicitud con mensaje (POST)
+   → actions.py: membership_request_create()
+   → model.py: MembershipRequest.create(user_id, org_id, message)
+   → Estado: "pending"
+3. Admin de la org visita /organization/<name>/membership-requests
+   → controller.py: membership_requests() lista solicitudes pendientes
+4. Admin aprueba o rechaza
+   → actions.py: membership_request_process(id, action="approve"|"reject")
+   → Si aprueba: CKAN agrega usuario como miembro de la org
+   → Estado: "approved" o "rejected"
+```
+
+**Autorización**:
+- Crear solicitud: cualquier usuario autenticado
+- Listar solicitudes: admin de la org o sysadmin
+- Procesar solicitud: admin de la org o sysadmin
+
+---
+
+## 3. Perfil de usuario extendido
+
+**Módulos**: `actions.py`, `validators.py`
+
+```
+1. Usuario edita su perfil
+2. actions.py: user_update() (override de CKAN core)
+   a. Recibe campos estándar de CKAN + campos extendidos
+   b. Valida campos con validators.py:
+      - user_profile_field: acepta texto, trim whitespace
+      - user_expertise_areas: valida JSON list o CSV
+      - user_social_links: valida JSON dict con claves permitidas
+   c. Serializa campos extendidos a JSON
+   d. Almacena en user.plugin_extras['theme_ejemplo']
+   e. Si cambió 'country', sincroniza membresía al grupo member-state
+3. actions.py: user_show() (override de CKAN core)
+   a. Llama user_show original
+   b. Extrae campos de plugin_extras['theme_ejemplo']
+   c. Los expone como campos de primer nivel en el resultado
+```
+
+**Campos extendidos**: `job_title`, `institution`, `country`, `phone`, `website`, `orcid`, `expertise_areas`, `social_links`
+
+---
+
+## 4. Paneles de administración
+
+**Patrón común**: Todas las rutas `/admin/*` siguen este flujo.
+
+```
+1. Verificación de autorización:
+   → auth.py: _sysadmin_only() verifica rol sysadmin
+   → Si no es sysadmin: abort(403)
+2. Renderización del panel:
+   → controller.py: renderiza template con datos actuales
+   → Templates en templates/admin/
+3. Operaciones CRUD vía AJAX:
+   → Endpoints separados para create/update/delete/reorder
+   → Retornan JSON con resultado
+4. Upload de imágenes (publicaciones y portal cards):
+   → utils.py: validación de imagen (extensión, MIME, magic bytes)
+   → Almacenamiento en directorio público de CKAN
+```
+
+### Paneles disponibles
+
+| Panel | Modelo de datos | Operaciones |
+|---|---|---|
+| Datasets destacados | Tag `FeaturedDataset` en datasets | search, add, remove |
+| Publicaciones destacadas | `FeaturedPublication` | CRUD, reorder, upload image, import legacy |
+| Tarjetas de portal | `PortalCard` | CRUD, reorder, upload image |
+| Tickets de errores | `BugTicket` | create, list, show, close, update status |
+| Gestión de usuarios | CKAN users | search, create, reset pwd, delete, purge, reactivate, toggle sysadmin |
+| Contenido IHP-IX | `IhpixContent` | list, update |
+| Actividades IHP-IX | `IhpixActivity` | CRUD |
+| Reportes IHP-IX | IHP-IX reports | list, review |
+
+---
+
+## 5. Sistema de caching (ciclo de vida)
+
+```
+1. Primera petición:
+   a. Cache miss → se ejecuta la función original
+   b. Resultado se almacena en cache con timestamp
+   c. Se retorna el resultado
+
+2. Peticiones subsiguientes (dentro de TTL):
+   a. Cache hit → se retorna resultado cacheado directamente
+   b. No hay llamada a API/DB
+
+3. Expiración (TTL superado):
+   a. Siguiente petición detecta cache expirado
+   b. Se ejecuta la función original
+   c. Se actualiza el cache con nuevo resultado y timestamp
+
+Patrón LRU con buster:
+   cache_buster = int(time.time() / cache_ttl)
+   → Cambia cada cache_ttl segundos
+   → @lru_cache ve un nuevo argumento → cache miss automático
+```
+
+---
+
+## 6. Directorio de personas
+
+**Ruta**: `/people`
+**Módulos**: `controller.py`, `helpers.py`, `actions.py`
+
+```
+1. Usuario visita /people con filtros opcionales (query params):
+   - q: búsqueda por nombre
+   - country: filtro por estado miembro
+   - organization: filtro por organización
+   - expertise: filtro por área de expertise
+2. controller.py: people_index() extrae query params
+3. helpers.py: get_people_directory(q, country, organization, expertise)
+   → actions.py: people_list() ejecuta búsqueda con filtros
+   → Consulta users con plugin_extras.theme_ejemplo
+4. Renderiza template people/directory.html con resultados paginados
+```
+
+---
+
+## 7. Portal IHP-IX
+
+**Rutas**: `/ihpix`, `/ihpix/outputs`, `/ihpix/report`, `/ihpix/dashboard`
+
+```
+1. Página principal (/ihpix):
+   → Carga contenido editable de IhpixContent (18 secciones)
+   → Muestra CTA blocks y Priority Area descriptions
+2. Outputs (/ihpix/outputs):
+   → Lista actividades publicadas de IhpixActivity
+   → Filtrable por priority_area y output
+3. Reporte (/ihpix/report):
+   → GET: formulario de reporte para usuarios autenticados
+   → POST: ihpix_report_submit() guarda el reporte
+4. Dashboard (/ihpix/dashboard):
+   → ihpix_dashboard_stats() genera estadísticas
+   → Muestra métricas agregadas por PA y país
+5. Admin (/admin/ihpix/*):
+   → Gestión de contenido, actividades y revisión de reportes
+```
+
+---
+
+## 8. Validación de imágenes de usuario
+
+**Módulo**: `utils.py`
+
+```
+1. Usuario sube imagen de perfil
+2. Validación en 3 capas:
+   a. Extensión del archivo (whitelist: PNG, JPG, GIF, WebP, etc.)
+   b. MIME type declarado (whitelist + normalización de aliases)
+   c. Magic bytes del archivo (detección real del formato)
+   d. Fallback: PIL/Pillow si magic bytes no son concluyentes
+3. Si la validación falla:
+   → Retorna código de error específico
+   → No se almacena el archivo
+4. Si la validación pasa:
+   → Se almacena en el directorio de uploads de CKAN
+```
+
+---
+
+## Ver también
+
+- [[Arquitectura]] — Diseño general del sistema
+- [[Modulos]] — Detalle por módulo
+- [[Variables de Entorno]] — Configuración de TTL de caches

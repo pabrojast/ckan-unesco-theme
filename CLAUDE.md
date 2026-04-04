@@ -1,89 +1,72 @@
 # CLAUDE.md
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+Guía de comportamiento para Claude Code al trabajar en este repositorio.
 
-## Project Overview
+## Propósito del repo
 
-This is a CKAN extension that provides a custom theme for UNESCO's water-related data portal. Despite the name `ckanext-theme-ejemplo` (example theme), this is a production theme specifically designed for UNESCO's water data initiatives.
+Extensión CKAN (`ckanext-theme-ejemplo`, plugin `theme_ejemplo`) que implementa el tema de producción para el portal de datos hídricos de UNESCO (IHP). A pesar del nombre "ejemplo", es código de producción.
 
-## Development Commands
+## Documentación principal
 
-### Setup
+La fuente de verdad humana es `docs/obsidian-vault/`. Consulta la vault antes de asumir cómo funciona algo. Archivos clave:
+- `Index.md` — mapa de navegación
+- `Arquitectura.md` — diseño del sistema
+- `Modulos.md` — detalle de cada módulo Python
+- `Variables de Entorno.md` — claves de configuración
+- `Flujos Importantes.md` — flujos de negocio
+
+## Comandos esenciales
+
 ```bash
-# Install in development mode
-pip install -e .
-pip install -r requirements.txt
-pip install -r dev-requirements.txt  # For testing
+# Setup
+pip install -e . && pip install -r requirements.txt
 
-# Add to CKAN configuration
-# Edit your CKAN config file and add 'theme_ejemplo' to ckan.plugins
-```
-
-### Testing
-```bash
-# Run all tests
+# Tests (requiere CKAN + PostgreSQL + Solr + Redis)
 pytest --ckan-ini=test.ini
 
-# Run with coverage (as done in CI)
-pytest --ckan-ini=test.ini --cov=ckanext.theme_ejemplo
+# Tests con cobertura
+pytest --ckan-ini=test.ini --cov=ckanext.theme_ejemplo --disable-warnings ckanext/theme_ejemplo
+
+# i18n: compilar traducciones
+python setup.py compile_catalog
 ```
 
-### Build & Package
-```bash
-# Build distribution
-python setup.py sdist
+## Reglas operativas
 
-# Upload to PyPI
-python setup.py sdist upload
-```
+### Código
+- **CKAN 2.9** target con compatibilidad forward para 2.10
+- Comentarios y logs en **español**; identificadores de código en **inglés**
+- Config keys usan prefijo `ckanext.theme_ejemplo.*`
+- Templates siguen patrón de override Jinja2 de CKAN, organizados por portal
+- Requiere **Shapely < 2** y forks específicos de extensiones (ver CI workflow)
 
-## Architecture & Key Components
+### Documentación
+- **No inventar información**. Si no puedes verificar algo, márcalo como "Pendiente por confirmar"
+- Si deduces algo del código, márcalo como "Inferencia"
+- Cuando cambies arquitectura, rutas, config, modelos, variables de entorno o comandos: **actualiza `docs/obsidian-vault/`**
+- No dupliques contenido extenso de la vault en este archivo. Referencia con rutas relativas
 
-### Core Plugin Architecture
+### Notas de la vault
+- Nombres en español, capitalización de primera palabra: `Flujos Importantes.md`
+- Usar wikilinks `[[Nombre]]` para enlaces internos
+- Usar callouts de Obsidian: `> [!warning]`, `> [!note]`, `> [!tip]`
+- Marcar incertidumbre con callouts: `> [!note] Pendiente por confirmar` o `> [!note] Inferencia`
 
-The main plugin (`ckanext/theme_ejemplo/plugin.py`) implements multiple CKAN interfaces to provide:
+### Prioridades
+- Mantener onboarding simple y útil
+- Priorizar claridad sobre completitud
+- No romper wikilinks existentes al renombrar notas
+- Registrar vacíos descubiertos en `Backlog Documentacion.md`
 
-1. **Custom Routes** - Six specialized portals accessed via Flask blueprints:
-   - `/memberstates` - UNESCO member states directory
-   - `/initiatives` - Water initiatives catalog  
-   - `/thematicbuilder` - Thematic dataset builder
-   - `/ihpix` - IHP-IX (International Hydrological Programme) portal
-   - `/iot-portal` - IoT water monitoring portal
-   - `/flood-drought-portal` - Flood and drought monitoring
-   - `/citizen-science-portal` - Citizen science initiatives
+## Estructura del código
 
-2. **Dataset Enhancement** - The plugin modifies dataset indexing to:
-   - Convert spatial bounding boxes to WKT format for Solr indexing
-   - Mark featured datasets based on admin follower count
-   - Process and enhance search facets
-   - Cache organization images for performance
-
-3. **External API Integration** - Integrates with UNESCO Open Learning API to fetch water-related courses, with LRU caching for performance.
-
-### Template Structure
-
-Templates follow CKAN's Jinja2 pattern with custom overrides:
-- `templates/home/` - Homepage components with UNESCO branding
-- `templates/[portal_name]/` - Specific templates for each portal
-- `templates/snippets/` - Reusable components
-- All templates support internationalization (i18n)
-
-### Performance Considerations
-
-Recent optimizations include:
-- HTTP session reuse with connection pooling
-- LRU caching for external API calls
-- Organization image caching
-- Proper error handling and logging throughout
-
-### Spatial Data Handling
-
-The extension processes geospatial data using the Shapely library to convert bounding box coordinates to WKT format for proper Solr indexing. This enables spatial search capabilities across the portal.
-
-## Important Notes
-
-1. **CKAN Version**: Built for CKAN 2.9 (Python 2.7 support indicates this)
-2. **Dependencies**: Requires ckanext-spatial, ckanext-dcat, ckanext-scheming, ckanext-schemingdcat
-3. **Name Mismatch**: The internal name `theme_ejemplo` appears throughout the codebase but doesn't reflect the UNESCO-specific nature of this theme
-4. **Internationalization**: Supports Arabic, Spanish, and French translations
-5. **Testing**: Uses pytest with a custom test.ini configuration
+| Módulo | Rol |
+|---|---|
+| `plugin.py` | Clase principal, 7 interfaces CKAN, rutas, helpers, caches |
+| `controller.py` | Clase `MyLogica`, 67 funciones de vista Flask |
+| `actions.py` | 45+ acciones CKAN custom y overrides |
+| `helpers.py` | 25 helpers de template (tracking, personas, orgs) |
+| `model.py` | 6 modelos SQLAlchemy (membresías, publicaciones, tickets, portal cards, IHP-IX) |
+| `auth.py` | 41 funciones de autorización |
+| `validators.py` | 3 validadores de perfil de usuario |
+| `utils.py` | Validación de imágenes (MIME, magic bytes) |
