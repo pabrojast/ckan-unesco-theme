@@ -431,6 +431,13 @@ class MyLogica():
                     except Exception:
                         priority_areas[pa_key] = []
 
+                # Obtener stats globales para la landing
+                try:
+                    ctx = {'user': c.user, 'model': model}
+                    stats = toolkit.get_action('ihpix_dashboard_stats')(ctx, {})
+                except Exception:
+                    stats = {}
+
                 is_sysadmin = False
                 try:
                     if c.userobj and c.userobj.sysadmin:
@@ -442,6 +449,7 @@ class MyLogica():
                                        cta_cards=cta_cards,
                                        pa_sections=pa_sections,
                                        priority_areas=priority_areas,
+                                       stats=stats,
                                        is_sysadmin=is_sysadmin)
 
         def ihpix_outputs():
@@ -453,6 +461,9 @@ class MyLogica():
 
                 pa_filter = request.args.get('pa', '')
                 output_filter = request.args.get('output', '')
+                biennium_filter = request.args.get('biennium', '')
+                region_filter = request.args.get('region', '')
+                country_filter = request.args.get('country', '')
                 q = request.args.get('q', '')
                 page = int(request.args.get('page', 1))
                 items_per_page = 20
@@ -463,6 +474,9 @@ class MyLogica():
                         priority_area=pa_filter or None,
                         output=output_filter or None,
                         q_text=q or None,
+                        biennium=biennium_filter or None,
+                        country=country_filter or None,
+                        region=region_filter or None,
                         limit=items_per_page,
                         offset=offset,
                     )
@@ -480,6 +494,9 @@ class MyLogica():
                                        total=total,
                                        pa_filter=pa_filter,
                                        output_filter=output_filter,
+                                       biennium_filter=biennium_filter,
+                                       region_filter=region_filter,
+                                       country_filter=country_filter,
                                        q=q,
                                        page=page,
                                        items_per_page=items_per_page)

@@ -1877,3 +1877,101 @@ def ihpix_dashboard_stats(context, data_dict):
     stats['timeline'] = timeline
     stats['by_country'] = country_stats
     return stats
+
+
+# ── IHP-IX GeoJSON & Country Summary Actions ───────────────────────────────
+
+from ckanext.theme_ejemplo.model import (
+    IhpixCountrySummary, init_ihpix_country_summary_db,
+)
+
+
+@toolkit.side_effect_free
+def ihpix_geojson(context, data_dict):
+    """GeoJSON FeatureCollection with country-level IHP-IX data.
+
+    Filters:
+        region (str): Filter by UNESCO region
+        priority_area (str): Not used yet at country level, reserved
+
+    Returns a GeoJSON FeatureCollection with Point features per country.
+    """
+    toolkit.check_access('ihpix_geojson', context, data_dict)
+    init_ihpix_country_summary_db()
+
+    region = data_dict.get('region', u'').strip() or None
+    return IhpixCountrySummary.get_as_geojson(region=region)
+
+
+@toolkit.side_effect_free
+def ihpix_activity_geojson(context, data_dict):
+    """GeoJSON FeatureCollection of individual activities geolocated via
+    their country's coordinates from ihpix_country_summary.
+
+    Filters:
+        priority_area (str)
+        output (str)
+        biennium (str)
+        flagship (str)
+        country (str)
+        region (str)
+    """
+    toolkit.check_access('ihpix_activity_geojson', context, data_dict)
+    init_ihpix_activities_db()
+    init_ihpix_country_summary_db()
+
+    # Obtener actividades filtradas
+    activities = IhpixActivity.get_published(
+        priority_area=data_dict.get('priority_area', u'').strip() or None,
+        output=data_dict.get('output', u'').strip() or None,
+        biennium=data_dict.get('biennium', u'').strip() or None,
+        country=data_dict.get('country', u'').strip() or None,
+        flagship=data_dict.get('flagship', u'').strip() or None,
+        region=data_dict.get('region', u'').strip() or None,
+    )
+
+    # Construir lookup de coordenadas por país
+    country_coords = {}
+    for cs in IhpixCountrySummary.get_all():
+        if cs.latitude and cs.longitude:
+            country_coords[cs.country] = (
+                float(cs.longitude), float(cs.latitude)
+            )
+
+    features = []
+    for act in activities:
+        country = act.country or u''
+        coords = country_coords.get(country)
+        if not coords:
+            continue
+        features.append({
+            'type': 'Feature',
+            'geometry': {
+                'type': 'Point',
+                'coordinates': list(coords),
+            },
+            'properties': act.as_dict(),
+        })
+
+    return {
+        'type': 'FeatureCollection',
+        'features': features,
+    }
+
+
+@toolkit.side_effect_free
+def ihpix_country_summary_list(context, data_dict):
+    """List country summary records for IHP-IX.
+
+    Filters:
+        region (str): UNESCO region filter
+    """
+    toolkit.check_access('ihpix_country_summary_list', context, data_dict)
+    init_ihpix_country_summary_db()
+
+    region = data_dict.get('region', u'').strip() or None
+    items = IhpixCountrySummary.get_all(region=region)
+    return {
+        'results': [i.as_dict() for i in items],
+        'count': len(items),
+    }

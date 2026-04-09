@@ -56,6 +56,7 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
         plugins.implements(plugins.ITranslation)
         plugins.implements(plugins.IActions)
         plugins.implements(plugins.IAuthFunctions)
+        plugins.implements(plugins.IClick)
 
         def __init__(self, name=None):
             super().__init__(name=name)
@@ -352,6 +353,8 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
             membership_model.init_ihpix_content_db()
             # Create ihpix_activity table if needed
             membership_model.init_ihpix_activities_db()
+            # Create ihpix_country_summary table if needed
+            membership_model.init_ihpix_country_summary_db()
             
         def get_blueprint(self):
             
@@ -951,6 +954,10 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 'ihpix_report_submit': custom_actions.ihpix_report_submit,
                 'ihpix_report_review': custom_actions.ihpix_report_review,
                 'ihpix_dashboard_stats': custom_actions.ihpix_dashboard_stats,
+                # IHP-IX GeoJSON & country summary
+                'ihpix_geojson': custom_actions.ihpix_geojson,
+                'ihpix_activity_geojson': custom_actions.ihpix_activity_geojson,
+                'ihpix_country_summary_list': custom_actions.ihpix_country_summary_list,
             }
 
         # IAuthFunctions
@@ -999,7 +1006,15 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 'ihpix_report_submit': custom_auth.ihpix_report_submit,
                 'ihpix_report_review': custom_auth.ihpix_report_review,
                 'ihpix_dashboard_stats': custom_auth.ihpix_dashboard_stats,
+                # IHP-IX GeoJSON & country summary
+                'ihpix_geojson': custom_auth.ihpix_geojson,
+                'ihpix_activity_geojson': custom_auth.ihpix_activity_geojson,
+                'ihpix_country_summary_list': custom_auth.ihpix_country_summary_list,
             }
+        
+        def get_commands(self):
+            from ckanext.theme_ejemplo.cli import ihpix
+            return [ihpix]
         
         def get_member_states_groups_list(self):
             """Obtiene los grupos de member-states como lista de tuplas (name, display_name).

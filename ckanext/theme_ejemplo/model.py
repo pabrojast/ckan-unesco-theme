@@ -834,7 +834,31 @@ class IhpixActivity(model.DomainObject):
                  country=u'', institution=u'', link=u'', image_url=u'',
                  status=u'published', reported_by=u'', reported_date=None,
                  contact_name=u'', contact_email=u'',
-                 start_date=None, end_date=None):
+                 start_date=None, end_date=None,
+                 key_activity=u'', outcomes=u'', biennium=u'',
+                 institution_type=u'', partners=u'',
+                 unesco_participation=u'', flagships=u'',
+                 regions=u'', member_states=u'',
+                 knowledge_product_type=u'',
+                 knowledge_product_type_other=u'',
+                 num_knowledge_products=0,
+                 scientific_product_type=u'',
+                 num_scientific_products=0,
+                 training_type=u'', num_training_materials=0,
+                 num_curricula=0, num_transboundary_ms=0,
+                 knowledge_activity_type=u'',
+                 knowledge_activity_type_other=u'',
+                 stakeholders_knowledge=0,
+                 stakeholders_knowledge_female=0,
+                 stakeholders_knowledge_youth=0,
+                 stakeholders_awareness=0,
+                 stakeholders_awareness_female=0,
+                 stakeholders_awareness_youth=0,
+                 num_stakeholder_groups=0,
+                 stakeholder_group_type=u'', notes=u'',
+                 cross_cutting_wg=u'', synergies=u'',
+                 supporting_member_state=u'',
+                 original_timestamp=u'', original_id=u''):
         self.id = str(uuid.uuid4())
         self.title = title
         self.priority_area = priority_area
@@ -854,6 +878,41 @@ class IhpixActivity(model.DomainObject):
         self.review_notes = u''
         self.reviewed_by = u''
         self.reviewed_at = None
+        # Campos extendidos del Excel
+        self.key_activity = key_activity
+        self.outcomes = outcomes
+        self.biennium = biennium
+        self.institution_type = institution_type
+        self.partners = partners
+        self.unesco_participation = unesco_participation
+        self.flagships = flagships  # JSON string
+        self.regions = regions  # JSON string
+        self.member_states = member_states  # JSON string
+        self.knowledge_product_type = knowledge_product_type
+        self.knowledge_product_type_other = knowledge_product_type_other
+        self.num_knowledge_products = num_knowledge_products or 0
+        self.scientific_product_type = scientific_product_type
+        self.num_scientific_products = num_scientific_products or 0
+        self.training_type = training_type
+        self.num_training_materials = num_training_materials or 0
+        self.num_curricula = num_curricula or 0
+        self.num_transboundary_ms = num_transboundary_ms or 0
+        self.knowledge_activity_type = knowledge_activity_type
+        self.knowledge_activity_type_other = knowledge_activity_type_other
+        self.stakeholders_knowledge = stakeholders_knowledge or 0
+        self.stakeholders_knowledge_female = stakeholders_knowledge_female or 0
+        self.stakeholders_knowledge_youth = stakeholders_knowledge_youth or 0
+        self.stakeholders_awareness = stakeholders_awareness or 0
+        self.stakeholders_awareness_female = stakeholders_awareness_female or 0
+        self.stakeholders_awareness_youth = stakeholders_awareness_youth or 0
+        self.num_stakeholder_groups = num_stakeholder_groups or 0
+        self.stakeholder_group_type = stakeholder_group_type
+        self.notes = notes
+        self.cross_cutting_wg = cross_cutting_wg  # JSON string
+        self.synergies = synergies
+        self.supporting_member_state = supporting_member_state
+        self.original_timestamp = original_timestamp
+        self.original_id = original_id
         self.created_at = datetime.datetime.utcnow()
         self.updated_at = datetime.datetime.utcnow()
 
@@ -875,6 +934,7 @@ class IhpixActivity(model.DomainObject):
 
     @classmethod
     def get_published(cls, priority_area=None, output=None, q_text=None,
+                      biennium=None, country=None, region=None, flagship=None,
                       limit=20, offset=0):
         """Return published activities with optional filters."""
         q = meta.Session.query(cls).filter(cls.status == cls.STATUS_PUBLISHED)
@@ -882,8 +942,21 @@ class IhpixActivity(model.DomainObject):
             q = q.filter(cls.priority_area == priority_area)
         if output:
             q = q.filter(cls.output == output)
+        if biennium:
+            q = q.filter(cls.biennium == biennium)
+        if country:
+            country_pattern = u'%' + country + u'%'
+            q = q.filter(
+                (cls.country == country) |
+                (cls.member_states.ilike(country_pattern)) |
+                (cls.supporting_member_state == country)
+            )
+        if region:
+            q = q.filter(cls.regions.ilike(u'%' + region + u'%'))
+        if flagship:
+            q = q.filter(cls.flagships.ilike(u'%' + flagship + u'%'))
         if q_text:
-            like = u'%{}%'.format(q_text)
+            like = u'%' + q_text + u'%'
             q = q.filter(
                 (cls.title.ilike(like)) | (cls.description.ilike(like))
             )
@@ -984,6 +1057,32 @@ class IhpixActivity(model.DomainObject):
             cls.output != None  # noqa: E711
         ).group_by(cls.output).order_by(func.count(cls.id).desc()).all()
 
+        # Métricas de impacto agregadas
+        stakeholders_knowledge_total = meta.Session.query(
+            func.coalesce(func.sum(cls.stakeholders_knowledge), 0)
+        ).filter(cls.status == cls.STATUS_PUBLISHED).scalar() or 0
+        stakeholders_awareness_total = meta.Session.query(
+            func.coalesce(func.sum(cls.stakeholders_awareness), 0)
+        ).filter(cls.status == cls.STATUS_PUBLISHED).scalar() or 0
+        knowledge_products_total = meta.Session.query(
+            func.coalesce(func.sum(cls.num_knowledge_products), 0)
+        ).filter(cls.status == cls.STATUS_PUBLISHED).scalar() or 0
+        scientific_products_total = meta.Session.query(
+            func.coalesce(func.sum(cls.num_scientific_products), 0)
+        ).filter(cls.status == cls.STATUS_PUBLISHED).scalar() or 0
+        training_materials_total = meta.Session.query(
+            func.coalesce(func.sum(cls.num_training_materials), 0)
+        ).filter(cls.status == cls.STATUS_PUBLISHED).scalar() or 0
+
+        # Por biennium
+        biennium_counts = meta.Session.query(
+            cls.biennium, func.count(cls.id)
+        ).filter(
+            cls.status == cls.STATUS_PUBLISHED,
+            cls.biennium != u'',
+            cls.biennium != None  # noqa: E711
+        ).group_by(cls.biennium).order_by(cls.biennium).all()
+
         return {
             'total_activities': total,
             'total_countries': countries,
@@ -995,6 +1094,14 @@ class IhpixActivity(model.DomainObject):
             'by_output': [
                 {'name': out or 'Unspecified', 'count': c}
                 for out, c in output_counts
+            ],
+            'stakeholders_knowledge': stakeholders_knowledge_total,
+            'stakeholders_awareness': stakeholders_awareness_total,
+            'knowledge_products': knowledge_products_total,
+            'scientific_products': scientific_products_total,
+            'training_materials': training_materials_total,
+            'by_biennium': [
+                {'name': b, 'count': c} for b, c in biennium_counts
             ],
         }
 
@@ -1054,6 +1161,40 @@ class IhpixActivity(model.DomainObject):
             'review_notes': self.review_notes,
             'reviewed_by': self.reviewed_by,
             'reviewed_at': self.reviewed_at.isoformat() if self.reviewed_at else None,
+            'key_activity': self.key_activity or u'',
+            'outcomes': self.outcomes or u'',
+            'biennium': self.biennium or u'',
+            'institution_type': self.institution_type or u'',
+            'partners': self.partners or u'',
+            'unesco_participation': self.unesco_participation or u'',
+            'flagships': self.flagships or u'',
+            'regions': self.regions or u'',
+            'member_states': self.member_states or u'',
+            'knowledge_product_type': self.knowledge_product_type or u'',
+            'knowledge_product_type_other': self.knowledge_product_type_other or u'',
+            'num_knowledge_products': self.num_knowledge_products or 0,
+            'scientific_product_type': self.scientific_product_type or u'',
+            'num_scientific_products': self.num_scientific_products or 0,
+            'training_type': self.training_type or u'',
+            'num_training_materials': self.num_training_materials or 0,
+            'num_curricula': self.num_curricula or 0,
+            'num_transboundary_ms': self.num_transboundary_ms or 0,
+            'knowledge_activity_type': self.knowledge_activity_type or u'',
+            'knowledge_activity_type_other': self.knowledge_activity_type_other or u'',
+            'stakeholders_knowledge': self.stakeholders_knowledge or 0,
+            'stakeholders_knowledge_female': self.stakeholders_knowledge_female or 0,
+            'stakeholders_knowledge_youth': self.stakeholders_knowledge_youth or 0,
+            'stakeholders_awareness': self.stakeholders_awareness or 0,
+            'stakeholders_awareness_female': self.stakeholders_awareness_female or 0,
+            'stakeholders_awareness_youth': self.stakeholders_awareness_youth or 0,
+            'num_stakeholder_groups': self.num_stakeholder_groups or 0,
+            'stakeholder_group_type': self.stakeholder_group_type or u'',
+            'notes': self.notes or u'',
+            'cross_cutting_wg': self.cross_cutting_wg or u'',
+            'synergies': self.synergies or u'',
+            'supporting_member_state': self.supporting_member_state or u'',
+            'original_timestamp': self.original_timestamp or u'',
+            'original_id': self.original_id or u'',
             'created_at': self.created_at.isoformat() if self.created_at else None,
             'updated_at': self.updated_at.isoformat() if self.updated_at else None,
         }
@@ -1085,6 +1226,41 @@ def define_ihpix_activity_table():
         Column('review_notes', UnicodeText, default=u''),
         Column('reviewed_by', UnicodeText, default=u''),
         Column('reviewed_at', DateTime, nullable=True),
+        # Campos extendidos del Excel
+        Column('key_activity', UnicodeText, default=u''),
+        Column('outcomes', UnicodeText, default=u''),
+        Column('biennium', UnicodeText, default=u''),
+        Column('institution_type', UnicodeText, default=u''),
+        Column('partners', UnicodeText, default=u''),
+        Column('unesco_participation', UnicodeText, default=u''),
+        Column('flagships', UnicodeText, default=u''),  # JSON
+        Column('regions', UnicodeText, default=u''),  # JSON
+        Column('member_states', UnicodeText, default=u''),  # JSON
+        Column('knowledge_product_type', UnicodeText, default=u''),
+        Column('knowledge_product_type_other', UnicodeText, default=u''),
+        Column('num_knowledge_products', Integer, default=0),
+        Column('scientific_product_type', UnicodeText, default=u''),
+        Column('num_scientific_products', Integer, default=0),
+        Column('training_type', UnicodeText, default=u''),
+        Column('num_training_materials', Integer, default=0),
+        Column('num_curricula', Integer, default=0),
+        Column('num_transboundary_ms', Integer, default=0),
+        Column('knowledge_activity_type', UnicodeText, default=u''),
+        Column('knowledge_activity_type_other', UnicodeText, default=u''),
+        Column('stakeholders_knowledge', Integer, default=0),
+        Column('stakeholders_knowledge_female', Integer, default=0),
+        Column('stakeholders_knowledge_youth', Integer, default=0),
+        Column('stakeholders_awareness', Integer, default=0),
+        Column('stakeholders_awareness_female', Integer, default=0),
+        Column('stakeholders_awareness_youth', Integer, default=0),
+        Column('num_stakeholder_groups', Integer, default=0),
+        Column('stakeholder_group_type', UnicodeText, default=u''),
+        Column('notes', UnicodeText, default=u''),
+        Column('cross_cutting_wg', UnicodeText, default=u''),  # JSON
+        Column('synergies', UnicodeText, default=u''),
+        Column('supporting_member_state', UnicodeText, default=u''),
+        Column('original_timestamp', UnicodeText, default=u''),
+        Column('original_id', UnicodeText, default=u''),
         Column('created_at', DateTime, default=datetime.datetime.utcnow),
         Column('updated_at', DateTime, default=datetime.datetime.utcnow),
     )
@@ -1121,6 +1297,41 @@ def _migrate_ihpix_activities(inspector):
         ('review_notes', "UnicodeText DEFAULT ''"),
         ('reviewed_by', "UnicodeText DEFAULT ''"),
         ('reviewed_at', 'TIMESTAMP'),
+        # Campos extendidos del Excel
+        ('key_activity', "UnicodeText DEFAULT ''"),
+        ('outcomes', "UnicodeText DEFAULT ''"),
+        ('biennium', "UnicodeText DEFAULT ''"),
+        ('institution_type', "UnicodeText DEFAULT ''"),
+        ('partners', "UnicodeText DEFAULT ''"),
+        ('unesco_participation', "UnicodeText DEFAULT ''"),
+        ('flagships', "UnicodeText DEFAULT ''"),
+        ('regions', "UnicodeText DEFAULT ''"),
+        ('member_states', "UnicodeText DEFAULT ''"),
+        ('knowledge_product_type', "UnicodeText DEFAULT ''"),
+        ('knowledge_product_type_other', "UnicodeText DEFAULT ''"),
+        ('num_knowledge_products', 'INTEGER DEFAULT 0'),
+        ('scientific_product_type', "UnicodeText DEFAULT ''"),
+        ('num_scientific_products', 'INTEGER DEFAULT 0'),
+        ('training_type', "UnicodeText DEFAULT ''"),
+        ('num_training_materials', 'INTEGER DEFAULT 0'),
+        ('num_curricula', 'INTEGER DEFAULT 0'),
+        ('num_transboundary_ms', 'INTEGER DEFAULT 0'),
+        ('knowledge_activity_type', "UnicodeText DEFAULT ''"),
+        ('knowledge_activity_type_other', "UnicodeText DEFAULT ''"),
+        ('stakeholders_knowledge', 'INTEGER DEFAULT 0'),
+        ('stakeholders_knowledge_female', 'INTEGER DEFAULT 0'),
+        ('stakeholders_knowledge_youth', 'INTEGER DEFAULT 0'),
+        ('stakeholders_awareness', 'INTEGER DEFAULT 0'),
+        ('stakeholders_awareness_female', 'INTEGER DEFAULT 0'),
+        ('stakeholders_awareness_youth', 'INTEGER DEFAULT 0'),
+        ('num_stakeholder_groups', 'INTEGER DEFAULT 0'),
+        ('stakeholder_group_type', "UnicodeText DEFAULT ''"),
+        ('notes', "UnicodeText DEFAULT ''"),
+        ('cross_cutting_wg', "UnicodeText DEFAULT ''"),
+        ('synergies', "UnicodeText DEFAULT ''"),
+        ('supporting_member_state', "UnicodeText DEFAULT ''"),
+        ('original_timestamp', "UnicodeText DEFAULT ''"),
+        ('original_id', "UnicodeText DEFAULT ''"),
     ]
     conn = meta.engine.connect()
     for col_name, col_type in new_columns:
@@ -1139,3 +1350,185 @@ def _migrate_ihpix_activities(inspector):
         conn.close()
     except Exception:
         pass
+
+
+# ── IHP-IX Country Summary Model ────────────────────────────────────────────
+
+ihpix_country_summary_table = None
+
+
+class IhpixCountrySummary(model.DomainObject):
+    """Aggregated country data for IHP-IX GeoJSON and dashboard."""
+
+    def __init__(self, country, latitude=0.0, longitude=0.0, region=u'',
+                 total_activities=0, pa1_count=0, pa2_count=0, pa3_count=0,
+                 pa4_count=0, pa5_count=0,
+                 transboundary_all=0, transboundary_pa1=0,
+                 transboundary_pa2=0, transboundary_pa3=0,
+                 transboundary_pa4=0, transboundary_pa5=0,
+                 supporting_all=0, supporting_pa1=0, supporting_pa2=0,
+                 supporting_pa3=0, supporting_pa4=0, supporting_pa5=0,
+                 flagship_data=u'', pa_output_data=u''):
+        self.id = str(uuid.uuid4())
+        self.country = country
+        self.latitude = latitude
+        self.longitude = longitude
+        self.region = region
+        self.total_activities = total_activities
+        self.pa1_count = pa1_count
+        self.pa2_count = pa2_count
+        self.pa3_count = pa3_count
+        self.pa4_count = pa4_count
+        self.pa5_count = pa5_count
+        self.transboundary_all = transboundary_all
+        self.transboundary_pa1 = transboundary_pa1
+        self.transboundary_pa2 = transboundary_pa2
+        self.transboundary_pa3 = transboundary_pa3
+        self.transboundary_pa4 = transboundary_pa4
+        self.transboundary_pa5 = transboundary_pa5
+        self.supporting_all = supporting_all
+        self.supporting_pa1 = supporting_pa1
+        self.supporting_pa2 = supporting_pa2
+        self.supporting_pa3 = supporting_pa3
+        self.supporting_pa4 = supporting_pa4
+        self.supporting_pa5 = supporting_pa5
+        self.flagship_data = flagship_data  # JSON string
+        self.pa_output_data = pa_output_data  # JSON string
+        self.created_at = datetime.datetime.utcnow()
+        self.updated_at = datetime.datetime.utcnow()
+
+    @classmethod
+    def get(cls, id):
+        return meta.Session.query(cls).get(id)
+
+    @classmethod
+    def get_by_country(cls, country):
+        return meta.Session.query(cls).filter(
+            cls.country == country
+        ).first()
+
+    @classmethod
+    def get_all(cls, region=None):
+        q = meta.Session.query(cls)
+        if region:
+            q = q.filter(cls.region == region)
+        return q.order_by(cls.total_activities.desc()).all()
+
+    @classmethod
+    def get_as_geojson(cls, region=None):
+        """Return GeoJSON FeatureCollection."""
+        items = cls.get_all(region=region)
+        features = []
+        for item in items:
+            if item.latitude and item.longitude:
+                features.append({
+                    'type': 'Feature',
+                    'geometry': {
+                        'type': 'Point',
+                        'coordinates': [
+                            float(item.longitude),
+                            float(item.latitude)
+                        ]
+                    },
+                    'properties': item.as_dict()
+                })
+        return {
+            'type': 'FeatureCollection',
+            'features': features
+        }
+
+    @classmethod
+    def delete_all(cls):
+        """Eliminar todos los registros (para re-ingesta).
+        No hace commit — el caller debe manejar la transacción.
+        """
+        meta.Session.query(cls).delete()
+
+    def as_dict(self):
+        return {
+            'id': self.id,
+            'country': self.country,
+            'latitude': float(self.latitude) if self.latitude else 0.0,
+            'longitude': float(self.longitude) if self.longitude else 0.0,
+            'region': self.region or u'',
+            'total_activities': self.total_activities or 0,
+            'pa1_count': self.pa1_count or 0,
+            'pa2_count': self.pa2_count or 0,
+            'pa3_count': self.pa3_count or 0,
+            'pa4_count': self.pa4_count or 0,
+            'pa5_count': self.pa5_count or 0,
+            'transboundary_all': self.transboundary_all or 0,
+            'transboundary_pa1': self.transboundary_pa1 or 0,
+            'transboundary_pa2': self.transboundary_pa2 or 0,
+            'transboundary_pa3': self.transboundary_pa3 or 0,
+            'transboundary_pa4': self.transboundary_pa4 or 0,
+            'transboundary_pa5': self.transboundary_pa5 or 0,
+            'supporting_all': self.supporting_all or 0,
+            'supporting_pa1': self.supporting_pa1 or 0,
+            'supporting_pa2': self.supporting_pa2 or 0,
+            'supporting_pa3': self.supporting_pa3 or 0,
+            'supporting_pa4': self.supporting_pa4 or 0,
+            'supporting_pa5': self.supporting_pa5 or 0,
+            'flagship_data': self.flagship_data or u'',
+            'pa_output_data': self.pa_output_data or u'',
+        }
+
+
+from sqlalchemy import Float
+
+
+def define_ihpix_country_summary_table():
+    global ihpix_country_summary_table
+
+    ihpix_country_summary_table = Table(
+        'ihpix_country_summary',
+        meta.metadata,
+        Column('id', UnicodeText, primary_key=True,
+               default=lambda: str(uuid.uuid4())),
+        Column('country', UnicodeText, nullable=False, unique=True),
+        Column('latitude', Float, default=0.0),
+        Column('longitude', Float, default=0.0),
+        Column('region', UnicodeText, default=u''),
+        Column('total_activities', Integer, default=0),
+        Column('pa1_count', Integer, default=0),
+        Column('pa2_count', Integer, default=0),
+        Column('pa3_count', Integer, default=0),
+        Column('pa4_count', Integer, default=0),
+        Column('pa5_count', Integer, default=0),
+        Column('transboundary_all', Integer, default=0),
+        Column('transboundary_pa1', Integer, default=0),
+        Column('transboundary_pa2', Integer, default=0),
+        Column('transboundary_pa3', Integer, default=0),
+        Column('transboundary_pa4', Integer, default=0),
+        Column('transboundary_pa5', Integer, default=0),
+        Column('supporting_all', Integer, default=0),
+        Column('supporting_pa1', Integer, default=0),
+        Column('supporting_pa2', Integer, default=0),
+        Column('supporting_pa3', Integer, default=0),
+        Column('supporting_pa4', Integer, default=0),
+        Column('supporting_pa5', Integer, default=0),
+        Column('flagship_data', UnicodeText, default=u''),  # JSON
+        Column('pa_output_data', UnicodeText, default=u''),  # JSON
+        Column('created_at', DateTime, default=datetime.datetime.utcnow),
+        Column('updated_at', DateTime, default=datetime.datetime.utcnow),
+    )
+
+    try:
+        meta.registry.map_imperatively(
+            IhpixCountrySummary, ihpix_country_summary_table)
+    except AttributeError:
+        meta.mapper(IhpixCountrySummary, ihpix_country_summary_table)
+
+
+def init_ihpix_country_summary_db():
+    """Create the ihpix_country_summary table if it doesn't exist."""
+    if ihpix_country_summary_table is None:
+        define_ihpix_country_summary_table()
+
+    from sqlalchemy import inspect as sa_inspect
+    inspector = sa_inspect(meta.engine)
+    if 'ihpix_country_summary' not in inspector.get_table_names():
+        ihpix_country_summary_table.create(meta.engine)
+        log.info(u'ihpix_country_summary table created')
+    else:
+        log.debug(u'ihpix_country_summary table already exists')

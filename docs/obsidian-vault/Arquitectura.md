@@ -47,6 +47,7 @@ El plugin es una extensión monolítica de CKAN que extiende el portal con:
 | **ITranslation** | Habilita i18n (árabe, español, francés) |
 | **IActions** | Sobrescribe `user_show`/`user_update` y agrega 45+ acciones custom |
 | **IAuthFunctions** | 41 funciones de autorización para acciones custom |
+| **IClick** | Registra comandos CLI (`ckan ihpix seed-data`) |
 
 ---
 
@@ -106,9 +107,10 @@ Usado para:
 | `BugTicket` | bug_ticket | Sistema de tickets de errores |
 | `PortalCard` | portal_card | Tarjetas configurables para portales |
 | `IhpixContent` | ihpix_content | Contenido editable de IHP-IX |
-| `IhpixActivity` | ihpix_activity | Actividades del programa IHP-IX |
+| `IhpixActivity` | ihpix_activity | Actividades del programa IHP-IX (30+ columnas: biennium, flagships, regions, member_states, métricas de stakeholders, productos de conocimiento, etc.) |
+| `IhpixCountrySummary` | ihpix_country_summary | Datos geográficos agregados por país (lat/lng, region, conteos por PA, datos transboundary, flagship_data JSON) |
 
-Las tablas se crean automáticamente con `init_db()` idempotente y soporte de migraciones.
+Las tablas se crean automáticamente con `init_db()` idempotente y soporte de migraciones (e.g., `_migrate_ihpix_activities()` para columnas nuevas).
 
 ---
 
@@ -146,6 +148,44 @@ Todos bajo `/admin/*`, requieren rol sysadmin. Ver rutas completas en [[Flujos I
 
 ---
 
+## Endpoints GeoJSON (IHP-IX)
+
+El portal IHP-IX expone 3 API actions públicas que sirven datos geográficos:
+
+| Endpoint | Datos | Formato |
+|---|---|---|
+| `ihpix_geojson` | Países con coordenadas y conteos por PA | GeoJSON FeatureCollection (Point) |
+| `ihpix_activity_geojson` | Actividades geolocalizadas vía country coords | GeoJSON FeatureCollection (Point) |
+| `ihpix_country_summary_list` | Datos tabulares por país | Lista JSON |
+
+Las coordenadas provienen de `IhpixCountrySummary` (cargadas via seed data). Los mapas frontend usan **Leaflet** cargado desde CDN. Ver [[Flujos Importantes#10. API GeoJSON de IHP-IX]] para el flujo completo.
+
+---
+
+## Pipeline de datos IHP-IX
+
+Flujo de ingesta de datos desde Excel hasta las vistas frontend:
+
+```
+Excel (Priority Areas)
+    │
+    ▼
+scripts/generate_seed.py → JSON seed (744 actividades, 205 países)
+    │
+    ▼
+CLI: ckan ihpix seed-data → DB (IhpixActivity + IhpixCountrySummary)
+    │
+    ▼
+API actions (ihpix_geojson, ihpix_activity_geojson, ihpix_dashboard_stats)
+    │
+    ▼
+Frontend: Leaflet maps + dashboards + exportación CSV
+```
+
+Ver [[Flujos Importantes#9. Ingesta de datos IHP-IX (Seed pipeline)]] y [[Modulos#cli.py]] para detalles.
+
+---
+
 ## Relaciones entre módulos
 
 ```
@@ -159,6 +199,11 @@ plugin.py ─── registra ──→ controller.py (vistas)
     │                    └── usa ──→ validators.py
     │
     ├── registra ──→ auth.py (autorización)
+    │
+    ├── registra ──→ cli.py (comandos CLI)
+    │                    │
+    │                    └── usa ──→ model.py (DB)
+    │                    └── usa ──→ scripts/generate_seed.py
     │
     └── usa ──→ utils.py (utilidades de imagen)
 ```

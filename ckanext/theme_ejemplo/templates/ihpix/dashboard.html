@@ -10,6 +10,9 @@
 {% block page_header %}{% endblock %}
 
 {% block primary_content_inner %}
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin="" />
 <style>
   /* ── Base ───────────────────────────────────────────────── */
   .ihpix-dash-wrap {
@@ -174,6 +177,66 @@
     background: linear-gradient(135deg, #F59E0B, #D97706);
   }
 
+  /* ── Secondary Stat Cards (smaller) ────────────────────── */
+  .ihpix-dash-stat-card-sm {
+    border-radius: 8px;
+    padding: 1rem 1rem;
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+    min-height: 95px;
+    margin-bottom: 15px;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+  .ihpix-dash-stat-card-sm:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
+  }
+  .ihpix-dash-stat-card-sm::after {
+    content: '';
+    position: absolute;
+    top: -15px;
+    right: -15px;
+    width: 70px;
+    height: 70px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  .ihpix-dash-stat-card-sm .ihpix-dash-stat-icon {
+    position: absolute;
+    top: 0.85rem;
+    right: 0.85rem;
+    font-size: 1.35rem;
+    opacity: 0.35;
+  }
+  .ihpix-dash-stat-card-sm .ihpix-dash-stat-number {
+    font-size: 1.65rem;
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 0.2rem;
+    animation: ihpixCountFade 0.6s ease-out 0.3s both;
+  }
+  .ihpix-dash-stat-card-sm .ihpix-dash-stat-label {
+    font-size: 0.75rem;
+    font-weight: 500;
+    opacity: 0.9;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .ihpix-dash-stat-purple {
+    background: linear-gradient(135deg, #7B1FA2, #4A148C);
+  }
+  .ihpix-dash-stat-cyan {
+    background: linear-gradient(135deg, #00ACC1, #00838F);
+  }
+  .ihpix-dash-stat-green {
+    background: linear-gradient(135deg, #43A047, #2E7D32);
+  }
+  .ihpix-dash-stat-rose {
+    background: linear-gradient(135deg, #E91E63, #AD1457);
+  }
+
   @keyframes ihpixCountFade {
     from { opacity: 0; transform: translateY(10px); }
     to   { opacity: 1; transform: translateY(0); }
@@ -214,6 +277,41 @@
   .ihpix-dash-chart-box canvas {
     width: 100% !important;
     height: 100% !important;
+  }
+
+  /* ── Map Panel ─────────────────────────────────────────── */
+  .ihpix-dash-map-box {
+    position: relative;
+    height: 450px;
+    border-radius: 6px;
+    overflow: hidden;
+  }
+  .ihpix-dash-map-box .leaflet-container {
+    height: 100%;
+    width: 100%;
+    border-radius: 6px;
+  }
+  .ihpix-dash-map-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-top: 0.75rem;
+    padding-top: 0.625rem;
+    border-top: 1px solid #f0f0f0;
+  }
+  .ihpix-dash-map-legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.8rem;
+    color: #4b5563;
+  }
+  .ihpix-dash-map-legend-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    display: inline-block;
+    border: 1px solid rgba(0,0,0,0.1);
   }
 
   /* ── Empty State ───────────────────────────────────────── */
@@ -304,11 +402,14 @@
   /* ── Print ─────────────────────────────────────────────── */
   @media print {
     .ihpix-dash-header { background: #0069B4 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    .ihpix-dash-stat-card { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .ihpix-dash-stat-card,
+    .ihpix-dash-stat-card-sm { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     .ihpix-dash-stat-card:hover,
+    .ihpix-dash-stat-card-sm:hover,
     .ihpix-dash-chart-panel:hover { transform: none; box-shadow: none; }
     .ihpix-dash-btn, .ihpix-dash-footer { display: none; }
     .ihpix-dash-chart-box { height: 260px; }
+    .ihpix-dash-map-box { height: 350px; }
   }
 
   /* ── Mobile ────────────────────────────────────────────── */
@@ -317,7 +418,9 @@
     .ihpix-dash-header h1 { font-size: 1.35rem; }
     .ihpix-dash-header-top { flex-direction: column; }
     .ihpix-dash-chart-box { height: 260px; }
+    .ihpix-dash-map-box { height: 300px; }
     .ihpix-dash-stat-card .ihpix-dash-stat-number { font-size: 1.75rem; }
+    .ihpix-dash-stat-card-sm .ihpix-dash-stat-number { font-size: 1.35rem; }
     .ihpix-dash-footer-links { flex-direction: column; }
   }
 </style>
@@ -357,7 +460,7 @@
     </div>
   </div>
 
-  {# ── Summary Stat Cards ───────────────────────────────── #}
+  {# ── Primary Stat Cards ───────────────────────────────── #}
   <div class="row ihpix-dash-stats">
     <div class="{{ 'col-md-3 col-sm-6' if is_sysadmin else 'col-md-4 col-sm-6' }}">
       <div class="ihpix-dash-stat-card ihpix-dash-stat-blue">
@@ -399,7 +502,78 @@
     {% endif %}
   </div>
 
-  {# ── Charts Row 1 ─────────────────────────────────────── #}
+  {# ── Secondary Stat Cards ─────────────────────────────── #}
+  <div class="row ihpix-dash-stats">
+    <div class="col-md-3 col-sm-6">
+      <div class="ihpix-dash-stat-card-sm ihpix-dash-stat-purple">
+        <i class="fa fa-users ihpix-dash-stat-icon"></i>
+        <div class="ihpix-dash-stat-number" data-count="{{ (stats.stakeholders_knowledge | default(0)) + (stats.stakeholders_awareness | default(0)) }}">
+          {{ (stats.stakeholders_knowledge | default(0)) + (stats.stakeholders_awareness | default(0)) }}
+        </div>
+        <div class="ihpix-dash-stat-label">{{ _('Stakeholders Reached') }}</div>
+      </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+      <div class="ihpix-dash-stat-card-sm ihpix-dash-stat-cyan">
+        <i class="fa fa-book ihpix-dash-stat-icon"></i>
+        <div class="ihpix-dash-stat-number" data-count="{{ stats.knowledge_products | default(0) }}">
+          {{ stats.knowledge_products | default(0) }}
+        </div>
+        <div class="ihpix-dash-stat-label">{{ _('Knowledge Products') }}</div>
+      </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+      <div class="ihpix-dash-stat-card-sm ihpix-dash-stat-green">
+        <i class="fa fa-flask ihpix-dash-stat-icon"></i>
+        <div class="ihpix-dash-stat-number" data-count="{{ stats.scientific_products | default(0) }}">
+          {{ stats.scientific_products | default(0) }}
+        </div>
+        <div class="ihpix-dash-stat-label">{{ _('Scientific Products') }}</div>
+      </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+      <div class="ihpix-dash-stat-card-sm ihpix-dash-stat-rose">
+        <i class="fa fa-graduation-cap ihpix-dash-stat-icon"></i>
+        <div class="ihpix-dash-stat-number" data-count="{{ stats.training_materials | default(0) }}">
+          {{ stats.training_materials | default(0) }}
+        </div>
+        <div class="ihpix-dash-stat-label">{{ _('Training Materials') }}</div>
+      </div>
+    </div>
+  </div>
+
+  {# ── Interactive World Map ─────────────────────────────── #}
+  <div class="row">
+    <div class="col-md-12">
+      <div class="ihpix-dash-chart-panel">
+        <h2 class="ihpix-dash-chart-title">
+          <i class="fa fa-globe"></i> {{ _('Geographic Distribution') }}
+        </h2>
+        <div class="ihpix-dash-map-box">
+          <div id="ihpix-map" style="height:100%;width:100%;"></div>
+        </div>
+        <div class="ihpix-dash-map-legend" id="ihpix-map-legend">
+          <span class="ihpix-dash-map-legend-item">
+            <span class="ihpix-dash-map-legend-dot" style="background:#E91E63;"></span> {{ _('Africa') }}
+          </span>
+          <span class="ihpix-dash-map-legend-item">
+            <span class="ihpix-dash-map-legend-dot" style="background:#FF9800;"></span> {{ _('Asia and the Pacific') }}
+          </span>
+          <span class="ihpix-dash-map-legend-item">
+            <span class="ihpix-dash-map-legend-dot" style="background:#0069B4;"></span> {{ _('Europe and North America') }}
+          </span>
+          <span class="ihpix-dash-map-legend-item">
+            <span class="ihpix-dash-map-legend-dot" style="background:#28a745;"></span> {{ _('Latin America and the Caribbean') }}
+          </span>
+          <span class="ihpix-dash-map-legend-item">
+            <span class="ihpix-dash-map-legend-dot" style="background:#9C27B0;"></span> {{ _('Arab States') }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {# ── Charts Row 1: PA Doughnut + Biennium Bar ─────────── #}
   <div class="row">
     <div class="col-md-6">
       <div class="ihpix-dash-chart-panel">
@@ -421,15 +595,15 @@
     <div class="col-md-6">
       <div class="ihpix-dash-chart-panel">
         <h2 class="ihpix-dash-chart-title">
-          <i class="fa fa-line-chart"></i> {{ _('Activities Timeline') }}
+          <i class="fa fa-calendar"></i> {{ _('Activities by Biennium') }}
         </h2>
         <div class="ihpix-dash-chart-box">
-          {% if stats.timeline %}
-            <canvas id="ihpix-chart-timeline"></canvas>
+          {% if stats.by_biennium %}
+            <canvas id="ihpix-chart-biennium"></canvas>
           {% else %}
             <div class="ihpix-dash-empty">
               <i class="fa fa-calendar-o"></i>
-              <p>{{ _('No timeline data available') }}</p>
+              <p>{{ _('No biennium data available') }}</p>
             </div>
           {% endif %}
         </div>
@@ -437,7 +611,7 @@
     </div>
   </div>
 
-  {# ── Charts Row 2 ─────────────────────────────────────── #}
+  {# ── Charts Row 2: Top Countries + Activities by Output ── #}
   <div class="row">
     <div class="col-md-6">
       <div class="ihpix-dash-chart-panel">
@@ -475,6 +649,34 @@
     </div>
   </div>
 
+  {# ── Charts Row 3: Region Distribution + Impact Metrics ── #}
+  <div class="row">
+    <div class="col-md-6">
+      <div class="ihpix-dash-chart-panel">
+        <h2 class="ihpix-dash-chart-title">
+          <i class="fa fa-map"></i> {{ _('Region Distribution') }}
+        </h2>
+        <div class="ihpix-dash-chart-box">
+          <canvas id="ihpix-chart-regions"></canvas>
+          <div class="ihpix-dash-empty" id="ihpix-regions-empty" style="display:none;">
+            <i class="fa fa-map-o"></i>
+            <p>{{ _('No region data available') }}</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="col-md-6">
+      <div class="ihpix-dash-chart-panel">
+        <h2 class="ihpix-dash-chart-title">
+          <i class="fa fa-bar-chart"></i> {{ _('Impact Metrics') }}
+        </h2>
+        <div class="ihpix-dash-chart-box">
+          <canvas id="ihpix-chart-impact"></canvas>
+        </div>
+      </div>
+    </div>
+  </div>
+
   {# ── Quick Links Footer ───────────────────────────────── #}
   <div class="ihpix-dash-footer">
     <div class="ihpix-dash-footer-title">{{ _('Quick Links') }}</div>
@@ -495,8 +697,11 @@
 
 </div>{# /.ihpix-dash-wrap #}
 
-{# ── Chart.js ────────────────────────────────────────────── #}
+{# ── CDN Scripts ─────────────────────────────────────────── #}
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+        crossorigin=""></script>
 <script>
 document.addEventListener('DOMContentLoaded', function () {
   'use strict';
@@ -513,12 +718,15 @@ document.addEventListener('DOMContentLoaded', function () {
     '#0069B4','#00A0E3','#005A9C','#0091d5','#003f7f',
     '#00b4d8','#3949AB','#0077b6','#48cae4','#023e8a'
   ];
+  var REGION_COLORS = {
+    'Africa': '#E91E63',
+    'Asia and the Pacific': '#FF9800',
+    'Europe and North America': '#0069B4',
+    'Latin America and the Caribbean': '#28a745',
+    'Arab States': '#9C27B0'
+  };
+  var BIENNIUM_COLORS = ['#0069B4', '#00A0E3', '#005A9C', '#0091d5', '#003f7f', '#00b4d8'];
   var FONT_FAMILY = getComputedStyle(document.body).fontFamily || 'Inter, system-ui, sans-serif';
-  var MONTHS = [
-    '{{ _("Jan") }}','{{ _("Feb") }}','{{ _("Mar") }}','{{ _("Apr") }}',
-    '{{ _("May") }}','{{ _("Jun") }}','{{ _("Jul") }}','{{ _("Aug") }}',
-    '{{ _("Sep") }}','{{ _("Oct") }}','{{ _("Nov") }}','{{ _("Dec") }}'
-  ];
 
   Chart.defaults.font.family = FONT_FAMILY;
 
@@ -540,9 +748,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
   /* ── Data from Jinja2 ──────────────────────────────── */
   var dataPa       = {{ stats.by_priority_area | default([]) | tojson }};
-  var dataTimeline = {{ stats.timeline | default([]) | tojson }};
+  var dataBiennium = {{ stats.by_biennium | default([]) | tojson }};
   var dataCountry  = {{ stats.by_country | default([]) | tojson }};
   var dataOutput   = {{ stats.by_output | default([]) | tojson }};
+
+  var impactData = {
+    stakeholders_knowledge: {{ stats.stakeholders_knowledge | default(0) | tojson }},
+    stakeholders_awareness: {{ stats.stakeholders_awareness | default(0) | tojson }},
+    knowledge_products:     {{ stats.knowledge_products | default(0) | tojson }},
+    scientific_products:    {{ stats.scientific_products | default(0) | tojson }},
+    training_materials:     {{ stats.training_materials | default(0) | tojson }}
+  };
 
   /* ── 1. Priority Area – Doughnut ────────────────────── */
   {% if stats.by_priority_area %}
@@ -598,47 +814,34 @@ document.addEventListener('DOMContentLoaded', function () {
   })();
   {% endif %}
 
-  /* ── 2. Timeline – Line / Area ─────────────────────── */
-  {% if stats.timeline %}
+  /* ── 2. Activities by Biennium – Horizontal Bar ─────── */
+  {% if stats.by_biennium %}
   (function () {
-    var ctx = document.getElementById('ihpix-chart-timeline');
+    var ctx = document.getElementById('ihpix-chart-biennium');
     if (!ctx) return;
-    var labels = dataTimeline.map(function (d) {
-      return MONTHS[d.month - 1] + ' ' + d.year;
-    });
-    var values = dataTimeline.map(function (d) { return d.count; });
+    var labels = dataBiennium.map(function (d) { return d.name; });
+    var values = dataBiennium.map(function (d) { return d.count; });
+    var colors = values.map(function (_, i) { return BIENNIUM_COLORS[i % BIENNIUM_COLORS.length]; });
 
     new Chart(ctx, {
-      type: 'line',
+      type: 'bar',
       data: {
         labels: labels,
         datasets: [{
           label: '{{ _("Activities") }}',
           data: values,
-          borderColor: '#0069B4',
-          backgroundColor: function (context) {
-            var chart = context.chart;
-            var area  = chart.chartArea;
-            if (!area) return 'rgba(0,105,180,0.15)';
-            var grad = chart.ctx.createLinearGradient(0, area.top, 0, area.bottom);
-            grad.addColorStop(0, 'rgba(0,105,180,0.28)');
-            grad.addColorStop(1, 'rgba(0,105,180,0.02)');
-            return grad;
-          },
-          fill: true,
-          tension: 0.4,
-          borderWidth: 2.5,
-          pointRadius: 3,
-          pointBackgroundColor: '#0069B4',
-          pointHoverRadius: 6
+          backgroundColor: colors,
+          borderRadius: 4,
+          barPercentage: 0.65
         }]
       },
       options: {
+        indexAxis: 'y',
         responsive: true,
         maintainAspectRatio: false,
         scales: {
-          x: { grid: { display: false }, ticks: { maxRotation: 45, font: { size: 11 } } },
-          y: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: 'rgba(0,0,0,0.05)' } }
+          x: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: 'rgba(0,0,0,0.05)' } },
+          y: { grid: { display: false }, ticks: { font: { size: 12, weight: '600' } } }
         },
         plugins: {
           legend: { display: false },
@@ -730,7 +933,7 @@ document.addEventListener('DOMContentLoaded', function () {
               font: { size: 11 },
               callback: function (val) {
                 var lbl = this.getLabelForValue(val);
-                return lbl.length > 18 ? lbl.substring(0, 16) + '…' : lbl;
+                return lbl.length > 18 ? lbl.substring(0, 16) + '\u2026' : lbl;
               }
             }
           },
@@ -745,6 +948,167 @@ document.addEventListener('DOMContentLoaded', function () {
     });
   })();
   {% endif %}
+
+  /* ── 5. Impact Metrics – Horizontal Bar ────────────── */
+  (function () {
+    var ctx = document.getElementById('ihpix-chart-impact');
+    if (!ctx) return;
+    var labels = [
+      '{{ _("Stakeholders (Knowledge)") }}',
+      '{{ _("Stakeholders (Awareness)") }}',
+      '{{ _("Knowledge Products") }}',
+      '{{ _("Scientific Products") }}',
+      '{{ _("Training Materials") }}'
+    ];
+    var values = [
+      impactData.stakeholders_knowledge,
+      impactData.stakeholders_awareness,
+      impactData.knowledge_products,
+      impactData.scientific_products,
+      impactData.training_materials
+    ];
+    var colors = ['#7B1FA2', '#9C27B0', '#00ACC1', '#43A047', '#E91E63'];
+
+    new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: '{{ _("Count") }}',
+          data: values,
+          backgroundColor: colors,
+          borderRadius: 4,
+          barPercentage: 0.6
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        scales: {
+          x: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: 'rgba(0,0,0,0.05)' } },
+          y: { grid: { display: false }, ticks: { font: { size: 11 } } }
+        },
+        plugins: {
+          legend: { display: false },
+          tooltip: tooltipStyle
+        },
+        animation: { duration: 700 }
+      }
+    });
+  })();
+
+  /* ── 6. Leaflet Map ────────────────────────────────── */
+  (function () {
+    var mapEl = document.getElementById('ihpix-map');
+    if (!mapEl) return;
+
+    var map = L.map('ihpix-map', {
+      center: [20, 0],
+      zoom: 2,
+      scrollWheelZoom: false,
+      zoomControl: true
+    });
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+      maxZoom: 18
+    }).addTo(map);
+
+    fetch('/api/3/action/ihpix_geojson')
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (!data.result || !data.result.features || !data.result.features.length) return;
+        var features = data.result.features;
+        var regionCounts = {};
+
+        features.forEach(function (f) {
+          var p = f.properties;
+          var coords = f.geometry.coordinates;
+          var radius = Math.max(5, Math.min(25, Math.sqrt(p.total_activities) * 3));
+          var color = REGION_COLORS[p.region] || '#6b7280';
+
+          /* Accumulate region counts for the Region Distribution chart */
+          if (p.region) {
+            regionCounts[p.region] = (regionCounts[p.region] || 0) + p.total_activities;
+          }
+
+          var popupLines = [
+            '<div style="min-width:180px;">',
+            '<strong style="font-size:1rem;">' + (p.country || '—') + '</strong>',
+            '<hr style="margin:4px 0;border-color:#e5e7eb;">',
+            '<b>' + '{{ _("Total Activities") }}' + ':</b> ' + p.total_activities
+          ];
+          for (var i = 1; i <= 5; i++) {
+            var paKey = 'pa' + i + '_count';
+            if (p[paKey] !== undefined && p[paKey] > 0) {
+              popupLines.push('<span style="color:' + PA_COLORS['PA' + i] + ';">\u25CF</span> PA' + i + ': ' + p[paKey]);
+            }
+          }
+          if (p.region) {
+            popupLines.push('<br><i style="color:#6b7280;">' + p.region + '</i>');
+          }
+          popupLines.push('</div>');
+
+          L.circleMarker([coords[1], coords[0]], {
+            radius: radius,
+            fillColor: color,
+            color: '#fff',
+            weight: 1.5,
+            opacity: 0.9,
+            fillOpacity: 0.7
+          }).bindPopup(popupLines.join('<br>'))
+            .addTo(map);
+        });
+
+        /* ── 7. Region Distribution – Doughnut (data from API) ── */
+        buildRegionChart(regionCounts);
+      })
+      .catch(function () {
+        /* Silently degrade if the API is unavailable */
+      });
+  })();
+
+  function buildRegionChart(regionCounts) {
+    var canvas = document.getElementById('ihpix-chart-regions');
+    var emptyEl = document.getElementById('ihpix-regions-empty');
+    if (!canvas) return;
+
+    var regionNames = Object.keys(regionCounts);
+    if (!regionNames.length) {
+      canvas.style.display = 'none';
+      if (emptyEl) emptyEl.style.display = '';
+      return;
+    }
+
+    var labels = regionNames;
+    var values = regionNames.map(function (r) { return regionCounts[r]; });
+    var colors = regionNames.map(function (r) { return REGION_COLORS[r] || '#6b7280'; });
+
+    new Chart(canvas, {
+      type: 'doughnut',
+      data: {
+        labels: labels,
+        datasets: [{
+          data: values,
+          backgroundColor: colors,
+          borderWidth: 2,
+          borderColor: '#fff',
+          hoverOffset: 6
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        cutout: '55%',
+        plugins: {
+          legend: { position: 'bottom', labels: { padding: 14, usePointStyle: true, pointStyleWidth: 10, font: { size: 11 } } },
+          tooltip: tooltipStyle
+        },
+        animation: { animateRotate: true, duration: 900 }
+      }
+    });
+  }
 });
 </script>
 {% endblock %}

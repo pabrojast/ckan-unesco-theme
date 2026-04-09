@@ -251,3 +251,20 @@ def ihpix_report_review(context, data_dict):
 def ihpix_dashboard_stats(context, data_dict):
     """Public read access to dashboard statistics."""
     return {'success': True}
+
+
+# ── IHP-IX GeoJSON & Country Summary Auth ──────────────────────────────────
+
+def ihpix_geojson(context, data_dict):
+    """Public read access to GeoJSON data."""
+    return {'success': True}
+
+
+def ihpix_activity_geojson(context, data_dict):
+    """Public read access to activity GeoJSON data."""
+    return {'success': True}
+
+
+def ihpix_country_summary_list(context, data_dict):
+    """Public read access to country summary data."""
+    return {'success': True}

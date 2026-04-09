@@ -165,16 +165,19 @@ Patrón LRU con buster:
 ```
 1. Página principal (/ihpix):
    → Carga contenido editable de IhpixContent (18 secciones)
-   → Muestra CTA blocks y Priority Area descriptions
+   → Muestra mapa mundial Leaflet con estadísticas globales
+   → Métricas de impacto con contadores animados
 2. Outputs (/ihpix/outputs):
    → Lista actividades publicadas de IhpixActivity
-   → Filtrable por priority_area y output
+   → Filtros avanzados: biennium, region, country, priority_area, output
+   → Vistas expandibles con detalle, exportación CSV
 3. Reporte (/ihpix/report):
    → GET: formulario de reporte para usuarios autenticados
    → POST: ihpix_report_submit() guarda el reporte
 4. Dashboard (/ihpix/dashboard):
-   → ihpix_dashboard_stats() genera estadísticas
-   → Muestra métricas agregadas por PA y país
+   → ihpix_dashboard_stats() genera estadísticas expandidas
+   → Mapa interactivo Leaflet con GeoJSON de países
+   → Gráficas por biennium, paneles de región e impacto
 5. Admin (/admin/ihpix/*):
    → Gestión de contenido, actividades y revisión de reportes
 ```
@@ -197,6 +200,63 @@ Patrón LRU con buster:
    → No se almacena el archivo
 4. Si la validación pasa:
    → Se almacena en el directorio de uploads de CKAN
+```
+
+---
+
+## 9. Ingesta de datos IHP-IX (Seed pipeline)
+
+**Módulos**: `cli.py`, `scripts/generate_seed.py`, `model.py`
+
+```
+Pipeline completo:
+1. Se recibe archivo Excel con datos de Priority Areas por país
+2. generate_seed.py procesa el Excel:
+   a. Lee hojas de actividades y datos geográficos
+   b. Genera JSON con estructura {activities: [...], country_summaries: [...]}
+   c. Escribe ckanext/theme_ejemplo/data/ihpix_seed_data.json
+3. CLI carga el JSON en la DB:
+   a. ckan ihpix seed-data -f <path.json>
+   b. Sin --append: elimina registros previos con original_id
+   c. Crea registros IhpixActivity (744 actividades)
+   d. Crea registros IhpixCountrySummary (205 países con coordenadas)
+
+Re-ingesta con datos actualizados:
+1. Obtener nuevo Excel
+2. cd ckanext/theme_ejemplo && python scripts/generate_seed.py
+3. ckan ihpix seed-data -f data/ihpix_seed_data.json
+   (o directamente: ckan ihpix seed-data --from-excel <path.xlsx>)
+```
+
+> [!tip] Flag `--append`
+> Usar `--append` para agregar datos sin eliminar los existentes. Sin este flag, el comando elimina todas las actividades con `original_id` y todos los country summaries antes de cargar.
+
+---
+
+## 10. API GeoJSON de IHP-IX
+
+**Módulos**: `actions.py`, `auth.py`, `model.py`
+
+```
+ihpix_geojson (datos de país):
+1. Request → API action ihpix_geojson (público)
+2. Filtro opcional: region
+3. IhpixCountrySummary.get_as_geojson(region)
+4. Retorna GeoJSON FeatureCollection con Point por país
+   → coordinates: [lng, lat]
+   → properties: total_activities, pa1–5_count, transboundary, flagship_data
+
+ihpix_activity_geojson (actividades individuales):
+1. Request → API action ihpix_activity_geojson (público)
+2. Filtros: priority_area, output, biennium, country, flagship, region
+3. Consulta IhpixActivity + join con IhpixCountrySummary para coordenadas
+4. Retorna GeoJSON FeatureCollection con actividades geolocalizadas
+
+ihpix_country_summary_list (datos tabulares):
+1. Request → API action ihpix_country_summary_list (público)
+2. Filtro opcional: region
+3. IhpixCountrySummary.get_all(region)
+4. Retorna lista de dicts con datos por país
 ```
 
 ---

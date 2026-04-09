@@ -1,161 +1,1074 @@
 {% extends "page.html" %}
-{% block title %}
-{% trans %}IHP IX{% endtrans %} - {{ super() }}
-{% endblock %}
 
+{% block title %}{{ _('IHP-IX: Science for a Water Secure World') }} - {{ super() }}{% endblock %}
 
 {% block breadcrumb_content %}
-<li class="active"><a href="{{ h.url_for('/ihpix') }}">{% trans %}IHP IX{% endtrans %}</a></li>
+  <li class="active"><a href="{{ h.url_for('/ihpix') }}">{% trans %}IHP IX{% endtrans %}</a></li>
 {% endblock %}
 
 {% block primary_content_inner %}
-  <h1>{{ _('IHP IX') }}</h1>
-  
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+      crossorigin="" />
+<style>
+  /* ── Base ───────────────────────────────────────────────── */
+  .ihpix-landing {
+    font-family: inherit;
+    color: #1a1a2e;
+  }
+
+  /* ── Hero Banner ────────────────────────────────────────── */
+  .ihpix-hero {
+    background: linear-gradient(135deg, #0069B4 0%, #005A9C 50%, #003f7f 100%);
+    color: #fff;
+    border-radius: 10px;
+    padding: 3rem 2.5rem 2.5rem;
+    margin-bottom: 2rem;
+    position: relative;
+    overflow: hidden;
+  }
+  .ihpix-hero::before {
+    content: '';
+    position: absolute;
+    top: -60%;
+    right: -8%;
+    width: 450px;
+    height: 450px;
+    background: radial-gradient(circle, rgba(255,255,255,0.07) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  .ihpix-hero::after {
+    content: '';
+    position: absolute;
+    bottom: -30%;
+    left: -5%;
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(0,160,227,0.15) 0%, transparent 70%);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  .ihpix-hero-inner {
+    position: relative;
+    z-index: 1;
+  }
+  .ihpix-hero h1 {
+    font-size: 2.1rem;
+    font-weight: 800;
+    margin: 0 0 0.5rem;
+    color: #fff;
+    line-height: 1.2;
+  }
+  .ihpix-hero-subtitle {
+    font-size: 1.05rem;
+    opacity: 0.88;
+    margin: 0 0 1.75rem;
+    max-width: 680px;
+    line-height: 1.5;
+  }
+
+  /* Hero quick stats */
+  .ihpix-hero-stats {
+    display: flex;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 1.75rem;
+  }
+  .ihpix-hero-stat {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 10px;
+    padding: 1rem 1.5rem;
+    min-width: 150px;
+    text-align: center;
+    transition: background 0.2s ease;
+  }
+  .ihpix-hero-stat:hover {
+    background: rgba(255,255,255,0.2);
+  }
+  .ihpix-hero-stat-number {
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1.1;
+    display: block;
+  }
+  .ihpix-hero-stat-label {
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    opacity: 0.85;
+    margin-top: 0.25rem;
+    display: block;
+  }
+
+  /* Hero action buttons */
+  .ihpix-hero-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+  .ihpix-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.6rem 1.25rem;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    border: none;
+    cursor: pointer;
+  }
+  .ihpix-btn-white {
+    background: #fff;
+    color: #0069B4;
+  }
+  .ihpix-btn-white:hover {
+    background: #e8f4ff;
+    color: #005A9C;
+    text-decoration: none;
+  }
+  .ihpix-btn-accent {
+    background: #00A0E3;
+    color: #fff;
+  }
+  .ihpix-btn-accent:hover {
+    background: #008cc7;
+    color: #fff;
+    text-decoration: none;
+  }
+  .ihpix-btn-ghost {
+    background: rgba(255,255,255,0.15);
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.35);
+  }
+  .ihpix-btn-ghost:hover {
+    background: rgba(255,255,255,0.3);
+    color: #fff;
+    text-decoration: none;
+  }
+
   {% if is_sysadmin %}
-  <div style="margin-bottom: 1rem; text-align: right;">
-    <a href="/ckan-admin/ihpix" class="btn btn-default btn-sm">
-      <i class="fa fa-cog"></i> {{ _('Manage Content') }}
-    </a>
-    <a href="/ckan-admin/ihpix/activities" class="btn btn-default btn-sm">
-      <i class="fa fa-flag"></i> {{ _('Manage Activities') }}
-    </a>
-    <a href="/ckan-admin/ihpix/reports" class="btn btn-default btn-sm">
-      <i class="fa fa-inbox"></i> {{ _('Review Reports') }}
-    </a>
+  .ihpix-admin-bar {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid rgba(255,255,255,0.2);
+  }
+  .ihpix-btn-admin {
+    background: rgba(233,30,99,0.2);
+    color: #fff;
+    border: 1px solid rgba(233,30,99,0.5);
+    font-size: 0.82rem;
+    padding: 0.4rem 0.9rem;
+  }
+  .ihpix-btn-admin:hover {
+    background: rgba(233,30,99,0.4);
+    color: #fff;
+    text-decoration: none;
+  }
+  {% endif %}
+
+  /* ── Section Titles ─────────────────────────────────────── */
+  .ihpix-section {
+    margin-bottom: 2.25rem;
+  }
+  .ihpix-section-header {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    margin-bottom: 1.25rem;
+  }
+  .ihpix-section-header i {
+    font-size: 1.3rem;
+    color: #0069B4;
+  }
+  .ihpix-section-title {
+    font-size: 1.4rem;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin: 0;
+  }
+  .ihpix-section-subtitle {
+    font-size: 0.92rem;
+    color: #6b7280;
+    margin: -0.75rem 0 1.25rem 2rem;
+    line-height: 1.5;
+  }
+
+  /* ── Map Section ────────────────────────────────────────── */
+  .ihpix-map-panel {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
+    transition: box-shadow 0.25s ease;
+  }
+  .ihpix-map-panel:hover {
+    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  }
+  #ihpix-map {
+    height: 420px;
+    width: 100%;
+    z-index: 1;
+  }
+  .ihpix-map-legend {
+    display: flex;
+    gap: 1rem;
+    flex-wrap: wrap;
+    padding: 0.75rem 1.25rem;
+    background: #f8f9fb;
+    border-top: 1px solid #e5e7eb;
+    font-size: 0.82rem;
+    color: #6b7280;
+  }
+  .ihpix-map-legend-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+  }
+  .ihpix-map-legend-dot {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    display: inline-block;
+    border: 2px solid rgba(255,255,255,0.8);
+    box-shadow: 0 0 3px rgba(0,0,0,0.2);
+  }
+  .ihpix-map-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 420px;
+    color: #9ca3af;
+    font-size: 0.95rem;
+  }
+  .ihpix-map-loading i {
+    margin-right: 0.5rem;
+    animation: ihpixSpin 1s linear infinite;
+  }
+
+  /* ── Priority Areas Grid ────────────────────────────────── */
+  .ihpix-pa-card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    min-height: 400px;
+  }
+  .ihpix-pa-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+  }
+  .ihpix-pa-card-img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    display: block;
+  }
+  .ihpix-pa-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.85rem;
+    font-weight: 800;
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.25);
+    z-index: 2;
+  }
+  .ihpix-pa-card-body {
+    padding: 1.25rem;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  .ihpix-pa-card-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin: 0 0 0.5rem;
+    line-height: 1.3;
+  }
+  .ihpix-pa-card-desc {
+    font-size: 0.88rem;
+    color: #4b5563;
+    line-height: 1.55;
+    flex: 1;
+    margin-bottom: 0.75rem;
+    display: -webkit-box;
+    -webkit-line-clamp: 4;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .ihpix-pa-card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding-top: 0.75rem;
+    border-top: 1px solid #f0f0f0;
+    margin-top: auto;
+  }
+  .ihpix-pa-activities-count {
+    font-size: 0.82rem;
+    color: #6b7280;
+  }
+  .ihpix-pa-activities-count i {
+    margin-right: 0.25rem;
+  }
+  .ihpix-pa-link {
+    font-size: 0.85rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .ihpix-pa-link:hover {
+    text-decoration: none;
+  }
+
+  /* PA color accents */
+  .ihpix-pa-card[data-pa="1"] .ihpix-pa-badge { background: #0069B4; }
+  .ihpix-pa-card[data-pa="1"] .ihpix-pa-link { color: #0069B4; }
+  .ihpix-pa-card[data-pa="1"] .ihpix-pa-link:hover { color: #004e8c; }
+  .ihpix-pa-card[data-pa="1"] { border-top: 3px solid #0069B4; }
+
+  .ihpix-pa-card[data-pa="2"] .ihpix-pa-badge { background: #00A0E3; }
+  .ihpix-pa-card[data-pa="2"] .ihpix-pa-link { color: #00A0E3; }
+  .ihpix-pa-card[data-pa="2"] .ihpix-pa-link:hover { color: #0082b8; }
+  .ihpix-pa-card[data-pa="2"] { border-top: 3px solid #00A0E3; }
+
+  .ihpix-pa-card[data-pa="3"] .ihpix-pa-badge { background: #28a745; }
+  .ihpix-pa-card[data-pa="3"] .ihpix-pa-link { color: #28a745; }
+  .ihpix-pa-card[data-pa="3"] .ihpix-pa-link:hover { color: #1e7e34; }
+  .ihpix-pa-card[data-pa="3"] { border-top: 3px solid #28a745; }
+
+  .ihpix-pa-card[data-pa="4"] .ihpix-pa-badge { background: #FFC107; }
+  .ihpix-pa-card[data-pa="4"] .ihpix-pa-link { color: #d4a106; }
+  .ihpix-pa-card[data-pa="4"] .ihpix-pa-link:hover { color: #b08a00; }
+  .ihpix-pa-card[data-pa="4"] { border-top: 3px solid #FFC107; }
+
+  .ihpix-pa-card[data-pa="5"] .ihpix-pa-badge { background: #E91E63; }
+  .ihpix-pa-card[data-pa="5"] .ihpix-pa-link { color: #E91E63; }
+  .ihpix-pa-card[data-pa="5"] .ihpix-pa-link:hover { color: #c2185b; }
+  .ihpix-pa-card[data-pa="5"] { border-top: 3px solid #E91E63; }
+
+  /* ── Impact Metrics ─────────────────────────────────────── */
+  .ihpix-metrics-row {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+    margin-bottom: 0;
+  }
+  .ihpix-metric-card {
+    flex: 1;
+    min-width: 180px;
+    border-radius: 10px;
+    padding: 1.5rem 1.25rem;
+    color: #fff;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    margin-bottom: 15px;
+  }
+  .ihpix-metric-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.18);
+  }
+  .ihpix-metric-card::after {
+    content: '';
+    position: absolute;
+    top: -20px;
+    right: -20px;
+    width: 90px;
+    height: 90px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 50%;
+    pointer-events: none;
+  }
+  .ihpix-metric-icon {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    font-size: 1.6rem;
+    opacity: 0.3;
+  }
+  .ihpix-metric-number {
+    font-size: 2.1rem;
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 0.3rem;
+  }
+  .ihpix-metric-label {
+    font-size: 0.82rem;
+    font-weight: 500;
+    opacity: 0.9;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .ihpix-metric-knowledge   { background: linear-gradient(135deg, #0069B4, #004e8c); }
+  .ihpix-metric-scientific   { background: linear-gradient(135deg, #3949AB, #283593); }
+  .ihpix-metric-training     { background: linear-gradient(135deg, #00897B, #00695C); }
+  .ihpix-metric-stakeholders { background: linear-gradient(135deg, #F59E0B, #D97706); }
+
+  /* ── CTA Cards ──────────────────────────────────────────── */
+  .ihpix-cta-card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 20px;
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    position: relative;
+  }
+  .ihpix-cta-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+  }
+  .ihpix-cta-card-img {
+    width: 100%;
+    height: 170px;
+    object-fit: cover;
+    display: block;
+  }
+  .ihpix-cta-card-body {
+    padding: 1.25rem;
+  }
+  .ihpix-cta-card-title {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: #1a1a2e;
+    margin: 0 0 0.5rem;
+  }
+  .ihpix-cta-card-desc {
+    font-size: 0.88rem;
+    color: #4b5563;
+    line-height: 1.55;
+    margin-bottom: 1rem;
+  }
+  .ihpix-cta-card-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #0069B4;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .ihpix-cta-card-link:hover {
+    color: #005A9C;
+    text-decoration: none;
+  }
+  .ihpix-cta-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    padding: 0.25rem 0.7rem;
+    border-radius: 20px;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    z-index: 2;
+  }
+  .ihpix-cta-badge-soon {
+    background: #FFC107;
+    color: #7c6300;
+  }
+  .ihpix-cta-badge-members {
+    background: #0069B4;
+    color: #fff;
+  }
+
+  /* ── Footer Action Bar ──────────────────────────────────── */
+  .ihpix-footer-bar {
+    background: #f8f9fb;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 1.75rem;
+    text-align: center;
+  }
+  .ihpix-footer-title {
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #374151;
+    margin: 0 0 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .ihpix-footer-links {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.75rem;
+    flex-wrap: wrap;
+  }
+  .ihpix-footer-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.55rem 1.15rem;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+  }
+  .ihpix-footer-link-primary {
+    background: #0069B4;
+    color: #fff;
+  }
+  .ihpix-footer-link-primary:hover {
+    background: #005A9C;
+    color: #fff;
+    text-decoration: none;
+  }
+  .ihpix-footer-link-outline {
+    background: #fff;
+    color: #0069B4;
+    border: 1px solid #0069B4;
+  }
+  .ihpix-footer-link-outline:hover {
+    background: #0069B4;
+    color: #fff;
+    text-decoration: none;
+  }
+  .ihpix-footer-link-success {
+    background: #28a745;
+    color: #fff;
+  }
+  .ihpix-footer-link-success:hover {
+    background: #1e7e34;
+    color: #fff;
+    text-decoration: none;
+  }
+  .ihpix-footer-link-admin {
+    background: #fff;
+    color: #E91E63;
+    border: 1px solid #E91E63;
+  }
+  .ihpix-footer-link-admin:hover {
+    background: #E91E63;
+    color: #fff;
+    text-decoration: none;
+  }
+
+  /* ── Animations ─────────────────────────────────────────── */
+  @keyframes ihpixSpin {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+  }
+  @keyframes ihpixFadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .ihpix-animate {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  .ihpix-animate.ihpix-visible {
+    animation: ihpixFadeUp 0.5s ease-out forwards;
+  }
+
+  /* ── Print ──────────────────────────────────────────────── */
+  @media print {
+    .ihpix-hero { background: #0069B4 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .ihpix-metric-card { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .ihpix-pa-card:hover,
+    .ihpix-cta-card:hover,
+    .ihpix-metric-card:hover { transform: none; box-shadow: none; }
+    .ihpix-hero-actions, .ihpix-admin-bar, .ihpix-footer-bar { display: none; }
+    #ihpix-map { height: 300px; }
+  }
+
+  /* ── Mobile ─────────────────────────────────────────────── */
+  @media (max-width: 767px) {
+    .ihpix-hero { padding: 1.75rem 1.25rem 1.5rem; }
+    .ihpix-hero h1 { font-size: 1.5rem; }
+    .ihpix-hero-stats { gap: 0.75rem; }
+    .ihpix-hero-stat { min-width: 120px; padding: 0.75rem 1rem; }
+    .ihpix-hero-stat-number { font-size: 1.5rem; }
+    .ihpix-hero-actions { flex-direction: column; }
+    .ihpix-section-title { font-size: 1.2rem; }
+    .ihpix-section-subtitle { margin-left: 0; }
+    #ihpix-map { height: 300px; }
+    .ihpix-metric-number { font-size: 1.6rem; }
+    .ihpix-metrics-row { gap: 10px; }
+    .ihpix-footer-links { flex-direction: column; }
+    .ihpix-pa-card { min-height: auto; }
+  }
+</style>
+
+<div class="ihpix-landing">
+
+  {# ══════════════════════════════════════════════════════════
+     SECTION 1 — Hero Banner
+     ══════════════════════════════════════════════════════════ #}
+  <div class="ihpix-hero">
+    <div class="ihpix-hero-inner">
+      <h1>{{ _('IHP-IX: Science for a Water Secure World') }}</h1>
+      <p class="ihpix-hero-subtitle">
+        {{ _('The ninth phase of the Intergovernmental Hydrological Programme (2022–2029) — UNESCO\'s strategic framework for addressing global water challenges through scientific knowledge, innovation, and international cooperation.') }}
+      </p>
+
+      {# Quick stats — placeholders populated by JS from the stats API #}
+      <div class="ihpix-hero-stats">
+        <div class="ihpix-hero-stat">
+          <span class="ihpix-hero-stat-number" id="ihpix-stat-activities">—</span>
+          <span class="ihpix-hero-stat-label">{{ _('Total Activities') }}</span>
+        </div>
+        <div class="ihpix-hero-stat">
+          <span class="ihpix-hero-stat-number" id="ihpix-stat-countries">—</span>
+          <span class="ihpix-hero-stat-label">{{ _('Countries') }}</span>
+        </div>
+        <div class="ihpix-hero-stat">
+          <span class="ihpix-hero-stat-number" id="ihpix-stat-stakeholders">—</span>
+          <span class="ihpix-hero-stat-label">{{ _('Stakeholders Reached') }}</span>
+        </div>
+      </div>
+
+      <div class="ihpix-hero-actions">
+        <a href="/ihpix/dashboard" class="ihpix-btn ihpix-btn-white">
+          <i class="fa fa-bar-chart"></i> {{ _('Dashboard') }}
+        </a>
+        <a href="/ihpix/outputs" class="ihpix-btn ihpix-btn-accent">
+          <i class="fa fa-list-alt"></i> {{ _('Browse Activities') }}
+        </a>
+        <a href="/ihpix/report" class="ihpix-btn ihpix-btn-ghost">
+          <i class="fa fa-paper-plane"></i> {{ _('Submit Report') }}
+        </a>
+      </div>
+
+      {% if is_sysadmin %}
+      <div class="ihpix-admin-bar">
+        <a href="/ckan-admin/ihpix" class="ihpix-btn ihpix-btn-admin">
+          <i class="fa fa-cog"></i> {{ _('Manage Content') }}
+        </a>
+        <a href="/ckan-admin/ihpix/activities" class="ihpix-btn ihpix-btn-admin">
+          <i class="fa fa-flag"></i> {{ _('Manage Activities') }}
+        </a>
+        <a href="/ckan-admin/ihpix/reports" class="ihpix-btn ihpix-btn-admin">
+          <i class="fa fa-inbox"></i> {{ _('Review Reports') }}
+        </a>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  {# ══════════════════════════════════════════════════════════
+     SECTION 2 — Interactive World Map
+     ══════════════════════════════════════════════════════════ #}
+  <div class="ihpix-section ihpix-animate">
+    <div class="ihpix-section-header">
+      <i class="fa fa-globe"></i>
+      <h2 class="ihpix-section-title">{{ _('Global Participation') }}</h2>
+    </div>
+    <p class="ihpix-section-subtitle">
+      {{ _('Explore IHP-IX activities reported by countries around the world. Click on a marker to see details.') }}
+    </p>
+    <div class="ihpix-map-panel">
+      <div id="ihpix-map">
+        <div class="ihpix-map-loading">
+          <i class="fa fa-spinner"></i> {{ _('Loading map data…') }}
+        </div>
+      </div>
+      <div class="ihpix-map-legend">
+        <span class="ihpix-map-legend-item">
+          <span class="ihpix-map-legend-dot" style="background:#0069B4;"></span> {{ _('Europe & N. America') }}
+        </span>
+        <span class="ihpix-map-legend-item">
+          <span class="ihpix-map-legend-dot" style="background:#00A0E3;"></span> {{ _('Asia & Pacific') }}
+        </span>
+        <span class="ihpix-map-legend-item">
+          <span class="ihpix-map-legend-dot" style="background:#28a745;"></span> {{ _('Africa') }}
+        </span>
+        <span class="ihpix-map-legend-item">
+          <span class="ihpix-map-legend-dot" style="background:#FFC107;"></span> {{ _('Latin America & Caribbean') }}
+        </span>
+        <span class="ihpix-map-legend-item">
+          <span class="ihpix-map-legend-dot" style="background:#E91E63;"></span> {{ _('Arab States') }}
+        </span>
+      </div>
+    </div>
+  </div>
+
+  {# ══════════════════════════════════════════════════════════
+     SECTION 3 — Priority Areas Grid
+     ══════════════════════════════════════════════════════════ #}
+  <div class="ihpix-section ihpix-animate">
+    <div class="ihpix-section-header">
+      <i class="fa fa-th-large"></i>
+      <h2 class="ihpix-section-title">{{ _('Priority Areas') }}</h2>
+    </div>
+    <p class="ihpix-section-subtitle">
+      {{ _('IHP-IX establishes five interrelated priority areas and 34 Outputs to address water challenges through a holistic, science-based approach supporting water governance at all levels.') }}
+    </p>
+
+    {# Macro to render recent activities for a priority area #}
+    {% macro render_pa_activities(pa_key) %}
+      {% if priority_areas is defined and priority_areas.get(pa_key) %}
+      <div style="margin-top: 0.6rem; padding: 0.6rem 0.75rem; background: #f8f9fa; border-radius: 6px;">
+        <div style="font-size: 0.8rem; font-weight: 600; color: #0069B4; margin-bottom: 0.35rem;">
+          <i class="fa fa-clock-o"></i> {{ _('Recent Activities') }}
+        </div>
+        {% for activity in priority_areas[pa_key][:3] %}
+        <div style="padding: 0.2rem 0; font-size: 0.82rem; {% if not loop.last %}border-bottom: 1px solid #eee;{% endif %}">
+          {% if activity.link %}
+          <a href="{{ activity.link }}" style="color: #333; text-decoration: none;" target="_blank">
+            {{ h.truncate(activity.title, 50) }}
+          </a>
+          {% else %}
+          <span style="color: #333;">{{ h.truncate(activity.title, 50) }}</span>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+    {% endmacro %}
+
+    <div class="row">
+      {% for pa in pa_sections %}
+      {% set pa_num = pa.display_order + 1 %}
+      {% set pa_key = 'PA' ~ pa_num %}
+      <div class="col-md-6 col-lg-4">
+        <div class="ihpix-pa-card" data-pa="{{ pa_num }}">
+          {% if pa.image_url %}
+          <img class="ihpix-pa-card-img" src="{{ pa.image_url }}" alt="" loading="lazy">
+          {% else %}
+          <div style="height: 180px; background: linear-gradient(135deg, #e8f4ff, #f0f8ff);"></div>
+          {% endif %}
+          <span class="ihpix-pa-badge">{{ pa_num }}</span>
+          <div class="ihpix-pa-card-body">
+            <h3 class="ihpix-pa-card-title">{{ pa.title }}</h3>
+            <p class="ihpix-pa-card-desc">{{ pa.description }}</p>
+            {{ render_pa_activities(pa_key) }}
+            <div class="ihpix-pa-card-footer">
+              <span class="ihpix-pa-activities-count" id="ihpix-pa-count-{{ pa_num }}">
+                <i class="fa fa-flag"></i> <span>—</span>
+              </span>
+              {% if pa.link %}
+              <a href="{{ pa.link }}" class="ihpix-pa-link" target="_blank">
+                {{ _('Discover') }} <i class="fa fa-arrow-right"></i>
+              </a>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  {# ══════════════════════════════════════════════════════════
+     SECTION 4 — Impact Metrics
+     ══════════════════════════════════════════════════════════ #}
+  <div class="ihpix-section ihpix-animate" id="ihpix-metrics-section">
+    <div class="ihpix-section-header">
+      <i class="fa fa-line-chart"></i>
+      <h2 class="ihpix-section-title">{{ _('Impact Metrics') }}</h2>
+    </div>
+    <p class="ihpix-section-subtitle">
+      {{ _('Key indicators reflecting the global impact of IHP-IX activities across knowledge production, capacity building, and stakeholder engagement.') }}
+    </p>
+    <div class="ihpix-metrics-row">
+      <div class="ihpix-metric-card ihpix-metric-knowledge">
+        <i class="fa fa-book ihpix-metric-icon"></i>
+        <div class="ihpix-metric-number ihpix-counter" data-target="0" id="ihpix-m-knowledge">0</div>
+        <div class="ihpix-metric-label">{{ _('Knowledge Products') }}</div>
+      </div>
+      <div class="ihpix-metric-card ihpix-metric-scientific">
+        <i class="fa fa-flask ihpix-metric-icon"></i>
+        <div class="ihpix-metric-number ihpix-counter" data-target="0" id="ihpix-m-scientific">0</div>
+        <div class="ihpix-metric-label">{{ _('Scientific Products') }}</div>
+      </div>
+      <div class="ihpix-metric-card ihpix-metric-training">
+        <i class="fa fa-graduation-cap ihpix-metric-icon"></i>
+        <div class="ihpix-metric-number ihpix-counter" data-target="0" id="ihpix-m-training">0</div>
+        <div class="ihpix-metric-label">{{ _('Training Materials') }}</div>
+      </div>
+      <div class="ihpix-metric-card ihpix-metric-stakeholders">
+        <i class="fa fa-users ihpix-metric-icon"></i>
+        <div class="ihpix-metric-number ihpix-counter" data-target="0" id="ihpix-m-stakeholders">0</div>
+        <div class="ihpix-metric-label">{{ _('Stakeholders Reached') }}</div>
+      </div>
+    </div>
+  </div>
+
+  {# ══════════════════════════════════════════════════════════
+     SECTION 5 — CTA Cards
+     ══════════════════════════════════════════════════════════ #}
+  {% if cta_cards %}
+  <div class="ihpix-section ihpix-animate">
+    <div class="ihpix-section-header">
+      <i class="fa fa-rocket"></i>
+      <h2 class="ihpix-section-title">{{ _('Get Involved') }}</h2>
+    </div>
+    <div class="row">
+      {% for card in cta_cards %}
+      <div class="col-md-4">
+        <div class="ihpix-cta-card">
+          {% if card.badge_text %}
+          <span class="ihpix-cta-badge {{ 'ihpix-cta-badge-soon' if card.badge_text == 'Coming Soon' else 'ihpix-cta-badge-members' }}">
+            {{ card.badge_text }}
+          </span>
+          {% endif %}
+          {% if card.image_url %}
+          <img class="ihpix-cta-card-img" src="{{ card.image_url }}" alt="" loading="lazy">
+          {% else %}
+          <div style="height: 170px; background: linear-gradient(135deg, #e8f4ff, #dbeafe);"></div>
+          {% endif %}
+          <div class="ihpix-cta-card-body">
+            <h3 class="ihpix-cta-card-title">{{ card.title }}</h3>
+            <p class="ihpix-cta-card-desc">{{ card.description }}</p>
+            <a href="{{ card.link }}" class="ihpix-cta-card-link"
+               {% if card.link and card.link != '#' %}target="_blank"{% endif %}>
+              {{ _('Access') }} <i class="fa fa-arrow-right"></i>
+            </a>
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
   </div>
   {% endif %}
 
-  {# Quick action bar #}
-  <div style="margin-bottom: 1.5rem; padding: 1rem; background: linear-gradient(135deg, #E8F4F8, #f0f8ff); border-radius: 10px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 0.8rem;">
-    <div>
-      <a href="/ihpix/dashboard" class="btn btn-primary btn-sm" style="margin-right: 0.5rem;">
+  {# ══════════════════════════════════════════════════════════
+     SECTION 6 — Footer Action Bar
+     ══════════════════════════════════════════════════════════ #}
+  <div class="ihpix-footer-bar ihpix-animate">
+    <div class="ihpix-footer-title">{{ _('Quick Links') }}</div>
+    <div class="ihpix-footer-links">
+      <a href="/ihpix/dashboard" class="ihpix-footer-link ihpix-footer-link-primary">
         <i class="fa fa-bar-chart"></i> {{ _('Dashboard') }}
       </a>
-      <a href="/ihpix/outputs" class="btn btn-default btn-sm" style="margin-right: 0.5rem;">
-        <i class="fa fa-list-alt"></i> {{ _('Browse Activities') }}
+      <a href="/ihpix/outputs" class="ihpix-footer-link ihpix-footer-link-outline">
+        <i class="fa fa-list-alt"></i> {{ _('Browse All Activities') }}
       </a>
-    </div>
-    <a href="/ihpix/report" class="btn btn-success btn-sm">
-      <i class="fa fa-plus-circle"></i> {{ _('Submit Activity Report') }}
-    </a>
-  </div>
-
-  <div class="module-content box">
-    <div>
-
-      <p>
-        {% trans %}The ninth phase of the Intergovernmental Hydrological Programme (IHP-IX) covering 2022-2029 is UNESCO's strategic framework for addressing complex water challenges through scientific knowledge and innovation. IHP-IX identifies key water priority areas to support Member States in achieving the 2030 Agenda and Sustainable Development Goals, particularly SDG6. It provides a methodological approach towards transdisciplinarity aimed at generating effective water solutions for resilient societies and sustainable development.{% endtrans %}
-      </p>
-
-      {# CTA Cards from database #}
-      {% if cta_cards %}
-      <div class="row">
-      {% for card in cta_cards %}
-      <div class="col-md-4 col3">
-        <div class="col-small">
-          <div class="cardsmall cardsmall-thematic cardsmall-cta cardsmall-hero"> 
-            {% if card.image_url %}
-            <img class="cardsmall-img-top image-style-cardsmall-1-column" src="{{ card.image_url }}" alt="" loading="lazy">
-            {% endif %}
-            <div class="cardsmall-body">
-              <h3 class="cardsmall-title">{{ card.title }}</h3>
-              <div class="cardsmall-text">
-                <p>{{ card.description }}</p>
-              </div>
-              <div class="field field--name-field-link field--type-link field--label-hidden field__item">
-                <a href="{{ card.link }}" class="btn btn-primary btn-arrow-right" {% if card.link and card.link != '#' %}target="_blank"{% endif %}>{{ _("Access") }}</a>
-              </div>
-            </div>
-            {% if card.badge_text %}
-              {% if card.badge_text == 'Coming Soon' %}
-              <span class="coming-soon-badge">{{ card.badge_text }}</span>
-              {% else %}
-              <span class="members-badge">{{ card.badge_text }}</span>
-              {% endif %}
-            {% endif %}
-          </div>
-        </div>
-      </div>
-      {% endfor %}
-      </div>
+      <a href="/ihpix/report" class="ihpix-footer-link ihpix-footer-link-success">
+        <i class="fa fa-paper-plane"></i> {{ _('Submit Report') }}
+      </a>
+      {% if is_sysadmin %}
+      <a href="/ckan-admin/ihpix" class="ihpix-footer-link ihpix-footer-link-admin">
+        <i class="fa fa-cog"></i> {{ _('Admin Panel') }}
+      </a>
+      <a href="/ckan-admin/ihpix/reports" class="ihpix-footer-link ihpix-footer-link-admin">
+        <i class="fa fa-inbox"></i> {{ _('Review Reports') }}
+      </a>
       {% endif %}
-
-      <h2 class="page-heading">{% trans %}IHP IX: Priority Areas{% endtrans %}</h2>
-      <p>
-        {% trans %}The Operational Implementation Plan of the Intergovernmental Hydrological Programme is based on the Strategic Plan of IHP-IX. This Strategy establishes five interrelated and intertwined priority areas and 34 Outputs, designed to address water challenges through a holistic, coherent, and multi-disciplinary approach. These priority areas promote science-based policies and create frameworks for water governance at all levels.{% endtrans %}
-      </p>
-
-      {# Macro to render recent activities for a priority area #}
-      {% macro render_pa_activities(pa_key) %}
-        {% if priority_areas is defined and priority_areas.get(pa_key) %}
-        <div class="ihpix-recent-activities" style="margin-top: 0.5rem; padding: 0.8rem 1rem; background: #f8f9fa; border-radius: 6px;">
-          <h5 style="margin: 0 0 0.5rem; font-size: 0.9rem; color: #0069B4;">
-            <i class="fa fa-clock-o"></i> {{ _('Recent Activities') }}
-          </h5>
-          {% for activity in priority_areas[pa_key] %}
-          <div style="padding: 0.3rem 0; border-bottom: 1px solid #eee; font-size: 0.85rem;">
-            {% if activity.link %}
-            <a href="{{ activity.link }}" style="color: #333; text-decoration: none;" target="_blank">
-              {{ h.truncate(activity.title, 60) }}
-            </a>
-            {% else %}
-            <span style="color: #333;">{{ h.truncate(activity.title, 60) }}</span>
-            {% endif %}
-            <span style="color: #999; font-size: 0.78rem; margin-left: 0.3rem;">
-              {{ activity.created_at[:10] if activity.created_at else '' }}
-            </span>
-          </div>
-          {% endfor %}
-          <a href="/ihpix/outputs?pa={{ pa_key }}" style="font-size: 0.82rem; color: #0069B4; display: block; margin-top: 0.4rem;">
-            {{ _('View all') }} →
-          </a>
-        </div>
-        {% endif %}
-      {% endmacro %}
-      
-      {# Priority Areas from database #}
-      <div class="row">
-      {% for pa in pa_sections %}
-        {% set pa_key = 'PA' ~ (pa.display_order + 1) %}
-      <div class="col-md-6 col2">
-        <div class="col-small"><div class="cardsmall cardsmall-thematic cardsmall-cta cardsmall-hero" style="min-height:28rem;">
-          {% if pa.image_url %}
-          <img class="cardsmall-img-top image-style-cardsmall-1-column" src="{{ pa.image_url }}" width="289" height="424" alt="" loading="lazy">
-          {% endif %}
-          <div class="cardsmall-body">
-            <div class="cardsmall-title">{{ pa.title }}</div>
-            <div class="cardsmall-text" style="padding-top:1rem">{{ pa.description }}</div>
-            {{ render_pa_activities(pa_key) }}
-          </div>
-          {% if pa.link %}
-          <div class="field field--name-field-link field--type-link field--label-hidden field__item">
-            <a href="{{ pa.link }}" class="btn btn-primary btn-arrow-right" target="_blank">{{ _("Discover") }}</a>
-          </div>
-          {% endif %}
-        </div></div>
-      </div>
-      {% endfor %}
-      </div>
-
-      {# Bottom action buttons #}
-      <div style="text-align: center; margin-top: 2rem;">
-        <a href="/ihpix/outputs" class="btn btn-primary btn-lg" style="margin: 0.3rem;">
-          <i class="fa fa-list-alt"></i> {{ _('Browse All Activities by Output') }}
-        </a>
-        <a href="/ihpix/dashboard" class="btn btn-default btn-lg" style="margin: 0.3rem;">
-          <i class="fa fa-bar-chart"></i> {{ _('Dashboard') }}
-        </a>
-        <a href="/ihpix/report" class="btn btn-success btn-lg" style="margin: 0.3rem;">
-          <i class="fa fa-plus-circle"></i> {{ _('Submit Report') }}
-        </a>
-      </div>
-
     </div>
   </div>
 
-  {# Incluir el código JavaScript y CSS #}
-  {% asset 'theme/thematicbuilder-js' %}
-  {% asset 'theme/thematicbuilder-css' %}
+</div>
+
+{# ── Leaflet JS + Page Logic ─────────────────────────────── #}
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+        crossorigin=""></script>
+<script>
+(function () {
+  'use strict';
+
+  /* ── Region color map ──────────────────────────────────── */
+  var REGION_COLORS = {
+    'Europe and North America': '#0069B4',
+    'Asia and the Pacific':     '#00A0E3',
+    'Africa':                   '#28a745',
+    'Latin America and the Caribbean': '#FFC107',
+    'Arab States':              '#E91E63'
+  };
+  var DEFAULT_COLOR = '#6b7280';
+
+  /* ── Helper: animated counter ──────────────────────────── */
+  function animateCounter(el, target) {
+    if (!target || target <= 0) { el.textContent = '0'; return; }
+    var duration = 1200;
+    var start = 0;
+    var startTime = null;
+    function step(ts) {
+      if (!startTime) startTime = ts;
+      var progress = Math.min((ts - startTime) / duration, 1);
+      var eased = 1 - Math.pow(1 - progress, 3);
+      el.textContent = Math.floor(eased * target).toLocaleString();
+      if (progress < 1) requestAnimationFrame(step);
+      else el.textContent = target.toLocaleString();
+    }
+    requestAnimationFrame(step);
+  }
+
+  /* ── Load stats from API ───────────────────────────────── */
+  fetch('/api/3/action/ihpix_dashboard_stats')
+    .then(function (r) { return r.json(); })
+    .then(function (data) {
+      if (!data.success) return;
+      var s = data.result || {};
+
+      /* Hero stats */
+      var elAct = document.getElementById('ihpix-stat-activities');
+      var elCnt = document.getElementById('ihpix-stat-countries');
+      var elStk = document.getElementById('ihpix-stat-stakeholders');
+      if (elAct) elAct.textContent = (s.total_activities || 0).toLocaleString();
+      if (elCnt) elCnt.textContent = (s.total_countries || 0).toLocaleString();
+
+      var stakeholders = (s.stakeholders_knowledge || 0) + (s.stakeholders_awareness || 0);
+      if (elStk) elStk.textContent = stakeholders.toLocaleString();
+
+      /* PA activity counts */
+      var byPA = s.by_priority_area || {};
+      for (var i = 1; i <= 5; i++) {
+        var paEl = document.querySelector('#ihpix-pa-count-' + i + ' span');
+        if (paEl) {
+          var count = byPA['PA' + i] || 0;
+          paEl.textContent = count + ' ' + (count === 1 ? '{{ _("activity") }}' : '{{ _("activities") }}');
+        }
+      }
+
+      /* Impact metric targets */
+      var mKnowledge   = document.getElementById('ihpix-m-knowledge');
+      var mScientific  = document.getElementById('ihpix-m-scientific');
+      var mTraining    = document.getElementById('ihpix-m-training');
+      var mStakeholders = document.getElementById('ihpix-m-stakeholders');
+
+      if (mKnowledge)    mKnowledge.setAttribute('data-target', s.knowledge_products || 0);
+      if (mScientific)   mScientific.setAttribute('data-target', s.scientific_products || 0);
+      if (mTraining)     mTraining.setAttribute('data-target', s.training_materials || 0);
+      if (mStakeholders) mStakeholders.setAttribute('data-target', stakeholders);
+    })
+    .catch(function () { /* silently degrade */ });
+
+  /* ── Initialize Leaflet map ────────────────────────────── */
+  var mapEl = document.getElementById('ihpix-map');
+  if (mapEl) {
+    /* Clear loading indicator */
+    var map = L.map('ihpix-map', {
+      scrollWheelZoom: false,
+      attributionControl: true
+    }).setView([20, 0], 2);
+
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>',
+      subdomains: 'abcd',
+      maxZoom: 12
+    }).addTo(map);
+
+    fetch('/api/3/action/ihpix_geojson')
+      .then(function (r) { return r.json(); })
+      .then(function (data) {
+        if (!data.success || !data.result || !data.result.features) return;
+
+        var features = data.result.features;
+        features.forEach(function (f) {
+          var props = f.properties || {};
+          var coords = f.geometry && f.geometry.coordinates;
+          if (!coords) return;
+
+          var lat = coords[1];
+          var lng = coords[0];
+          var total = props.total_activities || 0;
+          var region = props.region || '';
+          var color = REGION_COLORS[region] || DEFAULT_COLOR;
+          var radius = Math.max(5, Math.min(25, 5 + Math.sqrt(total) * 2.5));
+
+          var circle = L.circleMarker([lat, lng], {
+            radius: radius,
+            fillColor: color,
+            color: '#fff',
+            weight: 2,
+            opacity: 0.9,
+            fillOpacity: 0.7
+          }).addTo(map);
+
+          /* Popup content with PA breakdown */
+          var popupHtml = '<div style="min-width:180px;">' +
+            '<strong style="font-size:1rem;">' + (props.country || props.name || '{{ _("Unknown") }}') + '</strong>' +
+            '<div style="margin:0.4rem 0;font-size:0.9rem;color:#0069B4;font-weight:700;">' +
+              total + ' ' + (total === 1 ? '{{ _("activity") }}' : '{{ _("activities") }}') +
+            '</div>' +
+            '<div style="font-size:0.8rem;color:#555;">';
+
+          var paLabels = ['PA1', 'PA2', 'PA3', 'PA4', 'PA5'];
+          var paColors = ['#0069B4', '#00A0E3', '#28a745', '#FFC107', '#E91E63'];
+          for (var i = 0; i < 5; i++) {
+            var key = 'pa' + (i + 1) + '_count';
+            var cnt = props[key] || 0;
+            if (cnt > 0) {
+              popupHtml += '<span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:' +
+                paColors[i] + ';margin-right:4px;"></span>' +
+                paLabels[i] + ': ' + cnt + '<br>';
+            }
+          }
+          popupHtml += '</div></div>';
+          circle.bindPopup(popupHtml);
+        });
+      })
+      .catch(function () {
+        mapEl.innerHTML = '<div style="display:flex;align-items:center;justify-content:center;height:100%;color:#9ca3af;">' +
+          '<i class="fa fa-exclamation-triangle" style="margin-right:0.5rem;"></i> {{ _("Could not load map data") }}</div>';
+      });
+  }
+
+  /* ── IntersectionObserver for scroll animations + counters  */
+  if ('IntersectionObserver' in window) {
+    /* Fade-up animation for sections */
+    var fadeObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('ihpix-visible');
+          fadeObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+
+    document.querySelectorAll('.ihpix-animate').forEach(function (el) {
+      fadeObserver.observe(el);
+    });
+
+    /* Counter animation when metrics section enters view */
+    var metricsSection = document.getElementById('ihpix-metrics-section');
+    var countersFired = false;
+    if (metricsSection) {
+      var counterObserver = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting && !countersFired) {
+            countersFired = true;
+            /* Small delay to ensure data-target is populated from API */
+            setTimeout(function () {
+              document.querySelectorAll('.ihpix-counter').forEach(function (el) {
+                var target = parseInt(el.getAttribute('data-target'), 10) || 0;
+                animateCounter(el, target);
+              });
+            }, 300);
+            counterObserver.unobserve(metricsSection);
+          }
+        });
+      }, { threshold: 0.2 });
+      counterObserver.observe(metricsSection);
+    }
+  } else {
+    /* Fallback: show everything immediately */
+    document.querySelectorAll('.ihpix-animate').forEach(function (el) {
+      el.classList.add('ihpix-visible');
+    });
+  }
+})();
+</script>
+
+{% asset 'theme/thematicbuilder-js' %}
+{% asset 'theme/thematicbuilder-css' %}
 {% endblock %}
 
 {% block secondary_content %}

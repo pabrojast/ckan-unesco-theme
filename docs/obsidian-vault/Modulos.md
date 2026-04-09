@@ -18,6 +18,7 @@
 - `ITranslation` — `i18n_directory()`, `i18n_locales()`, `i18n_domain()`: i18n
 - `IActions` — `get_actions()`: registra acciones custom
 - `IAuthFunctions` — `get_auth_functions()`: registra funciones de autorización
+- `IClick` — `get_commands()`: registra comandos CLI (ver [[#cli.py]])
 
 ### Caches definidos a nivel de módulo
 - `_courses_cache` — cursos UNESCO
@@ -116,6 +117,11 @@ Ver [[Flujos Importantes#Paneles de administración]] para la lista completa.
 **IHP-IX reportes** (3):
 - `ihpix_report_submit`, `ihpix_report_review`, `ihpix_dashboard_stats`
 
+**IHP-IX GeoJSON y datos geográficos** (3):
+- `ihpix_geojson` — GeoJSON FeatureCollection de países con coordenadas y datos por PA. Filtro: `region`
+- `ihpix_activity_geojson` — GeoJSON de actividades geolocalizadas via coordenadas de país. Filtros: `priority_area`, `output`, `biennium`, `country`, `flagship`, `region`
+- `ihpix_country_summary_list` — Datos tabulares de países. Filtro: `region`
+
 ---
 
 ## helpers.py (~661 líneas)
@@ -184,11 +190,17 @@ Ver [[Flujos Importantes#Paneles de administración]] para la lista completa.
 - Auto-seed: 18 secciones por defecto
 
 **IhpixActivity**: Actividades del programa IHP-IX
-- Campos: id, title, priority_area, description, output, stakeholders (JSON), partner_organizations, start_date, end_date, status (planned/ongoing/completed), responsible_party, responsible_country, url, country_stats (JSON), created_at, updated_at
+- Campos base: id, title, priority_area, description, output, stakeholders (JSON), partner_organizations, start_date, end_date, status (planned/ongoing/completed), responsible_party, responsible_country, url, country_stats (JSON), created_at, updated_at
+- Campos expandidos (v2): biennium, flagships (JSON), regions (JSON), member_states (JSON), original_id, stakeholders_knowledge, stakeholders_awareness, knowledge_products, scientific_products, training_materials, among others (30+ columnas)
 - Métodos: `get()`, `get_by_priority_area()`, `get_published()`, `get_all()`, `get_pending()`, `get_facets()`, `get_stats()`, `get_timeline()`, `get_country_stats()`, `as_dict()`
+- Auto-migración: `_migrate_ihpix_activities()` agrega columnas nuevas a tablas existentes
+
+**IhpixCountrySummary**: Datos geográficos agregados por país para GeoJSON y dashboard IHP-IX
+- Campos: id, country, latitude, longitude, region, total_activities, pa1_count–pa5_count, transboundary_all, transboundary_pa1–pa5, supporting_all, supporting_pa1–pa5, flagship_data (JSON), pa_output_data (JSON), created_at, updated_at
+- Métodos: `get()`, `get_by_country()`, `get_all(region)`, `get_as_geojson(region)`, `delete_all()`, `as_dict()`
 
 ### Inicialización
-Cada modelo tiene `init_*_db()` y `define_*_table()`. Son idempotentes (verifican schema con inspector). Incluyen lógica de migración para agregar columnas nuevas a tablas existentes.
+Cada modelo tiene `init_*_db()` y `define_*_table()`. Son idempotentes (verifican schema con inspector). Incluyen lógica de migración para agregar columnas nuevas a tablas existentes (e.g., `_migrate_ihpix_activities()`).
 
 ---
 
@@ -203,7 +215,7 @@ Cada modelo tiene `init_*_db()` y `define_*_table()`. Son idempotentes (verifica
 | **Sysadmin only** | featured_dataset_*, featured_publication_*, portal_card_*, admin_user_*, ihpix_content_*, ihpix_activity_create/update/delete, ihpix_report_review, bug_ticket_api_list |
 | **Autenticado** | membership_request_create, membership_request_count, bug_ticket_create/list/show/update, ihpix_report_submit |
 | **Admin de org o sysadmin** | membership_request_list, membership_request_process |
-| **Público** | ihpix_activity_list, ihpix_activity_show, ihpix_dashboard_stats |
+| **Público** | ihpix_activity_list, ihpix_activity_show, ihpix_dashboard_stats, ihpix_geojson, ihpix_activity_geojson, ihpix_country_summary_list |
 
 ### Función helper
 - `_sysadmin_only(context, data_dict)` — verifica `context['auth_user_obj'].sysadmin`
@@ -241,6 +253,39 @@ Cada modelo tiene `init_*_db()` y `define_*_table()`. Son idempotentes (verifica
 2. Verificar MIME type declarado (con normalización)
 3. Detectar MIME real vía magic bytes del header
 4. Fallback: PIL/Pillow para casos no concluyentes
+
+---
+
+## cli.py
+
+**Rol**: Comandos CLI para gestión de datos IHP-IX. Registrado vía interfaz `IClick`.
+
+### Grupo `ihpix`
+
+| Comando | Descripción |
+|---|---|
+| `ckan ihpix seed-data -f <json>` | Carga actividades y country summaries desde JSON |
+| `ckan ihpix seed-data --from-excel <xlsx>` | Genera seed desde Excel y carga directamente |
+| `ckan ihpix seed-data` (sin args) | Busca `data/ihpix_seed_data.json` por defecto |
+| `--append` | Flag para agregar sin borrar datos existentes |
+
+### Flujo interno
+1. Inicializa tablas (`init_ihpix_activities_db()`, `init_ihpix_country_summary_db()`)
+2. Si `--from-excel`: llama `generate_seed()` de `scripts/generate_seed.py`
+3. Sin `--append`: elimina actividades con `original_id` y todos los country summaries
+4. Itera sobre `activities` y `country_summaries` del JSON, crea registros en DB
+
+---
+
+## scripts/generate_seed.py
+
+**Rol**: Script de conversión Excel → JSON para el pipeline de datos IHP-IX.
+
+**Función principal**: `generate_seed(excel_path)` — lee archivo Excel con datos de Priority Areas, genera estructura JSON con `activities` (744) y `country_summaries` (205 países con coordenadas).
+
+**Uso directo**: `cd ckanext/theme_ejemplo && python scripts/generate_seed.py`
+
+**Archivo de salida**: `ckanext/theme_ejemplo/data/ihpix_seed_data.json`
 
 ---
 

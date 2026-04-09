@@ -73,8 +73,31 @@ python setup.py compile_catalog
 ckan -c /etc/ckan/default/ckan.ini db init
 
 # Las tablas custom del plugin se crean automáticamente al iniciar CKAN
-# (MembershipRequest, FeaturedPublication, BugTicket, PortalCard, IhpixContent, IhpixActivity)
+# (MembershipRequest, FeaturedPublication, BugTicket, PortalCard, IhpixContent, IhpixActivity, IhpixCountrySummary)
 ```
+
+---
+
+## IHP-IX: Ingesta de datos
+
+```bash
+# Cargar seed desde JSON (archivo por defecto)
+ckan ihpix seed-data -f ckanext/theme_ejemplo/data/ihpix_seed_data.json
+
+# Cargar directamente desde Excel
+ckan ihpix seed-data --from-excel All_Priority_Areas_Reporting.xlsx
+
+# Cargar sin archivo (busca data/ihpix_seed_data.json automáticamente)
+ckan ihpix seed-data
+
+# Agregar datos sin borrar los existentes
+ckan ihpix seed-data -f data.json --append
+
+# Regenerar JSON seed desde Excel
+cd ckanext/theme_ejemplo && python scripts/generate_seed.py
+```
+
+> [!warning] Sin `--append`, el comando elimina actividades con `original_id` y todos los country summaries antes de cargar.
 
 ---
 
