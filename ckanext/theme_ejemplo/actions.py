@@ -2032,20 +2032,24 @@ def ihpix_report_review(context, data_dict):
 
 @toolkit.side_effect_free
 def ihpix_dashboard_stats(context, data_dict):
-    """Aggregated statistics for IHP-IX dashboard. Public access."""
+    """Aggregated statistics for IHP-IX dashboard. Public access.
+
+    Filters: priority_area, biennium, region, country, output.
+    """
     toolkit.check_access('ihpix_dashboard_stats', context, data_dict)
     init_ihpix_activities_db()
 
-    pa_filter = data_dict.get('priority_area', u'').strip() or None
+    filters = {}
+    for key in ('priority_area', 'biennium', 'region', 'country', 'output'):
+        val = data_dict.get(key, u'').strip()
+        if val:
+            filters[key] = val
 
-    stats = IhpixActivity.get_stats()
-    timeline = IhpixActivity.get_timeline(priority_area=pa_filter)
-    country_stats = IhpixActivity.get_country_stats(
-        priority_area=pa_filter, limit=20
+    stats = IhpixActivity.get_stats(filters=filters)
+    stats['timeline'] = IhpixActivity.get_timeline(filters=filters)
+    stats['by_country'] = IhpixActivity.get_country_stats(
+        filters=filters, limit=20
     )
-
-    stats['timeline'] = timeline
-    stats['by_country'] = country_stats
     return stats
 
 

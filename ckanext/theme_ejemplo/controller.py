@@ -2822,6 +2822,14 @@ class MyLogica():
                     'total_institutions': 0, 'pending_reports': 0,
                     'by_priority_area': [], 'by_output': [],
                     'timeline': [], 'by_country': [],
+                    'by_biennium': [],
+                    'stakeholders_knowledge': 0, 'stakeholders_awareness': 0,
+                    'knowledge_products': 0, 'scientific_products': 0,
+                    'training_materials': 0,
+                    'filter_options': {
+                        'bienniums': [], 'countries': [],
+                        'priority_areas': ['PA1', 'PA2', 'PA3', 'PA4', 'PA5'],
+                    },
                 }
 
             is_sysadmin = False

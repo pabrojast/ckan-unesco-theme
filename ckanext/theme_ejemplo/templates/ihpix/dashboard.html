@@ -474,6 +474,256 @@
     .dx-header-actions { flex-direction: column; }
     .dx-pill, .dx-filter-select { width: 100%; justify-content: center; text-align: center; }
   }
+
+  /* ── Filter Bar ────────────────────────────────────────── */
+  .dx-filter-bar {
+    background: var(--dx-surface) !important;
+    border: 1px solid var(--dx-border) !important;
+    border-radius: 12px !important;
+    padding: 16px 20px !important;
+    margin-bottom: 24px !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    gap: 12px !important;
+    position: sticky !important;
+    top: 0 !important;
+    z-index: 100 !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06) !important;
+  }
+  .dx-filter-bar-label {
+    font-size: 12px !important;
+    font-weight: 600 !important;
+    color: var(--dx-text-secondary) !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    margin-right: 4px !important;
+    white-space: nowrap !important;
+  }
+  .dx-filter-bar-label i {
+    color: var(--dx-primary) !important;
+    margin-right: 4px !important;
+  }
+  .dx-filter-sep {
+    width: 1px !important;
+    height: 24px !important;
+    background: var(--dx-border) !important;
+    flex-shrink: 0 !important;
+  }
+  .dx-filter-group {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+    align-items: center !important;
+  }
+  .dx-pa-pill {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 5px !important;
+    padding: 5px 12px !important;
+    border-radius: 20px !important;
+    border: 1.5px solid var(--dx-border) !important;
+    background: var(--dx-surface) !important;
+    color: var(--dx-text-secondary) !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    user-select: none !important;
+    line-height: 1.3 !important;
+  }
+  .dx-pa-pill:hover {
+    border-color: var(--dx-primary) !important;
+    color: var(--dx-primary) !important;
+    background: var(--dx-primary-light) !important;
+  }
+  .dx-pa-pill.active {
+    border-color: var(--dx-pa-color, var(--dx-primary)) !important;
+    background: var(--dx-pa-color, var(--dx-primary)) !important;
+    color: #fff !important;
+    font-weight: 600 !important;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12) !important;
+  }
+  .dx-pa-pill .dx-pa-dot {
+    width: 8px !important;
+    height: 8px !important;
+    border-radius: 50% !important;
+    flex-shrink: 0 !important;
+    background: var(--dx-pa-color, #94A3B8) !important;
+  }
+  .dx-pa-pill.active .dx-pa-dot {
+    background: rgba(255,255,255,0.7) !important;
+  }
+  .dx-filter-dropdown {
+    padding: 6px 28px 6px 10px !important;
+    border-radius: 8px !important;
+    border: 1.5px solid var(--dx-border) !important;
+    background: var(--dx-surface) !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    color: var(--dx-text) !important;
+    cursor: pointer !important;
+    transition: border-color 0.2s ease !important;
+    -webkit-appearance: none !important;
+    appearance: none !important;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='%2364748B' viewBox='0 0 16 16'%3E%3Cpath d='M8 11L3 6h10z'/%3E%3C/svg%3E") !important;
+    background-repeat: no-repeat !important;
+    background-position: right 8px center !important;
+    line-height: 1.4 !important;
+    max-width: 180px !important;
+  }
+  .dx-filter-dropdown:focus {
+    border-color: var(--dx-primary) !important;
+    outline: none !important;
+    box-shadow: 0 0 0 3px rgba(0,105,180,0.12) !important;
+  }
+  .dx-filter-dropdown.has-value {
+    border-color: var(--dx-primary) !important;
+    background-color: var(--dx-primary-light) !important;
+    color: var(--dx-primary) !important;
+  }
+  .dx-country-wrap {
+    position: relative !important;
+    display: inline-block !important;
+  }
+  .dx-country-input {
+    padding: 6px 10px !important;
+    border-radius: 8px !important;
+    border: 1.5px solid var(--dx-border) !important;
+    background: var(--dx-surface) !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    color: var(--dx-text) !important;
+    width: 160px !important;
+    transition: border-color 0.2s ease !important;
+    line-height: 1.4 !important;
+  }
+  .dx-country-input:focus {
+    border-color: var(--dx-primary) !important;
+    outline: none !important;
+    box-shadow: 0 0 0 3px rgba(0,105,180,0.12) !important;
+  }
+  .dx-country-input.has-value {
+    border-color: var(--dx-primary) !important;
+    background-color: var(--dx-primary-light) !important;
+    color: var(--dx-primary) !important;
+  }
+  .dx-country-list {
+    position: absolute !important;
+    top: 100% !important;
+    left: 0 !important;
+    right: 0 !important;
+    max-height: 200px !important;
+    overflow-y: auto !important;
+    background: var(--dx-surface) !important;
+    border: 1px solid var(--dx-border) !important;
+    border-radius: 8px !important;
+    box-shadow: 0 8px 24px rgba(0,0,0,0.12) !important;
+    z-index: 200 !important;
+    display: none !important;
+    margin-top: 4px !important;
+  }
+  .dx-country-list.show { display: block !important; }
+  .dx-country-opt {
+    padding: 8px 12px !important;
+    font-size: 12px !important;
+    color: var(--dx-text) !important;
+    cursor: pointer !important;
+    transition: background 0.15s !important;
+  }
+  .dx-country-opt:hover, .dx-country-opt.highlighted {
+    background: var(--dx-primary-light) !important;
+    color: var(--dx-primary) !important;
+  }
+  .dx-filter-reset {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    padding: 5px 12px !important;
+    border-radius: 8px !important;
+    border: none !important;
+    background: transparent !important;
+    color: var(--dx-text-muted) !important;
+    font-size: 12px !important;
+    font-weight: 500 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+    margin-left: auto !important;
+  }
+  .dx-filter-reset:hover {
+    color: #DC2626 !important;
+    background: #FEF2F2 !important;
+  }
+  .dx-filter-reset.hidden { display: none !important; }
+  .dx-active-chips {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 6px !important;
+    margin-top: 8px !important;
+    padding-top: 10px !important;
+    border-top: 1px solid var(--dx-border) !important;
+  }
+  .dx-active-chips.hidden { display: none !important; }
+  .dx-chip {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    padding: 3px 10px !important;
+    border-radius: 12px !important;
+    background: var(--dx-primary-light) !important;
+    color: var(--dx-primary) !important;
+    font-size: 11px !important;
+    font-weight: 500 !important;
+    cursor: pointer !important;
+    transition: all 0.2s ease !important;
+  }
+  .dx-chip:hover {
+    background: #DBEAFE !important;
+  }
+  .dx-chip .dx-chip-x {
+    font-weight: 700 !important;
+    margin-left: 2px !important;
+    opacity: 0.6 !important;
+  }
+  .dx-chip .dx-chip-x:hover { opacity: 1 !important; }
+  .dx-loading-overlay {
+    position: absolute !important;
+    inset: 0 !important;
+    background: rgba(255,255,255,0.7) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    border-radius: 12px !important;
+    z-index: 10 !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transition: opacity 0.2s ease !important;
+  }
+  .dx-loading-overlay.active {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+  }
+  .dx-spinner {
+    width: 28px !important;
+    height: 28px !important;
+    border: 3px solid var(--dx-border) !important;
+    border-top-color: var(--dx-primary) !important;
+    border-radius: 50% !important;
+    animation: dx-spin 0.7s linear infinite !important;
+  }
+  @keyframes dx-spin { to { transform: rotate(360deg); } }
+  .dx-card { position: relative !important; }
+  @media (max-width: 768px) {
+    .dx-filter-bar {
+      flex-direction: column !important;
+      align-items: stretch !important;
+    }
+    .dx-filter-sep { display: none !important; }
+    .dx-filter-group { justify-content: flex-start !important; }
+    .dx-filter-reset { margin-left: 0 !important; }
+    .dx-country-input { width: 100% !important; }
+    .dx-filter-dropdown { max-width: 100% !important; }
+  }
 </style>
 
 <div class="dx-dash">
@@ -488,19 +738,6 @@
         </p>
       </div>
       <div class="dx-header-actions">
-        <form method="get" action="" style="margin:0;display:inline-flex;">
-          <select name="pa"
-                  class="dx-filter-select"
-                  onchange="this.form.submit()"
-                  aria-label="{{ _('Filter by Priority Area') }}">
-            <option value="">{{ _('All Priority Areas') }}</option>
-            {% for i in range(1, 6) %}
-              <option value="PA{{ i }}" {{ 'selected' if pa_filter == 'PA' ~ i else '' }}>
-                {{ _('Priority Area') }} {{ i }}
-              </option>
-            {% endfor %}
-          </select>
-        </form>
         <a href="/ihpix/outputs" class="dx-pill">
           <i class="fa fa-compass"></i> {{ _('Explore Activities') }}
         </a>
@@ -509,6 +746,61 @@
         </a>
       </div>
     </div>
+  </div>
+
+  {# ── Interactive Filter Bar ────────────────────────────── #}
+  <div class="dx-filter-bar" id="dx-filter-bar">
+    <span class="dx-filter-label">
+      <i class="fa fa-sliders"></i> {{ _('Filters') }}
+    </span>
+    <div class="dx-filter-sep"></div>
+
+    {# PA pills #}
+    <div class="dx-filter-group" id="dx-pa-group">
+      <button class="dx-pa-pill" data-pa="PA1" style="--dx-pa-color:#0069B4;">
+        <span class="dx-pa-dot"></span> PA 1
+      </button>
+      <button class="dx-pa-pill" data-pa="PA2" style="--dx-pa-color:#0891B2;">
+        <span class="dx-pa-dot"></span> PA 2
+      </button>
+      <button class="dx-pa-pill" data-pa="PA3" style="--dx-pa-color:#059669;">
+        <span class="dx-pa-dot"></span> PA 3
+      </button>
+      <button class="dx-pa-pill" data-pa="PA4" style="--dx-pa-color:#D97706;">
+        <span class="dx-pa-dot"></span> PA 4
+      </button>
+      <button class="dx-pa-pill" data-pa="PA5" style="--dx-pa-color:#DC2626;">
+        <span class="dx-pa-dot"></span> PA 5
+      </button>
+    </div>
+
+    <div class="dx-filter-sep"></div>
+
+    {# Biennium dropdown #}
+    <select class="dx-filter-dropdown" id="dx-filter-biennium" aria-label="{{ _('Biennium') }}">
+      <option value="">{{ _('All Bienniums') }}</option>
+      {% for b in stats.filter_options.bienniums | default([]) %}
+        <option value="{{ b }}">{{ b }}</option>
+      {% endfor %}
+    </select>
+
+    {# Country autocomplete #}
+    <div class="dx-country-wrap">
+      <input type="text"
+             class="dx-country-input"
+             id="dx-filter-country"
+             placeholder="{{ _('Search country…') }}"
+             autocomplete="off"
+             aria-label="{{ _('Country') }}" />
+      <div class="dx-country-list" id="dx-country-list"></div>
+    </div>
+
+    <button class="dx-filter-reset hidden" id="dx-filter-reset" title="{{ _('Reset all filters') }}">
+      <i class="fa fa-times-circle"></i> {{ _('Reset') }}
+    </button>
+
+    {# Active filter chips #}
+    <div class="dx-active-chips hidden" id="dx-active-chips"></div>
   </div>
 
   {# ── KPI Stat Cards ───────────────────────────────────── #}
@@ -616,7 +908,8 @@
   {# ── Interactive Map ───────────────────────────────────── #}
   <div class="row">
     <div class="col-md-12">
-      <div class="dx-card dx-section">
+      <div class="dx-card dx-section" id="dx-card-map">
+        <div class="dx-loading-overlay" id="dx-loading-map"><div class="dx-spinner"></div></div>
         <h2 class="dx-section-title dx-map-title">
           <i class="fa fa-globe"></i> {{ _('Global Activity Distribution') }}
         </h2>
@@ -647,36 +940,32 @@
   {# ── Charts Row 1: PA Doughnut + Biennium Bar ─────────── #}
   <div class="row">
     <div class="col-md-6">
-      <div class="dx-card dx-section">
+      <div class="dx-card dx-section" id="dx-card-pa">
+        <div class="dx-loading-overlay" id="dx-loading-pa"><div class="dx-spinner"></div></div>
         <h2 class="dx-section-title">
           <i class="fa fa-pie-chart"></i> {{ _('Activities by Priority Area') }}
         </h2>
         <div class="dx-chart-box">
-          {% if stats.by_priority_area %}
-            <canvas id="ihpix-chart-pa"></canvas>
-          {% else %}
-            <div class="dx-empty">
-              <i class="fa fa-pie-chart"></i>
-              <p>{{ _('No priority area data available') }}</p>
-            </div>
-          {% endif %}
+          <canvas id="ihpix-chart-pa"></canvas>
+          <div class="dx-empty" id="dx-empty-pa" style="display:none;">
+            <i class="fa fa-pie-chart"></i>
+            <p>{{ _('No priority area data available') }}</p>
+          </div>
         </div>
       </div>
     </div>
     <div class="col-md-6">
-      <div class="dx-card dx-section">
+      <div class="dx-card dx-section" id="dx-card-biennium">
+        <div class="dx-loading-overlay" id="dx-loading-biennium"><div class="dx-spinner"></div></div>
         <h2 class="dx-section-title">
           <i class="fa fa-calendar"></i> {{ _('Activities by Biennium') }}
         </h2>
         <div class="dx-chart-box">
-          {% if stats.by_biennium %}
-            <canvas id="ihpix-chart-biennium"></canvas>
-          {% else %}
-            <div class="dx-empty">
-              <i class="fa fa-calendar-o"></i>
-              <p>{{ _('No biennium data available') }}</p>
-            </div>
-          {% endif %}
+          <canvas id="ihpix-chart-biennium"></canvas>
+          <div class="dx-empty" id="dx-empty-biennium" style="display:none;">
+            <i class="fa fa-calendar-o"></i>
+            <p>{{ _('No biennium data available') }}</p>
+          </div>
         </div>
       </div>
     </div>
@@ -685,24 +974,23 @@
   {# ── Charts Row 2: Top Outputs + Region Distribution ───── #}
   <div class="row">
     <div class="col-md-6">
-      <div class="dx-card dx-section">
+      <div class="dx-card dx-section" id="dx-card-outputs">
+        <div class="dx-loading-overlay" id="dx-loading-outputs"><div class="dx-spinner"></div></div>
         <h2 class="dx-section-title">
           <i class="fa fa-tasks"></i> {{ _('Top Outputs') }}
         </h2>
         <div class="dx-chart-box dx-chart-box--tall">
-          {% if stats.by_output %}
-            <canvas id="ihpix-chart-outputs"></canvas>
-          {% else %}
-            <div class="dx-empty">
-              <i class="fa fa-cubes"></i>
-              <p>{{ _('No output data available') }}</p>
-            </div>
-          {% endif %}
+          <canvas id="ihpix-chart-outputs"></canvas>
+          <div class="dx-empty" id="dx-empty-outputs" style="display:none;">
+            <i class="fa fa-cubes"></i>
+            <p>{{ _('No output data available') }}</p>
+          </div>
         </div>
       </div>
     </div>
     <div class="col-md-6">
-      <div class="dx-card dx-section">
+      <div class="dx-card dx-section" id="dx-card-regions">
+        <div class="dx-loading-overlay" id="dx-loading-regions"><div class="dx-spinner"></div></div>
         <h2 class="dx-section-title">
           <i class="fa fa-map"></i> {{ _('Region Distribution') }}
         </h2>
@@ -750,14 +1038,12 @@
   document.addEventListener('DOMContentLoaded', function () {
     'use strict';
 
-    /* ── Palette & helpers ──────────────────────────────── */
-    var PA_COLORS_ARR = ['#0069B4', '#0891B2', '#059669', '#D97706', '#DC2626'];
+    /* ═══════════════════════════════════════════════════════
+       PALETTE & HELPERS
+       ═══════════════════════════════════════════════════════ */
     var PA_COLORS = {
-      'PA1': '#0069B4',
-      'PA2': '#0891B2',
-      'PA3': '#059669',
-      'PA4': '#D97706',
-      'PA5': '#DC2626'
+      'PA1': '#0069B4', 'PA2': '#0891B2', 'PA3': '#059669',
+      'PA4': '#D97706', 'PA5': '#DC2626'
     };
     var REGION_COLORS = {
       'Africa': '#DC2626',
@@ -767,7 +1053,6 @@
       'Arab States': '#7C3AED'
     };
     var FONT_FAMILY = getComputedStyle(document.body).fontFamily || 'Inter, system-ui, sans-serif';
-
     Chart.defaults.font.family = FONT_FAMILY;
     Chart.defaults.color = '#64748B';
 
@@ -775,245 +1060,446 @@
       backgroundColor: '#0F172A',
       titleFont: { size: 13, weight: '600' },
       bodyFont: { size: 12 },
-      cornerRadius: 8,
-      padding: 12,
-      boxPadding: 4,
-      borderColor: 'rgba(255,255,255,0.1)',
-      borderWidth: 1
+      cornerRadius: 8, padding: 12, boxPadding: 4,
+      borderColor: 'rgba(255,255,255,0.1)', borderWidth: 1
     };
 
     function paColor(name) {
       var key = (name || '').replace(/[^A-Za-z0-9]/g, '').toUpperCase();
-      for (var k in PA_COLORS) {
-        if (key.indexOf(k) !== -1) return PA_COLORS[k];
-      }
+      for (var k in PA_COLORS) { if (key.indexOf(k) !== -1) return PA_COLORS[k]; }
       return '#94A3B8';
     }
 
-    /* ── Data from Jinja2 ──────────────────────────────── */
-    var dataPa       = {{ stats.by_priority_area | default([]) | tojson }};
-    var dataBiennium = {{ stats.by_biennium | default([]) | tojson }};
-    var dataCountry  = {{ stats.by_country | default([]) | tojson }};
-    var dataOutput   = {{ stats.by_output | default([]) | tojson }};
+    /* Countries list from server (for autocomplete) */
+    var ALL_COUNTRIES = {{ stats.filter_options.countries | default([]) | tojson }};
 
-    var impactData = {
-      stakeholders_knowledge: {{ stats.stakeholders_knowledge | default(0) | tojson }},
-      stakeholders_awareness: {{ stats.stakeholders_awareness | default(0) | tojson }},
-      knowledge_products:     {{ stats.knowledge_products | default(0) | tojson }},
-      scientific_products:    {{ stats.scientific_products | default(0) | tojson }},
-      training_materials:     {{ stats.training_materials | default(0) | tojson }}
+    /* ═══════════════════════════════════════════════════════
+       CHART INSTANCES (global for updates)
+       ═══════════════════════════════════════════════════════ */
+    var chartPa = null, chartBiennium = null, chartOutputs = null, chartRegions = null;
+    var leafletMap = null, mapMarkersLayer = null;
+
+    /* ═══════════════════════════════════════════════════════
+       FILTER STATE
+       ═══════════════════════════════════════════════════════ */
+    var activeFilters = {
+      priority_area: '',
+      biennium: '',
+      country: ''
     };
 
-    /* ── 1. Priority Area – Doughnut ────────────────────── */
-    {% if stats.by_priority_area %}
-    (function () {
-      var ctx = document.getElementById('ihpix-chart-pa');
-      if (!ctx) return;
-      var labels = dataPa.map(function (d) { return d.name; });
-      var values = dataPa.map(function (d) { return d.count; });
-      var colors = dataPa.map(function (d) { return paColor(d.name); });
-      var total  = values.reduce(function (a, b) { return a + b; }, 0);
+    /* ═══════════════════════════════════════════════════════
+       FILTER BAR LOGIC
+       ═══════════════════════════════════════════════════════ */
+    var paPills = document.querySelectorAll('.dx-pa-pill');
+    var bienniumSelect = document.getElementById('dx-filter-biennium');
+    var countryInput = document.getElementById('dx-filter-country');
+    var countryList = document.getElementById('dx-country-list');
+    var resetBtn = document.getElementById('dx-filter-reset');
+    var chipsContainer = document.getElementById('dx-active-chips');
+    var debounceTimer = null;
 
-      var centerTextPlugin = {
-        id: 'ihpixCenterText',
-        afterDraw: function (chart) {
-          var w  = chart.width, h = chart.height, cCtx = chart.ctx;
-          var meta = chart.getDatasetMeta(0);
-          if (!meta || !meta.data || !meta.data.length) return;
-          var el = meta.data[0];
-          var centerX = (chart.chartArea.left + chart.chartArea.right) / 2;
-          var centerY = (chart.chartArea.top + chart.chartArea.bottom) / 2;
-          cCtx.save();
-          cCtx.font = '700 28px ' + FONT_FAMILY;
-          cCtx.fillStyle = '#0F172A';
-          cCtx.textAlign = 'center';
-          cCtx.textBaseline = 'middle';
-          cCtx.fillText(total.toLocaleString(), centerX, centerY - 8);
-          cCtx.font = '500 12px ' + FONT_FAMILY;
-          cCtx.fillStyle = '#94A3B8';
-          cCtx.fillText('{{ _("Total") }}', centerX, centerY + 14);
-          cCtx.restore();
+    /* PA pill toggle */
+    paPills.forEach(function (pill) {
+      pill.addEventListener('click', function () {
+        var pa = this.getAttribute('data-pa');
+        if (activeFilters.priority_area === pa) {
+          activeFilters.priority_area = '';
+          this.classList.remove('active');
+        } else {
+          paPills.forEach(function (p) { p.classList.remove('active'); });
+          activeFilters.priority_area = pa;
+          this.classList.add('active');
         }
-      };
+        scheduleUpdate();
+      });
+    });
 
-      new Chart(ctx, {
+    /* Biennium dropdown */
+    bienniumSelect.addEventListener('change', function () {
+      activeFilters.biennium = this.value;
+      this.classList.toggle('has-value', !!this.value);
+      scheduleUpdate();
+    });
+
+    /* Country autocomplete */
+    countryInput.addEventListener('input', function () {
+      var q = this.value.trim().toLowerCase();
+      countryList.innerHTML = '';
+      if (q.length < 1) { countryList.classList.remove('show'); return; }
+      var matches = ALL_COUNTRIES.filter(function (c) {
+        return c.toLowerCase().indexOf(q) !== -1;
+      }).slice(0, 12);
+      if (!matches.length) { countryList.classList.remove('show'); return; }
+      matches.forEach(function (c) {
+        var opt = document.createElement('div');
+        opt.className = 'dx-country-opt';
+        opt.textContent = c;
+        opt.addEventListener('click', function () {
+          activeFilters.country = c;
+          countryInput.value = c;
+          countryInput.classList.add('has-value');
+          countryList.classList.remove('show');
+          scheduleUpdate();
+        });
+        countryList.appendChild(opt);
+      });
+      countryList.classList.add('show');
+    });
+
+    countryInput.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        var highlighted = countryList.querySelector('.highlighted');
+        if (highlighted) highlighted.click();
+        else if (countryList.querySelector('.dx-country-opt'))
+          countryList.querySelector('.dx-country-opt').click();
+      } else if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        var items = countryList.querySelectorAll('.dx-country-opt');
+        if (!items.length) return;
+        var idx = -1;
+        items.forEach(function (it, i) { if (it.classList.contains('highlighted')) idx = i; });
+        items.forEach(function (it) { it.classList.remove('highlighted'); });
+        if (e.key === 'ArrowDown') idx = (idx + 1) % items.length;
+        else idx = idx <= 0 ? items.length - 1 : idx - 1;
+        items[idx].classList.add('highlighted');
+        items[idx].scrollIntoView({ block: 'nearest' });
+      } else if (e.key === 'Escape') {
+        countryList.classList.remove('show');
+      }
+    });
+
+    /* Close dropdown on click outside */
+    document.addEventListener('click', function (e) {
+      if (!e.target.closest('.dx-country-wrap')) countryList.classList.remove('show');
+    });
+
+    /* Clear country if input emptied */
+    countryInput.addEventListener('blur', function () {
+      setTimeout(function () {
+        if (!countryInput.value.trim() && activeFilters.country) {
+          activeFilters.country = '';
+          countryInput.classList.remove('has-value');
+          scheduleUpdate();
+        }
+      }, 200);
+    });
+
+    /* Reset all */
+    resetBtn.addEventListener('click', function () {
+      activeFilters.priority_area = '';
+      activeFilters.biennium = '';
+      activeFilters.country = '';
+      paPills.forEach(function (p) { p.classList.remove('active'); });
+      bienniumSelect.value = '';
+      bienniumSelect.classList.remove('has-value');
+      countryInput.value = '';
+      countryInput.classList.remove('has-value');
+      scheduleUpdate();
+    });
+
+    function scheduleUpdate() {
+      clearTimeout(debounceTimer);
+      debounceTimer = setTimeout(fetchAndUpdate, 300);
+    }
+
+    function hasActiveFilters() {
+      return activeFilters.priority_area || activeFilters.biennium || activeFilters.country;
+    }
+
+    function updateFilterUI() {
+      /* Reset button visibility */
+      resetBtn.classList.toggle('hidden', !hasActiveFilters());
+
+      /* Active chips */
+      chipsContainer.innerHTML = '';
+      var chips = [];
+      if (activeFilters.priority_area) {
+        chips.push({ label: 'Priority Area ' + activeFilters.priority_area.replace('PA', ''), key: 'priority_area' });
+      }
+      if (activeFilters.biennium) {
+        chips.push({ label: activeFilters.biennium, key: 'biennium' });
+      }
+      if (activeFilters.country) {
+        chips.push({ label: activeFilters.country, key: 'country' });
+      }
+      chipsContainer.classList.toggle('hidden', !chips.length);
+      chips.forEach(function (ch) {
+        var el = document.createElement('span');
+        el.className = 'dx-chip';
+        el.innerHTML = ch.label + ' <span class="dx-chip-x">&times;</span>';
+        el.addEventListener('click', function () {
+          activeFilters[ch.key] = '';
+          if (ch.key === 'priority_area') paPills.forEach(function (p) { p.classList.remove('active'); });
+          if (ch.key === 'biennium') { bienniumSelect.value = ''; bienniumSelect.classList.remove('has-value'); }
+          if (ch.key === 'country') { countryInput.value = ''; countryInput.classList.remove('has-value'); }
+          scheduleUpdate();
+        });
+        chipsContainer.appendChild(el);
+      });
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       LOADING STATES
+       ═══════════════════════════════════════════════════════ */
+    function setLoading(show) {
+      ['dx-loading-pa', 'dx-loading-biennium', 'dx-loading-outputs',
+       'dx-loading-regions', 'dx-loading-map'].forEach(function (id) {
+        var el = document.getElementById(id);
+        if (el) el.classList.toggle('active', show);
+      });
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       ANIMATED NUMBER UPDATE
+       ═══════════════════════════════════════════════════════ */
+    function animateNumber(el, newVal) {
+      var start = parseInt(el.textContent.replace(/,/g, ''), 10) || 0;
+      var end = newVal || 0;
+      if (start === end) return;
+      var duration = 500;
+      var startTime = null;
+      function step(ts) {
+        if (!startTime) startTime = ts;
+        var p = Math.min((ts - startTime) / duration, 1);
+        var ease = 1 - Math.pow(1 - p, 3);
+        el.textContent = Math.round(start + (end - start) * ease).toLocaleString();
+        if (p < 1) requestAnimationFrame(step);
+      }
+      requestAnimationFrame(step);
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       CHART BUILDERS
+       ═══════════════════════════════════════════════════════ */
+
+    /* Doughnut center text plugin */
+    var centerTextPlugin = {
+      id: 'ihpixCenterText',
+      afterDraw: function (chart) {
+        var cCtx = chart.ctx;
+        var ds = chart.data.datasets[0];
+        if (!ds || !ds.data || !ds.data.length) return;
+        var total = ds.data.reduce(function (a, b) { return a + b; }, 0);
+        var cx = (chart.chartArea.left + chart.chartArea.right) / 2;
+        var cy = (chart.chartArea.top + chart.chartArea.bottom) / 2;
+        cCtx.save();
+        cCtx.font = '700 28px ' + FONT_FAMILY;
+        cCtx.fillStyle = '#0F172A';
+        cCtx.textAlign = 'center';
+        cCtx.textBaseline = 'middle';
+        cCtx.fillText(total.toLocaleString(), cx, cy - 8);
+        cCtx.font = '500 12px ' + FONT_FAMILY;
+        cCtx.fillStyle = '#94A3B8';
+        cCtx.fillText('{{ _("Total") }}', cx, cy + 14);
+        cCtx.restore();
+      }
+    };
+
+    function buildPaChart(data) {
+      var canvas = document.getElementById('ihpix-chart-pa');
+      var emptyEl = document.getElementById('dx-empty-pa');
+      if (!canvas) return;
+      if (!data || !data.length) {
+        canvas.style.display = 'none';
+        if (emptyEl) emptyEl.style.display = '';
+        return;
+      }
+      canvas.style.display = '';
+      if (emptyEl) emptyEl.style.display = 'none';
+
+      var labels = data.map(function (d) { return d.name; });
+      var values = data.map(function (d) { return d.count; });
+      var colors = data.map(function (d) { return paColor(d.name); });
+
+      if (chartPa) {
+        chartPa.data.labels = labels;
+        chartPa.data.datasets[0].data = values;
+        chartPa.data.datasets[0].backgroundColor = colors;
+        chartPa.update('active');
+        return;
+      }
+      chartPa = new Chart(canvas, {
         type: 'doughnut',
-        data: {
-          labels: labels,
-          datasets: [{
-            data: values,
-            backgroundColor: colors,
-            borderWidth: 2,
-            borderColor: '#fff',
-            hoverOffset: 6,
-            hoverBorderWidth: 0
-          }]
-        },
+        data: { labels: labels, datasets: [{ data: values, backgroundColor: colors, borderWidth: 2, borderColor: '#fff', hoverOffset: 6, hoverBorderWidth: 0 }] },
         options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          cutout: '65%',
+          responsive: true, maintainAspectRatio: false, cutout: '65%',
+          onClick: function (e, els) {
+            if (!els.length) return;
+            var idx = els[0].index;
+            var pa = labels[idx];
+            var paKey = pa.replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+            if (paKey.indexOf('PA') === -1) return;
+            if (activeFilters.priority_area === paKey) {
+              activeFilters.priority_area = '';
+              paPills.forEach(function (p) { p.classList.remove('active'); });
+            } else {
+              activeFilters.priority_area = paKey;
+              paPills.forEach(function (p) { p.classList.toggle('active', p.getAttribute('data-pa') === paKey); });
+            }
+            scheduleUpdate();
+          },
           plugins: {
-            legend: {
-              position: 'bottom',
-              labels: {
-                padding: 16,
-                usePointStyle: true,
-                pointStyleWidth: 10,
-                font: { size: 12, weight: '500' },
-                color: '#64748B'
-              }
-            },
+            legend: { position: 'bottom', labels: { padding: 16, usePointStyle: true, pointStyleWidth: 10, font: { size: 12, weight: '500' }, color: '#64748B' } },
             tooltip: tooltipStyle
           },
           animation: { animateRotate: true, duration: 800 }
         },
         plugins: [centerTextPlugin]
       });
-    })();
-    {% endif %}
+    }
 
-    /* ── 2. Activities by Biennium – Horizontal Bar ─────── */
-    {% if stats.by_biennium %}
-    (function () {
-      var ctx = document.getElementById('ihpix-chart-biennium');
-      if (!ctx) return;
-      var labels = dataBiennium.map(function (d) { return d.name; });
-      var values = dataBiennium.map(function (d) { return d.count; });
+    function buildBienniumChart(data) {
+      var canvas = document.getElementById('ihpix-chart-biennium');
+      var emptyEl = document.getElementById('dx-empty-biennium');
+      if (!canvas) return;
+      if (!data || !data.length) {
+        canvas.style.display = 'none';
+        if (emptyEl) emptyEl.style.display = '';
+        return;
+      }
+      canvas.style.display = '';
+      if (emptyEl) emptyEl.style.display = 'none';
 
-      new Chart(ctx, {
+      var labels = data.map(function (d) { return d.name; });
+      var values = data.map(function (d) { return d.count; });
+
+      if (chartBiennium) {
+        chartBiennium.data.labels = labels;
+        chartBiennium.data.datasets[0].data = values;
+        chartBiennium.update('active');
+        return;
+      }
+      chartBiennium = new Chart(canvas, {
         type: 'bar',
-        data: {
-          labels: labels,
-          datasets: [{
-            label: '{{ _("Activities") }}',
-            data: values,
-            backgroundColor: 'rgba(0, 105, 180, 0.8)',
-            hoverBackgroundColor: '#0069B4',
-            borderRadius: 6,
-            barPercentage: 0.6,
-            categoryPercentage: 0.8
-          }]
-        },
+        data: { labels: labels, datasets: [{ label: '{{ _("Activities") }}', data: values, backgroundColor: 'rgba(0, 105, 180, 0.8)', hoverBackgroundColor: '#0069B4', borderRadius: 6, barPercentage: 0.6, categoryPercentage: 0.8 }] },
         options: {
-          indexAxis: 'y',
-          responsive: true,
-          maintainAspectRatio: false,
+          indexAxis: 'y', responsive: true, maintainAspectRatio: false,
           scales: {
-            x: {
-              beginAtZero: true,
-              ticks: { precision: 0, color: '#94A3B8', font: { size: 11 } },
-              grid: { color: '#F1F5F9', drawBorder: false },
-              border: { display: false }
-            },
-            y: {
-              grid: { display: false },
-              border: { display: false },
-              ticks: { font: { size: 12, weight: '600' }, color: '#0F172A' }
-            }
+            x: { beginAtZero: true, ticks: { precision: 0, color: '#94A3B8', font: { size: 11 } }, grid: { color: '#F1F5F9', drawBorder: false }, border: { display: false } },
+            y: { grid: { display: false }, border: { display: false }, ticks: { font: { size: 12, weight: '600' }, color: '#0F172A' } }
           },
-          plugins: {
-            legend: { display: false },
-            tooltip: tooltipStyle
-          },
+          plugins: { legend: { display: false }, tooltip: tooltipStyle },
           animation: { duration: 800 }
         }
       });
-    })();
-    {% endif %}
+    }
 
-    /* ── 3. Top Outputs – Horizontal Bar ─────────────────── */
-    {% if stats.by_output %}
-    (function () {
-      var ctx = document.getElementById('ihpix-chart-outputs');
-      if (!ctx) return;
-      var sorted = dataOutput.slice().sort(function (a, b) { return b.count - a.count; }).slice(0, 15);
+    function buildOutputsChart(data) {
+      var canvas = document.getElementById('ihpix-chart-outputs');
+      var emptyEl = document.getElementById('dx-empty-outputs');
+      if (!canvas) return;
+      if (!data || !data.length) {
+        canvas.style.display = 'none';
+        if (emptyEl) emptyEl.style.display = '';
+        return;
+      }
+      canvas.style.display = '';
+      if (emptyEl) emptyEl.style.display = 'none';
+
+      var sorted = data.slice().sort(function (a, b) { return b.count - a.count; }).slice(0, 15);
       var labels = sorted.map(function (d) { return d.name; });
       var values = sorted.map(function (d) { return d.count; });
 
-      new Chart(ctx, {
+      if (chartOutputs) {
+        chartOutputs.data.labels = labels;
+        chartOutputs.data.datasets[0].data = values;
+        chartOutputs.update('active');
+        return;
+      }
+      chartOutputs = new Chart(canvas, {
         type: 'bar',
-        data: {
-          labels: labels,
-          datasets: [{
-            label: '{{ _("Activities") }}',
-            data: values,
-            backgroundColor: 'rgba(8, 145, 178, 0.8)',
-            hoverBackgroundColor: '#0891B2',
-            borderRadius: 6,
-            barPercentage: 0.65,
-            categoryPercentage: 0.85
-          }]
-        },
+        data: { labels: labels, datasets: [{ label: '{{ _("Activities") }}', data: values, backgroundColor: 'rgba(8, 145, 178, 0.8)', hoverBackgroundColor: '#0891B2', borderRadius: 6, barPercentage: 0.65, categoryPercentage: 0.85 }] },
         options: {
-          indexAxis: 'y',
-          responsive: true,
-          maintainAspectRatio: false,
+          indexAxis: 'y', responsive: true, maintainAspectRatio: false,
           scales: {
-            x: {
-              beginAtZero: true,
-              ticks: { precision: 0, color: '#94A3B8', font: { size: 11 } },
-              grid: { color: '#F1F5F9', drawBorder: false },
-              border: { display: false }
-            },
-            y: {
-              grid: { display: false },
-              border: { display: false },
-              ticks: {
-                font: { size: 11 },
-                color: '#64748B',
-                callback: function (val) {
-                  var lbl = this.getLabelForValue(val);
-                  return lbl.length > 28 ? lbl.substring(0, 26) + '\u2026' : lbl;
-                }
-              }
-            }
+            x: { beginAtZero: true, ticks: { precision: 0, color: '#94A3B8', font: { size: 11 } }, grid: { color: '#F1F5F9', drawBorder: false }, border: { display: false } },
+            y: { grid: { display: false }, border: { display: false }, ticks: { font: { size: 11 }, color: '#64748B', callback: function (val) { var lbl = this.getLabelForValue(val); return lbl.length > 28 ? lbl.substring(0, 26) + '\u2026' : lbl; } } }
           },
-          plugins: {
-            legend: { display: false },
-            tooltip: tooltipStyle
-          },
+          plugins: { legend: { display: false }, tooltip: tooltipStyle },
           animation: { duration: 700 }
         }
       });
-    })();
-    {% endif %}
+    }
 
-    /* ── 4. Leaflet Map ──────────────────────────────────── */
-    (function () {
+    function buildRegionChart(regionCounts) {
+      var canvas = document.getElementById('ihpix-chart-regions');
+      var emptyEl = document.getElementById('ihpix-regions-empty');
+      if (!canvas) return;
+      var regionNames = Object.keys(regionCounts);
+      if (!regionNames.length) {
+        canvas.style.display = 'none';
+        if (emptyEl) emptyEl.style.display = '';
+        return;
+      }
+      canvas.style.display = '';
+      if (emptyEl) emptyEl.style.display = 'none';
+
+      var labels = regionNames;
+      var values = regionNames.map(function (r) { return regionCounts[r]; });
+      var colors = regionNames.map(function (r) { return REGION_COLORS[r] || '#94A3B8'; });
+
+      if (chartRegions) {
+        chartRegions.data.labels = labels;
+        chartRegions.data.datasets[0].data = values;
+        chartRegions.data.datasets[0].backgroundColor = colors;
+        chartRegions.update('active');
+        return;
+      }
+      chartRegions = new Chart(canvas, {
+        type: 'doughnut',
+        data: { labels: labels, datasets: [{ data: values, backgroundColor: colors, borderWidth: 2, borderColor: '#fff', hoverOffset: 6, hoverBorderWidth: 0 }] },
+        options: {
+          responsive: true, maintainAspectRatio: false, cutout: '58%',
+          plugins: {
+            legend: { position: 'bottom', labels: { padding: 14, usePointStyle: true, pointStyleWidth: 10, font: { size: 11, weight: '500' }, color: '#64748B' } },
+            tooltip: tooltipStyle
+          },
+          animation: { animateRotate: true, duration: 800 }
+        }
+      });
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       MAP
+       ═══════════════════════════════════════════════════════ */
+    function initMap() {
       var mapEl = document.getElementById('ihpix-map');
       if (!mapEl) return;
 
-      var map = L.map('ihpix-map', {
-        center: [20, 0],
-        zoom: 2,
-        scrollWheelZoom: false,
-        zoomControl: true
+      leafletMap = L.map('ihpix-map', {
+        center: [20, 0], zoom: 2,
+        scrollWheelZoom: false, zoomControl: true
       });
-
       L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
-        maxZoom: 18,
-        subdomains: 'abcd'
-      }).addTo(map);
+        maxZoom: 18, subdomains: 'abcd'
+      }).addTo(leafletMap);
+      mapMarkersLayer = L.layerGroup().addTo(leafletMap);
+    }
 
-      fetch('/api/3/action/ihpix_geojson')
+    function updateMap(filters) {
+      if (!leafletMap) return;
+      mapMarkersLayer.clearLayers();
+
+      var url = '/api/3/action/ihpix_geojson';
+      fetch(url)
         .then(function (r) { return r.json(); })
         .then(function (data) {
-          if (!data.result || !data.result.features || !data.result.features.length) return;
-          var features = data.result.features;
+          if (!data.result || !data.result.features) return;
           var regionCounts = {};
-
-          features.forEach(function (f) {
+          data.result.features.forEach(function (f) {
             var p = f.properties;
             var coords = f.geometry && f.geometry.coordinates;
             if (!coords) return;
+
+            /* Si hay filtro de país, saltar los que no coinciden */
+            if (filters.country && p.country !== filters.country) return;
+
             var radius = Math.max(5, Math.min(22, Math.sqrt(p.total_activities) * 3));
             var color = REGION_COLORS[p.region] || '#94A3B8';
-
-            if (p.region) {
-              regionCounts[p.region] = (regionCounts[p.region] || 0) + p.total_activities;
-            }
+            if (p.region) regionCounts[p.region] = (regionCounts[p.region] || 0) + p.total_activities;
 
             var popupHtml = '<div style="min-width:180px;font-family:inherit;">' +
               '<div style="font-size:14px;font-weight:700;color:#0F172A;margin-bottom:6px;">' + (p.country || '\u2014') + '</div>' +
@@ -1028,78 +1514,104 @@
                   '<span style="color:' + PA_COLORS['PA' + i] + ';">\u25CF</span> PA' + i + ': ' + p[paKey] + '</div>';
               }
             }
-            if (p.region) {
-              popupHtml += '<div style="font-size:11px;color:#94A3B8;margin-top:6px;">' + p.region + '</div>';
-            }
+            if (p.region) popupHtml += '<div style="font-size:11px;color:#94A3B8;margin-top:6px;">' + p.region + '</div>';
             popupHtml += '</div>';
 
-            L.circleMarker([coords[1], coords[0]], {
-              radius: radius,
-              fillColor: color,
-              color: '#fff',
-              weight: 1.5,
-              opacity: 0.9,
-              fillOpacity: 0.65
-            }).bindPopup(popupHtml, { className: 'dx-popup' })
-              .addTo(map);
-          });
+            var marker = L.circleMarker([coords[1], coords[0]], {
+              radius: radius, fillColor: color, color: '#fff',
+              weight: 1.5, opacity: 0.9, fillOpacity: 0.65
+            }).bindPopup(popupHtml, { className: 'dx-popup' });
 
+            /* Click country on map → apply filter */
+            marker.on('click', function () {
+              if (p.country && p.country !== activeFilters.country) {
+                activeFilters.country = p.country;
+                countryInput.value = p.country;
+                countryInput.classList.add('has-value');
+                scheduleUpdate();
+              }
+            });
+            mapMarkersLayer.addLayer(marker);
+          });
           buildRegionChart(regionCounts);
         })
-        .catch(function () { /* Silently degrade */ });
-    })();
-
-    /* ── 5. Region Distribution – Doughnut (from API) ────── */
-    function buildRegionChart(regionCounts) {
-      var canvas = document.getElementById('ihpix-chart-regions');
-      var emptyEl = document.getElementById('ihpix-regions-empty');
-      if (!canvas) return;
-
-      var regionNames = Object.keys(regionCounts);
-      if (!regionNames.length) {
-        canvas.style.display = 'none';
-        if (emptyEl) emptyEl.style.display = '';
-        return;
-      }
-
-      var labels = regionNames;
-      var values = regionNames.map(function (r) { return regionCounts[r]; });
-      var colors = regionNames.map(function (r) { return REGION_COLORS[r] || '#94A3B8'; });
-
-      new Chart(canvas, {
-        type: 'doughnut',
-        data: {
-          labels: labels,
-          datasets: [{
-            data: values,
-            backgroundColor: colors,
-            borderWidth: 2,
-            borderColor: '#fff',
-            hoverOffset: 6,
-            hoverBorderWidth: 0
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          cutout: '58%',
-          plugins: {
-            legend: {
-              position: 'bottom',
-              labels: {
-                padding: 14,
-                usePointStyle: true,
-                pointStyleWidth: 10,
-                font: { size: 11, weight: '500' },
-                color: '#64748B'
-              }
-            },
-            tooltip: tooltipStyle
-          },
-          animation: { animateRotate: true, duration: 800 }
-        }
-      });
+        .catch(function () {});
     }
+
+    /* ═══════════════════════════════════════════════════════
+       FETCH & UPDATE ALL
+       ═══════════════════════════════════════════════════════ */
+    function fetchAndUpdate() {
+      updateFilterUI();
+      setLoading(true);
+
+      var params = [];
+      if (activeFilters.priority_area) params.push('priority_area=' + encodeURIComponent(activeFilters.priority_area));
+      if (activeFilters.biennium) params.push('biennium=' + encodeURIComponent(activeFilters.biennium));
+      if (activeFilters.country) params.push('country=' + encodeURIComponent(activeFilters.country));
+      var qs = params.length ? '?' + params.join('&') : '';
+
+      fetch('/api/3/action/ihpix_dashboard_stats' + qs)
+        .then(function (r) { return r.json(); })
+        .then(function (resp) {
+          if (!resp.success) { setLoading(false); return; }
+          var s = resp.result;
+
+          /* KPI numbers */
+          var kpis = document.querySelectorAll('.dx-kpi-number');
+          var kpiMap = {
+            '{{ _("Total Activities") }}': s.total_activities,
+            '{{ _("Countries") }}': s.total_countries,
+            '{{ _("Institutions") }}': s.total_institutions,
+            '{{ _("Pending Reports") }}': s.pending_reports
+          };
+          kpis.forEach(function (el) {
+            var label = el.closest('.dx-kpi-body').querySelector('.dx-kpi-label');
+            if (label && kpiMap[label.textContent.trim()] !== undefined) {
+              animateNumber(el, kpiMap[label.textContent.trim()]);
+            }
+          });
+
+          /* Impact metrics */
+          var impacts = document.querySelectorAll('.dx-impact-number');
+          var impactMap = {
+            '{{ _("Stakeholders Knowledge") }}': s.stakeholders_knowledge,
+            '{{ _("Stakeholders Awareness") }}': s.stakeholders_awareness,
+            '{{ _("Knowledge Products") }}': s.knowledge_products,
+            '{{ _("Scientific Products") }}': s.scientific_products,
+            '{{ _("Training Materials") }}': s.training_materials
+          };
+          impacts.forEach(function (el) {
+            var label = el.closest('.dx-impact').querySelector('.dx-impact-label');
+            if (label && impactMap[label.textContent.trim()] !== undefined) {
+              animateNumber(el, impactMap[label.textContent.trim()]);
+            }
+          });
+
+          /* Charts */
+          buildPaChart(s.by_priority_area);
+          buildBienniumChart(s.by_biennium);
+          buildOutputsChart(s.by_output);
+
+          /* Map */
+          updateMap(activeFilters);
+
+          setLoading(false);
+        })
+        .catch(function () { setLoading(false); });
+    }
+
+    /* ═══════════════════════════════════════════════════════
+       INITIAL RENDER
+       ═══════════════════════════════════════════════════════ */
+    var initialData = {{ stats | tojson }};
+
+    buildPaChart(initialData.by_priority_area || []);
+    buildBienniumChart(initialData.by_biennium || []);
+    buildOutputsChart(initialData.by_output || []);
+
+    initMap();
+    updateMap({});
   });
   </script>
 {% endblock %}

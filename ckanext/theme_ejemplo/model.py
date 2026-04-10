@@ -1080,70 +1080,121 @@ class IhpixActivity(model.DomainObject):
         }
 
     @classmethod
-    def get_stats(cls):
-        """Aggregated statistics for the dashboard."""
+    def get_stats(cls, filters=None):
+        """Aggregated statistics for the dashboard.
+
+        Args:
+            filters (dict): Optional filters — priority_area, biennium,
+                            region, country, output.
+        """
         from sqlalchemy import func, distinct
-        base = meta.Session.query(cls).filter(
+        filters = filters or {}
+
+        def _apply(q):
+            """Aplica filtros comunes a una query."""
+            pa = filters.get('priority_area')
+            if pa:
+                q = q.filter(cls.priority_area == pa)
+            bi = filters.get('biennium')
+            if bi:
+                q = q.filter(cls.biennium == bi)
+            country = filters.get('country')
+            if country:
+                q = q.filter(cls.country == country)
+            output = filters.get('output')
+            if output:
+                q = q.filter(cls.output == output)
+            region = filters.get('region')
+            if region:
+                q = q.filter(cls.regions.ilike(u'%' + region + u'%'))
+            return q
+
+        base = _apply(meta.Session.query(cls).filter(
             cls.status == cls.STATUS_PUBLISHED
-        )
+        ))
         total = base.count()
-        countries = meta.Session.query(
+
+        countries_q = _apply(meta.Session.query(
             func.count(distinct(cls.country))
         ).filter(
             cls.status == cls.STATUS_PUBLISHED,
             cls.country != u'',
             cls.country != None  # noqa: E711
-        ).scalar() or 0
-        institutions = meta.Session.query(
+        ))
+        countries = countries_q.scalar() or 0
+
+        institutions_q = _apply(meta.Session.query(
             func.count(distinct(cls.institution))
         ).filter(
             cls.status == cls.STATUS_PUBLISHED,
             cls.institution != u'',
             cls.institution != None  # noqa: E711
-        ).scalar() or 0
+        ))
+        institutions = institutions_q.scalar() or 0
+
         pending = meta.Session.query(cls).filter(
             cls.status == cls.STATUS_PENDING
         ).count()
 
-        pa_counts = meta.Session.query(
+        pa_q = _apply(meta.Session.query(
             cls.priority_area, func.count(cls.id)
         ).filter(
             cls.status == cls.STATUS_PUBLISHED
-        ).group_by(cls.priority_area).all()
+        ))
+        pa_counts = pa_q.group_by(cls.priority_area).all()
 
-        output_counts = meta.Session.query(
+        output_q = _apply(meta.Session.query(
             cls.output, func.count(cls.id)
         ).filter(
             cls.status == cls.STATUS_PUBLISHED,
             cls.output != u'',
             cls.output != None  # noqa: E711
-        ).group_by(cls.output).order_by(func.count(cls.id).desc()).all()
+        ))
+        output_counts = output_q.group_by(cls.output).order_by(
+            func.count(cls.id).desc()
+        ).all()
 
         # Métricas de impacto agregadas
-        stakeholders_knowledge_total = meta.Session.query(
-            func.coalesce(func.sum(cls.stakeholders_knowledge), 0)
-        ).filter(cls.status == cls.STATUS_PUBLISHED).scalar() or 0
-        stakeholders_awareness_total = meta.Session.query(
-            func.coalesce(func.sum(cls.stakeholders_awareness), 0)
-        ).filter(cls.status == cls.STATUS_PUBLISHED).scalar() or 0
-        knowledge_products_total = meta.Session.query(
-            func.coalesce(func.sum(cls.num_knowledge_products), 0)
-        ).filter(cls.status == cls.STATUS_PUBLISHED).scalar() or 0
-        scientific_products_total = meta.Session.query(
-            func.coalesce(func.sum(cls.num_scientific_products), 0)
-        ).filter(cls.status == cls.STATUS_PUBLISHED).scalar() or 0
-        training_materials_total = meta.Session.query(
-            func.coalesce(func.sum(cls.num_training_materials), 0)
-        ).filter(cls.status == cls.STATUS_PUBLISHED).scalar() or 0
+        def _sum(col):
+            q = _apply(meta.Session.query(
+                func.coalesce(func.sum(col), 0)
+            ).filter(cls.status == cls.STATUS_PUBLISHED))
+            return q.scalar() or 0
+
+        stakeholders_knowledge_total = _sum(cls.stakeholders_knowledge)
+        stakeholders_awareness_total = _sum(cls.stakeholders_awareness)
+        knowledge_products_total = _sum(cls.num_knowledge_products)
+        scientific_products_total = _sum(cls.num_scientific_products)
+        training_materials_total = _sum(cls.num_training_materials)
 
         # Por biennium
-        biennium_counts = meta.Session.query(
+        biennium_q = _apply(meta.Session.query(
             cls.biennium, func.count(cls.id)
         ).filter(
             cls.status == cls.STATUS_PUBLISHED,
             cls.biennium != u'',
             cls.biennium != None  # noqa: E711
-        ).group_by(cls.biennium).order_by(cls.biennium).all()
+        ))
+        biennium_counts = biennium_q.group_by(cls.biennium).order_by(
+            cls.biennium
+        ).all()
+
+        # Opciones disponibles para filtros (siempre sin filtrar)
+        all_bienniums = meta.Session.query(
+            distinct(cls.biennium)
+        ).filter(
+            cls.status == cls.STATUS_PUBLISHED,
+            cls.biennium != u'',
+            cls.biennium != None  # noqa: E711
+        ).order_by(cls.biennium).all()
+
+        all_countries = meta.Session.query(
+            distinct(cls.country)
+        ).filter(
+            cls.status == cls.STATUS_PUBLISHED,
+            cls.country != u'',
+            cls.country != None  # noqa: E711
+        ).order_by(cls.country).all()
 
         return {
             'total_activities': total,
@@ -1165,19 +1216,38 @@ class IhpixActivity(model.DomainObject):
             'by_biennium': [
                 {'name': b, 'count': c} for b, c in biennium_counts
             ],
+            'filter_options': {
+                'bienniums': [b[0] for b in all_bienniums],
+                'countries': [c[0] for c in all_countries],
+                'priority_areas': ['PA1', 'PA2', 'PA3', 'PA4', 'PA5'],
+            },
         }
 
     @classmethod
-    def get_timeline(cls, priority_area=None):
+    def get_timeline(cls, filters=None):
         """Monthly activity counts for timeline chart."""
         from sqlalchemy import func, extract
+        filters = filters or {}
         q = meta.Session.query(
             extract('year', cls.created_at).label('year'),
             extract('month', cls.created_at).label('month'),
             func.count(cls.id).label('count')
         ).filter(cls.status == cls.STATUS_PUBLISHED)
-        if priority_area:
-            q = q.filter(cls.priority_area == priority_area)
+        pa = filters.get('priority_area')
+        if pa:
+            q = q.filter(cls.priority_area == pa)
+        bi = filters.get('biennium')
+        if bi:
+            q = q.filter(cls.biennium == bi)
+        country = filters.get('country')
+        if country:
+            q = q.filter(cls.country == country)
+        output = filters.get('output')
+        if output:
+            q = q.filter(cls.output == output)
+        region = filters.get('region')
+        if region:
+            q = q.filter(cls.regions.ilike(u'%' + region + u'%'))
         q = q.group_by('year', 'month').order_by('year', 'month')
         return [
             {'year': int(r.year), 'month': int(r.month), 'count': r.count}
@@ -1185,9 +1255,10 @@ class IhpixActivity(model.DomainObject):
         ]
 
     @classmethod
-    def get_country_stats(cls, priority_area=None, limit=20):
+    def get_country_stats(cls, filters=None, limit=20):
         """Top countries by activity count."""
         from sqlalchemy import func
+        filters = filters or {}
         q = meta.Session.query(
             cls.country, func.count(cls.id).label('count')
         ).filter(
@@ -1195,8 +1266,18 @@ class IhpixActivity(model.DomainObject):
             cls.country != u'',
             cls.country != None  # noqa: E711
         )
-        if priority_area:
-            q = q.filter(cls.priority_area == priority_area)
+        pa = filters.get('priority_area')
+        if pa:
+            q = q.filter(cls.priority_area == pa)
+        bi = filters.get('biennium')
+        if bi:
+            q = q.filter(cls.biennium == bi)
+        output = filters.get('output')
+        if output:
+            q = q.filter(cls.output == output)
+        region = filters.get('region')
+        if region:
+            q = q.filter(cls.regions.ilike(u'%' + region + u'%'))
         q = q.group_by(cls.country).order_by(func.count(cls.id).desc())
         if limit:
             q = q.limit(limit)
