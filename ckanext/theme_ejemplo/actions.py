@@ -20,6 +20,7 @@ log = logging.getLogger(__name__)
 PROFILE_FIELDS = [
     'job_title', 'institution', 'country', 'phone',
     'website', 'orcid', 'expertise_areas', 'social_links',
+    'member_states',
 ]
 
 
@@ -36,12 +37,19 @@ def user_show(context, data_dict):
 
     for field in PROFILE_FIELDS:
         val = profile.get(field, '')
-        if field in ('expertise_areas', 'social_links') and isinstance(val, str):
+        if field in ('expertise_areas', 'social_links', 'member_states') and isinstance(val, str):
             try:
                 val = json.loads(val)
             except (json.JSONDecodeError, TypeError):
-                val = [] if field == 'expertise_areas' else {}
+                if field == 'social_links':
+                    val = {}
+                else:
+                    val = []
         result[field] = val
+
+    # Backward compat: si no hay member_states pero sí country, derivar
+    if not result.get('member_states') and result.get('country'):
+        result['member_states'] = [result['country']]
 
     # Always expose plugin_extras.theme_ejemplo as 'profile' for convenience
     result['profile'] = profile
@@ -49,6 +57,13 @@ def user_show(context, data_dict):
     # Resolve member state slug to display title
     country_slug = result.get('country', '')
     result['country_display'] = get_member_state_title(country_slug) if country_slug else ''
+
+    # Resolve all member state slugs to display titles
+    result['member_states_display'] = [
+        {'name': ms, 'title': get_member_state_title(ms)}
+        for ms in (result.get('member_states') or [])
+        if ms
+    ]
 
     # Expose user's CKAN organizations (with capacity/role)
     try:
@@ -97,6 +112,9 @@ def user_update(context, data_dict):
             if field == 'expertise_areas' and isinstance(val, str):
                 areas = [a.strip() for a in val.split(',') if a.strip()]
                 val = json.dumps(areas)
+            if field == 'member_states' and isinstance(val, str):
+                states = [s.strip() for s in val.split(',') if s.strip()]
+                val = json.dumps(states)
             profile_data[field] = val
 
     # Extract org role changes (sysadmin only, keys like org_role_<org_id>)
@@ -155,13 +173,48 @@ def user_update(context, data_dict):
             old_country = extras['theme_ejemplo'].get('country', '')
             new_country = profile_data.get('country', old_country)
 
+            # Leer member_states anterior (backward compat con country)
+            old_ms_raw = extras['theme_ejemplo'].get('member_states', '[]')
+            if isinstance(old_ms_raw, str):
+                try:
+                    old_member_states = json.loads(old_ms_raw)
+                except (json.JSONDecodeError, TypeError):
+                    old_member_states = []
+            elif isinstance(old_ms_raw, list):
+                old_member_states = old_ms_raw
+            else:
+                old_member_states = []
+            if not old_member_states and old_country:
+                old_member_states = [old_country]
+
             extras['theme_ejemplo'].update(profile_data)
+
+            # Derivar country del primer member_state para backward compat
+            if 'member_states' in profile_data:
+                new_ms_raw = profile_data['member_states']
+                if isinstance(new_ms_raw, str):
+                    try:
+                        new_member_states = json.loads(new_ms_raw)
+                    except (json.JSONDecodeError, TypeError):
+                        new_member_states = []
+                elif isinstance(new_ms_raw, list):
+                    new_member_states = new_ms_raw
+                else:
+                    new_member_states = []
+                extras['theme_ejemplo']['country'] = new_member_states[0] if new_member_states else ''
+            else:
+                new_member_states = old_member_states
+
             user_obj.plugin_extras = extras
             flag_modified(user_obj, 'plugin_extras')
             model.Session.commit()
 
-            # Sync member state group membership
-            if 'country' in profile_data and old_country != new_country:
+            # Sincronizar membresías en grupos de member states
+            if 'member_states' in profile_data:
+                _sync_member_state_memberships(
+                    user_obj.id, old_member_states, new_member_states
+                )
+            elif 'country' in profile_data and old_country != new_country:
                 _sync_member_state_membership(
                     user_obj.id, old_country, new_country
                 )
@@ -169,11 +222,14 @@ def user_update(context, data_dict):
             # Update result with saved profile
             for field in PROFILE_FIELDS:
                 val = extras['theme_ejemplo'].get(field, '')
-                if field in ('expertise_areas', 'social_links') and isinstance(val, str):
+                if field in ('expertise_areas', 'social_links', 'member_states') and isinstance(val, str):
                     try:
                         val = json.loads(val)
                     except (json.JSONDecodeError, TypeError):
-                        val = [] if field == 'expertise_areas' else {}
+                        if field == 'social_links':
+                            val = {}
+                        else:
+                            val = []
                 result[field] = val
             result['profile'] = extras.get('theme_ejemplo', {})
 
@@ -246,6 +302,71 @@ def _sync_member_state_membership(user_id, old_group_name, new_group_name):
             )
 
 
+def _sync_member_state_memberships(user_id, old_states, new_states):
+    """Sincroniza membresías de grupos de member states cuando cambia la lista.
+
+    Compara la lista anterior con la nueva y agrega/elimina según corresponda.
+    """
+    old_set = set(s for s in old_states if s)
+    new_set = set(s for s in new_states if s)
+
+    to_remove = old_set - new_set
+    to_add = new_set - old_set
+
+    if not to_remove and not to_add:
+        return
+
+    site_user = toolkit.get_action('get_site_user')({'ignore_auth': True}, {})
+    admin_context = {'user': site_user['name'], 'ignore_auth': True}
+
+    for group_name in to_remove:
+        try:
+            group = model.Group.get(group_name)
+            if group and group.type == 'group':
+                toolkit.get_action('member_delete')(
+                    dict(admin_context),
+                    {
+                        'id': group.id,
+                        'object': user_id,
+                        'object_type': 'user',
+                    },
+                )
+                log.info(
+                    'Removed user %s from member state group %s',
+                    user_id, group_name,
+                )
+        except toolkit.ObjectNotFound:
+            pass
+        except Exception as e:
+            log.warning(
+                'Could not remove user %s from group %s: %s',
+                user_id, group_name, e,
+            )
+
+    for group_name in to_add:
+        try:
+            group = model.Group.get(group_name)
+            if group and group.type == 'group':
+                toolkit.get_action('member_create')(
+                    dict(admin_context),
+                    {
+                        'id': group.id,
+                        'object': user_id,
+                        'object_type': 'user',
+                        'capacity': 'member',
+                    },
+                )
+                log.info(
+                    'Added user %s to member state group %s',
+                    user_id, group_name,
+                )
+        except Exception as e:
+            log.warning(
+                'Could not add user %s to group %s: %s',
+                user_id, group_name, e,
+            )
+
+
 def _apply_org_role_changes(user_id, org_role_changes):
     """Update the user's capacity in each organisation.
 
@@ -310,9 +431,22 @@ def people_list(context, data_dict):
         extras = user_obj.plugin_extras or {}
         profile = extras.get('theme_ejemplo', {})
 
-        # Filter by country
-        if country and profile.get('country', '').lower() != country.lower():
-            continue
+        # Filtrar por country / member_states
+        if country:
+            user_ms = profile.get('member_states', '[]')
+            if isinstance(user_ms, str):
+                try:
+                    user_ms = json.loads(user_ms)
+                except (json.JSONDecodeError, TypeError):
+                    user_ms = []
+            if not isinstance(user_ms, list):
+                user_ms = []
+            # Backward compat: usar country si no hay member_states
+            if not user_ms:
+                user_country = profile.get('country', '')
+                user_ms = [user_country] if user_country else []
+            if country.lower() not in [ms.lower() for ms in user_ms]:
+                continue
 
         # Filter by expertise
         if expertise:
@@ -354,6 +488,19 @@ def people_list(context, data_dict):
             orgs.append({'name': g.name, 'title': g.title or g.name, 'image_url': g.image_url or ''})
 
         country_val = profile.get('country', '')
+        member_states_raw = profile.get('member_states', '[]')
+        if isinstance(member_states_raw, str):
+            try:
+                member_states_list = json.loads(member_states_raw)
+            except (json.JSONDecodeError, TypeError):
+                member_states_list = []
+        elif isinstance(member_states_raw, list):
+            member_states_list = member_states_raw
+        else:
+            member_states_list = []
+        if not member_states_list and country_val:
+            member_states_list = [country_val]
+
         results.append({
             'id': user_obj.id,
             'name': user_obj.name,
@@ -363,6 +510,11 @@ def people_list(context, data_dict):
             'institution': profile.get('institution', ''),
             'country': country_val,
             'country_display': get_member_state_title(country_val) if country_val else '',
+            'member_states': member_states_list,
+            'member_states_display': [
+                {'name': ms, 'title': get_member_state_title(ms)}
+                for ms in member_states_list if ms
+            ],
             'orcid': profile.get('orcid', ''),
             'expertise_areas': expertise_areas,
             'social_links': social_links,
@@ -413,6 +565,19 @@ def organization_people(context, data_dict):
                     expertise_areas = []
 
             country_val = profile.get('country', '')
+            member_states_raw = profile.get('member_states', '[]')
+            if isinstance(member_states_raw, str):
+                try:
+                    ms_list = json.loads(member_states_raw)
+                except (json.JSONDecodeError, TypeError):
+                    ms_list = []
+            elif isinstance(member_states_raw, list):
+                ms_list = member_states_raw
+            else:
+                ms_list = []
+            if not ms_list and country_val:
+                ms_list = [country_val]
+
             members.append({
                 'id': user_obj.id,
                 'name': user_obj.name,
@@ -422,6 +587,11 @@ def organization_people(context, data_dict):
                 'institution': profile.get('institution', ''),
                 'country': country_val,
                 'country_display': get_member_state_title(country_val) if country_val else '',
+                'member_states': ms_list,
+                'member_states_display': [
+                    {'name': ms, 'title': get_member_state_title(ms)}
+                    for ms in ms_list if ms
+                ],
                 'expertise_areas': expertise_areas,
                 'capacity': capacity or 'member',
             })

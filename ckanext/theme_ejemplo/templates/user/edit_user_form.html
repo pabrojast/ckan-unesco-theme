@@ -221,7 +221,7 @@
 
         {{ form.input('job_title', label=_('Job Title / Position'), id='field-job-title', value=data.get('job_title', ''), placeholder=_('eg. Research Scientist'), classes=['control-medium']) }}
 
-        {{ form.input('institution', label=_('Institution / Organization'), id='field-institution', value=data.get('institution', ''), placeholder=_('eg. UNESCO-IHP'), classes=['control-medium']) }}
+        {{ form.input('institution', label=_('Institution'), id='field-institution', value=data.get('institution', ''), placeholder=_('eg. UNESCO-IHP'), classes=['control-medium']) }}
 
         {# Organizations — show role dropdowns for sysadmin, badges for everyone else #}
         {% set user_orgs = h.get_user_organizations(data.get('id', '')) %}
@@ -268,17 +268,215 @@
         </div>
         {% endif %}
 
+        {# Multi-select para Member States #}
+        {% set current_member_states = data.get('member_states', []) %}
+        {% if current_member_states is string %}
+          {% set current_member_states = [] %}
+        {% endif %}
+        {# Backward compat: si no hay member_states pero sí country #}
+        {% if not current_member_states and data.get('country', '') %}
+          {% set current_member_states = [data.get('country', '')] %}
+        {% endif %}
         <div class="form-group control-medium">
-          <label class="control-label" for="field-country">{{ _('Country (Member State)') }}</label>
+          <label class="control-label"><i class="fa fa-globe"></i> {{ _('Member States') }}</label>
           <div class="controls">
-            <select id="field-country" name="country" class="form-control">
-              <option value="">{{ _('Select a member state...') }}</option>
-              {% for ms_name, ms_title in h.get_member_states_groups_list() %}
-                <option value="{{ ms_name }}" {{ 'selected' if data.get('country', '') == ms_name }}>{{ ms_title }}</option>
-              {% endfor %}
-            </select>
+            <input type="hidden" name="member_states" id="field-member-states"
+                   value="{{ current_member_states|join(',') }}">
+            <div class="ms-multiselect" id="ms-multiselect">
+              <div class="ms-selected-chips" id="ms-selected-chips">
+                {% for ms_name in current_member_states %}
+                  {% for name, title in h.get_member_states_groups_list() %}
+                    {% if name == ms_name %}
+                      <span class="ms-chip" data-value="{{ name }}">
+                        <i class="fa fa-globe"></i> {{ title }}
+                        <button type="button" class="ms-chip-remove" aria-label="{{ _('Remove') }}">&times;</button>
+                      </span>
+                    {% endif %}
+                  {% endfor %}
+                {% endfor %}
+              </div>
+              <button type="button" class="btn btn-default ms-dropdown-toggle" id="ms-dropdown-toggle">
+                <i class="fa fa-plus"></i> {{ _('Add Member State') }}
+              </button>
+              <div class="ms-dropdown" id="ms-dropdown" style="display:none">
+                <div class="ms-search-wrap">
+                  <input type="text" class="form-control ms-search" id="ms-search"
+                         placeholder="{{ _('Search member states...') }}" autocomplete="off">
+                </div>
+                <ul class="ms-option-list" id="ms-option-list">
+                  {% for ms_name, ms_title in h.get_member_states_groups_list() %}
+                    <li class="ms-option" data-value="{{ ms_name }}" data-label="{{ ms_title }}">
+                      <label>
+                        <input type="checkbox" value="{{ ms_name }}"
+                               {{ 'checked' if ms_name in current_member_states }}>
+                        {{ ms_title }}
+                      </label>
+                    </li>
+                  {% endfor %}
+                </ul>
+              </div>
+            </div>
+            <span class="info-block info-inline">
+              <i class="fa fa-info-circle"></i>
+              {{ _('Select one or more member states you are associated with.') }}
+            </span>
           </div>
         </div>
+
+        <style>
+          .ms-multiselect { position: relative; }
+          .ms-selected-chips {
+            display: flex; flex-wrap: wrap; gap: 0.35rem; margin-bottom: 0.5rem;
+          }
+          .ms-chip {
+            display: inline-flex; align-items: center; gap: 0.25rem;
+            font-size: 0.82rem; padding: 0.25rem 0.6rem;
+            background: #E3F2FD; color: #0072BC; border-radius: 10px;
+            border: 1px solid #BBDEFB;
+          }
+          .ms-chip-remove {
+            background: none; border: none; color: #0072BC; font-size: 1rem;
+            cursor: pointer; padding: 0 0.15rem; line-height: 1;
+            opacity: 0.7; transition: opacity 0.15s;
+          }
+          .ms-chip-remove:hover { opacity: 1; color: #c0392b; }
+          .ms-dropdown-toggle {
+            font-size: 0.85rem; padding: 0.35rem 0.8rem;
+            border-radius: 8px;
+          }
+          .ms-dropdown {
+            position: absolute; z-index: 100; top: 100%; left: 0;
+            width: 100%; max-width: 400px; background: #fff;
+            border: 1px solid #ddd; border-radius: 8px;
+            box-shadow: 0 4px 16px rgba(0,0,0,0.12); margin-top: 4px;
+          }
+          .ms-search-wrap { padding: 0.5rem; border-bottom: 1px solid #eee; }
+          .ms-search { font-size: 0.85rem; border-radius: 6px; }
+          .ms-option-list {
+            list-style: none; margin: 0; padding: 0;
+            max-height: 220px; overflow-y: auto;
+          }
+          .ms-option { padding: 0.35rem 0.75rem; cursor: pointer; }
+          .ms-option:hover { background: #f0f7ff; }
+          .ms-option label {
+            display: flex; align-items: center; gap: 0.4rem;
+            cursor: pointer; margin: 0; font-weight: normal; font-size: 0.85rem;
+          }
+          .ms-option.hidden { display: none; }
+          .ms-option input[type="checkbox"] { margin: 0; }
+        </style>
+
+        <script>
+          document.addEventListener('DOMContentLoaded', function() {
+            var hidden = document.getElementById('field-member-states');
+            var chips = document.getElementById('ms-selected-chips');
+            var toggle = document.getElementById('ms-dropdown-toggle');
+            var dropdown = document.getElementById('ms-dropdown');
+            var search = document.getElementById('ms-search');
+            var optionList = document.getElementById('ms-option-list');
+            if (!hidden || !toggle || !dropdown) return;
+
+            function getSelected() {
+              return hidden.value ? hidden.value.split(',').filter(Boolean) : [];
+            }
+            function setSelected(arr) {
+              hidden.value = arr.join(',');
+            }
+
+            // Obtener label de un value desde las opciones del DOM
+            function getLabel(val) {
+              var opt = optionList.querySelector('.ms-option[data-value="' + val + '"]');
+              return opt ? opt.getAttribute('data-label') : val;
+            }
+
+            function renderChips() {
+              chips.innerHTML = '';
+              getSelected().forEach(function(val) {
+                var chip = document.createElement('span');
+                chip.className = 'ms-chip';
+                chip.setAttribute('data-value', val);
+                chip.innerHTML = '<i class="fa fa-globe"></i> ' + getLabel(val) +
+                  ' <button type="button" class="ms-chip-remove" aria-label="Remove">&times;</button>';
+                chip.querySelector('.ms-chip-remove').addEventListener('click', function() {
+                  removeState(val);
+                });
+                chips.appendChild(chip);
+              });
+            }
+
+            function addState(val) {
+              var sel = getSelected();
+              if (sel.indexOf(val) === -1) {
+                sel.push(val);
+                setSelected(sel);
+                renderChips();
+                syncCheckboxes();
+              }
+            }
+
+            function removeState(val) {
+              var sel = getSelected().filter(function(v) { return v !== val; });
+              setSelected(sel);
+              renderChips();
+              syncCheckboxes();
+            }
+
+            function syncCheckboxes() {
+              var sel = getSelected();
+              optionList.querySelectorAll('.ms-option input[type="checkbox"]').forEach(function(cb) {
+                cb.checked = sel.indexOf(cb.value) !== -1;
+              });
+            }
+
+            // Toggle dropdown
+            toggle.addEventListener('click', function(e) {
+              e.preventDefault();
+              var isOpen = dropdown.style.display !== 'none';
+              dropdown.style.display = isOpen ? 'none' : 'block';
+              if (!isOpen) { search.value = ''; filterOptions(''); search.focus(); }
+            });
+
+            // Cerrar al hacer click fuera
+            document.addEventListener('click', function(e) {
+              if (!e.target.closest('#ms-multiselect')) {
+                dropdown.style.display = 'none';
+              }
+            });
+
+            // Buscar
+            function filterOptions(q) {
+              q = q.toLowerCase();
+              optionList.querySelectorAll('.ms-option').forEach(function(opt) {
+                var label = opt.getAttribute('data-label').toLowerCase();
+                opt.classList.toggle('hidden', q && label.indexOf(q) === -1);
+              });
+            }
+            search.addEventListener('input', function() { filterOptions(this.value); });
+
+            // Click en checkbox
+            optionList.addEventListener('change', function(e) {
+              if (e.target.type === 'checkbox') {
+                if (e.target.checked) {
+                  addState(e.target.value);
+                } else {
+                  removeState(e.target.value);
+                }
+              }
+            });
+
+            // Delegated remove para chips renderizados en servidor
+            chips.addEventListener('click', function(e) {
+              var btn = e.target.closest('.ms-chip-remove');
+              if (btn) {
+                var chip = btn.closest('.ms-chip');
+                if (chip) removeState(chip.getAttribute('data-value'));
+              }
+            });
+
+            // Init
+            syncCheckboxes();
+          });
+        </script>
 
         {{ form.input('phone', label=_('Phone'), id='field-phone', value=data.get('phone', ''), placeholder=_('eg. +1 234 567 8900'), classes=['control-medium']) }}
 

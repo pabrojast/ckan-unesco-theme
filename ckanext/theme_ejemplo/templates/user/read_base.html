@@ -40,20 +40,66 @@
       <p class="user-profile-institution"><i class="fa fa-building"></i> {{ profile.institution }}</p>
     {% endif %}
     {% if profile.get('country') %}
-      <a href="{{ h.url_for('group.read', id=profile.country) }}" class="user-profile-country-chip" title="{{ h.get_member_state_title(profile.country) }}">
-        <i class="fa fa-globe"></i> {{ h.get_member_state_title(profile.country) }}
-      </a>
+      {# Mostrar todos los member states (multi-select) #}
+      {% set ms_display = user.get('member_states_display', []) %}
+      {% if ms_display %}
+        <div class="user-profile-member-states">
+          {% for ms in ms_display %}
+            <a href="{{ h.url_for('group.read', id=ms.name) }}" class="user-profile-country-chip" title="{{ ms.title }}">
+              <i class="fa fa-globe"></i> {{ ms.title }}
+            </a>
+          {% endfor %}
+        </div>
+      {% else %}
+        <a href="{{ h.url_for('group.read', id=profile.country) }}" class="user-profile-country-chip" title="{{ h.get_member_state_title(profile.country) }}">
+          <i class="fa fa-globe"></i> {{ h.get_member_state_title(profile.country) }}
+        </a>
+      {% endif %}
+    {% elif user.get('member_states_display') %}
+      <div class="user-profile-member-states">
+        {% for ms in user.get('member_states_display', []) %}
+          <a href="{{ h.url_for('group.read', id=ms.name) }}" class="user-profile-country-chip" title="{{ ms.title }}">
+            <i class="fa fa-globe"></i> {{ ms.title }}
+          </a>
+        {% endfor %}
+      </div>
     {% endif %}
-    {# Organizations #}
+    {# Organizations con "show more" #}
     {% set user_orgs = user.get('organizations', h.get_user_organizations(user.id)) %}
+    {% set max_visible_orgs = 5 %}
     {% if user_orgs %}
-    <div class="user-profile-orgs">
+    <div class="user-profile-orgs" id="user-profile-orgs">
       {% for org in user_orgs %}
-        <a href="{{ h.url_for('organization.read', id=org.name) }}" class="user-org-badge" title="{{ org.title }}">
+        <a href="{{ h.url_for('organization.read', id=org.name) }}"
+           class="user-org-badge {% if loop.index > max_visible_orgs %}user-org-hidden{% endif %}"
+           title="{{ org.title }}">
           <i class="fa fa-sitemap"></i> {{ org.title }}
         </a>
       {% endfor %}
+      {% if user_orgs|length > max_visible_orgs %}
+        <button type="button" class="user-orgs-toggle" id="user-orgs-toggle"
+                data-show-text="{{ _('Show all') }} ({{ user_orgs|length - max_visible_orgs }} {{ _('more') }})"
+                data-hide-text="{{ _('Show less') }}">
+          {{ _('Show all') }} ({{ user_orgs|length - max_visible_orgs }} {{ _('more') }})
+        </button>
+      {% endif %}
     </div>
+    <script>
+      (function() {
+        var toggle = document.getElementById('user-orgs-toggle');
+        if (!toggle) return;
+        var expanded = false;
+        toggle.addEventListener('click', function() {
+          expanded = !expanded;
+          var container = document.getElementById('user-profile-orgs');
+          var hiddenItems = container.querySelectorAll('.user-org-hidden');
+          hiddenItems.forEach(function(el) {
+            el.style.display = expanded ? '' : 'none';
+          });
+          toggle.textContent = expanded ? toggle.getAttribute('data-hide-text') : toggle.getAttribute('data-show-text');
+        });
+      })();
+    </script>
     {% endif %}
   </div>
 

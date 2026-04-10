@@ -1379,6 +1379,35 @@
   gap: 0.4rem;
   margin-top: 0.5rem;
 }
+.user-org-hidden {
+  display: none;
+}
+.user-orgs-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.78rem;
+  padding: 0.25rem 0.65rem;
+  background: transparent;
+  color: var(--unesco-blue, #0072BC);
+  border: 1px dashed #90CAF9;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 600;
+}
+.user-orgs-toggle:hover {
+  background: #f0f7ff;
+  border-color: var(--unesco-blue, #0072BC);
+}
+
+/* ── Member states chips (profile view) ────────────────────────────── */
+.user-profile-member-states {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  margin-top: 0.25rem;
+}
 
 .person-country-chip {
   text-decoration: none;
