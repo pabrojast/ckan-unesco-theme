@@ -466,6 +466,9 @@ class MyLogica():
                                        is_sysadmin=is_sysadmin)
 
         def ihpix_outputs():
+            # Solo sysadmin puede acceder a esta vista
+            if not (c.userobj and c.userobj.sysadmin):
+                return abort(403, _('Not authorized'))
             if request.method == 'GET':
                 from ckanext.theme_ejemplo.model import (
                     IhpixActivity, init_ihpix_activities_db,
@@ -2814,7 +2817,10 @@ class MyLogica():
 
         @staticmethod
         def ihpix_report():
-            """Public form: logged-in users can submit IHP-IX activity reports."""
+            """Solo sysadmin puede acceder al formulario de reportes IHP-IX."""
+            # Solo sysadmin puede acceder a esta vista
+            if not (c.userobj and c.userobj.sysadmin):
+                return abort(403, _('Not authorized'))
             from ckanext.theme_ejemplo.model import (
                 IhpixActivity, init_ihpix_activities_db, VALID_PRIORITY_AREAS,
             )
@@ -2866,7 +2872,10 @@ class MyLogica():
 
         @staticmethod
         def ihpix_dashboard():
-            """Public dashboard with interactive charts."""
+            """Dashboard solo para sysadmin."""
+            # Solo sysadmin puede acceder a esta vista
+            if not (c.userobj and c.userobj.sysadmin):
+                return abort(403, _('Not authorized'))
             from ckanext.theme_ejemplo.model import (
                 IhpixActivity, init_ihpix_activities_db,
             )

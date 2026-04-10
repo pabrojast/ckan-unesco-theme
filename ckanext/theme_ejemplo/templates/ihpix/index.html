@@ -658,12 +658,14 @@
       </div>
 
       <div class="ihpix-hero-actions">
+        {% if is_sysadmin %}
         <a href="/ihpix/outputs" class="ihpix-btn ihpix-btn-white">
           <i class="fa fa-list-alt"></i> {{ _('Explore Activities') }}
         </a>
         <a href="/ihpix/dashboard" class="ihpix-btn ihpix-btn-ghost">
           <i class="fa fa-bar-chart"></i> {{ _('Dashboard') }}
         </a>
+        {% endif %}
       </div>
     </div>
   </div>
@@ -825,6 +827,7 @@
         </div>
         {% endfor %}
       {% else %}
+        {% if is_sysadmin %}
         <div class="col-md-4">
           <div class="ihpix-cta-card">
             <div class="ihpix-cta-card-placeholder" style="background: var(--ix-primary-light);">
@@ -867,6 +870,7 @@
             </div>
           </div>
         </div>
+        {% endif %}
       {% endif %}
     </div>
   </div>
@@ -890,6 +894,7 @@
   {# ══════════════════════════════════════════════════════════
      SECTION 7 — Footer Navigation
      ══════════════════════════════════════════════════════════ #}
+  {% if is_sysadmin %}
   <div class="ihpix-footer-nav ihpix-animate">
     <a href="/ihpix/outputs" class="ihpix-footer-link ihpix-footer-link-primary">
       {{ _('Activities Explorer') }} <i class="fa fa-arrow-right"></i>
@@ -898,6 +903,7 @@
       {{ _('Dashboard') }} <i class="fa fa-arrow-right"></i>
     </a>
   </div>
+  {% endif %}
 
 </div>
 
