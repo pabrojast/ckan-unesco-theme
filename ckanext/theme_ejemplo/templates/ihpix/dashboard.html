@@ -14,432 +14,481 @@
       integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
       crossorigin="" />
 <style>
-  /* ── Base ───────────────────────────────────────────────── */
-  .ihpix-dash-wrap {
-    font-family: inherit;
-    color: #1a1a2e;
+  /* ── Design Tokens ─────────────────────────────────────── */
+  :root {
+    --dx-primary: #0069B4;
+    --dx-primary-dark: #004E8C;
+    --dx-primary-light: #E8F4FD;
+    --dx-surface: #FFFFFF;
+    --dx-surface-alt: #F8FAFC;
+    --dx-border: #E2E8F0;
+    --dx-text: #0F172A;
+    --dx-text-secondary: #64748B;
+    --dx-text-muted: #94A3B8;
+    --dx-success: #059669;
+    --dx-warning: #D97706;
+    --dx-teal: #0891B2;
+    --dx-red: #DC2626;
+    --dx-violet: #7C3AED;
+    --dx-radius: 12px;
+    --dx-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06);
+    --dx-shadow-hover: 0 4px 12px rgba(0,0,0,0.08), 0 2px 4px rgba(0,0,0,0.04);
   }
 
-  /* ── Header Banner ─────────────────────────────────────── */
-  .ihpix-dash-header {
-    background: linear-gradient(135deg, #0069B4 0%, #005A9C 50%, #003f7f 100%);
+  /* ── Base ───────────────────────────────────────────────── */
+  .dx-dash {
+    font-family: inherit;
+    color: var(--dx-text);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Page Header ────────────────────────────────────────── */
+  .dx-header {
+    background: linear-gradient(135deg, #0069B4 0%, #004E8C 100%);
     color: #fff;
-    border-radius: 8px;
-    padding: 2rem 2.25rem 1.75rem;
-    margin-bottom: 1.75rem;
+    border-radius: var(--dx-radius);
+    padding: 32px 32px 28px;
+    margin-bottom: 24px;
     position: relative;
     overflow: hidden;
   }
-  .ihpix-dash-header::before {
+  .dx-header::before {
     content: '';
     position: absolute;
-    top: -40%;
-    right: -10%;
-    width: 320px;
-    height: 320px;
-    background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+    top: -60%;
+    right: -8%;
+    width: 380px;
+    height: 380px;
+    background: radial-gradient(circle, rgba(255,255,255,0.07) 0%, transparent 65%);
     border-radius: 50%;
     pointer-events: none;
   }
-  .ihpix-dash-header-top {
+  .dx-header-inner {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
     flex-wrap: wrap;
-    gap: 1rem;
+    gap: 16px;
     position: relative;
     z-index: 1;
   }
-  .ihpix-dash-header h1 {
-    font-size: 1.75rem;
+  .dx-header h1 {
+    font-size: 24px;
     font-weight: 700;
-    margin: 0 0 0.25rem;
+    letter-spacing: -0.025em;
+    margin: 0 0 4px;
     color: #fff;
+    line-height: 1.2;
   }
-  .ihpix-dash-header .ihpix-dash-subtitle {
-    font-size: 0.95rem;
-    opacity: 0.85;
+  .dx-header-sub {
+    font-size: 15px;
+    color: rgba(255,255,255,0.8);
     margin: 0;
+    line-height: 1.5;
   }
-  .ihpix-dash-header-actions {
+  .dx-header-actions {
     display: flex;
     align-items: center;
-    gap: 0.625rem;
+    gap: 10px;
     flex-wrap: wrap;
   }
-  .ihpix-dash-filter-select {
-    background: rgba(255,255,255,0.15);
-    border: 1px solid rgba(255,255,255,0.3);
-    color: #fff;
-    border-radius: 6px;
-    padding: 0.45rem 0.75rem;
-    font-size: 0.875rem;
-    cursor: pointer;
-    min-width: 170px;
-  }
-  .ihpix-dash-filter-select option {
-    color: #333;
-    background: #fff;
-  }
-  .ihpix-dash-btn {
+  .dx-pill {
     display: inline-flex;
     align-items: center;
-    gap: 0.375rem;
-    padding: 0.5rem 1rem;
-    border-radius: 6px;
-    font-size: 0.875rem;
+    gap: 6px;
+    padding: 8px 18px;
+    border-radius: 100px;
+    font-size: 13px;
     font-weight: 600;
     text-decoration: none;
-    transition: all 0.2s ease;
-    border: none;
+    transition: background 0.2s ease, transform 0.15s ease;
+    border: 1px solid rgba(255,255,255,0.3);
+    background: rgba(255,255,255,0.12);
+    color: #fff;
     cursor: pointer;
+    line-height: 1.4;
   }
-  .ihpix-dash-btn-light {
-    background: rgba(255,255,255,0.18);
-    color: #fff;
-    border: 1px solid rgba(255,255,255,0.35);
-  }
-  .ihpix-dash-btn-light:hover {
-    background: rgba(255,255,255,0.3);
+  .dx-pill:hover {
+    background: rgba(255,255,255,0.24);
     color: #fff;
     text-decoration: none;
+    transform: translateY(-1px);
   }
-  .ihpix-dash-btn-accent {
-    background: #00A0E3;
-    color: #fff;
+  .dx-pill:focus {
+    outline: 2px solid rgba(255,255,255,0.5);
+    outline-offset: 2px;
   }
-  .ihpix-dash-btn-accent:hover {
-    background: #008cc7;
+  .dx-pill--accent {
+    background: rgba(255,255,255,0.2);
+    border-color: rgba(255,255,255,0.4);
+  }
+  .dx-filter-select {
+    background: rgba(255,255,255,0.12);
+    border: 1px solid rgba(255,255,255,0.3);
     color: #fff;
-    text-decoration: none;
+    border-radius: 100px;
+    padding: 7px 16px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    min-width: 165px;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' fill='white' viewBox='0 0 16 16'%3E%3Cpath d='M1.646 4.646a.5.5 0 0 1 .708 0L8 10.293l5.646-5.647a.5.5 0 0 1 .708.708l-6 6a.5.5 0 0 1-.708 0l-6-6a.5.5 0 0 1 0-.708z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 34px;
+  }
+  .dx-filter-select option {
+    color: var(--dx-text);
+    background: #fff;
   }
 
-  /* ── Stat Cards ────────────────────────────────────────── */
-  .ihpix-dash-stats {
-    margin-bottom: 1.75rem;
+  /* ── Card System ────────────────────────────────────────── */
+  .dx-card {
+    background: var(--dx-surface);
+    border: 1px solid var(--dx-border);
+    border-radius: var(--dx-radius);
+    box-shadow: var(--dx-shadow);
+    padding: 24px;
+    transition: box-shadow 0.2s ease;
   }
-  .ihpix-dash-stat-card {
+  .dx-card:hover {
+    box-shadow: var(--dx-shadow-hover);
+  }
+
+  /* ── KPI Stat Cards ─────────────────────────────────────── */
+  .dx-kpi-row {
+    margin-bottom: 20px;
+  }
+  .dx-kpi-row .col-md-3,
+  .dx-kpi-row .col-md-4,
+  .dx-kpi-row .col-sm-6 {
+    margin-bottom: 16px;
+  }
+  .dx-kpi {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 20px 24px;
+  }
+  .dx-kpi-icon {
+    width: 40px;
+    height: 40px;
     border-radius: 10px;
-    padding: 1.5rem 1.25rem;
-    color: #fff;
-    position: relative;
-    overflow: hidden;
-    min-height: 130px;
-    margin-bottom: 15px;
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
   }
-  .ihpix-dash-stat-card:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 25px rgba(0,0,0,0.18);
+  .dx-kpi-icon--blue {
+    background: rgba(0, 105, 180, 0.12);
+    color: var(--dx-primary);
   }
-  .ihpix-dash-stat-card::after {
-    content: '';
-    position: absolute;
-    top: -20px;
-    right: -20px;
-    width: 100px;
-    height: 100px;
-    background: rgba(255,255,255,0.1);
-    border-radius: 50%;
-    pointer-events: none;
+  .dx-kpi-icon--teal {
+    background: rgba(8, 145, 178, 0.12);
+    color: var(--dx-teal);
   }
-  .ihpix-dash-stat-card .ihpix-dash-stat-icon {
-    position: absolute;
-    top: 1.15rem;
-    right: 1.15rem;
-    font-size: 1.75rem;
-    opacity: 0.35;
+  .dx-kpi-icon--green {
+    background: rgba(5, 150, 105, 0.12);
+    color: var(--dx-success);
   }
-  .ihpix-dash-stat-card .ihpix-dash-stat-number {
-    font-size: 2.25rem;
-    font-weight: 800;
+  .dx-kpi-icon--amber {
+    background: rgba(217, 119, 6, 0.12);
+    color: var(--dx-warning);
+  }
+  .dx-kpi-body {
+    min-width: 0;
+  }
+  .dx-kpi-number {
+    font-size: 32px;
+    font-weight: 700;
     line-height: 1.1;
-    margin-bottom: 0.3rem;
-    animation: ihpixCountFade 0.6s ease-out both;
+    color: var(--dx-text);
+    letter-spacing: -0.025em;
+    animation: dxFadeUp 0.5s ease-out both;
   }
-  .ihpix-dash-stat-card .ihpix-dash-stat-label {
-    font-size: 0.85rem;
+  .dx-kpi-label {
+    font-size: 13px;
     font-weight: 500;
-    opacity: 0.9;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-  }
-  .ihpix-dash-stat-blue {
-    background: linear-gradient(135deg, #0069B4, #004e8c);
-  }
-  .ihpix-dash-stat-teal {
-    background: linear-gradient(135deg, #00897B, #00695C);
-  }
-  .ihpix-dash-stat-indigo {
-    background: linear-gradient(135deg, #3949AB, #283593);
-  }
-  .ihpix-dash-stat-amber {
-    background: linear-gradient(135deg, #F59E0B, #D97706);
+    color: var(--dx-text-secondary);
+    margin-top: 2px;
+    line-height: 1.3;
   }
 
-  /* ── Secondary Stat Cards (smaller) ────────────────────── */
-  .ihpix-dash-stat-card-sm {
-    border-radius: 8px;
-    padding: 1rem 1rem;
-    color: #fff;
-    position: relative;
-    overflow: hidden;
-    min-height: 95px;
-    margin-bottom: 15px;
-    transition: transform 0.25s ease, box-shadow 0.25s ease;
-  }
-  .ihpix-dash-stat-card-sm:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 6px 20px rgba(0,0,0,0.15);
-  }
-  .ihpix-dash-stat-card-sm::after {
-    content: '';
-    position: absolute;
-    top: -15px;
-    right: -15px;
-    width: 70px;
-    height: 70px;
-    background: rgba(255,255,255,0.1);
-    border-radius: 50%;
-    pointer-events: none;
-  }
-  .ihpix-dash-stat-card-sm .ihpix-dash-stat-icon {
-    position: absolute;
-    top: 0.85rem;
-    right: 0.85rem;
-    font-size: 1.35rem;
-    opacity: 0.35;
-  }
-  .ihpix-dash-stat-card-sm .ihpix-dash-stat-number {
-    font-size: 1.65rem;
-    font-weight: 800;
-    line-height: 1.1;
-    margin-bottom: 0.2rem;
-    animation: ihpixCountFade 0.6s ease-out 0.3s both;
-  }
-  .ihpix-dash-stat-card-sm .ihpix-dash-stat-label {
-    font-size: 0.75rem;
-    font-weight: 500;
-    opacity: 0.9;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-  }
-  .ihpix-dash-stat-purple {
-    background: linear-gradient(135deg, #7B1FA2, #4A148C);
-  }
-  .ihpix-dash-stat-cyan {
-    background: linear-gradient(135deg, #00ACC1, #00838F);
-  }
-  .ihpix-dash-stat-green {
-    background: linear-gradient(135deg, #43A047, #2E7D32);
-  }
-  .ihpix-dash-stat-rose {
-    background: linear-gradient(135deg, #E91E63, #AD1457);
-  }
-
-  @keyframes ihpixCountFade {
-    from { opacity: 0; transform: translateY(10px); }
+  @keyframes dxFadeUp {
+    from { opacity: 0; transform: translateY(8px); }
     to   { opacity: 1; transform: translateY(0); }
   }
 
-  /* ── Chart Panels ──────────────────────────────────────── */
-  .ihpix-dash-chart-panel {
-    background: #fff;
-    border: 1px solid #e5e7eb;
-    border-radius: 10px;
-    padding: 1.25rem 1.25rem 1rem;
-    margin-bottom: 1.75rem;
-    box-shadow: 0 1px 4px rgba(0,0,0,0.04);
-    transition: box-shadow 0.25s ease;
+  /* ── Impact Metric Cards ────────────────────────────────── */
+  .dx-impact-row {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 -8px 20px;
   }
-  .ihpix-dash-chart-panel:hover {
-    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+  .dx-impact-col {
+    flex: 0 0 20%;
+    max-width: 20%;
+    padding: 0 8px;
+    margin-bottom: 16px;
   }
-  .ihpix-dash-chart-title {
-    font-size: 1rem;
+  .dx-impact {
+    background: var(--dx-surface);
+    border: 1px solid var(--dx-border);
+    border-radius: var(--dx-radius);
+    box-shadow: var(--dx-shadow);
+    padding: 16px 20px;
+    border-top: 3px solid transparent;
+    transition: box-shadow 0.2s ease, transform 0.15s ease;
+  }
+  .dx-impact:hover {
+    box-shadow: var(--dx-shadow-hover);
+    transform: translateY(-2px);
+  }
+  .dx-impact--blue    { border-top-color: var(--dx-primary); }
+  .dx-impact--teal    { border-top-color: var(--dx-teal); }
+  .dx-impact--green   { border-top-color: var(--dx-success); }
+  .dx-impact--amber   { border-top-color: var(--dx-warning); }
+  .dx-impact--red     { border-top-color: var(--dx-red); }
+  .dx-impact-number {
+    font-size: 24px;
     font-weight: 700;
-    color: #1a1a2e;
-    margin: 0 0 1rem;
-    padding-bottom: 0.625rem;
-    border-bottom: 2px solid #f0f0f0;
+    color: var(--dx-text);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    animation: dxFadeUp 0.5s ease-out 0.15s both;
+  }
+  .dx-impact-label {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--dx-text-muted);
+    margin-top: 4px;
+    line-height: 1.35;
+  }
+
+  /* ── Section Card & Titles ──────────────────────────────── */
+  .dx-section {
+    margin-bottom: 24px;
+  }
+  .dx-section-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--dx-text);
+    margin: 0 0 16px;
     display: flex;
     align-items: center;
-    gap: 0.5rem;
+    gap: 8px;
+    line-height: 1.4;
   }
-  .ihpix-dash-chart-title i {
-    color: #0069B4;
-    font-size: 1.1rem;
+  .dx-section-title i {
+    color: var(--dx-text-muted);
+    font-size: 14px;
   }
-  .ihpix-dash-chart-box {
+  .dx-map-title {
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  /* ── Chart Container ────────────────────────────────────── */
+  .dx-chart-box {
     position: relative;
     height: 320px;
   }
-  .ihpix-dash-chart-box canvas {
+  .dx-chart-box canvas {
     width: 100% !important;
     height: 100% !important;
   }
+  .dx-chart-box--tall {
+    height: 420px;
+  }
 
-  /* ── Map Panel ─────────────────────────────────────────── */
-  .ihpix-dash-map-box {
+  /* ── Map ─────────────────────────────────────────────────── */
+  .dx-map-wrap {
     position: relative;
-    height: 450px;
-    border-radius: 6px;
+    height: 420px;
+    border-radius: var(--dx-radius);
     overflow: hidden;
   }
-  .ihpix-dash-map-box .leaflet-container {
+  .dx-map-wrap .leaflet-container {
     height: 100%;
     width: 100%;
-    border-radius: 6px;
   }
-  .ihpix-dash-map-legend {
+  .dx-map-wrap .leaflet-popup-content-wrapper {
+    border-radius: 10px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.12);
+    padding: 0;
+  }
+  .dx-map-wrap .leaflet-popup-content {
+    margin: 14px 16px;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  .dx-map-wrap .leaflet-popup-tip {
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+  .dx-map-legend {
     display: flex;
     flex-wrap: wrap;
-    gap: 0.75rem;
-    margin-top: 0.75rem;
-    padding-top: 0.625rem;
-    border-top: 1px solid #f0f0f0;
+    gap: 16px;
+    margin-top: 14px;
+    padding-top: 14px;
+    border-top: 1px solid var(--dx-border);
   }
-  .ihpix-dash-map-legend-item {
+  .dx-map-legend-item {
     display: inline-flex;
     align-items: center;
-    gap: 0.35rem;
-    font-size: 0.8rem;
-    color: #4b5563;
+    gap: 6px;
+    font-size: 13px;
+    color: var(--dx-text-secondary);
+    font-weight: 500;
   }
-  .ihpix-dash-map-legend-dot {
-    width: 10px;
-    height: 10px;
+  .dx-map-legend-dot {
+    width: 8px;
+    height: 8px;
     border-radius: 50%;
     display: inline-block;
-    border: 1px solid rgba(0,0,0,0.1);
+    flex-shrink: 0;
   }
 
-  /* ── Empty State ───────────────────────────────────────── */
-  .ihpix-dash-empty {
+  /* ── Empty State ────────────────────────────────────────── */
+  .dx-empty {
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     height: 100%;
     min-height: 200px;
-    color: #9ca3af;
+    color: var(--dx-text-muted);
     text-align: center;
   }
-  .ihpix-dash-empty i {
-    font-size: 2.5rem;
-    margin-bottom: 0.75rem;
-    opacity: 0.5;
+  .dx-empty i {
+    font-size: 36px;
+    margin-bottom: 12px;
+    opacity: 0.4;
   }
-  .ihpix-dash-empty p {
-    font-size: 0.9rem;
+  .dx-empty p {
+    font-size: 14px;
     margin: 0;
+    font-weight: 500;
   }
 
-  /* ── Quick Links Footer ────────────────────────────────── */
-  .ihpix-dash-footer {
-    background: #f8f9fb;
-    border: 1px solid #e5e7eb;
-    border-radius: 10px;
-    padding: 1.5rem;
-    text-align: center;
-  }
-  .ihpix-dash-footer-title {
-    font-size: 0.95rem;
-    font-weight: 700;
-    color: #374151;
-    margin: 0 0 1rem;
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-  }
-  .ihpix-dash-footer-links {
+  /* ── Navigation Footer ──────────────────────────────────── */
+  .dx-nav-footer {
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 0.75rem;
+    justify-content: space-between;
     flex-wrap: wrap;
+    gap: 12px;
+    padding: 20px 0 8px;
   }
-  .ihpix-dash-footer-link {
+  .dx-ghost-btn {
     display: inline-flex;
     align-items: center;
-    gap: 0.375rem;
-    padding: 0.55rem 1.15rem;
-    border-radius: 6px;
-    font-size: 0.875rem;
+    gap: 6px;
+    padding: 10px 20px;
+    border-radius: 8px;
+    font-size: 14px;
     font-weight: 600;
     text-decoration: none;
     transition: all 0.2s ease;
+    color: var(--dx-primary);
+    border: 1px solid var(--dx-border);
+    background: var(--dx-surface);
   }
-  .ihpix-dash-footer-link-primary {
-    background: #0069B4;
-    color: #fff;
-  }
-  .ihpix-dash-footer-link-primary:hover {
-    background: #005A9C;
-    color: #fff;
+  .dx-ghost-btn:hover {
+    background: var(--dx-primary-light);
+    border-color: var(--dx-primary);
+    color: var(--dx-primary-dark);
     text-decoration: none;
   }
-  .ihpix-dash-footer-link-outline {
-    background: #fff;
-    color: #0069B4;
-    border: 1px solid #0069B4;
+  .dx-ghost-btn:focus {
+    outline: 2px solid var(--dx-primary);
+    outline-offset: 2px;
   }
-  .ihpix-dash-footer-link-outline:hover {
-    background: #0069B4;
-    color: #fff;
-    text-decoration: none;
+  .dx-ghost-btn--admin {
+    color: var(--dx-red);
   }
-  .ihpix-dash-footer-link-admin {
-    background: #fff;
-    color: #E91E63;
-    border: 1px solid #E91E63;
-  }
-  .ihpix-dash-footer-link-admin:hover {
-    background: #E91E63;
-    color: #fff;
-    text-decoration: none;
+  .dx-ghost-btn--admin:hover {
+    background: #FEF2F2;
+    border-color: var(--dx-red);
+    color: var(--dx-red);
   }
 
-  /* ── Print ─────────────────────────────────────────────── */
+  /* ── Print ──────────────────────────────────────────────── */
   @media print {
-    .ihpix-dash-header { background: #0069B4 !important; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    .ihpix-dash-stat-card,
-    .ihpix-dash-stat-card-sm { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
-    .ihpix-dash-stat-card:hover,
-    .ihpix-dash-stat-card-sm:hover,
-    .ihpix-dash-chart-panel:hover { transform: none; box-shadow: none; }
-    .ihpix-dash-btn, .ihpix-dash-footer { display: none; }
-    .ihpix-dash-chart-box { height: 260px; }
-    .ihpix-dash-map-box { height: 350px; }
+    .dx-header {
+      background: #0069B4 !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .dx-header-actions,
+    .dx-nav-footer { display: none !important; }
+    .dx-impact,
+    .dx-card {
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+      box-shadow: none !important;
+    }
+    .dx-impact:hover,
+    .dx-card:hover { transform: none !important; box-shadow: none !important; }
+    .dx-chart-box { height: 260px; }
+    .dx-map-wrap { height: 350px; }
+    .dx-dash { font-size: 12px; }
+    .row { page-break-inside: avoid; }
   }
 
-  /* ── Mobile ────────────────────────────────────────────── */
+  /* ── Responsive ─────────────────────────────────────────── */
+  @media (max-width: 991px) {
+    .dx-impact-col {
+      flex: 0 0 33.333%;
+      max-width: 33.333%;
+    }
+  }
   @media (max-width: 767px) {
-    .ihpix-dash-header { padding: 1.25rem; }
-    .ihpix-dash-header h1 { font-size: 1.35rem; }
-    .ihpix-dash-header-top { flex-direction: column; }
-    .ihpix-dash-chart-box { height: 260px; }
-    .ihpix-dash-map-box { height: 300px; }
-    .ihpix-dash-stat-card .ihpix-dash-stat-number { font-size: 1.75rem; }
-    .ihpix-dash-stat-card-sm .ihpix-dash-stat-number { font-size: 1.35rem; }
-    .ihpix-dash-footer-links { flex-direction: column; }
+    .dx-header { padding: 20px; border-radius: 8px; }
+    .dx-header h1 { font-size: 20px; }
+    .dx-header-inner { flex-direction: column; }
+    .dx-header-actions { width: 100%; }
+    .dx-kpi-number { font-size: 24px; }
+    .dx-impact-col {
+      flex: 0 0 50%;
+      max-width: 50%;
+    }
+    .dx-chart-box { height: 260px; }
+    .dx-chart-box--tall { height: 320px; }
+    .dx-map-wrap { height: 300px; }
+    .dx-nav-footer { flex-direction: column; align-items: stretch; text-align: center; }
+    .dx-ghost-btn { justify-content: center; }
+    .dx-card { padding: 16px; }
+  }
+  @media (max-width: 480px) {
+    .dx-impact-col {
+      flex: 0 0 100%;
+      max-width: 100%;
+    }
+    .dx-header-actions { flex-direction: column; }
+    .dx-pill, .dx-filter-select { width: 100%; justify-content: center; text-align: center; }
   }
 </style>
 
-<div class="ihpix-dash-wrap">
+<div class="dx-dash">
 
-  {# ── Header Banner ────────────────────────────────────── #}
-  <div class="ihpix-dash-header">
-    <div class="ihpix-dash-header-top">
+  {# ── Page Header ───────────────────────────────────────── #}
+  <div class="dx-header">
+    <div class="dx-header-inner">
       <div>
         <h1>{{ _('IHP-IX Dashboard') }}</h1>
-        <p class="ihpix-dash-subtitle">
+        <p class="dx-header-sub">
           {{ _('Overview of IHP-IX activities, priority areas and country participation') }}
         </p>
       </div>
-      <div class="ihpix-dash-header-actions">
+      <div class="dx-header-actions">
         <form method="get" action="" style="margin:0;display:inline-flex;">
           <select name="pa"
-                  class="ihpix-dash-filter-select"
+                  class="dx-filter-select"
                   onchange="this.form.submit()"
                   aria-label="{{ _('Filter by Priority Area') }}">
             <option value="">{{ _('All Priority Areas') }}</option>
@@ -450,123 +499,143 @@
             {% endfor %}
           </select>
         </form>
-        <a href="/ihpix/report" class="ihpix-dash-btn ihpix-dash-btn-accent">
-          <i class="fa fa-paper-plane"></i> {{ _('Submit Report') }}
+        <a href="/ihpix/outputs" class="dx-pill">
+          <i class="fa fa-compass"></i> {{ _('Explore Activities') }}
         </a>
-        <a href="/ihpix/outputs" class="ihpix-dash-btn ihpix-dash-btn-light">
-          <i class="fa fa-list"></i> {{ _('Browse Activities') }}
+        <a href="/ihpix/report" class="dx-pill dx-pill--accent">
+          <i class="fa fa-paper-plane"></i> {{ _('Submit Report') }}
         </a>
       </div>
     </div>
   </div>
 
-  {# ── Primary Stat Cards ───────────────────────────────── #}
-  <div class="row ihpix-dash-stats">
+  {# ── KPI Stat Cards ───────────────────────────────────── #}
+  <div class="row dx-kpi-row">
     <div class="{{ 'col-md-3 col-sm-6' if is_sysadmin else 'col-md-4 col-sm-6' }}">
-      <div class="ihpix-dash-stat-card ihpix-dash-stat-blue">
-        <i class="fa fa-flag ihpix-dash-stat-icon"></i>
-        <div class="ihpix-dash-stat-number" data-count="{{ stats.total_activities | default(0) }}">
-          {{ stats.total_activities | default(0) }}
+      <div class="dx-card dx-kpi">
+        <div class="dx-kpi-icon dx-kpi-icon--blue">
+          <i class="fa fa-flag"></i>
         </div>
-        <div class="ihpix-dash-stat-label">{{ _('Total Activities') }}</div>
+        <div class="dx-kpi-body">
+          <div class="dx-kpi-number" data-count="{{ stats.total_activities | default(0) }}">
+            {{ stats.total_activities | default(0) }}
+          </div>
+          <div class="dx-kpi-label">{{ _('Total Activities') }}</div>
+        </div>
       </div>
     </div>
     <div class="{{ 'col-md-3 col-sm-6' if is_sysadmin else 'col-md-4 col-sm-6' }}">
-      <div class="ihpix-dash-stat-card ihpix-dash-stat-teal">
-        <i class="fa fa-globe ihpix-dash-stat-icon"></i>
-        <div class="ihpix-dash-stat-number" data-count="{{ stats.total_countries | default(0) }}">
-          {{ stats.total_countries | default(0) }}
+      <div class="dx-card dx-kpi">
+        <div class="dx-kpi-icon dx-kpi-icon--teal">
+          <i class="fa fa-globe"></i>
         </div>
-        <div class="ihpix-dash-stat-label">{{ _('Countries') }}</div>
+        <div class="dx-kpi-body">
+          <div class="dx-kpi-number" data-count="{{ stats.total_countries | default(0) }}">
+            {{ stats.total_countries | default(0) }}
+          </div>
+          <div class="dx-kpi-label">{{ _('Countries') }}</div>
+        </div>
       </div>
     </div>
     <div class="{{ 'col-md-3 col-sm-6' if is_sysadmin else 'col-md-4 col-sm-6' }}">
-      <div class="ihpix-dash-stat-card ihpix-dash-stat-indigo">
-        <i class="fa fa-building ihpix-dash-stat-icon"></i>
-        <div class="ihpix-dash-stat-number" data-count="{{ stats.total_institutions | default(0) }}">
-          {{ stats.total_institutions | default(0) }}
+      <div class="dx-card dx-kpi">
+        <div class="dx-kpi-icon dx-kpi-icon--green">
+          <i class="fa fa-building"></i>
         </div>
-        <div class="ihpix-dash-stat-label">{{ _('Institutions') }}</div>
+        <div class="dx-kpi-body">
+          <div class="dx-kpi-number" data-count="{{ stats.total_institutions | default(0) }}">
+            {{ stats.total_institutions | default(0) }}
+          </div>
+          <div class="dx-kpi-label">{{ _('Institutions') }}</div>
+        </div>
       </div>
     </div>
     {% if is_sysadmin %}
     <div class="col-md-3 col-sm-6">
-      <div class="ihpix-dash-stat-card ihpix-dash-stat-amber">
-        <i class="fa fa-clock-o ihpix-dash-stat-icon"></i>
-        <div class="ihpix-dash-stat-number" data-count="{{ stats.pending_reports | default(0) }}">
-          {{ stats.pending_reports | default(0) }}
+      <div class="dx-card dx-kpi">
+        <div class="dx-kpi-icon dx-kpi-icon--amber">
+          <i class="fa fa-clock-o"></i>
         </div>
-        <div class="ihpix-dash-stat-label">{{ _('Pending Reports') }}</div>
+        <div class="dx-kpi-body">
+          <div class="dx-kpi-number" data-count="{{ stats.pending_reports | default(0) }}">
+            {{ stats.pending_reports | default(0) }}
+          </div>
+          <div class="dx-kpi-label">{{ _('Pending Reports') }}</div>
+        </div>
       </div>
     </div>
     {% endif %}
   </div>
 
-  {# ── Secondary Stat Cards ─────────────────────────────── #}
-  <div class="row ihpix-dash-stats">
-    <div class="col-md-3 col-sm-6">
-      <div class="ihpix-dash-stat-card-sm ihpix-dash-stat-purple">
-        <i class="fa fa-users ihpix-dash-stat-icon"></i>
-        <div class="ihpix-dash-stat-number" data-count="{{ (stats.stakeholders_knowledge | default(0)) + (stats.stakeholders_awareness | default(0)) }}">
-          {{ (stats.stakeholders_knowledge | default(0)) + (stats.stakeholders_awareness | default(0)) }}
+  {# ── Impact Metrics Row ────────────────────────────────── #}
+  <div class="dx-impact-row">
+    <div class="dx-impact-col">
+      <div class="dx-impact dx-impact--blue">
+        <div class="dx-impact-number" data-count="{{ stats.stakeholders_knowledge | default(0) }}">
+          {{ stats.stakeholders_knowledge | default(0) }}
         </div>
-        <div class="ihpix-dash-stat-label">{{ _('Stakeholders Reached') }}</div>
+        <div class="dx-impact-label">{{ _('Stakeholders Knowledge') }}</div>
       </div>
     </div>
-    <div class="col-md-3 col-sm-6">
-      <div class="ihpix-dash-stat-card-sm ihpix-dash-stat-cyan">
-        <i class="fa fa-book ihpix-dash-stat-icon"></i>
-        <div class="ihpix-dash-stat-number" data-count="{{ stats.knowledge_products | default(0) }}">
+    <div class="dx-impact-col">
+      <div class="dx-impact dx-impact--teal">
+        <div class="dx-impact-number" data-count="{{ stats.stakeholders_awareness | default(0) }}">
+          {{ stats.stakeholders_awareness | default(0) }}
+        </div>
+        <div class="dx-impact-label">{{ _('Stakeholders Awareness') }}</div>
+      </div>
+    </div>
+    <div class="dx-impact-col">
+      <div class="dx-impact dx-impact--green">
+        <div class="dx-impact-number" data-count="{{ stats.knowledge_products | default(0) }}">
           {{ stats.knowledge_products | default(0) }}
         </div>
-        <div class="ihpix-dash-stat-label">{{ _('Knowledge Products') }}</div>
+        <div class="dx-impact-label">{{ _('Knowledge Products') }}</div>
       </div>
     </div>
-    <div class="col-md-3 col-sm-6">
-      <div class="ihpix-dash-stat-card-sm ihpix-dash-stat-green">
-        <i class="fa fa-flask ihpix-dash-stat-icon"></i>
-        <div class="ihpix-dash-stat-number" data-count="{{ stats.scientific_products | default(0) }}">
+    <div class="dx-impact-col">
+      <div class="dx-impact dx-impact--amber">
+        <div class="dx-impact-number" data-count="{{ stats.scientific_products | default(0) }}">
           {{ stats.scientific_products | default(0) }}
         </div>
-        <div class="ihpix-dash-stat-label">{{ _('Scientific Products') }}</div>
+        <div class="dx-impact-label">{{ _('Scientific Products') }}</div>
       </div>
     </div>
-    <div class="col-md-3 col-sm-6">
-      <div class="ihpix-dash-stat-card-sm ihpix-dash-stat-rose">
-        <i class="fa fa-graduation-cap ihpix-dash-stat-icon"></i>
-        <div class="ihpix-dash-stat-number" data-count="{{ stats.training_materials | default(0) }}">
+    <div class="dx-impact-col">
+      <div class="dx-impact dx-impact--red">
+        <div class="dx-impact-number" data-count="{{ stats.training_materials | default(0) }}">
           {{ stats.training_materials | default(0) }}
         </div>
-        <div class="ihpix-dash-stat-label">{{ _('Training Materials') }}</div>
+        <div class="dx-impact-label">{{ _('Training Materials') }}</div>
       </div>
     </div>
   </div>
 
-  {# ── Interactive World Map ─────────────────────────────── #}
+  {# ── Interactive Map ───────────────────────────────────── #}
   <div class="row">
     <div class="col-md-12">
-      <div class="ihpix-dash-chart-panel">
-        <h2 class="ihpix-dash-chart-title">
-          <i class="fa fa-globe"></i> {{ _('Geographic Distribution') }}
+      <div class="dx-card dx-section">
+        <h2 class="dx-section-title dx-map-title">
+          <i class="fa fa-globe"></i> {{ _('Global Activity Distribution') }}
         </h2>
-        <div class="ihpix-dash-map-box">
+        <div class="dx-map-wrap">
           <div id="ihpix-map" style="height:100%;width:100%;"></div>
         </div>
-        <div class="ihpix-dash-map-legend" id="ihpix-map-legend">
-          <span class="ihpix-dash-map-legend-item">
-            <span class="ihpix-dash-map-legend-dot" style="background:#E91E63;"></span> {{ _('Africa') }}
+        <div class="dx-map-legend" id="ihpix-map-legend">
+          <span class="dx-map-legend-item">
+            <span class="dx-map-legend-dot" style="background:#DC2626;"></span> {{ _('Africa') }}
           </span>
-          <span class="ihpix-dash-map-legend-item">
-            <span class="ihpix-dash-map-legend-dot" style="background:#FF9800;"></span> {{ _('Asia and the Pacific') }}
+          <span class="dx-map-legend-item">
+            <span class="dx-map-legend-dot" style="background:#D97706;"></span> {{ _('Asia and the Pacific') }}
           </span>
-          <span class="ihpix-dash-map-legend-item">
-            <span class="ihpix-dash-map-legend-dot" style="background:#0069B4;"></span> {{ _('Europe and North America') }}
+          <span class="dx-map-legend-item">
+            <span class="dx-map-legend-dot" style="background:#0069B4;"></span> {{ _('Europe and North America') }}
           </span>
-          <span class="ihpix-dash-map-legend-item">
-            <span class="ihpix-dash-map-legend-dot" style="background:#28a745;"></span> {{ _('Latin America and the Caribbean') }}
+          <span class="dx-map-legend-item">
+            <span class="dx-map-legend-dot" style="background:#059669;"></span> {{ _('Latin America and the Caribbean') }}
           </span>
-          <span class="ihpix-dash-map-legend-item">
-            <span class="ihpix-dash-map-legend-dot" style="background:#9C27B0;"></span> {{ _('Arab States') }}
+          <span class="dx-map-legend-item">
+            <span class="dx-map-legend-dot" style="background:#7C3AED;"></span> {{ _('Arab States') }}
           </span>
         </div>
       </div>
@@ -576,16 +645,16 @@
   {# ── Charts Row 1: PA Doughnut + Biennium Bar ─────────── #}
   <div class="row">
     <div class="col-md-6">
-      <div class="ihpix-dash-chart-panel">
-        <h2 class="ihpix-dash-chart-title">
-          <i class="fa fa-pie-chart"></i> {{ _('Priority Area Distribution') }}
+      <div class="dx-card dx-section">
+        <h2 class="dx-section-title">
+          <i class="fa fa-pie-chart"></i> {{ _('Activities by Priority Area') }}
         </h2>
-        <div class="ihpix-dash-chart-box">
+        <div class="dx-chart-box">
           {% if stats.by_priority_area %}
             <canvas id="ihpix-chart-pa"></canvas>
           {% else %}
-            <div class="ihpix-dash-empty">
-              <i class="fa fa-bar-chart"></i>
+            <div class="dx-empty">
+              <i class="fa fa-pie-chart"></i>
               <p>{{ _('No priority area data available') }}</p>
             </div>
           {% endif %}
@@ -593,15 +662,15 @@
       </div>
     </div>
     <div class="col-md-6">
-      <div class="ihpix-dash-chart-panel">
-        <h2 class="ihpix-dash-chart-title">
+      <div class="dx-card dx-section">
+        <h2 class="dx-section-title">
           <i class="fa fa-calendar"></i> {{ _('Activities by Biennium') }}
         </h2>
-        <div class="ihpix-dash-chart-box">
+        <div class="dx-chart-box">
           {% if stats.by_biennium %}
             <canvas id="ihpix-chart-biennium"></canvas>
           {% else %}
-            <div class="ihpix-dash-empty">
+            <div class="dx-empty">
               <i class="fa fa-calendar-o"></i>
               <p>{{ _('No biennium data available') }}</p>
             </div>
@@ -611,35 +680,18 @@
     </div>
   </div>
 
-  {# ── Charts Row 2: Top Countries + Activities by Output ── #}
+  {# ── Charts Row 2: Top Outputs + Region Distribution ───── #}
   <div class="row">
     <div class="col-md-6">
-      <div class="ihpix-dash-chart-panel">
-        <h2 class="ihpix-dash-chart-title">
-          <i class="fa fa-globe"></i> {{ _('Top Countries') }}
+      <div class="dx-card dx-section">
+        <h2 class="dx-section-title">
+          <i class="fa fa-tasks"></i> {{ _('Top Outputs') }}
         </h2>
-        <div class="ihpix-dash-chart-box">
-          {% if stats.by_country %}
-            <canvas id="ihpix-chart-countries"></canvas>
-          {% else %}
-            <div class="ihpix-dash-empty">
-              <i class="fa fa-map-o"></i>
-              <p>{{ _('No country data available') }}</p>
-            </div>
-          {% endif %}
-        </div>
-      </div>
-    </div>
-    <div class="col-md-6">
-      <div class="ihpix-dash-chart-panel">
-        <h2 class="ihpix-dash-chart-title">
-          <i class="fa fa-tasks"></i> {{ _('Activities by Output') }}
-        </h2>
-        <div class="ihpix-dash-chart-box">
+        <div class="dx-chart-box dx-chart-box--tall">
           {% if stats.by_output %}
             <canvas id="ihpix-chart-outputs"></canvas>
           {% else %}
-            <div class="ihpix-dash-empty">
+            <div class="dx-empty">
               <i class="fa fa-cubes"></i>
               <p>{{ _('No output data available') }}</p>
             </div>
@@ -647,470 +699,454 @@
         </div>
       </div>
     </div>
-  </div>
-
-  {# ── Charts Row 3: Region Distribution + Impact Metrics ── #}
-  <div class="row">
     <div class="col-md-6">
-      <div class="ihpix-dash-chart-panel">
-        <h2 class="ihpix-dash-chart-title">
+      <div class="dx-card dx-section">
+        <h2 class="dx-section-title">
           <i class="fa fa-map"></i> {{ _('Region Distribution') }}
         </h2>
-        <div class="ihpix-dash-chart-box">
+        <div class="dx-chart-box">
           <canvas id="ihpix-chart-regions"></canvas>
-          <div class="ihpix-dash-empty" id="ihpix-regions-empty" style="display:none;">
+          <div class="dx-empty" id="ihpix-regions-empty" style="display:none;">
             <i class="fa fa-map-o"></i>
             <p>{{ _('No region data available') }}</p>
           </div>
         </div>
       </div>
     </div>
-    <div class="col-md-6">
-      <div class="ihpix-dash-chart-panel">
-        <h2 class="ihpix-dash-chart-title">
-          <i class="fa fa-bar-chart"></i> {{ _('Impact Metrics') }}
-        </h2>
-        <div class="ihpix-dash-chart-box">
-          <canvas id="ihpix-chart-impact"></canvas>
-        </div>
-      </div>
-    </div>
   </div>
 
-  {# ── Quick Links Footer ───────────────────────────────── #}
-  <div class="ihpix-dash-footer">
-    <div class="ihpix-dash-footer-title">{{ _('Quick Links') }}</div>
-    <div class="ihpix-dash-footer-links">
-      <a href="/ihpix/outputs" class="ihpix-dash-footer-link ihpix-dash-footer-link-primary">
-        <i class="fa fa-list"></i> {{ _('Browse All Activities') }}
-      </a>
-      <a href="/ihpix/report" class="ihpix-dash-footer-link ihpix-dash-footer-link-outline">
-        <i class="fa fa-paper-plane"></i> {{ _('Submit a Report') }}
-      </a>
+  {# ── Navigation Footer ────────────────────────────────── #}
+  <div class="dx-nav-footer">
+    <a href="/ihpix/outputs" class="dx-ghost-btn">
+      <i class="fa fa-arrow-left"></i> {{ _('Activities Explorer') }}
+    </a>
+    <div style="display:flex;gap:12px;flex-wrap:wrap;">
       {% if is_sysadmin %}
-      <a href="/ckan-admin/ihpix/reports" class="ihpix-dash-footer-link ihpix-dash-footer-link-admin">
+      <a href="/ckan-admin/ihpix/reports" class="dx-ghost-btn dx-ghost-btn--admin">
         <i class="fa fa-gavel"></i> {{ _('Review Reports') }}
       </a>
       {% endif %}
+      <a href="/ihpix/report" class="dx-ghost-btn">
+        {{ _('Submit Report') }} <i class="fa fa-arrow-right"></i>
+      </a>
     </div>
   </div>
 
-</div>{# /.ihpix-dash-wrap #}
+</div>{# /.dx-dash #}
+{% endblock %}
 
-{# ── CDN Scripts ─────────────────────────────────────────── #}
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-        crossorigin=""></script>
-<script>
-document.addEventListener('DOMContentLoaded', function () {
-  'use strict';
+{% block scripts %}
+  {{ super() }}
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.7/dist/chart.umd.min.js"></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+          integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+          crossorigin=""></script>
+  <script>
+  document.addEventListener('DOMContentLoaded', function () {
+    'use strict';
 
-  /* ── Palette & helpers ──────────────────────────────── */
-  var PA_COLORS = {
-    'PA1': '#0069B4',
-    'PA2': '#00A0E3',
-    'PA3': '#28a745',
-    'PA4': '#FFC107',
-    'PA5': '#E91E63'
-  };
-  var BLUE_SHADES = [
-    '#0069B4','#00A0E3','#005A9C','#0091d5','#003f7f',
-    '#00b4d8','#3949AB','#0077b6','#48cae4','#023e8a'
-  ];
-  var REGION_COLORS = {
-    'Africa': '#E91E63',
-    'Asia and the Pacific': '#FF9800',
-    'Europe and North America': '#0069B4',
-    'Latin America and the Caribbean': '#28a745',
-    'Arab States': '#9C27B0'
-  };
-  var BIENNIUM_COLORS = ['#0069B4', '#00A0E3', '#005A9C', '#0091d5', '#003f7f', '#00b4d8'];
-  var FONT_FAMILY = getComputedStyle(document.body).fontFamily || 'Inter, system-ui, sans-serif';
+    /* ── Palette & helpers ──────────────────────────────── */
+    var PA_COLORS_ARR = ['#0069B4', '#0891B2', '#059669', '#D97706', '#DC2626'];
+    var PA_COLORS = {
+      'PA1': '#0069B4',
+      'PA2': '#0891B2',
+      'PA3': '#059669',
+      'PA4': '#D97706',
+      'PA5': '#DC2626'
+    };
+    var REGION_COLORS = {
+      'Africa': '#DC2626',
+      'Asia and the Pacific': '#D97706',
+      'Europe and North America': '#0069B4',
+      'Latin America and the Caribbean': '#059669',
+      'Arab States': '#7C3AED'
+    };
+    var FONT_FAMILY = getComputedStyle(document.body).fontFamily || 'Inter, system-ui, sans-serif';
 
-  Chart.defaults.font.family = FONT_FAMILY;
+    Chart.defaults.font.family = FONT_FAMILY;
+    Chart.defaults.color = '#64748B';
 
-  var tooltipStyle = {
-    backgroundColor: 'rgba(26,26,46,0.92)',
-    titleFont: { weight: '600' },
-    cornerRadius: 6,
-    padding: 10,
-    boxPadding: 4
-  };
-
-  function paColor(name) {
-    var key = (name || '').replace(/[^A-Za-z0-9]/g, '').toUpperCase();
-    for (var k in PA_COLORS) {
-      if (key.indexOf(k) !== -1) return PA_COLORS[k];
-    }
-    return '#6b7280';
-  }
-
-  /* ── Data from Jinja2 ──────────────────────────────── */
-  var dataPa       = {{ stats.by_priority_area | default([]) | tojson }};
-  var dataBiennium = {{ stats.by_biennium | default([]) | tojson }};
-  var dataCountry  = {{ stats.by_country | default([]) | tojson }};
-  var dataOutput   = {{ stats.by_output | default([]) | tojson }};
-
-  var impactData = {
-    stakeholders_knowledge: {{ stats.stakeholders_knowledge | default(0) | tojson }},
-    stakeholders_awareness: {{ stats.stakeholders_awareness | default(0) | tojson }},
-    knowledge_products:     {{ stats.knowledge_products | default(0) | tojson }},
-    scientific_products:    {{ stats.scientific_products | default(0) | tojson }},
-    training_materials:     {{ stats.training_materials | default(0) | tojson }}
-  };
-
-  /* ── 1. Priority Area – Doughnut ────────────────────── */
-  {% if stats.by_priority_area %}
-  (function () {
-    var ctx = document.getElementById('ihpix-chart-pa');
-    if (!ctx) return;
-    var labels = dataPa.map(function (d) { return d.name; });
-    var values = dataPa.map(function (d) { return d.count; });
-    var colors = dataPa.map(function (d) { return paColor(d.name); });
-    var total  = values.reduce(function (a, b) { return a + b; }, 0);
-
-    var centerTextPlugin = {
-      id: 'ihpixCenterText',
-      afterDraw: function (chart) {
-        var w  = chart.width, h = chart.height, cCtx = chart.ctx;
-        cCtx.save();
-        cCtx.font = '700 1.75rem ' + FONT_FAMILY;
-        cCtx.fillStyle = '#1a1a2e';
-        cCtx.textAlign = 'center';
-        cCtx.textBaseline = 'middle';
-        cCtx.fillText(total, w / 2, h / 2 - 8);
-        cCtx.font = '500 0.75rem ' + FONT_FAMILY;
-        cCtx.fillStyle = '#6b7280';
-        cCtx.fillText('{{ _("Total") }}', w / 2, h / 2 + 14);
-        cCtx.restore();
-      }
+    var tooltipStyle = {
+      backgroundColor: '#0F172A',
+      titleFont: { size: 13, weight: '600' },
+      bodyFont: { size: 12 },
+      cornerRadius: 8,
+      padding: 12,
+      boxPadding: 4,
+      borderColor: 'rgba(255,255,255,0.1)',
+      borderWidth: 1
     };
 
-    new Chart(ctx, {
-      type: 'doughnut',
-      data: {
-        labels: labels,
-        datasets: [{
-          data: values,
-          backgroundColor: colors,
-          borderWidth: 2,
-          borderColor: '#fff',
-          hoverOffset: 6
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        cutout: '62%',
-        plugins: {
-          legend: { position: 'bottom', labels: { padding: 16, usePointStyle: true, pointStyleWidth: 10 } },
-          tooltip: tooltipStyle
-        },
-        animation: { animateRotate: true, duration: 900 }
-      },
-      plugins: [centerTextPlugin]
-    });
-  })();
-  {% endif %}
-
-  /* ── 2. Activities by Biennium – Horizontal Bar ─────── */
-  {% if stats.by_biennium %}
-  (function () {
-    var ctx = document.getElementById('ihpix-chart-biennium');
-    if (!ctx) return;
-    var labels = dataBiennium.map(function (d) { return d.name; });
-    var values = dataBiennium.map(function (d) { return d.count; });
-    var colors = values.map(function (_, i) { return BIENNIUM_COLORS[i % BIENNIUM_COLORS.length]; });
-
-    new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: labels,
-        datasets: [{
-          label: '{{ _("Activities") }}',
-          data: values,
-          backgroundColor: colors,
-          borderRadius: 4,
-          barPercentage: 0.65
-        }]
-      },
-      options: {
-        indexAxis: 'y',
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-          x: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: 'rgba(0,0,0,0.05)' } },
-          y: { grid: { display: false }, ticks: { font: { size: 12, weight: '600' } } }
-        },
-        plugins: {
-          legend: { display: false },
-          tooltip: tooltipStyle
-        },
-        animation: { duration: 800 }
+    function paColor(name) {
+      var key = (name || '').replace(/[^A-Za-z0-9]/g, '').toUpperCase();
+      for (var k in PA_COLORS) {
+        if (key.indexOf(k) !== -1) return PA_COLORS[k];
       }
-    });
-  })();
-  {% endif %}
+      return '#94A3B8';
+    }
 
-  /* ── 3. Top Countries – Horizontal Bar ─────────────── */
-  {% if stats.by_country %}
-  (function () {
-    var ctx = document.getElementById('ihpix-chart-countries');
-    if (!ctx) return;
-    var sorted = dataCountry.slice().sort(function (a, b) { return b.count - a.count; }).slice(0, 15);
-    var labels = sorted.map(function (d) { return d.name; });
-    var values = sorted.map(function (d) { return d.count; });
+    /* ── Data from Jinja2 ──────────────────────────────── */
+    var dataPa       = {{ stats.by_priority_area | default([]) | tojson }};
+    var dataBiennium = {{ stats.by_biennium | default([]) | tojson }};
+    var dataCountry  = {{ stats.by_country | default([]) | tojson }};
+    var dataOutput   = {{ stats.by_output | default([]) | tojson }};
 
-    new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: labels,
-        datasets: [{
-          label: '{{ _("Activities") }}',
-          data: values,
-          backgroundColor: function (context) {
-            var chart = context.chart;
-            var area  = chart.chartArea;
-            if (!area) return '#0069B4';
-            var grad = chart.ctx.createLinearGradient(area.left, 0, area.right, 0);
-            grad.addColorStop(0, '#0069B4');
-            grad.addColorStop(1, '#00A0E3');
-            return grad;
+    var impactData = {
+      stakeholders_knowledge: {{ stats.stakeholders_knowledge | default(0) | tojson }},
+      stakeholders_awareness: {{ stats.stakeholders_awareness | default(0) | tojson }},
+      knowledge_products:     {{ stats.knowledge_products | default(0) | tojson }},
+      scientific_products:    {{ stats.scientific_products | default(0) | tojson }},
+      training_materials:     {{ stats.training_materials | default(0) | tojson }}
+    };
+
+    /* ── 1. Priority Area – Doughnut ────────────────────── */
+    {% if stats.by_priority_area %}
+    (function () {
+      var ctx = document.getElementById('ihpix-chart-pa');
+      if (!ctx) return;
+      var labels = dataPa.map(function (d) { return d.name; });
+      var values = dataPa.map(function (d) { return d.count; });
+      var colors = dataPa.map(function (d) { return paColor(d.name); });
+      var total  = values.reduce(function (a, b) { return a + b; }, 0);
+
+      var centerTextPlugin = {
+        id: 'ihpixCenterText',
+        afterDraw: function (chart) {
+          var w  = chart.width, h = chart.height, cCtx = chart.ctx;
+          var meta = chart.getDatasetMeta(0);
+          if (!meta || !meta.data || !meta.data.length) return;
+          var el = meta.data[0];
+          var centerX = (chart.chartArea.left + chart.chartArea.right) / 2;
+          var centerY = (chart.chartArea.top + chart.chartArea.bottom) / 2;
+          cCtx.save();
+          cCtx.font = '700 28px ' + FONT_FAMILY;
+          cCtx.fillStyle = '#0F172A';
+          cCtx.textAlign = 'center';
+          cCtx.textBaseline = 'middle';
+          cCtx.fillText(total.toLocaleString(), centerX, centerY - 8);
+          cCtx.font = '500 12px ' + FONT_FAMILY;
+          cCtx.fillStyle = '#94A3B8';
+          cCtx.fillText('{{ _("Total") }}', centerX, centerY + 14);
+          cCtx.restore();
+        }
+      };
+
+      new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: labels,
+          datasets: [{
+            data: values,
+            backgroundColor: colors,
+            borderWidth: 2,
+            borderColor: '#fff',
+            hoverOffset: 6,
+            hoverBorderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '65%',
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                padding: 16,
+                usePointStyle: true,
+                pointStyleWidth: 10,
+                font: { size: 12, weight: '500' },
+                color: '#64748B'
+              }
+            },
+            tooltip: tooltipStyle
           },
-          borderRadius: 4,
-          barPercentage: 0.7
-        }]
-      },
-      options: {
-        indexAxis: 'y',
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-          x: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: 'rgba(0,0,0,0.05)' } },
-          y: { grid: { display: false }, ticks: { font: { size: 11 } } }
+          animation: { animateRotate: true, duration: 800 }
         },
-        plugins: {
-          legend: { display: false },
-          tooltip: tooltipStyle
+        plugins: [centerTextPlugin]
+      });
+    })();
+    {% endif %}
+
+    /* ── 2. Activities by Biennium – Horizontal Bar ─────── */
+    {% if stats.by_biennium %}
+    (function () {
+      var ctx = document.getElementById('ihpix-chart-biennium');
+      if (!ctx) return;
+      var labels = dataBiennium.map(function (d) { return d.name; });
+      var values = dataBiennium.map(function (d) { return d.count; });
+
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: '{{ _("Activities") }}',
+            data: values,
+            backgroundColor: 'rgba(0, 105, 180, 0.8)',
+            hoverBackgroundColor: '#0069B4',
+            borderRadius: 6,
+            barPercentage: 0.6,
+            categoryPercentage: 0.8
+          }]
         },
-        animation: { duration: 700 }
-      }
-    });
-  })();
-  {% endif %}
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: {
+              beginAtZero: true,
+              ticks: { precision: 0, color: '#94A3B8', font: { size: 11 } },
+              grid: { color: '#F1F5F9', drawBorder: false },
+              border: { display: false }
+            },
+            y: {
+              grid: { display: false },
+              border: { display: false },
+              ticks: { font: { size: 12, weight: '600' }, color: '#0F172A' }
+            }
+          },
+          plugins: {
+            legend: { display: false },
+            tooltip: tooltipStyle
+          },
+          animation: { duration: 800 }
+        }
+      });
+    })();
+    {% endif %}
 
-  /* ── 4. Activities by Output – Vertical Bar ────────── */
-  {% if stats.by_output %}
-  (function () {
-    var ctx = document.getElementById('ihpix-chart-outputs');
-    if (!ctx) return;
-    var labels = dataOutput.map(function (d) { return d.name; });
-    var values = dataOutput.map(function (d) { return d.count; });
-    var colors = values.map(function (_, i) { return BLUE_SHADES[i % BLUE_SHADES.length]; });
+    /* ── 3. Top Outputs – Horizontal Bar ─────────────────── */
+    {% if stats.by_output %}
+    (function () {
+      var ctx = document.getElementById('ihpix-chart-outputs');
+      if (!ctx) return;
+      var sorted = dataOutput.slice().sort(function (a, b) { return b.count - a.count; }).slice(0, 15);
+      var labels = sorted.map(function (d) { return d.name; });
+      var values = sorted.map(function (d) { return d.count; });
 
-    new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: labels,
-        datasets: [{
-          label: '{{ _("Activities") }}',
-          data: values,
-          backgroundColor: colors,
-          borderRadius: 4,
-          barPercentage: 0.65
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-          x: {
-            grid: { display: false },
-            ticks: {
-              maxRotation: 45,
-              minRotation: 0,
-              font: { size: 11 },
-              callback: function (val) {
-                var lbl = this.getLabelForValue(val);
-                return lbl.length > 18 ? lbl.substring(0, 16) + '\u2026' : lbl;
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: labels,
+          datasets: [{
+            label: '{{ _("Activities") }}',
+            data: values,
+            backgroundColor: 'rgba(8, 145, 178, 0.8)',
+            hoverBackgroundColor: '#0891B2',
+            borderRadius: 6,
+            barPercentage: 0.65,
+            categoryPercentage: 0.85
+          }]
+        },
+        options: {
+          indexAxis: 'y',
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            x: {
+              beginAtZero: true,
+              ticks: { precision: 0, color: '#94A3B8', font: { size: 11 } },
+              grid: { color: '#F1F5F9', drawBorder: false },
+              border: { display: false }
+            },
+            y: {
+              grid: { display: false },
+              border: { display: false },
+              ticks: {
+                font: { size: 11 },
+                color: '#64748B',
+                callback: function (val) {
+                  var lbl = this.getLabelForValue(val);
+                  return lbl.length > 28 ? lbl.substring(0, 26) + '\u2026' : lbl;
+                }
               }
             }
           },
-          y: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: 'rgba(0,0,0,0.05)' } }
-        },
-        plugins: {
-          legend: { display: false },
-          tooltip: tooltipStyle
-        },
-        animation: { duration: 700 }
-      }
-    });
-  })();
-  {% endif %}
-
-  /* ── 5. Impact Metrics – Horizontal Bar ────────────── */
-  (function () {
-    var ctx = document.getElementById('ihpix-chart-impact');
-    if (!ctx) return;
-    var labels = [
-      '{{ _("Stakeholders (Knowledge)") }}',
-      '{{ _("Stakeholders (Awareness)") }}',
-      '{{ _("Knowledge Products") }}',
-      '{{ _("Scientific Products") }}',
-      '{{ _("Training Materials") }}'
-    ];
-    var values = [
-      impactData.stakeholders_knowledge,
-      impactData.stakeholders_awareness,
-      impactData.knowledge_products,
-      impactData.scientific_products,
-      impactData.training_materials
-    ];
-    var colors = ['#7B1FA2', '#9C27B0', '#00ACC1', '#43A047', '#E91E63'];
-
-    new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: labels,
-        datasets: [{
-          label: '{{ _("Count") }}',
-          data: values,
-          backgroundColor: colors,
-          borderRadius: 4,
-          barPercentage: 0.6
-        }]
-      },
-      options: {
-        indexAxis: 'y',
-        responsive: true,
-        maintainAspectRatio: false,
-        scales: {
-          x: { beginAtZero: true, ticks: { precision: 0 }, grid: { color: 'rgba(0,0,0,0.05)' } },
-          y: { grid: { display: false }, ticks: { font: { size: 11 } } }
-        },
-        plugins: {
-          legend: { display: false },
-          tooltip: tooltipStyle
-        },
-        animation: { duration: 700 }
-      }
-    });
-  })();
-
-  /* ── 6. Leaflet Map ────────────────────────────────── */
-  (function () {
-    var mapEl = document.getElementById('ihpix-map');
-    if (!mapEl) return;
-
-    var map = L.map('ihpix-map', {
-      center: [20, 0],
-      zoom: 2,
-      scrollWheelZoom: false,
-      zoomControl: true
-    });
-
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-      maxZoom: 18
-    }).addTo(map);
-
-    fetch('/api/3/action/ihpix_geojson')
-      .then(function (r) { return r.json(); })
-      .then(function (data) {
-        if (!data.result || !data.result.features || !data.result.features.length) return;
-        var features = data.result.features;
-        var regionCounts = {};
-
-        features.forEach(function (f) {
-          var p = f.properties;
-          var coords = f.geometry.coordinates;
-          var radius = Math.max(5, Math.min(25, Math.sqrt(p.total_activities) * 3));
-          var color = REGION_COLORS[p.region] || '#6b7280';
-
-          /* Accumulate region counts for the Region Distribution chart */
-          if (p.region) {
-            regionCounts[p.region] = (regionCounts[p.region] || 0) + p.total_activities;
-          }
-
-          var popupLines = [
-            '<div style="min-width:180px;">',
-            '<strong style="font-size:1rem;">' + (p.country || '—') + '</strong>',
-            '<hr style="margin:4px 0;border-color:#e5e7eb;">',
-            '<b>' + '{{ _("Total Activities") }}' + ':</b> ' + p.total_activities
-          ];
-          for (var i = 1; i <= 5; i++) {
-            var paKey = 'pa' + i + '_count';
-            if (p[paKey] !== undefined && p[paKey] > 0) {
-              popupLines.push('<span style="color:' + PA_COLORS['PA' + i] + ';">\u25CF</span> PA' + i + ': ' + p[paKey]);
-            }
-          }
-          if (p.region) {
-            popupLines.push('<br><i style="color:#6b7280;">' + p.region + '</i>');
-          }
-          popupLines.push('</div>');
-
-          L.circleMarker([coords[1], coords[0]], {
-            radius: radius,
-            fillColor: color,
-            color: '#fff',
-            weight: 1.5,
-            opacity: 0.9,
-            fillOpacity: 0.7
-          }).bindPopup(popupLines.join('<br>'))
-            .addTo(map);
-        });
-
-        /* ── 7. Region Distribution – Doughnut (data from API) ── */
-        buildRegionChart(regionCounts);
-      })
-      .catch(function () {
-        /* Silently degrade if the API is unavailable */
+          plugins: {
+            legend: { display: false },
+            tooltip: tooltipStyle
+          },
+          animation: { duration: 700 }
+        }
       });
-  })();
+    })();
+    {% endif %}
 
-  function buildRegionChart(regionCounts) {
-    var canvas = document.getElementById('ihpix-chart-regions');
-    var emptyEl = document.getElementById('ihpix-regions-empty');
-    if (!canvas) return;
+    /* ── 4. Leaflet Map ──────────────────────────────────── */
+    (function () {
+      var mapEl = document.getElementById('ihpix-map');
+      if (!mapEl) return;
 
-    var regionNames = Object.keys(regionCounts);
-    if (!regionNames.length) {
-      canvas.style.display = 'none';
-      if (emptyEl) emptyEl.style.display = '';
-      return;
-    }
+      var map = L.map('ihpix-map', {
+        center: [20, 0],
+        zoom: 2,
+        scrollWheelZoom: false,
+        zoomControl: true
+      });
 
-    var labels = regionNames;
-    var values = regionNames.map(function (r) { return regionCounts[r]; });
-    var colors = regionNames.map(function (r) { return REGION_COLORS[r] || '#6b7280'; });
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
+        maxZoom: 18,
+        subdomains: 'abcd'
+      }).addTo(map);
 
-    new Chart(canvas, {
-      type: 'doughnut',
-      data: {
-        labels: labels,
-        datasets: [{
-          data: values,
-          backgroundColor: colors,
-          borderWidth: 2,
-          borderColor: '#fff',
-          hoverOffset: 6
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        cutout: '55%',
-        plugins: {
-          legend: { position: 'bottom', labels: { padding: 14, usePointStyle: true, pointStyleWidth: 10, font: { size: 11 } } },
-          tooltip: tooltipStyle
-        },
-        animation: { animateRotate: true, duration: 900 }
+      fetch('/api/3/action/ihpix_country_summary_list')
+        .then(function (r) { return r.json(); })
+        .then(function (data) {
+          if (!data.result || !data.result.features || !data.result.features.length) return;
+          var features = data.result.features;
+          var regionCounts = {};
+
+          features.forEach(function (f) {
+            var p = f.properties;
+            var coords = f.geometry.coordinates;
+            var radius = Math.max(5, Math.min(22, Math.sqrt(p.total_activities) * 3));
+            var color = REGION_COLORS[p.region] || '#94A3B8';
+
+            if (p.region) {
+              regionCounts[p.region] = (regionCounts[p.region] || 0) + p.total_activities;
+            }
+
+            var popupHtml = '<div style="min-width:180px;font-family:inherit;">' +
+              '<div style="font-size:14px;font-weight:700;color:#0F172A;margin-bottom:6px;">' + (p.country || '\u2014') + '</div>' +
+              '<div style="height:1px;background:#E2E8F0;margin-bottom:8px;"></div>' +
+              '<div style="font-size:13px;color:#64748B;margin-bottom:4px;">' +
+              '<strong style="color:#0F172A;">' + p.total_activities + '</strong> {{ _("activities") }}</div>';
+
+            for (var i = 1; i <= 5; i++) {
+              var paKey = 'pa' + i + '_count';
+              if (p[paKey] !== undefined && p[paKey] > 0) {
+                popupHtml += '<div style="font-size:12px;color:#64748B;margin-top:2px;">' +
+                  '<span style="color:' + PA_COLORS['PA' + i] + ';">\u25CF</span> PA' + i + ': ' + p[paKey] + '</div>';
+              }
+            }
+            if (p.region) {
+              popupHtml += '<div style="font-size:11px;color:#94A3B8;margin-top:6px;">' + p.region + '</div>';
+            }
+            popupHtml += '</div>';
+
+            L.circleMarker([coords[1], coords[0]], {
+              radius: radius,
+              fillColor: color,
+              color: '#fff',
+              weight: 1.5,
+              opacity: 0.9,
+              fillOpacity: 0.65
+            }).bindPopup(popupHtml, { className: 'dx-popup' })
+              .addTo(map);
+          });
+
+          buildRegionChart(regionCounts);
+        })
+        .catch(function () {
+          /* Degrade silently — try fallback endpoint */
+          fetch('/api/3/action/ihpix_geojson')
+            .then(function (r) { return r.json(); })
+            .then(function (data) {
+              if (!data.result || !data.result.features || !data.result.features.length) return;
+              var features = data.result.features;
+              var regionCounts = {};
+
+              features.forEach(function (f) {
+                var p = f.properties;
+                var coords = f.geometry.coordinates;
+                var radius = Math.max(5, Math.min(22, Math.sqrt(p.total_activities) * 3));
+                var color = REGION_COLORS[p.region] || '#94A3B8';
+
+                if (p.region) {
+                  regionCounts[p.region] = (regionCounts[p.region] || 0) + p.total_activities;
+                }
+
+                var popupHtml = '<div style="min-width:180px;font-family:inherit;">' +
+                  '<div style="font-size:14px;font-weight:700;color:#0F172A;margin-bottom:6px;">' + (p.country || '\u2014') + '</div>' +
+                  '<div style="height:1px;background:#E2E8F0;margin-bottom:8px;"></div>' +
+                  '<div style="font-size:13px;color:#64748B;margin-bottom:4px;">' +
+                  '<strong style="color:#0F172A;">' + p.total_activities + '</strong> {{ _("activities") }}</div>';
+
+                for (var i = 1; i <= 5; i++) {
+                  var paKey = 'pa' + i + '_count';
+                  if (p[paKey] !== undefined && p[paKey] > 0) {
+                    popupHtml += '<div style="font-size:12px;color:#64748B;margin-top:2px;">' +
+                      '<span style="color:' + PA_COLORS['PA' + i] + ';">\u25CF</span> PA' + i + ': ' + p[paKey] + '</div>';
+                  }
+                }
+                if (p.region) {
+                  popupHtml += '<div style="font-size:11px;color:#94A3B8;margin-top:6px;">' + p.region + '</div>';
+                }
+                popupHtml += '</div>';
+
+                L.circleMarker([coords[1], coords[0]], {
+                  radius: radius,
+                  fillColor: color,
+                  color: '#fff',
+                  weight: 1.5,
+                  opacity: 0.9,
+                  fillOpacity: 0.65
+                }).bindPopup(popupHtml, { className: 'dx-popup' })
+                  .addTo(map);
+              });
+
+              buildRegionChart(regionCounts);
+            })
+            .catch(function () { /* Silently degrade */ });
+        });
+    })();
+
+    /* ── 5. Region Distribution – Doughnut (from API) ────── */
+    function buildRegionChart(regionCounts) {
+      var canvas = document.getElementById('ihpix-chart-regions');
+      var emptyEl = document.getElementById('ihpix-regions-empty');
+      if (!canvas) return;
+
+      var regionNames = Object.keys(regionCounts);
+      if (!regionNames.length) {
+        canvas.style.display = 'none';
+        if (emptyEl) emptyEl.style.display = '';
+        return;
       }
-    });
-  }
-});
-</script>
+
+      var labels = regionNames;
+      var values = regionNames.map(function (r) { return regionCounts[r]; });
+      var colors = regionNames.map(function (r) { return REGION_COLORS[r] || '#94A3B8'; });
+
+      new Chart(canvas, {
+        type: 'doughnut',
+        data: {
+          labels: labels,
+          datasets: [{
+            data: values,
+            backgroundColor: colors,
+            borderWidth: 2,
+            borderColor: '#fff',
+            hoverOffset: 6,
+            hoverBorderWidth: 0
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '58%',
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                padding: 14,
+                usePointStyle: true,
+                pointStyleWidth: 10,
+                font: { size: 11, weight: '500' },
+                color: '#64748B'
+              }
+            },
+            tooltip: tooltipStyle
+          },
+          animation: { animateRotate: true, duration: 800 }
+        }
+      });
+    }
+  });
+  </script>
 {% endblock %}
 
 {% block secondary_content %}
