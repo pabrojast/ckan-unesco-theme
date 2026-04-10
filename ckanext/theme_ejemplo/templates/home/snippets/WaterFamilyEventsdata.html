@@ -1,0 +1,58 @@
+{% set events = h.get_recent_water_events(number=3) %}
+{% if events %}
+<div class="row">
+{% for event in events %}
+<div class="col-md-4 col3 col-enhanced">
+  <div class="col-small">
+    <div class="cardsmall cardsmall-enhanced cardsmall-height-fixed cardsmall-cta cardsmall-hero content-wrapper-enhanced hover-lift"> 
+      {% if event.image %}
+        <img class="cardsmall-img-enhanced image-style-cardsmall-1-column" src="{{ event.image }}" width="289" height="424" alt="{{ event.title or event.name }}" loading="lazy">
+      {% else %}
+        <img class="cardsmall-img-enhanced image-style-cardsmall-1-column" src="/Landing_page/Content/data_catalogue_button1.png" width="289" height="424" alt="{{ event.title or event.name }}" loading="lazy">
+      {% endif %}
+      
+      <div class="cardsmall-body-enhanced content-body-enhanced">
+        {% if event.publish_date %}
+          <p class="text-muted-enhanced" style="margin-bottom: 0.5rem; font-size: 0.9rem;">
+            <i class="fa fa-calendar text-unesco-blue"></i>
+            <small>{{ h.render_datetime(event.publish_date) }}</small>
+          </p>
+        {% endif %}
+        
+        <div class="cardsmall-title-enhanced">{{ event.title or event.name }}</div>
+        
+        <div class="cardsmall-text-enhanced">
+          <div class="text-content">
+            {% set content_text = h.theme_ejemplo_markdown_excerpt(event.content) %}
+            {% if content_text and content_text|length > 200 %}
+              <div class="text-preview">{{ content_text[:200] }}{% if content_text|length > 200 %}...{% endif %}</div>
+              <div class="text-full">{{ content_text }}</div>
+              <button type="button" class="read-more-btn" onclick="toggleReadMore(this)">
+                <i class="fa fa-plus"></i>
+                <span class="read-more-text">{{ _("Read more") }}</span>
+              </button>
+            {% else %}
+              <p>{{ content_text or _("No content available") }}</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      
+      <div class="content-footer-enhanced">
+        <div class="field field--name-field-link field--type-link field--label-hidden field__item">
+          <a href="{{ h.url_for('pages.water_events_show', page='' + event.name) }}" class="btn btn-primary btn-arrow-right" target="_blank">{% trans %}Read full article{% endtrans %}</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endfor %}
+</div>
+<div class="row" style="margin-top: 1rem;">
+  <div class="col-md-12 text-center">
+    <a href="{{ h.url_for('pages.water_events_index') }}" class="btn btn-default btn-lg">
+      <i class="fa fa-calendar"></i> {% trans %}View all events{% endtrans %}
+    </a>
+  </div>
+</div>
+{% endif %}
