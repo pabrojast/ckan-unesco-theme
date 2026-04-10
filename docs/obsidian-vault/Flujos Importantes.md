@@ -164,7 +164,10 @@ Patrón LRU con buster:
 
 ```
 1. Página principal (/ihpix):
-   → Carga contenido editable de IhpixContent (18 secciones)
+   → Carga contenido editable de IhpixContent (12 secciones)
+   → Hero (título y subtítulo) editable desde admin
+   → Títulos de sección (Priority Areas, Metrics, CTA) editables desde admin
+   → Priority Areas: título, descripción e imagen editables desde admin
    → Muestra mapa mundial Leaflet con estadísticas globales
    → Métricas de impacto con contadores animados
 2. Outputs (/ihpix/outputs):

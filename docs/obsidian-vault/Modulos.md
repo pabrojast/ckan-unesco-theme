@@ -187,7 +187,10 @@ Ver [[Flujos Importantes#Paneles de administración]] para la lista completa.
 **IhpixContent**: Contenido editable del portal IHP-IX
 - Campos: id, section_type, section_key (unique), title, description, content (JSON), created_at, updated_at
 - Métodos: `get()`, `get_by_key()`, `get_by_type()`, `get_all()`, `as_dict()`
-- Auto-seed: 18 secciones por defecto
+- section_types: `cta_card`, `priority_area`, `hero`, `section_header`
+- section_keys: `cta_1`–`cta_3`, `pa_1`–`pa_5`, `hero`, `section_pa`, `section_metrics`, `section_cta`
+- Auto-seed: 12 secciones por defecto (8 originales + 4 nuevas: hero, section headers)
+- Auto-migración: `_ensure_new_ihpix_sections()` agrega secciones nuevas (hero, section_header) a instancias existentes
 
 **IhpixActivity**: Actividades del programa IHP-IX
 - Campos base: id, title, priority_area, description, output, stakeholders (JSON), partner_organizations, start_date, end_date, status (planned/ongoing/completed), responsible_party, responsible_country, url, country_stats (JSON), created_at, updated_at
