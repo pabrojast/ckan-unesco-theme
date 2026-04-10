@@ -6,7 +6,11 @@
   <li class="active"><a href="{{ h.url_for('/ihpix') }}">{% trans %}IHP IX{% endtrans %}</a></li>
 {% endblock %}
 
-{% block primary_content_inner %}
+{% block page_header %}{% endblock %}
+
+{% block content %}
+<div class="main">
+<div class="container">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
       integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
       crossorigin="" />
@@ -39,10 +43,6 @@
   font-family: inherit;
   color: var(--ix-text) !important;
 }
-
-/* ── CKAN wrapper neutralisation ─────────────────────────── */
-article.module:has(.ihpix-landing) { border: none !important; background: transparent !important; box-shadow: none !important; margin: 0 !important; }
-article.module > .module-content:has(.ihpix-landing) { padding: 0 !important; }
 
 /* ── Hero Section ──────────────────────────────────────────── */
 .ihpix-hero {
@@ -1086,8 +1086,6 @@ article.module > .module-content:has(.ihpix-landing) { padding: 0 !important; }
 })();
 </script>
 
-{% endblock %}
-
-{% block secondary_content %}
-  {% snippet "ihpix/snippets/helper.html" %}
+</div>{# /.container #}
+</div>{# /.main #}
 {% endblock %}
