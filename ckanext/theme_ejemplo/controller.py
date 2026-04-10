@@ -419,6 +419,17 @@ class MyLogica():
                                IhpixContent.get_by_type('priority_area')
                                if item.is_active]
 
+                # Cargar hero y títulos de sección
+                hero_item = IhpixContent.get_by_key('hero')
+                hero_content = hero_item.as_dict() if hero_item else {
+                    'title': 'IHP-IX Strategic Plan',
+                    'description': '',
+                }
+                section_titles = {}
+                for key in ('section_pa', 'section_metrics', 'section_cta'):
+                    item = IhpixContent.get_by_key(key)
+                    section_titles[key] = item.as_dict() if item else {'title': key}
+
                 # Load recent activities per priority area
                 priority_areas = {}
                 for pa_num in range(1, 6):
@@ -450,6 +461,8 @@ class MyLogica():
                                        pa_sections=pa_sections,
                                        priority_areas=priority_areas,
                                        stats=stats,
+                                       hero_content=hero_content,
+                                       section_titles=section_titles,
                                        is_sysadmin=is_sysadmin)
 
         def ihpix_outputs():
@@ -2513,11 +2526,17 @@ class MyLogica():
                          if i['section_type'] == 'cta_card']
             priority_areas = [i for i in result['results']
                               if i['section_type'] == 'priority_area']
+            hero_sections = [i for i in result['results']
+                             if i['section_type'] == 'hero']
+            section_headers = [i for i in result['results']
+                               if i['section_type'] == 'section_header']
 
             return render_template(
                 'admin/ihpix_content.html',
                 cta_cards=cta_cards,
                 priority_areas=priority_areas,
+                hero_sections=hero_sections,
+                section_headers=section_headers,
             )
 
         @staticmethod

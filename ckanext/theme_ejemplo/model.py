@@ -590,11 +590,13 @@ def define_portal_card_table():
 
 ihpix_content_table = None
 
-VALID_IHPIX_SECTION_TYPES = ('cta_card', 'priority_area')
+VALID_IHPIX_SECTION_TYPES = ('cta_card', 'priority_area', 'hero', 'section_header')
 
 VALID_IHPIX_SECTION_KEYS = (
     'cta_1', 'cta_2', 'cta_3',
     'pa_1', 'pa_2', 'pa_3', 'pa_4', 'pa_5',
+    'hero',
+    'section_pa', 'section_metrics', 'section_cta',
 )
 
 
@@ -707,6 +709,7 @@ def init_ihpix_content_db():
             _seed_default_ihpix_content()
         else:
             log.debug(u'ihpix_content table already exists with %d rows', count)
+            _ensure_new_ihpix_sections()
 
 
 def _seed_default_ihpix_content():
@@ -728,6 +731,38 @@ def _seed_default_ihpix_content():
         meta.Session.add(content)
     meta.Session.commit()
     log.info(u'ihpix_content table seeded with %d default sections', len(defaults))
+
+
+def _ensure_new_ihpix_sections():
+    """Agrega secciones nuevas (hero, section_headers) si no existen en DB.
+
+    Necesario para instancias que ya tenían ihpix_content con solo
+    cta_card y priority_area.
+    """
+    new_keys = ('hero', 'section_pa', 'section_metrics', 'section_cta')
+    defaults = {d['section_key']: d for d in _get_default_ihpix_content()
+                if d['section_key'] in new_keys}
+    added = 0
+    for key, item in defaults.items():
+        existing = IhpixContent.get_by_key(key)
+        if existing is None:
+            content = IhpixContent(
+                section_type=item['section_type'],
+                section_key=item['section_key'],
+                title=item.get('title', u''),
+                description=item.get('description', u''),
+                image_url=item.get('image_url', u''),
+                link=item.get('link', u''),
+                badge_text=item.get('badge_text', u''),
+                display_order=item.get('display_order', 0),
+                is_active=item.get('is_active', True),
+                extra_fields=item.get('extra_fields', u''),
+            )
+            meta.Session.add(content)
+            added += 1
+    if added:
+        meta.Session.commit()
+        log.info(u'ihpix_content: added %d new sections (hero/headers)', added)
 
 
 def _get_default_ihpix_content():
@@ -809,6 +844,33 @@ def _get_default_ihpix_content():
             'image_url': '/Landing_page/Content/area_5.png',
             'link': 'https://unesdoc.unesco.org/in/documentViewer.xhtml?v=2.1.196&id=p%3A%3Ausmarcdef_0000381318&file=/in/rest/annotationSVC/DownloadWatermarkedAttachment/attach_import_9aabb773-6ee5-4fd1-b6a4-6b3a55a7766a%3F_%3D381318eng.pdf&locale=en&multi=true&ark=/ark%3A/48223/pf0000381318/PDF/381318eng.pdf#page=36',
             'display_order': 4,
+        },
+        # ── Hero Section (1) ─────────────────────────────────────────────
+        {
+            'section_type': 'hero',
+            'section_key': 'hero',
+            'title': 'IHP-IX Strategic Plan',
+            'description': 'The ninth phase of the Intergovernmental Hydrological Programme (2022-2029) — UNESCO\'s strategic framework for addressing global water challenges through science, innovation, and cooperation.',
+            'display_order': 0,
+        },
+        # ── Section Headers (3) ──────────────────────────────────────────
+        {
+            'section_type': 'section_header',
+            'section_key': 'section_pa',
+            'title': 'Five Priority Areas',
+            'display_order': 0,
+        },
+        {
+            'section_type': 'section_header',
+            'section_key': 'section_metrics',
+            'title': 'Programme Impact',
+            'display_order': 1,
+        },
+        {
+            'section_type': 'section_header',
+            'section_key': 'section_cta',
+            'title': 'Get Involved',
+            'display_order': 2,
         },
     ]
 

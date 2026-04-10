@@ -322,6 +322,12 @@
   margin: 0 0 8px;
   line-height: 1.3;
 }
+.ihpix-pa-desc {
+  font-size: 12px;
+  color: var(--ix-text-secondary) !important;
+  line-height: 1.5;
+  margin: 0 0 8px;
+}
 .ihpix-pa-count {
   font-size: 13px;
   color: var(--ix-text-secondary) !important;
@@ -631,9 +637,9 @@
      ══════════════════════════════════════════════════════════ #}
   <div class="ihpix-hero">
     <div class="ihpix-hero-inner">
-      <h1>{{ _('IHP-IX Strategic Plan') }}</h1>
+      <h1>{{ hero_content.title or _('IHP-IX Strategic Plan') }}</h1>
       <p class="ihpix-hero-subtitle">
-        {{ _('The ninth phase of the Intergovernmental Hydrological Programme (2022–2029) — UNESCO\'s strategic framework for addressing global water challenges through science, innovation, and cooperation.') }}
+        {{ hero_content.description or _('The ninth phase of the Intergovernmental Hydrological Programme (2022–2029) — UNESCO\'s strategic framework for addressing global water challenges through science, innovation, and cooperation.') }}
       </p>
 
       <div class="ihpix-hero-stats">
@@ -699,10 +705,8 @@
      SECTION 3 — Priority Areas
      ══════════════════════════════════════════════════════════ #}
   <div class="ihpix-section ihpix-animate">
-    <h2 class="ihpix-section-title">{{ _('Five Priority Areas') }}</h2>
+    <h2 class="ihpix-section-title">{{ section_titles.get('section_pa', {}).get('title', _('Five Priority Areas')) }}</h2>
     <span class="ihpix-section-accent"></span>
-
-    {% set pa_names = {1: _('Water Security'), 2: _('Water & Climate'), 3: _('Water Knowledge'), 4: _('Water Governance'), 5: _('Water Education')} %}
 
     <div class="ihpix-pa-grid">
       {% for pa in pa_sections %}
@@ -711,7 +715,10 @@
       <div class="ihpix-pa-col">
         <div class="ihpix-pa-card" data-pa="{{ pa_num }}">
           <span class="ihpix-pa-badge">PA{{ pa_num }}</span>
-          <h3 class="ihpix-pa-title">{{ pa_names.get(pa_num, pa.title) }}</h3>
+          <h3 class="ihpix-pa-title">{{ pa.title }}</h3>
+          {% if pa.description %}
+          <p class="ihpix-pa-desc">{{ pa.description|truncate(120) }}</p>
+          {% endif %}
           <div class="ihpix-pa-count" id="ihpix-pa-count-{{ pa_num }}">
             <i class="fa fa-flag"></i> <span>&mdash;</span>
           </div>
@@ -730,7 +737,7 @@
      SECTION 4 — Impact Metrics
      ══════════════════════════════════════════════════════════ #}
   <div class="ihpix-metrics-section ihpix-animate" id="ihpix-metrics-section">
-    <h2 class="ihpix-section-title">{{ _('Programme Impact') }}</h2>
+    <h2 class="ihpix-section-title">{{ section_titles.get('section_metrics', {}).get('title', _('Programme Impact')) }}</h2>
     <span class="ihpix-section-accent"></span>
 
     <div class="ihpix-metrics-grid">
@@ -786,7 +793,7 @@
      SECTION 5 — CTA Cards
      ══════════════════════════════════════════════════════════ #}
   <div class="ihpix-section ihpix-animate">
-    <h2 class="ihpix-section-title">{{ _('Get Involved') }}</h2>
+    <h2 class="ihpix-section-title">{{ section_titles.get('section_cta', {}).get('title', _('Get Involved')) }}</h2>
     <span class="ihpix-section-accent"></span>
 
     <div class="row">
