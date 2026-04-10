@@ -965,6 +965,69 @@ class MyLogica():
                 log.error(f"Error in group_publications: {e}")
                 abort(500)
 
+        def group_ihpix(name):
+            """Group/Initiative IHP-IX tab — shows IHP-IX activities for this country. Sysadmin only."""
+            # Solo sysadmins pueden ver esta pestaña
+            if not (c.userobj and c.userobj.sysadmin):
+                abort(403, _('Not authorized'))
+
+            try:
+                context = {'ignore_auth': True}
+                group = toolkit.get_action('group_show')(
+                    context, {'id': name}
+                )
+
+                from ckanext.theme_ejemplo.model import (
+                    IhpixActivity, init_ihpix_activities_db,
+                )
+                init_ihpix_activities_db()
+
+                pa_filter = request.args.get('pa', '')
+                output_filter = request.args.get('output', '')
+                biennium_filter = request.args.get('biennium', '')
+                q = request.args.get('q', '')
+                page = int(request.args.get('page', 1))
+                items_per_page = 20
+                offset = items_per_page * (page - 1)
+
+                try:
+                    results, total = IhpixActivity.get_published(
+                        priority_area=pa_filter or None,
+                        output=output_filter or None,
+                        q_text=q or None,
+                        biennium=biennium_filter or None,
+                        country=name or None,
+                        limit=items_per_page,
+                        offset=offset,
+                    )
+                    activities = [a.as_dict() for a in results]
+                    facets = IhpixActivity.get_facets()
+                except Exception as e:
+                    log.error(f"Error fetching IHP-IX activities for group {name}: {e}")
+                    activities = []
+                    facets = {}
+                    total = 0
+
+                return render_template(
+                    "group/ihpix.html",
+                    group_dict=group,
+                    group_type='group',
+                    activities=activities,
+                    facets=facets,
+                    total=total,
+                    pa_filter=pa_filter,
+                    output_filter=output_filter,
+                    biennium_filter=biennium_filter,
+                    q=q,
+                    page=page,
+                    items_per_page=items_per_page,
+                )
+            except toolkit.ObjectNotFound:
+                abort(404, _('Group not found'))
+            except Exception as e:
+                log.error(f"Error in group_ihpix: {e}")
+                abort(500)
+
         def request_membership(name):
             """Handle membership request for an organization."""
             try:

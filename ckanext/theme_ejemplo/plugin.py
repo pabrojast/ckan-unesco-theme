@@ -521,6 +521,12 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 MyLogica.group_data_stories,
                 methods=['GET']
             )
+            blueprint.add_url_rule(
+                u'/group/<name>/ihpix',
+                u'group_ihpix',
+                MyLogica.group_ihpix,
+                methods=['GET']
+            )
 
             # Membership request
             blueprint.add_url_rule(

@@ -1,0 +1,1036 @@
+{% extends "group/read_base.html" %}
+
+{% block subtitle %}{{ _('IHP-IX Activities') }} {{ g.template_title_delimiter }} {{ group_dict.display_name }}{% endblock %}
+
+{% block primary_content_inner %}
+  <h2 class="hide-heading">{{ _('IHP-IX Activities') }}</h2>
+
+<style>
+  :root {
+    --ox-primary: #0069B4;
+    --ox-primary-dark: #004E8C;
+    --ox-primary-light: #E8F4FD;
+    --ox-surface: #FFFFFF;
+    --ox-surface-alt: #F8FAFC;
+    --ox-border: #E2E8F0;
+    --ox-text: #0F172A;
+    --ox-text-sec: #64748B;
+    --ox-text-muted: #94A3B8;
+    --ox-success: #059669;
+    --ox-radius: 12px;
+    --ox-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06);
+    --ox-shadow-hover: 0 4px 12px rgba(0,0,0,0.08);
+  }
+
+  .gix-wrap { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: var(--ox-text); }
+  .gix-wrap *, .gix-wrap *::before, .gix-wrap *::after { box-sizing: border-box; }
+
+  /* Info bar */
+  .gix-info-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    background: linear-gradient(135deg, #0069B4 0%, #004E8C 100%);
+    color: #fff;
+    border-radius: var(--ox-radius);
+    padding: 18px 24px;
+    margin-bottom: 20px;
+  }
+  .gix-info-bar h3 {
+    font-size: 17px;
+    font-weight: 700;
+    margin: 0;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .gix-info-bar h3 .fa { font-size: 16px; opacity: 0.85; }
+  .gix-info-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .gix-count-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,0.18);
+    border-radius: 100px;
+    padding: 5px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+  }
+  .gix-link-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 100px;
+    padding: 5px 14px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #fff;
+    text-decoration: none;
+    transition: background 0.15s;
+  }
+  .gix-link-btn:hover { background: rgba(255,255,255,0.25); color: #fff; text-decoration: none; }
+
+  /* Filters */
+  .gix-filters {
+    background: var(--ox-surface);
+    border: 1px solid var(--ox-border);
+    border-radius: var(--ox-radius);
+    padding: 18px 20px;
+    margin-bottom: 20px;
+  }
+  .gix-filters-head {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--ox-text-sec);
+    margin: 0 0 12px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .gix-filters-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: flex-end;
+  }
+  .gix-fg { flex: 1 1 140px; min-width: 120px; }
+  .gix-fg--wide { flex: 2 1 220px; min-width: 180px; }
+  .gix-fg label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ox-text-sec);
+    margin-bottom: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+  .gix-input, .gix-select {
+    width: 100%;
+    height: 38px;
+    padding: 0 12px;
+    border: 1px solid var(--ox-border);
+    border-radius: 8px;
+    font-size: 14px;
+    color: var(--ox-text);
+    background: var(--ox-surface);
+    transition: border-color 0.15s;
+  }
+  .gix-input:focus, .gix-select:focus { outline: none; border-color: var(--ox-primary); box-shadow: 0 0 0 3px rgba(0,105,180,0.1); }
+  .gix-search-wrap {
+    position: relative;
+  }
+  .gix-search-wrap .fa {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--ox-text-muted);
+    font-size: 13px;
+    pointer-events: none;
+  }
+  .gix-search-wrap .gix-input { padding-left: 34px; }
+  .gix-filter-actions {
+    display: flex;
+    gap: 8px;
+    flex: 0 0 auto;
+    align-items: flex-end;
+  }
+  .gix-fbtn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 9px 18px;
+    border-radius: 100px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+    border: 1px solid transparent;
+    line-height: 1.4;
+  }
+  .gix-fbtn .fa { font-size: 12px; }
+  .gix-fbtn--solid { background: var(--ox-primary); color: #fff; border-color: var(--ox-primary); }
+  .gix-fbtn--solid:hover { background: var(--ox-primary-dark); border-color: var(--ox-primary-dark); color: #fff; text-decoration: none; }
+  .gix-fbtn--ghost { background: transparent; color: var(--ox-text-sec); border-color: var(--ox-border); }
+  .gix-fbtn--ghost:hover { background: var(--ox-surface-alt); color: var(--ox-text); text-decoration: none; }
+
+  /* Results bar */
+  .gix-results-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .gix-results-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+  }
+  .gix-results-text {
+    font-size: 14px;
+    color: var(--ox-text-sec);
+    margin: 0;
+  }
+  .gix-results-text strong { color: var(--ox-text); font-weight: 700; }
+  .gix-chips { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+  .gix-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: var(--ox-primary-light);
+    color: var(--ox-primary);
+    border-radius: 100px;
+    padding: 4px 12px;
+    font-size: 12px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: background 0.15s;
+  }
+  .gix-chip:hover { background: #D1ECFA; text-decoration: none; color: var(--ox-primary); }
+  .gix-chip .fa-times { font-size: 10px; opacity: 0.6; }
+  .gix-export-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 14px;
+    border-radius: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    background: transparent;
+    color: var(--ox-primary);
+    border: 1px solid var(--ox-primary);
+    cursor: pointer;
+    transition: all 0.2s;
+    text-decoration: none;
+  }
+  .gix-export-btn:hover { background: var(--ox-primary-light); text-decoration: none; color: var(--ox-primary); }
+
+  /* Activity cards */
+  .gix-card {
+    background: var(--ox-surface);
+    border: 1px solid var(--ox-border);
+    border-radius: var(--ox-radius);
+    margin-bottom: 14px;
+    overflow: hidden;
+    display: flex;
+    transition: box-shadow 0.25s ease, transform 0.25s ease;
+    box-shadow: var(--ox-shadow);
+  }
+  .gix-card:hover { box-shadow: var(--ox-shadow-hover); transform: translateY(-1px); }
+  .gix-card-accent { width: 4px; flex-shrink: 0; }
+  .gix-card-accent[data-pa="PA1"] { background: #0069B4; }
+  .gix-card-accent[data-pa="PA2"] { background: #0891B2; }
+  .gix-card-accent[data-pa="PA3"] { background: #059669; }
+  .gix-card-accent[data-pa="PA4"] { background: #D97706; }
+  .gix-card-accent[data-pa="PA5"] { background: #DC2626; }
+  .gix-card-body { flex: 1; padding: 18px 20px; min-width: 0; }
+  .gix-card-top {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 6px;
+  }
+  .gix-card-title {
+    font-size: 15px;
+    font-weight: 600;
+    margin: 0;
+    line-height: 1.4;
+    color: var(--ox-text);
+  }
+  .gix-card-title a { color: var(--ox-text); text-decoration: none; transition: color 0.15s; }
+  .gix-card-title a:hover { color: var(--ox-primary); text-decoration: none; }
+  .gix-card-title .fa-external-link { font-size: 10px; opacity: 0.35; margin-left: 4px; }
+  .gix-card-date {
+    color: var(--ox-text-muted);
+    white-space: nowrap;
+    font-size: 12px;
+    flex-shrink: 0;
+  }
+  .gix-card-date .fa { margin-right: 3px; font-size: 11px; }
+  .gix-card-meta {
+    font-size: 12px;
+    color: var(--ox-text-sec);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+  .gix-card-meta span { display: inline-flex; align-items: center; gap: 3px; }
+  .gix-card-meta .fa { color: var(--ox-text-muted); font-size: 11px; }
+  .gix-meta-sep { color: var(--ox-border); font-size: 10px; }
+  .gix-card-tags { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 10px; }
+  .gix-tag {
+    display: inline-block;
+    padding: 2px 9px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.5;
+  }
+  .gix-tag--pa { color: #fff; }
+  .gix-tag--pa[data-pa="PA1"] { background: #0069B4; }
+  .gix-tag--pa[data-pa="PA2"] { background: #0891B2; }
+  .gix-tag--pa[data-pa="PA3"] { background: #059669; }
+  .gix-tag--pa[data-pa="PA4"] { background: #D97706; }
+  .gix-tag--pa[data-pa="PA5"] { background: #DC2626; }
+  .gix-tag--output { background: var(--ox-primary-light); color: var(--ox-primary); }
+  .gix-tag--biennium { background: #F0FDF4; color: var(--ox-success); }
+  .gix-tag--status { background: transparent; color: var(--ox-success); border: 1px solid #A7F3D0; }
+  .gix-card-desc {
+    font-size: 13px;
+    color: var(--ox-text-sec);
+    margin: 0 0 12px;
+    line-height: 1.6;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .gix-toggle-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: transparent;
+    border: 1px solid var(--ox-border);
+    border-radius: 8px;
+    padding: 5px 12px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--ox-text-sec);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .gix-toggle-btn:hover { background: var(--ox-surface-alt); border-color: #CBD5E1; color: var(--ox-text); }
+  .gix-toggle-btn .fa { font-size: 10px; transition: transform 0.25s; }
+  .gix-toggle-btn.gix-expanded .fa { transform: rotate(180deg); }
+
+  /* Detail panel */
+  .gix-detail {
+    background: var(--ox-surface-alt);
+    border-top: 1px solid var(--ox-border);
+    border-radius: 0 0 8px 8px;
+    padding: 16px;
+    margin: 14px -20px -18px;
+    animation: gixSlideIn 0.25s ease-out;
+  }
+  @keyframes gixSlideIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .gix-detail-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 10px;
+    margin-bottom: 10px;
+  }
+  .gix-detail-item {
+    padding: 10px 12px;
+    background: var(--ox-surface);
+    border-radius: 8px;
+    border: 1px solid var(--ox-border);
+  }
+  .gix-detail-label {
+    font-size: 11px;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--ox-text-muted);
+    margin-bottom: 3px;
+  }
+  .gix-detail-value {
+    font-size: 13px;
+    color: var(--ox-text);
+    word-break: break-word;
+    line-height: 1.5;
+  }
+  .gix-section-title {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--ox-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    margin: 14px 0 8px;
+    padding-bottom: 6px;
+    border-bottom: 2px solid var(--ox-primary-light);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .gix-section-title .fa { font-size: 12px; }
+  .gix-tag-list { display: flex; flex-wrap: wrap; gap: 5px; margin-bottom: 6px; }
+  .gix-dtag {
+    display: inline-block;
+    padding: 2px 9px;
+    border-radius: 6px;
+    font-size: 12px;
+    background: var(--ox-primary-light);
+    color: var(--ox-primary);
+    border: 1px solid #D1ECFA;
+  }
+  .gix-json-tags-row { margin-bottom: 8px; }
+
+  /* Stakeholder mini-cards */
+  .gix-stake-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+  .gix-stake-card {
+    text-align: center;
+    padding: 12px 8px;
+    background: var(--ox-surface);
+    border-radius: 8px;
+    border: 1px solid #D1FAE5;
+  }
+  .gix-stake-num {
+    font-size: 20px;
+    font-weight: 800;
+    color: var(--ox-success);
+    line-height: 1;
+    margin-bottom: 3px;
+  }
+  .gix-stake-label {
+    font-size: 10px;
+    color: var(--ox-text-sec);
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  /* Pagination */
+  .gix-pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    margin-top: 28px;
+    flex-wrap: wrap;
+  }
+  .gix-pagination a,
+  .gix-pagination span {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.15s;
+    padding: 0 5px;
+  }
+  .gix-pagination a {
+    background: var(--ox-surface-alt);
+    border: 1px solid var(--ox-border);
+    color: var(--ox-text-sec);
+  }
+  .gix-pagination a:hover {
+    background: var(--ox-primary-light);
+    border-color: var(--ox-primary);
+    color: var(--ox-primary);
+    text-decoration: none;
+  }
+  .gix-page-active {
+    background: var(--ox-primary);
+    color: #fff;
+    border: 1px solid var(--ox-primary);
+    font-weight: 700;
+  }
+  .gix-page-dots { color: var(--ox-text-muted); border: none; background: none; }
+
+  /* Empty state */
+  .gix-empty {
+    text-align: center;
+    padding: 48px 24px;
+    background: var(--ox-surface-alt);
+    border-radius: var(--ox-radius);
+    border: 2px dashed var(--ox-border);
+  }
+  .gix-empty-icon {
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    background: var(--ox-primary-light);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+  }
+  .gix-empty-icon .fa { font-size: 24px; color: var(--ox-primary); }
+  .gix-empty h3 { font-size: 16px; font-weight: 700; color: var(--ox-text); margin: 0 0 6px; }
+  .gix-empty p { font-size: 13px; color: var(--ox-text-sec); margin: 0 0 16px; }
+
+  /* Responsive */
+  @media (max-width: 767px) {
+    .gix-info-bar { padding: 14px 16px; }
+    .gix-info-bar h3 { font-size: 15px; }
+    .gix-filters { padding: 14px 16px; }
+    .gix-fg { flex: 1 1 100%; }
+    .gix-fg--wide { flex: 1 1 100%; }
+    .gix-card-body { padding: 14px 16px; }
+    .gix-detail { margin: 12px -16px -14px; padding: 14px; }
+    .gix-detail-grid { grid-template-columns: 1fr; }
+    .gix-stake-grid { grid-template-columns: repeat(2, 1fr); }
+    .gix-results-bar { flex-direction: column; align-items: flex-start; }
+    .gix-card-top { flex-direction: column; gap: 4px; }
+    .gix-card-date { align-self: flex-start; }
+  }
+</style>
+
+<div class="gix-wrap">
+
+  {# ── Info bar ──────────────────────────────────────────── #}
+  <div class="gix-info-bar">
+    <h3><i class="fa fa-flask"></i> {{ _('IHP-IX Activities') }} — {{ group_dict.display_name }}</h3>
+    <div class="gix-info-right">
+      <span class="gix-count-pill">
+        <i class="fa fa-bar-chart"></i> {{ total }} {{ _('activities') }}
+      </span>
+      <a href="{{ h.url_for('/ihpix/outputs', country=group_dict.name) }}" class="gix-link-btn" target="_blank">
+        <i class="fa fa-external-link"></i> {{ _('Full Explorer') }}
+      </a>
+    </div>
+  </div>
+
+  {# ── Filters ───────────────────────────────────────────── #}
+  <div class="gix-filters">
+    <p class="gix-filters-head"><i class="fa fa-sliders"></i> {{ _('Filter Activities') }}</p>
+    <form method="get" action="{{ h.url_for('theme_ejemplo.group_ihpix', name=group_dict.name) }}">
+      <div class="gix-filters-grid">
+        <div class="gix-fg gix-fg--wide">
+          <label for="gix-q">{{ _('Search') }}</label>
+          <div class="gix-search-wrap">
+            <i class="fa fa-search"></i>
+            <input type="text" name="q" id="gix-q"
+                   class="gix-input"
+                   placeholder="{{ _('Search by title, institution…') }}"
+                   value="{{ q }}">
+          </div>
+        </div>
+
+        <div class="gix-fg">
+          <label for="gix-pa">{{ _('Priority Area') }}</label>
+          <select name="pa" id="gix-pa" class="gix-select">
+            <option value="">{{ _('All') }}</option>
+            {% for pa_num in range(1, 6) %}
+              <option value="PA{{ pa_num }}" {% if pa_filter == 'PA' ~ pa_num %}selected{% endif %}>
+                PA{{ pa_num }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="gix-fg">
+          <label for="gix-output">{{ _('Output') }}</label>
+          <select name="output" id="gix-output" class="gix-select">
+            <option value="">{{ _('All') }}</option>
+            {% if facets and facets.get('ihpix_output') %}
+              {% for item in facets['ihpix_output']['items'] %}
+                <option value="{{ item.name }}" {% if output_filter == item.name %}selected{% endif %}>
+                  {{ item.display_name }} ({{ item.count }})
+                </option>
+              {% endfor %}
+            {% endif %}
+          </select>
+        </div>
+
+        <div class="gix-fg">
+          <label for="gix-biennium">{{ _('Biennium') }}</label>
+          <select name="biennium" id="gix-biennium" class="gix-select">
+            <option value="">{{ _('All') }}</option>
+            {% for b in ['2022-2023', '2024-2025', '2026-2027', '2028-2029'] %}
+              <option value="{{ b }}" {% if biennium_filter is defined and biennium_filter == b %}selected{% endif %}>
+                {{ b }}
+              </option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div class="gix-filter-actions">
+          <button type="submit" class="gix-fbtn gix-fbtn--solid">
+            <i class="fa fa-search"></i> {{ _('Apply') }}
+          </button>
+          {% set has_filters = q or pa_filter or output_filter or (biennium_filter is defined and biennium_filter) %}
+          {% if has_filters %}
+            <a href="{{ h.url_for('theme_ejemplo.group_ihpix', name=group_dict.name) }}" class="gix-fbtn gix-fbtn--ghost">
+              <i class="fa fa-times"></i> {{ _('Clear') }}
+            </a>
+          {% endif %}
+        </div>
+      </div>
+    </form>
+  </div>
+
+  {# ── Results bar ───────────────────────────────────────── #}
+  <div class="gix-results-bar">
+    <div class="gix-results-left">
+      <p class="gix-results-text">
+        {{ _('Showing') }} <strong>{{ activities|length }}</strong> {{ _('of') }} <strong>{{ total }}</strong> {{ _('activities') }}
+      </p>
+      <div class="gix-chips">
+        {% if pa_filter %}
+          <a href="{{ h.url_for('theme_ejemplo.group_ihpix', name=group_dict.name, q=q, output=output_filter, biennium=biennium_filter if biennium_filter is defined else '') }}"
+             class="gix-chip">
+            {{ pa_filter }} <i class="fa fa-times"></i>
+          </a>
+        {% endif %}
+        {% if output_filter %}
+          <a href="{{ h.url_for('theme_ejemplo.group_ihpix', name=group_dict.name, q=q, pa=pa_filter, biennium=biennium_filter if biennium_filter is defined else '') }}"
+             class="gix-chip">
+            {{ output_filter }} <i class="fa fa-times"></i>
+          </a>
+        {% endif %}
+        {% if biennium_filter is defined and biennium_filter %}
+          <a href="{{ h.url_for('theme_ejemplo.group_ihpix', name=group_dict.name, q=q, pa=pa_filter, output=output_filter) }}"
+             class="gix-chip">
+            {{ biennium_filter }} <i class="fa fa-times"></i>
+          </a>
+        {% endif %}
+        {% if q %}
+          <a href="{{ h.url_for('theme_ejemplo.group_ihpix', name=group_dict.name, pa=pa_filter, output=output_filter, biennium=biennium_filter if biennium_filter is defined else '') }}"
+             class="gix-chip">
+            "{{ q }}" <i class="fa fa-times"></i>
+          </a>
+        {% endif %}
+      </div>
+    </div>
+    <button type="button" onclick="gixExportCSV()" class="gix-export-btn">
+      <i class="fa fa-download"></i> {{ _('Export CSV') }}
+    </button>
+  </div>
+
+  {# ── Activity cards ────────────────────────────────────── #}
+  {% if activities %}
+    {% for activity in activities %}
+      {% set pa = activity.priority_area or '' %}
+      <div class="gix-card">
+        <div class="gix-card-accent" data-pa="{{ pa }}" style="background: {{ {'PA1':'#0069B4','PA2':'#0891B2','PA3':'#059669','PA4':'#D97706','PA5':'#DC2626'}.get(pa, '#E2E8F0') }};"></div>
+        <div class="gix-card-body">
+          <div class="gix-card-top">
+            <h4 class="gix-card-title">
+              {% if activity.link %}
+                <a href="{{ activity.link }}" target="_blank" rel="noopener">
+                  {{ activity.title }} <i class="fa fa-external-link"></i>
+                </a>
+              {% else %}
+                {{ activity.title }}
+              {% endif %}
+            </h4>
+            <span class="gix-card-date">
+              {% if activity.reported_date %}
+                <i class="fa fa-calendar-o"></i> {{ activity.reported_date }}
+              {% elif activity.created_at %}
+                <i class="fa fa-calendar-o"></i> {{ activity.created_at[:10] }}
+              {% endif %}
+            </span>
+          </div>
+
+          {% if activity.country or activity.institution %}
+            <div class="gix-card-meta">
+              {% if activity.institution %}
+                <span><i class="fa fa-building-o"></i> {{ activity.institution }}</span>
+              {% endif %}
+              {% if activity.institution and activity.country %}
+                <span class="gix-meta-sep">•</span>
+              {% endif %}
+              {% if activity.country %}
+                <span><i class="fa fa-globe"></i> {{ activity.country }}</span>
+              {% endif %}
+              {% if activity.institution_type and (activity.institution or activity.country) %}
+                <span class="gix-meta-sep">•</span>
+              {% endif %}
+              {% if activity.institution_type %}
+                <span><i class="fa fa-tag"></i> {{ activity.institution_type }}</span>
+              {% endif %}
+            </div>
+          {% endif %}
+
+          <div class="gix-card-tags">
+            {% if pa %}
+              <span class="gix-tag gix-tag--pa" data-pa="{{ pa }}">{{ pa }}</span>
+            {% endif %}
+            {% if activity.output %}
+              <span class="gix-tag gix-tag--output">{{ activity.output }}</span>
+            {% endif %}
+            {% if activity.biennium %}
+              <span class="gix-tag gix-tag--biennium">{{ activity.biennium }}</span>
+            {% endif %}
+            {% if activity.status %}
+              <span class="gix-tag gix-tag--status">{{ activity.status }}</span>
+            {% endif %}
+          </div>
+
+          {% if activity.description %}
+            <p class="gix-card-desc">{{ activity.description }}</p>
+          {% endif %}
+
+          {# Expandable detail section #}
+          <div class="gix-detail" id="gix-detail-{{ activity.id }}" style="display: none;">
+            <div class="gix-detail-grid">
+              {% if activity.key_activity %}
+                <div class="gix-detail-item">
+                  <div class="gix-detail-label">{{ _('Key Activity') }}</div>
+                  <div class="gix-detail-value">{{ activity.key_activity }}</div>
+                </div>
+              {% endif %}
+              {% if activity.outcomes %}
+                <div class="gix-detail-item">
+                  <div class="gix-detail-label">{{ _('Outcomes') }}</div>
+                  <div class="gix-detail-value">{{ activity.outcomes }}</div>
+                </div>
+              {% endif %}
+              {% if activity.partners %}
+                <div class="gix-detail-item">
+                  <div class="gix-detail-label">{{ _('Partners') }}</div>
+                  <div class="gix-detail-value">{{ activity.partners }}</div>
+                </div>
+              {% endif %}
+              {% if activity.unesco_participation %}
+                <div class="gix-detail-item">
+                  <div class="gix-detail-label">{{ _('UNESCO Participation') }}</div>
+                  <div class="gix-detail-value">{{ activity.unesco_participation }}</div>
+                </div>
+              {% endif %}
+              {% if activity.supporting_member_state %}
+                <div class="gix-detail-item">
+                  <div class="gix-detail-label">{{ _('Supporting Member State') }}</div>
+                  <div class="gix-detail-value">{{ activity.supporting_member_state }}</div>
+                </div>
+              {% endif %}
+              {% if activity.synergies %}
+                <div class="gix-detail-item">
+                  <div class="gix-detail-label">{{ _('Synergies') }}</div>
+                  <div class="gix-detail-value">{{ activity.synergies }}</div>
+                </div>
+              {% endif %}
+            </div>
+
+            {# JSON fields: Flagships, Regions, Member States, Cross-cutting WG #}
+            {% set json_sections = [
+              (activity.flagships, _('Flagships')),
+              (activity.regions, _('Regions')),
+              (activity.member_states, _('Member States')),
+              (activity.cross_cutting_wg, _('Cross-cutting Working Groups'))
+            ] %}
+            {% for raw_value, label in json_sections %}
+              {% if raw_value %}
+                <div class="gix-json-tags-row">
+                  <div class="gix-detail-label">{{ label }}</div>
+                  <div class="gix-tag-list gix-json-tags" data-json="{{ raw_value | e }}">
+                    <span class="gix-dtag">{{ raw_value }}</span>
+                  </div>
+                </div>
+              {% endif %}
+            {% endfor %}
+
+            {# Products & Training #}
+            {% set has_products = activity.knowledge_product_type or activity.num_knowledge_products or activity.scientific_product_type or activity.num_scientific_products or activity.training_type or activity.num_training_materials or activity.num_curricula or activity.num_transboundary_ms %}
+            {% if has_products %}
+              <div class="gix-section-title"><i class="fa fa-cubes"></i> {{ _('Products & Training') }}</div>
+              <div class="gix-detail-grid">
+                {% if activity.knowledge_product_type %}
+                  <div class="gix-detail-item">
+                    <div class="gix-detail-label">{{ _('Knowledge Product Type') }}</div>
+                    <div class="gix-detail-value">{{ activity.knowledge_product_type }}</div>
+                  </div>
+                {% endif %}
+                {% if activity.knowledge_product_type_other %}
+                  <div class="gix-detail-item">
+                    <div class="gix-detail-label">{{ _('Knowledge Product Type (Other)') }}</div>
+                    <div class="gix-detail-value">{{ activity.knowledge_product_type_other }}</div>
+                  </div>
+                {% endif %}
+                {% if activity.num_knowledge_products %}
+                  <div class="gix-detail-item">
+                    <div class="gix-detail-label">{{ _('# Knowledge Products') }}</div>
+                    <div class="gix-detail-value">{{ activity.num_knowledge_products }}</div>
+                  </div>
+                {% endif %}
+                {% if activity.scientific_product_type %}
+                  <div class="gix-detail-item">
+                    <div class="gix-detail-label">{{ _('Scientific Product Type') }}</div>
+                    <div class="gix-detail-value">{{ activity.scientific_product_type }}</div>
+                  </div>
+                {% endif %}
+                {% if activity.num_scientific_products %}
+                  <div class="gix-detail-item">
+                    <div class="gix-detail-label">{{ _('# Scientific Products') }}</div>
+                    <div class="gix-detail-value">{{ activity.num_scientific_products }}</div>
+                  </div>
+                {% endif %}
+                {% if activity.training_type %}
+                  <div class="gix-detail-item">
+                    <div class="gix-detail-label">{{ _('Training Type') }}</div>
+                    <div class="gix-detail-value">{{ activity.training_type }}</div>
+                  </div>
+                {% endif %}
+                {% if activity.num_training_materials %}
+                  <div class="gix-detail-item">
+                    <div class="gix-detail-label">{{ _('# Training Materials') }}</div>
+                    <div class="gix-detail-value">{{ activity.num_training_materials }}</div>
+                  </div>
+                {% endif %}
+                {% if activity.num_curricula %}
+                  <div class="gix-detail-item">
+                    <div class="gix-detail-label">{{ _('# Curricula') }}</div>
+                    <div class="gix-detail-value">{{ activity.num_curricula }}</div>
+                  </div>
+                {% endif %}
+                {% if activity.num_transboundary_ms %}
+                  <div class="gix-detail-item">
+                    <div class="gix-detail-label">{{ _('# Transboundary Member States') }}</div>
+                    <div class="gix-detail-value">{{ activity.num_transboundary_ms }}</div>
+                  </div>
+                {% endif %}
+                {% if activity.knowledge_activity_type %}
+                  <div class="gix-detail-item">
+                    <div class="gix-detail-label">{{ _('Knowledge Activity Type') }}</div>
+                    <div class="gix-detail-value">{{ activity.knowledge_activity_type }}</div>
+                  </div>
+                {% endif %}
+                {% if activity.knowledge_activity_type_other %}
+                  <div class="gix-detail-item">
+                    <div class="gix-detail-label">{{ _('Knowledge Activity Type (Other)') }}</div>
+                    <div class="gix-detail-value">{{ activity.knowledge_activity_type_other }}</div>
+                  </div>
+                {% endif %}
+              </div>
+            {% endif %}
+
+            {# Stakeholder Metrics #}
+            {% set has_stakeholders = activity.stakeholders_knowledge or activity.stakeholders_awareness or activity.num_stakeholder_groups %}
+            {% if has_stakeholders %}
+              <div class="gix-section-title"><i class="fa fa-users"></i> {{ _('Stakeholder Engagement') }}</div>
+              <div class="gix-stake-grid">
+                {% if activity.stakeholders_knowledge %}
+                  <div class="gix-stake-card">
+                    <div class="gix-stake-num">{{ activity.stakeholders_knowledge }}</div>
+                    <div class="gix-stake-label">{{ _('Knowledge') }}</div>
+                  </div>
+                {% endif %}
+                {% if activity.stakeholders_knowledge_female %}
+                  <div class="gix-stake-card">
+                    <div class="gix-stake-num">{{ activity.stakeholders_knowledge_female }}</div>
+                    <div class="gix-stake-label">{{ _('Knowledge (Female)') }}</div>
+                  </div>
+                {% endif %}
+                {% if activity.stakeholders_knowledge_youth %}
+                  <div class="gix-stake-card">
+                    <div class="gix-stake-num">{{ activity.stakeholders_knowledge_youth }}</div>
+                    <div class="gix-stake-label">{{ _('Knowledge (Youth)') }}</div>
+                  </div>
+                {% endif %}
+                {% if activity.stakeholders_awareness %}
+                  <div class="gix-stake-card">
+                    <div class="gix-stake-num">{{ activity.stakeholders_awareness }}</div>
+                    <div class="gix-stake-label">{{ _('Awareness') }}</div>
+                  </div>
+                {% endif %}
+                {% if activity.stakeholders_awareness_female %}
+                  <div class="gix-stake-card">
+                    <div class="gix-stake-num">{{ activity.stakeholders_awareness_female }}</div>
+                    <div class="gix-stake-label">{{ _('Awareness (Female)') }}</div>
+                  </div>
+                {% endif %}
+                {% if activity.stakeholders_awareness_youth %}
+                  <div class="gix-stake-card">
+                    <div class="gix-stake-num">{{ activity.stakeholders_awareness_youth }}</div>
+                    <div class="gix-stake-label">{{ _('Awareness (Youth)') }}</div>
+                  </div>
+                {% endif %}
+                {% if activity.num_stakeholder_groups %}
+                  <div class="gix-stake-card">
+                    <div class="gix-stake-num">{{ activity.num_stakeholder_groups }}</div>
+                    <div class="gix-stake-label">{{ _('Stakeholder Groups') }}</div>
+                  </div>
+                {% endif %}
+              </div>
+              {% if activity.stakeholder_group_type %}
+                <div style="margin-top: 6px;">
+                  <div class="gix-detail-label">{{ _('Stakeholder Group Type') }}</div>
+                  <div class="gix-detail-value">{{ activity.stakeholder_group_type }}</div>
+                </div>
+              {% endif %}
+            {% endif %}
+
+            {# Notes #}
+            {% if activity.notes %}
+              <div class="gix-section-title"><i class="fa fa-sticky-note-o"></i> {{ _('Notes') }}</div>
+              <div class="gix-detail-value" style="white-space: pre-line;">{{ activity.notes }}</div>
+            {% endif %}
+          </div>
+
+          <button type="button" onclick="gixToggleDetail('{{ activity.id }}')" class="gix-toggle-btn" id="gix-btn-{{ activity.id }}">
+            <i class="fa fa-chevron-down"></i> {{ _('View Details') }}
+          </button>
+        </div>
+      </div>
+    {% endfor %}
+
+    {# ── Pagination ──────────────────────────────────────── #}
+    {% set total_pages = (total / items_per_page)|round(0, 'ceil')|int %}
+    {% if total_pages > 1 %}
+      {% macro page_url(p) %}
+        {{- h.url_for('theme_ejemplo.group_ihpix', name=group_dict.name,
+              pa=pa_filter, q=q, output=output_filter,
+              biennium=biennium_filter if biennium_filter is defined else '',
+              page=p) -}}
+      {% endmacro %}
+
+      <nav class="gix-pagination" aria-label="{{ _('Page navigation') }}">
+        {% if page > 1 %}
+          <a href="{{ page_url(page - 1) }}" aria-label="{{ _('Previous') }}"><i class="fa fa-chevron-left"></i></a>
+        {% endif %}
+
+        {% for p in range(1, total_pages + 1) %}
+          {% if p == page %}
+            <span class="gix-page-active">{{ p }}</span>
+          {% elif p <= 2 or p >= total_pages - 1 or (p >= page - 2 and p <= page + 2) %}
+            <a href="{{ page_url(p) }}">{{ p }}</a>
+          {% elif p == 3 or p == total_pages - 2 %}
+            <span class="gix-page-dots">…</span>
+          {% endif %}
+        {% endfor %}
+
+        {% if page < total_pages %}
+          <a href="{{ page_url(page + 1) }}" aria-label="{{ _('Next') }}"><i class="fa fa-chevron-right"></i></a>
+        {% endif %}
+      </nav>
+    {% endif %}
+
+  {% else %}
+    {# ── Empty state ─────────────────────────────────────── #}
+    <div class="gix-empty">
+      <div class="gix-empty-icon">
+        <i class="fa fa-flask"></i>
+      </div>
+      <h3>{{ _('No IHP-IX activities found') }}</h3>
+      <p>{{ _('No reported activities match the current filters for this member state.') }}</p>
+      {% if q or pa_filter or output_filter or (biennium_filter is defined and biennium_filter) %}
+        <a href="{{ h.url_for('theme_ejemplo.group_ihpix', name=group_dict.name) }}" class="gix-fbtn gix-fbtn--solid" style="margin-top: 4px;">
+          <i class="fa fa-times"></i> {{ _('Clear All Filters') }}
+        </a>
+      {% endif %}
+    </div>
+  {% endif %}
+
+</div>
+
+{# ── JavaScript ──────────────────────────────────────────── #}
+<script>
+(function() {
+  'use strict';
+
+  window.gixToggleDetail = function(id) {
+    var detail = document.getElementById('gix-detail-' + id);
+    var btn = document.getElementById('gix-btn-' + id);
+    if (!detail || !btn) return;
+
+    var isHidden = detail.style.display === 'none';
+    detail.style.display = isHidden ? 'block' : 'none';
+
+    if (isHidden) {
+      btn.classList.add('gix-expanded');
+      btn.innerHTML = '<i class="fa fa-chevron-down"></i> {{ _("Hide Details") }}';
+    } else {
+      btn.classList.remove('gix-expanded');
+      btn.innerHTML = '<i class="fa fa-chevron-down"></i> {{ _("View Details") }}';
+    }
+  };
+
+  function parseJsonTags() {
+    var containers = document.querySelectorAll('.gix-json-tags');
+    for (var i = 0; i < containers.length; i++) {
+      var raw = containers[i].getAttribute('data-json');
+      if (!raw) continue;
+      try {
+        var items = JSON.parse(raw);
+        if (Array.isArray(items) && items.length > 0) {
+          var html = '';
+          for (var j = 0; j < items.length; j++) {
+            var text = typeof items[j] === 'object' ? (items[j].name || items[j].label || JSON.stringify(items[j])) : items[j];
+            html += '<span class="gix-dtag">' + escapeHtml(String(text)) + '</span>';
+          }
+          containers[i].innerHTML = html;
+        }
+      } catch (e) { /* JSON parse fallback — se mantiene el texto original */ }
+    }
+  }
+
+  function escapeHtml(str) {
+    var div = document.createElement('div');
+    div.appendChild(document.createTextNode(str));
+    return div.innerHTML;
+  }
+
+  window.gixExportCSV = function() {
+    var activities = {{ activities | tojson }};
+    if (!activities || !activities.length) {
+      alert('{{ _("No activities to export.") }}');
+      return;
+    }
+
+    var cols = [
+      'id', 'title', 'priority_area', 'output', 'biennium', 'country',
+      'institution', 'institution_type', 'status', 'reported_date',
+      'key_activity', 'outcomes', 'partners', 'unesco_participation',
+      'flagships', 'regions', 'member_states',
+      'knowledge_product_type', 'knowledge_product_type_other', 'num_knowledge_products',
+      'scientific_product_type', 'num_scientific_products',
+      'training_type', 'num_training_materials', 'num_curricula',
+      'num_transboundary_ms', 'knowledge_activity_type', 'knowledge_activity_type_other',
+      'stakeholders_knowledge', 'stakeholders_knowledge_female', 'stakeholders_knowledge_youth',
+      'stakeholders_awareness', 'stakeholders_awareness_female', 'stakeholders_awareness_youth',
+      'num_stakeholder_groups', 'stakeholder_group_type',
+      'notes', 'synergies', 'cross_cutting_wg', 'supporting_member_state', 'link', 'description'
+    ];
+
+    var csvRows = [cols.join(',')];
+    for (var i = 0; i < activities.length; i++) {
+      var row = [];
+      for (var j = 0; j < cols.length; j++) {
+        var val = activities[i][cols[j]];
+        if (val === null || val === undefined) val = '';
+        val = String(val).replace(/"/g, '""');
+        row.push('"' + val + '"');
+      }
+      csvRows.push(row.join(','));
+    }
+
+    var blob = new Blob([csvRows.join('\n')], { type: 'text/csv;charset=utf-8;' });
+    var link = document.createElement('a');
+    link.href = URL.createObjectURL(blob);
+    link.download = 'ihpix_activities_{{ group_dict.name }}.csv';
+    link.style.display = 'none';
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(link.href);
+  };
+
+  document.addEventListener('DOMContentLoaded', function() {
+    parseJsonTags();
+  });
+
+})();
+</script>
+{% endblock %}
