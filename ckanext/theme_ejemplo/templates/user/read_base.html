@@ -89,13 +89,17 @@
         var toggle = document.getElementById('user-orgs-toggle');
         if (!toggle) return;
         var expanded = false;
+        var maxVisible = {{ max_visible_orgs }};
         toggle.addEventListener('click', function() {
           expanded = !expanded;
-          var container = document.getElementById('user-profile-orgs');
-          var hiddenItems = container.querySelectorAll('.user-org-hidden');
-          hiddenItems.forEach(function(el) {
-            el.style.display = expanded ? '' : 'none';
-          });
+          var badges = document.getElementById('user-profile-orgs').querySelectorAll('.user-org-badge');
+          for (var i = maxVisible; i < badges.length; i++) {
+            if (expanded) {
+              badges[i].classList.remove('user-org-hidden');
+            } else {
+              badges[i].classList.add('user-org-hidden');
+            }
+          }
           toggle.textContent = expanded ? toggle.getAttribute('data-hide-text') : toggle.getAttribute('data-show-text');
         });
       })();
