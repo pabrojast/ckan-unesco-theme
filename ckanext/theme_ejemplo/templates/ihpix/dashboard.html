@@ -42,6 +42,10 @@
     -webkit-font-smoothing: antialiased;
   }
 
+  /* ── CKAN wrapper neutralisation ─────────────────────── */
+  article.module:has(.dx-dash) { border: none !important; background: transparent !important; box-shadow: none !important; margin: 0 !important; }
+  article.module > .module-content:has(.dx-dash) { padding: 0 !important; }
+
   /* ── Page Header ────────────────────────────────────────── */
   .dx-header {
     background: linear-gradient(135deg, #0069B4 0%, #004E8C 100%) !important;

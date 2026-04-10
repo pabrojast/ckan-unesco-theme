@@ -28,6 +28,10 @@
     --ox-shadow-hover: 0 4px 12px rgba(0,0,0,0.08);
   }
 
+  /* ── CKAN wrapper neutralisation ─────────────────────── */
+  article.module:has(.ox-wrap) { border: none !important; background: transparent !important; box-shadow: none !important; margin: 0 !important; }
+  article.module > .module-content:has(.ox-wrap) { padding: 0 !important; }
+
   /* ── Base Reset ────────────────────────────────────────── */
   .ox-wrap { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: var(--ox-text) !important; }
   .ox-wrap *, .ox-wrap *::before, .ox-wrap *::after { box-sizing: border-box; }

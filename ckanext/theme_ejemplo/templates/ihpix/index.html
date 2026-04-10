@@ -40,6 +40,10 @@
   color: var(--ix-text) !important;
 }
 
+/* ── CKAN wrapper neutralisation ─────────────────────────── */
+article.module:has(.ihpix-landing) { border: none !important; background: transparent !important; box-shadow: none !important; margin: 0 !important; }
+article.module > .module-content:has(.ihpix-landing) { padding: 0 !important; }
+
 /* ── Hero Section ──────────────────────────────────────────── */
 .ihpix-hero {
   background: linear-gradient(135deg, #0069B4 0%, #004E8C 100%) !important;
