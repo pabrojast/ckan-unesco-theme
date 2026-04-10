@@ -992,7 +992,7 @@
         subdomains: 'abcd'
       }).addTo(map);
 
-      fetch('/api/3/action/ihpix_country_summary_list')
+      fetch('/api/3/action/ihpix_geojson')
         .then(function (r) { return r.json(); })
         .then(function (data) {
           if (!data.result || !data.result.features || !data.result.features.length) return;
@@ -1001,7 +1001,8 @@
 
           features.forEach(function (f) {
             var p = f.properties;
-            var coords = f.geometry.coordinates;
+            var coords = f.geometry && f.geometry.coordinates;
+            if (!coords) return;
             var radius = Math.max(5, Math.min(22, Math.sqrt(p.total_activities) * 3));
             var color = REGION_COLORS[p.region] || '#94A3B8';
 
@@ -1040,58 +1041,7 @@
 
           buildRegionChart(regionCounts);
         })
-        .catch(function () {
-          /* Degrade silently — try fallback endpoint */
-          fetch('/api/3/action/ihpix_geojson')
-            .then(function (r) { return r.json(); })
-            .then(function (data) {
-              if (!data.result || !data.result.features || !data.result.features.length) return;
-              var features = data.result.features;
-              var regionCounts = {};
-
-              features.forEach(function (f) {
-                var p = f.properties;
-                var coords = f.geometry.coordinates;
-                var radius = Math.max(5, Math.min(22, Math.sqrt(p.total_activities) * 3));
-                var color = REGION_COLORS[p.region] || '#94A3B8';
-
-                if (p.region) {
-                  regionCounts[p.region] = (regionCounts[p.region] || 0) + p.total_activities;
-                }
-
-                var popupHtml = '<div style="min-width:180px;font-family:inherit;">' +
-                  '<div style="font-size:14px;font-weight:700;color:#0F172A;margin-bottom:6px;">' + (p.country || '\u2014') + '</div>' +
-                  '<div style="height:1px;background:#E2E8F0;margin-bottom:8px;"></div>' +
-                  '<div style="font-size:13px;color:#64748B;margin-bottom:4px;">' +
-                  '<strong style="color:#0F172A;">' + p.total_activities + '</strong> {{ _("activities") }}</div>';
-
-                for (var i = 1; i <= 5; i++) {
-                  var paKey = 'pa' + i + '_count';
-                  if (p[paKey] !== undefined && p[paKey] > 0) {
-                    popupHtml += '<div style="font-size:12px;color:#64748B;margin-top:2px;">' +
-                      '<span style="color:' + PA_COLORS['PA' + i] + ';">\u25CF</span> PA' + i + ': ' + p[paKey] + '</div>';
-                  }
-                }
-                if (p.region) {
-                  popupHtml += '<div style="font-size:11px;color:#94A3B8;margin-top:6px;">' + p.region + '</div>';
-                }
-                popupHtml += '</div>';
-
-                L.circleMarker([coords[1], coords[0]], {
-                  radius: radius,
-                  fillColor: color,
-                  color: '#fff',
-                  weight: 1.5,
-                  opacity: 0.9,
-                  fillOpacity: 0.65
-                }).bindPopup(popupHtml, { className: 'dx-popup' })
-                  .addTo(map);
-              });
-
-              buildRegionChart(regionCounts);
-            })
-            .catch(function () { /* Silently degrade */ });
-        });
+        .catch(function () { /* Silently degrade */ });
     })();
 
     /* ── 5. Region Distribution – Doughnut (from API) ────── */

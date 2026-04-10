@@ -942,8 +942,10 @@
       if (elCnt) elCnt.textContent = (s.total_countries || 0).toLocaleString();
       if (elIns) elIns.textContent = (s.total_institutions || 0).toLocaleString();
 
-      /* PA activity counts */
-      var byPA = s.by_priority_area || {};
+      /* PA activity counts — API returns array [{name:'PA1', count:295}, ...] */
+      var byPAArr = s.by_priority_area || [];
+      var byPA = {};
+      byPAArr.forEach(function (item) { byPA[item.name] = item.count; });
       for (var i = 1; i <= 5; i++) {
         var paEl = document.querySelector('#ihpix-pa-count-' + i + ' span');
         if (paEl) {
