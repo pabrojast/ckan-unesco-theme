@@ -6282,7 +6282,7 @@ body .download-links .btn-group .btn i {
 }
 
 .slideshow-modern .slideshow-wrapper {
-  height: 295px;
+  height: 380px;
 }
 
 .slideshow-modern .slide.slide-active {
@@ -6342,6 +6342,7 @@ body .download-links .btn-group .btn i {
   margin-bottom: 1.25rem;
   font-weight: 300;
   max-width: 600px;
+  color: #fff;
 }
 
 .slideshow-modern .slide-btn {
@@ -6417,20 +6418,20 @@ body .download-links .btn-group .btn i {
 
 /* Responsive slideshow */
 @media (max-width: 992px) {
-  .slideshow-modern .slideshow-wrapper { height: 260px; }
+  .slideshow-modern .slideshow-wrapper { height: 340px; }
   .slideshow-modern .slide-content h2 { font-size: 2rem; }
   .slideshow-modern .slide-content { padding: 2rem; }
 }
 
 @media (max-width: 768px) {
-  .slideshow-modern .slideshow-wrapper { height: 220px; }
+  .slideshow-modern .slideshow-wrapper { height: 280px; }
   .slideshow-modern .slide-content h2 { font-size: 1.5rem; }
   .slideshow-modern .slide-subtitle { font-size: 0.95rem; display: none; }
   .slideshow-modern .slide-content { padding: 1.5rem; }
 }
 
 @media (max-width: 576px) {
-  .slideshow-modern .slideshow-wrapper { height: 180px; }
+  .slideshow-modern .slideshow-wrapper { height: 240px; }
   .slideshow-modern .slide-content h2 { font-size: 1.25rem; }
   .slideshow-modern .slide-btn { padding: 0.5rem 1.25rem !important; font-size: 0.85rem !important; }
 }
