@@ -997,7 +997,7 @@ class IhpixActivity(model.DomainObject):
     @classmethod
     def get_published(cls, priority_area=None, output=None, q_text=None,
                       biennium=None, country=None, region=None, flagship=None,
-                      limit=20, offset=0):
+                      organization=None, limit=20, offset=0):
         """Return published activities with optional filters."""
         q = meta.Session.query(cls).filter(cls.status == cls.STATUS_PUBLISHED)
         if priority_area:
@@ -1013,6 +1013,24 @@ class IhpixActivity(model.DomainObject):
                 (cls.member_states.ilike(country_pattern)) |
                 (cls.supporting_member_state == country)
             )
+        if organization:
+            # Búsqueda flexible: el título de la org puede diferir del nombre
+            # almacenado en institution/partners. Se generan variantes para
+            # maximizar coincidencias (ej: "WWF India" vs "World Wide Fund for Nature (WWF)")
+            org_variants = cls._build_org_search_variants(organization)
+            from sqlalchemy import or_
+            org_conditions = []
+            for variant in org_variants:
+                pattern = u'%' + variant + u'%'
+                org_conditions.extend([
+                    cls.institution.ilike(pattern),
+                    cls.partners.ilike(pattern),
+                    cls.country.ilike(pattern),
+                    cls.member_states.ilike(pattern),
+                    cls.supporting_member_state.ilike(pattern),
+                ])
+            if org_conditions:
+                q = q.filter(or_(*org_conditions))
         if region:
             q = q.filter(cls.regions.ilike(u'%' + region + u'%'))
         if flagship:
@@ -1025,6 +1043,54 @@ class IhpixActivity(model.DomainObject):
         total = q.count()
         results = q.order_by(cls.created_at.desc()).offset(offset).limit(limit).all()
         return results, total
+
+    @staticmethod
+    def _build_org_search_variants(org_name):
+        """Genera variantes de búsqueda a partir del nombre de una organización.
+
+        Extrae siglas entre paréntesis, palabras significativas, y normaliza
+        guiones para mejorar el matching flexible contra campos de texto libre.
+        Ejemplo: "World Wide Fund for Nature (WWF)" → ["World Wide Fund for Nature (WWF)",
+        "World Wide Fund for Nature", "WWF", "World Wide Fund Nature"]
+        """
+        import re
+        variants = set()
+        name = org_name.strip()
+        if not name:
+            return []
+        variants.add(name)
+
+        # Extraer siglas entre paréntesis: "Org Name (ABC)" → "ABC"
+        acronym_match = re.search(r'\(([A-Za-z0-9\-\.]+)\)', name)
+        if acronym_match:
+            acronym = acronym_match.group(1)
+            variants.add(acronym)
+            # Nombre sin la sigla entre paréntesis
+            clean_name = re.sub(r'\s*\([A-Za-z0-9\-\.]+\)\s*', ' ', name).strip()
+            if clean_name and len(clean_name) > 3:
+                variants.add(clean_name)
+
+        # Convertir slug a nombre legible: "world-wide-fund-for-nature-wwf" → "world wide fund for nature wwf"
+        if '-' in name and ' ' not in name:
+            readable = name.replace('-', ' ')
+            variants.add(readable)
+            # Extraer posible sigla al final del slug
+            parts = readable.split()
+            if parts and len(parts[-1]) <= 5 and parts[-1].isalpha():
+                possible_acronym = parts[-1].upper()
+                variants.add(possible_acronym)
+                without_acronym = ' '.join(parts[:-1])
+                if without_acronym and len(without_acronym) > 3:
+                    variants.add(without_acronym)
+
+        # Versión sin stopwords comunes para matching más flexible
+        stopwords = {'for', 'of', 'the', 'and', 'in', 'on', 'de', 'la', 'le', 'les', 'des', 'du', 'et'}
+        words = name.split()
+        significant = [w for w in words if w.lower() not in stopwords and len(w) > 1]
+        if len(significant) >= 2 and len(significant) < len(words):
+            variants.add(' '.join(significant))
+
+        return [v for v in variants if len(v) >= 2]
 
     @classmethod
     def get_all(cls, status=None, priority_area=None, limit=100, offset=0):

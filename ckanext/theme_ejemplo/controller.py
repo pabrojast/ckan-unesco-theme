@@ -829,12 +829,15 @@ class MyLogica():
                 offset = items_per_page * (page - 1)
 
                 try:
+                    # Buscar por título de organización (no slug) para mejor matching
+                    org_title = org.get('title', '')
+                    org_name = org.get('name', '')
                     results, total = IhpixActivity.get_published(
                         priority_area=pa_filter or None,
                         output=output_filter or None,
                         q_text=q or None,
                         biennium=biennium_filter or None,
-                        country=name or None,
+                        organization=org_title or org_name or None,
                         limit=items_per_page,
                         offset=offset,
                     )
