@@ -804,6 +804,68 @@ class MyLogica():
                 log.error(f"Error in organization_data_stories: {e}")
                 abort(500)
 
+        def organization_ihpix(name):
+            """Organization IHP-IX tab — shows IHP-IX activities for this organization. Sysadmin only."""
+            if not (c.userobj and c.userobj.sysadmin):
+                abort(403, _('Not authorized'))
+
+            try:
+                context = {'ignore_auth': True}
+                org = toolkit.get_action('organization_show')(
+                    context, {'id': name}
+                )
+
+                from ckanext.theme_ejemplo.model import (
+                    IhpixActivity, init_ihpix_activities_db,
+                )
+                init_ihpix_activities_db()
+
+                pa_filter = request.args.get('pa', '')
+                output_filter = request.args.get('output', '')
+                biennium_filter = request.args.get('biennium', '')
+                q = request.args.get('q', '')
+                page = int(request.args.get('page', 1))
+                items_per_page = 20
+                offset = items_per_page * (page - 1)
+
+                try:
+                    results, total = IhpixActivity.get_published(
+                        priority_area=pa_filter or None,
+                        output=output_filter or None,
+                        q_text=q or None,
+                        biennium=biennium_filter or None,
+                        country=name or None,
+                        limit=items_per_page,
+                        offset=offset,
+                    )
+                    activities = [a.as_dict() for a in results]
+                    facets = IhpixActivity.get_facets()
+                except Exception as e:
+                    log.error(f"Error fetching IHP-IX activities for org {name}: {e}")
+                    activities = []
+                    facets = {}
+                    total = 0
+
+                return render_template(
+                    "organization/ihpix.html",
+                    group_dict=org,
+                    group_type='organization',
+                    activities=activities,
+                    facets=facets,
+                    total=total,
+                    pa_filter=pa_filter,
+                    output_filter=output_filter,
+                    biennium_filter=biennium_filter,
+                    q=q,
+                    page=page,
+                    items_per_page=items_per_page,
+                )
+            except toolkit.ObjectNotFound:
+                abort(404, _('Organization not found'))
+            except Exception as e:
+                log.error(f"Error in organization_ihpix: {e}")
+                abort(500)
+
         def group_data_stories(name):
             """Group/member state/initiative data stories tab."""
             try:

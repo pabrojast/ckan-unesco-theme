@@ -489,6 +489,12 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 MyLogica.organization_data_stories,
                 methods=['GET']
             )
+            blueprint.add_url_rule(
+                u'/organization/<name>/ihpix',
+                u'organization_ihpix',
+                MyLogica.organization_ihpix,
+                methods=['GET']
+            )
 
             # Group/Initiative tabs (News, Events, Publications, Members, Data Stories)
             blueprint.add_url_rule(
