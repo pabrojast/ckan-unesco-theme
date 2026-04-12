@@ -924,7 +924,7 @@
         <i class="fa fa-flask"></i>
       </div>
       <h3>{{ _('No IHP-IX activities found') }}</h3>
-      <p>{{ _('No reported activities match the current filters for this member state.') }}</p>
+      <p>{{ _('No reported activities match the current filters for this organization.') }}</p>
       {% if q or pa_filter or output_filter or (biennium_filter is defined and biennium_filter) %}
         <a href="{{ h.url_for('theme_ejemplo.organization_ihpix', name=group_dict.name) }}" class="gix-fbtn gix-fbtn--solid" style="margin-top: 4px;">
           <i class="fa fa-times"></i> {{ _('Clear All Filters') }}
