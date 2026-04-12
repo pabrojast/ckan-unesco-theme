@@ -1,7 +1,7 @@
 {% set placeholder = _('E.g. environment') %}
 {% set stats = h.theme_ejemplo_site_statistics() %}
 
-<div class="module module-search module-narrow module-shallow box homepage-search-box">
+<div class="module module-search module-narrow module-shallow box">
   <form class="module-content search-form" method="get" action="{% url_for 'dataset.search' %}">
     <h3 class="heading">{{ _("Search data") }}</h3>
     <div class="search-input form-group search-giant">
@@ -21,55 +21,5 @@
       <strong>{{ h.SI_number_span(stats.organization_count) }}</strong>
       {{ _('organization') if stats.organization_count == 1 else _('organizations') }}
     </a>
-  </div>
-</div>
-
-{# Barra de estadísticas destacada #}
-{% set tracking_totals = h.get_tracking_totals() %}
-<div class="homepage-stats-bar reveal-section">
-  <div class="stats-bar-inner">
-    <div class="stats-bar-item">
-      <div class="stats-bar-icon"><i class="fa fa-database"></i></div>
-      <div class="stats-bar-content">
-        <span class="stats-bar-number" data-count="{{ stats.dataset_count }}">{{ h.SI_number_span(stats.dataset_count) }}</span>
-        <span class="stats-bar-label">{{ _('Datasets') }}</span>
-      </div>
-    </div>
-    <div class="stats-bar-divider"></div>
-    <div class="stats-bar-item">
-      <div class="stats-bar-icon"><i class="fa fa-building"></i></div>
-      <div class="stats-bar-content">
-        <span class="stats-bar-number" data-count="{{ stats.organization_count }}">{{ h.SI_number_span(stats.organization_count) }}</span>
-        <span class="stats-bar-label">{{ _('Organizations') }}</span>
-      </div>
-    </div>
-    <div class="stats-bar-divider"></div>
-    <div class="stats-bar-item">
-      <div class="stats-bar-icon"><i class="fa fa-users"></i></div>
-      <div class="stats-bar-content">
-        <span class="stats-bar-number" data-count="{{ stats.group_count }}">{{ h.SI_number_span(stats.group_count) }}</span>
-        <span class="stats-bar-label">{{ _('Groups') }}</span>
-      </div>
-    </div>
-    {% if tracking_totals.page_views > 0 %}
-    <div class="stats-bar-divider"></div>
-    <div class="stats-bar-item">
-      <div class="stats-bar-icon"><i class="fa fa-eye"></i></div>
-      <div class="stats-bar-content">
-        <span class="stats-bar-number" data-count="{{ tracking_totals.page_views }}">{{ h.SI_number_span(tracking_totals.page_views) }}</span>
-        <span class="stats-bar-label">{{ _('Page Views') }}</span>
-      </div>
-    </div>
-    {% endif %}
-    {% if tracking_totals.downloads > 0 %}
-    <div class="stats-bar-divider"></div>
-    <div class="stats-bar-item">
-      <div class="stats-bar-icon"><i class="fa fa-download"></i></div>
-      <div class="stats-bar-content">
-        <span class="stats-bar-number" data-count="{{ tracking_totals.downloads }}">{{ h.SI_number_span(tracking_totals.downloads) }}</span>
-        <span class="stats-bar-label">{{ _('Downloads') }}</span>
-      </div>
-    </div>
-    {% endif %}
   </div>
 </div>
