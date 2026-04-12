@@ -6846,3 +6846,134 @@ body .download-links .btn-group .btn i {
 .homepage-search-box .tags {
   padding: 0.5rem 1.5rem 1rem;
 }
+
+/* --- Open Source Tools CTA Banner --- */
+.oss-banner {
+  position: relative;
+  border-radius: 16px;
+  overflow: hidden;
+  margin: 1.5rem 0;
+  background: linear-gradient(135deg, #0a1628 0%, #0d2847 40%, var(--unesco-blue-dark) 100%);
+  box-shadow: 0 6px 24px rgba(0, 105, 180, 0.2);
+}
+
+.oss-banner-bg {
+  position: absolute;
+  inset: 0;
+  opacity: 0.07;
+  background-image:
+    radial-gradient(circle at 20% 50%, rgba(255,255,255,0.15) 1px, transparent 1px),
+    radial-gradient(circle at 80% 20%, rgba(255,255,255,0.12) 1px, transparent 1px),
+    radial-gradient(circle at 60% 80%, rgba(255,255,255,0.10) 1px, transparent 1px);
+  background-size: 60px 60px, 90px 90px, 45px 45px;
+  pointer-events: none;
+}
+
+.oss-banner-bg::before {
+  content: '</>';
+  position: absolute;
+  right: 3%;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 7rem;
+  font-weight: 800;
+  color: rgba(255,255,255,0.04);
+  font-family: 'Courier New', monospace;
+  pointer-events: none;
+}
+
+.oss-banner-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 1.75rem;
+  padding: 2rem 2.5rem;
+}
+
+.oss-banner-icon {
+  flex-shrink: 0;
+  width: 64px;
+  height: 64px;
+  border-radius: 16px;
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(8px);
+}
+
+.oss-banner-icon i {
+  font-size: 1.75rem;
+  color: #5fd4f4;
+}
+
+.oss-banner-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.oss-banner-text h3 {
+  margin: 0 0 0.35rem;
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #fff;
+}
+
+.oss-banner-text p {
+  margin: 0;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: rgba(255,255,255,0.7);
+}
+
+.oss-banner-btn {
+  flex-shrink: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.75rem;
+  border-radius: 25px;
+  background: #fff;
+  color: var(--unesco-blue-dark) !important;
+  font-weight: 700;
+  font-size: 0.95rem;
+  text-decoration: none !important;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+  white-space: nowrap;
+}
+
+.oss-banner-btn:hover {
+  background: var(--unesco-blue-pale);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+  color: var(--unesco-blue-dark) !important;
+  text-decoration: none !important;
+}
+
+.oss-banner-btn i {
+  transition: transform 0.3s ease;
+}
+
+.oss-banner-btn:hover i {
+  transform: translateX(3px);
+}
+
+@media (max-width: 768px) {
+  .oss-banner-content {
+    flex-direction: column;
+    text-align: center;
+    padding: 1.75rem 1.5rem;
+    gap: 1rem;
+  }
+
+  .oss-banner-text h3 {
+    font-size: 1.2rem;
+  }
+
+  .oss-banner-bg::before {
+    display: none;
+  }
+}
