@@ -6856,8 +6856,9 @@ body .download-links .btn-group .btn i {
   border-radius: 16px;
   overflow: hidden;
   margin: 1.5rem 0;
-  background: linear-gradient(135deg, #0a1628 0%, #0d2847 40%, var(--unesco-blue-dark) 100%);
-  box-shadow: 0 6px 24px rgba(0, 105, 180, 0.2);
+  background: linear-gradient(135deg, var(--unesco-blue) 0%, var(--unesco-blue-dark) 50%, var(--unesco-blue) 100%);
+  box-shadow: 0 4px 16px rgba(0, 114, 188, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .oss-banner-bg {
