@@ -559,3 +559,116 @@ document.addEventListener('DOMContentLoaded', function() {
     
     console.log('Bootstrap 5 compatibility fix applied');
 });
+
+/* ============================================================
+   Scroll Reveal — IntersectionObserver para animar secciones
+   al entrar en el viewport
+   ============================================================ */
+(function() {
+    'use strict';
+
+    function initScrollReveal() {
+        // Verificar soporte del navegador
+        if (!('IntersectionObserver' in window)) {
+            // Fallback: mostrar todo de inmediato
+            document.querySelectorAll('.reveal-section, .reveal-item').forEach(function(el) {
+                el.classList.add('revealed');
+            });
+            return;
+        }
+
+        // Respetar preferencia de movimiento reducido
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            document.querySelectorAll('.reveal-section, .reveal-item').forEach(function(el) {
+                el.classList.add('revealed');
+            });
+            return;
+        }
+
+        var revealObserver = new IntersectionObserver(function(entries) {
+            entries.forEach(function(entry) {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('revealed');
+                    revealObserver.unobserve(entry.target);
+                }
+            });
+        }, {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        });
+
+        // Observar secciones y items
+        document.querySelectorAll('.reveal-section, .reveal-item').forEach(function(el) {
+            revealObserver.observe(el);
+        });
+    }
+
+    /* ============================================================
+       Stats Bar — Animación de contadores
+       ============================================================ */
+    function initStatsCounter() {
+        var statsBar = document.querySelector('.homepage-stats-bar');
+        if (!statsBar) return;
+
+        var counters = statsBar.querySelectorAll('.stats-bar-number strong');
+        if (!counters.length) return;
+
+        var animated = false;
+
+        function animateCounters() {
+            if (animated) return;
+            animated = true;
+
+            counters.forEach(function(counter) {
+                var target = parseInt(counter.textContent.replace(/[^0-9]/g, ''), 10);
+                if (isNaN(target) || target === 0) return;
+
+                var duration = 1500;
+                var start = 0;
+                var startTime = null;
+
+                function step(timestamp) {
+                    if (!startTime) startTime = timestamp;
+                    var progress = Math.min((timestamp - startTime) / duration, 1);
+                    // Easing: ease-out cubic
+                    var eased = 1 - Math.pow(1 - progress, 3);
+                    var current = Math.floor(eased * target);
+                    counter.textContent = current.toLocaleString();
+                    if (progress < 1) {
+                        requestAnimationFrame(step);
+                    } else {
+                        counter.textContent = target.toLocaleString();
+                    }
+                }
+
+                counter.textContent = '0';
+                requestAnimationFrame(step);
+            });
+        }
+
+        if ('IntersectionObserver' in window) {
+            var observer = new IntersectionObserver(function(entries) {
+                entries.forEach(function(entry) {
+                    if (entry.isIntersecting) {
+                        animateCounters();
+                        observer.unobserve(entry.target);
+                    }
+                });
+            }, { threshold: 0.3 });
+            observer.observe(statsBar);
+        } else {
+            animateCounters();
+        }
+    }
+
+    // Inicializar cuando el DOM esté listo
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', function() {
+            initScrollReveal();
+            initStatsCounter();
+        });
+    } else {
+        initScrollReveal();
+        initStatsCounter();
+    }
+})();
