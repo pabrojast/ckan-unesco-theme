@@ -1542,8 +1542,12 @@ a.heading.truncate {
   right: 0;
   padding: 1.5rem;
   background: linear-gradient(to top, rgba(0,0,0,0.9), rgba(0,0,0,0.4) 80%, rgba(0,0,0,0));
-  color: #fff;
+  color: #fff !important;
   overflow: hidden;
+}
+
+.slide-content * {
+  color: #fff;
 }
 
 .slide-content h2 {
@@ -6311,6 +6315,10 @@ body .download-links .btn-group .btn i {
   right: 0;
   padding: 2.5rem 3rem;
   background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.5) 60%, transparent 100%);
+  color: #fff !important;
+}
+
+.slideshow-modern .slide-content * {
   color: #fff;
 }
 
@@ -6336,13 +6344,15 @@ body .download-links .btn-group .btn i {
   line-height: 1.2;
 }
 
-.slideshow-modern .slide-subtitle {
+.slideshow-modern .slide-subtitle,
+p.slide-subtitle {
   font-size: 1.1rem;
   opacity: 0.9;
   margin-bottom: 1.25rem;
   font-weight: 300;
   max-width: 600px;
-  color: #fff;
+  color: #fff !important;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
 }
 
 .slideshow-modern .slide-btn {
