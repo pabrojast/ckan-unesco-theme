@@ -750,6 +750,12 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 methods=['POST']
             )
             blueprint.add_url_rule(
+                u'/ckan-admin/ihpix/activities/show',
+                u'ihpix_activities_show',
+                MyLogica.ihpix_activities_show,
+                methods=['GET']
+            )
+            blueprint.add_url_rule(
                 u'/ckan-admin/ihpix/activities/upload-image',
                 u'ihpix_activities_upload_image',
                 MyLogica.ihpix_activities_upload_image,

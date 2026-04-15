@@ -1829,6 +1829,58 @@ def ihpix_activity_show(context, data_dict):
     return activity.as_dict()
 
 
+def _parse_date_field(data_dict, field_name):
+    """Parsea un campo de fecha desde data_dict. Retorna date o None."""
+    val = data_dict.get(field_name, None)
+    if val and isinstance(val, str):
+        import datetime as _dt
+        try:
+            return _dt.datetime.strptime(val, '%Y-%m-%d').date()
+        except ValueError:
+            raise toolkit.ValidationError(
+                {field_name: 'Invalid date format. Use YYYY-MM-DD'}
+            )
+    return val
+
+
+def _parse_int_field(data_dict, field_name, default=0):
+    """Parsea un campo entero desde data_dict."""
+    val = data_dict.get(field_name, default)
+    if val is None or val == '':
+        return default
+    try:
+        return int(val)
+    except (ValueError, TypeError):
+        return default
+
+
+# Campos de texto extendidos de IhpixActivity
+_IHPIX_TEXT_FIELDS = (
+    'description', 'output', 'country', 'institution', 'link', 'image_url',
+    'contact_name', 'contact_email', 'key_activity', 'outcomes', 'biennium',
+    'institution_type', 'partners', 'unesco_participation',
+    'flagships', 'regions', 'member_states',
+    'knowledge_product_type', 'knowledge_product_type_other',
+    'scientific_product_type', 'training_type',
+    'knowledge_activity_type', 'knowledge_activity_type_other',
+    'stakeholder_group_type', 'notes',
+    'cross_cutting_wg', 'synergies', 'supporting_member_state',
+)
+
+# Campos numéricos de IhpixActivity
+_IHPIX_INT_FIELDS = (
+    'num_knowledge_products', 'num_scientific_products',
+    'num_training_materials', 'num_curricula', 'num_transboundary_ms',
+    'stakeholders_knowledge', 'stakeholders_knowledge_female',
+    'stakeholders_knowledge_youth', 'stakeholders_awareness',
+    'stakeholders_awareness_female', 'stakeholders_awareness_youth',
+    'num_stakeholder_groups',
+)
+
+# Campos de fecha de IhpixActivity
+_IHPIX_DATE_FIELDS = ('start_date', 'end_date', 'reported_date')
+
+
 def ihpix_activity_create(context, data_dict):
     """Create a new IHP-IX activity. Sysadmin only."""
     toolkit.check_access('ihpix_activity_create', context, data_dict)
@@ -1842,18 +1894,6 @@ def ihpix_activity_create(context, data_dict):
                 ', '.join(VALID_PRIORITY_AREAS))}
         )
 
-    reported_date = data_dict.get('reported_date', None)
-    if reported_date and isinstance(reported_date, str):
-        import datetime as _dt
-        try:
-            reported_date = _dt.datetime.strptime(
-                reported_date, '%Y-%m-%d'
-            ).date()
-        except ValueError:
-            raise toolkit.ValidationError(
-                {'reported_date': 'Invalid date format. Use YYYY-MM-DD'}
-            )
-
     status = data_dict.get('status', 'published')
     if status not in ('draft', 'published'):
         raise toolkit.ValidationError(
@@ -1865,19 +1905,24 @@ def ihpix_activity_create(context, data_dict):
     if not reported_by and user_obj:
         reported_by = user_obj.id
 
-    activity = IhpixActivity(
-        title=title,
-        priority_area=priority_area,
-        description=data_dict.get('description', u''),
-        output=data_dict.get('output', u''),
-        country=data_dict.get('country', u''),
-        institution=data_dict.get('institution', u''),
-        link=data_dict.get('link', u''),
-        image_url=data_dict.get('image_url', u''),
-        status=status,
-        reported_by=reported_by,
-        reported_date=reported_date,
-    )
+    # Construir kwargs para todos los campos del modelo
+    kwargs = {
+        'title': title,
+        'priority_area': priority_area,
+        'status': status,
+        'reported_by': reported_by,
+    }
+
+    for field in _IHPIX_TEXT_FIELDS:
+        kwargs[field] = data_dict.get(field, u'')
+
+    for field in _IHPIX_INT_FIELDS:
+        kwargs[field] = _parse_int_field(data_dict, field, 0)
+
+    for field in _IHPIX_DATE_FIELDS:
+        kwargs[field] = _parse_date_field(data_dict, field)
+
+    activity = IhpixActivity(**kwargs)
     model.Session.add(activity)
     model.Session.commit()
     return activity.as_dict()
@@ -1893,8 +1938,8 @@ def ihpix_activity_update(context, data_dict):
     if not activity:
         raise toolkit.ObjectNotFound('IHP-IX activity not found')
 
-    for field in ('title', 'description', 'output', 'country',
-                  'institution', 'link', 'image_url', 'reported_by'):
+    # Campos de texto simples
+    for field in _IHPIX_TEXT_FIELDS + ('title', 'reported_by'):
         if field in data_dict:
             setattr(activity, field, data_dict[field])
 
@@ -1915,17 +1960,15 @@ def ihpix_activity_update(context, data_dict):
             )
         activity.status = status
 
-    if 'reported_date' in data_dict:
-        rd = data_dict['reported_date']
-        if rd and isinstance(rd, str):
-            import datetime as _dt
-            try:
-                rd = _dt.datetime.strptime(rd, '%Y-%m-%d').date()
-            except ValueError:
-                raise toolkit.ValidationError(
-                    {'reported_date': 'Invalid date format. Use YYYY-MM-DD'}
-                )
-        activity.reported_date = rd
+    # Campos de fecha
+    for field in _IHPIX_DATE_FIELDS:
+        if field in data_dict:
+            setattr(activity, field, _parse_date_field(data_dict, field))
+
+    # Campos numéricos
+    for field in _IHPIX_INT_FIELDS:
+        if field in data_dict:
+            setattr(activity, field, _parse_int_field(data_dict, field, 0))
 
     import datetime as _dt
     activity.updated_at = _dt.datetime.utcnow()

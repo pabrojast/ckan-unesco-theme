@@ -2746,7 +2746,7 @@ class MyLogica():
             except toolkit.NotAuthorized:
                 return base.abort(403, _('Not authorized'))
 
-            pa_filter = request.args.get('pa', '')
+            pa_filter = request.args.get('pa_filter', '')
             page = int(request.args.get('page', 1))
             limit = 20
             offset = (page - 1) * limit
@@ -2757,6 +2757,19 @@ class MyLogica():
 
             result = toolkit.get_action('ihpix_activity_list')(context, data)
 
+            # Listas para selectores del formulario
+            try:
+                org_list = toolkit.get_action('organization_list')(
+                    {'ignore_auth': True}, {'all_fields': True, 'limit': 1000}
+                )
+            except Exception:
+                org_list = []
+
+            try:
+                ms_list = toolkit.h.get_member_states_groups_list()
+            except Exception:
+                ms_list = []
+
             return render_template(
                 'admin/ihpix_activities.html',
                 activities=result['results'],
@@ -2765,7 +2778,30 @@ class MyLogica():
                 pa_filter=pa_filter,
                 page=page,
                 items_per_page=limit,
+                org_list=org_list,
+                ms_list=ms_list,
             )
+
+        # Todos los campos del formulario de actividades IHP-IX
+        _IHPIX_FORM_FIELDS = (
+            'title', 'description', 'priority_area', 'output', 'country',
+            'institution', 'link', 'image_url', 'status', 'reported_date',
+            'contact_name', 'contact_email', 'reported_by',
+            'start_date', 'end_date', 'key_activity', 'outcomes', 'biennium',
+            'institution_type', 'partners', 'unesco_participation',
+            'flagships', 'regions', 'member_states',
+            'knowledge_product_type', 'knowledge_product_type_other',
+            'num_knowledge_products', 'scientific_product_type',
+            'num_scientific_products', 'training_type',
+            'num_training_materials', 'num_curricula', 'num_transboundary_ms',
+            'knowledge_activity_type', 'knowledge_activity_type_other',
+            'stakeholders_knowledge', 'stakeholders_knowledge_female',
+            'stakeholders_knowledge_youth', 'stakeholders_awareness',
+            'stakeholders_awareness_female', 'stakeholders_awareness_youth',
+            'num_stakeholder_groups', 'stakeholder_group_type',
+            'notes', 'cross_cutting_wg', 'synergies',
+            'supporting_member_state',
+        )
 
         @staticmethod
         def ihpix_activities_create():
@@ -2776,9 +2812,7 @@ class MyLogica():
             }
             try:
                 data = {}
-                for key in ('title', 'description', 'priority_area', 'output',
-                            'country', 'institution', 'link', 'image_url',
-                            'status', 'reported_date'):
+                for key in MyLogica._IHPIX_FORM_FIELDS:
                     val = request.form.get(key)
                     if val is not None and val != '':
                         data[key] = val
@@ -2801,10 +2835,8 @@ class MyLogica():
                 'auth_user_obj': c.userobj,
             }
             try:
-                data = {}
-                for key in ('id', 'title', 'description', 'priority_area',
-                            'output', 'country', 'institution', 'link',
-                            'image_url', 'status', 'reported_date'):
+                data = {'id': request.form.get('id', '')}
+                for key in MyLogica._IHPIX_FORM_FIELDS:
                     val = request.form.get(key)
                     if val is not None:
                         data[key] = val
@@ -2819,6 +2851,27 @@ class MyLogica():
                 return jsonify({'success': False, 'error': e.error_dict}), 400
             except Exception as e:
                 log.error('Error updating IHP-IX activity: %s', e)
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        @staticmethod
+        def ihpix_activities_show():
+            """AJAX: Get full activity data for editing."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                activity_id = request.args.get('id', '')
+                result = toolkit.get_action('ihpix_activity_show')(
+                    context, {'id': activity_id}
+                )
+                return jsonify({'success': True, 'data': result})
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+            except toolkit.ObjectNotFound:
+                return jsonify({'success': False, 'error': 'Activity not found'}), 404
+            except Exception as e:
+                log.error('Error showing IHP-IX activity: %s', e)
                 return jsonify({'success': False, 'error': str(e)}), 500
 
         @staticmethod
