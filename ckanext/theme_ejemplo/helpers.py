@@ -15,6 +15,15 @@ _tracking_cache = {'dataset': {}, 'resource': {}, 'totals': None, 'popular': Non
 _TRACKING_CACHE_TTL = 300  # 5 minutes
 
 
+def _rollback_session_after_helper_error():
+    """Reset the shared ORM session after a helper query fails."""
+    try:
+        model.Session.rollback()
+    except Exception as rollback_error:
+        log.warning('Error rolling back session after helper failure: %s',
+                    rollback_error)
+
+
 def _is_tracking_enabled():
     """Check if CKAN tracking is enabled. When disabled, skip all DB queries."""
     return toolkit.asbool(toolkit.config.get('ckan.tracking_enabled', False))
@@ -632,11 +641,11 @@ def has_pending_membership_request(org_id):
 def get_featured_publications():
     """Get featured publications for the homepage."""
     try:
-        from ckanext.theme_ejemplo.model import FeaturedPublication, init_featured_publications_db
-        init_featured_publications_db()
+        from ckanext.theme_ejemplo.model import FeaturedPublication
         pubs = FeaturedPublication.get_all()
         return [p.as_dict() for p in pubs]
     except Exception as e:
+        _rollback_session_after_helper_error()
         log.error(f'Error getting featured publications: {e}')
         return []
 
@@ -647,8 +656,7 @@ def get_open_bug_tickets_count():
         from ckan.common import current_user
         if not current_user or not current_user.is_authenticated:
             return 0
-        from ckanext.theme_ejemplo.model import BugTicket, init_bug_tickets_db
-        init_bug_tickets_db()
+        from ckanext.theme_ejemplo.model import BugTicket
         if current_user.sysadmin:
             _, total = BugTicket.get_all(status=BugTicket.STATUS_OPEN)
         else:
@@ -657,5 +665,6 @@ def get_open_bug_tickets_count():
             )
         return total
     except Exception as e:
+        _rollback_session_after_helper_error()
         log.error(f'Error getting open bug tickets count: {e}')
         return 0
