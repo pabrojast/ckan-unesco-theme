@@ -24,6 +24,12 @@ def _rollback_session_after_helper_error():
                     rollback_error)
 
 
+def _warn_and_rollback_helper_error(message, error):
+    """Log helper failures that may leave CKAN's shared ORM session aborted."""
+    _rollback_session_after_helper_error()
+    log.warning('%s: %s', message, error)
+
+
 def _is_tracking_enabled():
     """Check if CKAN tracking is enabled. When disabled, skip all DB queries."""
     return toolkit.asbool(toolkit.config.get('ckan.tracking_enabled', False))
@@ -369,7 +375,9 @@ def get_user_profile(user_name):
         )
         return user
     except Exception as e:
-        log.warning(f"Error getting user profile for {user_name}: {e}")
+        _warn_and_rollback_helper_error(
+            'Error getting user profile for {}'.format(user_name), e
+        )
         return None
 
 
@@ -388,7 +396,7 @@ def get_people_directory(q='', country='', organization='', expertise='', limit=
             }
         )
     except Exception as e:
-        log.warning(f"Error getting people directory: {e}")
+        _warn_and_rollback_helper_error('Error getting people directory', e)
         return {'results': [], 'count': 0}
 
 
@@ -401,7 +409,9 @@ def get_org_members_with_profiles(org_id):
         )
         return result.get('members', [])
     except Exception as e:
-        log.warning(f"Error getting org members for {org_id}: {e}")
+        _warn_and_rollback_helper_error(
+            'Error getting org members for {}'.format(org_id), e
+        )
         return []
 
 
@@ -431,12 +441,17 @@ def get_org_statistics(org_id):
                 {'id': org_id, 'include_users': True}
             )
             stats['members'] = len(org.get('users', []))
-        except Exception:
+        except Exception as e:
+            _warn_and_rollback_helper_error(
+                'Error getting organization members for {}'.format(org_id), e
+            )
             stats['members'] = 0
 
         return stats
     except Exception as e:
-        log.warning(f"Error getting org statistics for {org_id}: {e}")
+        _warn_and_rollback_helper_error(
+            'Error getting org statistics for {}'.format(org_id), e
+        )
         return {'datasets': 0, 'publications': 0, 'members': 0}
 
 
@@ -454,7 +469,9 @@ def get_org_publications(org_id, limit=20, offset=0):
         )
         return search
     except Exception as e:
-        log.warning(f"Error getting org publications for {org_id}: {e}")
+        _warn_and_rollback_helper_error(
+            'Error getting org publications for {}'.format(org_id), e
+        )
         return {'results': [], 'count': 0}
 
 
@@ -469,7 +486,10 @@ def is_org_member(org_id):
             {'id': org_id, 'object_type': 'user'}
         )
         return any(m[0] == current_user.id for m in members)
-    except Exception:
+    except Exception as e:
+        _warn_and_rollback_helper_error(
+            'Error checking organization membership for {}'.format(org_id), e
+        )
         return False
 
 
@@ -562,8 +582,10 @@ def get_user_organizations(user_id):
                     if uid == user_obj.id:
                         capacity_map[g.id] = cap
                         break
-            except Exception:
-                pass
+            except Exception as e:
+                _warn_and_rollback_helper_error(
+                    'Error getting organization capacity for {}'.format(g.id), e
+                )
 
         orgs = []
         for g in user_obj.get_groups('organization'):
@@ -575,7 +597,10 @@ def get_user_organizations(user_id):
                 'capacity': capacity_map.get(g.id, 'member'),
             })
         return orgs
-    except Exception:
+    except Exception as e:
+        _warn_and_rollback_helper_error(
+            'Error getting organizations for user {}'.format(user_id), e
+        )
         return []
 
 
@@ -590,7 +615,10 @@ def is_org_admin(org_id):
             {'id': org_id, 'object_type': 'user'}
         )
         return any(m[0] == current_user.id and m[2] == 'admin' for m in members)
-    except Exception:
+    except Exception as e:
+        _warn_and_rollback_helper_error(
+            'Error checking organization admin status for {}'.format(org_id), e
+        )
         return False
 
 
@@ -605,7 +633,10 @@ def get_pending_membership_requests_count():
             {}
         )
         return result.get('count', 0)
-    except Exception:
+    except Exception as e:
+        _warn_and_rollback_helper_error(
+            'Error getting pending membership requests count', e
+        )
         return 0
 
 
@@ -620,7 +651,8 @@ def get_user_admin_orgs():
             {'permission': 'admin'}
         )
         return orgs
-    except Exception:
+    except Exception as e:
+        _warn_and_rollback_helper_error('Error getting admin organizations', e)
         return []
 
 
@@ -634,7 +666,10 @@ def has_pending_membership_request(org_id):
         return MembershipRequest.get_pending_for_user_and_org(
             current_user.id, org_id
         ) is not None
-    except Exception:
+    except Exception as e:
+        _warn_and_rollback_helper_error(
+            'Error checking pending membership request for {}'.format(org_id), e
+        )
         return False
 
 
