@@ -8,7 +8,9 @@
       "Read(//c/**)",
       "Bash(git checkout:*)",
       "Bash(dir:*)",
-      "Bash(findstr:*)"
+      "Bash(findstr:*)",
+      "Bash(mkdir -p /home/pabrojast/Proyectos/ckan-unesco-theme/ckanext/theme_ejemplo/public/vendor/leaflet)",
+      "Bash(mkdir -p /home/pabrojast/Proyectos/ckan-unesco-theme/ckanext/theme_ejemplo/public/vendor/chartjs)"
     ],
     "deny": [],
     "ask": []

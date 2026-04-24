@@ -11,9 +11,9 @@
 {% block content %}
 <div class="main">
 <div class="container">
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
-      integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
-      crossorigin="" />
+{% if c.userobj %}
+<link rel="stylesheet" href="{{ h.url_for_static('/vendor/leaflet/leaflet.css') }}" />
+{% endif %}
 
 <style>
 /* ═══════════════════════════════════════════════════════════
@@ -671,8 +671,9 @@
   </div>
 
   {# ══════════════════════════════════════════════════════════
-     SECTION 2 — Interactive World Map
+     SECTION 2 — Interactive World Map (solo usuarios logueados)
      ══════════════════════════════════════════════════════════ #}
+  {% if c.userobj %}
   <div class="ihpix-section ihpix-animate">
     <h2 class="ihpix-section-title">{{ _('Global Activity Distribution') }}</h2>
     <span class="ihpix-section-accent"></span>
@@ -702,6 +703,7 @@
       </div>
     </div>
   </div>
+  {% endif %}
 
   {# ══════════════════════════════════════════════════════════
      SECTION 3 — Priority Areas
@@ -724,7 +726,7 @@
           <div class="ihpix-pa-count" id="ihpix-pa-count-{{ pa_num }}">
             <i class="fa fa-flag"></i> <span>&mdash;</span>
           </div>
-          {% if pa.link %}
+          {% if pa.link and c.userobj %}
           <a href="{{ pa.link }}" class="ihpix-pa-link" target="_blank">
             {{ _('Explore') }} &rarr;
           </a>
@@ -908,9 +910,9 @@
 </div>
 
 {# ── Leaflet JS + Page Logic ─────────────────────────────── #}
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
-        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
-        crossorigin=""></script>
+{% if c.userobj %}
+<script src="{{ h.url_for_static('/vendor/leaflet/leaflet.js') }}"></script>
+{% endif %}
 <script>
 (function () {
   'use strict';
@@ -986,9 +988,9 @@
     })
     .catch(function () { /* silently degrade */ });
 
-  /* ── Initialize Leaflet map ───────────────────────────── */
+  /* ── Initialize Leaflet map (solo si Leaflet está cargado) ─ */
   var mapEl = document.getElementById('ihpix-map');
-  if (mapEl) {
+  if (mapEl && typeof L !== 'undefined') {
     var map = L.map('ihpix-map', {
       scrollWheelZoom: false,
       attributionControl: true
