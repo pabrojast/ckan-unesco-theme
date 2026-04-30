@@ -669,7 +669,7 @@ class MyLogica():
                 pub_search = toolkit.get_action('package_search')(
                     {},
                     {
-                        'fq': f'owner_org:{org["id"]} AND (type:documents OR dcat_type:*marcgt*)',
+                        'fq': f'owner_org:{org["id"]} +type:documents',
                         'rows': items_per_page,
                         'start': items_per_page * (page - 1),
                         'sort': 'metadata_modified desc',
@@ -1012,7 +1012,7 @@ class MyLogica():
                     result = toolkit.get_action('package_search')(
                         {'ignore_auth': True},
                         {
-                            'fq': f'groups:{name} AND (type:documents OR dcat_type:*marcgt*)',
+                            'fq': f'groups:{name} +type:documents',
                             'rows': 50,
                             'sort': 'metadata_modified desc',
                         }
@@ -1368,7 +1368,7 @@ class MyLogica():
                 page = h.get_page_number(request.args) or 1
                 items_per_page = 21
 
-                fq = 'creator_user_id:{} AND (type:documents OR dcat_type:*marcgt*)'.format(user_dict['id'])
+                fq = 'creator_user_id:{} +type:documents'.format(user_dict['id'])
                 result = toolkit.get_action('package_search')(
                     {'ignore_auth': True},
                     {

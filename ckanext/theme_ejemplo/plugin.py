@@ -126,7 +126,7 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 endpoint = flask_request.endpoint or ''
                 if endpoint in ('group.read', 'organization.read'):
                     fq = search_params.get('fq', '')
-                    search_params['fq'] = fq + ' -type:documents -dcat_type:*marcgt*'
+                    search_params['fq'] = fq + ' -type:documents'
             except RuntimeError:
                 pass
             return search_params
