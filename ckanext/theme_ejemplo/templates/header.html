@@ -167,15 +167,15 @@
         </li>
         {% set _colab_count = h.colab_pending_count() if 'colab_pending_count' in h else 0 %}
         {% set _tb_count = h.tb_pending_count() if 'tb_pending_count' in h else 0 %}
-        {% if _colab_count %}
         <li>
           <a href="{{ h.url_for('colab.show_admin') }}" title="{{ _('Pending user approvals') }}" style="position: relative; display: inline-block;">
             <i class="fa fa-user-plus" aria-hidden="true"></i>
             <span class="text">{{ _('Users') }}</span>
+            {% if _colab_count %}
             <span style="position: absolute; top: -4px; right: -8px; background: #dc3545; color: #fff; border-radius: 50%; font-size: 10px; min-width: 18px; height: 18px; line-height: 18px; text-align: center; padding: 0 4px; font-weight: 700; box-shadow: 0 1px 3px rgba(0,0,0,0.3);">{{ _colab_count }}</span>
+            {% endif %}
           </a>
         </li>
-        {% endif %}
         {% if _tb_count %}
         <li>
           <a href="{{ h.url_for('thingsboard.admin_dashboard') }}" title="{{ _('Pending device approvals') }}" style="position: relative; display: inline-block;">
@@ -218,12 +218,14 @@
           <li class="topmenu-unesco"><a href="https://www.unesco.org/en/" alt="UNESCO Portal">UNESCO</a></li>
           
           <!-- Full text on desktop, short on tablet, hidden on mobile -->
+          {% if not c.userobj %}
           <li class="topmenu-enroll desktop-only">
-            <a href="/colab" alt="Enroll as a Data Contributor for Your Organization">{% trans %}Enroll as a Data Contributor for Your Organization{% endtrans %}</a>
+            <a href="/colab" alt="Register">{% trans %}Register{% endtrans %}</a>
           </li>
           <li class="topmenu-enroll tablet-only">
-            <a href="/colab" alt="Enroll as a Data Contributor">{% trans %}Enroll{% endtrans %}</a>
+            <a href="/colab" alt="Register">{% trans %}Register{% endtrans %}</a>
           </li>
+          {% endif %}
           
           <!-- Login - always visible but compact on mobile -->
           {% block header_account_notlogged %}
@@ -252,7 +254,9 @@
               <i class="fa fa-bars"></i>
             </a>
             <ul class="topmenu-dropdown">
-              <li><a href="/colab">{% trans %}Enroll as a Data Contributor for Your Organization{% endtrans %}</a></li>
+              {% if not c.userobj %}
+              <li><a href="/colab">{% trans %}Register{% endtrans %}</a></li>
+              {% endif %}
               <li>{% snippet "snippets/IHPIX.html" %}</li>
             </ul>
           </li>
