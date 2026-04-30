@@ -25,6 +25,24 @@
   {% endif %}
 {% endblock %}
 
+{# Botón "Add" contextual según la pestaña activa #}
+{% block page_primary_action %}
+  {% set ep = request.endpoint %}
+  {% if ep in ('organization.read', group_type + '.read') %}
+    {% if h.check_access('package_create', {'owner_org': group_dict.id}) %}
+      <a class="btn btn-primary" href="{{ h.url_for('dataset.new', group=group_dict.id) }}">
+        <i class="fa fa-plus-square"></i> {{ _('Add Dataset') }}
+      </a>
+    {% endif %}
+  {% elif ep == 'theme_ejemplo.organization_publications' %}
+    {% if h.check_access('package_create', {'owner_org': group_dict.id}) %}
+      <a class="btn btn-primary" href="{{ h.url_for('documents.new', group=group_dict.id) }}">
+        <i class="fa fa-plus-square"></i> {{ _('Add Document') }}
+      </a>
+    {% endif %}
+  {% endif %}
+{% endblock %}
+
 {# Add request membership button #}
 {% block content_action %}
   {{ super() }}
