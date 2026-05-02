@@ -16,6 +16,7 @@ from . import helpers
 from . import actions as custom_actions
 from . import auth as custom_auth
 from . import model as membership_model
+from . import cache as anon_cache
 from .utils import normalize_user_image_url
 import logging
 from functools import lru_cache
@@ -57,6 +58,7 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
         plugins.implements(plugins.IActions)
         plugins.implements(plugins.IAuthFunctions)
         plugins.implements(plugins.IClick)
+        plugins.implements(plugins.IMiddleware, inherit=True)
 
         def __init__(self, name=None):
             super().__init__(name=name)
@@ -329,6 +331,21 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
             except Exception as e:
                 log.debug(f"Tracking injection in search skipped: {e}")
             return search_results
+
+        # IMiddleware
+        def make_middleware(self, app, config):
+            """Registra los hooks de caché anónimo cuando recibimos la app Flask.
+
+            CKAN invoca ``make_middleware`` tanto para el stack Flask como
+            para el legacy Pylons (en versiones de transición). El registro
+            es idempotente: sólo se aplica si la app expone before/after
+            request (Flask) y se ignora silenciosamente en otros casos.
+            """
+            try:
+                anon_cache.init_app(app)
+            except Exception as e:
+                log.warning(f"No se pudo registrar el caché anónimo: {e}")
+            return app
 
         def update_config(self, config):
             # Add this plugin's templates dir to CKAN's extra_template_paths, so

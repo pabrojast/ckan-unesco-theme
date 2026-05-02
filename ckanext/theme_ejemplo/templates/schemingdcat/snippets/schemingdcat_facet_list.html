@@ -54,14 +54,14 @@ If facet field has options, list in the form [dic{keys:'value', 'label'}], where
                 <span class="search_heading_span" ><i class="fa fa-filter"></i>  {{ title }}</span>
           <div class="sorting_heading">
           <div class="sorting{% if order.startswith('name') %} active{% endif %}">
-              <a href="{{ h.schemingdcat_new_order_url(name,'name',extras) }}" title="{% trans %}sort by name{% endtrans %}">
+              <a href="{{ h.schemingdcat_new_order_url(name,'name',extras) }}" rel="nofollow" title="{% trans %}sort by name{% endtrans %}">
                   <span class="up{% if order=='name' %} active{% endif %}">&#9650;</span>
                   <span class="down{% if order=='name_r' %} active{% endif %}">&#9660;</span>
                   <span class="label">A-Z</span>
               </a>
           </div>
           <div class="sorting{% if order.startswith('count') %} active{% endif %}">
-              <a href="{{ h.schemingdcat_new_order_url(name,'count',extras) }}" title="{% trans %}sort by results{% endtrans %}">
+              <a href="{{ h.schemingdcat_new_order_url(name,'count',extras) }}" rel="nofollow" title="{% trans %}sort by results{% endtrans %}">
                   <span class="up{% if order=='count_r' %} active{% endif %}">&#9650;</span>
                   <span class="down{% if order=='count' %} active{% endif %}">&#9660;</span>
                   <span class="label">1-9</span>
@@ -98,7 +98,7 @@ If facet field has options, list in the form [dic{keys:'value', 'label'}], where
                 {%  endif %}
               {%  endif %}
               <li class="{{ 'nav-item' }}{% if item.active %} active{% endif %}">
-                <a href="{{ href }}" title="{{ label if label != label_truncated else '' }}">
+                <a href="{{ href }}" rel="nofollow" title="{{ label if label != label_truncated else '' }}">
               {%  if img_url %}
                   <img src="{{ img_url }}" title="{{ label }}" class="facet-icon" loading="lazy"></img>
               {%  endif %}    
@@ -119,10 +119,10 @@ If facet field has options, list in the form [dic{keys:'value', 'label'}], where
         <p class="module-footer">
           {% if h.get_param_int('_%s_limit' % name) %}
           {% if h.has_more_facets(name, search_facets or c.search_facets) %}
-              <a href="{{ h.remove_url_param('_%s_limit' % name, replace=0, extras=extras, alternative_url=alternative_url) }}" class="read-more">{{ _('Show more {facet_type}').format(facet_type=title) }}</a>
+              <a href="{{ h.remove_url_param('_%s_limit' % name, replace=0, extras=extras, alternative_url=alternative_url) }}" class="read-more" rel="nofollow">{{ _('Show more {facet_type}').format(facet_type=title) }}</a>
           {% endif %}
             {% else %}
-          <a href="{{ h.remove_url_param('_%s_limit' % name, extras=extras, alternative_url=alternative_url) }}" class="read-more">{{ _('Display only the first {facet_type}').format(facet_type=title) }}</a>
+          <a href="{{ h.remove_url_param('_%s_limit' % name, extras=extras, alternative_url=alternative_url) }}" class="read-more" rel="nofollow">{{ _('Display only the first {facet_type}').format(facet_type=title) }}</a>
             {% endif %}
         </p>
           {% else %}

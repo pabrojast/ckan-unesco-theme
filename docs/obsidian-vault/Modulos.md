@@ -19,6 +19,7 @@
 - `IActions` — `get_actions()`: registra acciones custom
 - `IAuthFunctions` — `get_auth_functions()`: registra funciones de autorización
 - `IClick` — `get_commands()`: registra comandos CLI (ver [[#cli.py]])
+- `IMiddleware` — `make_middleware()`: registra los hooks Flask del [[Modulos#cache.py|caché de respuestas anónimas]]
 
 ### Caches definidos a nivel de módulo
 - `_courses_cache` — cursos UNESCO
@@ -256,6 +257,29 @@ Cada modelo tiene `init_*_db()` y `define_*_table()`. Son idempotentes (verifica
 2. Verificar MIME type declarado (con normalización)
 3. Detectar MIME real vía magic bytes del header
 4. Fallback: PIL/Pillow para casos no concluyentes
+
+---
+
+## cache.py
+
+**Rol**: Caché de respuestas anónimas para mitigar la "spider trap" de búsquedas con facetas/orden/paginación. Se registra vía `IMiddleware`.
+
+### Comportamiento
+- Sólo cachea peticiones `GET`/`HEAD` sin cookie de sesión (`auth_tkt`, `ckan`, `ckan.flask.session`, `session`).
+- Sólo cachea respuestas `200` con `Content-Type` text/JSON/XML, sin `Set-Cookie`, sin `Cache-Control: private|no-store`.
+- Backend: Redis (vía `ckan.lib.redis.connect_to_redis`) con fallback a un LRU local (max 1000 entradas).
+- Clave: `theme_ejemplo:anon_cache:{lang}|{enc}|{method}|{path}?{query_ordenada}`.
+- Headers preservados: `Content-Type`, `Content-Encoding`, `Content-Language`, `Vary`.
+- Las respuestas servidas/guardadas exponen `X-Anon-Cache: HIT|MISS` (útil para diagnóstico).
+
+### Bypass
+- Cookie de sesión presente.
+- `?_nocache=1` en query string.
+- Header `Cache-Control: no-cache`.
+- Path en `anon_cache_exclude_paths` (default: `/api`, `/ckan-admin`, `/user`, `/dashboard`, `/feeds`, `/util`, `/_tracking`, `/membership-requests`, `/bug-tickets`).
+
+> [!warning]
+> Por defecto está **desactivado** (`anon_cache_enabled = false`). Activarlo en producción una vez verificado el comportamiento. Ver [[Variables de Entorno#Caché de respuestas anónimas]].
 
 ---
 

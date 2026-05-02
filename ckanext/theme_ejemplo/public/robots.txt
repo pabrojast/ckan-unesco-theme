@@ -30,6 +30,18 @@ Disallow: /revision/
 Disallow: /api/
 Disallow: /ckan-admin/
 Disallow: /user/
+# Spider-trap mitigation: block faceted/sorted/paginated URL combinations
+# (each combination is a unique URL that crawlers enumerate exhaustively).
+Disallow: /*?_*_sort=
+Disallow: /*&_*_sort=
+Disallow: /*?_*_limit=
+Disallow: /*&_*_limit=
+Disallow: /*?page=
+Disallow: /*&page=
+Disallow: /*?sort=
+Disallow: /*&sort=
+Disallow: /*?ext_bbox=
+Disallow: /*&ext_bbox=
 
 # Aggressive bots — block everything
 User-agent: AhrefsBot

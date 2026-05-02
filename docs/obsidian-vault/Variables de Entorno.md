@@ -18,6 +18,22 @@ Estas claves se definen en el archivo de configuración de CKAN (`ckan.ini`) y s
 | `ckanext.theme_ejemplo.recently_added_cache_ttl` | `300` (5 min) | TTL del caché de datasets/documentos recientes |
 | `ckanext.theme_ejemplo.tracking_cache_ttl` | `300` (5 min) | TTL del caché de estadísticas de tracking (mínimo 60s) |
 
+#### Caché de respuestas anónimas
+
+> [!note]
+> Mitiga la "spider trap" de las búsquedas con facetas (`/dataset/?_X_sort=...`). Sólo aplica a `GET`/`HEAD` sin cookie de sesión y respuestas `200` text/JSON/XML. Usa Redis (vía `ckan.lib.redis.connect_to_redis`) con fallback a un LRU local.
+
+| Clave | Default | Descripción |
+|---|---|---|
+| `ckanext.theme_ejemplo.anon_cache_enabled` | `false` | Activa el caché de respuestas anónimas (recomendado en producción) |
+| `ckanext.theme_ejemplo.anon_cache_ttl` | `300` (5 min) | TTL en segundos de cada entrada |
+| `ckanext.theme_ejemplo.anon_cache_max_bytes` | `1048576` (1 MB) | Tamaño máximo del body para guardarlo en caché |
+| `ckanext.theme_ejemplo.anon_cache_include_paths` | _(vacío = todo)_ | Prefijos de path a cachear (CSV). Si está vacío, se cachea todo lo no excluido |
+| `ckanext.theme_ejemplo.anon_cache_exclude_paths` | `/api,/ckan-admin,/user,/dashboard,/feeds,/util,/_tracking,/membership-requests,/bug-tickets` | Prefijos a saltar siempre |
+
+> [!tip]
+> Para desactivar puntualmente el caché en una request (debug), añade `?_nocache=1` o el header `Cache-Control: no-cache`. Las respuestas servidas/guardadas exponen `X-Anon-Cache: HIT|MISS`.
+
 ### Funcionalidad
 
 | Clave | Default | Descripción |
@@ -53,6 +69,14 @@ ckanext.theme_ejemplo.home_cache_ttl = 300
 ckanext.theme_ejemplo.recently_added_cache_ttl = 300
 ckanext.theme_ejemplo.tracking_cache_ttl = 300
 ckanext.theme_ejemplo.index_followers = false
+
+# Caché de respuestas anónimas (mitiga spider trap)
+ckanext.theme_ejemplo.anon_cache_enabled = true
+ckanext.theme_ejemplo.anon_cache_ttl = 300
+ckanext.theme_ejemplo.anon_cache_max_bytes = 1048576
+# Vacío = cachea todo lo no excluido
+# ckanext.theme_ejemplo.anon_cache_include_paths =
+ckanext.theme_ejemplo.anon_cache_exclude_paths = /api,/ckan-admin,/user,/dashboard,/feeds,/util,/_tracking,/membership-requests,/bug-tickets
 ```
 
 ---

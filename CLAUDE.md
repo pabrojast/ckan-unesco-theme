@@ -62,7 +62,7 @@ python setup.py compile_catalog
 
 | Módulo | Rol |
 |---|---|
-| `plugin.py` | Clase principal, 7 interfaces CKAN, rutas, helpers, caches |
+| `plugin.py` | Clase principal, 8 interfaces CKAN, rutas, helpers, caches |
 | `controller.py` | Clase `MyLogica`, 67 funciones de vista Flask |
 | `actions.py` | 45+ acciones CKAN custom y overrides |
 | `helpers.py` | 25 helpers de template (tracking, personas, orgs) |
@@ -70,3 +70,4 @@ python setup.py compile_catalog
 | `auth.py` | 41 funciones de autorización |
 | `validators.py` | 3 validadores de perfil de usuario |
 | `utils.py` | Validación de imágenes (MIME, magic bytes) |
+| `cache.py` | Caché de respuestas anónimas (Redis + LRU local) registrado vía `IMiddleware` |
