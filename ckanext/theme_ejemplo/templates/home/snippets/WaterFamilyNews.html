@@ -5,6 +5,9 @@
     <div class="section-title-content">
       <h2>{{ _('UNESCO Water Family News') }}</h2>
       <p class="section-title-description">{{ _('Latest news from the UNESCO Water Family community') }}</p>
+      <a href="{{ h.url_for('pages.water_news_index') }}" class="section-title-link" title="{{ _('View all news') }}">
+        {{ _('View all news') }} <i class="fa fa-arrow-right" aria-hidden="true"></i>
+      </a>
     </div>
   </div>
   <div id="WaterFamilyNews"></div>

@@ -1685,6 +1685,33 @@ a.heading.truncate {
   0 0 1px rgba(0, 0, 0, 0.2);
 }
 
+.section-title-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.75rem;
+  padding: 0.4rem 0.9rem;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 999px;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.section-title-link:hover,
+.section-title-link:focus {
+  background: rgba(255, 255, 255, 0.3);
+  color: #fff;
+  text-decoration: none;
+  transform: translateX(2px);
+}
+
+.section-title-link .fa {
+  font-size: 0.85rem;
+}
+
 @media (max-width: 768px) {
   .section-title {
     height: 140px;
