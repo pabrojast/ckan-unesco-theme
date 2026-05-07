@@ -1,0 +1,250 @@
+{# Override del template de error de CKAN. Renderiza una página amigable
+   con branding UNESCO para 4xx/5xx en lugar de exponer la pila técnica.
+   Variables disponibles desde CKAN: code, name, content, show_login_redirect_link.
+   Se mantiene autocontenido (CSS in-line) por si el CSS principal falla. #}
+{% extends "page.html" %}
+
+{% set _code = code|int if code else 0 %}
+{% if _code >= 500 %}
+  {% set _kind = 'server' %}
+{% elif _code in (401, 403) %}
+  {% set _kind = 'forbidden' %}
+{% elif _code == 404 %}
+  {% set _kind = 'notfound' %}
+{% else %}
+  {% set _kind = 'generic' %}
+{% endif %}
+
+{% block subtitle %}{{ gettext('Error %(error_code)s', error_code=code) }}{% endblock %}
+
+{% block breadcrumb %}{% endblock %}
+{% block toolbar %}{% endblock %}
+{% block secondary %}{% endblock %}
+
+{% block flash %}
+  {# Silenciar mensajes flash que pudo encolar el error #}
+  {% set _flushed = h.flash.pop_messages() %}
+{% endblock %}
+
+{% block styles %}
+  {{ super() }}
+  <style>
+    .error-page {
+      min-height: 60vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 3rem 1rem;
+      background: linear-gradient(180deg, #f6fafd 0%, #eaf3fa 100%);
+    }
+    .error-card {
+      max-width: 640px;
+      width: 100%;
+      background: #fff;
+      border-radius: 14px;
+      box-shadow: 0 10px 40px rgba(0, 105, 180, 0.12);
+      padding: 3rem 2.5rem;
+      text-align: center;
+    }
+    .error-icon {
+      width: 96px;
+      height: 96px;
+      margin: 0 auto 1.5rem;
+      border-radius: 50%;
+      background: #E8F4F8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #0069B4;
+    }
+    .error-icon svg { width: 52px; height: 52px; }
+    .error-code {
+      font-size: 0.85rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: #6c757d;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+    }
+    .error-title {
+      font-size: 1.9rem;
+      font-weight: 700;
+      color: #0069B4;
+      margin: 0 0 0.75rem;
+      line-height: 1.2;
+    }
+    .error-message {
+      font-size: 1.05rem;
+      color: #495057;
+      line-height: 1.6;
+      margin: 0 auto 2rem;
+      max-width: 480px;
+    }
+    .error-actions {
+      display: flex;
+      gap: 0.75rem;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+    .error-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.7rem 1.4rem;
+      border-radius: 25px;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      border: 2px solid transparent;
+      cursor: pointer;
+      font-size: 0.95rem;
+    }
+    .error-btn-primary {
+      background: linear-gradient(135deg, #0069B4 0%, #005a9e 100%);
+      color: #fff;
+      border-color: #0069B4;
+    }
+    .error-btn-primary:hover {
+      background: linear-gradient(135deg, #005a9e 0%, #0069B4 100%);
+      color: #fff;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 105, 180, 0.3);
+      text-decoration: none;
+    }
+    .error-btn-outline {
+      background: transparent;
+      color: #0069B4;
+      border-color: #0069B4;
+    }
+    .error-btn-outline:hover {
+      background: #0069B4;
+      color: #fff;
+      text-decoration: none;
+    }
+    .error-meta {
+      margin-top: 2rem;
+      padding-top: 1.5rem;
+      border-top: 1px solid #e9ecef;
+      font-size: 0.85rem;
+      color: #8a8a8a;
+    }
+    .error-meta a { color: #0069B4; }
+    .error-details {
+      margin-top: 1rem;
+      text-align: left;
+      font-size: 0.85rem;
+      color: #6c757d;
+    }
+    .error-details summary {
+      cursor: pointer;
+      font-weight: 600;
+      padding: 0.4rem 0;
+    }
+    .error-details .error-content-raw {
+      background: #f8f9fa;
+      border-radius: 6px;
+      padding: 0.75rem 1rem;
+      margin-top: 0.5rem;
+      word-break: break-word;
+    }
+    @media (max-width: 540px) {
+      .error-card { padding: 2rem 1.25rem; }
+      .error-title { font-size: 1.45rem; }
+      .error-message { font-size: 0.98rem; }
+      .error-btn { width: 100%; justify-content: center; }
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <div class="error-page" role="main">
+    <div class="error-card" aria-live="polite">
+      <div class="error-icon" aria-hidden="true">
+        {% if _kind == 'server' %}
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a4 4 0 0 0-5.4 5.4L3 18l3 3 6.3-6.3a4 4 0 0 0 5.4-5.4l-2.7 2.7-2.6-2.6 2.7-2.7Z"/></svg>
+        {% elif _kind == 'forbidden' %}
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        {% elif _kind == 'notfound' %}
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/><path d="M11 8.5a2 2 0 0 1 2 2c0 1-2 1.5-2 3"/><circle cx="11" cy="14.5" r="0.5" fill="currentColor"/></svg>
+        {% else %}
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+        {% endif %}
+      </div>
+
+      <div class="error-code">{{ _('Error') }} {{ code or '—' }}</div>
+
+      {% if _kind == 'server' %}
+        <h1 class="error-title">{{ _('We are working on the site') }}</h1>
+        <p class="error-message">
+          {{ _('Something went wrong on our end and we could not load this page. Our team has been notified. Please try again in a few minutes.') }}
+        </p>
+        <div class="error-actions">
+          <a href="{{ request.url if request else '/' }}" class="error-btn error-btn-primary">
+            <i class="fa fa-refresh" aria-hidden="true"></i>
+            {{ _('Try again') }}
+          </a>
+          <a href="/" class="error-btn error-btn-outline">
+            <i class="fa fa-home" aria-hidden="true"></i>
+            {{ _('Back to home') }}
+          </a>
+        </div>
+      {% elif _kind == 'forbidden' %}
+        <h1 class="error-title">{{ _('You do not have access to this page') }}</h1>
+        <p class="error-message">
+          {{ _('This content is restricted. If you believe this is a mistake, sign in with an account that has the right permissions.') }}
+        </p>
+        <div class="error-actions">
+          {% if not c.userobj %}
+            <a href="/user/login" class="error-btn error-btn-primary">
+              <i class="fa fa-sign-in" aria-hidden="true"></i>
+              {{ _('Sign in') }}
+            </a>
+          {% endif %}
+          <a href="/" class="error-btn error-btn-outline">
+            <i class="fa fa-home" aria-hidden="true"></i>
+            {{ _('Back to home') }}
+          </a>
+        </div>
+      {% elif _kind == 'notfound' %}
+        <h1 class="error-title">{{ _('We could not find this page') }}</h1>
+        <p class="error-message">
+          {{ _('The page you are looking for may have been moved, renamed, or no longer exists. Try searching the catalogue or returning to the home page.') }}
+        </p>
+        <div class="error-actions">
+          <a href="/" class="error-btn error-btn-primary">
+            <i class="fa fa-home" aria-hidden="true"></i>
+            {{ _('Back to home') }}
+          </a>
+          <a href="/dataset/" class="error-btn error-btn-outline">
+            <i class="fa fa-search" aria-hidden="true"></i>
+            {{ _('Search datasets') }}
+          </a>
+        </div>
+      {% else %}
+        <h1 class="error-title">{{ name or _('Something went wrong') }}</h1>
+        <p class="error-message">
+          {{ _('An unexpected error occurred. You can return to the home page or try again later.') }}
+        </p>
+        <div class="error-actions">
+          <a href="/" class="error-btn error-btn-primary">
+            <i class="fa fa-home" aria-hidden="true"></i>
+            {{ _('Back to home') }}
+          </a>
+        </div>
+      {% endif %}
+
+      {# Mostrar el detalle técnico solo en 4xx; en 5xx puede filtrar info sensible #}
+      {% if content and _kind != 'server' %}
+        <details class="error-details">
+          <summary>{{ _('Technical details') }}</summary>
+          <div class="error-content-raw">{{ content }}</div>
+        </details>
+      {% endif %}
+
+      <div class="error-meta">
+        {{ _('Need help?') }}
+        <a href="mailto:ihp-wins@unesco.org">ihp-wins@unesco.org</a>
+      </div>
+    </div>
+  </div>
+{% endblock %}
