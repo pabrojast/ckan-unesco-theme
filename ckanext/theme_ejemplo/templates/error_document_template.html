@@ -37,7 +37,11 @@
          quedara tapada por la cabecera. */
       align-items: flex-start;
       justify-content: center;
-      padding: 3rem 1rem 4rem;
+      /* La cabecera (.masthead) es position:absolute en este tema y el espacio
+         lo aporta normalmente `.main { padding-top: 9rem }`. Como este template
+         sobreescribe el bloque `content` entero, ese wrapper no existe aquí, así
+         que reservamos el mismo espacio superior manualmente. */
+      padding: 9rem 1rem 4rem;
       background: linear-gradient(180deg, #f6fafd 0%, #eaf3fa 100%);
     }
     .error-card {
