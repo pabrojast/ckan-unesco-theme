@@ -32,9 +32,12 @@
     .error-page {
       min-height: 60vh;
       display: flex;
-      align-items: center;
+      /* flex-start (no centrado vertical): si la tarjeta es más alta que el
+         contenedor, el centrado provocaba que se desbordara hacia arriba y
+         quedara tapada por la cabecera. */
+      align-items: flex-start;
       justify-content: center;
-      padding: 3rem 1rem;
+      padding: 3rem 1rem 4rem;
       background: linear-gradient(180deg, #f6fafd 0%, #eaf3fa 100%);
     }
     .error-card {
