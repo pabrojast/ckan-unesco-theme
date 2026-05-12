@@ -11,3 +11,19 @@ thematicbuilder-css:
   filters: cssrewrite,cssmin
   contents:
     - thematicbuilder/css/main.css
+
+ckan-bs5-compat-js:
+  output: theme/ckan-bs5-compat.js
+  filters: rjsmin
+  extra:
+    preload:
+      - vendor/bootstrap
+  contents:
+    - ckan-bs5-compat.js
+
+theme-ejemplo-runtime-js:
+  output: theme/theme-ejemplo-runtime.js
+  filters: rjsmin
+  contents:
+    - theme_ejemplo_enhanced.js
+    - topmenu-responsive.js
