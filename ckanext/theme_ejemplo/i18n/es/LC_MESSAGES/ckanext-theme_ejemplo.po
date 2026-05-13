@@ -916,3 +916,147 @@ msgstr ""
 "un usuario registrado</strong> y deseas convertirte en miembro de esa "
 "organización. Con esta cuenta de usuario, <strong>no</strong> podrás "
 "crear conjuntos de datos, grupos u otros elementos.\""
+
+#: ckanext/theme_ejemplo/templates/header.html
+msgid "Blog"
+msgstr "Blog"
+
+#: ckanext/theme_ejemplo/templates/header.html
+msgid "Pages"
+msgstr "Páginas"
+
+#: ckanext/theme_ejemplo/templates/header.html
+msgid "Harvest"
+msgstr "Recolección"
+
+#: ckanext/theme_ejemplo/templates/header.html
+msgid "More options"
+msgstr "Más opciones"
+
+#: ckanext/theme_ejemplo/templates/bug_tickets/new.html
+msgid "Preview"
+msgstr "Vista previa"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/slideshow.html
+msgid "IHP-WINS: Empowering Open Science & Data-Driven Water Governance"
+msgstr "IHP-WINS: Impulsando la ciencia abierta y la gobernanza del agua basada en datos"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/slideshow.html
+msgid "UNESCO's Water Information Network System for evidence-based decision making"
+msgstr "El Sistema de Red de Información del Agua de la UNESCO para la toma de decisiones basada en evidencia"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/slideshow.html
+msgid "Learn More"
+msgstr "Más información"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/slideshow.html
+msgid "Citizen Science"
+msgstr "Ciencia ciudadana"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/slideshow.html
+msgid "Community-driven water monitoring and data collection"
+msgstr "Monitoreo del agua y recopilación de datos impulsados por la comunidad"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/slideshow.html
+msgid "IHP Citizen Science Portal"
+msgstr "Portal de ciencia ciudadana de IHP"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/slideshow.html
+msgid "Internet of Things"
+msgstr "Internet de las cosas"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/slideshow.html
+msgid "Real-time water monitoring through connected sensors"
+msgstr "Monitoreo del agua en tiempo real mediante sensores conectados"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/slideshow.html
+msgid "IHP IoT Portal"
+msgstr "Portal IoT de IHP"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/slideshow.html
+msgid "Open Learning"
+msgstr "Aprendizaje abierto"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/slideshow.html
+msgid "Build capacity in water science and management"
+msgstr "Fortalecimiento de capacidades en ciencia y gestión del agua"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/slideshow.html
+msgid "IHP UNESCO Open Learning"
+msgstr "Aprendizaje abierto de la UNESCO IHP"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/slideshow.html
+msgid "UNESCO News and Events"
+msgstr "Noticias y eventos de la UNESCO"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/slideshow.html
+msgid "Stay connected with the global water community"
+msgstr "Mantente conectado con la comunidad mundial del agua"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/slideshow.html
+msgid "View Events"
+msgstr "Ver eventos"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/slideshow.html
+msgid "UNESCO IHP"
+msgstr "UNESCO IHP"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/slideshow.html
+msgid "Previous slide"
+msgstr "Diapositiva anterior"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/slideshow.html
+msgid "Go to slide {number}"
+msgstr "Ir a la diapositiva {number}"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/slideshow.html
+msgid "Next slide"
+msgstr "Siguiente diapositiva"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/IHPIX.html
+msgid "IHP IX: Priority Areas"
+msgstr "IHP IX: Áreas prioritarias"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/IHPIX.html
+msgid "Priority Area 1: Scientific Research and Innovation"
+msgstr "Área prioritaria 1: Investigación científica e innovación"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/IHPIX.html
+msgid "Priority Area 2: Water Education in the Fourth Industrial Revolution including Sustainability"
+msgstr "Área prioritaria 2: Educación sobre el agua en la Cuarta Revolución Industrial, incluida la sostenibilidad"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/IHPIX.html
+msgid "Priority Area 3: Bridging the Data-Knowledge Gap"
+msgstr "Área prioritaria 3: Cerrar la brecha entre datos y conocimiento"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/IHPIX.html
+msgid "Priority Area 4: Integrated Water Resources Management under Conditions of Global Change"
+msgstr "Área prioritaria 4: Gestión integrada de los recursos hídricos en condiciones de cambio global"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/IHPIX.html
+msgid "Priority Area 5: Water Governance based on Science for Mitigation, Adaptation, and Resilience"
+msgstr "Área prioritaria 5: Gobernanza del agua basada en la ciencia para la mitigación, la adaptación y la resiliencia"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/ThematicViewers.html
+msgid "Ecohydrology Demonstration Sites"
+msgstr "Sitios demostrativos de ecohidrología"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/ThematicViewers.html
+msgid "Water Quality Monitoring Portal"
+msgstr "Portal de monitoreo de la calidad del agua"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/ThematicViewers.html
+msgid "Urban Water Solutions Database"
+msgstr "Base de datos de soluciones urbanas para el agua"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/ThematicViewers.html
+msgid "Internet of Things Portal"
+msgstr "Portal de Internet de las cosas"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/ThematicViewers.html
+msgid "Citizen Science Portal"
+msgstr "Portal de ciencia ciudadana"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/ThematicViewers.html
+msgid "Flood and Drought Monitoring and Early Warning Systems"
+msgstr "Monitoreo de inundaciones y sequías y sistemas de alerta temprana"

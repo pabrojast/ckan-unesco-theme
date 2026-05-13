@@ -396,7 +396,7 @@
                 chip.className = 'ms-chip';
                 chip.setAttribute('data-value', val);
                 chip.innerHTML = '<i class="fa fa-globe"></i> ' + getLabel(val) +
-                  ' <button type="button" class="ms-chip-remove" aria-label="Remove">&times;</button>';
+                  ' <button type="button" class="ms-chip-remove" aria-label="{{ _("Remove") }}">&times;</button>';
                 chip.querySelector('.ms-chip-remove').addEventListener('click', function() {
                   removeState(val);
                 });

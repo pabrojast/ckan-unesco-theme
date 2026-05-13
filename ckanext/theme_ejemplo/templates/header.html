@@ -107,7 +107,7 @@
           </a>
         </li>
         <li>
-          <a href="/harvest" title="harvest">
+          <a href="/harvest" title="{{ _('Harvest') }}">
             <span class="text">{{ _('Harvest') }}</span>  </a>
         </li>
         {% endif %}
@@ -163,7 +163,7 @@
         </li>
         {% if c.userobj and c.userobj.sysadmin %}
         <li>
-          <a href="/blog" alt="Blog">Blog</a>
+          <a href="/blog" title="{{ _('Blog') }}">{{ _('Blog') }}</a>
         </li>
         {% set _colab_count = h.colab_pending_count() if 'colab_pending_count' in h else 0 %}
         {% set _tb_count = h.tb_pending_count() if 'tb_pending_count' in h else 0 %}
@@ -186,7 +186,7 @@
         </li>
         {% endif %}
         <li>
-          <a href="/pages" alt="Pages">Pages</a>
+          <a href="/pages" title="{{ _('Pages') }}">{{ _('Pages') }}</a>
         </li>
         {% endif %}
         {% endblock %} {% endblock %}
@@ -250,7 +250,7 @@
           
           <!-- Mobile menu toggle for hidden items -->
           <li class="topmenu-toggle mobile-only">
-            <a href="#" class="topmenu-dropdown-toggle" aria-label="More options">
+            <a href="#" class="topmenu-dropdown-toggle" aria-label="{{ _('More options') }}">
               <i class="fa fa-bars"></i>
             </a>
             <ul class="topmenu-dropdown">
@@ -309,7 +309,7 @@
         <div class="masthead-lang-mobile">
           {% snippet "snippets/language_selector.html" %}
         </div>
-        <button data-target="#main-navigation-toggle" data-toggle="collapse" data-bs-target="#main-navigation-toggle" data-bs-toggle="collapse" class="navbar-toggle navbar-toggler" type="button" aria-label="expand or collapse" aria-controls="main-navigation-toggle" aria-expanded="false">
+        <button data-target="#main-navigation-toggle" data-toggle="collapse" data-bs-target="#main-navigation-toggle" data-bs-toggle="collapse" class="navbar-toggle navbar-toggler" type="button" aria-label="{{ _('Toggle navigation') }}" aria-controls="main-navigation-toggle" aria-expanded="false">
           <span class="sr-only">{{ _('Toggle navigation') }}</span>
           <span class="fa fa-bars"></span>
         </button>

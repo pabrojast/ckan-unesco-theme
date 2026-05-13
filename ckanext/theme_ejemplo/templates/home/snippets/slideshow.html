@@ -1,38 +1,38 @@
 {% set slideshow_items = [
   {
-    'title': 'IHP-WINS: Empowering Open Science & Data-Driven Water Governance',
-    'subtitle': 'UNESCO\'s Water Information Network System for evidence-based decision making',
+    'title': _('IHP-WINS: Empowering Open Science & Data-Driven Water Governance'),
+    'subtitle': _("UNESCO's Water Information Network System for evidence-based decision making"),
     'image': '/Landing_page/Content/01IHP-WEB.jpg',
     'link': '#IHPWINS',
-    'link_text': 'Learn More'
+    'link_text': _('Learn More')
   },
   {
-    'title': 'Citizen Science',
-    'subtitle': 'Community-driven water monitoring and data collection',
+    'title': _('Citizen Science'),
+    'subtitle': _('Community-driven water monitoring and data collection'),
     'image': '/Landing_page/Content/02IHP-CITIZEN.jpg',
     'link': '/citizen-science-portal',
-    'link_text': 'IHP Citizen Science Portal'
+    'link_text': _('IHP Citizen Science Portal')
   },
   {
-    'title': 'Internet of Things',
-    'subtitle': 'Real-time water monitoring through connected sensors',
+    'title': _('Internet of Things'),
+    'subtitle': _('Real-time water monitoring through connected sensors'),
     'image': '/Landing_page/Content/03IHP-INTERNET.jpg',
     'link': '/iot-portal',
-    'link_text': 'IHP IOT Portal'
+    'link_text': _('IHP IoT Portal')
   },
   {
-    'title': 'Open Learning',
-    'subtitle': 'Build capacity in water science and management',
+    'title': _('Open Learning'),
+    'subtitle': _('Build capacity in water science and management'),
     'image': '/Landing_page/Content/04IHP-OPEN.jpg',
     'link': 'https://openlearning.unesco.org/program/intergovernmental-hydrological-programme-ihp/',
-    'link_text': 'IHP UNESCO Open Learning'
+    'link_text': _('IHP UNESCO Open Learning')
   },
   {
-    'title': 'UNESCO News and Events',
-    'subtitle': 'Stay connected with the global water community',
+    'title': _('UNESCO News and Events'),
+    'subtitle': _('Stay connected with the global water community'),
     'image': '/Landing_page/Content/05IHP-NEWS.jpg',
     'link': '#IHPEvents',
-    'link_text': 'View Events'
+    'link_text': _('View Events')
   }
 ] %}
 
@@ -42,7 +42,7 @@
       <div class="slide {% if loop.first %}slide-active{% endif %}" data-index="{{ loop.index0 }}">
         <div class="slide-image" style="background-image: url('{{ item.image }}');">
           <div class="slide-content">
-            <span class="slide-tag">UNESCO IHP</span>
+            <span class="slide-tag">{{ _('UNESCO IHP') }}</span>
             <h2>{{ item.title }}</h2>
             <p class="slide-subtitle">{{ item.subtitle }}</p>
             {% if item.link %}
@@ -62,13 +62,13 @@
   </div>
   
   <div class="slideshow-nav">
-    <button class="prev-btn" aria-label="Previous slide">&#10094;</button>
+    <button class="prev-btn" aria-label="{{ _('Previous slide') }}">&#10094;</button>
     <div class="slideshow-dots">
       {% for item in slideshow_items %}
-        <button class="dot {% if loop.first %}active{% endif %}" aria-label="Go to slide {{ loop.index }}"></button>
+        <button class="dot {% if loop.first %}active{% endif %}" aria-label="{{ _('Go to slide {number}').format(number=loop.index) }}"></button>
       {% endfor %}
     </div>
-    <button class="next-btn" aria-label="Next slide">&#10095;</button>
+    <button class="next-btn" aria-label="{{ _('Next slide') }}">&#10095;</button>
   </div>
 </div>
 

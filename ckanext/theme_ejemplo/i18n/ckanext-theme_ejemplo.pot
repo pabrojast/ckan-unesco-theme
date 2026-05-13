@@ -740,3 +740,146 @@ msgid ""
 "to create datasets, groups, or other items.\""
 msgstr ""
 
+#: ckanext/theme_ejemplo/templates/header.html
+msgid "Blog"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/header.html
+msgid "Pages"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/header.html
+msgid "Harvest"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/header.html
+msgid "More options"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/bug_tickets/new.html
+msgid "Preview"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/slideshow.html
+msgid "IHP-WINS: Empowering Open Science & Data-Driven Water Governance"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/slideshow.html
+msgid "UNESCO's Water Information Network System for evidence-based decision making"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/slideshow.html
+msgid "Learn More"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/slideshow.html
+msgid "Citizen Science"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/slideshow.html
+msgid "Community-driven water monitoring and data collection"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/slideshow.html
+msgid "IHP Citizen Science Portal"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/slideshow.html
+msgid "Internet of Things"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/slideshow.html
+msgid "Real-time water monitoring through connected sensors"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/slideshow.html
+msgid "IHP IoT Portal"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/slideshow.html
+msgid "Open Learning"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/slideshow.html
+msgid "Build capacity in water science and management"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/slideshow.html
+msgid "IHP UNESCO Open Learning"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/slideshow.html
+msgid "UNESCO News and Events"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/slideshow.html
+msgid "Stay connected with the global water community"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/slideshow.html
+msgid "View Events"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/slideshow.html
+msgid "UNESCO IHP"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/slideshow.html
+msgid "Previous slide"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/slideshow.html
+msgid "Go to slide {number}"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/slideshow.html
+msgid "Next slide"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/IHPIX.html
+msgid "IHP IX: Priority Areas"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/IHPIX.html
+msgid "Priority Area 1: Scientific Research and Innovation"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/IHPIX.html
+msgid "Priority Area 2: Water Education in the Fourth Industrial Revolution including Sustainability"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/IHPIX.html
+msgid "Priority Area 3: Bridging the Data-Knowledge Gap"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/IHPIX.html
+msgid "Priority Area 4: Integrated Water Resources Management under Conditions of Global Change"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/IHPIX.html
+msgid "Priority Area 5: Water Governance based on Science for Mitigation, Adaptation, and Resilience"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/ThematicViewers.html
+msgid "Ecohydrology Demonstration Sites"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/ThematicViewers.html
+msgid "Water Quality Monitoring Portal"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/ThematicViewers.html
+msgid "Urban Water Solutions Database"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/ThematicViewers.html
+msgid "Internet of Things Portal"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/ThematicViewers.html
+msgid "Citizen Science Portal"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/ThematicViewers.html
+msgid "Flood and Drought Monitoring and Early Warning Systems"
+msgstr ""
