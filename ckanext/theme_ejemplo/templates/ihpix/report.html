@@ -715,14 +715,28 @@
                  placeholder="{{ _('Partner 1, Partner 2, …') }}">
         </div>
 
-        <div class="ihpix-report-field">
-          <label class="ihpix-report-label" for="ihpix-field-institution">
-            {{ _('Name of the Lead Implementing Institution') }} <span class="ihpix-report-required">*</span>
-          </label>
-          <span class="ihpix-report-help">{{ _('Name of the institution mainly responsible for the implemented activity.') }}</span>
-          <input type="text" id="ihpix-field-institution" name="institution"
-                 class="ihpix-report-input" required>
-          <div class="ihpix-report-error-text" id="ihpix-error-institution">{{ _('Institution name is required.') }}</div>
+        <div class="ihpix-report-row">
+          <div class="ihpix-report-field">
+            <label class="ihpix-report-label" for="ihpix-field-institution">
+              {{ _('Name of the Lead Implementing Institution') }} <span class="ihpix-report-required">*</span>
+            </label>
+            <span class="ihpix-report-help">{{ _('Name of the institution mainly responsible for the implemented activity.') }}</span>
+            <input type="text" id="ihpix-field-institution" name="institution"
+                   class="ihpix-report-input" required>
+            <div class="ihpix-report-error-text" id="ihpix-error-institution">{{ _('Institution name is required.') }}</div>
+          </div>
+          <div class="ihpix-report-field">
+            <label class="ihpix-report-label" for="ihpix-field-country">
+              {{ _('Country of implementation') }}
+            </label>
+            <span class="ihpix-report-help">{{ _('Primary country where the activity was implemented (optional).') }}</span>
+            <select id="ihpix-field-country" name="country" class="ihpix-report-select">
+              <option value="">-- {{ _('Select a country') }} --</option>
+              {% for code, name in member_states %}
+                <option value="{{ code }}">{{ _(name) }}</option>
+              {% endfor %}
+            </select>
+          </div>
         </div>
 
         <div class="ihpix-report-field">

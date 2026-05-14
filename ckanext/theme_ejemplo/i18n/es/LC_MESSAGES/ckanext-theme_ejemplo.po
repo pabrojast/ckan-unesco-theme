@@ -2156,3 +2156,15 @@ msgstr "Σ Meta"
 #: ckanext/theme_ejemplo/templates/ihpix/report.html
 msgid "Σ Youth"
 msgstr "Σ Jóvenes"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Country of implementation"
+msgstr "País de implementación"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Primary country where the activity was implemented (optional)."
+msgstr "País principal donde se implementó la actividad (opcional)."
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Select a country"
+msgstr "Selecciona un país"

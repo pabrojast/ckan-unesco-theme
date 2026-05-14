@@ -1979,3 +1979,15 @@ msgstr ""
 #: ckanext/theme_ejemplo/templates/ihpix/report.html
 msgid "Σ Youth"
 msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Country of implementation"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Primary country where the activity was implemented (optional)."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Select a country"
+msgstr ""

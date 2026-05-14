@@ -2134,3 +2134,15 @@ msgstr "Σ Cible"
 #: ckanext/theme_ejemplo/templates/ihpix/report.html
 msgid "Σ Youth"
 msgstr "Σ Jeunes"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Country of implementation"
+msgstr "Pays de mise en œuvre"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Primary country where the activity was implemented (optional)."
+msgstr "Pays principal où l'activité a été mise en œuvre (facultatif)."
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Select a country"
+msgstr "Sélectionner un pays"

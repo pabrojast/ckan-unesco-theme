@@ -2001,3 +2001,15 @@ msgstr "Σ الهدف"
 #: ckanext/theme_ejemplo/templates/ihpix/report.html
 msgid "Σ Youth"
 msgstr "Σ الشباب"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Country of implementation"
+msgstr "بلد التنفيذ"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Primary country where the activity was implemented (optional)."
+msgstr "البلد الرئيسي الذي نُفّذ فيه النشاط (اختياري)."
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Select a country"
+msgstr "اختر بلداً"
