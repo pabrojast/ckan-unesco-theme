@@ -883,3 +883,183 @@ msgstr ""
 #: ckanext/theme_ejemplo/templates/home/snippets/ThematicViewers.html
 msgid "Flood and Drought Monitoring and Early Warning Systems"
 msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/promoted.html
+msgid "The <strong>Intergovernmental Hydrological Programme's Water Information Network System (IHP-WINS)</strong> promotes the sharing of water-related data among countries, organizations, and stakeholders as part of the UNESCO IHP mandate."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/promoted.html
+msgid "Data Integration"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/promoted.html
+msgid "Integrates water-related data from monitoring networks, research institutions, and international organizations using standardized formats."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/promoted.html
+msgid "International Cooperation"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/promoted.html
+msgid "Strengthens collaboration and knowledge exchange among water professionals at national, regional, and global scales."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/promoted.html
+msgid "Evidence-Based Decisions"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/promoted.html
+msgid "Supports sustainable water management through tools for data visualization, analysis, and informed decision-making."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/promoted.html
+msgid "Access Brochure"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/FeaturedPublications.html
+msgid "Featured publications from UNESCO IHP and the Water Family"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/FeaturedPublicationsdata.html
+msgid "No description available"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/IHPEducation.html
+msgid "IHP Open Learning"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/IHPEducation.html
+msgid "Explore the <a href=\"https://openlearning.unesco.org/program/intergovernmental-hydrological-programme-ihp/\" target=\"_blank\" style=\"color:#fff; font-weight: bold; text-decoration: underline; text-underline-offset: 2px;\" >IHP Open Learning platform</a> or participate in one of the latest open learning courses."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/IHPEducationdata.html
+msgid "View Course"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/IHPEvents.html
+msgid "Stay updated with the latest activities and announcements"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/IHPEventsdata.html
+msgid "No content available"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/IHPEventsdata.html
+msgid "Read full article"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/IHPIX.html
+msgid "The Operational Implementation Plan of the Intergovernmental Hydrological Programme is based on the Strategic Plan of IHP-IX. This Strategy has five interrelated and intertwined priority areas and 34 Outputs."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/IHPViewers.html
+msgid "Geospatial Catalogue Viewer"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/IHPViewers.html
+msgid "Transform data into actionable insights"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/ThematicViewers.html
+msgid "Thematic Viewers"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/ThematicViewers.html
+msgid "Specialized visualization tools tailored to specific water themes"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/WaterFamilyEvents.html
+msgid "UNESCO Water Family Events"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/WaterFamilyEvents.html
+msgid "Upcoming and recent events from the UNESCO Water Family"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/WaterFamilyEventsdata.html
+msgid "View all events"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/WaterFamilyNews.html
+msgid "UNESCO Water Family News"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/WaterFamilyNews.html
+msgid "Latest news from the UNESCO Water Family community"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/WaterFamilyNews.html
+msgid "View all news"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/ai_water_tools.html
+msgid "AI for Water Management"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/ai_water_tools.html
+msgid "Explore a curated database of artificial intelligence tools and applications designed for water resource management. Discover AI solutions transforming how we manage water worldwide."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/data.html
+msgid "A data platform to aid in informed decision-making"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/data.html
+msgid "At UNESCO, we believe in the power of open collaboration and the principles of Open Science, leveraging open-source technology to provide a seamless experience for users. The platform's Data Catalogue and Management System stand as a testament to this commitment, offering a robust repository for all IHP-relevant datasets. UNESCO's Water Family can contribute and access information in various formats, enabling a diverse and inclusive data-sharing environment."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featureddata.html
+msgid "Recently uploaded datasets from UNESCO's Water Family"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/open_source_tools_banner.html
+msgid "Open Source Tools"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/open_source_tools_banner.html
+msgid "Explore community-driven open source tools for water data management, analysis, and visualization. Built by and for the global water community."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/open_source_tools_banner.html
+msgid "Explore Tools"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/recently_added.html
+msgid "Recently Added"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/recently_added.html
+msgid "Latest datasets and publications added to IHP-WINS"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/recently_added.html
+msgid "New Datasets"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/recently_added.html
+msgid "View all datasets"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/recently_added.html
+msgid "No datasets available"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/recently_added.html
+msgid "New Publications"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/recently_added.html
+msgid "View all publications"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/recently_added.html
+msgid "No publications available"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/stats.html
+msgid "page views"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/stats.html
+msgid "downloads"
+msgstr ""

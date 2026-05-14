@@ -905,3 +905,183 @@ msgstr "بوابة العلم المواطن"
 #: ckanext/theme_ejemplo/templates/home/snippets/ThematicViewers.html
 msgid "Flood and Drought Monitoring and Early Warning Systems"
 msgstr "رصد الفيضانات والجفاف وأنظمة الإنذار المبكر"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/promoted.html
+msgid "The <strong>Intergovernmental Hydrological Programme's Water Information Network System (IHP-WINS)</strong> promotes the sharing of water-related data among countries, organizations, and stakeholders as part of the UNESCO IHP mandate."
+msgstr "يعزز <strong>نظام شبكة معلومات المياه التابع للبرنامج الهيدرولوجي الدولي الحكومي (IHP-WINS)</strong> تبادل البيانات المتعلقة بالمياه بين البلدان والمنظمات والجهات المعنية، كجزء من ولاية البرنامج الهيدرولوجي الدولي لليونسكو."
+
+#: ckanext/theme_ejemplo/templates/home/snippets/promoted.html
+msgid "Data Integration"
+msgstr "تكامل البيانات"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/promoted.html
+msgid "Integrates water-related data from monitoring networks, research institutions, and international organizations using standardized formats."
+msgstr "يدمج البيانات المتعلقة بالمياه من شبكات الرصد ومؤسسات البحث والمنظمات الدولية باستخدام صيغ موحدة."
+
+#: ckanext/theme_ejemplo/templates/home/snippets/promoted.html
+msgid "International Cooperation"
+msgstr "التعاون الدولي"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/promoted.html
+msgid "Strengthens collaboration and knowledge exchange among water professionals at national, regional, and global scales."
+msgstr "يعزز التعاون وتبادل المعرفة بين المهنيين في مجال المياه على الأصعدة الوطنية والإقليمية والعالمية."
+
+#: ckanext/theme_ejemplo/templates/home/snippets/promoted.html
+msgid "Evidence-Based Decisions"
+msgstr "قرارات مبنية على الأدلة"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/promoted.html
+msgid "Supports sustainable water management through tools for data visualization, analysis, and informed decision-making."
+msgstr "يدعم الإدارة المستدامة للمياه من خلال أدوات لتصور البيانات وتحليلها واتخاذ قرارات مستنيرة."
+
+#: ckanext/theme_ejemplo/templates/home/snippets/promoted.html
+msgid "Access Brochure"
+msgstr "الاطلاع على الكتيب"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/FeaturedPublications.html
+msgid "Featured publications from UNESCO IHP and the Water Family"
+msgstr "منشورات مختارة من البرنامج الهيدرولوجي الدولي لليونسكو وعائلة المياه"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/FeaturedPublicationsdata.html
+msgid "No description available"
+msgstr "لا يوجد وصف متاح"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/IHPEducation.html
+msgid "IHP Open Learning"
+msgstr "التعلم المفتوح للبرنامج الهيدرولوجي الدولي"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/IHPEducation.html
+msgid "Explore the <a href=\"https://openlearning.unesco.org/program/intergovernmental-hydrological-programme-ihp/\" target=\"_blank\" style=\"color:#fff; font-weight: bold; text-decoration: underline; text-underline-offset: 2px;\" >IHP Open Learning platform</a> or participate in one of the latest open learning courses."
+msgstr "استكشف <a href=\"https://openlearning.unesco.org/program/intergovernmental-hydrological-programme-ihp/\" target=\"_blank\" style=\"color:#fff; font-weight: bold; text-decoration: underline; text-underline-offset: 2px;\" >منصة التعلم المفتوح للبرنامج الهيدرولوجي الدولي</a> أو شارك في أحد أحدث دورات التعلم المفتوح."
+
+#: ckanext/theme_ejemplo/templates/home/snippets/IHPEducationdata.html
+msgid "View Course"
+msgstr "عرض الدورة"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/IHPEvents.html
+msgid "Stay updated with the latest activities and announcements"
+msgstr "ابق على اطلاع بأحدث الأنشطة والإعلانات"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/IHPEventsdata.html
+msgid "No content available"
+msgstr "لا يوجد محتوى متاح"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/IHPEventsdata.html
+msgid "Read full article"
+msgstr "قراءة المقال كاملاً"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/IHPIX.html
+msgid "The Operational Implementation Plan of the Intergovernmental Hydrological Programme is based on the Strategic Plan of IHP-IX. This Strategy has five interrelated and intertwined priority areas and 34 Outputs."
+msgstr "تستند خطة التنفيذ التشغيلي للبرنامج الهيدرولوجي الدولي الحكومي إلى الخطة الاستراتيجية للبرنامج الهيدرولوجي الدولي الحكومي IX. وتضم هذه الاستراتيجية خمسة مجالات أولوية مترابطة و34 ناتجاً."
+
+#: ckanext/theme_ejemplo/templates/home/snippets/IHPViewers.html
+msgid "Geospatial Catalogue Viewer"
+msgstr "عارض الكتالوج الجغرافي المكاني"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/IHPViewers.html
+msgid "Transform data into actionable insights"
+msgstr "حوّل البيانات إلى رؤى قابلة للتنفيذ"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/ThematicViewers.html
+msgid "Thematic Viewers"
+msgstr "العارضات الموضوعية"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/ThematicViewers.html
+msgid "Specialized visualization tools tailored to specific water themes"
+msgstr "أدوات تصور متخصصة مصممة لمواضيع مياه محددة"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/WaterFamilyEvents.html
+msgid "UNESCO Water Family Events"
+msgstr "فعاليات عائلة المياه التابعة لليونسكو"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/WaterFamilyEvents.html
+msgid "Upcoming and recent events from the UNESCO Water Family"
+msgstr "الفعاليات القادمة والأخيرة لعائلة المياه التابعة لليونسكو"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/WaterFamilyEventsdata.html
+msgid "View all events"
+msgstr "عرض جميع الفعاليات"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/WaterFamilyNews.html
+msgid "UNESCO Water Family News"
+msgstr "أخبار عائلة المياه التابعة لليونسكو"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/WaterFamilyNews.html
+msgid "Latest news from the UNESCO Water Family community"
+msgstr "آخر أخبار مجتمع عائلة المياه التابعة لليونسكو"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/WaterFamilyNews.html
+msgid "View all news"
+msgstr "عرض جميع الأخبار"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/ai_water_tools.html
+msgid "AI for Water Management"
+msgstr "الذكاء الاصطناعي لإدارة المياه"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/ai_water_tools.html
+msgid "Explore a curated database of artificial intelligence tools and applications designed for water resource management. Discover AI solutions transforming how we manage water worldwide."
+msgstr "استكشف قاعدة بيانات منتقاة من أدوات وتطبيقات الذكاء الاصطناعي المصممة لإدارة الموارد المائية. اكتشف حلول الذكاء الاصطناعي التي تُحدث تحولاً في طريقة إدارة المياه حول العالم."
+
+#: ckanext/theme_ejemplo/templates/home/snippets/data.html
+msgid "A data platform to aid in informed decision-making"
+msgstr "منصة بيانات لدعم اتخاذ القرارات المستنيرة"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/data.html
+msgid "At UNESCO, we believe in the power of open collaboration and the principles of Open Science, leveraging open-source technology to provide a seamless experience for users. The platform's Data Catalogue and Management System stand as a testament to this commitment, offering a robust repository for all IHP-relevant datasets. UNESCO's Water Family can contribute and access information in various formats, enabling a diverse and inclusive data-sharing environment."
+msgstr "في اليونسكو، نؤمن بقوة التعاون المفتوح ومبادئ العلم المفتوح، مع الاستفادة من تقنية المصدر المفتوح لتقديم تجربة سلسة للمستخدمين. يُجسّد كتالوج البيانات ونظام الإدارة في المنصة هذا الالتزام، إذ يوفر مستودعاً قوياً لجميع مجموعات البيانات ذات الصلة بالبرنامج الهيدرولوجي الدولي. تستطيع عائلة المياه التابعة لليونسكو المساهمة بالمعلومات والوصول إليها بصيغ متعددة، مما يتيح بيئة متنوعة وشاملة لتبادل البيانات."
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featureddata.html
+msgid "Recently uploaded datasets from UNESCO's Water Family"
+msgstr "مجموعات البيانات التي حمّلتها مؤخراً عائلة المياه التابعة لليونسكو"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/open_source_tools_banner.html
+msgid "Open Source Tools"
+msgstr "الأدوات مفتوحة المصدر"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/open_source_tools_banner.html
+msgid "Explore community-driven open source tools for water data management, analysis, and visualization. Built by and for the global water community."
+msgstr "استكشف أدوات مفتوحة المصدر تقودها المجتمعات لإدارة بيانات المياه وتحليلها وعرضها. صُممت من قِبَل المجتمع العالمي للمياه ومن أجله."
+
+#: ckanext/theme_ejemplo/templates/home/snippets/open_source_tools_banner.html
+msgid "Explore Tools"
+msgstr "استكشاف الأدوات"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/recently_added.html
+msgid "Recently Added"
+msgstr "أُضيف حديثاً"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/recently_added.html
+msgid "Latest datasets and publications added to IHP-WINS"
+msgstr "أحدث مجموعات البيانات والمنشورات المُضافة إلى IHP-WINS"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/recently_added.html
+msgid "New Datasets"
+msgstr "مجموعات بيانات جديدة"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/recently_added.html
+msgid "View all datasets"
+msgstr "عرض جميع مجموعات البيانات"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/recently_added.html
+msgid "No datasets available"
+msgstr "لا توجد مجموعات بيانات متاحة"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/recently_added.html
+msgid "New Publications"
+msgstr "منشورات جديدة"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/recently_added.html
+msgid "View all publications"
+msgstr "عرض جميع المنشورات"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/recently_added.html
+msgid "No publications available"
+msgstr "لا توجد منشورات متاحة"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/stats.html
+msgid "page views"
+msgstr "مشاهدات الصفحة"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/stats.html
+msgid "downloads"
+msgstr "تنزيلات"
