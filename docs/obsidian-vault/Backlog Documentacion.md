@@ -15,6 +15,10 @@
 | DOC-005 | i18n | Documentar proceso completo de agregar un nuevo idioma | Baja |
 | DOC-006 | Config | Documentar todas las claves de config de CKAN core que afectan al plugin | Media |
 | DOC-007 | Admin | Crear guía de usuario para cada panel de administración | Media |
+| DOC-008 | IHP-IX | Confirmar lista oficial completa de los 34 Outputs (códigos + títulos) con OIP UNESCO; hoy `ihpix_constants.OUTPUTS` solo tiene códigos. | Alta |
+| DOC-009 | IHP-IX | Confirmar Key Activities por Output (form acepta texto libre por ahora). | Media |
+| DOC-010 | IHP-IX | Documentar export XLSX del Admin Overview cuando se implemente (hoy solo CSV). | Baja |
+| DOC-011 | IHP-IX | Guía paso-a-paso para IHP National Committees: cómo migrar del Microsoft Form al `/ihpix/report` interno. | Alta |
 
 ---
 

@@ -1,0 +1,635 @@
+{% extends "page.html" %}
+
+{% block title %}{{ _('IHP-IX Overview') }} - {{ super() }}{% endblock %}
+
+{% block breadcrumb_content %}
+<li><a href="{{ h.url_for('theme_ejemplo.ihpix_dashboard') }}">{{ _('IHP-IX') }}</a></li>
+<li class="active">{{ _('Admin Overview') }}</li>
+{% endblock %}
+
+{% block primary_content_inner %}
+<style>
+  .ihpix-ov-banner {
+    background: linear-gradient(135deg, #0069B4 0%, #003d6b 100%);
+    color: #fff;
+    padding: 1.7rem 2rem;
+    border-radius: 12px;
+    margin-bottom: 1.5rem;
+  }
+  .ihpix-ov-banner h1 { margin: 0 0 0.3rem; font-size: 1.5rem; color: #fff; }
+  .ihpix-ov-banner p { margin: 0; opacity: 0.92; font-size: 0.95rem; }
+
+  .ihpix-ov-filters {
+    background: #fff;
+    border: 1px solid #e0e6ed;
+    border-radius: 12px;
+    padding: 1rem 1.2rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+  }
+  .ihpix-ov-filters form {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 0.7rem;
+    align-items: end;
+  }
+  .ihpix-ov-filters label {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: #4a5568;
+    margin: 0 0 0.2rem;
+    display: block;
+  }
+  .ihpix-ov-filters select,
+  .ihpix-ov-filters input {
+    width: 100%;
+    padding: 0.4rem 0.6rem;
+    font-size: 0.85rem;
+    border: 1px solid #cbd5e0;
+    border-radius: 6px;
+    background: #fff;
+  }
+  .ihpix-ov-filters-actions {
+    display: flex;
+    gap: 0.4rem;
+    align-items: flex-end;
+  }
+  .ihpix-ov-btn {
+    padding: 0.5rem 1rem;
+    font-size: 0.85rem;
+    font-weight: 600;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+  }
+  .ihpix-ov-btn-primary { background: #0069B4; color: #fff; }
+  .ihpix-ov-btn-primary:hover { background: #005A9C; color: #fff; text-decoration: none; }
+  .ihpix-ov-btn-secondary { background: #fff; color: #4a5568; border: 1px solid #cbd5e0; }
+  .ihpix-ov-btn-secondary:hover { background: #f7fafc; text-decoration: none; color: #4a5568; }
+  .ihpix-ov-btn-success { background: #38a169; color: #fff; }
+  .ihpix-ov-btn-success:hover { background: #2f855a; color: #fff; text-decoration: none; }
+
+  .ihpix-ov-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+  }
+  .ihpix-ov-card {
+    background: #fff;
+    border: 1px solid #e0e6ed;
+    border-left: 4px solid #0069B4;
+    border-radius: 10px;
+    padding: 1rem 1.2rem;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  }
+  .ihpix-ov-card.is-warn { border-left-color: #ed8936; }
+  .ihpix-ov-card.is-ok { border-left-color: #38a169; }
+  .ihpix-ov-card.is-info { border-left-color: #4299e1; }
+  .ihpix-ov-card .label {
+    font-size: 0.74rem;
+    font-weight: 600;
+    color: #718096;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 0.3rem;
+  }
+  .ihpix-ov-card .value {
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: #1a2b3c;
+    line-height: 1;
+  }
+  .ihpix-ov-card .delta {
+    font-size: 0.8rem;
+    color: #718096;
+    margin-top: 0.3rem;
+  }
+
+  .ihpix-ov-tabs {
+    background: #fff;
+    border: 1px solid #e0e6ed;
+    border-radius: 12px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    overflow: hidden;
+  }
+  .ihpix-ov-tabs-nav {
+    display: flex;
+    background: #f7fafc;
+    border-bottom: 1px solid #e0e6ed;
+    overflow-x: auto;
+  }
+  .ihpix-ov-tabs-nav button {
+    flex: 0 0 auto;
+    padding: 0.7rem 1.2rem;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #4a5568;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    white-space: nowrap;
+  }
+  .ihpix-ov-tabs-nav button:hover { color: #0069B4; }
+  .ihpix-ov-tabs-nav button.is-active {
+    color: #0069B4;
+    background: #fff;
+    border-bottom-color: #0069B4;
+  }
+  .ihpix-ov-tab-content {
+    display: none;
+    padding: 1.5rem;
+  }
+  .ihpix-ov-tab-content.is-active { display: block; }
+
+  .ihpix-ov-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.88rem;
+  }
+  .ihpix-ov-table th,
+  .ihpix-ov-table td {
+    padding: 0.6rem 0.8rem;
+    text-align: left;
+    border-bottom: 1px solid #e0e6ed;
+  }
+  .ihpix-ov-table th {
+    background: #f7fafc;
+    font-weight: 600;
+    color: #344563;
+    font-size: 0.82rem;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+  .ihpix-ov-table tbody tr:hover { background: #f7fafc; }
+  .ihpix-ov-table tfoot td {
+    background: #f0f7fc;
+    font-weight: 700;
+    border-top: 2px solid #0069B4;
+  }
+  .ihpix-ov-table .num { text-align: right; font-variant-numeric: tabular-nums; }
+  .ihpix-ov-table .kpi-id-cell { font-weight: 700; color: #0069B4; }
+
+  .ihpix-ov-charts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(360px, 1fr));
+    gap: 1.5rem;
+  }
+  .ihpix-ov-chart-card {
+    background: #fff;
+    border: 1px solid #e0e6ed;
+    border-radius: 10px;
+    padding: 1rem;
+  }
+  .ihpix-ov-chart-card h4 {
+    margin: 0 0 0.8rem;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #1a2b3c;
+  }
+  .ihpix-ov-chart-canvas {
+    position: relative;
+    height: 260px;
+  }
+
+  .ihpix-ov-completeness {
+    display: grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 1.5rem;
+  }
+  @media (max-width: 900px) {
+    .ihpix-ov-completeness { grid-template-columns: 1fr; }
+  }
+  .ihpix-ov-completeness-bars {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+  }
+  .ihpix-ov-completeness-bars li {
+    display: grid;
+    grid-template-columns: 80px 1fr 60px;
+    align-items: center;
+    gap: 0.7rem;
+    margin-bottom: 0.5rem;
+    font-size: 0.85rem;
+  }
+  .ihpix-ov-completeness-bars .bar-track {
+    background: #edf2f7;
+    border-radius: 999px;
+    overflow: hidden;
+    height: 14px;
+  }
+  .ihpix-ov-completeness-bars .bar-fill {
+    background: linear-gradient(90deg, #0069B4, #4299e1);
+    height: 100%;
+    border-radius: 999px;
+  }
+
+  .ihpix-ov-pending {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 0.6rem;
+  }
+  .ihpix-ov-pending .pending-row {
+    background: #fffbeb;
+    border: 1px solid #f6e05e;
+    border-radius: 8px;
+    padding: 0.7rem 1rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 1rem;
+  }
+  .ihpix-ov-pending .pending-row .title { font-weight: 600; color: #1a2b3c; }
+  .ihpix-ov-pending .pending-row .meta {
+    font-size: 0.8rem;
+    color: #718096;
+    margin-top: 0.2rem;
+  }
+
+  .ihpix-ov-empty {
+    text-align: center;
+    padding: 2rem;
+    color: #a0aec0;
+    font-size: 0.92rem;
+  }
+
+  @media (max-width: 768px) {
+    .ihpix-ov-cards { grid-template-columns: repeat(2, 1fr); }
+    .ihpix-ov-filters form { grid-template-columns: 1fr 1fr; }
+  }
+</style>
+
+<div class="ihpix-ov-banner">
+  <h1><i class="fa fa-tachometer"></i> {{ _('IHP-IX Admin Overview') }}</h1>
+  <p>{{ _('Aggregate view of reported activities: KPIs, targets, completeness and breakdowns. Aligned with the IHP-IX reporting guidelines.') }}</p>
+</div>
+
+{# ── Filter bar ────────────────────────────────────── #}
+<div class="ihpix-ov-filters">
+  <form method="get" action="">
+    <div>
+      <label for="ov-pa">{{ _('Priority Area') }}</label>
+      <select id="ov-pa" name="priority_area">
+        <option value="">{{ _('All') }}</option>
+        {% for code, name in priority_areas.items() %}
+          <option value="{{ code }}" {% if filters.priority_area == code %}selected{% endif %}>{{ code }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div>
+      <label for="ov-biennium">{{ _('Biennium') }}</label>
+      <select id="ov-biennium" name="biennium">
+        <option value="">{{ _('All') }}</option>
+        {% for b in biennia %}
+          <option value="{{ b }}" {% if filters.biennium == b %}selected{% endif %}>{{ b }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div>
+      <label for="ov-region">{{ _('Region') }}</label>
+      <select id="ov-region" name="region">
+        <option value="">{{ _('All') }}</option>
+        {% for r in regions %}
+          <option value="{{ r }}" {% if filters.region == r %}selected{% endif %}>{{ _(r) }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div>
+      <label for="ov-flagship">{{ _('Flagship') }}</label>
+      <select id="ov-flagship" name="flagship">
+        <option value="">{{ _('All') }}</option>
+        {% for f in flagships %}
+          <option value="{{ f }}" {% if filters.flagship == f %}selected{% endif %}>{{ f }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div>
+      <label for="ov-ctwg">{{ _('Cross-cutting WG') }}</label>
+      <select id="ov-ctwg" name="ctwg">
+        <option value="">{{ _('All') }}</option>
+        {% for w in cross_cutting_wgs %}
+          <option value="{{ w }}" {% if filters.ctwg == w %}selected{% endif %}>{{ _(w[:30]) }}{% if w|length > 30 %}…{% endif %}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div>
+      <label for="ov-status">{{ _('Status') }}</label>
+      <select id="ov-status" name="status">
+        <option value="">{{ _('All') }}</option>
+        {% for s in statuses %}
+          <option value="{{ s }}" {% if filters.status == s %}selected{% endif %}>{{ _(s|capitalize) }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="ihpix-ov-filters-actions">
+      <button type="submit" class="ihpix-ov-btn ihpix-ov-btn-primary"><i class="fa fa-filter"></i> {{ _('Apply') }}</button>
+      <a href="{{ h.url_for('theme_ejemplo.ihpix_admin_overview') }}" class="ihpix-ov-btn ihpix-ov-btn-secondary">{{ _('Reset') }}</a>
+    </div>
+  </form>
+</div>
+
+{# ── Top stats cards ───────────────────────────────── #}
+<div class="ihpix-ov-cards">
+  <div class="ihpix-ov-card">
+    <div class="label">{{ _('Total Activities') }}</div>
+    <div class="value">{{ stats.total or 0 }}</div>
+  </div>
+  <div class="ihpix-ov-card is-warn">
+    <div class="label">{{ _('Pending Review') }}</div>
+    <div class="value">{{ (stats.status_counts and stats.status_counts.pending) or 0 }}</div>
+    <div class="delta"><a href="{{ h.url_for('theme_ejemplo.ihpix_reports_admin') }}?status=pending">{{ _('Review queue →') }}</a></div>
+  </div>
+  <div class="ihpix-ov-card is-ok">
+    <div class="label">{{ _('Published') }}</div>
+    <div class="value">{{ (stats.status_counts and stats.status_counts.published) or 0 }}</div>
+  </div>
+  <div class="ihpix-ov-card is-info">
+    <div class="label">{{ _('Avg. Completeness') }}</div>
+    <div class="value">{{ stats.avg_completeness or 0 }}%</div>
+  </div>
+  <div class="ihpix-ov-card">
+    <div class="label">{{ _('Active biennia') }}</div>
+    <div class="value">{{ stats.biennium_active or 0 }}</div>
+  </div>
+  <div class="ihpix-ov-card">
+    <div class="label">{{ _('Member States covered') }}</div>
+    <div class="value">{{ stats.member_states_covered or 0 }}</div>
+  </div>
+</div>
+
+{# ── Tabs ─────────────────────────────────────────── #}
+<div class="ihpix-ov-tabs">
+  <div class="ihpix-ov-tabs-nav" role="tablist">
+    <button type="button" class="is-active" data-tab="kpis">{{ _('KPI Targets') }}</button>
+    <button type="button" data-tab="distributions">{{ _('Distributions') }}</button>
+    <button type="button" data-tab="geography">{{ _('Geography') }}</button>
+    <button type="button" data-tab="completeness">{{ _('Completeness') }}</button>
+    <button type="button" data-tab="queue">{{ _('Pending queue') }}</button>
+  </div>
+
+  {# ── Tab 1: KPI Targets ─────────────────────────── #}
+  <div class="ihpix-ov-tab-content is-active" data-tab="kpis">
+    <table class="ihpix-ov-table">
+      <thead>
+        <tr>
+          <th>{{ _('KPI') }}</th>
+          <th>{{ _('Description') }}</th>
+          <th class="num">{{ _('Activities reporting') }}</th>
+          <th class="num">{{ _('Σ Target') }}</th>
+          <th class="num">{{ _('Σ Youth') }}</th>
+          <th class="num">{{ _('Σ Female') }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% set kpi_breakdown = stats.kpi_breakdown or {} %}
+        {% for kpi_id, kpi_meta in kpis.items() %}
+          {% set row = kpi_breakdown.get(kpi_id, {}) %}
+          <tr>
+            <td class="kpi-id-cell">KPI {{ kpi_id }}</td>
+            <td>{{ _(kpi_meta.title) }}</td>
+            <td class="num">{{ row.active_count or 0 }}</td>
+            <td class="num">{{ row.target_total or 0 }}</td>
+            <td class="num">{% if row.has_youth_female %}{{ row.youth_total or 0 }}{% else %}—{% endif %}</td>
+            <td class="num">{% if row.has_youth_female %}{{ row.female_total or 0 }}{% else %}—{% endif %}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    <div style="margin-top: 1rem; text-align: right;">
+      <a href="?{{ request.query_string.decode() if request.query_string else '' }}&export=csv"
+         class="ihpix-ov-btn ihpix-ov-btn-success">
+        <i class="fa fa-download"></i> {{ _('Export tab as CSV') }}
+      </a>
+    </div>
+  </div>
+
+  {# ── Tab 2: Distributions ──────────────────────── #}
+  <div class="ihpix-ov-tab-content" data-tab="distributions">
+    <div class="ihpix-ov-charts">
+      <div class="ihpix-ov-chart-card">
+        <h4>{{ _('By Priority Area') }}</h4>
+        <div class="ihpix-ov-chart-canvas"><canvas id="chart-pa"></canvas></div>
+      </div>
+      <div class="ihpix-ov-chart-card">
+        <h4>{{ _('By Biennium') }}</h4>
+        <div class="ihpix-ov-chart-canvas"><canvas id="chart-biennium"></canvas></div>
+      </div>
+      <div class="ihpix-ov-chart-card">
+        <h4>{{ _('Top Outputs (10)') }}</h4>
+        <div class="ihpix-ov-chart-canvas"><canvas id="chart-output"></canvas></div>
+      </div>
+      <div class="ihpix-ov-chart-card">
+        <h4>{{ _('By Flagship Initiative') }}</h4>
+        <div class="ihpix-ov-chart-canvas"><canvas id="chart-flagship"></canvas></div>
+      </div>
+      <div class="ihpix-ov-chart-card">
+        <h4>{{ _('By Cross-cutting WG') }}</h4>
+        <div class="ihpix-ov-chart-canvas"><canvas id="chart-ctwg"></canvas></div>
+      </div>
+      <div class="ihpix-ov-chart-card">
+        <h4>{{ _('By Institution Type') }}</h4>
+        <div class="ihpix-ov-chart-canvas"><canvas id="chart-itype"></canvas></div>
+      </div>
+    </div>
+  </div>
+
+  {# ── Tab 3: Geography ──────────────────────────── #}
+  <div class="ihpix-ov-tab-content" data-tab="geography">
+    <div class="ihpix-ov-charts" style="grid-template-columns: 1fr 1fr;">
+      <div class="ihpix-ov-chart-card">
+        <h4>{{ _('Activities by Region') }}</h4>
+        <div class="ihpix-ov-chart-canvas"><canvas id="chart-region"></canvas></div>
+      </div>
+      <div class="ihpix-ov-chart-card">
+        <h4>{{ _('Top 20 Member States') }}</h4>
+        <table class="ihpix-ov-table">
+          <thead><tr><th>{{ _('Member State') }}</th><th class="num">{{ _('Count') }}</th></tr></thead>
+          <tbody>
+            {% for ms in stats.by_member_state or [] %}
+              <tr><td>{{ ms.name }}</td><td class="num">{{ ms.count }}</td></tr>
+            {% else %}
+              <tr><td colspan="2" class="ihpix-ov-empty">{{ _('No member-state data') }}</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  {# ── Tab 4: Completeness ──────────────────────── #}
+  <div class="ihpix-ov-tab-content" data-tab="completeness">
+    <div class="ihpix-ov-completeness">
+      <div>
+        <h4>{{ _('Completeness distribution') }}</h4>
+        <ul class="ihpix-ov-completeness-bars">
+          {% set buckets = stats.completeness_buckets or {} %}
+          {% set max_b = ([buckets.get('0-25', 0), buckets.get('25-50', 0), buckets.get('50-75', 0), buckets.get('75-100', 0), 1] | max) %}
+          {% for label in ['0-25', '25-50', '50-75', '75-100'] %}
+            {% set v = buckets.get(label, 0) %}
+            <li>
+              <span>{{ label }}%</span>
+              <div class="bar-track"><div class="bar-fill" style="width: {{ (v * 100 / max_b)|int }}%"></div></div>
+              <span class="num">{{ v }}</span>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+      <div>
+        <h4>{{ _('Sections most often left blank') }}</h4>
+        <table class="ihpix-ov-table">
+          <thead>
+            <tr><th>{{ _('Section') }}</th><th class="num">{{ _('Activities with section blank') }}</th></tr>
+          </thead>
+          <tbody>
+            {% for sec, count in (stats.section_blank_counts or {}).items() %}
+              <tr><td>{{ sec }}</td><td class="num">{{ count }}</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  {# ── Tab 5: Pending queue ──────────────────────── #}
+  <div class="ihpix-ov-tab-content" data-tab="queue">
+    <div class="ihpix-ov-pending">
+      {% for r in stats.recent_pending or [] %}
+        <div class="pending-row">
+          <div>
+            <div class="title">{{ r.title }}</div>
+            <div class="meta">
+              <span>{{ r.priority_area }}</span> ·
+              <span>{{ r.institution or '—' }}</span> ·
+              <span>{{ r.biennium or '—' }}</span> ·
+              <span>{{ _('By') }} {{ r.reported_by or '—' }}</span> ·
+              <span>{{ r.created_at }}</span>
+            </div>
+          </div>
+          <a href="{{ h.url_for('theme_ejemplo.ihpix_reports_admin') }}?status=pending#report-{{ r.id }}"
+             class="ihpix-ov-btn ihpix-ov-btn-primary"><i class="fa fa-eye"></i> {{ _('Review') }}</a>
+        </div>
+      {% else %}
+        <div class="ihpix-ov-empty">{{ _('No pending reports.') }}</div>
+      {% endfor %}
+    </div>
+    <div style="margin-top: 1rem; text-align: center;">
+      <a href="{{ h.url_for('theme_ejemplo.ihpix_reports_admin') }}?status=pending"
+         class="ihpix-ov-btn ihpix-ov-btn-primary">{{ _('Open full review queue') }}</a>
+    </div>
+  </div>
+</div>
+
+<div style="margin-top: 1.5rem; text-align: right;">
+  <a href="{{ h.url_for('theme_ejemplo.ihpix_activities_admin') if h.url_for and 'theme_ejemplo.ihpix_activities_admin' else '#' }}"
+     class="ihpix-ov-btn ihpix-ov-btn-secondary">
+    <i class="fa fa-list"></i> {{ _('Manage activities') }}
+  </a>
+  <a href="?{{ request.query_string.decode() if request.query_string else '' }}&export=xlsx"
+     class="ihpix-ov-btn ihpix-ov-btn-success">
+    <i class="fa fa-file-excel-o"></i> {{ _('Export full dataset') }}
+  </a>
+</div>
+
+<script src="/vendor/chartjs/chart.umd.min.js" type="text/javascript"></script>
+<script type="application/json" id="ihpix-ov-data">
+{
+  "by_pa": {{ (stats.by_priority_area or [])|tojson }},
+  "by_biennium": {{ (stats.by_biennium or [])|tojson }},
+  "by_output": {{ (stats.by_output or [])|tojson }},
+  "by_flagship": {{ (stats.by_flagship or [])|tojson }},
+  "by_ctwg": {{ (stats.by_ctwg or [])|tojson }},
+  "by_itype": {{ (stats.by_institution_type or [])|tojson }},
+  "by_region": {{ (stats.by_region or [])|tojson }}
+}
+</script>
+<script>
+(function() {
+  'use strict';
+
+  /* Tab switching */
+  var tabs = document.querySelectorAll('.ihpix-ov-tabs-nav button');
+  var panels = document.querySelectorAll('.ihpix-ov-tab-content');
+  tabs.forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var name = btn.getAttribute('data-tab');
+      tabs.forEach(function(b) { b.classList.toggle('is-active', b === btn); });
+      panels.forEach(function(p) {
+        p.classList.toggle('is-active', p.getAttribute('data-tab') === name);
+      });
+      // Render charts lazily when distribution / geography tab activates
+      if (name === 'distributions') renderDistributionCharts();
+      if (name === 'geography') renderGeographyCharts();
+    });
+  });
+
+  /* Chart rendering */
+  var data = JSON.parse(document.getElementById('ihpix-ov-data').textContent);
+  var palette = ['#0069B4', '#4299e1', '#38a169', '#ed8936', '#9f7aea',
+                 '#d53f8c', '#ecc94b', '#f56565', '#48bb78', '#667eea'];
+  var charts = {};
+
+  function makeBar(canvasId, dataset, color) {
+    if (!window.Chart || charts[canvasId]) return;
+    var el = document.getElementById(canvasId);
+    if (!el) return;
+    var labels = dataset.map(function(d) { return d.name; });
+    var values = dataset.map(function(d) { return d.count; });
+    charts[canvasId] = new Chart(el.getContext('2d'), {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [{
+          data: values,
+          backgroundColor: color || '#0069B4',
+          borderRadius: 4
+        }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        indexAxis: dataset.length > 5 ? 'y' : 'x',
+        plugins: { legend: { display: false } },
+        scales: { x: { beginAtZero: true }, y: { beginAtZero: true } }
+      }
+    });
+  }
+
+  function makeDoughnut(canvasId, dataset) {
+    if (!window.Chart || charts[canvasId]) return;
+    var el = document.getElementById(canvasId);
+    if (!el) return;
+    var labels = dataset.map(function(d) { return d.name; });
+    var values = dataset.map(function(d) { return d.count; });
+    charts[canvasId] = new Chart(el.getContext('2d'), {
+      type: 'doughnut',
+      data: {
+        labels: labels,
+        datasets: [{ data: values, backgroundColor: palette }]
+      },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { position: 'right', labels: { boxWidth: 12, font: { size: 11 } } } }
+      }
+    });
+  }
+
+  function renderDistributionCharts() {
+    makeDoughnut('chart-pa', data.by_pa);
+    makeBar('chart-biennium', data.by_biennium, '#4299e1');
+    makeBar('chart-output', (data.by_output || []).slice(0, 10), '#38a169');
+    makeBar('chart-flagship', data.by_flagship, '#9f7aea');
+    makeBar('chart-ctwg', data.by_ctwg, '#ed8936');
+    makeBar('chart-itype', data.by_itype, '#d53f8c');
+  }
+  function renderGeographyCharts() {
+    makeDoughnut('chart-region', data.by_region);
+  }
+})();
+</script>
+
+{% endblock %}

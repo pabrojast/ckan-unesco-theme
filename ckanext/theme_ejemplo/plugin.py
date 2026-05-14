@@ -793,6 +793,14 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 methods=['POST']
             )
 
+            # IHP-IX admin overview dashboard (sysadmin) — PDF 2026 spec
+            blueprint.add_url_rule(
+                u'/ckan-admin/ihpix/overview',
+                u'ihpix_admin_overview',
+                MyLogica.ihpix_admin_overview,
+                methods=['GET']
+            )
+
             # Bug ticket system
             blueprint.add_url_rule(
                 u'/bug-tickets',
@@ -989,6 +997,7 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 'ihpix_report_submit': custom_actions.ihpix_report_submit,
                 'ihpix_report_review': custom_actions.ihpix_report_review,
                 'ihpix_dashboard_stats': custom_actions.ihpix_dashboard_stats,
+                'ihpix_admin_overview_stats': custom_actions.ihpix_admin_overview_stats,
                 # IHP-IX GeoJSON & country summary
                 'ihpix_geojson': custom_actions.ihpix_geojson,
                 'ihpix_activity_geojson': custom_actions.ihpix_activity_geojson,
@@ -1038,6 +1047,7 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 'ihpix_activity_update': custom_auth.ihpix_activity_update,
                 'ihpix_activity_delete': custom_auth.ihpix_activity_delete,
                 # IHP-IX reporting & dashboard
+                'ihpix_admin_overview_stats': custom_auth.ihpix_admin_overview_stats,
                 'ihpix_report_submit': custom_auth.ihpix_report_submit,
                 'ihpix_report_review': custom_auth.ihpix_report_review,
                 'ihpix_dashboard_stats': custom_auth.ihpix_dashboard_stats,

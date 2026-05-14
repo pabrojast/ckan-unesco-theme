@@ -2935,13 +2935,9 @@ class MyLogica():
 
         @staticmethod
         def ihpix_report():
-            """Solo sysadmin puede acceder al formulario de reportes IHP-IX."""
-            # Solo sysadmin puede acceder a esta vista
-            if not (c.userobj and c.userobj.sysadmin):
-                return abort(403, _('Not authorized'))
-            from ckanext.theme_ejemplo.model import (
-                IhpixActivity, init_ihpix_activities_db, VALID_PRIORITY_AREAS,
-            )
+            """Formulario IHP-IX (PDF 2026 spec) — público para usuarios autenticados."""
+            from ckanext.theme_ejemplo.model import init_ihpix_activities_db
+            from ckanext.theme_ejemplo import ihpix_constants as C
             init_ihpix_activities_db()
 
             if request.method == 'POST':
@@ -2949,25 +2945,63 @@ class MyLogica():
                     return jsonify({'success': False,
                                     'error': 'You must be logged in'}), 403
                 try:
+                    # Single-value fields
+                    single_fields = (
+                        'title', 'description', 'priority_area', 'output',
+                        'country', 'institution', 'link', 'contact_name',
+                        'contact_email', 'reported_date', 'start_date',
+                        'end_date',
+                        # Section I extras
+                        'focal_point_name', 'institution_type',
+                        'institution_type_other', 'partners', 'biennium',
+                        'unesco_secretariat_participation',
+                        'has_member_state_support', 'supporting_member_state',
+                        'has_flagship',
+                        # Section II / III / IV
+                        'key_activity', 'has_synergies', 'synergies',
+                        'regions_benefit',
+                        # Section V — gates and counts (single-value)
+                        'kpi_1a_active', 'kpi_1b_active', 'kpi_2_active',
+                        'kpi_3_active', 'kpi_4_active', 'kpi_5_active',
+                        'kpi_6_active', 'kpi_8_active',
+                        'knowledge_product_type_other',
+                        'knowledge_activity_type_other',
+                        'stakeholder_group_type_other',
+                        'stakeholder_group_name',
+                        'num_knowledge_products', 'num_scientific_products',
+                        'num_training_materials', 'num_curricula',
+                        'num_transboundary_ms', 'num_stakeholder_groups',
+                        'stakeholders_knowledge',
+                        'stakeholders_knowledge_youth',
+                        'stakeholders_knowledge_female',
+                        'stakeholders_awareness',
+                        'stakeholders_awareness_youth',
+                        'stakeholders_awareness_female',
+                        # Section VI
+                        'additional_notes',
+                        # draft flag
+                        'save_as_draft',
+                    )
+                    multi_fields = (
+                        'flagships', 'cross_cutting_wg', 'regions',
+                        'member_states', 'knowledge_product_type',
+                        'scientific_product_type', 'knowledge_activity_type',
+                        'training_type', 'stakeholder_group_type',
+                    )
+
                     context = {'user': c.user, 'model': model}
-                    data_dict = {
-                        'title': request.form.get('title', ''),
-                        'description': request.form.get('description', ''),
-                        'priority_area': request.form.get('priority_area', ''),
-                        'output': request.form.get('output', ''),
-                        'country': request.form.get('country', ''),
-                        'institution': request.form.get('institution', ''),
-                        'link': request.form.get('link', ''),
-                        'contact_name': request.form.get('contact_name', ''),
-                        'contact_email': request.form.get('contact_email', ''),
-                        'reported_date': request.form.get('reported_date', ''),
-                        'start_date': request.form.get('start_date', ''),
-                        'end_date': request.form.get('end_date', ''),
-                    }
+                    data_dict = {f: request.form.get(f, '') for f in single_fields}
+                    for f in multi_fields:
+                        data_dict[f] = request.form.getlist(f)
+
                     result = toolkit.get_action('ihpix_report_submit')(
                         context, data_dict
                     )
-                    return jsonify({'success': True, 'data': result})
+                    msg = (_('Draft saved.')
+                           if C.normalize_bool(data_dict.get('save_as_draft'))
+                           else _('Report submitted successfully!'))
+                    return jsonify({'success': True, 'message': msg,
+                                    'data': result})
                 except toolkit.ValidationError as e:
                     return jsonify({'success': False,
                                     'error': str(e.error_dict)}), 400
@@ -2978,12 +3012,24 @@ class MyLogica():
                     log.error('Error submitting IHP-IX report: %s', e)
                     return jsonify({'success': False, 'error': str(e)}), 500
 
-            # GET: render the form
+            # GET: render the form with controlled vocabularies
             is_logged_in = bool(c.user)
             return render_template(
                 'ihpix/report.html',
                 is_logged_in=is_logged_in,
-                priority_areas=list(VALID_PRIORITY_AREAS),
+                priority_areas=C.PRIORITY_AREAS,
+                outputs_by_pa=C.OUTPUTS,
+                biennia=C.BIENNIA,
+                institution_types=C.LEAD_INSTITUTION_TYPES,
+                flagships=C.FLAGSHIPS,
+                cross_cutting_wgs=C.CROSS_CUTTING_WGS,
+                regions=C.REGIONS,
+                member_states=C.MEMBER_STATES,
+                knowledge_product_types=C.KNOWLEDGE_PRODUCT_TYPES,
+                scientific_product_types=C.SCIENTIFIC_PRODUCT_TYPES,
+                knowledge_activity_types=C.KNOWLEDGE_ACTIVITY_TYPES,
+                training_types=C.TRAINING_TYPES,
+                stakeholder_group_types=C.STAKEHOLDER_GROUP_TYPES,
             )
 
         # ── IHP-IX Dashboard ──────────────────────────────────────────────
@@ -3128,3 +3174,42 @@ class MyLogica():
             except Exception as e:
                 log.error('Error reviewing IHP-IX report: %s', e)
                 return jsonify({'success': False, 'error': str(e)}), 500
+
+        # ── IHP-IX Admin Overview (PDF 2026 spec) ─────────────────────────
+
+        @staticmethod
+        def ihpix_admin_overview():
+            """Sysadmin overview dashboard: KPIs, completeness, distributions."""
+            if not (c.userobj and c.userobj.sysadmin):
+                return abort(403, _('Not authorized'))
+
+            from ckanext.theme_ejemplo import ihpix_constants as C
+
+            # Optional filters from query string
+            filter_keys = ('priority_area', 'biennium', 'region', 'country',
+                           'output', 'flagship', 'ctwg', 'status')
+            filters = {k: (request.args.get(k) or '').strip()
+                       for k in filter_keys}
+            filters = {k: v for k, v in filters.items() if v}
+
+            context = {'user': c.user, 'model': model}
+            try:
+                stats = toolkit.get_action('ihpix_admin_overview_stats')(
+                    context, dict(filters)
+                )
+            except Exception as e:
+                log.error('Error loading IHP-IX overview stats: %s', e)
+                stats = {}
+
+            return render_template(
+                'admin/ihpix_overview.html',
+                stats=stats,
+                filters=filters,
+                priority_areas=C.PRIORITY_AREAS,
+                biennia=C.BIENNIA,
+                regions=C.REGIONS,
+                flagships=C.FLAGSHIPS,
+                cross_cutting_wgs=C.CROSS_CUTTING_WGS,
+                kpis=C.KPIS,
+                statuses=['draft', 'pending', 'published', 'rejected'],
+            )

@@ -115,8 +115,19 @@ Ver [[Flujos Importantes#Paneles de administración]] para la lista completa.
 **IHP-IX actividades** (5):
 - `ihpix_activity_list`, `ihpix_activity_show`, `ihpix_activity_create`, `ihpix_activity_update`, `ihpix_activity_delete`
 
-**IHP-IX reportes** (3):
-- `ihpix_report_submit`, `ihpix_report_review`, `ihpix_dashboard_stats`
+**IHP-IX reportes** (4):
+- `ihpix_report_submit` — captura formulario PDF 2026 completo (6 secciones, gates Y/N, lista JSON multi-select). Soporta `save_as_draft=1`.
+- `ihpix_report_review` — approve/reject por sysadmin.
+- `ihpix_dashboard_stats` — público; KPI cards + breakdowns base para `/ihpix/dashboard`.
+- `ihpix_admin_overview_stats` — **sysadmin only**; metrics extendidas para `/ckan-admin/ihpix/overview`: KPI targets totals (Σ + youth/female), breakdowns por flagship/CTWG/institution_type, completeness histogram, recent pending.
+
+**Taxonomías centralizadas** (nuevo módulo `ihpix_constants.py`, 2026-05):
+`PRIORITY_AREAS` (5), `OUTPUTS` (34, dict por PA), `FLAGSHIPS` (15), `REGIONS` (7),
+`CROSS_CUTTING_WGS` (3), `LEAD_INSTITUTION_TYPES` (12), `KNOWLEDGE_PRODUCT_TYPES` (7),
+`SCIENTIFIC_PRODUCT_TYPES` (4), `KNOWLEDGE_ACTIVITY_TYPES` (5), `TRAINING_TYPES` (4),
+`STAKEHOLDER_GROUP_TYPES` (9), `BIENNIA` (4: 2022-2023 → 2028-2029),
+`MEMBER_STATES` (195 ISO-2), `KPIS` (8 con metadata para tablas).
+Helpers: `is_valid_*`, `normalize_bool`, `filter_valid`.
 
 **IHP-IX GeoJSON y datos geográficos** (3):
 - `ihpix_geojson` — GeoJSON FeatureCollection de países con coordenadas y datos por PA. Filtro: `region`

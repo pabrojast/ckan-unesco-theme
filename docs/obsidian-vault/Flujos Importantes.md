@@ -160,7 +160,9 @@ Patrón LRU con buster:
 
 ## 7. Portal IHP-IX
 
-**Rutas**: `/ihpix`, `/ihpix/outputs`, `/ihpix/report`, `/ihpix/dashboard`
+**Rutas**: `/ihpix`, `/ihpix/outputs`, `/ihpix/report`, `/ihpix/dashboard`, `/ckan-admin/ihpix/overview`
+
+**Taxonomías oficiales**: ver [[Modulos]] → `ihpix_constants.py` (5 Priority Areas, 34 Outputs, 15 Flagships, 7 Regions, 3 CTWGs, 12 Institution Types, 8 KPIs, 195 Member States, 4 Biennia 2022-2029).
 
 ```
 1. Página principal (/ihpix):
@@ -174,16 +176,41 @@ Patrón LRU con buster:
    → Lista actividades publicadas de IhpixActivity
    → Filtros avanzados: biennium, region, country, priority_area, output
    → Vistas expandibles con detalle, exportación CSV
-3. Reporte (/ihpix/report):
-   → GET: formulario de reporte para usuarios autenticados
-   → POST: ihpix_report_submit() guarda el reporte
-4. Dashboard (/ihpix/dashboard):
+3. Reporte (/ihpix/report) — alineado al PDF UNESCO 2026:
+   → 6 secciones (I General, II Priority Areas, III CTWGs, IV Region,
+     V KPIs, VI Notes), ~50 campos con lógica condicional Y/N
+   → Char counters 250 chars (description, outcomes)
+   → Sticky section nav, validación inline por sección
+   → Botones: "Save as draft" (status=draft) y "Submit for review" (status=pending)
+   → POST: ihpix_report_submit() persiste con todas las flags KPI activas
+4. Dashboard público (/ihpix/dashboard):
    → ihpix_dashboard_stats() genera estadísticas expandidas
    → Mapa interactivo Leaflet con GeoJSON de países
    → Gráficas por biennium, paneles de región e impacto
-5. Admin (/admin/ihpix/*):
-   → Gestión de contenido, actividades y revisión de reportes
+5. Admin Overview (/ckan-admin/ihpix/overview) — sysadmin:
+   → ihpix_admin_overview_stats() expone métricas extendidas
+   → 5 tabs: KPI Targets, Distributions, Geography, Completeness, Pending queue
+   → Filtros: biennium · PA · region · flagship · CTWG · status
+   → Charts.js (PA donut, biennium/output/flagship/CTWG/institution bars)
+   → Exportación CSV/XLSX (en pipeline)
+6. Admin Reports (/ckan-admin/ihpix/reports):
+   → Cola de revisión approve/reject/re-approve
+   → Stats pending/rejected, paginación, filtro por status
+7. Admin Content/Activities (/ckan-admin/ihpix, /activities):
+   → Edición de hero, CTA cards, priority areas
+   → CRUD completo de actividades, importación bulk Excel
 ```
+
+### Modelo de gates condicionales (PDF 2026)
+
+Para preservar la diferencia entre "no aplica" y "no se contestó", el modelo guarda **booleanos explícitos**:
+- `unesco_secretariat_participation`, `has_member_state_support`, `has_flagship`,
+  `has_synergies`, `regions_benefit`.
+- 8 gates KPI: `kpi_1a_active`, `kpi_1b_active`, `kpi_2_active`, `kpi_3_active`,
+  `kpi_4_active`, `kpi_5_active`, `kpi_6_active`, `kpi_8_active`.
+
+Cuando el gate es `False`, los campos hijos se resetean al submit (`num_*=0`,
+listas `JSON=''`). Esto permite reportar fielmente "actividad NO contribuyó al KPI X".
 
 ---
 

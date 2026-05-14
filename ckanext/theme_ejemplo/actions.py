@@ -1994,40 +1994,219 @@ def ihpix_activity_delete(context, data_dict):
 # ── IHP-IX Reporting & Dashboard ────────────────────────────────────────────
 
 def ihpix_report_submit(context, data_dict):
-    """Submit an IHP-IX activity report. Any logged-in user.
-    Creates an activity with status=pending for admin review."""
+    """Submit an IHP-IX activity report (PDF 2026 spec).
+
+    Maps all fields of the 6-section reporting form to `IhpixActivity`.
+    Multi-select values arrive as lists (via `request.form.getlist` in the
+    controller) and are persisted as JSON strings in the corresponding
+    column.
+
+    Behaviour:
+    - `save_as_draft=1` → status=draft, only `title` required.
+    - Otherwise → status=pending (awaits admin review), full required-field
+      validation per PDF.
+    """
+    from ckanext.theme_ejemplo import ihpix_constants as C
+
     toolkit.check_access('ihpix_report_submit', context, data_dict)
     init_ihpix_activities_db()
 
+    is_draft = C.normalize_bool(data_dict.get('save_as_draft'))
+
     title = data_dict.get('title', u'').strip()
     priority_area = data_dict.get('priority_area', u'').strip()
+
     if not title:
         raise toolkit.ValidationError({'title': 'Title is required'})
-    if priority_area not in VALID_PRIORITY_AREAS:
-        raise toolkit.ValidationError(
-            {'priority_area': 'Must be one of: {}'.format(
-                ', '.join(VALID_PRIORITY_AREAS))}
-        )
+
+    if not is_draft:
+        # Full required-field validation per PDF Section I/II
+        required = {
+            'focal_point_name': 'Focal point name is required',
+            'contact_email': 'Focal point email is required',
+            'institution_type': 'Lead Implementing Institution category is required',
+            'institution': 'Institution name is required',
+            'biennium': 'Biennium is required',
+        }
+        for fname, msg in required.items():
+            if not str(data_dict.get(fname, u'')).strip():
+                raise toolkit.ValidationError({fname: msg})
+        if priority_area not in C.PRIORITY_AREAS:
+            raise toolkit.ValidationError({
+                'priority_area': 'Must be one of: {}'.format(', '.join(C.PRIORITY_AREAS))
+            })
+        biennium = str(data_dict.get('biennium', u'')).strip()
+        if biennium and not C.is_valid_biennium(biennium):
+            raise toolkit.ValidationError({
+                'biennium': 'Must be one of: {}'.format(', '.join(C.BIENNIA))
+            })
+        inst_type = str(data_dict.get('institution_type', u'')).strip()
+        if inst_type and not C.is_valid_institution_type(inst_type):
+            raise toolkit.ValidationError({
+                'institution_type': 'Invalid institution type'
+            })
+
+    def _list(field, allowed=None):
+        """Extract a list from data_dict (supports list, JSON string, comma-string)."""
+        val = data_dict.get(field, [])
+        if isinstance(val, (list, tuple)):
+            items = [str(v).strip() for v in val if str(v).strip()]
+        else:
+            s = str(val or u'').strip()
+            if not s:
+                return []
+            if s.startswith('['):
+                try:
+                    import json as _json
+                    items = [str(v).strip() for v in _json.loads(s) if str(v).strip()]
+                except Exception:
+                    items = [p.strip() for p in s.split(',') if p.strip()]
+            else:
+                items = [p.strip() for p in s.split(',') if p.strip()]
+        if allowed:
+            items = [i for i in items if i in allowed]
+        return items
+
+    def _json(field, allowed=None):
+        items = _list(field, allowed)
+        import json as _json_mod
+        return _json_mod.dumps(items) if items else u''
+
+    def _int(field):
+        val = data_dict.get(field, 0)
+        try:
+            return max(0, int(val or 0))
+        except (TypeError, ValueError):
+            return 0
+
+    def _bool(field):
+        return C.normalize_bool(data_dict.get(field))
 
     import datetime as _dt
+
     activity = IhpixActivity(
         title=title,
-        priority_area=priority_area,
+        priority_area=priority_area or 'PA1',
         description=data_dict.get('description', u'').strip(),
         output=data_dict.get('output', u'').strip(),
         country=data_dict.get('country', u'').strip(),
         institution=data_dict.get('institution', u'').strip(),
         link=data_dict.get('link', u'').strip(),
         image_url=data_dict.get('image_url', u''),
-        status=IhpixActivity.STATUS_PENDING,
+        status=(IhpixActivity.STATUS_DRAFT if is_draft else IhpixActivity.STATUS_PENDING),
         reported_by=context.get('user', u''),
-        contact_name=data_dict.get('contact_name', u'').strip(),
+        contact_name=data_dict.get('contact_name', u'').strip()
+            or data_dict.get('focal_point_name', u'').strip(),
         contact_email=data_dict.get('contact_email', u'').strip(),
+
+        # Section I extras
+        focal_point_name=data_dict.get('focal_point_name', u'').strip(),
+        institution_type=data_dict.get('institution_type', u'').strip(),
+        institution_type_other=data_dict.get('institution_type_other', u'').strip(),
+        partners=data_dict.get('partners', u'').strip(),
+        biennium=data_dict.get('biennium', u'').strip(),
+        unesco_secretariat_participation=_bool('unesco_secretariat_participation'),
+        has_member_state_support=_bool('has_member_state_support'),
+        supporting_member_state=data_dict.get('supporting_member_state', u'').strip(),
+        has_flagship=_bool('has_flagship'),
+        flagships=_json('flagships', allowed=C.FLAGSHIPS),
+
+        # Section II
+        key_activity=data_dict.get('key_activity', u'').strip(),
+
+        # Section III
+        cross_cutting_wg=_json('cross_cutting_wg', allowed=C.CROSS_CUTTING_WGS),
+        has_synergies=_bool('has_synergies'),
+        synergies=data_dict.get('synergies', u'').strip(),
+
+        # Section IV
+        regions_benefit=_bool('regions_benefit'),
+        regions=_json('regions', allowed=C.REGIONS),
+        member_states=_json('member_states'),
+
+        # Section V — KPIs
+        kpi_1a_active=_bool('kpi_1a_active'),
+        knowledge_product_type=_json('knowledge_product_type', allowed=C.KNOWLEDGE_PRODUCT_TYPES),
+        knowledge_product_type_other=data_dict.get('knowledge_product_type_other', u'').strip(),
+        num_knowledge_products=_int('num_knowledge_products'),
+
+        kpi_1b_active=_bool('kpi_1b_active'),
+        scientific_product_type=_json('scientific_product_type', allowed=C.SCIENTIFIC_PRODUCT_TYPES),
+        num_scientific_products=_int('num_scientific_products'),
+
+        kpi_2_active=_bool('kpi_2_active'),
+        knowledge_activity_type=_json('knowledge_activity_type', allowed=C.KNOWLEDGE_ACTIVITY_TYPES),
+        knowledge_activity_type_other=data_dict.get('knowledge_activity_type_other', u'').strip(),
+        stakeholders_knowledge=_int('stakeholders_knowledge'),
+        stakeholders_knowledge_youth=_int('stakeholders_knowledge_youth'),
+        stakeholders_knowledge_female=_int('stakeholders_knowledge_female'),
+
+        kpi_3_active=_bool('kpi_3_active'),
+        training_type=_json('training_type', allowed=C.TRAINING_TYPES),
+        num_training_materials=_int('num_training_materials'),
+
+        kpi_4_active=_bool('kpi_4_active'),
+        num_curricula=_int('num_curricula'),
+
+        kpi_5_active=_bool('kpi_5_active'),
+        stakeholders_awareness=_int('stakeholders_awareness'),
+        stakeholders_awareness_youth=_int('stakeholders_awareness_youth'),
+        stakeholders_awareness_female=_int('stakeholders_awareness_female'),
+
+        kpi_6_active=_bool('kpi_6_active'),
+        num_transboundary_ms=_int('num_transboundary_ms'),
+
+        kpi_8_active=_bool('kpi_8_active'),
+        stakeholder_group_type=_json('stakeholder_group_type', allowed=C.STAKEHOLDER_GROUP_TYPE_VALUES),
+        stakeholder_group_type_other=data_dict.get('stakeholder_group_type_other', u'').strip(),
+        stakeholder_group_name=data_dict.get('stakeholder_group_name', u'').strip(),
+        num_stakeholder_groups=_int('num_stakeholder_groups'),
+
+        # Section VI
+        additional_notes=data_dict.get('additional_notes', u'').strip(),
     )
+
+    # If kpi gate is False, also reset the gate-related ints to 0 to keep DB clean.
+    if not activity.kpi_1a_active:
+        activity.num_knowledge_products = 0
+        activity.knowledge_product_type = u''
+    if not activity.kpi_1b_active:
+        activity.num_scientific_products = 0
+        activity.scientific_product_type = u''
+    if not activity.kpi_2_active:
+        activity.stakeholders_knowledge = 0
+        activity.stakeholders_knowledge_youth = 0
+        activity.stakeholders_knowledge_female = 0
+    if not activity.kpi_3_active:
+        activity.num_training_materials = 0
+        activity.training_type = u''
+    if not activity.kpi_4_active:
+        activity.num_curricula = 0
+    if not activity.kpi_5_active:
+        activity.stakeholders_awareness = 0
+        activity.stakeholders_awareness_youth = 0
+        activity.stakeholders_awareness_female = 0
+    if not activity.kpi_6_active:
+        activity.num_transboundary_ms = 0
+    if not activity.kpi_8_active:
+        activity.num_stakeholder_groups = 0
+        activity.stakeholder_group_type = u''
+
+    # Reset conditional text fields when their gate is "no"
+    if not activity.has_member_state_support:
+        activity.supporting_member_state = u''
+    if not activity.has_flagship:
+        activity.flagships = u''
+    if not activity.has_synergies:
+        activity.synergies = u''
+    if not activity.regions_benefit:
+        activity.regions = u''
+        activity.member_states = u''
 
     # Parse dates
     for field in ('reported_date', 'start_date', 'end_date'):
-        val = data_dict.get(field, u'').strip()
+        val = data_dict.get(field, u'')
+        val = str(val).strip() if val is not None else u''
         if val:
             try:
                 setattr(activity, field, _dt.datetime.strptime(val, '%Y-%m-%d').date())
@@ -2094,6 +2273,214 @@ def ihpix_dashboard_stats(context, data_dict):
         filters=filters, limit=20
     )
     return stats
+
+
+@toolkit.side_effect_free
+def ihpix_admin_overview_stats(context, data_dict):
+    """Extended admin-only stats for the IHP-IX overview dashboard.
+
+    Adds: KPI activation counts + target totals, flagship counts, CTWG
+    counts, institution-type counts, completeness histogram, status
+    breakdown, recent pending activities, list of available filters.
+
+    Filter args (all optional): priority_area, biennium, region, country,
+    output, flagship, ctwg, status.
+    """
+    toolkit.check_access('ihpix_admin_overview_stats', context, data_dict)
+    init_ihpix_activities_db()
+
+    from ckanext.theme_ejemplo import ihpix_constants as C
+    import json as _json
+
+    filters = {}
+    for key in ('priority_area', 'biennium', 'region', 'country', 'output',
+                'flagship', 'ctwg', 'status'):
+        val = data_dict.get(key, u'').strip() if data_dict.get(key) else u''
+        if val:
+            filters[key] = val
+
+    q = model.Session.query(IhpixActivity)
+    if 'priority_area' in filters:
+        q = q.filter(IhpixActivity.priority_area == filters['priority_area'])
+    if 'biennium' in filters:
+        q = q.filter(IhpixActivity.biennium == filters['biennium'])
+    if 'output' in filters:
+        q = q.filter(IhpixActivity.output == filters['output'])
+    if 'country' in filters:
+        q = q.filter(IhpixActivity.country.ilike('%' + filters['country'] + '%'))
+    if 'status' in filters:
+        q = q.filter(IhpixActivity.status == filters['status'])
+    if 'region' in filters:
+        q = q.filter(IhpixActivity.regions.ilike('%' + filters['region'] + '%'))
+    if 'flagship' in filters:
+        q = q.filter(IhpixActivity.flagships.ilike('%' + filters['flagship'] + '%'))
+    if 'ctwg' in filters:
+        q = q.filter(IhpixActivity.cross_cutting_wg.ilike('%' + filters['ctwg'] + '%'))
+
+    activities = q.all()
+    total = len(activities)
+
+    # ── Status breakdown ──
+    status_counts = {}
+    for s in (IhpixActivity.STATUS_DRAFT, IhpixActivity.STATUS_PENDING,
+              IhpixActivity.STATUS_PUBLISHED, IhpixActivity.STATUS_REJECTED):
+        status_counts[s] = sum(1 for a in activities if a.status == s)
+
+    # ── KPI activation & target totals ──
+    kpi_breakdown = {}
+    for kpi_id, meta in C.KPIS.items():
+        gate_attr = 'kpi_{}_active'.format(kpi_id)
+        count_col = meta.get('count_column')
+        actives = [a for a in activities if getattr(a, gate_attr, False)]
+        total_target = 0
+        youth_total = 0
+        female_total = 0
+        if count_col:
+            for a in actives:
+                total_target += int(getattr(a, count_col, 0) or 0)
+        if meta.get('has_youth_female'):
+            youth_attr = count_col + '_youth' if count_col else None
+            female_attr = count_col + '_female' if count_col else None
+            for a in actives:
+                if youth_attr and hasattr(a, youth_attr):
+                    youth_total += int(getattr(a, youth_attr, 0) or 0)
+                if female_attr and hasattr(a, female_attr):
+                    female_total += int(getattr(a, female_attr, 0) or 0)
+        kpi_breakdown[kpi_id] = {
+            'title': meta['title'],
+            'active_count': len(actives),
+            'target_total': total_target,
+            'youth_total': youth_total,
+            'female_total': female_total,
+            'has_youth_female': meta.get('has_youth_female', False),
+        }
+
+    # ── Distribution helpers ──
+    def _count_by_attr(attr):
+        out = {}
+        for a in activities:
+            v = (getattr(a, attr, u'') or u'').strip()
+            if v:
+                out[v] = out.get(v, 0) + 1
+        return [{'name': k, 'count': v} for k, v in
+                sorted(out.items(), key=lambda x: -x[1])]
+
+    def _count_by_json_attr(attr):
+        out = {}
+        for a in activities:
+            raw = (getattr(a, attr, u'') or u'').strip()
+            if not raw:
+                continue
+            try:
+                items = _json.loads(raw) if raw.startswith('[') else [raw]
+            except Exception:
+                items = [raw]
+            for it in items:
+                if isinstance(it, str) and it.strip():
+                    out[it] = out.get(it, 0) + 1
+        return [{'name': k, 'count': v} for k, v in
+                sorted(out.items(), key=lambda x: -x[1])]
+
+    by_pa = _count_by_attr('priority_area')
+    by_biennium = _count_by_attr('biennium')
+    by_output = _count_by_attr('output')
+    by_institution_type = _count_by_attr('institution_type')
+    by_flagship = _count_by_json_attr('flagships')
+    by_ctwg = _count_by_json_attr('cross_cutting_wg')
+    by_region = _count_by_json_attr('regions')
+    by_member_state = _count_by_json_attr('member_states')
+
+    # ── Completeness (% per record) ──
+    SECTION_FIELDS = {
+        'I': ['focal_point_name', 'contact_email', 'institution_type',
+              'institution', 'title', 'description', 'outcomes', 'biennium'],
+        'II': ['priority_area', 'output', 'key_activity'],
+        'III': ['cross_cutting_wg'],
+        'IV': ['regions', 'member_states'],
+        'V': ['kpi_1a_active', 'kpi_1b_active', 'kpi_2_active', 'kpi_3_active',
+              'kpi_4_active', 'kpi_5_active', 'kpi_6_active', 'kpi_8_active'],
+        'VI': ['additional_notes'],
+    }
+    completeness_buckets = {'0-25': 0, '25-50': 0, '50-75': 0, '75-100': 0}
+    section_blank_counts = {sec: 0 for sec in SECTION_FIELDS}
+    for a in activities:
+        total_fields = 0
+        filled_fields = 0
+        for sec, fields in SECTION_FIELDS.items():
+            sec_filled = 0
+            for f in fields:
+                total_fields += 1
+                val = getattr(a, f, None)
+                if val not in (None, '', 0, False):
+                    filled_fields += 1
+                    sec_filled += 1
+            if sec_filled == 0:
+                section_blank_counts[sec] += 1
+        pct = (filled_fields * 100.0 / total_fields) if total_fields else 0
+        if pct < 25:
+            completeness_buckets['0-25'] += 1
+        elif pct < 50:
+            completeness_buckets['25-50'] += 1
+        elif pct < 75:
+            completeness_buckets['50-75'] += 1
+        else:
+            completeness_buckets['75-100'] += 1
+
+    avg_completeness = 0
+    if activities:
+        total_fields = sum(len(f) for f in SECTION_FIELDS.values())
+        s = 0
+        for a in activities:
+            filled = 0
+            for fields in SECTION_FIELDS.values():
+                for f in fields:
+                    val = getattr(a, f, None)
+                    if val not in (None, '', 0, False):
+                        filled += 1
+            s += (filled * 100.0 / total_fields) if total_fields else 0
+        avg_completeness = round(s / len(activities), 1)
+
+    # ── Member-state coverage ──
+    member_states_covered = len({ms['name'] for ms in by_member_state})
+
+    # ── Recent pending (5) ──
+    recent_pending = (
+        model.Session.query(IhpixActivity)
+        .filter(IhpixActivity.status == IhpixActivity.STATUS_PENDING)
+        .order_by(IhpixActivity.created_at.desc())
+        .limit(5)
+        .all()
+    )
+    recent_pending_list = [{
+        'id': a.id,
+        'title': a.title,
+        'priority_area': a.priority_area,
+        'institution': a.institution,
+        'biennium': a.biennium,
+        'reported_by': a.reported_by,
+        'created_at': a.created_at.strftime('%Y-%m-%d') if a.created_at else '',
+    } for a in recent_pending]
+
+    return {
+        'filters_applied': filters,
+        'total': total,
+        'status_counts': status_counts,
+        'avg_completeness': avg_completeness,
+        'member_states_covered': member_states_covered,
+        'biennium_active': sum(1 for b in C.BIENNIA if any(a.biennium == b for a in activities)),
+        'kpi_breakdown': kpi_breakdown,
+        'by_priority_area': by_pa,
+        'by_biennium': by_biennium,
+        'by_output': by_output[:10],
+        'by_institution_type': by_institution_type,
+        'by_flagship': by_flagship,
+        'by_ctwg': by_ctwg,
+        'by_region': by_region,
+        'by_member_state': by_member_state[:20],
+        'completeness_buckets': completeness_buckets,
+        'section_blank_counts': section_blank_counts,
+        'recent_pending': recent_pending_list,
+    }
 
 
 # ── IHP-IX GeoJSON & Country Summary Actions ───────────────────────────────

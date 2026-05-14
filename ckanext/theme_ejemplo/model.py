@@ -898,7 +898,8 @@ class IhpixActivity(model.DomainObject):
                  contact_name=u'', contact_email=u'',
                  start_date=None, end_date=None,
                  key_activity=u'', outcomes=u'', biennium=u'',
-                 institution_type=u'', partners=u'',
+                 institution_type=u'', institution_type_other=u'',
+                 partners=u'',
                  unesco_participation=u'', flagships=u'',
                  regions=u'', member_states=u'',
                  knowledge_product_type=u'',
@@ -917,9 +918,24 @@ class IhpixActivity(model.DomainObject):
                  stakeholders_awareness_female=0,
                  stakeholders_awareness_youth=0,
                  num_stakeholder_groups=0,
-                 stakeholder_group_type=u'', notes=u'',
+                 stakeholder_group_type=u'',
+                 stakeholder_group_type_other=u'',
+                 stakeholder_group_name=u'',
+                 notes=u'',
                  cross_cutting_wg=u'', synergies=u'',
                  supporting_member_state=u'',
+                 # Section I / V conditional gates (PDF 2026)
+                 focal_point_name=u'',
+                 unesco_secretariat_participation=False,
+                 has_member_state_support=False,
+                 has_flagship=False,
+                 has_synergies=False,
+                 regions_benefit=False,
+                 kpi_1a_active=False, kpi_1b_active=False,
+                 kpi_2_active=False, kpi_3_active=False,
+                 kpi_4_active=False, kpi_5_active=False,
+                 kpi_6_active=False, kpi_8_active=False,
+                 additional_notes=u'',
                  original_timestamp=u'', original_id=u''):
         self.id = str(uuid.uuid4())
         self.title = title
@@ -945,6 +961,7 @@ class IhpixActivity(model.DomainObject):
         self.outcomes = outcomes
         self.biennium = biennium
         self.institution_type = institution_type
+        self.institution_type_other = institution_type_other
         self.partners = partners
         self.unesco_participation = unesco_participation
         self.flagships = flagships  # JSON string
@@ -969,10 +986,28 @@ class IhpixActivity(model.DomainObject):
         self.stakeholders_awareness_youth = stakeholders_awareness_youth or 0
         self.num_stakeholder_groups = num_stakeholder_groups or 0
         self.stakeholder_group_type = stakeholder_group_type
+        self.stakeholder_group_type_other = stakeholder_group_type_other
+        self.stakeholder_group_name = stakeholder_group_name
         self.notes = notes
         self.cross_cutting_wg = cross_cutting_wg  # JSON string
         self.synergies = synergies
         self.supporting_member_state = supporting_member_state
+        # PDF 2026 conditional gates
+        self.focal_point_name = focal_point_name
+        self.unesco_secretariat_participation = bool(unesco_secretariat_participation)
+        self.has_member_state_support = bool(has_member_state_support)
+        self.has_flagship = bool(has_flagship)
+        self.has_synergies = bool(has_synergies)
+        self.regions_benefit = bool(regions_benefit)
+        self.kpi_1a_active = bool(kpi_1a_active)
+        self.kpi_1b_active = bool(kpi_1b_active)
+        self.kpi_2_active = bool(kpi_2_active)
+        self.kpi_3_active = bool(kpi_3_active)
+        self.kpi_4_active = bool(kpi_4_active)
+        self.kpi_5_active = bool(kpi_5_active)
+        self.kpi_6_active = bool(kpi_6_active)
+        self.kpi_8_active = bool(kpi_8_active)
+        self.additional_notes = additional_notes
         self.original_timestamp = original_timestamp
         self.original_id = original_id
         self.created_at = datetime.datetime.utcnow()
@@ -1464,10 +1499,29 @@ def define_ihpix_activity_table():
         Column('stakeholders_awareness_youth', Integer, default=0),
         Column('num_stakeholder_groups', Integer, default=0),
         Column('stakeholder_group_type', UnicodeText, default=u''),
+        Column('stakeholder_group_type_other', UnicodeText, default=u''),
+        Column('stakeholder_group_name', UnicodeText, default=u''),
         Column('notes', UnicodeText, default=u''),
         Column('cross_cutting_wg', UnicodeText, default=u''),  # JSON
         Column('synergies', UnicodeText, default=u''),
         Column('supporting_member_state', UnicodeText, default=u''),
+        # PDF 2026 conditional gates — Section I / V
+        Column('focal_point_name', UnicodeText, default=u''),
+        Column('institution_type_other', UnicodeText, default=u''),
+        Column('unesco_secretariat_participation', Boolean, default=False),
+        Column('has_member_state_support', Boolean, default=False),
+        Column('has_flagship', Boolean, default=False),
+        Column('has_synergies', Boolean, default=False),
+        Column('regions_benefit', Boolean, default=False),
+        Column('kpi_1a_active', Boolean, default=False),
+        Column('kpi_1b_active', Boolean, default=False),
+        Column('kpi_2_active', Boolean, default=False),
+        Column('kpi_3_active', Boolean, default=False),
+        Column('kpi_4_active', Boolean, default=False),
+        Column('kpi_5_active', Boolean, default=False),
+        Column('kpi_6_active', Boolean, default=False),
+        Column('kpi_8_active', Boolean, default=False),
+        Column('additional_notes', UnicodeText, default=u''),
         Column('original_timestamp', UnicodeText, default=u''),
         Column('original_id', UnicodeText, default=u''),
         Column('created_at', DateTime, default=datetime.datetime.utcnow),
@@ -1539,6 +1593,25 @@ def _migrate_ihpix_activities(inspector):
         ('cross_cutting_wg', "TEXT DEFAULT ''"),
         ('synergies', "TEXT DEFAULT ''"),
         ('supporting_member_state', "TEXT DEFAULT ''"),
+        # PDF 2026 conditional gates — Section I / V
+        ('focal_point_name', "TEXT DEFAULT ''"),
+        ('institution_type_other', "TEXT DEFAULT ''"),
+        ('stakeholder_group_type_other', "TEXT DEFAULT ''"),
+        ('stakeholder_group_name', "TEXT DEFAULT ''"),
+        ('unesco_secretariat_participation', 'BOOLEAN DEFAULT FALSE'),
+        ('has_member_state_support', 'BOOLEAN DEFAULT FALSE'),
+        ('has_flagship', 'BOOLEAN DEFAULT FALSE'),
+        ('has_synergies', 'BOOLEAN DEFAULT FALSE'),
+        ('regions_benefit', 'BOOLEAN DEFAULT FALSE'),
+        ('kpi_1a_active', 'BOOLEAN DEFAULT FALSE'),
+        ('kpi_1b_active', 'BOOLEAN DEFAULT FALSE'),
+        ('kpi_2_active', 'BOOLEAN DEFAULT FALSE'),
+        ('kpi_3_active', 'BOOLEAN DEFAULT FALSE'),
+        ('kpi_4_active', 'BOOLEAN DEFAULT FALSE'),
+        ('kpi_5_active', 'BOOLEAN DEFAULT FALSE'),
+        ('kpi_6_active', 'BOOLEAN DEFAULT FALSE'),
+        ('kpi_8_active', 'BOOLEAN DEFAULT FALSE'),
+        ('additional_notes', "TEXT DEFAULT ''"),
         ('original_timestamp', "TEXT DEFAULT ''"),
         ('original_id', "TEXT DEFAULT ''"),
     ]

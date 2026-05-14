@@ -1240,3 +1240,919 @@ msgstr "vistas de página"
 #: ckanext/theme_ejemplo/templates/home/snippets/stats.html
 msgid "downloads"
 msgstr "descargas"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "%(pending)d pending"
+msgstr "%(pending)d pendiente(s)"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "%(rejected)d rejected"
+msgstr "%(rejected)d rechazado(s)"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Active biennia"
+msgstr "Bienios activos"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Activities"
+msgstr "Actividades"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Activities by Region"
+msgstr "Actividades por región"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Activities reporting"
+msgstr "Reporte de actividades"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Activities with section blank"
+msgstr "Actividades con sección en blanco"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Add any other relevant information not yet included in previous questions, or comments on the reporting process."
+msgstr "Agrega cualquier otra información relevante que no se haya incluido en las preguntas anteriores, o comentarios sobre el proceso de reporte."
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Additional notes"
+msgstr "Notas adicionales"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Admin Overview"
+msgstr "Vista general de administración"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Aggregate view of reported activities: KPIs, targets, completeness and breakdowns. Aligned with the IHP-IX reporting guidelines."
+msgstr "Vista agregada de las actividades reportadas: KPI, metas, completitud y desgloses. Alineada con las directrices de reporte de IHP-IX."
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "All"
+msgstr "Todos"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "All reports have been reviewed."
+msgstr "Todos los reportes han sido revisados."
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "An error occurred."
+msgstr "Ocurrió un error."
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "An error occurred. Please try again."
+msgstr "Ocurrió un error. Por favor inténtalo de nuevo."
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Apply"
+msgstr "Aplicar"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Approve"
+msgstr "Aprobar"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Approve this report?"
+msgstr "¿Aprobar este reporte?"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Approving..."
+msgstr "Aprobando..."
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Authentication Required"
+msgstr "Autenticación requerida"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Avg. Completeness"
+msgstr "Completitud promedio"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Awareness training"
+msgstr "Capacitación en sensibilización"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Back to IHP-IX Admin"
+msgstr "Volver a la administración de IHP-IX"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Biennium"
+msgstr "Bienio"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Biennium of implementation"
+msgstr "Bienio de implementación"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Brief description highlighting the main objectives and methodologies used. 250 characters maximum."
+msgstr "Descripción breve que destaque los principales objetivos y metodologías utilizadas. Máximo 250 caracteres."
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "By"
+msgstr "Por"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "By Biennium"
+msgstr "Por bienio"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "By Cross-cutting WG"
+msgstr "Por Grupo de Trabajo Transversal"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "By Flagship Initiative"
+msgstr "Por Iniciativa Insignia"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "By Institution Type"
+msgstr "Por tipo de institución"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "By Priority Area"
+msgstr "Por área prioritaria"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Cancel"
+msgstr "Cancelar"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Capacity support and strengthening"
+msgstr "Apoyo y fortalecimiento de capacidades"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Completeness"
+msgstr "Completitud"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Completeness distribution"
+msgstr "Distribución de completitud"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Confirm Reject"
+msgstr "Confirmar rechazo"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Contact"
+msgstr "Contacto"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Contribution to Cross-cutting Working Groups"
+msgstr "Contribución a los Grupos de Trabajo Transversales"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Contribution to IHP-IX Key Performance Indicators and Targets"
+msgstr "Contribución a los Indicadores Clave de Desempeño y Metas de IHP-IX"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Contribution to IHP-IX Priority Areas"
+msgstr "Contribución a las áreas prioritarias de IHP-IX"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Count"
+msgstr "Conteo"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Country"
+msgstr "País"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Cross-cutting"
+msgstr "Transversal"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Cross-cutting WG"
+msgstr "Grupo de Trabajo Transversal"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Curricula – Training materials and courses"
+msgstr "Currículos – Materiales de capacitación y cursos"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Date of completion"
+msgstr "Fecha de finalización"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Dates"
+msgstr "Fechas"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Description of the implemented activity"
+msgstr "Descripción de la actividad implementada"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Descriptive title that captures the nature of the activity."
+msgstr "Título descriptivo que refleje la naturaleza de la actividad."
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Did the UNESCO Secretariat (HQ or Field Offices) participate in the implementation?"
+msgstr "¿Participó la Secretaría de UNESCO (Sede u Oficinas en el Terreno) en la implementación?"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Did the activity contribute to awareness-raising of target stakeholders?"
+msgstr "¿La actividad contribuyó a la sensibilización de las partes interesadas objetivo?"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Did the activity generate (or improve) and/or disseminate knowledge products?"
+msgstr "¿La actividad generó (o mejoró) y/o difundió productos de conocimiento?"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Did the activity generate scientific products (articles, patents, conference proceedings)?"
+msgstr "¿La actividad generó productos científicos (artículos, patentes, actas de congresos)?"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Did the activity improve knowledge of stakeholders via capacity building, trainings, seminars or conferences?"
+msgstr "¿La actividad mejoró el conocimiento de las partes interesadas mediante el fortalecimiento de capacidades, capacitaciones, seminarios o conferencias?"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Did the activity produce any training materials or training course (physical/online)?"
+msgstr "¿La actividad produjo materiales de capacitación o algún curso (presencial/en línea)?"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Did the activity produce or revise educational curricula on sustainable water management?"
+msgstr "¿La actividad produjo o revisó currículos educativos sobre gestión sostenible del agua?"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Did the activity strengthen the capacity of certain Stakeholder Groups (river basin groups, communities, sectors)?"
+msgstr "¿La actividad fortaleció la capacidad de ciertos grupos de partes interesadas (grupos de cuencas fluviales, comunidades, sectores)?"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Did the activity support Member States in improving their transboundary water systems (surface water and groundwater)?"
+msgstr "¿La actividad apoyó a los Estados Miembros en mejorar sus sistemas hídricos transfronterizos (aguas superficiales y subterráneas)?"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Did your activity benefit any Member States or specific Regions?"
+msgstr "¿Tu actividad benefició a algún Estado Miembro o regiones específicas?"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Distributions"
+msgstr "Distribuciones"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Does the activity have synergies with other Priority Areas, Outputs or Key Activities?"
+msgstr "¿La actividad tiene sinergias con otras áreas prioritarias, productos o actividades clave?"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Draft"
+msgstr "Borrador"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Draft saved."
+msgstr "Borrador guardado."
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Education material – Stakeholder knowledge improvement"
+msgstr "Material educativo – Mejora del conocimiento de las partes interesadas"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Educational curricula"
+msgstr "Currículos educativos"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Email address of the person responsible for the activity."
+msgstr "Dirección de correo electrónico de la persona responsable de la actividad."
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Email of focal point"
+msgstr "Correo electrónico del punto focal"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "End"
+msgstr "Fin"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Explain why this report is being rejected..."
+msgstr "Explica por qué se está rechazando este reporte..."
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Export full dataset"
+msgstr "Exportar conjunto de datos completo"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Export tab as CSV"
+msgstr "Exportar pestaña como CSV"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Financial, in-kind or hosting support."
+msgstr "Apoyo financiero, en especie o de alojamiento."
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Flagship"
+msgstr "Iniciativa Insignia"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Focal point"
+msgstr "Punto focal"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Focal point name is required."
+msgstr "El nombre del punto focal es obligatorio."
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Form sections"
+msgstr "Secciones del formulario"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Full name of the person responsible for the implemented activity."
+msgstr "Nombre completo de la persona responsable de la actividad implementada."
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "General"
+msgstr "General"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "General Information"
+msgstr "Información general"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Geography"
+msgstr "Geografía"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Highlight linkages with Cross-cutting Working Groups or synergies with other related Priority Areas."
+msgstr "Destaca los vínculos con los Grupos de Trabajo Transversales o las sinergias con otras áreas prioritarias relacionadas."
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Hold Ctrl/Cmd to select multiple. Multiple Member States can be selected."
+msgstr "Mantén presionado Ctrl/Cmd para seleccionar varios. Se pueden seleccionar varios Estados Miembros."
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "How many female participants?"
+msgstr "¿Cuántas participantes mujeres?"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "How many youth (18–35)?"
+msgstr "¿Cuántos jóvenes (18–35)?"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "IHP IX"
+msgstr "IHP IX"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "IHP-IX"
+msgstr "IHP-IX"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "IHP-IX Admin Overview"
+msgstr "Vista general de administración de IHP-IX"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "IHP-IX Overview"
+msgstr "Vista general de IHP-IX"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "IHP-IX Report Review"
+msgstr "Revisión de reportes IHP-IX"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Identify the Priority Area, Output and Key Activity of IHP-IX that the implemented activity contributes to."
+msgstr "Identifica el área prioritaria, producto y actividad clave de IHP-IX a los que contribuye la actividad implementada."
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "If applicable, the date when the activity was successfully completed."
+msgstr "Si corresponde, la fecha en que la actividad se completó con éxito."
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "If there were other partners besides the Lead Implementing Institution, please provide their name(s)."
+msgstr "Si hubo otros socios además de la institución implementadora principal, indica su(s) nombre(s)."
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "In which Region(s) was the activity implemented?"
+msgstr "¿En qué región(es) se implementó la actividad?"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Include numbers as indicated in the Operational Implementation Plan (e.g., \"Priority 3, Output 3.3, Key Activity 3.3.1\")."
+msgstr "Incluye los números tal como se indican en el Plan Operativo de Implementación (p. ej., \"Prioridad 3, Producto 3.3, Actividad clave 3.3.1\")."
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Indicate the Region(s) and Member State(s) that benefitted from the activity."
+msgstr "Indica la(s) región(es) y el/los Estado(s) Miembro(s) que se beneficiaron de la actividad."
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Institution"
+msgstr "Institución"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Institution name is required."
+msgstr "El nombre de la institución es obligatorio."
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "KPI"
+msgstr "KPI"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "KPI Targets"
+msgstr "Metas de KPI"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "KPIs"
+msgstr "KPIs"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Key Activity"
+msgstr "Actividad clave"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Key outputs and outcomes"
+msgstr "Productos y resultados clave"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Knowledge generation"
+msgstr "Generación de conocimiento"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Knowledge improvement (scientific products)"
+msgstr "Mejora del conocimiento (productos científicos)"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Lead Implementing Institution category"
+msgstr "Categoría de la institución implementadora principal"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Link"
+msgstr "Enlace"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Link / URL"
+msgstr "Enlace / URL"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Link the implemented activity to the Key Performance Indicators (KPIs) defined in the Operational Implementation Plan of IHP-IX."
+msgstr "Vincula la actividad implementada con los Indicadores Clave de Desempeño (KPI) definidos en el Plan Operativo de Implementación de IHP-IX."
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Log in to continue"
+msgstr "Inicia sesión para continuar"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Main Priority Area to which the activity contributes."
+msgstr "Área prioritaria principal a la que contribuye la actividad."
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Manage activities"
+msgstr "Gestionar actividades"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Member State"
+msgstr "Estado Miembro"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Member State that supported the activity"
+msgstr "Estado Miembro que apoyó la actividad"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Member States covered"
+msgstr "Estados Miembros cubiertos"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Most relevant Output to which the activity contributes."
+msgstr "Producto más relevante al que contribuye la actividad."
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Multiple Flagship Initiatives can be selected."
+msgstr "Se pueden seleccionar varias Iniciativas Insignia."
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Multiple Regions can be selected. If the activity targets all regions, select Global."
+msgstr "Se pueden seleccionar varias regiones. Si la actividad apunta a todas las regiones, selecciona Global."
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Multiple options can be selected."
+msgstr "Se pueden seleccionar varias opciones."
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Name of the Lead Implementing Institution"
+msgstr "Nombre de la institución implementadora principal"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Name of the Stakeholder Group(s) involved"
+msgstr "Nombre del/los grupo(s) de partes interesadas involucrado(s)"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Name of the institution mainly responsible for the implemented activity."
+msgstr "Nombre de la institución principalmente responsable de la actividad implementada."
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Network error. Please check your connection and try again."
+msgstr "Error de red. Por favor revisa tu conexión e inténtalo de nuevo."
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Network error. Please try again."
+msgstr "Error de red. Por favor inténtalo de nuevo."
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "No"
+msgstr "No"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "No Reports to Review"
+msgstr "No hay reportes para revisar"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "No member-state data"
+msgstr "Sin datos de Estados Miembros"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "No pending reports."
+msgstr "No hay reportes pendientes."
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "No reports match the current filter."
+msgstr "Ningún reporte coincide con el filtro actual."
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Notes"
+msgstr "Notas"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Open Admin Overview"
+msgstr "Abrir vista general de administración"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Open full review queue"
+msgstr "Abrir cola de revisión completa"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Optional reference URL related to the activity."
+msgstr "URL de referencia opcional relacionada con la actividad."
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Other Priority Areas, Outputs or Key Activities with synergies"
+msgstr "Otras áreas prioritarias, productos o actividades clave con sinergias"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Other partners involved"
+msgstr "Otros socios involucrados"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Output"
+msgstr "Producto"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Page Content"
+msgstr "Contenido de la página"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Partner 1, Partner 2, …"
+msgstr "Socio 1, Socio 2, …"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Pending"
+msgstr "Pendiente"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Pending Review"
+msgstr "Revisión pendiente"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Pending queue"
+msgstr "Cola pendiente"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Please enter a valid email address."
+msgstr "Por favor ingresa una dirección de correo electrónico válida."
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Please fix the highlighted fields."
+msgstr "Por favor corrige los campos resaltados."
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Please select a biennium."
+msgstr "Por favor selecciona un bienio."
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Please select a priority area."
+msgstr "Por favor selecciona un área prioritaria."
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Please select the institution category."
+msgstr "Por favor selecciona la categoría de la institución."
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Please specify the institution type"
+msgstr "Por favor especifica el tipo de institución"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Please specify the type of Stakeholder Group"
+msgstr "Por favor especifica el tipo de grupo de partes interesadas"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Please specify the type of activity"
+msgstr "Por favor especifica el tipo de actividad"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Please specify the type of knowledge product"
+msgstr "Por favor especifica el tipo de producto de conocimiento"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Priority Area"
+msgstr "Área prioritaria"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Provide general information and comprehensive details about the implemented activity, including title, description, key objectives, key outcomes, and entities involved."
+msgstr "Proporciona información general y detalles completos sobre la actividad implementada, incluyendo título, descripción, objetivos clave, resultados clave y entidades involucradas."
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Published"
+msgstr "Publicado"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Re-approve"
+msgstr "Reaprobar"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Region"
+msgstr "Región"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Region of Implementation"
+msgstr "Región de implementación"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Reject"
+msgstr "Rechazar"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Rejected"
+msgstr "Rechazado"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Rejecting..."
+msgstr "Rechazando..."
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Rejection Details"
+msgstr "Detalles del rechazo"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Relevant Key Activity to which the implemented activity contributes (e.g., 3.3.1)."
+msgstr "Actividad clave relevante a la que contribuye la actividad implementada (p. ej., 3.3.1)."
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Relevant notes or comments"
+msgstr "Notas o comentarios relevantes"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Report"
+msgstr "Reporte"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Report Submitted Successfully"
+msgstr "Reporte enviado con éxito"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Report activities implemented under IHP-IX (2022–2029). The form covers 6 sections aligned with the official UNESCO reporting guidelines. Approx. 10 minutes to complete."
+msgstr "Reporta las actividades implementadas en el marco de IHP-IX (2022–2029). El formulario cubre 6 secciones alineadas con las directrices oficiales de reporte de UNESCO. Aproximadamente 10 minutos para completarlo."
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Report submitted successfully!"
+msgstr "¡Reporte enviado con éxito!"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Reported"
+msgstr "Reportado"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Reports"
+msgstr "Reportes"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Reset"
+msgstr "Restablecer"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Review"
+msgstr "Revisar"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Review Notes"
+msgstr "Notas de revisión"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Review queue →"
+msgstr "Cola de revisión →"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Reviewed by"
+msgstr "Revisado por"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Save as draft"
+msgstr "Guardar como borrador"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Section"
+msgstr "Sección"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Sections most often left blank"
+msgstr "Secciones que se dejan en blanco con más frecuencia"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Select a Member State"
+msgstr "Selecciona un Estado Miembro"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Select a Priority Area"
+msgstr "Selecciona un área prioritaria"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Select a biennium"
+msgstr "Selecciona un bienio"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Select a category"
+msgstr "Selecciona una categoría"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Select an Output"
+msgstr "Selecciona un producto"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Select the category that best represents the Lead Implementing Institution (one choice only)."
+msgstr "Selecciona la categoría que mejor representa a la institución implementadora principal (una sola opción)."
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Showing %(start)s–%(end)s of %(total)s reports"
+msgstr "Mostrando %(start)s–%(end)s de %(total)s reportes"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Start"
+msgstr "Inicio"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Status"
+msgstr "Estado"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Submit Another Report"
+msgstr "Enviar otro reporte"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Submit IHP-IX Activity Report"
+msgstr "Enviar reporte de actividad IHP-IX"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Submit IHP-IX Report"
+msgstr "Enviar reporte IHP-IX"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Submit Report"
+msgstr "Enviar reporte"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Submit for review"
+msgstr "Enviar para revisión"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Submitted"
+msgstr "Enviado"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Submitted by"
+msgstr "Enviado por"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Target 1a: How many knowledge products were generated?"
+msgstr "Meta 1a: ¿Cuántos productos de conocimiento se generaron?"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Target 1b: How many scientific products were generated?"
+msgstr "Meta 1b: ¿Cuántos productos científicos se generaron?"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Target 2: How many key stakeholders improved their knowledge?"
+msgstr "Meta 2: ¿Cuántas partes interesadas clave mejoraron su conocimiento?"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Target 3: How many training materials/courses were produced or implemented?"
+msgstr "Meta 3: ¿Cuántos materiales de capacitación/cursos se produjeron o implementaron?"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Target 4: How many educational curricula were produced or revised?"
+msgstr "Meta 4: ¿Cuántos currículos educativos se produjeron o revisaron?"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Target 5: How many key stakeholders reached?"
+msgstr "Meta 5: ¿A cuántas partes interesadas clave se llegó?"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Target 6: How many Member States were supported?"
+msgstr "Meta 6: ¿A cuántos Estados Miembros se apoyó?"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Target 8: Number of Stakeholder Groups that benefitted from the activity"
+msgstr "Meta 8: Número de grupos de partes interesadas que se beneficiaron de la actividad"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Thank you for your contribution. Your report will be reviewed by an administrator before publication."
+msgstr "Gracias por tu contribución. Tu reporte será revisado por un administrador antes de su publicación."
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "There are no pending reports at this time."
+msgstr "No hay reportes pendientes en este momento."
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "There are no rejected reports."
+msgstr "No hay reportes rechazados."
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Title is required."
+msgstr "El título es obligatorio."
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Title of the implemented activity"
+msgstr "Título de la actividad implementada"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Top 20 Member States"
+msgstr "Top 20 Estados Miembros"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Top Outputs (10)"
+msgstr "Productos principales (10)"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Total Activities"
+msgstr "Total de actividades"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Total Shown"
+msgstr "Total mostrado"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Type of Stakeholder Groups targeted"
+msgstr "Tipo de grupos de partes interesadas objetivo"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Type of knowledge generating activity"
+msgstr "Tipo de actividad generadora de conocimiento"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Type of knowledge product"
+msgstr "Tipo de producto de conocimiento"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Type of scientific product"
+msgstr "Tipo de producto científico"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Type of training materials or course"
+msgstr "Tipo de materiales de capacitación o curso"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Under which Flagship Initiative(s) was the activity implemented?"
+msgstr "¿Bajo qué Iniciativa(s) Insignia se implementó la actividad?"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Was the activity implemented as part of a Flagship Initiative?"
+msgstr "¿La actividad se implementó como parte de una Iniciativa Insignia?"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Was this activity implemented with specific support from a Member State?"
+msgstr "¿Esta actividad se implementó con apoyo específico de un Estado Miembro?"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Water cooperation (transboundary)"
+msgstr "Cooperación hídrica (transfronteriza)"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "What was developed, produced, or implemented; outcomes/impact on the targeted public. 250 characters maximum."
+msgstr "Lo que se desarrolló, produjo o implementó; resultados/impacto en el público objetivo. Máximo 250 caracteres."
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Which Cross-cutting Working Groups does this activity contribute to?"
+msgstr "¿A qué Grupos de Trabajo Transversales contribuye esta actividad?"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Which Member State(s) benefited from the activity?"
+msgstr "¿Qué Estado(s) Miembro(s) se beneficiaron de la actividad?"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Yes"
+msgstr "Sí"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "You need to be logged in to submit an IHP-IX activity report."
+msgstr "Necesitas iniciar sesión para enviar un reporte de actividad IHP-IX."
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "approved"
+msgstr "aprobado"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "e.g., 3.3.1"
+msgstr "p. ej., 3.3.1"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "rejected"
+msgstr "rechazado"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Σ Female"
+msgstr "Σ Mujeres"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Σ Target"
+msgstr "Σ Meta"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "Σ Youth"
+msgstr "Σ Jóvenes"

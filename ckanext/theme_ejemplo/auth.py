@@ -253,6 +253,11 @@ def ihpix_dashboard_stats(context, data_dict):
     return {'success': True}
 
 
+def ihpix_admin_overview_stats(context, data_dict):
+    """Sysadmin-only access to the extended admin overview statistics."""
+    return _sysadmin_only(context, data_dict)
+
+
 # ── IHP-IX GeoJSON & Country Summary Auth ──────────────────────────────────
 
 def ihpix_geojson(context, data_dict):

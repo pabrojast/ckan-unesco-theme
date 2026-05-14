@@ -42,6 +42,51 @@
     line-height: 1.5;
   }
 
+  /* Sticky section navigation */
+  .ihpix-section-nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background: #fff;
+    border-bottom: 1px solid #e0e6ed;
+    padding: 0.5rem 0;
+    margin-bottom: 1.5rem;
+    overflow-x: auto;
+    white-space: nowrap;
+    -webkit-overflow-scrolling: touch;
+  }
+  .ihpix-section-nav-inner {
+    display: inline-flex;
+    gap: 0.4rem;
+    padding: 0.25rem 0.5rem;
+  }
+  .ihpix-section-nav a {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4rem;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: #344563;
+    background: #f7fafc;
+    border: 1px solid #e0e6ed;
+    border-radius: 999px;
+    text-decoration: none;
+    transition: background 0.15s ease, color 0.15s ease;
+  }
+  .ihpix-section-nav a:hover,
+  .ihpix-section-nav a.active {
+    background: #0069B4;
+    border-color: #0069B4;
+    color: #fff;
+    text-decoration: none;
+  }
+  .ihpix-section-nav a .roman {
+    font-family: 'Times New Roman', serif;
+    font-style: italic;
+    margin-right: 2px;
+  }
+
   .ihpix-report-section {
     background: #fff;
     border: 1px solid #e0e6ed;
@@ -50,6 +95,7 @@
     margin-bottom: 1.5rem;
     overflow: hidden;
     transition: box-shadow 0.2s ease;
+    scroll-margin-top: 80px;
   }
   .ihpix-report-section:hover {
     box-shadow: 0 4px 16px rgba(0,0,0,0.08);
@@ -66,11 +112,31 @@
     font-size: 1.2rem;
     color: #0069B4;
   }
+  .ihpix-report-section-header .ihpix-roman {
+    font-family: 'Times New Roman', serif;
+    font-style: italic;
+    font-weight: 700;
+    color: #0069B4;
+    margin-right: 4px;
+    font-size: 1.05rem;
+  }
   .ihpix-report-section-header h3 {
     margin: 0;
     font-size: 1.05rem;
     font-weight: 600;
     color: #1a2b3c;
+  }
+  .ihpix-report-section-intro {
+    background: #f0f7fc;
+    border-bottom: 1px solid #e0e6ed;
+    padding: 0.9rem 1.5rem;
+    font-size: 0.88rem;
+    color: #344563;
+    line-height: 1.5;
+  }
+  .ihpix-report-section-intro i {
+    color: #0069B4;
+    margin-right: 0.4rem;
   }
   .ihpix-report-section-body {
     padding: 1.5rem;
@@ -92,6 +158,13 @@
   .ihpix-report-label .ihpix-report-required {
     color: #e53e3e;
     margin-left: 2px;
+  }
+  .ihpix-report-help {
+    display: block;
+    font-size: 0.78rem;
+    color: #718096;
+    margin-bottom: 0.4rem;
+    font-weight: 400;
   }
   .ihpix-report-input,
   .ihpix-report-select,
@@ -115,7 +188,8 @@
     box-shadow: 0 0 0 3px rgba(0,105,180,0.12);
   }
   .ihpix-report-input.ihpix-report-field-error,
-  .ihpix-report-select.ihpix-report-field-error {
+  .ihpix-report-select.ihpix-report-field-error,
+  .ihpix-report-textarea.ihpix-report-field-error {
     border-color: #e53e3e;
     box-shadow: 0 0 0 3px rgba(229,62,62,0.12);
   }
@@ -138,6 +212,152 @@
   .ihpix-report-row .ihpix-report-field {
     flex: 1;
     min-width: 200px;
+  }
+
+  /* Char counter */
+  .ihpix-char-counter {
+    display: block;
+    text-align: right;
+    font-size: 0.75rem;
+    color: #718096;
+    margin-top: 0.25rem;
+  }
+  .ihpix-char-counter.over {
+    color: #e53e3e;
+    font-weight: 600;
+  }
+
+  /* Yes/No radio toggle */
+  .ihpix-yesno {
+    display: inline-flex;
+    border: 1px solid #cbd5e0;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-top: 0.2rem;
+  }
+  .ihpix-yesno label {
+    margin: 0;
+    padding: 0.4rem 1.2rem;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #718096;
+    background: #fff;
+    cursor: pointer;
+    transition: background 0.15s ease, color 0.15s ease;
+    border-right: 1px solid #cbd5e0;
+  }
+  .ihpix-yesno label:last-child {
+    border-right: none;
+  }
+  .ihpix-yesno input[type="radio"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+  .ihpix-yesno input[type="radio"]:checked + span {
+    color: #fff;
+  }
+  .ihpix-yesno label:has(input[type="radio"]:checked) {
+    background: #0069B4;
+    color: #fff;
+  }
+  .ihpix-yesno label.is-yes:has(input[type="radio"]:checked) { background: #38a169; }
+  .ihpix-yesno label.is-no:has(input[type="radio"]:checked)  { background: #718096; }
+
+  /* Conditional section reveal */
+  .ihpix-conditional {
+    display: none;
+    margin-top: 1rem;
+    padding: 1rem 1.2rem;
+    background: #f7fafc;
+    border-left: 3px solid #0069B4;
+    border-radius: 0 8px 8px 0;
+  }
+  .ihpix-conditional.show {
+    display: block;
+    animation: ihpix-fadeIn 0.25s ease;
+  }
+  @keyframes ihpix-fadeIn {
+    from { opacity: 0; transform: translateY(-4px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Checkbox grid (multi-select) */
+  .ihpix-checkbox-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 0.5rem 1rem;
+  }
+  .ihpix-checkbox-grid label {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.5rem;
+    padding: 0.5rem 0.7rem;
+    border: 1px solid #e0e6ed;
+    border-radius: 6px;
+    background: #fff;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 0.88rem;
+    color: #344563;
+    margin: 0;
+    transition: background 0.15s ease, border-color 0.15s ease;
+  }
+  .ihpix-checkbox-grid label:hover {
+    background: #f0f7fc;
+    border-color: #0069B4;
+  }
+  .ihpix-checkbox-grid label:has(input:checked) {
+    background: #e6f0f8;
+    border-color: #0069B4;
+  }
+  .ihpix-checkbox-grid input[type="checkbox"] {
+    margin: 0.2rem 0 0;
+  }
+  .ihpix-checkbox-grid .checkbox-desc {
+    display: block;
+    font-weight: 400;
+    font-size: 0.78rem;
+    color: #718096;
+    margin-top: 0.2rem;
+  }
+
+  /* KPI fieldset */
+  .ihpix-kpi-block {
+    border-left: 4px solid #0069B4;
+    background: #fafcfe;
+    padding: 1rem 1.2rem;
+    border-radius: 0 8px 8px 0;
+    margin-bottom: 1rem;
+  }
+  .ihpix-kpi-block-header {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    margin-bottom: 0.8rem;
+  }
+  .ihpix-kpi-block-header h4 {
+    margin: 0;
+    font-size: 0.98rem;
+    font-weight: 700;
+    color: #0069B4;
+    flex: 1;
+  }
+  .ihpix-kpi-block-header .kpi-id {
+    display: inline-block;
+    padding: 0.2rem 0.6rem;
+    background: #0069B4;
+    color: #fff;
+    font-size: 0.75rem;
+    font-weight: 700;
+    border-radius: 4px;
+    margin-right: 0.5rem;
+  }
+  .ihpix-kpi-block-help {
+    font-size: 0.82rem;
+    color: #718096;
+    line-height: 1.5;
+    margin-bottom: 0.7rem;
   }
 
   .ihpix-report-btn {
@@ -167,19 +387,31 @@
     transform: none;
     box-shadow: none;
   }
+  .ihpix-report-btn.is-secondary {
+    background: #fff;
+    color: #0069B4;
+    border: 1px solid #0069B4;
+  }
+  .ihpix-report-btn.is-secondary:hover {
+    background: #f0f7fc;
+  }
   .ihpix-report-btn .fa-spinner {
     display: none;
   }
   .ihpix-report-btn.ihpix-report-loading .fa-spinner {
     display: inline-block;
   }
-  .ihpix-report-btn.ihpix-report-loading .fa-paper-plane {
+  .ihpix-report-btn.ihpix-report-loading .fa-paper-plane,
+  .ihpix-report-btn.ihpix-report-loading .fa-save {
     display: none;
   }
 
   .ihpix-report-actions {
-    text-align: right;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.8rem;
     padding-top: 0.5rem;
+    flex-wrap: wrap;
   }
 
   /* Toast notifications */
@@ -360,7 +592,14 @@
       max-width: none;
     }
     .ihpix-report-actions {
-      text-align: center;
+      justify-content: stretch;
+    }
+    .ihpix-report-actions .ihpix-report-btn {
+      flex: 1;
+      justify-content: center;
+    }
+    .ihpix-checkbox-grid {
+      grid-template-columns: 1fr;
     }
   }
 </style>
@@ -369,7 +608,7 @@
 
 <div class="ihpix-report-banner">
   <h1><i class="fa fa-file-text-o"></i> {{ _('Submit IHP-IX Activity Report') }}</h1>
-  <p>{{ _('Share your contributions to the Intergovernmental Hydrological Programme. Submitted reports are reviewed before publication.') }}</p>
+  <p>{{ _('Report activities implemented under IHP-IX (2022–2029). The form covers 6 sections aligned with the official UNESCO reporting guidelines. Approx. 10 minutes to complete.') }}</p>
 </div>
 
 {% if not is_logged_in %}
@@ -395,68 +634,256 @@
     </button>
   </div>
 
+  {# Sticky section nav #}
+  <nav class="ihpix-section-nav" aria-label="{{ _('Form sections') }}">
+    <div class="ihpix-section-nav-inner">
+      <a href="#section-1" class="active"><span class="roman">I.</span>{{ _('General') }}</a>
+      <a href="#section-2"><span class="roman">II.</span>{{ _('Priority Area') }}</a>
+      <a href="#section-3"><span class="roman">III.</span>{{ _('Cross-cutting') }}</a>
+      <a href="#section-4"><span class="roman">IV.</span>{{ _('Region') }}</a>
+      <a href="#section-5"><span class="roman">V.</span>{{ _('KPIs') }}</a>
+      <a href="#section-6"><span class="roman">VI.</span>{{ _('Notes') }}</a>
+    </div>
+  </nav>
+
   {# Report form #}
   <form id="ihpix-report-form" novalidate>
 
-    {# Section 1: Activity Information #}
-    <div class="ihpix-report-section">
+    {# ── Section I: General Information ─────────────────────────────── #}
+    <div class="ihpix-report-section" id="section-1">
       <div class="ihpix-report-section-header">
         <i class="fa fa-info-circle"></i>
-        <h3>{{ _('Activity Information') }}</h3>
+        <span class="ihpix-roman">I.</span>
+        <h3>{{ _('General Information') }}</h3>
+      </div>
+      <div class="ihpix-report-section-intro">
+        <i class="fa fa-quote-left"></i>{{ _('Provide general information and comprehensive details about the implemented activity, including title, description, key objectives, key outcomes, and entities involved.') }}
       </div>
       <div class="ihpix-report-section-body">
 
+        <div class="ihpix-report-row">
+          <div class="ihpix-report-field">
+            <label class="ihpix-report-label" for="ihpix-field-focal-point">
+              {{ _('Focal point') }} <span class="ihpix-report-required">*</span>
+            </label>
+            <span class="ihpix-report-help">{{ _('Full name of the person responsible for the implemented activity.') }}</span>
+            <input type="text" id="ihpix-field-focal-point" name="focal_point_name"
+                   class="ihpix-report-input" required>
+            <div class="ihpix-report-error-text" id="ihpix-error-focal-point">{{ _('Focal point name is required.') }}</div>
+          </div>
+          <div class="ihpix-report-field">
+            <label class="ihpix-report-label" for="ihpix-field-contact-email">
+              {{ _('Email of focal point') }} <span class="ihpix-report-required">*</span>
+            </label>
+            <span class="ihpix-report-help">{{ _('Email address of the person responsible for the activity.') }}</span>
+            <input type="email" id="ihpix-field-contact-email" name="contact_email"
+                   class="ihpix-report-input" required
+                   placeholder="email@example.com">
+            <div class="ihpix-report-error-text" id="ihpix-error-email">{{ _('Please enter a valid email address.') }}</div>
+          </div>
+        </div>
+
+        <div class="ihpix-report-field">
+          <label class="ihpix-report-label" for="ihpix-field-institution-type">
+            {{ _('Lead Implementing Institution category') }} <span class="ihpix-report-required">*</span>
+          </label>
+          <span class="ihpix-report-help">{{ _('Select the category that best represents the Lead Implementing Institution (one choice only).') }}</span>
+          <select id="ihpix-field-institution-type" name="institution_type"
+                  class="ihpix-report-select" required>
+            <option value="">-- {{ _('Select a category') }} --</option>
+            {% for it in institution_types %}
+              <option value="{{ it }}">{{ _(it) }}</option>
+            {% endfor %}
+          </select>
+          <div class="ihpix-report-error-text" id="ihpix-error-institution-type">{{ _('Please select the institution category.') }}</div>
+          <div class="ihpix-conditional" data-conditional-on="institution_type" data-show-when="Other">
+            <div class="ihpix-report-field" style="margin-bottom: 0;">
+              <label class="ihpix-report-label" for="ihpix-field-institution-type-other">{{ _('Please specify the institution type') }}</label>
+              <input type="text" id="ihpix-field-institution-type-other" name="institution_type_other"
+                     class="ihpix-report-input">
+            </div>
+          </div>
+        </div>
+
+        <div class="ihpix-report-field">
+          <label class="ihpix-report-label" for="ihpix-field-partners">
+            {{ _('Other partners involved') }}
+          </label>
+          <span class="ihpix-report-help">{{ _('If there were other partners besides the Lead Implementing Institution, please provide their name(s).') }}</span>
+          <input type="text" id="ihpix-field-partners" name="partners"
+                 class="ihpix-report-input"
+                 placeholder="{{ _('Partner 1, Partner 2, …') }}">
+        </div>
+
+        <div class="ihpix-report-field">
+          <label class="ihpix-report-label" for="ihpix-field-institution">
+            {{ _('Name of the Lead Implementing Institution') }} <span class="ihpix-report-required">*</span>
+          </label>
+          <span class="ihpix-report-help">{{ _('Name of the institution mainly responsible for the implemented activity.') }}</span>
+          <input type="text" id="ihpix-field-institution" name="institution"
+                 class="ihpix-report-input" required>
+          <div class="ihpix-report-error-text" id="ihpix-error-institution">{{ _('Institution name is required.') }}</div>
+        </div>
+
         <div class="ihpix-report-field">
           <label class="ihpix-report-label" for="ihpix-field-title">
-            {{ _('Title') }} <span class="ihpix-report-required">*</span>
+            {{ _('Title of the implemented activity') }} <span class="ihpix-report-required">*</span>
           </label>
+          <span class="ihpix-report-help">{{ _('Descriptive title that captures the nature of the activity.') }}</span>
           <input type="text" id="ihpix-field-title" name="title"
-                 class="ihpix-report-input" required
-                 placeholder="{{ _('Activity title') }}">
+                 class="ihpix-report-input" required>
           <div class="ihpix-report-error-text" id="ihpix-error-title">{{ _('Title is required.') }}</div>
         </div>
 
         <div class="ihpix-report-field">
           <label class="ihpix-report-label" for="ihpix-field-description">
-            {{ _('Description') }}
+            {{ _('Description of the implemented activity') }}
           </label>
+          <span class="ihpix-report-help">{{ _('Brief description highlighting the main objectives and methodologies used. 250 characters maximum.') }}</span>
           <textarea id="ihpix-field-description" name="description"
                     class="ihpix-report-textarea" rows="4"
-                    placeholder="{{ _('Describe the activity...') }}"></textarea>
+                    maxlength="250"
+                    data-counter="ihpix-counter-description"></textarea>
+          <span class="ihpix-char-counter" id="ihpix-counter-description">0 / 250</span>
+        </div>
+
+        <div class="ihpix-report-field">
+          <label class="ihpix-report-label" for="ihpix-field-outcomes">
+            {{ _('Key outputs and outcomes') }}
+          </label>
+          <span class="ihpix-report-help">{{ _('What was developed, produced, or implemented; outcomes/impact on the targeted public. 250 characters maximum.') }}</span>
+          <textarea id="ihpix-field-outcomes" name="outcomes"
+                    class="ihpix-report-textarea" rows="4"
+                    maxlength="250"
+                    data-counter="ihpix-counter-outcomes"></textarea>
+          <span class="ihpix-char-counter" id="ihpix-counter-outcomes">0 / 250</span>
         </div>
 
         <div class="ihpix-report-row">
           <div class="ihpix-report-field">
-            <label class="ihpix-report-label" for="ihpix-field-priority-area">
-              {{ _('Priority Area') }} <span class="ihpix-report-required">*</span>
+            <label class="ihpix-report-label" for="ihpix-field-biennium">
+              {{ _('Biennium of implementation') }} <span class="ihpix-report-required">*</span>
             </label>
-            <select id="ihpix-field-priority-area" name="priority_area"
+            <select id="ihpix-field-biennium" name="biennium"
                     class="ihpix-report-select" required>
-              <option value="">-- {{ _('Select a Priority Area') }} --</option>
-              {% for pa in priority_areas %}
-                {% if pa == 'PA1' %}
-                <option value="PA1">{{ _('Priority Area 1 – Scientific Research and Innovation') }}</option>
-                {% elif pa == 'PA2' %}
-                <option value="PA2">{{ _('Priority Area 2 – Water Education') }}</option>
-                {% elif pa == 'PA3' %}
-                <option value="PA3">{{ _('Priority Area 3 – Bridging the Data-Knowledge Gap') }}</option>
-                {% elif pa == 'PA4' %}
-                <option value="PA4">{{ _('Priority Area 4 – Integrated Water Resources Management') }}</option>
-                {% elif pa == 'PA5' %}
-                <option value="PA5">{{ _('Priority Area 5 – Water Governance') }}</option>
-                {% endif %}
+              <option value="">-- {{ _('Select a biennium') }} --</option>
+              {% for b in biennia %}
+                <option value="{{ b }}">{{ b }}</option>
               {% endfor %}
             </select>
-            <div class="ihpix-report-error-text" id="ihpix-error-priority-area">{{ _('Please select a priority area.') }}</div>
+            <div class="ihpix-report-error-text" id="ihpix-error-biennium">{{ _('Please select a biennium.') }}</div>
           </div>
+          <div class="ihpix-report-field">
+            <label class="ihpix-report-label" for="ihpix-field-end-date">
+              {{ _('Date of completion') }}
+            </label>
+            <span class="ihpix-report-help">{{ _('If applicable, the date when the activity was successfully completed.') }}</span>
+            <input type="date" id="ihpix-field-end-date" name="end_date"
+                   class="ihpix-report-input">
+          </div>
+        </div>
 
+        <div class="ihpix-report-field">
+          <label class="ihpix-report-label">{{ _('Did the UNESCO Secretariat (HQ or Field Offices) participate in the implementation?') }}</label>
+          <div class="ihpix-yesno">
+            <label class="is-yes"><input type="radio" name="unesco_secretariat_participation" value="yes"><span>{{ _('Yes') }}</span></label>
+            <label class="is-no"><input type="radio" name="unesco_secretariat_participation" value="no" checked><span>{{ _('No') }}</span></label>
+          </div>
+        </div>
+
+        <div class="ihpix-report-field">
+          <label class="ihpix-report-label">{{ _('Was this activity implemented with specific support from a Member State?') }}</label>
+          <span class="ihpix-report-help">{{ _('Financial, in-kind or hosting support.') }}</span>
+          <div class="ihpix-yesno">
+            <label class="is-yes"><input type="radio" name="has_member_state_support" value="yes"><span>{{ _('Yes') }}</span></label>
+            <label class="is-no"><input type="radio" name="has_member_state_support" value="no" checked><span>{{ _('No') }}</span></label>
+          </div>
+          <div class="ihpix-conditional" data-conditional-on="has_member_state_support" data-show-when="yes">
+            <div class="ihpix-report-field" style="margin-bottom: 0;">
+              <label class="ihpix-report-label" for="ihpix-field-supporting-ms">{{ _('Member State that supported the activity') }}</label>
+              <select id="ihpix-field-supporting-ms" name="supporting_member_state" class="ihpix-report-select">
+                <option value="">-- {{ _('Select a Member State') }} --</option>
+                {% for code, name in member_states %}
+                  <option value="{{ code }}">{{ _(name) }}</option>
+                {% endfor %}
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div class="ihpix-report-field">
+          <label class="ihpix-report-label">{{ _('Was the activity implemented as part of a Flagship Initiative?') }}</label>
+          <div class="ihpix-yesno">
+            <label class="is-yes"><input type="radio" name="has_flagship" value="yes"><span>{{ _('Yes') }}</span></label>
+            <label class="is-no"><input type="radio" name="has_flagship" value="no" checked><span>{{ _('No') }}</span></label>
+          </div>
+          <div class="ihpix-conditional" data-conditional-on="has_flagship" data-show-when="yes">
+            <div class="ihpix-report-field" style="margin-bottom: 0;">
+              <label class="ihpix-report-label">{{ _('Under which Flagship Initiative(s) was the activity implemented?') }}</label>
+              <span class="ihpix-report-help">{{ _('Multiple Flagship Initiatives can be selected.') }}</span>
+              <div class="ihpix-checkbox-grid">
+                {% for fs in flagships %}
+                  <label><input type="checkbox" name="flagships" value="{{ fs }}"> {{ fs }}</label>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    {# ── Section II: Priority Area ─────────────────────────────────── #}
+    <div class="ihpix-report-section" id="section-2">
+      <div class="ihpix-report-section-header">
+        <i class="fa fa-bullseye"></i>
+        <span class="ihpix-roman">II.</span>
+        <h3>{{ _('Contribution to IHP-IX Priority Areas') }}</h3>
+      </div>
+      <div class="ihpix-report-section-intro">
+        <i class="fa fa-quote-left"></i>{{ _('Identify the Priority Area, Output and Key Activity of IHP-IX that the implemented activity contributes to.') }}
+      </div>
+      <div class="ihpix-report-section-body">
+
+        <div class="ihpix-report-field">
+          <label class="ihpix-report-label" for="ihpix-field-priority-area">
+            {{ _('Priority Area') }} <span class="ihpix-report-required">*</span>
+          </label>
+          <span class="ihpix-report-help">{{ _('Main Priority Area to which the activity contributes.') }}</span>
+          <select id="ihpix-field-priority-area" name="priority_area"
+                  class="ihpix-report-select" required>
+            <option value="">-- {{ _('Select a Priority Area') }} --</option>
+            {% for pa_code, pa_name in priority_areas.items() %}
+              <option value="{{ pa_code }}">{{ pa_code[2:] }}. {{ _(pa_name) }}</option>
+            {% endfor %}
+          </select>
+          <div class="ihpix-report-error-text" id="ihpix-error-priority-area">{{ _('Please select a priority area.') }}</div>
+        </div>
+
+        <div class="ihpix-report-row">
           <div class="ihpix-report-field">
             <label class="ihpix-report-label" for="ihpix-field-output">
               {{ _('Output') }}
             </label>
-            <input type="text" id="ihpix-field-output" name="output"
+            <span class="ihpix-report-help">{{ _('Most relevant Output to which the activity contributes.') }}</span>
+            <select id="ihpix-field-output" name="output" class="ihpix-report-select">
+              <option value="">-- {{ _('Select an Output') }} --</option>
+              {# Populated dynamically based on selected Priority Area #}
+              {% for pa_code, outputs in outputs_by_pa.items() %}
+                {% for code, title in outputs %}
+                  <option value="{{ code }}" data-pa="{{ pa_code }}">{{ code }}{% if title %} – {{ _(title) }}{% endif %}</option>
+                {% endfor %}
+              {% endfor %}
+            </select>
+          </div>
+          <div class="ihpix-report-field">
+            <label class="ihpix-report-label" for="ihpix-field-key-activity">
+              {{ _('Key Activity') }}
+            </label>
+            <span class="ihpix-report-help">{{ _('Relevant Key Activity to which the implemented activity contributes (e.g., 3.3.1).') }}</span>
+            <input type="text" id="ihpix-field-key-activity" name="key_activity"
                    class="ihpix-report-input"
-                   placeholder="{{ _('e.g., Output 1.1') }}">
+                   placeholder="{{ _('e.g., 3.3.1') }}">
           </div>
         </div>
 
@@ -464,6 +891,7 @@
           <label class="ihpix-report-label" for="ihpix-field-link">
             {{ _('Link / URL') }}
           </label>
+          <span class="ihpix-report-help">{{ _('Optional reference URL related to the activity.') }}</span>
           <input type="text" id="ihpix-field-link" name="link"
                  class="ihpix-report-input"
                  placeholder="https://...">
@@ -472,298 +900,375 @@
       </div>
     </div>
 
-    {# Section 2: Location & Institution #}
-    <div class="ihpix-report-section">
+    {# ── Section III: Cross-cutting Working Groups ────────────────── #}
+    <div class="ihpix-report-section" id="section-3">
+      <div class="ihpix-report-section-header">
+        <i class="fa fa-sitemap"></i>
+        <span class="ihpix-roman">III.</span>
+        <h3>{{ _('Contribution to Cross-cutting Working Groups') }}</h3>
+      </div>
+      <div class="ihpix-report-section-intro">
+        <i class="fa fa-quote-left"></i>{{ _('Highlight linkages with Cross-cutting Working Groups or synergies with other related Priority Areas.') }}
+      </div>
+      <div class="ihpix-report-section-body">
+
+        <div class="ihpix-report-field">
+          <label class="ihpix-report-label">{{ _('Which Cross-cutting Working Groups does this activity contribute to?') }}</label>
+          <span class="ihpix-report-help">{{ _('Multiple options can be selected.') }}</span>
+          <div class="ihpix-checkbox-grid">
+            {% for wg in cross_cutting_wgs %}
+              <label><input type="checkbox" name="cross_cutting_wg" value="{{ wg }}"> {{ _(wg) }}</label>
+            {% endfor %}
+          </div>
+        </div>
+
+        <div class="ihpix-report-field">
+          <label class="ihpix-report-label">{{ _('Does the activity have synergies with other Priority Areas, Outputs or Key Activities?') }}</label>
+          <div class="ihpix-yesno">
+            <label class="is-yes"><input type="radio" name="has_synergies" value="yes"><span>{{ _('Yes') }}</span></label>
+            <label class="is-no"><input type="radio" name="has_synergies" value="no" checked><span>{{ _('No') }}</span></label>
+          </div>
+          <div class="ihpix-conditional" data-conditional-on="has_synergies" data-show-when="yes">
+            <div class="ihpix-report-field" style="margin-bottom: 0;">
+              <label class="ihpix-report-label" for="ihpix-field-synergies">{{ _('Other Priority Areas, Outputs or Key Activities with synergies') }}</label>
+              <span class="ihpix-report-help">{{ _('Include numbers as indicated in the Operational Implementation Plan (e.g., "Priority 3, Output 3.3, Key Activity 3.3.1").') }}</span>
+              <textarea id="ihpix-field-synergies" name="synergies"
+                        class="ihpix-report-textarea" rows="3"></textarea>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    {# ── Section IV: Region of Implementation ───────────────────── #}
+    <div class="ihpix-report-section" id="section-4">
       <div class="ihpix-report-section-header">
         <i class="fa fa-globe"></i>
-        <h3>{{ _('Location & Institution') }}</h3>
+        <span class="ihpix-roman">IV.</span>
+        <h3>{{ _('Region of Implementation') }}</h3>
+      </div>
+      <div class="ihpix-report-section-intro">
+        <i class="fa fa-quote-left"></i>{{ _('Indicate the Region(s) and Member State(s) that benefitted from the activity.') }}
       </div>
       <div class="ihpix-report-section-body">
-        <div class="ihpix-report-row">
-          <div class="ihpix-report-field">
-            <label class="ihpix-report-label" for="ihpix-field-country">
-              {{ _('Country') }}
-            </label>
-            <select id="ihpix-field-country" name="country" class="ihpix-report-select">
-              <option value="">-- {{ _('Select a country') }} --</option>
-              <option value="AF">{{ _('Afghanistan') }}</option>
-              <option value="AL">{{ _('Albania') }}</option>
-              <option value="DZ">{{ _('Algeria') }}</option>
-              <option value="AD">{{ _('Andorra') }}</option>
-              <option value="AO">{{ _('Angola') }}</option>
-              <option value="AG">{{ _('Antigua and Barbuda') }}</option>
-              <option value="AR">{{ _('Argentina') }}</option>
-              <option value="AM">{{ _('Armenia') }}</option>
-              <option value="AU">{{ _('Australia') }}</option>
-              <option value="AT">{{ _('Austria') }}</option>
-              <option value="AZ">{{ _('Azerbaijan') }}</option>
-              <option value="BS">{{ _('Bahamas') }}</option>
-              <option value="BH">{{ _('Bahrain') }}</option>
-              <option value="BD">{{ _('Bangladesh') }}</option>
-              <option value="BB">{{ _('Barbados') }}</option>
-              <option value="BY">{{ _('Belarus') }}</option>
-              <option value="BE">{{ _('Belgium') }}</option>
-              <option value="BZ">{{ _('Belize') }}</option>
-              <option value="BJ">{{ _('Benin') }}</option>
-              <option value="BT">{{ _('Bhutan') }}</option>
-              <option value="BO">{{ _('Bolivia') }}</option>
-              <option value="BA">{{ _('Bosnia and Herzegovina') }}</option>
-              <option value="BW">{{ _('Botswana') }}</option>
-              <option value="BR">{{ _('Brazil') }}</option>
-              <option value="BN">{{ _('Brunei') }}</option>
-              <option value="BG">{{ _('Bulgaria') }}</option>
-              <option value="BF">{{ _('Burkina Faso') }}</option>
-              <option value="BI">{{ _('Burundi') }}</option>
-              <option value="CV">{{ _('Cabo Verde') }}</option>
-              <option value="KH">{{ _('Cambodia') }}</option>
-              <option value="CM">{{ _('Cameroon') }}</option>
-              <option value="CA">{{ _('Canada') }}</option>
-              <option value="CF">{{ _('Central African Republic') }}</option>
-              <option value="TD">{{ _('Chad') }}</option>
-              <option value="CL">{{ _('Chile') }}</option>
-              <option value="CN">{{ _('China') }}</option>
-              <option value="CO">{{ _('Colombia') }}</option>
-              <option value="KM">{{ _('Comoros') }}</option>
-              <option value="CG">{{ _('Congo') }}</option>
-              <option value="CD">{{ _('Congo (Democratic Republic)') }}</option>
-              <option value="CR">{{ _('Costa Rica') }}</option>
-              <option value="CI">{{ _("Côte d'Ivoire") }}</option>
-              <option value="HR">{{ _('Croatia') }}</option>
-              <option value="CU">{{ _('Cuba') }}</option>
-              <option value="CY">{{ _('Cyprus') }}</option>
-              <option value="CZ">{{ _('Czechia') }}</option>
-              <option value="DK">{{ _('Denmark') }}</option>
-              <option value="DJ">{{ _('Djibouti') }}</option>
-              <option value="DM">{{ _('Dominica') }}</option>
-              <option value="DO">{{ _('Dominican Republic') }}</option>
-              <option value="EC">{{ _('Ecuador') }}</option>
-              <option value="EG">{{ _('Egypt') }}</option>
-              <option value="SV">{{ _('El Salvador') }}</option>
-              <option value="GQ">{{ _('Equatorial Guinea') }}</option>
-              <option value="ER">{{ _('Eritrea') }}</option>
-              <option value="EE">{{ _('Estonia') }}</option>
-              <option value="SZ">{{ _('Eswatini') }}</option>
-              <option value="ET">{{ _('Ethiopia') }}</option>
-              <option value="FJ">{{ _('Fiji') }}</option>
-              <option value="FI">{{ _('Finland') }}</option>
-              <option value="FR">{{ _('France') }}</option>
-              <option value="GA">{{ _('Gabon') }}</option>
-              <option value="GM">{{ _('Gambia') }}</option>
-              <option value="GE">{{ _('Georgia') }}</option>
-              <option value="DE">{{ _('Germany') }}</option>
-              <option value="GH">{{ _('Ghana') }}</option>
-              <option value="GR">{{ _('Greece') }}</option>
-              <option value="GD">{{ _('Grenada') }}</option>
-              <option value="GT">{{ _('Guatemala') }}</option>
-              <option value="GN">{{ _('Guinea') }}</option>
-              <option value="GW">{{ _('Guinea-Bissau') }}</option>
-              <option value="GY">{{ _('Guyana') }}</option>
-              <option value="HT">{{ _('Haiti') }}</option>
-              <option value="HN">{{ _('Honduras') }}</option>
-              <option value="HU">{{ _('Hungary') }}</option>
-              <option value="IS">{{ _('Iceland') }}</option>
-              <option value="IN">{{ _('India') }}</option>
-              <option value="ID">{{ _('Indonesia') }}</option>
-              <option value="IR">{{ _('Iran') }}</option>
-              <option value="IQ">{{ _('Iraq') }}</option>
-              <option value="IE">{{ _('Ireland') }}</option>
-              <option value="IL">{{ _('Israel') }}</option>
-              <option value="IT">{{ _('Italy') }}</option>
-              <option value="JM">{{ _('Jamaica') }}</option>
-              <option value="JP">{{ _('Japan') }}</option>
-              <option value="JO">{{ _('Jordan') }}</option>
-              <option value="KZ">{{ _('Kazakhstan') }}</option>
-              <option value="KE">{{ _('Kenya') }}</option>
-              <option value="KI">{{ _('Kiribati') }}</option>
-              <option value="KP">{{ _('Korea (North)') }}</option>
-              <option value="KR">{{ _('Korea (South)') }}</option>
-              <option value="KW">{{ _('Kuwait') }}</option>
-              <option value="KG">{{ _('Kyrgyzstan') }}</option>
-              <option value="LA">{{ _('Laos') }}</option>
-              <option value="LV">{{ _('Latvia') }}</option>
-              <option value="LB">{{ _('Lebanon') }}</option>
-              <option value="LS">{{ _('Lesotho') }}</option>
-              <option value="LR">{{ _('Liberia') }}</option>
-              <option value="LY">{{ _('Libya') }}</option>
-              <option value="LI">{{ _('Liechtenstein') }}</option>
-              <option value="LT">{{ _('Lithuania') }}</option>
-              <option value="LU">{{ _('Luxembourg') }}</option>
-              <option value="MG">{{ _('Madagascar') }}</option>
-              <option value="MW">{{ _('Malawi') }}</option>
-              <option value="MY">{{ _('Malaysia') }}</option>
-              <option value="MV">{{ _('Maldives') }}</option>
-              <option value="ML">{{ _('Mali') }}</option>
-              <option value="MT">{{ _('Malta') }}</option>
-              <option value="MH">{{ _('Marshall Islands') }}</option>
-              <option value="MR">{{ _('Mauritania') }}</option>
-              <option value="MU">{{ _('Mauritius') }}</option>
-              <option value="MX">{{ _('Mexico') }}</option>
-              <option value="FM">{{ _('Micronesia') }}</option>
-              <option value="MD">{{ _('Moldova') }}</option>
-              <option value="MC">{{ _('Monaco') }}</option>
-              <option value="MN">{{ _('Mongolia') }}</option>
-              <option value="ME">{{ _('Montenegro') }}</option>
-              <option value="MA">{{ _('Morocco') }}</option>
-              <option value="MZ">{{ _('Mozambique') }}</option>
-              <option value="MM">{{ _('Myanmar') }}</option>
-              <option value="NA">{{ _('Namibia') }}</option>
-              <option value="NR">{{ _('Nauru') }}</option>
-              <option value="NP">{{ _('Nepal') }}</option>
-              <option value="NL">{{ _('Netherlands') }}</option>
-              <option value="NZ">{{ _('New Zealand') }}</option>
-              <option value="NI">{{ _('Nicaragua') }}</option>
-              <option value="NE">{{ _('Niger') }}</option>
-              <option value="NG">{{ _('Nigeria') }}</option>
-              <option value="MK">{{ _('North Macedonia') }}</option>
-              <option value="NO">{{ _('Norway') }}</option>
-              <option value="OM">{{ _('Oman') }}</option>
-              <option value="PK">{{ _('Pakistan') }}</option>
-              <option value="PW">{{ _('Palau') }}</option>
-              <option value="PS">{{ _('Palestine') }}</option>
-              <option value="PA">{{ _('Panama') }}</option>
-              <option value="PG">{{ _('Papua New Guinea') }}</option>
-              <option value="PY">{{ _('Paraguay') }}</option>
-              <option value="PE">{{ _('Peru') }}</option>
-              <option value="PH">{{ _('Philippines') }}</option>
-              <option value="PL">{{ _('Poland') }}</option>
-              <option value="PT">{{ _('Portugal') }}</option>
-              <option value="QA">{{ _('Qatar') }}</option>
-              <option value="RO">{{ _('Romania') }}</option>
-              <option value="RU">{{ _('Russia') }}</option>
-              <option value="RW">{{ _('Rwanda') }}</option>
-              <option value="KN">{{ _('Saint Kitts and Nevis') }}</option>
-              <option value="LC">{{ _('Saint Lucia') }}</option>
-              <option value="VC">{{ _('Saint Vincent and the Grenadines') }}</option>
-              <option value="WS">{{ _('Samoa') }}</option>
-              <option value="SM">{{ _('San Marino') }}</option>
-              <option value="ST">{{ _('Sao Tome and Principe') }}</option>
-              <option value="SA">{{ _('Saudi Arabia') }}</option>
-              <option value="SN">{{ _('Senegal') }}</option>
-              <option value="RS">{{ _('Serbia') }}</option>
-              <option value="SC">{{ _('Seychelles') }}</option>
-              <option value="SL">{{ _('Sierra Leone') }}</option>
-              <option value="SG">{{ _('Singapore') }}</option>
-              <option value="SK">{{ _('Slovakia') }}</option>
-              <option value="SI">{{ _('Slovenia') }}</option>
-              <option value="SB">{{ _('Solomon Islands') }}</option>
-              <option value="SO">{{ _('Somalia') }}</option>
-              <option value="ZA">{{ _('South Africa') }}</option>
-              <option value="SS">{{ _('South Sudan') }}</option>
-              <option value="ES">{{ _('Spain') }}</option>
-              <option value="LK">{{ _('Sri Lanka') }}</option>
-              <option value="SD">{{ _('Sudan') }}</option>
-              <option value="SR">{{ _('Suriname') }}</option>
-              <option value="SE">{{ _('Sweden') }}</option>
-              <option value="CH">{{ _('Switzerland') }}</option>
-              <option value="SY">{{ _('Syria') }}</option>
-              <option value="TJ">{{ _('Tajikistan') }}</option>
-              <option value="TZ">{{ _('Tanzania') }}</option>
-              <option value="TH">{{ _('Thailand') }}</option>
-              <option value="TL">{{ _('Timor-Leste') }}</option>
-              <option value="TG">{{ _('Togo') }}</option>
-              <option value="TO">{{ _('Tonga') }}</option>
-              <option value="TT">{{ _('Trinidad and Tobago') }}</option>
-              <option value="TN">{{ _('Tunisia') }}</option>
-              <option value="TR">{{ _('Turkey') }}</option>
-              <option value="TM">{{ _('Turkmenistan') }}</option>
-              <option value="TV">{{ _('Tuvalu') }}</option>
-              <option value="UG">{{ _('Uganda') }}</option>
-              <option value="UA">{{ _('Ukraine') }}</option>
-              <option value="AE">{{ _('United Arab Emirates') }}</option>
-              <option value="GB">{{ _('United Kingdom') }}</option>
-              <option value="US">{{ _('United States') }}</option>
-              <option value="UY">{{ _('Uruguay') }}</option>
-              <option value="UZ">{{ _('Uzbekistan') }}</option>
-              <option value="VU">{{ _('Vanuatu') }}</option>
-              <option value="VA">{{ _('Vatican City') }}</option>
-              <option value="VE">{{ _('Venezuela') }}</option>
-              <option value="VN">{{ _('Viet Nam') }}</option>
-              <option value="YE">{{ _('Yemen') }}</option>
-              <option value="ZM">{{ _('Zambia') }}</option>
-              <option value="ZW">{{ _('Zimbabwe') }}</option>
-            </select>
-          </div>
 
-          <div class="ihpix-report-field">
-            <label class="ihpix-report-label" for="ihpix-field-institution">
-              {{ _('Institution') }}
-            </label>
-            <input type="text" id="ihpix-field-institution" name="institution"
-                   class="ihpix-report-input"
-                   placeholder="{{ _('Institution or organization name') }}">
+        <div class="ihpix-report-field">
+          <label class="ihpix-report-label">{{ _('Did your activity benefit any Member States or specific Regions?') }}</label>
+          <div class="ihpix-yesno">
+            <label class="is-yes"><input type="radio" name="regions_benefit" value="yes"><span>{{ _('Yes') }}</span></label>
+            <label class="is-no"><input type="radio" name="regions_benefit" value="no" checked><span>{{ _('No') }}</span></label>
+          </div>
+          <div class="ihpix-conditional" data-conditional-on="regions_benefit" data-show-when="yes">
+
+            <div class="ihpix-report-field">
+              <label class="ihpix-report-label">{{ _('In which Region(s) was the activity implemented?') }}</label>
+              <span class="ihpix-report-help">{{ _('Multiple Regions can be selected. If the activity targets all regions, select Global.') }}</span>
+              <div class="ihpix-checkbox-grid">
+                {% for r in regions %}
+                  <label><input type="checkbox" name="regions" value="{{ r }}"> {{ _(r) }}</label>
+                {% endfor %}
+              </div>
+            </div>
+
+            <div class="ihpix-report-field" style="margin-bottom: 0;">
+              <label class="ihpix-report-label" for="ihpix-field-member-states">{{ _('Which Member State(s) benefited from the activity?') }}</label>
+              <span class="ihpix-report-help">{{ _('Hold Ctrl/Cmd to select multiple. Multiple Member States can be selected.') }}</span>
+              <select id="ihpix-field-member-states" name="member_states" multiple size="8"
+                      class="ihpix-report-select" style="height: auto; background-image: none; padding-right: 0.9rem;">
+                {% for code, name in member_states %}
+                  <option value="{{ code }}">{{ _(name) }}</option>
+                {% endfor %}
+              </select>
+            </div>
+
           </div>
         </div>
+
       </div>
     </div>
 
-    {# Section 3: Dates #}
-    <div class="ihpix-report-section">
+    {# ── Section V: KPIs and Targets ────────────────────────────── #}
+    <div class="ihpix-report-section" id="section-5">
       <div class="ihpix-report-section-header">
-        <i class="fa fa-calendar"></i>
-        <h3>{{ _('Dates') }}</h3>
+        <i class="fa fa-tachometer"></i>
+        <span class="ihpix-roman">V.</span>
+        <h3>{{ _('Contribution to IHP-IX Key Performance Indicators and Targets') }}</h3>
+      </div>
+      <div class="ihpix-report-section-intro">
+        <i class="fa fa-quote-left"></i>{{ _('Link the implemented activity to the Key Performance Indicators (KPIs) defined in the Operational Implementation Plan of IHP-IX.') }}
       </div>
       <div class="ihpix-report-section-body">
-        <div class="ihpix-report-row">
-          <div class="ihpix-report-field">
-            <label class="ihpix-report-label" for="ihpix-field-reported-date">
-              {{ _('Reported Date') }}
-            </label>
-            <input type="date" id="ihpix-field-reported-date" name="reported_date"
-                   class="ihpix-report-input">
+
+        {# KPI 1a — Knowledge products #}
+        <div class="ihpix-kpi-block">
+          <div class="ihpix-kpi-block-header">
+            <span class="kpi-id">KPI 1a</span>
+            <h4>{{ _('Knowledge generation') }}</h4>
           </div>
-          <div class="ihpix-report-field">
-            <label class="ihpix-report-label" for="ihpix-field-start-date">
-              {{ _('Activity Start Date') }}
-            </label>
-            <input type="date" id="ihpix-field-start-date" name="start_date"
-                   class="ihpix-report-input">
+          <p class="ihpix-kpi-block-help">{{ _('Did the activity generate (or improve) and/or disseminate knowledge products?') }}</p>
+          <div class="ihpix-yesno">
+            <label class="is-yes"><input type="radio" name="kpi_1a_active" value="yes"><span>{{ _('Yes') }}</span></label>
+            <label class="is-no"><input type="radio" name="kpi_1a_active" value="no" checked><span>{{ _('No') }}</span></label>
           </div>
-          <div class="ihpix-report-field">
-            <label class="ihpix-report-label" for="ihpix-field-end-date">
-              {{ _('Activity End Date') }}
-            </label>
-            <input type="date" id="ihpix-field-end-date" name="end_date"
-                   class="ihpix-report-input">
+          <div class="ihpix-conditional" data-conditional-on="kpi_1a_active" data-show-when="yes">
+            <div class="ihpix-report-field">
+              <label class="ihpix-report-label">{{ _('Type of knowledge product') }}</label>
+              <div class="ihpix-checkbox-grid">
+                {% for t in knowledge_product_types %}
+                  <label><input type="checkbox" name="knowledge_product_type" value="{{ t }}"> {{ _(t) }}</label>
+                {% endfor %}
+              </div>
+              <div class="ihpix-conditional" data-conditional-on="knowledge_product_type" data-show-when="Other" data-conditional-mode="contains">
+                <label class="ihpix-report-label" for="ihpix-field-kp-other">{{ _('Please specify the type of knowledge product') }}</label>
+                <input type="text" id="ihpix-field-kp-other" name="knowledge_product_type_other" class="ihpix-report-input">
+              </div>
+            </div>
+            <div class="ihpix-report-field" style="margin-bottom: 0;">
+              <label class="ihpix-report-label" for="ihpix-field-num-kp">{{ _('Target 1a: How many knowledge products were generated?') }}</label>
+              <input type="number" id="ihpix-field-num-kp" name="num_knowledge_products" min="0" class="ihpix-report-input" style="max-width: 200px;">
+            </div>
           </div>
         </div>
+
+        {# KPI 1b — Scientific products #}
+        <div class="ihpix-kpi-block">
+          <div class="ihpix-kpi-block-header">
+            <span class="kpi-id">KPI 1b</span>
+            <h4>{{ _('Knowledge improvement (scientific products)') }}</h4>
+          </div>
+          <p class="ihpix-kpi-block-help">{{ _('Did the activity generate scientific products (articles, patents, conference proceedings)?') }}</p>
+          <div class="ihpix-yesno">
+            <label class="is-yes"><input type="radio" name="kpi_1b_active" value="yes"><span>{{ _('Yes') }}</span></label>
+            <label class="is-no"><input type="radio" name="kpi_1b_active" value="no" checked><span>{{ _('No') }}</span></label>
+          </div>
+          <div class="ihpix-conditional" data-conditional-on="kpi_1b_active" data-show-when="yes">
+            <div class="ihpix-report-field">
+              <label class="ihpix-report-label">{{ _('Type of scientific product') }}</label>
+              <div class="ihpix-checkbox-grid">
+                {% for t in scientific_product_types %}
+                  <label><input type="checkbox" name="scientific_product_type" value="{{ t }}"> {{ _(t) }}</label>
+                {% endfor %}
+              </div>
+            </div>
+            <div class="ihpix-report-field" style="margin-bottom: 0;">
+              <label class="ihpix-report-label" for="ihpix-field-num-sp">{{ _('Target 1b: How many scientific products were generated?') }}</label>
+              <input type="number" id="ihpix-field-num-sp" name="num_scientific_products" min="0" class="ihpix-report-input" style="max-width: 200px;">
+            </div>
+          </div>
+        </div>
+
+        {# KPI 2 — Stakeholder knowledge #}
+        <div class="ihpix-kpi-block">
+          <div class="ihpix-kpi-block-header">
+            <span class="kpi-id">KPI 2</span>
+            <h4>{{ _('Education material – Stakeholder knowledge improvement') }}</h4>
+          </div>
+          <p class="ihpix-kpi-block-help">{{ _('Did the activity improve knowledge of stakeholders via capacity building, trainings, seminars or conferences?') }}</p>
+          <div class="ihpix-yesno">
+            <label class="is-yes"><input type="radio" name="kpi_2_active" value="yes"><span>{{ _('Yes') }}</span></label>
+            <label class="is-no"><input type="radio" name="kpi_2_active" value="no" checked><span>{{ _('No') }}</span></label>
+          </div>
+          <div class="ihpix-conditional" data-conditional-on="kpi_2_active" data-show-when="yes">
+            <div class="ihpix-report-field">
+              <label class="ihpix-report-label">{{ _('Type of knowledge generating activity') }}</label>
+              <div class="ihpix-checkbox-grid">
+                {% for t in knowledge_activity_types %}
+                  <label><input type="checkbox" name="knowledge_activity_type" value="{{ t }}"> {{ _(t) }}</label>
+                {% endfor %}
+              </div>
+              <div class="ihpix-conditional" data-conditional-on="knowledge_activity_type" data-show-when="Other" data-conditional-mode="contains">
+                <label class="ihpix-report-label" for="ihpix-field-ka-other">{{ _('Please specify the type of activity') }}</label>
+                <input type="text" id="ihpix-field-ka-other" name="knowledge_activity_type_other" class="ihpix-report-input">
+              </div>
+            </div>
+            <div class="ihpix-report-row">
+              <div class="ihpix-report-field">
+                <label class="ihpix-report-label" for="ihpix-field-sk-total">{{ _('Target 2: How many key stakeholders improved their knowledge?') }}</label>
+                <input type="number" id="ihpix-field-sk-total" name="stakeholders_knowledge" min="0" class="ihpix-report-input">
+              </div>
+              <div class="ihpix-report-field">
+                <label class="ihpix-report-label" for="ihpix-field-sk-youth">{{ _('How many youth (18–35)?') }}</label>
+                <input type="number" id="ihpix-field-sk-youth" name="stakeholders_knowledge_youth" min="0" class="ihpix-report-input">
+              </div>
+              <div class="ihpix-report-field">
+                <label class="ihpix-report-label" for="ihpix-field-sk-female">{{ _('How many female participants?') }}</label>
+                <input type="number" id="ihpix-field-sk-female" name="stakeholders_knowledge_female" min="0" class="ihpix-report-input">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {# KPI 3 — Training materials / courses #}
+        <div class="ihpix-kpi-block">
+          <div class="ihpix-kpi-block-header">
+            <span class="kpi-id">KPI 3</span>
+            <h4>{{ _('Curricula – Training materials and courses') }}</h4>
+          </div>
+          <p class="ihpix-kpi-block-help">{{ _('Did the activity produce any training materials or training course (physical/online)?') }}</p>
+          <div class="ihpix-yesno">
+            <label class="is-yes"><input type="radio" name="kpi_3_active" value="yes"><span>{{ _('Yes') }}</span></label>
+            <label class="is-no"><input type="radio" name="kpi_3_active" value="no" checked><span>{{ _('No') }}</span></label>
+          </div>
+          <div class="ihpix-conditional" data-conditional-on="kpi_3_active" data-show-when="yes">
+            <div class="ihpix-report-field">
+              <label class="ihpix-report-label">{{ _('Type of training materials or course') }}</label>
+              <div class="ihpix-checkbox-grid">
+                {% for t in training_types %}
+                  <label><input type="checkbox" name="training_type" value="{{ t }}"> {{ _(t) }}</label>
+                {% endfor %}
+              </div>
+            </div>
+            <div class="ihpix-report-field" style="margin-bottom: 0;">
+              <label class="ihpix-report-label" for="ihpix-field-num-tr">{{ _('Target 3: How many training materials/courses were produced or implemented?') }}</label>
+              <input type="number" id="ihpix-field-num-tr" name="num_training_materials" min="0" class="ihpix-report-input" style="max-width: 200px;">
+            </div>
+          </div>
+        </div>
+
+        {# KPI 4 — Curricula #}
+        <div class="ihpix-kpi-block">
+          <div class="ihpix-kpi-block-header">
+            <span class="kpi-id">KPI 4</span>
+            <h4>{{ _('Educational curricula') }}</h4>
+          </div>
+          <p class="ihpix-kpi-block-help">{{ _('Did the activity produce or revise educational curricula on sustainable water management?') }}</p>
+          <div class="ihpix-yesno">
+            <label class="is-yes"><input type="radio" name="kpi_4_active" value="yes"><span>{{ _('Yes') }}</span></label>
+            <label class="is-no"><input type="radio" name="kpi_4_active" value="no" checked><span>{{ _('No') }}</span></label>
+          </div>
+          <div class="ihpix-conditional" data-conditional-on="kpi_4_active" data-show-when="yes">
+            <div class="ihpix-report-field" style="margin-bottom: 0;">
+              <label class="ihpix-report-label" for="ihpix-field-num-curr">{{ _('Target 4: How many educational curricula were produced or revised?') }}</label>
+              <input type="number" id="ihpix-field-num-curr" name="num_curricula" min="0" class="ihpix-report-input" style="max-width: 200px;">
+            </div>
+          </div>
+        </div>
+
+        {# KPI 5 — Awareness #}
+        <div class="ihpix-kpi-block">
+          <div class="ihpix-kpi-block-header">
+            <span class="kpi-id">KPI 5</span>
+            <h4>{{ _('Awareness training') }}</h4>
+          </div>
+          <p class="ihpix-kpi-block-help">{{ _('Did the activity contribute to awareness-raising of target stakeholders?') }}</p>
+          <div class="ihpix-yesno">
+            <label class="is-yes"><input type="radio" name="kpi_5_active" value="yes"><span>{{ _('Yes') }}</span></label>
+            <label class="is-no"><input type="radio" name="kpi_5_active" value="no" checked><span>{{ _('No') }}</span></label>
+          </div>
+          <div class="ihpix-conditional" data-conditional-on="kpi_5_active" data-show-when="yes">
+            <div class="ihpix-report-row">
+              <div class="ihpix-report-field">
+                <label class="ihpix-report-label" for="ihpix-field-sa-total">{{ _('Target 5: How many key stakeholders reached?') }}</label>
+                <input type="number" id="ihpix-field-sa-total" name="stakeholders_awareness" min="0" class="ihpix-report-input">
+              </div>
+              <div class="ihpix-report-field">
+                <label class="ihpix-report-label" for="ihpix-field-sa-youth">{{ _('How many youth (18–35)?') }}</label>
+                <input type="number" id="ihpix-field-sa-youth" name="stakeholders_awareness_youth" min="0" class="ihpix-report-input">
+              </div>
+              <div class="ihpix-report-field">
+                <label class="ihpix-report-label" for="ihpix-field-sa-female">{{ _('How many female participants?') }}</label>
+                <input type="number" id="ihpix-field-sa-female" name="stakeholders_awareness_female" min="0" class="ihpix-report-input">
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {# KPI 6 — Transboundary #}
+        <div class="ihpix-kpi-block">
+          <div class="ihpix-kpi-block-header">
+            <span class="kpi-id">KPI 6</span>
+            <h4>{{ _('Water cooperation (transboundary)') }}</h4>
+          </div>
+          <p class="ihpix-kpi-block-help">{{ _('Did the activity support Member States in improving their transboundary water systems (surface water and groundwater)?') }}</p>
+          <div class="ihpix-yesno">
+            <label class="is-yes"><input type="radio" name="kpi_6_active" value="yes"><span>{{ _('Yes') }}</span></label>
+            <label class="is-no"><input type="radio" name="kpi_6_active" value="no" checked><span>{{ _('No') }}</span></label>
+          </div>
+          <div class="ihpix-conditional" data-conditional-on="kpi_6_active" data-show-when="yes">
+            <div class="ihpix-report-field" style="margin-bottom: 0;">
+              <label class="ihpix-report-label" for="ihpix-field-num-tb">{{ _('Target 6: How many Member States were supported?') }}</label>
+              <input type="number" id="ihpix-field-num-tb" name="num_transboundary_ms" min="0" class="ihpix-report-input" style="max-width: 200px;">
+            </div>
+          </div>
+        </div>
+
+        {# KPI 8 — Stakeholder Groups #}
+        <div class="ihpix-kpi-block">
+          <div class="ihpix-kpi-block-header">
+            <span class="kpi-id">KPI 8</span>
+            <h4>{{ _('Capacity support and strengthening') }}</h4>
+          </div>
+          <p class="ihpix-kpi-block-help">{{ _('Did the activity strengthen the capacity of certain Stakeholder Groups (river basin groups, communities, sectors)?') }}</p>
+          <div class="ihpix-yesno">
+            <label class="is-yes"><input type="radio" name="kpi_8_active" value="yes"><span>{{ _('Yes') }}</span></label>
+            <label class="is-no"><input type="radio" name="kpi_8_active" value="no" checked><span>{{ _('No') }}</span></label>
+          </div>
+          <div class="ihpix-conditional" data-conditional-on="kpi_8_active" data-show-when="yes">
+            <div class="ihpix-report-field">
+              <label class="ihpix-report-label">{{ _('Type of Stakeholder Groups targeted') }}</label>
+              <div class="ihpix-checkbox-grid">
+                {% for value, desc in stakeholder_group_types %}
+                  <label title="{{ desc }}">
+                    <input type="checkbox" name="stakeholder_group_type" value="{{ value }}">
+                    <span>
+                      {{ _(value) }}
+                      {% if desc %}<span class="checkbox-desc">{{ _(desc) }}</span>{% endif %}
+                    </span>
+                  </label>
+                {% endfor %}
+              </div>
+              <div class="ihpix-conditional" data-conditional-on="stakeholder_group_type" data-show-when="Other" data-conditional-mode="contains">
+                <label class="ihpix-report-label" for="ihpix-field-sh-other">{{ _('Please specify the type of Stakeholder Group') }}</label>
+                <input type="text" id="ihpix-field-sh-other" name="stakeholder_group_type_other" class="ihpix-report-input">
+              </div>
+            </div>
+            <div class="ihpix-report-field">
+              <label class="ihpix-report-label" for="ihpix-field-sg-name">{{ _('Name of the Stakeholder Group(s) involved') }}</label>
+              <input type="text" id="ihpix-field-sg-name" name="stakeholder_group_name" class="ihpix-report-input">
+            </div>
+            <div class="ihpix-report-field" style="margin-bottom: 0;">
+              <label class="ihpix-report-label" for="ihpix-field-num-sg">{{ _('Target 8: Number of Stakeholder Groups that benefitted from the activity') }}</label>
+              <input type="number" id="ihpix-field-num-sg" name="num_stakeholder_groups" min="0" class="ihpix-report-input" style="max-width: 200px;">
+            </div>
+          </div>
+        </div>
+
       </div>
     </div>
 
-    {# Section 4: Contact Information #}
-    <div class="ihpix-report-section">
+    {# ── Section VI: Additional notes ──────────────────────────── #}
+    <div class="ihpix-report-section" id="section-6">
       <div class="ihpix-report-section-header">
-        <i class="fa fa-envelope"></i>
-        <h3>{{ _('Contact Information') }}</h3>
+        <i class="fa fa-sticky-note-o"></i>
+        <span class="ihpix-roman">VI.</span>
+        <h3>{{ _('Additional notes') }}</h3>
+      </div>
+      <div class="ihpix-report-section-intro">
+        <i class="fa fa-quote-left"></i>{{ _('Add any other relevant information not yet included in previous questions, or comments on the reporting process.') }}
       </div>
       <div class="ihpix-report-section-body">
-        <div class="ihpix-report-row">
-          <div class="ihpix-report-field">
-            <label class="ihpix-report-label" for="ihpix-field-contact-name">
-              {{ _('Contact Name') }}
-            </label>
-            <input type="text" id="ihpix-field-contact-name" name="contact_name"
-                   class="ihpix-report-input"
-                   placeholder="{{ _('Full name') }}">
-          </div>
-          <div class="ihpix-report-field">
-            <label class="ihpix-report-label" for="ihpix-field-contact-email">
-              {{ _('Contact Email') }}
-            </label>
-            <input type="email" id="ihpix-field-contact-email" name="contact_email"
-                   class="ihpix-report-input"
-                   placeholder="{{ _('email@example.com') }}">
-            <div class="ihpix-report-error-text" id="ihpix-error-email">{{ _('Please enter a valid email address.') }}</div>
-          </div>
+        <div class="ihpix-report-field" style="margin-bottom: 0;">
+          <label class="ihpix-report-label" for="ihpix-field-additional-notes">
+            {{ _('Relevant notes or comments') }}
+          </label>
+          <textarea id="ihpix-field-additional-notes" name="additional_notes"
+                    class="ihpix-report-textarea" rows="5"></textarea>
         </div>
       </div>
     </div>
 
-    {# Submit #}
+    {# Submit + Save Draft #}
     <div class="ihpix-report-actions">
+      <button type="button" class="ihpix-report-btn is-secondary" id="ihpix-report-draft-btn">
+        <i class="fa fa-save"></i>
+        <i class="fa fa-spinner fa-spin"></i>
+        {{ _('Save as draft') }}
+      </button>
       <button type="submit" class="ihpix-report-btn" id="ihpix-report-submit-btn">
         <i class="fa fa-paper-plane"></i>
         <i class="fa fa-spinner fa-spin"></i>
-        {{ _('Submit Report') }}
+        {{ _('Submit for review') }}
       </button>
     </div>
 
@@ -775,27 +1280,24 @@
 
     var form = document.getElementById('ihpix-report-form');
     var submitBtn = document.getElementById('ihpix-report-submit-btn');
+    var draftBtn = document.getElementById('ihpix-report-draft-btn');
     var successState = document.getElementById('ihpix-report-success');
     var toastContainer = document.getElementById('ihpix-report-toasts');
 
+    /* ── Toasts ─────────────────────────────────────────────────── */
     function showToast(message, type) {
       var toast = document.createElement('div');
       toast.className = 'ihpix-report-toast ihpix-report-toast-' + type;
       var icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
-      toast.innerHTML = '<i class="fa ' + icon + '"></i><span>' + message + '</span>' +
+      toast.innerHTML = '<i class="fa ' + icon + '"></i><span></span>' +
         '<button class="ihpix-report-toast-close" type="button">&times;</button>';
-
+      toast.querySelector('span').textContent = message;
       toast.querySelector('.ihpix-report-toast-close').addEventListener('click', function() {
         removeToast(toast);
       });
-
       toastContainer.appendChild(toast);
-
-      setTimeout(function() {
-        removeToast(toast);
-      }, 6000);
+      setTimeout(function() { removeToast(toast); }, 6000);
     }
-
     function removeToast(toast) {
       if (!toast.parentNode) return;
       toast.style.animation = 'ihpix-report-slideOut 0.3s ease forwards';
@@ -804,17 +1306,105 @@
       }, 300);
     }
 
-    function clearFieldErrors() {
-      var errorFields = form.querySelectorAll('.ihpix-report-field-error');
-      for (var i = 0; i < errorFields.length; i++) {
-        errorFields[i].classList.remove('ihpix-report-field-error');
-      }
-      var errorTexts = form.querySelectorAll('.ihpix-report-error-text');
-      for (var j = 0; j < errorTexts.length; j++) {
-        errorTexts[j].style.display = 'none';
-      }
+    /* ── Conditional reveals ────────────────────────────────────── */
+    function evaluateConditionals() {
+      var conditionals = form.querySelectorAll('.ihpix-conditional');
+      conditionals.forEach(function(el) {
+        var name = el.getAttribute('data-conditional-on');
+        var showWhen = el.getAttribute('data-show-when');
+        var mode = el.getAttribute('data-conditional-mode') || 'equals';
+        var inputs = form.querySelectorAll('[name="' + name + '"]');
+        var matched = false;
+        inputs.forEach(function(inp) {
+          if (inp.type === 'radio' || inp.type === 'checkbox') {
+            if (inp.checked && inp.value === showWhen) matched = true;
+          } else if (mode === 'contains') {
+            if (inp.value && inp.value.indexOf(showWhen) !== -1) matched = true;
+          } else {
+            if (inp.value === showWhen) matched = true;
+          }
+        });
+        // For checkbox groups in 'contains' mode, check any checked
+        if (mode === 'contains' && inputs.length && inputs[0].type === 'checkbox') {
+          inputs.forEach(function(inp) {
+            if (inp.checked && inp.value === showWhen) matched = true;
+          });
+        }
+        el.classList.toggle('show', matched);
+      });
     }
 
+    form.addEventListener('change', evaluateConditionals);
+    evaluateConditionals();
+
+    /* ── Char counters ──────────────────────────────────────────── */
+    function setupCounters() {
+      var textareas = form.querySelectorAll('[data-counter]');
+      textareas.forEach(function(ta) {
+        var counter = document.getElementById(ta.getAttribute('data-counter'));
+        if (!counter) return;
+        var max = parseInt(ta.getAttribute('maxlength') || '0', 10);
+        function update() {
+          var len = ta.value.length;
+          counter.textContent = len + ' / ' + max;
+          counter.classList.toggle('over', max > 0 && len > max * 0.9);
+        }
+        ta.addEventListener('input', update);
+        update();
+      });
+    }
+    setupCounters();
+
+    /* ── PA → Output filter ─────────────────────────────────────── */
+    var paSelect = document.getElementById('ihpix-field-priority-area');
+    var outputSelect = document.getElementById('ihpix-field-output');
+    var originalOutputOptions = outputSelect ? Array.prototype.slice.call(outputSelect.options) : [];
+    function filterOutputs() {
+      if (!paSelect || !outputSelect) return;
+      var pa = paSelect.value;
+      outputSelect.innerHTML = '';
+      originalOutputOptions.forEach(function(opt) {
+        if (!opt.value || opt.getAttribute('data-pa') === pa) {
+          outputSelect.appendChild(opt.cloneNode(true));
+        }
+      });
+    }
+    if (paSelect) {
+      paSelect.addEventListener('change', filterOutputs);
+      filterOutputs();
+    }
+
+    /* ── Section nav active state ───────────────────────────────── */
+    var navLinks = document.querySelectorAll('.ihpix-section-nav a');
+    var sectionMap = {};
+    navLinks.forEach(function(a) {
+      var href = a.getAttribute('href');
+      if (href && href.charAt(0) === '#') {
+        sectionMap[href.substring(1)] = a;
+      }
+    });
+    function updateNav() {
+      var scrollPos = window.scrollY + 100;
+      var current = null;
+      Object.keys(sectionMap).forEach(function(id) {
+        var sec = document.getElementById(id);
+        if (sec && sec.offsetTop <= scrollPos) current = id;
+      });
+      navLinks.forEach(function(a) { a.classList.remove('active'); });
+      if (current && sectionMap[current]) sectionMap[current].classList.add('active');
+    }
+    window.addEventListener('scroll', updateNav, { passive: true });
+    updateNav();
+
+    /* ── Validation ─────────────────────────────────────────────── */
+    function clearFieldErrors() {
+      form.querySelectorAll('.ihpix-report-field-error').forEach(function(f) {
+        f.classList.remove('ihpix-report-field-error');
+      });
+      form.querySelectorAll('.ihpix-report-error-text').forEach(function(t) {
+        t.style.display = 'none';
+      });
+    }
     function showFieldError(fieldId, errorId) {
       var field = document.getElementById(fieldId);
       var error = document.getElementById(errorId);
@@ -822,53 +1412,71 @@
       if (error) error.style.display = 'block';
     }
 
-    function validateForm() {
+    function validateForm(isDraft) {
       clearFieldErrors();
       var valid = true;
+      var firstInvalidSection = null;
 
-      var title = form.querySelector('[name="title"]');
-      if (!title.value.trim()) {
-        showFieldError('ihpix-field-title', 'ihpix-error-title');
+      function fail(fid, eid, sectionId) {
+        showFieldError(fid, eid);
         valid = false;
+        if (!firstInvalidSection) firstInvalidSection = sectionId;
       }
 
-      var pa = form.querySelector('[name="priority_area"]');
-      if (!pa.value) {
-        showFieldError('ihpix-field-priority-area', 'ihpix-error-priority-area');
-        valid = false;
+      if (!isDraft) {
+        var requiredChecks = [
+          ['focal_point_name',  'ihpix-field-focal-point',      'ihpix-error-focal-point',      'section-1'],
+          ['contact_email',     'ihpix-field-contact-email',    'ihpix-error-email',            'section-1'],
+          ['institution_type',  'ihpix-field-institution-type', 'ihpix-error-institution-type', 'section-1'],
+          ['institution',       'ihpix-field-institution',      'ihpix-error-institution',      'section-1'],
+          ['title',             'ihpix-field-title',            'ihpix-error-title',            'section-1'],
+          ['biennium',          'ihpix-field-biennium',         'ihpix-error-biennium',         'section-1'],
+          ['priority_area',     'ihpix-field-priority-area',    'ihpix-error-priority-area',    'section-2'],
+        ];
+        requiredChecks.forEach(function(c) {
+          var inp = form.querySelector('[name="' + c[0] + '"]');
+          if (!inp || !inp.value.trim()) fail(c[1], c[2], c[3]);
+        });
+        // Email format
+        var email = form.querySelector('[name="contact_email"]');
+        if (email && email.value.trim()) {
+          var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+          if (!emailPattern.test(email.value.trim())) {
+            fail('ihpix-field-contact-email', 'ihpix-error-email', 'section-1');
+          }
+        }
+      } else {
+        // Draft: only title required
+        var title = form.querySelector('[name="title"]');
+        if (!title.value.trim()) fail('ihpix-field-title', 'ihpix-error-title', 'section-1');
       }
 
-      var email = form.querySelector('[name="contact_email"]');
-      if (email.value.trim()) {
-        var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailPattern.test(email.value.trim())) {
-          showFieldError('ihpix-field-contact-email', 'ihpix-error-email');
-          valid = false;
+      if (!valid && firstInvalidSection) {
+        var firstSec = document.getElementById(firstInvalidSection);
+        if (firstSec && firstSec.scrollIntoView) {
+          firstSec.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
       }
-
       return valid;
     }
 
-    form.addEventListener('submit', function(e) {
-      e.preventDefault();
-
-      if (!validateForm()) {
+    /* ── Submit ────────────────────────────────────────────────── */
+    function submitForm(asDraft) {
+      if (!validateForm(asDraft)) {
         showToast('{{ _("Please fix the highlighted fields.") }}', 'error');
         return;
       }
-
-      submitBtn.classList.add('ihpix-report-loading');
-      submitBtn.disabled = true;
+      var btn = asDraft ? draftBtn : submitBtn;
+      btn.classList.add('ihpix-report-loading');
+      btn.disabled = true;
 
       var formData = new FormData(form);
+      if (asDraft) formData.append('save_as_draft', '1');
 
-      fetch('/ihpix/report', {
+      fetch('{{ h.url_for("theme_ejemplo.ihpix_report") }}', {
         method: 'POST',
         body: formData,
-        headers: {
-          'X-Requested-With': 'XMLHttpRequest'
-        }
+        headers: { 'X-Requested-With': 'XMLHttpRequest' }
       })
       .then(function(response) {
         return response.json().then(function(data) {
@@ -876,31 +1484,42 @@
         });
       })
       .then(function(result) {
-        submitBtn.classList.remove('ihpix-report-loading');
-        submitBtn.disabled = false;
-
+        btn.classList.remove('ihpix-report-loading');
+        btn.disabled = false;
         if (result.ok && result.data.success) {
-          showToast(result.data.message || '{{ _("Report submitted successfully!") }}', 'success');
-          form.style.display = 'none';
-          successState.classList.add('ihpix-report-visible');
-          form.reset();
+          var msg = result.data.message || (asDraft
+            ? '{{ _("Draft saved.") }}'
+            : '{{ _("Report submitted successfully!") }}');
+          showToast(msg, 'success');
+          if (!asDraft) {
+            form.style.display = 'none';
+            successState.classList.add('ihpix-report-visible');
+            form.reset();
+          }
         } else {
-          var msg = result.data.error || result.data.message || '{{ _("An error occurred. Please try again.") }}';
-          showToast(msg, 'error');
+          var err = result.data.error || result.data.message || '{{ _("An error occurred. Please try again.") }}';
+          showToast(err, 'error');
         }
       })
-      .catch(function(err) {
-        submitBtn.classList.remove('ihpix-report-loading');
-        submitBtn.disabled = false;
+      .catch(function() {
+        btn.classList.remove('ihpix-report-loading');
+        btn.disabled = false;
         showToast('{{ _("Network error. Please check your connection and try again.") }}', 'error');
       });
+    }
+
+    form.addEventListener('submit', function(e) {
+      e.preventDefault();
+      submitForm(false);
     });
+    draftBtn.addEventListener('click', function() { submitForm(true); });
 
     /* Allow resetting to submit another report */
     window.ihpixReportReset = function() {
       successState.classList.remove('ihpix-report-visible');
       form.style.display = '';
       clearFieldErrors();
+      evaluateConditionals();
     };
   })();
   </script>
