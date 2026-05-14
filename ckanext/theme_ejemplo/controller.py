@@ -76,6 +76,38 @@ def get_member_states_groups():
         log.error(f"Error obteniendo member-states: {e}")
         return ['member-states']
 
+
+@timed_lru_cache(seconds=300, maxsize=20)
+def get_member_states_for_select():
+    """Devuelve los grupos hijos de `member-states` como [(name, title), ...]
+    ordenados por título — fuente única para los selects del form IHP-IX.
+
+    Usa una sola query SQL (idéntico patrón al de ckanext-colab).
+    Si la BD aún no tiene el grupo `member-states`, devuelve [].
+    """
+    try:
+        ms_group = model.Group.get('member-states')
+        if not ms_group:
+            return []
+        rows = (
+            model.Session.query(model.Group.name, model.Group.title)
+            .join(model.Member, model.Member.table_id == model.Group.id)
+            .filter(
+                model.Member.group_id == ms_group.id,
+                model.Member.state == 'active',
+                model.Member.table_name == 'group',
+                model.Group.state == 'active',
+                model.Group.name != 'member-states',
+            )
+            .order_by(model.Group.title)
+            .all()
+        )
+        return [(r.name, r.title or r.name) for r in rows if r.name]
+    except Exception as e:
+        log.error(f"Error obteniendo member-states para select: {e}")
+        return []
+
+
 @timed_lru_cache(seconds=300, maxsize=20)  # Cache de 5 minutos
 def get_all_groups_cached(sort_by=None):
     """Obtiene todos los grupos con cache"""
@@ -3013,6 +3045,13 @@ class MyLogica():
                     return jsonify({'success': False, 'error': str(e)}), 500
 
             # GET: render the form with controlled vocabularies
+            # Member states come from CKAN groups (children of `member-states`)
+            # so the list matches whatever the portal has configured. Falls
+            # back to the static ISO-2 list when no groups exist yet.
+            ms_groups = get_member_states_for_select()
+            if not ms_groups:
+                ms_groups = list(C.MEMBER_STATES)
+
             is_logged_in = bool(c.user)
             return render_template(
                 'ihpix/report.html',
@@ -3024,7 +3063,7 @@ class MyLogica():
                 flagships=C.FLAGSHIPS,
                 cross_cutting_wgs=C.CROSS_CUTTING_WGS,
                 regions=C.REGIONS,
-                member_states=C.MEMBER_STATES,
+                member_states=ms_groups,
                 knowledge_product_types=C.KNOWLEDGE_PRODUCT_TYPES,
                 scientific_product_types=C.SCIENTIFIC_PRODUCT_TYPES,
                 knowledge_activity_types=C.KNOWLEDGE_ACTIVITY_TYPES,
