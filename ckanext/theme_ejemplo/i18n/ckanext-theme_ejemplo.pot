@@ -1991,3 +1991,7 @@ msgstr ""
 #: ckanext/theme_ejemplo/templates/ihpix/report.html
 msgid "Select a country"
 msgstr ""
+
+#: ckanext/theme_ejemplo/templates/header.html:287
+msgid "Documents"
+msgstr ""

@@ -2146,3 +2146,7 @@ msgstr "Pays principal où l'activité a été mise en œuvre (facultatif)."
 #: ckanext/theme_ejemplo/templates/ihpix/report.html
 msgid "Select a country"
 msgstr "Sélectionner un pays"
+
+#: ckanext/theme_ejemplo/templates/header.html:287
+msgid "Documents"
+msgstr "Documents"

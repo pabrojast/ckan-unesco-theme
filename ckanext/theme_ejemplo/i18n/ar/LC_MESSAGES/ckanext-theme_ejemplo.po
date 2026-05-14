@@ -2013,3 +2013,7 @@ msgstr "البلد الرئيسي الذي نُفّذ فيه النشاط (اخ�
 #: ckanext/theme_ejemplo/templates/ihpix/report.html
 msgid "Select a country"
 msgstr "اختر بلداً"
+
+#: ckanext/theme_ejemplo/templates/header.html:287
+msgid "Documents"
+msgstr "الوثائق"

@@ -2310,7 +2310,7 @@ h2.page-heading {
   border-radius: 16px;
   overflow: hidden;
   box-shadow: 0 4px 16px rgba(0, 114, 188, 0.12);
-  height: 140px;
+  min-height: 140px;
   display: flex;
   align-items: center;
   transition: all 0.3s ease;
