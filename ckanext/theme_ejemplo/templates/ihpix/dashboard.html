@@ -3,7 +3,7 @@
 {% block title %}{{ _('IHP-IX Dashboard') }} - {{ super() }}{% endblock %}
 
 {% block breadcrumb_content %}
-  <li><a href="/ihpix">IHP IX</a></li>
+  <li><a href="{{ h.url_for('/ihpix') }}">IHP IX</a></li>
   <li class="active">{{ _('Dashboard') }}</li>
 {% endblock %}
 
@@ -736,10 +736,10 @@
         </p>
       </div>
       <div class="dx-header-actions">
-        <a href="/ihpix/outputs" class="dx-pill">
+        <a href="{{ h.url_for('/ihpix/outputs') }}" class="dx-pill">
           <i class="fa fa-compass"></i> {{ _('Explore Activities') }}
         </a>
-        <a href="/ihpix/report" class="dx-pill dx-pill--accent">
+        <a href="{{ h.url_for('/ihpix/report') }}" class="dx-pill dx-pill--accent">
           <i class="fa fa-paper-plane"></i> {{ _('Submit Report') }}
         </a>
       </div>
@@ -1005,7 +1005,7 @@
 
   {# ── Navigation Footer ────────────────────────────────── #}
   <div class="dx-nav-footer">
-    <a href="/ihpix/outputs" class="dx-ghost-btn">
+    <a href="{{ h.url_for('/ihpix/outputs') }}" class="dx-ghost-btn">
       <i class="fa fa-arrow-left"></i> {{ _('Activities Explorer') }}
     </a>
     <div style="display:flex;gap:12px;flex-wrap:wrap;">
@@ -1014,7 +1014,7 @@
         <i class="fa fa-gavel"></i> {{ _('Review Reports') }}
       </a>
       {% endif %}
-      <a href="/ihpix/report" class="dx-ghost-btn">
+      <a href="{{ h.url_for('/ihpix/report') }}" class="dx-ghost-btn">
         {{ _('Submit Report') }} <i class="fa fa-arrow-right"></i>
       </a>
     </div>

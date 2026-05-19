@@ -659,10 +659,10 @@
 
       <div class="ihpix-hero-actions">
         {% if is_sysadmin %}
-        <a href="/ihpix/outputs" class="ihpix-btn ihpix-btn-white">
+        <a href="{{ h.url_for('/ihpix/outputs') }}" class="ihpix-btn ihpix-btn-white">
           <i class="fa fa-list-alt"></i> {{ _('Explore Activities') }}
         </a>
-        <a href="/ihpix/dashboard" class="ihpix-btn ihpix-btn-ghost">
+        <a href="{{ h.url_for('/ihpix/dashboard') }}" class="ihpix-btn ihpix-btn-ghost">
           <i class="fa fa-bar-chart"></i> {{ _('Dashboard') }}
         </a>
         {% endif %}
@@ -838,7 +838,7 @@
             <div class="ihpix-cta-card-body">
               <h3 class="ihpix-cta-card-title">{{ _('Report Activity') }}</h3>
               <p class="ihpix-cta-card-desc">{{ _('Submit your IHP-IX activity report and contribute to global water science monitoring.') }}</p>
-              <a href="/ihpix/report" class="ihpix-cta-card-link">
+              <a href="{{ h.url_for('/ihpix/report') }}" class="ihpix-cta-card-link">
                 {{ _('Submit Report') }} <i class="fa fa-arrow-right"></i>
               </a>
             </div>
@@ -852,7 +852,7 @@
             <div class="ihpix-cta-card-body">
               <h3 class="ihpix-cta-card-title">{{ _('Explore Dashboard') }}</h3>
               <p class="ihpix-cta-card-desc">{{ _('Visualize IHP-IX programme data with interactive charts, maps, and analytics.') }}</p>
-              <a href="/ihpix/dashboard" class="ihpix-cta-card-link">
+              <a href="{{ h.url_for('/ihpix/dashboard') }}" class="ihpix-cta-card-link">
                 {{ _('Open Dashboard') }} <i class="fa fa-arrow-right"></i>
               </a>
             </div>
@@ -866,7 +866,7 @@
             <div class="ihpix-cta-card-body">
               <h3 class="ihpix-cta-card-title">{{ _('View Outputs') }}</h3>
               <p class="ihpix-cta-card-desc">{{ _('Browse all IHP-IX outputs and activities organized by priority area and region.') }}</p>
-              <a href="/ihpix/outputs" class="ihpix-cta-card-link">
+              <a href="{{ h.url_for('/ihpix/outputs') }}" class="ihpix-cta-card-link">
                 {{ _('Browse Outputs') }} <i class="fa fa-arrow-right"></i>
               </a>
             </div>
@@ -898,10 +898,10 @@
      ══════════════════════════════════════════════════════════ #}
   {% if is_sysadmin %}
   <div class="ihpix-footer-nav ihpix-animate">
-    <a href="/ihpix/outputs" class="ihpix-footer-link ihpix-footer-link-primary">
+    <a href="{{ h.url_for('/ihpix/outputs') }}" class="ihpix-footer-link ihpix-footer-link-primary">
       {{ _('Activities Explorer') }} <i class="fa fa-arrow-right"></i>
     </a>
-    <a href="/ihpix/dashboard" class="ihpix-footer-link ihpix-footer-link-outline">
+    <a href="{{ h.url_for('/ihpix/dashboard') }}" class="ihpix-footer-link ihpix-footer-link-outline">
       {{ _('Dashboard') }} <i class="fa fa-arrow-right"></i>
     </a>
   </div>

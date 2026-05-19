@@ -190,7 +190,7 @@
             <i class="fa fa-refresh" aria-hidden="true"></i>
             {{ _('Try again') }}
           </a>
-          <a href="/" class="error-btn error-btn-outline">
+          <a href="{{ h.url_for('/') }}" class="error-btn error-btn-outline">
             <i class="fa fa-home" aria-hidden="true"></i>
             {{ _('Back to home') }}
           </a>
@@ -207,7 +207,7 @@
               {{ _('Sign in') }}
             </a>
           {% endif %}
-          <a href="/" class="error-btn error-btn-outline">
+          <a href="{{ h.url_for('/') }}" class="error-btn error-btn-outline">
             <i class="fa fa-home" aria-hidden="true"></i>
             {{ _('Back to home') }}
           </a>
@@ -218,7 +218,7 @@
           {{ _('The page you are looking for may have been moved, renamed, or no longer exists. Try searching the catalogue or returning to the home page.') }}
         </p>
         <div class="error-actions">
-          <a href="/" class="error-btn error-btn-primary">
+          <a href="{{ h.url_for('/') }}" class="error-btn error-btn-primary">
             <i class="fa fa-home" aria-hidden="true"></i>
             {{ _('Back to home') }}
           </a>
@@ -233,7 +233,7 @@
           {{ _('An unexpected error occurred. You can return to the home page or try again later.') }}
         </p>
         <div class="error-actions">
-          <a href="/" class="error-btn error-btn-primary">
+          <a href="{{ h.url_for('/') }}" class="error-btn error-btn-primary">
             <i class="fa fa-home" aria-hidden="true"></i>
             {{ _('Back to home') }}
           </a>

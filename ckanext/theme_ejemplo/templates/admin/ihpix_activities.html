@@ -602,7 +602,7 @@
             <!-- Breadcrumb -->
             <div class="toolbar" role="navigation" aria-label="Breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="home"><a href="/"><i class="fa fa-home"></i><span> {{ _('Home') }}</span></a></li>
+                    <li class="home"><a href="{{ h.url_for('/') }}"><i class="fa fa-home"></i><span> {{ _('Home') }}</span></a></li>
                     <li><a href="{{ h.url_for(controller='admin', action='index') }}">{{ _('Admin') }}</a></li>
                     <li class="active">{{ _('IHP-IX Activities') }}</li>
                 </ol>

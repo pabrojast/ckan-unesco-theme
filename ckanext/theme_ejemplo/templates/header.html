@@ -107,7 +107,7 @@
           </a>
         </li>
         <li>
-          <a href="/harvest" title="{{ _('Harvest') }}">
+          <a href="{{ h.url_for('/harvest') }}" title="{{ _('Harvest') }}">
             <span class="text">{{ _('Harvest') }}</span>  </a>
         </li>
         {% endif %}
@@ -163,7 +163,7 @@
         </li>
         {% if c.userobj and c.userobj.sysadmin %}
         <li>
-          <a href="/blog" title="{{ _('Blog') }}">{{ _('Blog') }}</a>
+          <a href="{{ h.url_for('/blog') }}" title="{{ _('Blog') }}">{{ _('Blog') }}</a>
         </li>
         {% set _colab_count = h.colab_pending_count() if 'colab_pending_count' in h else 0 %}
         {% set _tb_count = h.tb_pending_count() if 'tb_pending_count' in h else 0 %}
@@ -186,7 +186,7 @@
         </li>
         {% endif %}
         <li>
-          <a href="/pages" title="{{ _('Pages') }}">{{ _('Pages') }}</a>
+          <a href="{{ h.url_for('/pages') }}" title="{{ _('Pages') }}">{{ _('Pages') }}</a>
         </li>
         {% endif %}
         {% endblock %} {% endblock %}
@@ -220,10 +220,10 @@
           <!-- Full text on desktop, short on tablet, hidden on mobile -->
           {% if not c.userobj %}
           <li class="topmenu-enroll desktop-only">
-            <a href="/colab" alt="Register">{% trans %}Register{% endtrans %}</a>
+            <a href="{{ h.url_for('/colab') }}" alt="Register">{% trans %}Register{% endtrans %}</a>
           </li>
           <li class="topmenu-enroll tablet-only">
-            <a href="/colab" alt="Register">{% trans %}Register{% endtrans %}</a>
+            <a href="{{ h.url_for('/colab') }}" alt="Register">{% trans %}Register{% endtrans %}</a>
           </li>
           {% endif %}
           
@@ -255,7 +255,7 @@
             </a>
             <ul class="topmenu-dropdown">
               {% if not c.userobj %}
-              <li><a href="/colab">{% trans %}Register{% endtrans %}</a></li>
+              <li><a href="{{ h.url_for('/colab') }}">{% trans %}Register{% endtrans %}</a></li>
               {% endif %}
               <li>{% snippet "snippets/IHPIX.html" %}</li>
             </ul>
@@ -281,14 +281,14 @@
       <nav class="section navigation">
         <ul class="nav nav-pills">
     {% block header_site_navigation_tabs %}
-    <li><a href="/">{% trans %}Home{% endtrans %}</a></li>
+    <li><a href="{{ h.url_for('/') }}">{% trans %}Home{% endtrans %}</a></li>
 
 		    <li{% if request.endpoint == 'dataset.search' %} class="active"{% endif %}><a href="{{ h.url_for('dataset.search') }}">{{ _('Datasets') }}</a></li>
-      <li><a href="/documents">{% trans %}Documents{% endtrans %}</a></li>
+      <li><a href="{{ h.url_for('/documents') }}">{% trans %}Documents{% endtrans %}</a></li>
 		    <li{% if request.endpoint == 'organization.index' %} class="active"{% endif %}><a href="{{ h.url_for('organization.index') }}">{{ _('Organizations') }}</a></li>
 	    
-      <li><a href="/memberstates">{% trans %}Member States{% endtrans %}</a></li>
-      <li><a href="/initiatives">{% trans %}Initiatives{% endtrans %}</a></li>
+      <li><a href="{{ h.url_for('/memberstates') }}">{% trans %}Member States{% endtrans %}</a></li>
+      <li><a href="{{ h.url_for('/initiatives') }}">{% trans %}Initiatives{% endtrans %}</a></li>
       <li><a href="https://www.unesco.org/en/ihp">{{ _('About') }} IHP</a></li>
       {% endblock %}
         </ul>
