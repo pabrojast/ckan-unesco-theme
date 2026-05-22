@@ -180,7 +180,14 @@ Patrón LRU con buster:
    → 6 secciones (I General, II Priority Areas, III CTWGs, IV Region,
      V KPIs, VI Notes), ~50 campos con lógica condicional Y/N
    → Char counters 250 chars (description, outcomes)
-   → Sticky section nav, validación inline por sección
+   → Sticky section nav con barra de progreso (7 campos obligatorios)
+     e indicadores de estado por sección
+   → Autoguardado en localStorage (clave `ihpix-report-draft-v1`);
+     restaura respuestas no enviadas al recargar y se limpia al enviar
+   → Validación inline al salir de cada campo + resumen de errores
+     con enlaces de salto tras un envío inválido
+   → Member States: buscador con etiquetas removibles (checkboxes
+     name="member_states", contrato POST sin cambios)
    → Botones: "Save as draft" (status=draft) y "Submit for review" (status=pending)
    → POST: ihpix_report_submit() persiste con todas las flags KPI activas
 4. Dashboard público (/ihpix/dashboard):
