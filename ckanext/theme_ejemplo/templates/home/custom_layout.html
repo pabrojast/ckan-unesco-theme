@@ -14,6 +14,11 @@
 
     <div class="container">
       <div class="row row2">
+        <div class="col-md-12 col1 reveal-section" style="border-top: 0 !important;">
+          {% block site_stats_hero %}
+            {% snippet 'home/snippets/site_stats_hero.html' %}
+          {% endblock %}
+        </div>
         <div class="col-md-12 col1 homepage-section reveal-section">
           {% block promoted %}
             {% snippet 'home/snippets/promoted.html' %}

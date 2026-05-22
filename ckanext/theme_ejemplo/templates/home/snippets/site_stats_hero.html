@@ -1,0 +1,446 @@
+{# Tablero de estadísticas del sitio para la home.
+   Muestra contadores animados con datos clave de la plataforma. #}
+{% set stats = h.theme_ejemplo_site_statistics() %}
+{% set tracking_totals = h.get_tracking_totals() %}
+
+{% set dataset_count = stats.dataset_only_count if stats.dataset_only_count is defined else stats.dataset_count %}
+{% set document_count = stats.document_count if stats.document_count is defined else 0 %}
+{% set initiative_count = stats.initiative_count if stats.initiative_count is defined else 0 %}
+{% set member_state_count = stats.member_state_count if stats.member_state_count is defined else 0 %}
+{% set organization_count = stats.organization_count if stats.organization_count is defined else 0 %}
+{% set page_views = tracking_totals.page_views if tracking_totals and tracking_totals.page_views is defined else 0 %}
+{% set downloads = tracking_totals.downloads if tracking_totals and tracking_totals.downloads is defined else 0 %}
+
+<section class="site-stats-hero" aria-labelledby="site-stats-title">
+  <div class="site-stats-header">
+    <span class="site-stats-eyebrow">{% trans %}IHP-WINS at a glance{% endtrans %}</span>
+    <h2 id="site-stats-title" class="site-stats-title">
+      {% trans %}A growing global hub for water knowledge{% endtrans %}
+    </h2>
+    <p class="site-stats-subtitle">
+      {% trans %}Real-time figures from across our network of countries, partners and contributors.{% endtrans %}
+    </p>
+  </div>
+
+  <div class="site-stats-grid">
+    <a class="site-stat-card site-stat-card--primary" href="{{ h.url_for('/initiatives') }}" aria-label="{{ _('Explore initiatives') }}">
+      <div class="site-stat-icon" aria-hidden="true">
+        <i class="fa fa-lightbulb-o"></i>
+      </div>
+      <div class="site-stat-body">
+        <span class="site-stat-value" data-count-to="{{ initiative_count }}">0</span>
+        <span class="site-stat-label">{% trans %}Initiatives{% endtrans %}</span>
+        <span class="site-stat-meta">{% trans %}Collaborative programmes{% endtrans %}</span>
+      </div>
+    </a>
+
+    <a class="site-stat-card" href="{{ h.url_for('/memberstates') }}" aria-label="{{ _('Explore member states') }}">
+      <div class="site-stat-icon" aria-hidden="true">
+        <i class="fa fa-globe"></i>
+      </div>
+      <div class="site-stat-body">
+        <span class="site-stat-value" data-count-to="{{ member_state_count }}">0</span>
+        <span class="site-stat-label">{% trans %}Member States{% endtrans %}</span>
+        <span class="site-stat-meta">{% trans %}Countries on the network{% endtrans %}</span>
+      </div>
+    </a>
+
+    <a class="site-stat-card" href="{{ h.url_for('dataset.search') }}" aria-label="{{ _('Browse datasets') }}">
+      <div class="site-stat-icon" aria-hidden="true">
+        <i class="fa fa-database"></i>
+      </div>
+      <div class="site-stat-body">
+        <span class="site-stat-value" data-count-to="{{ dataset_count }}">0</span>
+        <span class="site-stat-label">{% trans %}Datasets{% endtrans %}</span>
+        <span class="site-stat-meta">{% trans %}Open water data{% endtrans %}</span>
+      </div>
+    </a>
+
+    <a class="site-stat-card" href="{{ h.url_for('/documents') }}" aria-label="{{ _('Browse documents') }}">
+      <div class="site-stat-icon" aria-hidden="true">
+        <i class="fa fa-file-text-o"></i>
+      </div>
+      <div class="site-stat-body">
+        <span class="site-stat-value" data-count-to="{{ document_count }}">0</span>
+        <span class="site-stat-label">{% trans %}Documents{% endtrans %}</span>
+        <span class="site-stat-meta">{% trans %}Reports & publications{% endtrans %}</span>
+      </div>
+    </a>
+
+    <a class="site-stat-card" href="{{ h.url_for(controller='organization', action='index') }}" aria-label="{{ _('Browse organizations') }}">
+      <div class="site-stat-icon" aria-hidden="true">
+        <i class="fa fa-users"></i>
+      </div>
+      <div class="site-stat-body">
+        <span class="site-stat-value" data-count-to="{{ organization_count }}">0</span>
+        <span class="site-stat-label">{% trans %}Organizations{% endtrans %}</span>
+        <span class="site-stat-meta">{% trans %}Contributing partners{% endtrans %}</span>
+      </div>
+    </a>
+
+    {% if page_views and page_views > 0 %}
+    <div class="site-stat-card site-stat-card--static" aria-label="{{ _('Total page views') }}">
+      <div class="site-stat-icon" aria-hidden="true">
+        <i class="fa fa-eye"></i>
+      </div>
+      <div class="site-stat-body">
+        <span class="site-stat-value" data-count-to="{{ page_views }}">0</span>
+        <span class="site-stat-label">{% trans %}Page views{% endtrans %}</span>
+        <span class="site-stat-meta">{% trans %}Community engagement{% endtrans %}</span>
+      </div>
+    </div>
+    {% elif downloads and downloads > 0 %}
+    <div class="site-stat-card site-stat-card--static" aria-label="{{ _('Total downloads') }}">
+      <div class="site-stat-icon" aria-hidden="true">
+        <i class="fa fa-download"></i>
+      </div>
+      <div class="site-stat-body">
+        <span class="site-stat-value" data-count-to="{{ downloads }}">0</span>
+        <span class="site-stat-label">{% trans %}Downloads{% endtrans %}</span>
+        <span class="site-stat-meta">{% trans %}Data put to work{% endtrans %}</span>
+      </div>
+    </div>
+    {% endif %}
+  </div>
+</section>
+
+<style>
+  .site-stats-hero {
+    margin: 2.5rem 0 1.5rem;
+    padding: 2rem 1.5rem 2.25rem;
+    background: linear-gradient(135deg,
+      var(--unesco-blue-pale, #E8F4F8) 0%,
+      #ffffff 60%,
+      var(--unesco-blue-pale, #E8F4F8) 100%);
+    border-radius: 20px;
+    box-shadow: 0 4px 18px rgba(0, 105, 180, 0.08);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .site-stats-hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 0% 0%, rgba(0, 105, 180, 0.08) 0, transparent 40%),
+      radial-gradient(circle at 100% 100%, rgba(0, 158, 224, 0.08) 0, transparent 40%);
+    pointer-events: none;
+  }
+
+  .site-stats-header {
+    text-align: center;
+    margin-bottom: 1.75rem;
+    position: relative;
+  }
+
+  .site-stats-eyebrow {
+    display: inline-block;
+    font-size: 0.78rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--unesco-blue, #0069B4);
+    background: rgba(0, 105, 180, 0.08);
+    padding: 0.35rem 0.9rem;
+    border-radius: 999px;
+    margin-bottom: 0.85rem;
+  }
+
+  .site-stats-title {
+    font-size: 1.6rem;
+    line-height: 1.25;
+    margin: 0 0 0.5rem;
+    color: var(--unesco-blue-dark, #005a9e);
+    font-weight: 700;
+  }
+
+  .site-stats-subtitle {
+    margin: 0 auto;
+    max-width: 620px;
+    color: var(--text-secondary, #475569);
+    font-size: 0.98rem;
+    line-height: 1.6;
+  }
+
+  .site-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 1rem;
+    position: relative;
+  }
+
+  .site-stat-card {
+    display: flex;
+    align-items: center;
+    gap: 0.95rem;
+    padding: 1.1rem 1.15rem;
+    background: #ffffff;
+    border-radius: 14px;
+    border: 1px solid rgba(0, 105, 180, 0.10);
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+    text-decoration: none;
+    color: inherit;
+    cursor: pointer;
+    transition: transform 0.25s ease,
+                box-shadow 0.25s ease,
+                border-color 0.25s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .site-stat-card::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 3px;
+    width: 0%;
+    background: linear-gradient(90deg,
+      var(--unesco-blue, #0069B4),
+      var(--unesco-blue-light, #0077d4));
+    transition: width 0.3s ease;
+  }
+
+  .site-stat-card:hover,
+  .site-stat-card:focus-visible {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px rgba(0, 105, 180, 0.14);
+    border-color: rgba(0, 105, 180, 0.25);
+    color: inherit;
+    text-decoration: none;
+    outline: none;
+  }
+
+  .site-stat-card:hover::after,
+  .site-stat-card:focus-visible::after {
+    width: 100%;
+  }
+
+  .site-stat-card--static {
+    cursor: default;
+  }
+
+  .site-stat-card--static:hover {
+    transform: none;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+    border-color: rgba(0, 105, 180, 0.10);
+  }
+
+  .site-stat-card--static:hover::after {
+    width: 0%;
+  }
+
+  .site-stat-card--primary {
+    background: linear-gradient(135deg,
+      var(--unesco-blue, #0069B4),
+      var(--unesco-blue-light, #0077d4));
+    color: #ffffff;
+    border-color: transparent;
+    box-shadow: 0 8px 22px rgba(0, 105, 180, 0.25);
+  }
+
+  .site-stat-card--primary .site-stat-icon {
+    background: rgba(255, 255, 255, 0.18);
+    color: #ffffff;
+  }
+
+  .site-stat-card--primary .site-stat-label,
+  .site-stat-card--primary .site-stat-meta {
+    color: rgba(255, 255, 255, 0.92);
+  }
+
+  .site-stat-card--primary .site-stat-meta {
+    color: rgba(255, 255, 255, 0.78);
+  }
+
+  .site-stat-card--primary:hover,
+  .site-stat-card--primary:focus-visible {
+    color: #ffffff;
+    box-shadow: 0 14px 28px rgba(0, 105, 180, 0.32);
+  }
+
+  .site-stat-card--primary::after {
+    background: rgba(255, 255, 255, 0.6);
+  }
+
+  .site-stat-icon {
+    flex-shrink: 0;
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    background: var(--unesco-blue-pale, #E8F4F8);
+    color: var(--unesco-blue, #0069B4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    transition: transform 0.25s ease;
+  }
+
+  .site-stat-card:hover .site-stat-icon {
+    transform: scale(1.06) rotate(-3deg);
+  }
+
+  .site-stat-body {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.2;
+    min-width: 0;
+  }
+
+  .site-stat-value {
+    font-size: 1.85rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    color: inherit;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .site-stat-label {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--unesco-blue-dark, #005a9e);
+    margin-top: 0.15rem;
+  }
+
+  .site-stat-meta {
+    font-size: 0.8rem;
+    color: var(--text-secondary, #6b7785);
+    margin-top: 0.15rem;
+  }
+
+  @media (max-width: 768px) {
+    .site-stats-hero {
+      padding: 1.5rem 1rem 1.75rem;
+      border-radius: 16px;
+      margin: 1.75rem 0 1rem;
+    }
+    .site-stats-title {
+      font-size: 1.35rem;
+    }
+    .site-stats-subtitle {
+      font-size: 0.92rem;
+    }
+    .site-stats-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 0.75rem;
+    }
+    .site-stat-card {
+      padding: 0.9rem 0.85rem;
+      gap: 0.7rem;
+    }
+    .site-stat-icon {
+      width: 40px;
+      height: 40px;
+      font-size: 1.1rem;
+      border-radius: 10px;
+    }
+    .site-stat-value {
+      font-size: 1.45rem;
+    }
+    .site-stat-label {
+      font-size: 0.85rem;
+    }
+    .site-stat-meta {
+      font-size: 0.72rem;
+    }
+  }
+
+  @media (max-width: 420px) {
+    .site-stats-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .site-stat-card,
+    .site-stat-card::after,
+    .site-stat-icon {
+      transition: none !important;
+    }
+    .site-stat-card:hover {
+      transform: none;
+    }
+  }
+</style>
+
+<script>
+  (function () {
+    'use strict';
+
+    function formatNumber(value) {
+      try {
+        return Number(value).toLocaleString();
+      } catch (err) {
+        return String(value);
+      }
+    }
+
+    function easeOutCubic(t) {
+      return 1 - Math.pow(1 - t, 3);
+    }
+
+    function animateCounter(el) {
+      var target = parseInt(el.getAttribute('data-count-to'), 10) || 0;
+      if (target <= 0) {
+        el.textContent = '0';
+        return;
+      }
+
+      var prefersReducedMotion = window.matchMedia &&
+        window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      if (prefersReducedMotion) {
+        el.textContent = formatNumber(target);
+        return;
+      }
+
+      var duration = Math.min(1600, 600 + target * 4);
+      var start = null;
+
+      function tick(timestamp) {
+        if (start === null) start = timestamp;
+        var progress = Math.min(1, (timestamp - start) / duration);
+        var current = Math.round(easeOutCubic(progress) * target);
+        el.textContent = formatNumber(current);
+        if (progress < 1) {
+          window.requestAnimationFrame(tick);
+        } else {
+          el.textContent = formatNumber(target);
+        }
+      }
+
+      window.requestAnimationFrame(tick);
+    }
+
+    function init() {
+      var counters = document.querySelectorAll('.site-stats-hero [data-count-to]');
+      if (!counters.length) return;
+
+      if (!('IntersectionObserver' in window)) {
+        Array.prototype.forEach.call(counters, animateCounter);
+        return;
+      }
+
+      var observer = new IntersectionObserver(function (entries) {
+        entries.forEach(function (entry) {
+          if (entry.isIntersecting) {
+            animateCounter(entry.target);
+            observer.unobserve(entry.target);
+          }
+        });
+      }, { threshold: 0.25 });
+
+      Array.prototype.forEach.call(counters, function (el) {
+        observer.observe(el);
+      });
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', init);
+    } else {
+      init();
+    }
+  })();
+</script>

@@ -1279,6 +1279,41 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
             stats['dataset_count'] = toolkit.get_action('package_search')({}, {'rows': 1}).get('count', 0)
             stats['group_count'] = len(toolkit.get_action('group_list')({}, {}))
             stats['organization_count'] = len(toolkit.get_action('organization_list')({}, {}))
+
+            # Conteo de datasets sin incluir documentos (publicaciones)
+            try:
+                stats['dataset_only_count'] = toolkit.get_action('package_search')(
+                    {}, {'fq': '-type:documents', 'rows': 0}
+                ).get('count', 0)
+            except Exception as e:
+                log.warning(f"Error counting dataset-only items: {e}")
+                stats['dataset_only_count'] = stats['dataset_count']
+
+            # Conteo de documentos / publicaciones
+            try:
+                stats['document_count'] = toolkit.get_action('package_search')(
+                    {}, {'fq': '+type:documents', 'rows': 0}
+                ).get('count', 0)
+            except Exception as e:
+                log.warning(f"Error counting documents: {e}")
+                stats['document_count'] = 0
+
+            # Conteo de initiatives (grupos que no son member-states)
+            try:
+                initiatives = self.get_initiatives_groups_list() or []
+                stats['initiative_count'] = len(initiatives)
+            except Exception as e:
+                log.warning(f"Error counting initiatives: {e}")
+                stats['initiative_count'] = 0
+
+            # Conteo de member states
+            try:
+                member_states = self.get_member_states_groups_list() or []
+                stats['member_state_count'] = len(member_states)
+            except Exception as e:
+                log.warning(f"Error counting member states: {e}")
+                stats['member_state_count'] = 0
+
             return stats
 
         @lru_cache(maxsize=16)
