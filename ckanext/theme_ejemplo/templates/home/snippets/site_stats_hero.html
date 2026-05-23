@@ -12,20 +12,21 @@
 {% set downloads = tracking_totals.downloads if tracking_totals and tracking_totals.downloads is defined else 0 %}
 
 <section class="site-stats-hero" aria-labelledby="site-stats-title">
+  <div class="site-stats-bridge" aria-hidden="true"></div>
   <div class="site-stats-header">
-    <span class="site-stats-eyebrow">{% trans %}IHP-WINS at a glance{% endtrans %}</span>
     <h2 id="site-stats-title" class="site-stats-title">
-      {% trans %}A growing global hub for water knowledge{% endtrans %}
+      <span class="site-stats-bullet" aria-hidden="true"></span>
+      {% trans %}IHP-WINS at a glance{% endtrans %}
     </h2>
     <p class="site-stats-subtitle">
-      {% trans %}Real-time figures from across our network of countries, partners and contributors.{% endtrans %}
+      {% trans %}A growing global hub for water knowledge — real-time figures from our network.{% endtrans %}
     </p>
   </div>
 
   <div class="site-stats-grid">
     <a class="site-stat-card site-stat-card--primary" href="{{ h.url_for('/initiatives') }}" aria-label="{{ _('Explore initiatives') }}">
       <div class="site-stat-icon" aria-hidden="true">
-        <i class="fa fa-lightbulb-o"></i>
+        <i class="fa fa-flag"></i>
       </div>
       <div class="site-stat-body">
         <span class="site-stat-value" data-count-to="{{ initiative_count }}">0</span>
@@ -58,7 +59,7 @@
 
     <a class="site-stat-card" href="{{ h.url_for('/documents') }}" aria-label="{{ _('Browse documents') }}">
       <div class="site-stat-icon" aria-hidden="true">
-        <i class="fa fa-file-text-o"></i>
+        <i class="fa fa-file-text"></i>
       </div>
       <div class="site-stat-body">
         <span class="site-stat-value" data-count-to="{{ document_count }}">0</span>
@@ -106,61 +107,65 @@
 
 <style>
   .site-stats-hero {
-    margin: 2.5rem 0 1.5rem;
-    padding: 2rem 1.5rem 2.25rem;
-    background: linear-gradient(135deg,
-      var(--unesco-blue-pale, #E8F4F8) 0%,
-      #ffffff 60%,
-      var(--unesco-blue-pale, #E8F4F8) 100%);
-    border-radius: 20px;
-    box-shadow: 0 4px 18px rgba(0, 105, 180, 0.08);
     position: relative;
-    overflow: hidden;
+    max-width: 1181px;
+    margin: -1.25rem auto 1.5rem;
+    padding: 0 0.25rem;
+    background: transparent;
+    box-shadow: none;
+    border-radius: 0;
   }
 
-  .site-stats-hero::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    background:
-      radial-gradient(circle at 0% 0%, rgba(0, 105, 180, 0.08) 0, transparent 40%),
-      radial-gradient(circle at 100% 100%, rgba(0, 158, 224, 0.08) 0, transparent 40%);
-    pointer-events: none;
+  /* Pieza visual que une el slideshow con las stats */
+  .site-stats-bridge {
+    width: 2px;
+    height: 32px;
+    margin: 0 auto 1rem;
+    background: linear-gradient(180deg,
+      rgba(0, 105, 180, 0.0) 0%,
+      rgba(0, 105, 180, 0.45) 100%);
+    border-radius: 2px;
   }
 
   .site-stats-header {
-    text-align: center;
-    margin-bottom: 1.75rem;
-    position: relative;
-  }
-
-  .site-stats-eyebrow {
-    display: inline-block;
-    font-size: 0.78rem;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    font-weight: 600;
-    color: var(--unesco-blue, #0069B4);
-    background: rgba(0, 105, 180, 0.08);
-    padding: 0.35rem 0.9rem;
-    border-radius: 999px;
-    margin-bottom: 0.85rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-bottom: 1rem;
+    padding: 0 0.25rem;
   }
 
   .site-stats-title {
-    font-size: 1.6rem;
-    line-height: 1.25;
-    margin: 0 0 0.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: 1.05rem;
+    line-height: 1.3;
+    margin: 0;
     color: var(--unesco-blue-dark, #005a9e);
     font-weight: 700;
+    letter-spacing: 0.01em;
+    text-transform: uppercase;
+  }
+
+  .site-stats-bullet {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--unesco-blue, #0069B4);
+    box-shadow: 0 0 0 4px rgba(0, 105, 180, 0.18);
+    flex-shrink: 0;
   }
 
   .site-stats-subtitle {
-    margin: 0 auto;
-    max-width: 620px;
-    color: var(--text-secondary, #475569);
-    font-size: 0.98rem;
-    line-height: 1.6;
+    margin: 0;
+    color: var(--text-secondary, #6b7785);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    flex: 1 1 320px;
+    text-align: right;
   }
 
   .site-stats-grid {
@@ -312,15 +317,26 @@
 
   @media (max-width: 768px) {
     .site-stats-hero {
-      padding: 1.5rem 1rem 1.75rem;
-      border-radius: 16px;
-      margin: 1.75rem 0 1rem;
+      padding: 0 0.5rem;
+      margin: -0.5rem auto 1rem;
+    }
+    .site-stats-bridge {
+      height: 24px;
+      margin-bottom: 0.75rem;
+    }
+    .site-stats-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.35rem;
+      text-align: left;
     }
     .site-stats-title {
-      font-size: 1.35rem;
+      font-size: 0.95rem;
     }
     .site-stats-subtitle {
-      font-size: 0.92rem;
+      font-size: 0.85rem;
+      text-align: left;
+      flex: 1 1 auto;
     }
     .site-stats-grid {
       grid-template-columns: repeat(2, 1fr);
