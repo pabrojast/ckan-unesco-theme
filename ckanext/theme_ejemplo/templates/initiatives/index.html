@@ -19,6 +19,31 @@
 
 {% block primary_content_inner %}
   <h1 class="hide-heading">{{ _('Groups') }}</h1>
+
+  {% if c.userobj %}
+    {% set my_pending = h.get_my_pending_initiative_request() %}
+    <div class="initiative-request-cta" style="margin: 0 0 20px 0; padding: 16px 20px; background: #eef7fc; border: 1px solid #c8e3f1; border-radius: 6px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap;">
+      <div style="flex: 1; min-width: 220px;">
+        {% if my_pending %}
+          <strong><i class="fa fa-clock-o"></i> {{ _('Your initiative request is under review') }}</strong>
+          <div style="color: #555; margin-top: 4px;">
+            "{{ my_pending.title }}" — {{ _('an administrator will process it soon.') }}
+          </div>
+        {% else %}
+          <strong><i class="fa fa-flag"></i> {{ _('Have an idea for a new initiative?') }}</strong>
+          <div style="color: #555; margin-top: 4px;">
+            {{ _('Send a request and a site administrator will review your proposal.') }}
+          </div>
+        {% endif %}
+      </div>
+      {% if not my_pending %}
+      <a href="{{ h.url_for('theme_ejemplo.request_initiative') }}" class="btn btn-primary">
+        <i class="fa fa-plus-circle"></i> {{ _('Request a new initiative') }}
+      </a>
+      {% endif %}
+    </div>
+  {% endif %}
+
   {% block groups_search_form %}
     {% snippet 'snippets/search_form.html', form_id='group-search-form', type='group', query=q, sorting_selected=sort_by_selected, count=groupcount, placeholder=_('Search ...'), show_empty=request.args, no_bottom_border=true if groups, sorting = [(_('Name Ascending'), 'title asc'), (_('Name Descending'), 'title desc')] %}
   {% endblock %}

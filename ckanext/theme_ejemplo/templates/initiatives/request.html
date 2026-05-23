@@ -1,0 +1,105 @@
+{% extends "page.html" %}
+
+{% block title %}{{ _('Request a new initiative') }} - {{ super() }}{% endblock %}
+
+{% block subtitle %}{{ _('Request a new initiative') }}{% endblock %}
+
+{% block breadcrumb_content %}
+  <li><a href="{{ h.url_for('theme_ejemplo.initiatives') }}">{% trans %}Initiatives{% endtrans %}</a></li>
+  <li class="active"><a href="">{{ _('New request') }}</a></li>
+{% endblock %}
+
+{% block primary_content_inner %}
+  <h1><i class="fa fa-flag"></i> {{ _('Request a new initiative') }}</h1>
+
+  <div class="alert alert-info" role="alert">
+    <p>{{ _('Fill out the form below to request the creation of a new initiative. A site administrator will review your submission. Once approved, the initiative will be created as a CKAN group and you will become its administrator.') }}</p>
+    <p class="text-muted"><small>{{ _('Please choose a clear title and provide a logo (PNG, JPG, GIF, WEBP, BMP, TIFF or AVIF).') }}</small></p>
+  </div>
+
+  <form method="POST" enctype="multipart/form-data" class="dataset-form initiative-request-form">
+    {{ h.csrf_input() }}
+
+    <div class="form-group">
+      <label class="control-label" for="field-title">
+        {{ _('Initiative title') }} <span class="text-danger">*</span>
+      </label>
+      <input type="text"
+             id="field-title"
+             name="title"
+             class="form-control"
+             placeholder="{{ _('e.g. Global Network on Water Quality') }}"
+             value="{{ form.title if form else '' }}"
+             required maxlength="200" />
+    </div>
+
+    <div class="form-group">
+      <label class="control-label" for="field-description">{{ _('Description') }}</label>
+      <textarea id="field-description"
+                name="description"
+                class="form-control"
+                rows="6"
+                placeholder="{{ _('Briefly describe the goals, scope and expected outcomes of the initiative...') }}">{{ form.description if form else '' }}</textarea>
+      <p class="help-block">{{ _('Markdown is supported.') }}</p>
+    </div>
+
+    <div class="form-group">
+      <label class="control-label" for="field-logo-upload">
+        {{ _('Logo') }} <span class="text-danger">*</span>
+      </label>
+      <input type="file"
+             id="field-logo-upload"
+             name="logo_upload"
+             class="form-control"
+             accept="image/png,image/jpeg,image/gif,image/webp,image/bmp,image/tiff,image/avif" />
+      <p class="help-block">
+        {{ _('Square images work best. The logo will represent your initiative on the portal.') }}
+      </p>
+      <div id="initiative-logo-preview" style="display:none; margin-top: 10px;">
+        <img id="initiative-logo-preview-img" src="" alt="logo preview"
+             style="max-width: 160px; max-height: 160px; border: 1px solid #ddd; border-radius: 6px; padding: 6px;" />
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="control-label" for="field-logo-url">
+        {{ _('… or paste a logo URL') }}
+      </label>
+      <input type="url"
+             id="field-logo-url"
+             name="logo_url"
+             class="form-control"
+             placeholder="https://..."
+             value="{{ form.logo_url if form else '' }}" />
+      <p class="help-block">{{ _('Used only if no file is uploaded above.') }}</p>
+    </div>
+
+    <div class="form-actions">
+      <a href="{{ h.url_for('theme_ejemplo.initiatives') }}" class="btn btn-default">
+        <i class="fa fa-arrow-left"></i> {{ _('Cancel') }}
+      </a>
+      <button type="submit" class="btn btn-primary">
+        <i class="fa fa-paper-plane"></i> {{ _('Send request') }}
+      </button>
+    </div>
+  </form>
+
+  <script>
+    (function () {
+      var input = document.getElementById('field-logo-upload');
+      var preview = document.getElementById('initiative-logo-preview');
+      var previewImg = document.getElementById('initiative-logo-preview-img');
+      if (!input || !preview || !previewImg) return;
+      input.addEventListener('change', function () {
+        var f = this.files && this.files[0];
+        if (!f) { preview.style.display = 'none'; return; }
+        var reader = new FileReader();
+        reader.onload = function (e) {
+          previewImg.src = e.target.result;
+          preview.style.display = 'block';
+        };
+        reader.readAsDataURL(f);
+      });
+    })();
+  </script>
+{% endblock %}

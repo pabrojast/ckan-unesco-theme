@@ -185,6 +185,16 @@
           </a>
         </li>
         {% endif %}
+        {% set _ir_count = h.get_pending_initiative_requests_count() %}
+        {% if _ir_count %}
+        <li>
+          <a href="{{ h.url_for('theme_ejemplo.initiative_requests_admin') }}" title="{{ _('Pending initiative requests') }}" style="position: relative; display: inline-block;">
+            <i class="fa fa-flag" aria-hidden="true"></i>
+            <span class="text">{{ _('Initiatives') }}</span>
+            <span style="position: absolute; top: -4px; right: -8px; background: #17a2b8; color: #fff; border-radius: 50%; font-size: 10px; min-width: 18px; height: 18px; line-height: 18px; text-align: center; padding: 0 4px; font-weight: 700; box-shadow: 0 1px 3px rgba(0,0,0,0.3);">{{ _ir_count }}</span>
+          </a>
+        </li>
+        {% endif %}
         <li>
           <a href="{{ h.url_for('/pages') }}" title="{{ _('Pages') }}">{{ _('Pages') }}</a>
         </li>

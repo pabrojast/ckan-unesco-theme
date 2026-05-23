@@ -372,7 +372,9 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
             membership_model.init_ihpix_activities_db()
             # Create ihpix_country_summary table if needed
             membership_model.init_ihpix_country_summary_db()
-            
+            # Create initiative_request table if needed
+            membership_model.init_initiative_requests_db()
+
         def get_blueprint(self):
             
             blueprint = Blueprint(self.name, self.__module__)        
@@ -573,6 +575,26 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 u'membership_requests_overview',
                 MyLogica.membership_requests_overview,
                 methods=['GET']
+            )
+
+            # Initiative requests
+            blueprint.add_url_rule(
+                u'/initiatives/request',
+                u'request_initiative',
+                MyLogica.request_initiative,
+                methods=['GET', 'POST']
+            )
+            blueprint.add_url_rule(
+                u'/ckan-admin/initiative-requests',
+                u'initiative_requests_admin',
+                MyLogica.initiative_requests_admin,
+                methods=['GET']
+            )
+            blueprint.add_url_rule(
+                u'/ckan-admin/initiative-requests/<request_id>/process',
+                u'initiative_request_process_view',
+                MyLogica.initiative_request_process_view,
+                methods=['POST']
             )
 
             # User profile tabs
@@ -940,6 +962,8 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                  'get_recently_added': self.get_recently_added,
                  'get_featured_publications': helpers.get_featured_publications,
                  'get_open_bug_tickets_count': helpers.get_open_bug_tickets_count,
+                 'get_pending_initiative_requests_count': helpers.get_pending_initiative_requests_count,
+                 'get_my_pending_initiative_request': helpers.get_my_pending_initiative_request,
                  'get_dataset_tracking': helpers.get_dataset_tracking,
                  'get_resource_downloads': helpers.get_resource_downloads,
                  'get_tracking_totals': helpers.get_tracking_totals,
@@ -1002,6 +1026,11 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 'ihpix_geojson': custom_actions.ihpix_geojson,
                 'ihpix_activity_geojson': custom_actions.ihpix_activity_geojson,
                 'ihpix_country_summary_list': custom_actions.ihpix_country_summary_list,
+                # Initiative requests
+                'initiative_request_create': custom_actions.initiative_request_create,
+                'initiative_request_list': custom_actions.initiative_request_list,
+                'initiative_request_process': custom_actions.initiative_request_process,
+                'initiative_request_count': custom_actions.initiative_request_count,
             }
 
         # IAuthFunctions
@@ -1055,6 +1084,11 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 'ihpix_geojson': custom_auth.ihpix_geojson,
                 'ihpix_activity_geojson': custom_auth.ihpix_activity_geojson,
                 'ihpix_country_summary_list': custom_auth.ihpix_country_summary_list,
+                # Initiative requests
+                'initiative_request_create': custom_auth.initiative_request_create,
+                'initiative_request_list': custom_auth.initiative_request_list,
+                'initiative_request_process': custom_auth.initiative_request_process,
+                'initiative_request_count': custom_auth.initiative_request_count,
             }
         
         def get_commands(self):

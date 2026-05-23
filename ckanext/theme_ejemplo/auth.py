@@ -273,3 +273,29 @@ def ihpix_activity_geojson(context, data_dict):
 def ihpix_country_summary_list(context, data_dict):
     """Public read access to country summary data."""
     return {'success': True}
+
+
+# ── Initiative Request Auth ─────────────────────────────────────────────────
+
+def initiative_request_create(context, data_dict):
+    """Cualquier usuario autenticado puede solicitar una iniciativa."""
+    if not context.get('auth_user_obj'):
+        return {'success': False, 'msg': toolkit._('Debes iniciar sesión.')}
+    return {'success': True}
+
+
+def initiative_request_list(context, data_dict):
+    """Solo sysadmins pueden listar solicitudes."""
+    return _sysadmin_only(context, data_dict)
+
+
+def initiative_request_process(context, data_dict):
+    """Solo sysadmins pueden aprobar/rechazar solicitudes."""
+    return _sysadmin_only(context, data_dict)
+
+
+def initiative_request_count(context, data_dict):
+    """Cualquier usuario autenticado puede consultar el conteo (devuelve 0 si no es sysadmin)."""
+    if not context.get('auth_user_obj'):
+        return {'success': False}
+    return {'success': True}

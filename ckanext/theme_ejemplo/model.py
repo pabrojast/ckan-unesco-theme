@@ -1814,3 +1814,118 @@ def init_ihpix_country_summary_db():
         log.info(u'ihpix_country_summary table created')
     else:
         log.debug(u'ihpix_country_summary table already exists')
+
+
+# ── Initiative Request Model ─────────────────────────────────────────────────
+
+initiative_request_table = None
+
+
+class InitiativeRequest(model.DomainObject):
+    """Solicitud de un usuario para crear una nueva iniciativa (grupo CKAN)."""
+
+    STATUS_PENDING = u'pending'
+    STATUS_APPROVED = u'approved'
+    STATUS_REJECTED = u'rejected'
+
+    def __init__(self, user_id, title, description=u'', name=u'',
+                 logo_url=u''):
+        self.id = str(uuid.uuid4())
+        self.user_id = user_id
+        self.title = title
+        self.name = name
+        self.description = description
+        self.logo_url = logo_url
+        self.status = self.STATUS_PENDING
+        self.handled_by = None
+        self.handled_at = None
+        self.admin_note = u''
+        self.created_group_id = None
+        self.created_at = datetime.datetime.utcnow()
+
+    @classmethod
+    def get(cls, id):
+        return meta.Session.query(cls).get(id)
+
+    @classmethod
+    def get_pending(cls):
+        return meta.Session.query(cls).filter(
+            cls.status == cls.STATUS_PENDING,
+        ).order_by(cls.created_at.desc()).all()
+
+    @classmethod
+    def get_all(cls, status=None):
+        q = meta.Session.query(cls)
+        if status:
+            q = q.filter(cls.status == status)
+        return q.order_by(cls.created_at.desc()).all()
+
+    @classmethod
+    def get_pending_for_user(cls, user_id):
+        return meta.Session.query(cls).filter(
+            cls.user_id == user_id,
+            cls.status == cls.STATUS_PENDING,
+        ).first()
+
+    @classmethod
+    def count_pending(cls):
+        return meta.Session.query(cls).filter(
+            cls.status == cls.STATUS_PENDING,
+        ).count()
+
+    def as_dict(self):
+        return {
+            'id': self.id,
+            'user_id': self.user_id,
+            'title': self.title,
+            'name': self.name or u'',
+            'description': self.description or u'',
+            'logo_url': self.logo_url or u'',
+            'status': self.status,
+            'handled_by': self.handled_by,
+            'handled_at': self.handled_at.isoformat() if self.handled_at else None,
+            'admin_note': self.admin_note or u'',
+            'created_group_id': self.created_group_id,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+        }
+
+
+def init_initiative_requests_db():
+    """Crea la tabla initiative_request si no existe."""
+    if initiative_request_table is None:
+        define_initiative_request_table()
+
+    from sqlalchemy import inspect as sa_inspect
+    inspector = sa_inspect(meta.engine)
+    if 'initiative_request' not in inspector.get_table_names():
+        initiative_request_table.create(meta.engine)
+        log.info(u'initiative_request table created')
+    else:
+        log.debug(u'initiative_request table already exists')
+
+
+def define_initiative_request_table():
+    global initiative_request_table
+
+    initiative_request_table = Table(
+        'initiative_request',
+        meta.metadata,
+        Column('id', UnicodeText, primary_key=True,
+               default=lambda: str(uuid.uuid4())),
+        Column('user_id', UnicodeText, nullable=False),
+        Column('title', UnicodeText, nullable=False),
+        Column('name', UnicodeText, default=u''),
+        Column('description', UnicodeText, default=u''),
+        Column('logo_url', UnicodeText, default=u''),
+        Column('status', UnicodeText, default=u'pending'),
+        Column('handled_by', UnicodeText, nullable=True),
+        Column('handled_at', DateTime, nullable=True),
+        Column('admin_note', UnicodeText, default=u''),
+        Column('created_group_id', UnicodeText, nullable=True),
+        Column('created_at', DateTime, default=datetime.datetime.utcnow),
+    )
+
+    try:
+        meta.registry.map_imperatively(InitiativeRequest, initiative_request_table)
+    except AttributeError:
+        meta.mapper(InitiativeRequest, initiative_request_table)

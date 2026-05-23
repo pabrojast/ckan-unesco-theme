@@ -1383,6 +1383,249 @@ class MyLogica():
                 orgs_with_requests=orgs_with_requests,
             )
 
+        # --- Initiative Request Views ---
+
+        @staticmethod
+        def request_initiative():
+            """Formulario público para solicitar la creación de una iniciativa."""
+            if not current_user.is_authenticated:
+                return toolkit.redirect_to('user.login')
+
+            from ckanext.theme_ejemplo.model import InitiativeRequest
+
+            # Si ya tiene una solicitud pendiente, redirigir con aviso
+            existing = InitiativeRequest.get_pending_for_user(current_user.id)
+            if existing and request.method == 'GET':
+                h.flash_notice(_(
+                    'Ya tienes una solicitud de iniciativa pendiente de revisión. '
+                    'Espera a que un administrador la procese antes de enviar otra.'
+                ))
+                return toolkit.redirect_to('theme_ejemplo.initiatives')
+
+            if request.method == 'POST':
+                title = (request.form.get('title') or '').strip()
+                description = (request.form.get('description') or '').strip()
+                logo_url = (request.form.get('logo_url') or '').strip()
+                logo_upload = request.files.get('logo_upload')
+
+                try:
+                    result = toolkit.get_action('initiative_request_create')(
+                        {'auth_user_obj': current_user, 'user': current_user.name},
+                        {
+                            'title': title,
+                            'description': description,
+                            'logo_url': logo_url,
+                            'logo_upload': logo_upload,
+                        },
+                    )
+                except toolkit.ValidationError as e:
+                    err = e.error_dict if hasattr(e, 'error_dict') else {}
+                    for field, msgs in (err or {}).items():
+                        for m in msgs if isinstance(msgs, (list, tuple)) else [msgs]:
+                            h.flash_error('{}: {}'.format(field, m))
+                    if not err:
+                        h.flash_error(str(e))
+                    return render_template(
+                        'initiatives/request.html',
+                        form={
+                            'title': title,
+                            'description': description,
+                            'logo_url': logo_url,
+                        },
+                    )
+                except toolkit.NotAuthorized:
+                    abort(403, _('No autorizado'))
+                    return
+
+                # Notificar a sysadmins por email
+                try:
+                    sysadmins = (
+                        model.Session.query(model.User)
+                        .filter(model.User.sysadmin.is_(True),
+                                model.User.state == 'active')
+                        .all()
+                    )
+                    subject = _('Nueva solicitud de iniciativa: {title}').format(
+                        title=result.get('title', '')
+                    )
+                    body = _(
+                        'El usuario {user} ({fullname}) ha solicitado la creación '
+                        'de una nueva iniciativa.\n\n'
+                        'Título: {title}\n'
+                        'Descripción:\n{description}\n\n'
+                        'Para revisar la solicitud visita: {url}'
+                    ).format(
+                        user=current_user.name,
+                        fullname=current_user.fullname or current_user.name,
+                        title=result.get('title', ''),
+                        description=result.get('description') or _('(sin descripción)'),
+                        url=toolkit.url_for(
+                            'theme_ejemplo.initiative_requests_admin', qualified=True
+                        ),
+                    )
+                    for admin_obj in sysadmins:
+                        if admin_obj.email:
+                            try:
+                                mailer.mail_user(admin_obj, subject, body)
+                            except Exception as mail_err:
+                                log.warning(
+                                    f'Failed to send initiative request email '
+                                    f'to {admin_obj.name}: {mail_err}'
+                                )
+                except Exception as e:
+                    log.warning(f'Error notifying sysadmins of initiative request: {e}')
+
+                h.flash_success(_(
+                    'Tu solicitud de iniciativa ha sido enviada. '
+                    'Un administrador la revisará pronto.'
+                ))
+                return toolkit.redirect_to('theme_ejemplo.initiatives')
+
+            return render_template('initiatives/request.html', form={})
+
+        @staticmethod
+        def initiative_requests_admin():
+            """Panel sysadmin para listar y revisar solicitudes de iniciativa."""
+            if not current_user.is_authenticated:
+                return toolkit.redirect_to('user.login')
+            if not current_user.sysadmin:
+                abort(403, _('Solo los administradores pueden gestionar solicitudes de iniciativa.'))
+                return
+
+            tab = request.args.get('tab', 'pending')
+
+            ctx = {
+                'auth_user_obj': current_user,
+                'user': current_user.name,
+                'ignore_auth': True,
+            }
+            try:
+                pending = toolkit.get_action('initiative_request_list')(
+                    ctx, {'status': 'pending'}
+                )
+            except Exception as e:
+                log.error(f'Error fetching pending initiative requests: {e}')
+                pending = {'results': [], 'count': 0}
+
+            try:
+                history = toolkit.get_action('initiative_request_list')(ctx, {})
+            except Exception as e:
+                log.error(f'Error fetching initiative request history: {e}')
+                history = {'results': [], 'count': 0}
+
+            history_results = [
+                r for r in history.get('results', [])
+                if r['status'] != 'pending'
+            ]
+
+            return render_template(
+                'admin/initiative_requests.html',
+                pending_requests=pending.get('results', []),
+                pending_count=pending.get('count', 0),
+                history_requests=history_results,
+                active_tab=tab,
+            )
+
+        @staticmethod
+        def initiative_request_process_view(request_id):
+            """Endpoint POST para aprobar/rechazar una solicitud de iniciativa."""
+            if not current_user.is_authenticated:
+                return toolkit.redirect_to('user.login')
+            if not current_user.sysadmin:
+                abort(403, _('Solo los administradores pueden procesar solicitudes.'))
+                return
+
+            action = (request.form.get('action') or '').strip()
+            admin_note = (request.form.get('admin_note') or '').strip()
+            override_name = (request.form.get('name') or '').strip()
+            tab = request.args.get('tab', 'pending')
+
+            if action not in ('approve', 'reject'):
+                h.flash_error(_('Acción inválida.'))
+                return toolkit.redirect_to(
+                    'theme_ejemplo.initiative_requests_admin', tab=tab
+                )
+
+            try:
+                result = toolkit.get_action('initiative_request_process')(
+                    {'auth_user_obj': current_user, 'user': current_user.name},
+                    {
+                        'id': request_id,
+                        'action': action,
+                        'admin_note': admin_note,
+                        'name': override_name,
+                    },
+                )
+                if action == 'approve':
+                    # Notificar al solicitante
+                    try:
+                        from ckanext.theme_ejemplo.model import InitiativeRequest
+                        req = InitiativeRequest.get(request_id)
+                        if req:
+                            requester = model.User.get(req.user_id)
+                            if requester and requester.email:
+                                subject = _('Tu iniciativa "{title}" fue aprobada').format(
+                                    title=req.title
+                                )
+                                body = _(
+                                    'Tu solicitud de iniciativa "{title}" fue aprobada. '
+                                    'Ahora eres administrador del grupo. '
+                                    'Puedes acceder en: {url}'
+                                ).format(
+                                    title=req.title,
+                                    url=toolkit.url_for(
+                                        'group.read',
+                                        id=result.get('name', req.name),
+                                        qualified=True,
+                                    ),
+                                )
+                                try:
+                                    mailer.mail_user(requester, subject, body)
+                                except Exception:
+                                    pass
+                    except Exception as notify_err:
+                        log.warning(f'Approval notification failed: {notify_err}')
+                    h.flash_success(_('Solicitud aprobada y grupo creado.'))
+                else:
+                    # Notificar rechazo
+                    try:
+                        from ckanext.theme_ejemplo.model import InitiativeRequest
+                        req = InitiativeRequest.get(request_id)
+                        if req:
+                            requester = model.User.get(req.user_id)
+                            if requester and requester.email:
+                                subject = _('Tu solicitud de iniciativa fue rechazada')
+                                body = _(
+                                    'Tu solicitud "{title}" fue rechazada.\n\n'
+                                    'Motivo: {note}'
+                                ).format(
+                                    title=req.title,
+                                    note=admin_note or _('(sin motivo proporcionado)'),
+                                )
+                                try:
+                                    mailer.mail_user(requester, subject, body)
+                                except Exception:
+                                    pass
+                    except Exception as notify_err:
+                        log.warning(f'Rejection notification failed: {notify_err}')
+                    h.flash_success(_('Solicitud rechazada.'))
+            except toolkit.ValidationError as e:
+                err = e.error_dict if hasattr(e, 'error_dict') else {}
+                for field, msgs in (err or {}).items():
+                    for m in msgs if isinstance(msgs, (list, tuple)) else [msgs]:
+                        h.flash_error('{}: {}'.format(field, m))
+                if not err:
+                    h.flash_error(str(e))
+            except toolkit.ObjectNotFound as e:
+                h.flash_error(str(e))
+            except Exception as e:
+                log.error(f'Error processing initiative request: {e}')
+                h.flash_error(str(e))
+
+            return toolkit.redirect_to(
+                'theme_ejemplo.initiative_requests_admin', tab=tab
+            )
+
         # --- User profile tab views ---
 
         def _get_user_context(id):

@@ -61,6 +61,9 @@
 **Membresías** (3):
 `request_membership()`, `membership_requests()`, `membership_requests_overview()`
 
+**Solicitudes de iniciativas** (3):
+`request_initiative()`, `initiative_requests_admin()`, `initiative_request_process_view()` — ver [[Solicitudes de Iniciativas]]
+
 **Dataset** (2):
 `dataset_resources_ajax()`, `dataset_read()`
 
@@ -93,6 +96,9 @@ Ver [[Flujos Importantes#Paneles de administración]] para la lista completa.
 
 **Solicitudes de membresía** (4):
 - `membership_request_create`, `membership_request_list`, `membership_request_process`, `membership_request_count`
+
+**Solicitudes de iniciativas** (4):
+- `initiative_request_create`, `initiative_request_list`, `initiative_request_process`, `initiative_request_count` — ver [[Solicitudes de Iniciativas]]
 
 **Datasets destacados** (3):
 - `featured_dataset_list`, `featured_dataset_add`, `featured_dataset_remove`
@@ -163,6 +169,9 @@ Helpers: `is_valid_*`, `normalize_bool`, `filter_valid`.
 **Membresías** (2):
 `get_pending_membership_requests_count()`, `has_pending_membership_request()`
 
+**Solicitudes de iniciativas** (2):
+`get_pending_initiative_requests_count()` (sysadmin badge), `get_my_pending_initiative_request()` (CTA en `/initiatives`)
+
 **Contenido destacado** (2):
 `get_featured_publications()`, `get_open_bug_tickets_count()`
 
@@ -214,6 +223,11 @@ Helpers: `is_valid_*`, `normalize_bool`, `filter_valid`.
 - Campos: id, country, latitude, longitude, region, total_activities, pa1_count–pa5_count, transboundary_all, transboundary_pa1–pa5, supporting_all, supporting_pa1–pa5, flagship_data (JSON), pa_output_data (JSON), created_at, updated_at
 - Métodos: `get()`, `get_by_country()`, `get_all(region)`, `get_as_geojson(region)`, `delete_all()`, `as_dict()`
 
+**InitiativeRequest**: Solicitudes de creación de iniciativas (grupos CKAN) enviadas por usuarios
+- Campos: id, user_id, title, name (slug), description, logo_url, status (pending/approved/rejected), handled_by, handled_at, admin_note, created_group_id, created_at
+- Métodos: `get()`, `get_pending()`, `get_all(status)`, `get_pending_for_user()`, `count_pending()`, `as_dict()`
+- Ver flujo en [[Solicitudes de Iniciativas]]
+
 ### Inicialización
 Cada modelo tiene `init_*_db()` y `define_*_table()`. Son idempotentes (verifican schema con inspector). Incluyen lógica de migración para agregar columnas nuevas a tablas existentes (e.g., `_migrate_ihpix_activities()`).
 
@@ -228,8 +242,9 @@ Cada modelo tiene `init_*_db()` y `define_*_table()`. Son idempotentes (verifica
 | Patrón | Acciones |
 |---|---|
 | **Sysadmin only** | featured_dataset_*, featured_publication_*, portal_card_*, admin_user_*, ihpix_content_*, ihpix_activity_create/update/delete, ihpix_report_review, bug_ticket_api_list |
-| **Autenticado** | membership_request_create, membership_request_count, bug_ticket_create/list/show/update, ihpix_report_submit |
+| **Autenticado** | membership_request_create, membership_request_count, initiative_request_create, initiative_request_count, bug_ticket_create/list/show/update, ihpix_report_submit |
 | **Admin de org o sysadmin** | membership_request_list, membership_request_process |
+| **Sysadmin only (iniciativas)** | initiative_request_list, initiative_request_process |
 | **Público** | ihpix_activity_list, ihpix_activity_show, ihpix_dashboard_stats, ihpix_geojson, ihpix_activity_geojson, ihpix_country_summary_list |
 
 ### Función helper

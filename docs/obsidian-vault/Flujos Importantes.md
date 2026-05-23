@@ -54,6 +54,38 @@
 
 ---
 
+## 2.1. Solicitud de creación de iniciativa
+
+**Ruta usuario**: `/initiatives/request`
+**Ruta admin**: `/ckan-admin/initiative-requests`
+**Módulos**: `controller.py`, `actions.py`, `model.py`, `auth.py`, `helpers.py`
+**Detalle completo**: ver [[Solicitudes de Iniciativas]]
+
+```
+1. Usuario autenticado visita /initiatives o /initiatives/request
+   → CTA en /initiatives → formulario en /initiatives/request
+2. Sube título + descripción + logo (multipart/form-data)
+   → actions.py: initiative_request_create()
+   → utils.py: get_invalid_user_image_upload_reason() valida MIME + magic bytes
+   → ckan.lib.uploader: guarda logo en uploads/initiative_requests/
+   → model.py: InitiativeRequest (status="pending")
+   → email a todos los sysadmins
+3. Sysadmin ve badge fa-flag con conteo en cabecera
+   → helpers.py: get_pending_initiative_requests_count()
+4. Sysadmin entra a /ckan-admin/initiative-requests
+   → controller.py: initiative_requests_admin() (tabs pending/history)
+5. Sysadmin aprueba o rechaza
+   → controller.py: initiative_request_process_view() (POST)
+   → actions.py: initiative_request_process(id, action)
+   → Si aprueba: group_create + member_create(capacity=admin) para el solicitante
+   → Email al usuario (aprobación o rechazo + motivo)
+```
+
+> [!note] Decisión de diseño
+> Las "iniciativas" del portal IHP son grupos CKAN (`type='group'`) que no están bajo `member-states`. Al aprobar, el grupo se crea automáticamente y el solicitante queda como `admin` del grupo (puede editar contenido, agregar miembros, etc.).
+
+---
+
 ## 3. Perfil de usuario extendido
 
 **Módulos**: `actions.py`, `validators.py`

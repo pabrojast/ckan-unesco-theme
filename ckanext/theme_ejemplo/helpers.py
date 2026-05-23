@@ -703,3 +703,34 @@ def get_open_bug_tickets_count():
         _rollback_session_after_helper_error()
         log.error(f'Error getting open bug tickets count: {e}')
         return 0
+
+
+def get_pending_initiative_requests_count():
+    """Cantidad de solicitudes de iniciativa pendientes (solo para sysadmins, 0 si no)."""
+    try:
+        from ckan.common import current_user
+        if not current_user or not current_user.is_authenticated:
+            return 0
+        if not current_user.sysadmin:
+            return 0
+        from ckanext.theme_ejemplo.model import InitiativeRequest
+        return InitiativeRequest.count_pending()
+    except Exception as e:
+        _rollback_session_after_helper_error()
+        log.error(f'Error getting pending initiative requests count: {e}')
+        return 0
+
+
+def get_my_pending_initiative_request():
+    """Devuelve la solicitud pendiente del usuario actual, o None."""
+    try:
+        from ckan.common import current_user
+        if not current_user or not current_user.is_authenticated:
+            return None
+        from ckanext.theme_ejemplo.model import InitiativeRequest
+        req = InitiativeRequest.get_pending_for_user(current_user.id)
+        return req.as_dict() if req else None
+    except Exception as e:
+        _rollback_session_after_helper_error()
+        log.error(f'Error getting my pending initiative request: {e}')
+        return None

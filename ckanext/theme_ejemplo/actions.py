@@ -2579,3 +2579,238 @@ def ihpix_country_summary_list(context, data_dict):
         'results': [i.as_dict() for i in items],
         'count': len(items),
     }
+
+
+# ── Initiative Request Actions ──────────────────────────────────────────────
+
+from ckanext.theme_ejemplo.model import (
+    InitiativeRequest,
+    init_initiative_requests_db,
+)
+
+
+def _process_initiative_logo_upload(upload_file):
+    """Valida y sube el logo de una solicitud de iniciativa.
+
+    Devuelve la URL pública estática del archivo subido o lanza ValidationError.
+    """
+    if not upload_file or not getattr(upload_file, 'filename', ''):
+        return u''
+
+    reason = get_invalid_user_image_upload_reason(upload_file)
+    if reason:
+        raise toolkit.ValidationError({
+            'logo_upload': [toolkit._(
+                'El archivo subido no es una imagen válida (razón: {reason}).'
+            ).format(reason=reason)]
+        })
+
+    import ckan.lib.uploader as uploader
+    import ckan.lib.helpers as h_core
+    upload = uploader.get_uploader('initiative_requests')
+    upload.update_data_dict(
+        {'upload': upload_file, 'url': u'', 'clear_upload': u''},
+        'url', 'upload', 'clear_upload',
+    )
+    upload.upload()
+    return h_core.url_for_static(
+        'uploads/initiative_requests/{}'.format(upload.filename),
+        qualified=False,
+    )
+
+
+def initiative_request_create(context, data_dict):
+    """Crea una solicitud de iniciativa.
+
+    :param title: título de la iniciativa (requerido)
+    :param description: descripción
+    :param logo_upload: FileStorage opcional con el logo
+    :param logo_url: URL alternativa al logo (si no se sube archivo)
+    """
+    toolkit.check_access('initiative_request_create', context, data_dict)
+    init_initiative_requests_db()
+
+    title = (toolkit.get_or_bust(data_dict, 'title') or u'').strip()
+    description = (data_dict.get('description', u'') or u'').strip()
+    logo_url = (data_dict.get('logo_url', u'') or u'').strip()
+    logo_upload = data_dict.get('logo_upload')
+
+    if not title:
+        raise toolkit.ValidationError({
+            'title': [toolkit._('El título es obligatorio.')]
+        })
+
+    user_obj = context.get('auth_user_obj') or model.User.get(context.get('user'))
+    if not user_obj:
+        raise toolkit.NotAuthorized(toolkit._('Debes iniciar sesión.'))
+
+    # No permitir más de una solicitud pendiente por usuario
+    existing = InitiativeRequest.get_pending_for_user(user_obj.id)
+    if existing:
+        raise toolkit.ValidationError({
+            'title': [toolkit._(
+                'Ya tienes una solicitud de iniciativa pendiente. '
+                'Espera a que un administrador la revise.'
+            )]
+        })
+
+    # Procesar logo (upload tiene prioridad sobre URL externa)
+    if logo_upload and getattr(logo_upload, 'filename', ''):
+        logo_url = _process_initiative_logo_upload(logo_upload)
+    elif logo_url and not is_valid_user_image_reference(logo_url):
+        raise toolkit.ValidationError({
+            'logo_url': [toolkit._('La URL del logo no es válida.')]
+        })
+
+    # Sugerir slug a partir del título
+    from ckan.lib.munge import munge_name
+    proposed_name = munge_name(title)
+
+    req = InitiativeRequest(
+        user_id=user_obj.id,
+        title=title,
+        description=description,
+        name=proposed_name,
+        logo_url=logo_url,
+    )
+    model.Session.add(req)
+    model.Session.commit()
+
+    return req.as_dict()
+
+
+@toolkit.side_effect_free
+def initiative_request_list(context, data_dict):
+    """Lista solicitudes de iniciativa para el panel admin.
+
+    :param status: filtro opcional (pending/approved/rejected)
+    """
+    toolkit.check_access('initiative_request_list', context, data_dict)
+    init_initiative_requests_db()
+
+    status_filter = data_dict.get('status', None)
+    requests_list = InitiativeRequest.get_all(status=status_filter)
+
+    results = []
+    for req in requests_list:
+        user_obj = model.User.get(req.user_id) if req.user_id else None
+        handler_obj = model.User.get(req.handled_by) if req.handled_by else None
+        entry = req.as_dict()
+        entry.update({
+            'user_name': user_obj.name if user_obj else u'',
+            'user_fullname': (user_obj.fullname or user_obj.name) if user_obj else u'',
+            'user_email': user_obj.email if user_obj else u'',
+            'user_image_url': normalize_user_image_url(user_obj.image_url) if user_obj else u'',
+            'handler_name': (handler_obj.fullname or handler_obj.name) if handler_obj else u'',
+        })
+        results.append(entry)
+
+    return {'results': results, 'count': len(results)}
+
+
+def initiative_request_process(context, data_dict):
+    """Aprueba o rechaza una solicitud de iniciativa.
+
+    Al aprobar: crea el grupo CKAN con el logo subido y añade al solicitante
+    como admin del grupo. Al rechazar: guarda admin_note.
+
+    :param id: id de la solicitud
+    :param action: 'approve' o 'reject'
+    :param admin_note: nota opcional (motivo de rechazo)
+    :param name: slug opcional (editable por el admin antes de aprobar)
+    """
+    import datetime
+    toolkit.check_access('initiative_request_process', context, data_dict)
+    init_initiative_requests_db()
+
+    request_id = toolkit.get_or_bust(data_dict, 'id')
+    action = toolkit.get_or_bust(data_dict, 'action')
+    admin_note = (data_dict.get('admin_note', u'') or u'').strip()
+    override_name = (data_dict.get('name', u'') or u'').strip()
+
+    if action not in ('approve', 'reject'):
+        raise toolkit.ValidationError({
+            'action': [toolkit._('Debe ser "approve" o "reject".')]
+        })
+
+    req = InitiativeRequest.get(request_id)
+    if not req:
+        raise toolkit.ObjectNotFound(toolkit._('Solicitud no encontrada.'))
+
+    if req.status != InitiativeRequest.STATUS_PENDING:
+        raise toolkit.ValidationError({
+            'status': [toolkit._('Esta solicitud ya fue procesada.')]
+        })
+
+    user_obj = context.get('auth_user_obj') or model.User.get(context.get('user'))
+
+    if action == 'reject':
+        req.status = InitiativeRequest.STATUS_REJECTED
+        req.handled_by = user_obj.id if user_obj else None
+        req.handled_at = datetime.datetime.utcnow()
+        req.admin_note = admin_note
+        model.Session.commit()
+        return req.as_dict()
+
+    # action == 'approve' — crear grupo y añadir solicitante como admin
+    from ckan.lib.munge import munge_name
+    group_name = munge_name(override_name or req.name or req.title)
+
+    group_dict = {
+        'name': group_name,
+        'title': req.title,
+        'description': req.description or u'',
+        'type': 'group',
+    }
+    if req.logo_url:
+        group_dict['image_url'] = req.logo_url
+
+    try:
+        created = toolkit.get_action('group_create')(
+            {'ignore_auth': True, 'user': user_obj.name if user_obj else None},
+            group_dict,
+        )
+    except toolkit.ValidationError as e:
+        # Probablemente colisión de slug; relanzar para que el admin lo vea
+        raise toolkit.ValidationError({
+            'name': [toolkit._(
+                'No se pudo crear el grupo (posible conflicto de nombre): {err}'
+            ).format(err=str(e))]
+        })
+
+    # Añadir al solicitante como admin del grupo recién creado
+    try:
+        toolkit.get_action('member_create')(
+            {'ignore_auth': True},
+            {
+                'id': created['id'],
+                'object': req.user_id,
+                'object_type': 'user',
+                'capacity': 'admin',
+            },
+        )
+    except Exception as e:
+        log.warning(
+            f'Initiative approved (group {created["id"]}) but failed to add '
+            f'requester as admin: {e}'
+        )
+
+    req.status = InitiativeRequest.STATUS_APPROVED
+    req.handled_by = user_obj.id if user_obj else None
+    req.handled_at = datetime.datetime.utcnow()
+    req.admin_note = admin_note
+    req.created_group_id = created['id']
+    req.name = group_name
+    model.Session.commit()
+
+    return req.as_dict()
+
+
+@toolkit.side_effect_free
+def initiative_request_count(context, data_dict):
+    """Cantidad de solicitudes pendientes. Para el badge sysadmin."""
+    user_obj = context.get('auth_user_obj') or model.User.get(context.get('user'))
+    if not user_obj or not user_obj.sysadmin:
+        return {'count': 0}
+    init_initiative_requests_db()
+    return {'count': InitiativeRequest.count_pending()}

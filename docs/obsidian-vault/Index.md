@@ -19,6 +19,7 @@ Bienvenido a la documentación interna de **ckanext-theme-ejemplo**, la extensi�
 - [[Modulos]] — Detalle de cada módulo Python
 - [[Flujos Importantes]] — Flujos clave del sistema
 - [[Variables de Entorno]] — Configuración y claves de config
+- [[Solicitudes de Iniciativas]] — Flujo de solicitud + aprobación sysadmin
 
 ### Operación
 - [[Testing]] — Estrategia y ejecución de tests
