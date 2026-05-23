@@ -2017,3 +2017,75 @@ msgstr "اختر بلداً"
 #: ckanext/theme_ejemplo/templates/header.html:287
 msgid "Documents"
 msgstr "الوثائق"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/site_stats_hero.html
+msgid "IHP-WINS at a glance"
+msgstr "IHP-WINS في لمحة"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/site_stats_hero.html
+msgid "A growing global hub for water knowledge — real-time figures from our network."
+msgstr "مركز عالمي متنامٍ للمعرفة المائية — أرقام فورية من شبكتنا."
+
+#: ckanext/theme_ejemplo/templates/home/snippets/site_stats_hero.html
+msgid "Collaborative programmes"
+msgstr "برامج تعاونية"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/site_stats_hero.html
+msgid "Countries on the network"
+msgstr "البلدان في الشبكة"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/site_stats_hero.html
+msgid "Open water data"
+msgstr "بيانات مياه مفتوحة"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/site_stats_hero.html
+msgid "Reports & publications"
+msgstr "تقارير ومنشورات"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/site_stats_hero.html
+msgid "Contributing partners"
+msgstr "الشركاء المساهمون"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/site_stats_hero.html
+msgid "Page views"
+msgstr "مشاهدات الصفحة"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/site_stats_hero.html
+msgid "Community engagement"
+msgstr "تفاعل المجتمع"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/site_stats_hero.html
+msgid "Downloads"
+msgstr "التنزيلات"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/site_stats_hero.html
+msgid "Data put to work"
+msgstr "البيانات قيد الاستخدام"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/site_stats_hero.html
+msgid "Explore initiatives"
+msgstr "استكشاف المبادرات"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/site_stats_hero.html
+msgid "Explore member states"
+msgstr "استكشاف الدول الأعضاء"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/site_stats_hero.html
+msgid "Browse datasets"
+msgstr "تصفح مجموعات البيانات"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/site_stats_hero.html
+msgid "Browse documents"
+msgstr "تصفح المستندات"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/site_stats_hero.html
+msgid "Browse organizations"
+msgstr "تصفح المنظمات"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/site_stats_hero.html
+msgid "Total page views"
+msgstr "إجمالي المشاهدات"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/site_stats_hero.html
+msgid "Total downloads"
+msgstr "إجمالي التنزيلات"

@@ -2172,3 +2172,75 @@ msgstr "Selecciona un país"
 #: ckanext/theme_ejemplo/templates/header.html:287
 msgid "Documents"
 msgstr "Documentos"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/site_stats_hero.html
+msgid "IHP-WINS at a glance"
+msgstr "IHP-WINS de un vistazo"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/site_stats_hero.html
+msgid "A growing global hub for water knowledge — real-time figures from our network."
+msgstr "Un núcleo global creciente de conocimiento sobre el agua: cifras en tiempo real desde nuestra red."
+
+#: ckanext/theme_ejemplo/templates/home/snippets/site_stats_hero.html
+msgid "Collaborative programmes"
+msgstr "Programas colaborativos"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/site_stats_hero.html
+msgid "Countries on the network"
+msgstr "Países en la red"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/site_stats_hero.html
+msgid "Open water data"
+msgstr "Datos abiertos del agua"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/site_stats_hero.html
+msgid "Reports & publications"
+msgstr "Informes y publicaciones"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/site_stats_hero.html
+msgid "Contributing partners"
+msgstr "Socios contribuyentes"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/site_stats_hero.html
+msgid "Page views"
+msgstr "Vistas de página"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/site_stats_hero.html
+msgid "Community engagement"
+msgstr "Participación de la comunidad"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/site_stats_hero.html
+msgid "Downloads"
+msgstr "Descargas"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/site_stats_hero.html
+msgid "Data put to work"
+msgstr "Datos puestos en uso"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/site_stats_hero.html
+msgid "Explore initiatives"
+msgstr "Explorar iniciativas"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/site_stats_hero.html
+msgid "Explore member states"
+msgstr "Explorar estados miembros"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/site_stats_hero.html
+msgid "Browse datasets"
+msgstr "Explorar conjuntos de datos"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/site_stats_hero.html
+msgid "Browse documents"
+msgstr "Explorar documentos"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/site_stats_hero.html
+msgid "Browse organizations"
+msgstr "Explorar organizaciones"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/site_stats_hero.html
+msgid "Total page views"
+msgstr "Vistas totales"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/site_stats_hero.html
+msgid "Total downloads"
+msgstr "Descargas totales"

@@ -1995,3 +1995,75 @@ msgstr ""
 #: ckanext/theme_ejemplo/templates/header.html:287
 msgid "Documents"
 msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/site_stats_hero.html
+msgid "IHP-WINS at a glance"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/site_stats_hero.html
+msgid "A growing global hub for water knowledge — real-time figures from our network."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/site_stats_hero.html
+msgid "Collaborative programmes"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/site_stats_hero.html
+msgid "Countries on the network"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/site_stats_hero.html
+msgid "Open water data"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/site_stats_hero.html
+msgid "Reports & publications"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/site_stats_hero.html
+msgid "Contributing partners"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/site_stats_hero.html
+msgid "Page views"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/site_stats_hero.html
+msgid "Community engagement"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/site_stats_hero.html
+msgid "Downloads"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/site_stats_hero.html
+msgid "Data put to work"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/site_stats_hero.html
+msgid "Explore initiatives"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/site_stats_hero.html
+msgid "Explore member states"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/site_stats_hero.html
+msgid "Browse datasets"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/site_stats_hero.html
+msgid "Browse documents"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/site_stats_hero.html
+msgid "Browse organizations"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/site_stats_hero.html
+msgid "Total page views"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/snippets/site_stats_hero.html
+msgid "Total downloads"
+msgstr ""
