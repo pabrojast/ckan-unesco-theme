@@ -18,12 +18,20 @@
       <span class="site-stats-bullet" aria-hidden="true"></span>
       {% trans %}IHP-WINS at a glance{% endtrans %}
     </h2>
-    <p class="site-stats-subtitle">
-      {% trans %}A growing global hub for water knowledge — real-time figures from our network.{% endtrans %}
-    </p>
   </div>
 
   <div class="site-stats-grid">
+    <a class="site-stat-card" href="{{ h.url_for(controller='organization', action='index') }}" aria-label="{{ _('Browse organizations') }}">
+      <div class="site-stat-icon" aria-hidden="true">
+        <i class="fa fa-users"></i>
+      </div>
+      <div class="site-stat-body">
+        <span class="site-stat-value" data-count-to="{{ organization_count }}">0</span>
+        <span class="site-stat-label">{% trans %}Organizations{% endtrans %}</span>
+        <span class="site-stat-meta">{% trans %}Contributing partners{% endtrans %}</span>
+      </div>
+    </a>
+
     <a class="site-stat-card site-stat-card--primary" href="{{ h.url_for('/initiatives') }}" aria-label="{{ _('Explore initiatives') }}">
       <div class="site-stat-icon" aria-hidden="true">
         <i class="fa fa-flag"></i>
@@ -65,17 +73,6 @@
         <span class="site-stat-value" data-count-to="{{ document_count }}">0</span>
         <span class="site-stat-label">{% trans %}Documents{% endtrans %}</span>
         <span class="site-stat-meta">{% trans %}Reports & publications{% endtrans %}</span>
-      </div>
-    </a>
-
-    <a class="site-stat-card" href="{{ h.url_for(controller='organization', action='index') }}" aria-label="{{ _('Browse organizations') }}">
-      <div class="site-stat-icon" aria-hidden="true">
-        <i class="fa fa-users"></i>
-      </div>
-      <div class="site-stat-body">
-        <span class="site-stat-value" data-count-to="{{ organization_count }}">0</span>
-        <span class="site-stat-label">{% trans %}Organizations{% endtrans %}</span>
-        <span class="site-stat-meta">{% trans %}Contributing partners{% endtrans %}</span>
       </div>
     </a>
 
@@ -130,9 +127,8 @@
   .site-stats-header {
     display: flex;
     align-items: center;
-    justify-content: space-between;
+    justify-content: center;
     gap: 1rem;
-    flex-wrap: wrap;
     margin-bottom: 1rem;
     padding: 0 0.25rem;
   }
@@ -146,7 +142,7 @@
     margin: 0;
     color: var(--unesco-blue-dark, #005a9e);
     font-weight: 700;
-    letter-spacing: 0.01em;
+    letter-spacing: 0.04em;
     text-transform: uppercase;
   }
 
@@ -157,15 +153,6 @@
     background: var(--unesco-blue, #0069B4);
     box-shadow: 0 0 0 4px rgba(0, 105, 180, 0.18);
     flex-shrink: 0;
-  }
-
-  .site-stats-subtitle {
-    margin: 0;
-    color: var(--text-secondary, #6b7785);
-    font-size: 0.9rem;
-    line-height: 1.5;
-    flex: 1 1 320px;
-    text-align: right;
   }
 
   .site-stats-grid {
@@ -325,18 +312,11 @@
       margin-bottom: 0.75rem;
     }
     .site-stats-header {
-      flex-direction: column;
-      align-items: flex-start;
-      gap: 0.35rem;
-      text-align: left;
+      justify-content: center;
+      text-align: center;
     }
     .site-stats-title {
       font-size: 0.95rem;
-    }
-    .site-stats-subtitle {
-      font-size: 0.85rem;
-      text-align: left;
-      flex: 1 1 auto;
     }
     .site-stats-grid {
       grid-template-columns: repeat(2, 1fr);
