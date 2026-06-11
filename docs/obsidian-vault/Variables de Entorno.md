@@ -12,7 +12,7 @@ Estas claves se definen en el archivo de configuración de CKAN (`ckan.ini`) y s
 
 | Clave | Default | Descripción |
 |---|---|---|
-| `ckanext.theme_ejemplo.courses_cache_ttl` | `600` (10 min) | TTL del caché de cursos UNESCO Open Learning |
+| `ckanext.theme_ejemplo.courses_cache_ttl` | `600` (10 min) | TTL del micro-caché en memoria de la lectura de cursos desde BD (helper `get_latest_courses`) |
 | `ckanext.theme_ejemplo.groups_cache_ttl` | `300` (5 min) | TTL del caché de estados miembros e iniciativas |
 | `ckanext.theme_ejemplo.home_cache_ttl` | `300` (5 min) | TTL del caché de datasets destacados y estadísticas del sitio |
 | `ckanext.theme_ejemplo.recently_added_cache_ttl` | `300` (5 min) | TTL del caché de datasets/documentos recientes |
@@ -33,6 +33,17 @@ Estas claves se definen en el archivo de configuración de CKAN (`ckan.ini`) y s
 
 > [!tip]
 > Para desactivar puntualmente el caché en una request (debug), añade `?_nocache=1` o el header `Cache-Control: no-cache`. Las respuestas servidas/guardadas exponen `X-Anon-Cache: HIT|MISS`.
+
+### Open Learning (cursos curados)
+
+Ver [[Open Learning]] para el flujo completo de sincronización y curación.
+
+| Clave | Default | Descripción |
+|---|---|---|
+| `ckanext.theme_ejemplo.openlearning_search_terms` | `water` | Términos de búsqueda contra la API (CSV, ej. `water,hydrology`) |
+| `ckanext.theme_ejemplo.openlearning_sync_ttl` | `21600` (6 h) | TTL del sync lazy; `0` desactiva el sync automático (queda solo CLI/botón admin) |
+| `ckanext.theme_ejemplo.openlearning_max_pages` | `10` | Tope de páginas a seguir por término de búsqueda |
+| `ckanext.theme_ejemplo.openlearning_page_size` | `50` | `page_size` enviado a la API |
 
 ### Funcionalidad
 
@@ -69,6 +80,12 @@ ckanext.theme_ejemplo.home_cache_ttl = 300
 ckanext.theme_ejemplo.recently_added_cache_ttl = 300
 ckanext.theme_ejemplo.tracking_cache_ttl = 300
 ckanext.theme_ejemplo.index_followers = false
+
+# Cursos UNESCO Open Learning (caché curada)
+ckanext.theme_ejemplo.openlearning_search_terms = water
+ckanext.theme_ejemplo.openlearning_sync_ttl = 21600
+ckanext.theme_ejemplo.openlearning_max_pages = 10
+ckanext.theme_ejemplo.openlearning_page_size = 50
 
 # Caché de respuestas anónimas (mitiga spider trap)
 ckanext.theme_ejemplo.anon_cache_enabled = true

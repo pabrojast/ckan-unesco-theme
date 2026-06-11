@@ -73,7 +73,7 @@ python setup.py compile_catalog
 ckan -c /etc/ckan/default/ckan.ini db init
 
 # Las tablas custom del plugin se crean automáticamente al iniciar CKAN
-# (MembershipRequest, FeaturedPublication, BugTicket, PortalCard, IhpixContent, IhpixActivity, IhpixCountrySummary)
+# (MembershipRequest, FeaturedPublication, BugTicket, PortalCard, IhpixContent, IhpixActivity, IhpixCountrySummary, InitiativeRequest, OpenLearningCourse)
 ```
 
 ---
@@ -98,6 +98,20 @@ cd ckanext/theme_ejemplo && python scripts/generate_seed.py
 ```
 
 > [!warning] Sin `--append`, el comando elimina actividades con `original_id` y todos los country summaries antes de cargar.
+
+---
+
+## Open Learning: sincronización de cursos
+
+```bash
+# Sincronizar la caché curada de cursos con la API de Open Learning
+ckan -c /etc/ckan/default/ckan.ini openlearning sync --force
+
+# Cron sugerido en producción (cada 6 horas)
+# 0 */6 * * * ckan -c /etc/ckan/default/ckan.ini openlearning sync --force
+```
+
+Ver [[Open Learning]] para el flujo de curación completo.
 
 ---
 

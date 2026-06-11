@@ -299,3 +299,21 @@ def initiative_request_count(context, data_dict):
     if not context.get('auth_user_obj'):
         return {'success': False}
     return {'success': True}
+
+
+# ── Open Learning Course Auth ────────────────────────────────────────────────
+
+def open_learning_course_list(context, data_dict):
+    return _sysadmin_only(context, data_dict)
+
+
+def open_learning_course_set_status(context, data_dict):
+    return _sysadmin_only(context, data_dict)
+
+
+def open_learning_course_set_type(context, data_dict):
+    return _sysadmin_only(context, data_dict)
+
+
+def open_learning_sync(context, data_dict):
+    return _sysadmin_only(context, data_dict)

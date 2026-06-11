@@ -1,0 +1,54 @@
+{#
+  Tarjeta de curso UNESCO Open Learning (caché curada).
+
+  course - dict de OpenLearningCourse.as_dict():
+    name, org, short_description, image_url, course_url,
+    start_display, course_type ('permanent' | 'scheduled')
+#}
+<div class="col-small">
+    <div class="cardsmall cardsmall-enhanced cardsmall-height-fixed cardsmall-cta cardsmall-hero content-wrapper-enhanced hover-lift">
+        {% if course.image_url %}
+        <img class="cardsmall-img-enhanced image-style-cardsmall-1-column" src="{{ course.image_url }}" width="289" height="424" alt="{{ course.name }}" loading="lazy">
+        {% else %}
+        <img class="cardsmall-img-enhanced image-style-cardsmall-1-column" src="/Landing_page/Content/04IHP-OPEN.jpg" width="289" height="424" alt="{{ course.name }}" loading="lazy">
+        {% endif %}
+        <div class="cardsmall-body-enhanced content-body-enhanced">
+            <p class="text-muted-enhanced" style="margin-bottom: 0.5rem; font-size: 0.9rem;">{{ course.org }}</p>
+            <div class="cardsmall-title-enhanced">
+                <a href="{{ course.course_url }}" title="{{ course.name }}" target="_blank">{{ course.name }}</a>
+            </div>
+            <div class="cardsmall-text-enhanced">
+                <div class="text-content">
+                    {% if course.course_type == 'scheduled' and course.start_display %}
+                        <p style="margin-bottom: 0.5rem;">
+                            <i class="fa fa-calendar text-unesco-blue"></i>
+                            <strong>{% trans %}Start:{% endtrans %}</strong> {{ course.start_display }}
+                        </p>
+                    {% elif course.course_type == 'permanent' %}
+                        <p style="margin-bottom: 0.5rem;">
+                            <i class="fa fa-clock-o text-unesco-blue"></i>
+                            <strong>{% trans %}Self-paced{% endtrans %}</strong>
+                        </p>
+                    {% endif %}
+                    {% if course.short_description and course.short_description|length > 150 %}
+                        <div class="text-preview">{{ course.short_description[:150] }}...</div>
+                        <div class="text-full">{{ course.short_description }}</div>
+                        <button type="button" class="read-more-btn" onclick="toggleReadMore(this)">
+                            <i class="fa fa-plus"></i>
+                            <span class="read-more-text">{{ _("Read more") }}</span>
+                        </button>
+                    {% elif course.short_description %}
+                        <p>{{ course.short_description }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="content-footer-enhanced">
+            <div class="field field--name-field-link field--type-link field--label-hidden field__item">
+                <a href="{{ course.course_url }}" class="btn btn-primary" target="_blank">
+                    {{ _("View Course") }}
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

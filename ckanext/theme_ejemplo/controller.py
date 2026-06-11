@@ -3495,3 +3495,135 @@ class MyLogica():
                 kpis=C.KPIS,
                 statuses=['draft', 'pending', 'published', 'rejected'],
             )
+
+        # ── Open Learning Courses (caché curada) ──────────────────────────
+
+        @staticmethod
+        def open_learning_admin():
+            """Panel admin de curación de cursos Open Learning. Solo sysadmin."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('open_learning_course_list', context, {})
+            except toolkit.NotAuthorized:
+                return base.abort(403, _('Not authorized'))
+
+            data = toolkit.get_action('open_learning_course_list')(context, {})
+            extra_vars = {
+                'courses': data.get('results', []),
+                'courses_count': data.get('count', 0),
+                'counts_by_status': data.get('counts_by_status', {}),
+                'last_sync_at': data.get('last_sync_at'),
+            }
+            return base.render('admin/open_learning.html', extra_vars=extra_vars)
+
+        @staticmethod
+        def open_learning_set_status():
+            """AJAX: cambiar el status de curación de un curso."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('open_learning_course_set_status', context, {})
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+
+            course_id = request.form.get('id', '')
+            status = request.form.get('status', '')
+            if not course_id or not status:
+                return jsonify({'success': False, 'error': 'Missing id or status'}), 400
+
+            try:
+                result = toolkit.get_action('open_learning_course_set_status')(
+                    context, {'id': course_id, 'status': status}
+                )
+                return jsonify(result)
+            except toolkit.ObjectNotFound:
+                return jsonify({'success': False, 'error': 'Not found'}), 404
+            except toolkit.ValidationError as e:
+                return jsonify({'success': False, 'error': str(e)}), 400
+            except Exception as e:
+                log.error(f'Error al cambiar status de curso Open Learning: {e}')
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        @staticmethod
+        def open_learning_set_type():
+            """AJAX: corregir el tipo (permanent/scheduled) de un curso."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('open_learning_course_set_type', context, {})
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+
+            course_id = request.form.get('id', '')
+            if not course_id:
+                return jsonify({'success': False, 'error': 'Missing id'}), 400
+
+            data = {'id': course_id}
+            if 'course_type' in request.form:
+                data['course_type'] = request.form['course_type']
+            if 'reset_override' in request.form:
+                data['reset_override'] = request.form['reset_override']
+
+            try:
+                result = toolkit.get_action('open_learning_course_set_type')(
+                    context, data
+                )
+                return jsonify(result)
+            except toolkit.ObjectNotFound:
+                return jsonify({'success': False, 'error': 'Not found'}), 404
+            except toolkit.ValidationError as e:
+                return jsonify({'success': False, 'error': str(e)}), 400
+            except Exception as e:
+                log.error(f'Error al cambiar tipo de curso Open Learning: {e}')
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        @staticmethod
+        def open_learning_sync_now():
+            """AJAX: forzar sincronización con la API de Open Learning."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('open_learning_sync', context, {})
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+
+            try:
+                result = toolkit.get_action('open_learning_sync')(context, {})
+                result['success'] = True
+                return jsonify(result)
+            except Exception as e:
+                log.error(f'Error en sync manual de Open Learning: {e}')
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        @staticmethod
+        def courses():
+            """Página pública de cursos Open Learning, separados por tipo."""
+            from ckanext.theme_ejemplo import openlearning
+            from ckanext.theme_ejemplo.model import OpenLearningCourse
+
+            # Sync lazy: solo dispara si pasó el TTL; nunca rompe el render
+            openlearning.maybe_sync_courses()
+
+            permanent_courses = [
+                course.as_dict()
+                for course in OpenLearningCourse.get_public(
+                    OpenLearningCourse.TYPE_PERMANENT)
+            ]
+            scheduled_courses = [
+                course.as_dict()
+                for course in OpenLearningCourse.get_public(
+                    OpenLearningCourse.TYPE_SCHEDULED)
+            ]
+            return base.render('courses/index.html', extra_vars={
+                'permanent_courses': permanent_courses,
+                'scheduled_courses': scheduled_courses,
+            })

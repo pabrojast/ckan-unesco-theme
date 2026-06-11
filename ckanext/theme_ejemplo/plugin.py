@@ -7,7 +7,6 @@ import ckan.plugins as plugins
 import ckan.plugins.toolkit as toolkit
 from ckan.lib.plugins import DefaultTranslation
 import shapely.geometry
-import requests
 import json
 import ckanext.schemingdcat.utils as utils
 from flask import Blueprint
@@ -24,13 +23,6 @@ import time
 
 # Configurar logging
 log = logging.getLogger(__name__)
-
-# Session reutilizable para requests HTTP
-http_session = requests.Session()
-# Timeout optimizado: (connect_timeout, read_timeout)
-# connect_timeout: tiempo para establecer conexión
-# read_timeout: tiempo para recibir respuesta
-http_session.timeout = (5, 10)  # 5s conexión + 10s respuesta = máximo 15s total
 
 # TTL caches para evitar llamadas repetidas en helpers costosos
 _courses_cache = {'data': None, 'expires': 0}
@@ -374,6 +366,8 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
             membership_model.init_ihpix_country_summary_db()
             # Create initiative_request table if needed
             membership_model.init_initiative_requests_db()
+            # Create open_learning_course table if needed
+            membership_model.init_open_learning_courses_db()
 
         def get_blueprint(self):
             
@@ -745,6 +739,38 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 methods=['GET']
             )
 
+            # Open Learning courses: panel admin de curación + página pública
+            blueprint.add_url_rule(
+                u'/ckan-admin/open-learning',
+                u'open_learning_admin',
+                MyLogica.open_learning_admin,
+                methods=['GET']
+            )
+            blueprint.add_url_rule(
+                u'/ckan-admin/open-learning/set-status',
+                u'open_learning_set_status',
+                MyLogica.open_learning_set_status,
+                methods=['POST']
+            )
+            blueprint.add_url_rule(
+                u'/ckan-admin/open-learning/set-type',
+                u'open_learning_set_type',
+                MyLogica.open_learning_set_type,
+                methods=['POST']
+            )
+            blueprint.add_url_rule(
+                u'/ckan-admin/open-learning/sync',
+                u'open_learning_sync_now',
+                MyLogica.open_learning_sync_now,
+                methods=['POST']
+            )
+            blueprint.add_url_rule(
+                u'/courses',
+                u'courses',
+                MyLogica.courses,
+                methods=['GET']
+            )
+
             # IHP-IX admin panel (sysadmin only)
             blueprint.add_url_rule(
                 u'/ckan-admin/ihpix',
@@ -1031,6 +1057,11 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 'initiative_request_list': custom_actions.initiative_request_list,
                 'initiative_request_process': custom_actions.initiative_request_process,
                 'initiative_request_count': custom_actions.initiative_request_count,
+                # Open Learning courses
+                'open_learning_course_list': custom_actions.open_learning_course_list,
+                'open_learning_course_set_status': custom_actions.open_learning_course_set_status,
+                'open_learning_course_set_type': custom_actions.open_learning_course_set_type,
+                'open_learning_sync': custom_actions.open_learning_sync,
             }
 
         # IAuthFunctions
@@ -1089,11 +1120,16 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 'initiative_request_list': custom_auth.initiative_request_list,
                 'initiative_request_process': custom_auth.initiative_request_process,
                 'initiative_request_count': custom_auth.initiative_request_count,
+                # Open Learning courses
+                'open_learning_course_list': custom_auth.open_learning_course_list,
+                'open_learning_course_set_status': custom_auth.open_learning_course_set_status,
+                'open_learning_course_set_type': custom_auth.open_learning_course_set_type,
+                'open_learning_sync': custom_auth.open_learning_sync,
             }
         
         def get_commands(self):
-            from ckanext.theme_ejemplo.cli import ihpix
-            return [ihpix]
+            from ckanext.theme_ejemplo.cli import ihpix, openlearning
+            return [ihpix, openlearning]
         
         def get_member_states_groups_list(self):
             """Obtiene los grupos de member-states como lista de tuplas (name, display_name).
@@ -1176,12 +1212,12 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 return _initiatives_cache['data'] or []
         
         def get_latest_courses(self):
-            """
-            Mejorado con:
-            - Session reutilizable
-            - Manejo robusto de errores
-            - Cache TTL configurable
-            - Timeout apropiado
+            """Cursos para la home, desde la caché curada en BD.
+
+            La llamada a la API externa vive en openlearning.py (sync lazy
+            con TTL propio). Aquí solo se lee la BD (cursos aprobados y
+            disponibles) con un micro-caché en memoria para no consultar
+            en cada request de la home.
             """
             cache_ttl = _get_cache_ttl('ckanext.theme_ejemplo.courses_cache_ttl', 600)
             now = time.time()
@@ -1189,23 +1225,10 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 return _courses_cache['data']
 
             try:
-                url = 'https://openlearning.unesco.org/api/courses/v1/courses/'
-                params = {'search_term': 'water'}
-
-                response = http_session.get(url, params=params, timeout=5)
-                response.raise_for_status()  # Lanza excepción para status HTTP de error
-
-                courses = response.json().get('results', [])
-                result = courses[:8]  # Limitar a un máximo de 8 cursos
-            except requests.exceptions.Timeout:
-                log.warning("Timeout al obtener cursos de UNESCO")
-                result = _courses_cache['data'] or []
-            except requests.exceptions.RequestException as e:
-                log.warning(f"Error HTTP al obtener cursos de UNESCO: {e}")
-                result = _courses_cache['data'] or []
-            except (ValueError, json.JSONDecodeError) as e:
-                log.warning(f"Error al parsear cursos de UNESCO: {e}")
-                result = _courses_cache['data'] or []
+                from ckanext.theme_ejemplo import openlearning
+                openlearning.maybe_sync_courses()
+                courses = membership_model.OpenLearningCourse.get_public(limit=8)
+                result = [course.as_dict() for course in courses]
             except Exception as e:
                 log.error(f"Error inesperado al obtener cursos: {e}")
                 result = _courses_cache['data'] or []
@@ -1251,16 +1274,8 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 return max(0, toolkit.asint(toolkit.config.get('ckanext.theme_ejemplo.home_cache_ttl', 300)))
             except Exception:
                 return 300
-            except requests.exceptions.RequestException as e:
-                log.error(f"Error al obtener cursos de UNESCO: {e}")
-                return []
-            except json.JSONDecodeError as e:
-                log.error(f"Error al parsear respuesta JSON de UNESCO: {e}")
-                return []
-            except Exception as e:
-                log.error(f"Error inesperado al obtener cursos: {e}")
-                return []
-            
+
+
         def get_featured_datasets(self):
             """Mejorado con mejor manejo de errores y logging"""
             try:

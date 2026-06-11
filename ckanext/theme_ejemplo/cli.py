@@ -199,3 +199,29 @@ def seed_data(json_file, excel_file, append):
         meta.Session.rollback()
         click.echo('Error durante la ingesta, rollback realizado: {}'.format(e))
         raise SystemExit(1)
+
+
+@click.group()
+def openlearning():
+    """Comandos de sincronización de cursos UNESCO Open Learning."""
+    pass
+
+
+@openlearning.command(name='sync')
+@click.option('--force', is_flag=True, default=False,
+              help='Ignorar el TTL y sincronizar siempre')
+def openlearning_sync(force):
+    """Sincronizar la caché curada de cursos con la API de Open Learning."""
+    from ckanext.theme_ejemplo.model import init_open_learning_courses_db
+    from ckanext.theme_ejemplo import openlearning as ol
+
+    init_open_learning_courses_db()
+    summary = ol.sync_courses(force=force)
+    click.echo(
+        'Sync Open Learning: {created} nuevos, {updated} actualizados, '
+        '{marked_unavailable} no disponibles '
+        '(api={total_api}, completo={full_success})'.format(**summary)
+    )
+    if not summary['full_success']:
+        click.echo('Aviso: el fetch fue parcial; no se marcaron cursos '
+                   'como no disponibles.')

@@ -1,0 +1,367 @@
+{% extends "page.html" %}
+
+{% block title %}
+{{ _('Open Learning Courses') }} - {{ _('Curation') }} - {{ super() }}
+{% endblock %}
+
+{% block content %}
+<div class="homepage layout-1">
+    <div id="content" class="container">
+      {{ self.flash() }}
+    </div>
+
+    {% block primary_content %}
+    <div class="main">
+        <div class="container">
+            <!-- Breadcrumb -->
+            <div class="toolbar" role="navigation" aria-label="Breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="home"><a href="{{ h.url_for('/') }}"><i class="fa fa-home"></i><span> {{ _('Home') }}</span></a></li>
+                    <li><a href="{{ h.url_for(controller='admin', action='index') }}">{{ _('Admin') }}</a></li>
+                    <li class="active">{{ _('Open Learning Courses') }}</li>
+                </ol>
+            </div>
+
+            <!-- Header Banner -->
+            <section class="module module-narrow module-shallow">
+              <div class="pcard-banner">
+                <div class="pcard-banner-bg" style="background-image: url('/Landing_page/Content/04IHP-OPEN.jpg');"></div>
+                <div class="pcard-banner-overlay"></div>
+                <div class="pcard-banner-content">
+                  <h1><i class="fa fa-graduation-cap"></i> {{ _('Open Learning Courses') }}</h1>
+                  <p>{{ _('Curate which courses from the UNESCO Open Learning platform are shown on the site. New courses arrive as pending and are only published once approved.') }}</p>
+                  <a href="{{ h.url_for('theme_ejemplo.courses') }}" class="btn btn-outline-light btn-sm" target="_blank" style="margin-top: 8px; border: 2px solid rgba(255,255,255,0.7); color: white; border-radius: 20px; padding: 6px 18px;">
+                    <i class="fa fa-external-link"></i> {{ _('View public page') }}
+                  </a>
+                </div>
+              </div>
+            </section>
+        </div>
+
+        <div class="container">
+          <div class="row">
+            <div class="col-md-12">
+
+              <!-- Toolbar: counts, filter, sync -->
+              <div class="olc-toolbar">
+                <div class="row">
+                  <div class="col-md-8">
+                    <div class="btn-group olc-filter-group" role="group">
+                      <button type="button" class="btn btn-default olc-filter-btn active" data-filter="all">
+                        {{ _('All') }} <span class="olc-badge olc-badge-blue">{{ courses_count }}</span>
+                      </button>
+                      <button type="button" class="btn btn-default olc-filter-btn" data-filter="pending">
+                        {{ _('Pending') }} <span class="olc-badge olc-badge-yellow">{{ counts_by_status.get('pending', 0) }}</span>
+                      </button>
+                      <button type="button" class="btn btn-default olc-filter-btn" data-filter="approved">
+                        {{ _('Approved') }} <span class="olc-badge olc-badge-green">{{ counts_by_status.get('approved', 0) }}</span>
+                      </button>
+                      <button type="button" class="btn btn-default olc-filter-btn" data-filter="hidden">
+                        {{ _('Hidden') }} <span class="olc-badge olc-badge-gray">{{ counts_by_status.get('hidden', 0) }}</span>
+                      </button>
+                      <button type="button" class="btn btn-default olc-filter-btn" data-filter="unavailable">
+                        {{ _('No longer in API') }}
+                      </button>
+                    </div>
+                  </div>
+                  <div class="col-md-4 text-right">
+                    {% if last_sync_at %}
+                    <span class="text-muted small" style="margin-right: 10px;">
+                      {{ _('Last sync:') }} {{ last_sync_at[:16].replace('T', ' ') }} UTC
+                    </span>
+                    {% endif %}
+                    <button type="button" id="olc-sync-btn" class="btn btn-primary">
+                      <i class="fa fa-refresh"></i> {{ _('Sync now') }}
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Course list -->
+              <div id="olc-list">
+                {% if courses %}
+                  {% for course in courses %}
+                  <div class="olc-card{% if not course.is_available %} olc-unavailable{% endif %}"
+                       data-id="{{ course.id }}"
+                       data-status="{{ course.status }}"
+                       data-available="{{ 'true' if course.is_available else 'false' }}">
+                    <article class="module module-narrow">
+                      <div class="module-content" style="padding: 1.5rem 2rem;">
+                        <div class="row">
+                          <div class="col-md-2 col-sm-3">
+                            {% if course.image_url %}
+                            <img src="{{ course.image_url }}" class="olc-card-img" alt="{{ course.name }}" loading="lazy" />
+                            {% else %}
+                            <div class="olc-card-img-placeholder"><i class="fa fa-graduation-cap fa-2x"></i></div>
+                            {% endif %}
+                          </div>
+                          <div class="col-md-6 col-sm-5">
+                            <h3 class="olc-card-title">
+                              <a href="{{ course.course_url }}" target="_blank">{{ course.name }}</a>
+                            </h3>
+                            <p class="olc-card-org"><i class="fa fa-university"></i> {{ course.org }}</p>
+                            <p class="olc-card-status">
+                              {% if course.status == 'pending' %}
+                              <span class="label label-warning">{{ _('Pending') }}</span>
+                              {% elif course.status == 'approved' %}
+                              <span class="label label-success">{{ _('Approved') }}</span>
+                              {% else %}
+                              <span class="label label-default">{{ _('Hidden') }}</span>
+                              {% endif %}
+                              {% if not course.is_available %}
+                              <span class="label label-danger">{{ _('No longer in API') }}</span>
+                              {% endif %}
+                              {% if course.start_display %}
+                              <span class="text-muted small" style="margin-left: 8px;">
+                                <i class="fa fa-calendar"></i> {{ _('Start:') }} {{ course.start_display }}
+                              </span>
+                              {% endif %}
+                            </p>
+                            {% if course.short_description %}
+                            <p class="olc-card-desc">{{ course.short_description[:160] }}{% if course.short_description|length > 160 %}...{% endif %}</p>
+                            {% endif %}
+                          </div>
+                          <div class="col-md-4 col-sm-4">
+                            <div class="olc-card-actions">
+                              <div class="olc-type-control">
+                                <label class="small text-muted" style="margin: 0 6px 0 0;">{{ _('Type') }}</label>
+                                <select class="form-control input-sm olc-type-select" data-id="{{ course.id }}">
+                                  <option value="permanent" {% if course.course_type == 'permanent' %}selected{% endif %}>{{ _('Self-paced') }}</option>
+                                  <option value="scheduled" {% if course.course_type == 'scheduled' %}selected{% endif %}>{{ _('Scheduled') }}</option>
+                                </select>
+                                {% if course.course_type_override %}
+                                <span class="label label-info" title="{{ _('Type set manually; sync will not change it') }}">{{ _('Manual') }}</span>
+                                {% endif %}
+                              </div>
+                              <div class="olc-status-buttons">
+                                {% if course.status != 'approved' %}
+                                <button class="btn btn-success btn-sm olc-status-btn" data-id="{{ course.id }}" data-status="approved">
+                                  <i class="fa fa-check"></i> {{ _('Approve') }}
+                                </button>
+                                {% endif %}
+                                {% if course.status != 'hidden' %}
+                                <button class="btn btn-warning btn-sm olc-status-btn" data-id="{{ course.id }}" data-status="hidden">
+                                  <i class="fa fa-eye-slash"></i> {{ _('Hide') }}
+                                </button>
+                                {% endif %}
+                                {% if course.status != 'pending' %}
+                                <button class="btn btn-default btn-sm olc-status-btn" data-id="{{ course.id }}" data-status="pending">
+                                  <i class="fa fa-undo"></i> {{ _('Mark pending') }}
+                                </button>
+                                {% endif %}
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </article>
+                  </div>
+                  {% endfor %}
+                {% else %}
+                  <div class="olc-empty-state">
+                    <section class="module module-narrow">
+                      <div class="module-content text-center" style="padding: 4rem 2.5rem;">
+                        <i class="fa fa-graduation-cap fa-4x" style="color: #005A9C; opacity: 0.7; margin-bottom: 1.5rem;"></i>
+                        <h3>{{ _('No courses yet') }}</h3>
+                        <p class="text-muted">{{ _('Click "Sync now" to fetch courses from the Open Learning API.') }}</p>
+                      </div>
+                    </section>
+                  </div>
+                {% endif %}
+              </div>
+
+            </div>
+          </div>
+        </div>
+
+    </div>
+    {% endblock %}
+</div>
+
+<!-- CSS -->
+<style>
+.pcard-banner {
+  position: relative; height: 200px; overflow: hidden;
+  border-radius: 16px; margin-bottom: 2.5rem;
+  box-shadow: 0 8px 32px rgba(0, 114, 188, 0.16);
+  display: flex; align-items: center;
+}
+.pcard-banner-bg {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  background-size: cover; background-position: center; z-index: 1;
+}
+.pcard-banner-overlay {
+  position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+  background: linear-gradient(to right, rgba(0, 105, 180, 0.9) 0%, rgba(0, 105, 180, 0.7) 50%, rgba(0, 105, 180, 0.4) 100%);
+  z-index: 2;
+}
+.pcard-banner-content { position: relative; z-index: 3; padding: 2rem 2.5rem; color: white; width: 100%; }
+.pcard-banner-content h1 {
+  font-size: 2.2rem; font-weight: 700; margin-bottom: 0.8rem;
+  text-shadow: 2px 2px 8px rgba(0,0,0,0.3); color: white;
+}
+.pcard-banner-content h1 .fa { margin-right: 10px; }
+.pcard-banner .pcard-banner-content p {
+  font-size: 1.05rem; margin-bottom: 0; opacity: 0.95;
+  text-shadow: 1px 1px 4px rgba(0,0,0,0.3); font-weight: 300;
+  color: #fff !important; max-width: 90%;
+}
+.toolbar { margin-bottom: 2rem; padding: 1rem 0; }
+
+.olc-toolbar { margin-bottom: 1.5rem; }
+.olc-filter-btn { border-radius: 20px !important; margin-right: 6px; font-weight: 600; }
+.olc-filter-btn.active { background: #E3F2FD; border-color: #0072BC; color: #0072BC; }
+.olc-badge {
+  display: inline-block; padding: 1px 8px; border-radius: 12px;
+  font-size: 0.8rem; font-weight: 700; margin-left: 4px;
+}
+.olc-badge-blue { background: #E3F2FD; color: #0072BC; }
+.olc-badge-yellow { background: #fff3cd; color: #856404; }
+.olc-badge-green { background: #d4edda; color: #155724; }
+.olc-badge-gray { background: #e9ecef; color: #495057; }
+
+#olc-sync-btn { border-radius: 20px; font-weight: 600; }
+
+.olc-card { margin-bottom: 1rem; }
+.olc-card .module {
+  border-radius: 12px; border: 1px solid #e9ecef;
+  box-shadow: 0 2px 8px rgba(0, 114, 188, 0.06); margin: 0;
+}
+.olc-card[data-status='pending'] .module-content { border-left: 4px solid #f0c75e; }
+.olc-card[data-status='approved'] .module-content { border-left: 4px solid #28a745; }
+.olc-card[data-status='hidden'] .module-content { border-left: 4px solid #adb5bd; }
+.olc-unavailable { opacity: 0.6; }
+.olc-unavailable:hover { opacity: 0.9; }
+
+.olc-card-img {
+  width: 100%; height: 90px; object-fit: cover;
+  border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.olc-card-img-placeholder {
+  width: 100%; height: 90px; border-radius: 10px; background: #f8f9fa;
+  display: flex; align-items: center; justify-content: center; color: #adb5bd;
+}
+.olc-card-title { font-size: 1.05rem; font-weight: 700; margin: 0 0 4px 0; }
+.olc-card-title a { color: #2c3e50; }
+.olc-card-title a:hover { color: #0072BC; }
+.olc-card-org { color: #6c757d; font-size: 0.85rem; margin-bottom: 4px; }
+.olc-card-org .fa { margin-right: 4px; }
+.olc-card-status { margin-bottom: 6px; }
+.olc-card-desc { color: #6c757d; font-size: 0.9rem; margin-bottom: 0; }
+
+.olc-card-actions {
+  display: flex; flex-direction: column; gap: 10px;
+  align-items: flex-end; justify-content: center; height: 100%;
+}
+.olc-type-control { display: flex; align-items: center; gap: 6px; }
+.olc-type-control select { width: auto; display: inline-block; border-radius: 8px; }
+.olc-status-buttons { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+.olc-status-buttons .btn { border-radius: 16px; font-weight: 600; font-size: 0.8rem; }
+
+@media (max-width: 768px) {
+  .pcard-banner { height: 160px; }
+  .pcard-banner-content h1 { font-size: 1.7rem; }
+  .olc-card-actions { align-items: flex-start; margin-top: 10px; }
+}
+</style>
+
+<!-- JavaScript -->
+<script>
+(function() {
+  var URLS = {
+    setStatus: '{{ h.url_for("theme_ejemplo.open_learning_set_status") }}',
+    setType: '{{ h.url_for("theme_ejemplo.open_learning_set_type") }}',
+    sync: '{{ h.url_for("theme_ejemplo.open_learning_sync_now") }}'
+  };
+
+  // ── Filtro client-side por status / disponibilidad ──
+  document.querySelectorAll('.olc-filter-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      document.querySelectorAll('.olc-filter-btn').forEach(function(b) { b.classList.remove('active'); });
+      btn.classList.add('active');
+      var filter = btn.getAttribute('data-filter');
+      document.querySelectorAll('.olc-card').forEach(function(card) {
+        var show;
+        if (filter === 'all') {
+          show = true;
+        } else if (filter === 'unavailable') {
+          show = card.getAttribute('data-available') === 'false';
+        } else {
+          show = card.getAttribute('data-status') === filter;
+        }
+        card.style.display = show ? '' : 'none';
+      });
+    });
+  });
+
+  // ── Cambiar status (approve / hide / re-pend) ──
+  document.querySelectorAll('.olc-status-btn').forEach(function(btn) {
+    btn.addEventListener('click', function() {
+      var formData = new FormData();
+      formData.append('id', btn.getAttribute('data-id'));
+      formData.append('status', btn.getAttribute('data-status'));
+      btn.disabled = true;
+      btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i>';
+      fetch(URLS.setStatus, { method: 'POST', body: formData })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (data.id) { window.location.reload(); }
+          else {
+            btn.disabled = false;
+            alert('Error: ' + (data.error || ''));
+          }
+        })
+        .catch(function(e) { btn.disabled = false; alert('Error: ' + e); });
+    });
+  });
+
+  // ── Cambiar tipo (permanent / scheduled) ──
+  document.querySelectorAll('.olc-type-select').forEach(function(sel) {
+    sel.addEventListener('change', function() {
+      var formData = new FormData();
+      formData.append('id', sel.getAttribute('data-id'));
+      formData.append('course_type', sel.value);
+      sel.disabled = true;
+      fetch(URLS.setType, { method: 'POST', body: formData })
+        .then(function(r) { return r.json(); })
+        .then(function(data) {
+          if (data.id) { window.location.reload(); }
+          else {
+            sel.disabled = false;
+            alert('Error: ' + (data.error || ''));
+          }
+        })
+        .catch(function(e) { sel.disabled = false; alert('Error: ' + e); });
+    });
+  });
+
+  // ── Sync manual ──
+  var syncBtn = document.getElementById('olc-sync-btn');
+  syncBtn.addEventListener('click', function() {
+    syncBtn.disabled = true;
+    syncBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> {{ _("Syncing...") }}';
+    fetch(URLS.sync, { method: 'POST' })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.success) {
+          alert('{{ _("Sync complete:") }} '
+            + data.created + ' {{ _("new") }}, '
+            + data.updated + ' {{ _("updated") }}, '
+            + data.marked_unavailable + ' {{ _("no longer available") }}'
+            + (data.full_success ? '' : '\n{{ _("Warning: partial fetch; nothing was marked unavailable.") }}'));
+          window.location.reload();
+        } else {
+          syncBtn.disabled = false;
+          syncBtn.innerHTML = '<i class="fa fa-refresh"></i> {{ _("Sync now") }}';
+          alert('Error: ' + (data.error || ''));
+        }
+      })
+      .catch(function(e) {
+        syncBtn.disabled = false;
+        syncBtn.innerHTML = '<i class="fa fa-refresh"></i> {{ _("Sync now") }}';
+        alert('Error: ' + e);
+      });
+  });
+})();
+</script>
+{% endblock %}

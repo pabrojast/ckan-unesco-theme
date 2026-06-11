@@ -22,12 +22,14 @@
 - `IMiddleware` — `make_middleware()`: registra los hooks Flask del [[Modulos#cache.py|caché de respuestas anónimas]]
 
 ### Caches definidos a nivel de módulo
-- `_courses_cache` — cursos UNESCO
+- `_courses_cache` — cursos UNESCO (micro-caché de la lectura de BD; la API se consume en [[Modulos#openlearning.py|openlearning.py]])
 - `_member_states_cache` — estados miembros
 - `_initiatives_cache` — iniciativas
 - `_recently_added_datasets_cache` — datasets recientes
 - `_recently_added_documents_cache` — documentos recientes
-- `http_session` — `requests.Session()` compartida
+
+> [!note]
+> La antigua `http_session` compartida de plugin.py se eliminó (2026-06): la única llamada HTTP externa (cursos) vive ahora en [[Modulos#openlearning.py|openlearning.py]] con sesión propia.
 
 ### Métodos de instancia con @lru_cache
 - `_get_featured_datasets_filtered_cached(cache_buster)` — datasets destacados filtrados
@@ -140,6 +142,12 @@ Helpers: `is_valid_*`, `normalize_bool`, `filter_valid`.
 - `ihpix_activity_geojson` — GeoJSON de actividades geolocalizadas via coordenadas de país. Filtros: `priority_area`, `output`, `biennium`, `country`, `flagship`, `region`
 - `ihpix_country_summary_list` — Datos tabulares de países. Filtro: `region`
 
+**Cursos Open Learning** (4) — ver [[Open Learning]]:
+- `open_learning_course_list` — listado completo para el panel admin, con counts por status y fecha de último sync
+- `open_learning_course_set_status` — cambia status de curación (`pending`/`approved`/`hidden`)
+- `open_learning_course_set_type` — corrige el tipo (`permanent`/`scheduled`) con override manual; `reset_override` vuelve a la auto-detección
+- `open_learning_sync` — fuerza sincronización con la API
+
 ---
 
 ## helpers.py (~661 líneas)
@@ -228,6 +236,11 @@ Helpers: `is_valid_*`, `normalize_bool`, `filter_valid`.
 - Métodos: `get()`, `get_pending()`, `get_all(status)`, `get_pending_for_user()`, `count_pending()`, `as_dict()`
 - Ver flujo en [[Solicitudes de Iniciativas]]
 
+**OpenLearningCourse**: Caché persistente curada de cursos UNESCO Open Learning — ver [[Open Learning]]
+- Campos: id, course_id (unique, de la API), name, org, short_description, image_url, start, end, start_display, pacing, raw_json, course_type (permanent/scheduled), course_type_override, status (pending/approved/hidden), is_available, display_order, first_seen_at, last_seen_at, created_at, updated_at
+- Índice compuesto `(status, is_available)` para la query pública
+- Métodos: `get()`, `get_by_course_id()`, `get_all()` (pendientes primero), `get_public(course_type, limit)`, `last_sync_at()`, `counts_by_status()`, `as_dict()` (incluye `course_url` calculada)
+
 ### Inicialización
 Cada modelo tiene `init_*_db()` y `define_*_table()`. Son idempotentes (verifican schema con inspector). Incluyen lógica de migración para agregar columnas nuevas a tablas existentes (e.g., `_migrate_ihpix_activities()`).
 
@@ -241,7 +254,7 @@ Cada modelo tiene `init_*_db()` y `define_*_table()`. Son idempotentes (verifica
 
 | Patrón | Acciones |
 |---|---|
-| **Sysadmin only** | featured_dataset_*, featured_publication_*, portal_card_*, admin_user_*, ihpix_content_*, ihpix_activity_create/update/delete, ihpix_report_review, bug_ticket_api_list |
+| **Sysadmin only** | featured_dataset_*, featured_publication_*, portal_card_*, admin_user_*, ihpix_content_*, ihpix_activity_create/update/delete, ihpix_report_review, bug_ticket_api_list, open_learning_* |
 | **Autenticado** | membership_request_create, membership_request_count, initiative_request_create, initiative_request_count, bug_ticket_create/list/show/update, ihpix_report_submit |
 | **Admin de org o sysadmin** | membership_request_list, membership_request_process |
 | **Sysadmin only (iniciativas)** | initiative_request_list, initiative_request_process |
@@ -311,7 +324,7 @@ Cada modelo tiene `init_*_db()` y `define_*_table()`. Son idempotentes (verifica
 
 ## cli.py
 
-**Rol**: Comandos CLI para gestión de datos IHP-IX. Registrado vía interfaz `IClick`.
+**Rol**: Comandos CLI del plugin. Registrado vía interfaz `IClick` (grupos `ihpix` y `openlearning`).
 
 ### Grupo `ihpix`
 
@@ -322,11 +335,36 @@ Cada modelo tiene `init_*_db()` y `define_*_table()`. Son idempotentes (verifica
 | `ckan ihpix seed-data` (sin args) | Busca `data/ihpix_seed_data.json` por defecto |
 | `--append` | Flag para agregar sin borrar datos existentes |
 
+### Grupo `openlearning`
+
+| Comando | Descripción |
+|---|---|
+| `ckan openlearning sync` | Sincroniza la caché curada de cursos con la API de Open Learning |
+| `--force` | Ignora el TTL (hoy el comando siempre sincroniza; el TTL aplica al sync lazy) |
+
+Cron sugerido en producción: `0 */6 * * * ckan -c /etc/ckan/default/ckan.ini openlearning sync --force`
+
 ### Flujo interno
 1. Inicializa tablas (`init_ihpix_activities_db()`, `init_ihpix_country_summary_db()`)
 2. Si `--from-excel`: llama `generate_seed()` de `scripts/generate_seed.py`
 3. Sin `--append`: elimina actividades con `original_id` y todos los country summaries
 4. Itera sobre `activities` y `country_summaries` del JSON, crea registros en DB
+
+---
+
+## openlearning.py
+
+**Rol**: Sincronización de cursos de UNESCO Open Learning hacia la caché persistente curada (`open_learning_course`). Ver flujo completo en [[Open Learning]].
+
+### Funciones principales
+- `_fetch_all_courses(search_terms)` — fetch paginado por término (sigue `pagination.next`, salta cursos `hidden`, deduplica por `course_id`). Devuelve `(courses_by_id, full_success)`
+- `_detect_course_type(api_course)` — `pacing == 'self'` → permanent; `'instructor'` → scheduled; fallback por `start_type`/`end`
+- `sync_courses(force)` — upsert transaccional que preserva la curación (nunca toca `status` ni `display_order`); marca `is_available=False` **solo si el fetch fue completo**
+- `maybe_sync_courses()` — gatillo lazy con TTL contra `max(last_seen_at)` en BD + cooldown de 5 min en memoria; nunca lanza excepción
+
+### Notas
+- Sesión `requests.Session` propia (timeout `(5, 10)`) para evitar import circular con plugin.py
+- API: `https://openlearning.unesco.org/api/courses/v1/courses/` (Open edX courses v1)
 
 ---
 

@@ -2814,3 +2814,110 @@ def initiative_request_count(context, data_dict):
         return {'count': 0}
     init_initiative_requests_db()
     return {'count': InitiativeRequest.count_pending()}
+
+
+# ── Open Learning Course Actions ─────────────────────────────────────────────
+
+from ckanext.theme_ejemplo.model import (
+    OpenLearningCourse, init_open_learning_courses_db,
+    VALID_COURSE_STATUSES, VALID_COURSE_TYPES,
+)
+
+
+@toolkit.side_effect_free
+def open_learning_course_list(context, data_dict):
+    """Lista los cursos de la caché curada. Solo sysadmin.
+
+    Filtros opcionales: status, course_type, is_available.
+    """
+    toolkit.check_access('open_learning_course_list', context, data_dict)
+    init_open_learning_courses_db()
+
+    courses = OpenLearningCourse.get_all()
+
+    status = data_dict.get('status')
+    if status:
+        courses = [c for c in courses if c.status == status]
+    course_type = data_dict.get('course_type')
+    if course_type:
+        courses = [c for c in courses if c.course_type == course_type]
+    if 'is_available' in data_dict:
+        val = data_dict['is_available']
+        if isinstance(val, str):
+            val = val.lower() in ('true', '1', 'yes', 'on')
+        courses = [c for c in courses if bool(c.is_available) == val]
+
+    last_sync = OpenLearningCourse.last_sync_at()
+    return {
+        'results': [c.as_dict() for c in courses],
+        'count': len(courses),
+        'counts_by_status': OpenLearningCourse.counts_by_status(),
+        'last_sync_at': last_sync.isoformat() if last_sync else None,
+    }
+
+
+def open_learning_course_set_status(context, data_dict):
+    """Cambia el status de curación de un curso. Solo sysadmin."""
+    toolkit.check_access('open_learning_course_set_status', context, data_dict)
+    init_open_learning_courses_db()
+
+    course_id = toolkit.get_or_bust(data_dict, 'id')
+    status = toolkit.get_or_bust(data_dict, 'status')
+    if status not in VALID_COURSE_STATUSES:
+        raise toolkit.ValidationError({'status': 'Invalid status'})
+
+    course = OpenLearningCourse.get(course_id)
+    if not course:
+        raise toolkit.ObjectNotFound('Open Learning course not found')
+
+    import datetime
+    course.status = status
+    course.updated_at = datetime.datetime.utcnow()
+    model.Session.commit()
+    return course.as_dict()
+
+
+def open_learning_course_set_type(context, data_dict):
+    """Corrige manualmente el tipo de un curso (permanent/scheduled).
+
+    Marca course_type_override para que el sync no lo recalcule. Con
+    reset_override=True vuelve a la auto-detección.
+    """
+    toolkit.check_access('open_learning_course_set_type', context, data_dict)
+    init_open_learning_courses_db()
+
+    course_id = toolkit.get_or_bust(data_dict, 'id')
+    course = OpenLearningCourse.get(course_id)
+    if not course:
+        raise toolkit.ObjectNotFound('Open Learning course not found')
+
+    reset_override = data_dict.get('reset_override', False)
+    if isinstance(reset_override, str):
+        reset_override = reset_override.lower() in ('true', '1', 'yes', 'on')
+
+    if reset_override:
+        from ckanext.theme_ejemplo import openlearning
+        try:
+            api_course = json.loads(course.raw_json or u'{}')
+        except ValueError:
+            api_course = {}
+        course.course_type = openlearning._detect_course_type(api_course)
+        course.course_type_override = False
+    else:
+        course_type = toolkit.get_or_bust(data_dict, 'course_type')
+        if course_type not in VALID_COURSE_TYPES:
+            raise toolkit.ValidationError({'course_type': 'Invalid course_type'})
+        course.course_type = course_type
+        course.course_type_override = True
+
+    import datetime
+    course.updated_at = datetime.datetime.utcnow()
+    model.Session.commit()
+    return course.as_dict()
+
+
+def open_learning_sync(context, data_dict):
+    """Fuerza una sincronización con la API de Open Learning. Solo sysadmin."""
+    toolkit.check_access('open_learning_sync', context, data_dict)
+    from ckanext.theme_ejemplo import openlearning
+    return openlearning.sync_courses(force=True)

@@ -5,7 +5,7 @@ import datetime
 import uuid
 import logging
 
-from sqlalchemy import Table, Column, UnicodeText, DateTime, Integer, Boolean, Date, Text
+from sqlalchemy import Table, Column, UnicodeText, DateTime, Integer, Boolean, Date, Text, Index
 
 import ckan.model as model
 import ckan.model.meta as meta
@@ -1929,3 +1929,184 @@ def define_initiative_request_table():
         meta.registry.map_imperatively(InitiativeRequest, initiative_request_table)
     except AttributeError:
         meta.mapper(InitiativeRequest, initiative_request_table)
+
+
+# ── Open Learning Course Model ───────────────────────────────────────────────
+
+open_learning_course_table = None
+
+VALID_COURSE_STATUSES = (u'pending', u'approved', u'hidden')
+VALID_COURSE_TYPES = (u'permanent', u'scheduled')
+
+OPENLEARNING_COURSE_URL = u'https://openlearning.unesco.org/courses/{course_id}/about'
+
+
+class OpenLearningCourse(model.DomainObject):
+    """Caché curada de un curso de UNESCO Open Learning.
+
+    Los cursos se sincronizan desde la API externa pero las decisiones de
+    curación (status, tipo con override, orden) viven solo en esta tabla.
+    """
+
+    STATUS_PENDING = u'pending'
+    STATUS_APPROVED = u'approved'
+    STATUS_HIDDEN = u'hidden'
+
+    TYPE_PERMANENT = u'permanent'
+    TYPE_SCHEDULED = u'scheduled'
+
+    def __init__(self, course_id, name, org=u'', short_description=u'',
+                 image_url=u'', start=None, end=None, start_display=u'',
+                 pacing=u'', raw_json=u'', course_type=u'permanent'):
+        now = datetime.datetime.utcnow()
+        self.id = str(uuid.uuid4())
+        self.course_id = course_id
+        self.name = name
+        self.org = org
+        self.short_description = short_description
+        self.image_url = image_url
+        self.start = start
+        self.end = end
+        self.start_display = start_display
+        self.pacing = pacing
+        self.raw_json = raw_json
+        self.course_type = course_type
+        self.course_type_override = False
+        self.status = self.STATUS_PENDING
+        self.is_available = True
+        self.display_order = 0
+        self.first_seen_at = now
+        self.last_seen_at = now
+        self.created_at = now
+        self.updated_at = now
+
+    @classmethod
+    def get(cls, id):
+        return meta.Session.query(cls).get(id)
+
+    @classmethod
+    def get_by_course_id(cls, course_id):
+        return meta.Session.query(cls).filter(
+            cls.course_id == course_id
+        ).first()
+
+    @classmethod
+    def get_all(cls):
+        """Todos los cursos para el panel admin (pendientes primero)."""
+        from sqlalchemy import case
+        status_order = case(
+            {u'pending': 0, u'approved': 1, u'hidden': 2},
+            value=cls.status, else_=3
+        )
+        return meta.Session.query(cls).order_by(
+            status_order,
+            cls.display_order.asc(),
+            cls.first_seen_at.desc(),
+        ).all()
+
+    @classmethod
+    def get_public(cls, course_type=None, limit=None):
+        """Cursos aprobados y disponibles, para las vistas públicas."""
+        q = meta.Session.query(cls).filter(
+            cls.status == cls.STATUS_APPROVED,
+            cls.is_available == True,  # noqa: E712
+        )
+        if course_type:
+            q = q.filter(cls.course_type == course_type)
+        q = q.order_by(
+            cls.display_order.asc(),
+            cls.start.desc().nullslast(),
+            cls.first_seen_at.desc(),
+        )
+        if limit:
+            q = q.limit(limit)
+        return q.all()
+
+    @classmethod
+    def last_sync_at(cls):
+        """Fecha del último sync exitoso (max last_seen_at) o None."""
+        from sqlalchemy import func
+        return meta.Session.query(func.max(cls.last_seen_at)).scalar()
+
+    @classmethod
+    def counts_by_status(cls):
+        from sqlalchemy import func
+        rows = meta.Session.query(cls.status, func.count(cls.id)).group_by(
+            cls.status
+        ).all()
+        counts = {status: 0 for status in VALID_COURSE_STATUSES}
+        counts.update({row[0]: row[1] for row in rows})
+        return counts
+
+    def as_dict(self):
+        return {
+            'id': self.id,
+            'course_id': self.course_id,
+            'name': self.name,
+            'org': self.org or u'',
+            'short_description': self.short_description or u'',
+            'image_url': self.image_url or u'',
+            'start': self.start.isoformat() if self.start else None,
+            'end': self.end.isoformat() if self.end else None,
+            'start_display': self.start_display or u'',
+            'pacing': self.pacing or u'',
+            'course_type': self.course_type,
+            'course_type_override': bool(self.course_type_override),
+            'status': self.status,
+            'is_available': bool(self.is_available),
+            'display_order': self.display_order or 0,
+            'course_url': OPENLEARNING_COURSE_URL.format(course_id=self.course_id),
+            'first_seen_at': self.first_seen_at.isoformat() if self.first_seen_at else None,
+            'last_seen_at': self.last_seen_at.isoformat() if self.last_seen_at else None,
+            'updated_at': self.updated_at.isoformat() if self.updated_at else None,
+        }
+
+
+def init_open_learning_courses_db():
+    """Crea la tabla open_learning_course si no existe."""
+    if open_learning_course_table is None:
+        define_open_learning_course_table()
+
+    from sqlalchemy import inspect as sa_inspect
+    inspector = sa_inspect(meta.engine)
+    if 'open_learning_course' not in inspector.get_table_names():
+        open_learning_course_table.create(meta.engine)
+        log.info(u'open_learning_course table created')
+    else:
+        log.debug(u'open_learning_course table already exists')
+
+
+def define_open_learning_course_table():
+    global open_learning_course_table
+
+    open_learning_course_table = Table(
+        'open_learning_course',
+        meta.metadata,
+        Column('id', UnicodeText, primary_key=True,
+               default=lambda: str(uuid.uuid4())),
+        Column('course_id', UnicodeText, nullable=False, unique=True),
+        Column('name', UnicodeText, nullable=False),
+        Column('org', UnicodeText, default=u''),
+        Column('short_description', UnicodeText, default=u''),
+        Column('image_url', UnicodeText, default=u''),
+        Column('start', DateTime, nullable=True),
+        Column('end', DateTime, nullable=True),
+        Column('start_display', UnicodeText, default=u''),
+        Column('pacing', UnicodeText, default=u''),
+        Column('raw_json', UnicodeText, default=u''),
+        Column('course_type', UnicodeText, nullable=False, default=u'permanent'),
+        Column('course_type_override', Boolean, default=False),
+        Column('status', UnicodeText, nullable=False, default=u'pending'),
+        Column('is_available', Boolean, default=True),
+        Column('display_order', Integer, default=0),
+        Column('first_seen_at', DateTime, default=datetime.datetime.utcnow),
+        Column('last_seen_at', DateTime, default=datetime.datetime.utcnow),
+        Column('created_at', DateTime, default=datetime.datetime.utcnow),
+        Column('updated_at', DateTime, default=datetime.datetime.utcnow),
+        Index('idx_olc_status_available', 'status', 'is_available'),
+    )
+
+    try:
+        meta.registry.map_imperatively(OpenLearningCourse, open_learning_course_table)
+    except AttributeError:
+        meta.mapper(OpenLearningCourse, open_learning_course_table)

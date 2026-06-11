@@ -330,8 +330,33 @@ ihpix_country_summary_list (datos tabulares):
 
 ---
 
+## 11. Curación de cursos Open Learning
+
+**Módulos**: `openlearning.py`, `model.py`, `actions.py`, `controller.py` — ver [[Open Learning]]
+
+```
+1. Sync (lazy con TTL 6h / botón admin / cron `ckan openlearning sync --force`)
+   → _fetch_all_courses(): API Open edX paginada, por término de búsqueda
+   → upsert en tabla open_learning_course:
+     · curso nuevo → status='pending' + tipo auto-detectado (pacing)
+     · curso existente → actualiza display, last_seen_at, is_available=True
+       (recalcula tipo solo si NO hay override admin; nunca toca status/orden)
+     · curso ausente → is_available=False, SOLO si el fetch fue completo
+2. Sysadmin en /ckan-admin/open-learning
+   → aprueba (approved) / oculta (hidden) / corrige tipo (permanent/scheduled)
+3. Vistas públicas leen get_public() (approved + is_available):
+   → home: hasta 8 cursos (helper get_latest_courses, micro-caché 10 min)
+   → /courses: secciones separadas self-paced y scheduled
+```
+
+> [!warning] Fallo parcial de la API
+> Si cualquier página de cualquier término falla, `full_success=False` y **ningún** curso se marca como no disponible en ese sync. Evita falsos negativos cuando la API está inestable.
+
+---
+
 ## Ver también
 
 - [[Arquitectura]] — Diseño general del sistema
 - [[Modulos]] — Detalle por módulo
+- [[Open Learning]] — Caché curada de cursos
 - [[Variables de Entorno]] — Configuración de TTL de caches

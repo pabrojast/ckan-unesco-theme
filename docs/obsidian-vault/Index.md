@@ -20,6 +20,7 @@ Bienvenido a la documentación interna de **ckanext-theme-ejemplo**, la extensi�
 - [[Flujos Importantes]] — Flujos clave del sistema
 - [[Variables de Entorno]] — Configuración y claves de config
 - [[Solicitudes de Iniciativas]] — Flujo de solicitud + aprobación sysadmin
+- [[Open Learning]] — Caché curada de cursos UNESCO Open Learning
 
 ### Operación
 - [[Testing]] — Estrategia y ejecución de tests

@@ -1,0 +1,96 @@
+{% extends "page.html" %}
+
+{% block title %}{{ _('IHP Open Learning Courses') }} - {{ super() }}{% endblock %}
+
+{% block content %}
+<div class="homepage layout-1">
+    <div id="content" class="container">
+      {{ self.flash() }}
+    </div>
+
+    {% block primary_content %}
+    <div class="main">
+        <div class="container">
+            <!-- Breadcrumb -->
+            <div class="toolbar" role="navigation" aria-label="Breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="home"><a href="{{ h.url_for('/') }}"><i class="fa fa-home"></i><span> {{ _('Home') }}</span></a></li>
+                    <li class="active">{{ _('Courses') }}</li>
+                </ol>
+            </div>
+
+            <!-- Header -->
+            <section class="module module-narrow module-shallow">
+              <div class="section-title section-title-enhanced" style="margin-bottom: 0.5rem;">
+                <div class="section-title-bg" style="background-image: url('/Landing_page/Content/04IHP-OPEN.jpg');"></div>
+                <div class="section-title-overlay"></div>
+                <div class="section-title-content">
+                  <h1>{{ _('IHP Open Learning Courses') }}</h1>
+                  <p class="section-title-description">{% trans %}Courses from the <a href="https://openlearning.unesco.org/program/intergovernmental-hydrological-programme-ihp/" target="_blank" style="color:#fff; font-weight: bold; text-decoration: underline; text-underline-offset: 2px;">IHP Open Learning platform</a>, curated by the IHP-WINS team.{% endtrans %}</p>
+                </div>
+              </div>
+            </section>
+
+            <!-- Self-paced courses -->
+            {% if permanent_courses %}
+            <section class="module module-narrow module-shallow">
+              <h2 class="courses-section-title">
+                <i class="fa fa-clock-o text-unesco-blue"></i> {% trans %}Self-paced courses{% endtrans %}
+              </h2>
+              <p class="text-muted">{% trans %}Permanently open courses you can start at any time.{% endtrans %}</p>
+              <div class="row">
+                {% for course in permanent_courses %}
+                <div class="col-md-3 col4 col-enhanced">
+                  {% snippet 'snippets/course_card.html', course=course %}
+                </div>
+                {% endfor %}
+              </div>
+            </section>
+            {% endif %}
+
+            <!-- Scheduled courses -->
+            {% if scheduled_courses %}
+            <section class="module module-narrow module-shallow">
+              <h2 class="courses-section-title">
+                <i class="fa fa-calendar text-unesco-blue"></i> {% trans %}Scheduled courses{% endtrans %}
+              </h2>
+              <p class="text-muted">{% trans %}Instructor-led courses with fixed start dates.{% endtrans %}</p>
+              <div class="row">
+                {% for course in scheduled_courses %}
+                <div class="col-md-3 col4 col-enhanced">
+                  {% snippet 'snippets/course_card.html', course=course %}
+                </div>
+                {% endfor %}
+              </div>
+            </section>
+            {% endif %}
+
+            {% if not permanent_courses and not scheduled_courses %}
+            <section class="module module-narrow module-shallow">
+              <div class="module-content text-center" style="padding: 4rem 2.5rem;">
+                <i class="fa fa-graduation-cap fa-4x text-unesco-blue" style="opacity: 0.6; margin-bottom: 1.5rem;"></i>
+                <h3>{% trans %}No courses available yet{% endtrans %}</h3>
+                <p class="text-muted">{% trans %}Please check back soon, or explore the IHP Open Learning platform directly.{% endtrans %}</p>
+                <a href="https://openlearning.unesco.org/program/intergovernmental-hydrological-programme-ihp/" class="btn btn-primary" target="_blank">
+                  {% trans %}Visit IHP Open Learning{% endtrans %}
+                </a>
+              </div>
+            </section>
+            {% endif %}
+
+        </div>
+    </div>
+    {% endblock %}
+</div>
+
+<style>
+.courses-section-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #0072BC;
+  margin: 2rem 0 0.3rem 0;
+  border: none;
+}
+.courses-section-title .fa { margin-right: 8px; }
+</style>
+{% endblock %}
