@@ -31,6 +31,14 @@
               </div>
             </section>
 
+            {% if c.userobj and c.userobj.sysadmin %}
+            <div class="courses-admin-bar">
+              <a href="{{ h.url_for('theme_ejemplo.open_learning_admin') }}" class="btn btn-primary">
+                <i class="fa fa-cog"></i> {% trans %}Manage courses{% endtrans %}
+              </a>
+            </div>
+            {% endif %}
+
             <!-- Self-paced courses -->
             {% if permanent_courses %}
             <section class="module module-narrow module-shallow">
@@ -92,5 +100,11 @@
   border: none;
 }
 .courses-section-title .fa { margin-right: 8px; }
+.courses-admin-bar {
+  text-align: right;
+  margin: 0.5rem 0 1rem 0;
+}
+.courses-admin-bar .btn { border-radius: 20px; font-weight: 600; }
+.courses-admin-bar .btn .fa { margin-right: 6px; }
 </style>
 {% endblock %}
