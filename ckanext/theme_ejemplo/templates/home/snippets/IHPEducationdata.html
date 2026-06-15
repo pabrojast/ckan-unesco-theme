@@ -7,11 +7,11 @@
     </div>
     {% endfor %}
 </div>
-{% endif %}
 <div class="row" style="margin-top: 1rem;">
   <div class="col-md-12 text-center">
-    <a href="{{ h.url_for('theme_ejemplo.courses') }}" class="btn btn-default btn-lg">
+    <a href="{{ h.url_for('theme_ejemplo.courses') }}" class="btn btn-primary btn-lg">
       <i class="fa fa-graduation-cap"></i> {% trans %}View all courses{% endtrans %}
     </a>
   </div>
 </div>
+{% endif %}
