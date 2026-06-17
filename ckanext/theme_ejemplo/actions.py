@@ -2019,6 +2019,14 @@ def ihpix_report_submit(context, data_dict):
     if not title:
         raise toolkit.ValidationError({'title': 'Title is required'})
 
+    # Server-side length enforcement (client maxlength is bypassable)
+    for fname in ('description', 'outcomes'):
+        val = data_dict.get(fname, u'')
+        if isinstance(val, str) and len(val.strip()) > 250:
+            raise toolkit.ValidationError(
+                {fname: '{} must be 250 characters or fewer'.format(fname)}
+            )
+
     if not is_draft:
         # Full required-field validation per PDF Section I/II
         required = {
