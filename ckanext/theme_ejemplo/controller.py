@@ -3225,7 +3225,7 @@ class MyLogica():
                         'title', 'description', 'priority_area', 'output',
                         'country', 'institution', 'link', 'contact_name',
                         'contact_email', 'reported_date', 'start_date',
-                        'end_date',
+                        'end_date', 'outcomes',
                         # Section I extras
                         'focal_point_name', 'institution_type',
                         'institution_type_other', 'partners', 'biennium',

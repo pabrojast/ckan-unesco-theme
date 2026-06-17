@@ -2092,6 +2092,7 @@ def ihpix_report_submit(context, data_dict):
         country=data_dict.get('country', u'').strip(),
         institution=data_dict.get('institution', u'').strip(),
         link=data_dict.get('link', u'').strip(),
+        outcomes=data_dict.get('outcomes', u'').strip(),
         image_url=data_dict.get('image_url', u''),
         status=(IhpixActivity.STATUS_DRAFT if is_draft else IhpixActivity.STATUS_PENDING),
         reported_by=context.get('user', u''),
