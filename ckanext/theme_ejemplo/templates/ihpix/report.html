@@ -9,6 +9,9 @@
 
 {% block primary_content_inner %}
 <style>
+  /* Full-width centered layout — no sidebar on this page */
+  .wrapper .primary { width: 100%; float: none; }
+
   .ihpix-report-banner {
     background: linear-gradient(135deg, #0069B4 0%, #005A9C 60%, #003d6b 100%);
     color: #fff;
@@ -40,7 +43,7 @@
     opacity: 0.92;
     font-size: 1rem;
     line-height: 1.5;
-    color: #fff;
+    color: #fff !important;
   }
 
   /* Contenedor pegajoso: nav de secciones + barra de progreso */
