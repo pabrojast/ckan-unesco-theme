@@ -3605,6 +3605,67 @@ class MyLogica():
                 return jsonify({'success': False, 'error': str(e)}), 500
 
         @staticmethod
+        def open_learning_search():
+            """AJAX: buscar cursos en la API de Open Learning por término."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access(
+                    'open_learning_course_search', context, {})
+            except toolkit.NotAuthorized:
+                return jsonify(
+                    {'success': False, 'error': 'Not authorized'}), 403
+
+            query = request.form.get('query', '').strip()
+            if not query:
+                return jsonify(
+                    {'success': False, 'error': 'Query is required'}), 400
+
+            try:
+                result = toolkit.get_action('open_learning_course_search')(
+                    context, {'query': query}
+                )
+                result['success'] = True
+                return jsonify(result)
+            except Exception as e:
+                log.error(f'Error en búsqueda API de Open Learning: {e}')
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        @staticmethod
+        def open_learning_add_course():
+            """AJAX: agregar un curso de Open Learning por course_id."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access(
+                    'open_learning_course_add', context, {})
+            except toolkit.NotAuthorized:
+                return jsonify(
+                    {'success': False, 'error': 'Not authorized'}), 403
+
+            course_id = request.form.get('course_id', '').strip()
+            if not course_id:
+                return jsonify(
+                    {'success': False, 'error': 'course_id is required'}), 400
+
+            try:
+                result = toolkit.get_action('open_learning_course_add')(
+                    context, {'course_id': course_id}
+                )
+                return jsonify(result)
+            except toolkit.ObjectNotFound as e:
+                return jsonify({'success': False, 'error': str(e)}), 404
+            except toolkit.ValidationError as e:
+                return jsonify({'success': False, 'error': str(e)}), 400
+            except Exception as e:
+                log.error(f'Error al agregar curso Open Learning: {e}')
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        @staticmethod
         def courses():
             """Página pública de cursos Open Learning, separados por tipo."""
             from ckanext.theme_ejemplo import openlearning

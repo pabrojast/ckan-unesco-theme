@@ -261,3 +261,145 @@ def maybe_sync_courses():
             _sync_lock.release()
     except Exception as e:
         log.warning(u'Open Learning: sync lazy falló (se sirve la BD): %s', e)
+
+
+def search_courses_api(query):
+    """Busca cursos en la API de Open Learning por término.
+
+    No persiste nada: solo devuelve una lista de dicts con los datos
+    mínimos para mostrar en el panel admin. Filtra los cursos ocultos
+    (hidden) de la API.
+
+    Lanza RuntimeError si la API responde con error o JSON inválido.
+    """
+    if not query or not query.strip():
+        return []
+
+    page_size = _get_config_int(
+        'ckanext.theme_ejemplo.openlearning_page_size', 50) or 50
+
+    results = []
+    url = API_URL
+    params = {'search_term': query.strip(), 'page_size': page_size}
+
+    try:
+        response = _http_session.get(url, params=params, timeout=(5, 10))
+        response.raise_for_status()
+        data = response.json()
+    except requests.exceptions.RequestException as e:
+        log.warning(u'Open Learning: error en search API para %r: %s', query, e)
+        raise RuntimeError('Open Learning API request failed')
+    except ValueError as e:
+        log.warning(u'Open Learning: respuesta no-JSON en search API: %s', e)
+        raise RuntimeError('Open Learning API returned invalid JSON')
+
+    for course in data.get('results', []):
+        course_id = course.get('course_id')
+        if not course_id or course.get('hidden'):
+            continue
+        media = course.get('media') or {}
+        results.append({
+            'course_id': course_id,
+            'name': (course.get('name') or u'').strip(),
+            'org': course.get('org') or u'',
+            'short_description': course.get('short_description') or u'',
+            'image_url': ((media.get('image') or {}).get('raw')) or u'',
+            'start_display': course.get('start_display') or u'',
+            'pacing': course.get('pacing') or u'',
+            'course_type': _detect_course_type(course),
+        })
+
+    return results
+
+
+def fetch_and_upsert_course(course_id):
+    """Fetcha un curso individual de la API y hace upsert en la BD.
+
+    Sigue el mismo contrato de curation que sync_courses:
+    - Nuevo curso → insert como 'pending', tipo auto-detectado.
+    - Curso existente → actualiza campos de display, preserva
+      status, course_type_override y display_order.
+    - Nunca marca is_available=False (eso lo hace solo el sync completo).
+
+    Devuelve (course_obj, action) donde action es 'created' o 'updated'.
+    Lanza toolkit.ObjectNotFound si la API no devuelve el curso.
+    Lanza toolkit.ValidationError si el course_id está vacío.
+    Lanza RuntimeError si la API falla (red/HTTP/JSON).
+    """
+    if not course_id or not course_id.strip():
+        raise toolkit.ValidationError({'course_id': 'course_id is required'})
+
+    course_id = course_id.strip()
+
+    # Fetch del curso individual desde la API
+    try:
+        response = _http_session.get(
+            API_URL, params={'course_id': course_id}, timeout=(5, 10))
+        response.raise_for_status()
+        data = response.json()
+    except requests.exceptions.RequestException as e:
+        log.warning(
+            u'Open Learning: error HTTP al fetchar curso %s: %s', course_id, e)
+        raise RuntimeError('Open Learning API request failed')
+    except ValueError as e:
+        log.warning(u'Open Learning: respuesta no-JSON para curso %s: %s',
+                    course_id, e)
+        raise RuntimeError('Open Learning API returned invalid JSON')
+
+    # La API devuelve {results: [...]} — buscar el curso solicitado
+    api_course = None
+    for c in data.get('results', []):
+        if c.get('course_id') == course_id and not c.get('hidden'):
+            api_course = c
+            break
+
+    if api_course is None:
+        raise toolkit.ObjectNotFound(
+            'Course not found in API: {}'.format(course_id))
+
+    name = (api_course.get('name') or u'').strip()
+    if not name:
+        raise toolkit.ValidationError({'name': 'Course has no name'})
+
+    media = api_course.get('media') or {}
+    sync_started_at = datetime.datetime.utcnow()
+    fields = {
+        'name': name,
+        'org': api_course.get('org') or u'',
+        'short_description': api_course.get('short_description') or u'',
+        'image_url': ((media.get('image') or {}).get('raw')) or u'',
+        'start': _parse_iso_datetime(api_course.get('start')),
+        'end': _parse_iso_datetime(api_course.get('end')),
+        'start_display': api_course.get('start_display') or u'',
+        'pacing': api_course.get('pacing') or u'',
+        'raw_json': json.dumps(api_course, ensure_ascii=False),
+    }
+
+    try:
+        existing = OpenLearningCourse.get_by_course_id(course_id)
+        if existing is None:
+            course = OpenLearningCourse(
+                course_id=course_id,
+                course_type=_detect_course_type(api_course),
+                **fields
+            )
+            meta.Session.add(course)
+            meta.Session.commit()
+            log.info(u'Open Learning: curso %s agregado manualmente', course_id)
+            return course, 'created'
+        else:
+            for attr, value in fields.items():
+                setattr(existing, attr, value)
+            existing.last_seen_at = sync_started_at
+            existing.updated_at = sync_started_at
+            existing.is_available = True
+            if not existing.course_type_override:
+                existing.course_type = _detect_course_type(api_course)
+            meta.Session.commit()
+            log.info(u'Open Learning: curso %s actualizado manualmente', course_id)
+            return existing, 'updated'
+    except Exception as e:
+        meta.Session.rollback()
+        log.error(u'Open Learning: error en upsert manual del curso %s: %s',
+                  course_id, e)
+        raise

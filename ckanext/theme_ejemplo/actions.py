@@ -2930,3 +2930,59 @@ def open_learning_sync(context, data_dict):
     toolkit.check_access('open_learning_sync', context, data_dict)
     from ckanext.theme_ejemplo import openlearning
     return openlearning.sync_courses(force=True)
+
+
+@toolkit.side_effect_free
+def open_learning_course_search(context, data_dict):
+    """Busca cursos en la API de Open Learning por término. Solo sysadmin.
+
+    No persiste nada: devuelve los resultados de la API marcando cuáles
+    ya están en la BD para que el admin decida cuáles agregar.
+    """
+    toolkit.check_access('open_learning_course_search', context, data_dict)
+    init_open_learning_courses_db()
+
+    query = data_dict.get('query', u'').strip()
+    if not query:
+        return {'results': [], 'already_in_db': 0}
+
+    from ckanext.theme_ejemplo import openlearning
+    try:
+        api_results = openlearning.search_courses_api(query)
+    except RuntimeError:
+        raise toolkit.ValidationError({'query': 'Open Learning API is unavailable'})
+
+    results = []
+    already_in_db = 0
+    for c in api_results:
+        existing = OpenLearningCourse.get_by_course_id(c['course_id'])
+        if existing:
+            already_in_db += 1
+            c['in_db'] = True
+            c['db_status'] = existing.status
+        else:
+            c['in_db'] = False
+        results.append(c)
+
+    return {'results': results, 'already_in_db': already_in_db}
+
+
+def open_learning_course_add(context, data_dict):
+    """Agrega un curso de Open Learning por course_id. Solo sysadmin.
+
+    Fetcha el curso individual de la API y hace upsert en la BD.
+    Respeta el contrato de curation: nuevos cursos como 'pending',
+    existentes preservan status/course_type_override/display_order.
+    """
+    toolkit.check_access('open_learning_course_add', context, data_dict)
+    init_open_learning_courses_db()
+
+    course_id = toolkit.get_or_bust(data_dict, 'course_id')
+
+    from ckanext.theme_ejemplo import openlearning
+    try:
+        course, action = openlearning.fetch_and_upsert_course(course_id)
+    except RuntimeError:
+        raise toolkit.ValidationError(
+            {'course_id': 'Open Learning API is unavailable'})
+    return {'success': True, 'course': course.as_dict(), 'action': action}

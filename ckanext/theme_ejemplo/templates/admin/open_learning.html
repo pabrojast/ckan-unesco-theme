@@ -36,6 +36,30 @@
                 </div>
               </div>
             </section>
+
+            <!-- Search API & Add courses -->
+            <div class="olc-search-panel">
+              <h3><i class="fa fa-search"></i> {{ _('Search API & Add Courses') }}</h3>
+              <p class="text-muted small" style="margin-bottom: 1rem;">{{ _('Search the UNESCO Open Learning API for courses not yet in the database, or add a course directly by its Open edX course_id.') }}</p>
+              <div class="olc-search-row">
+                <div class="olc-search-field">
+                  <input type="text" id="olc-search-input" class="form-control"
+                         placeholder="{{ _('Search by keyword (e.g. groundwater, climate...)') }}">
+                  <button type="button" id="olc-search-btn" class="btn btn-primary">
+                    <i class="fa fa-search"></i> {{ _('Search API') }}
+                  </button>
+                </div>
+                <span class="olc-search-divider">{{ _('or') }}</span>
+                <div class="olc-add-id-field">
+                  <input type="text" id="olc-add-id-input" class="form-control"
+                         placeholder="{{ _('Paste course_id (e.g. course-v1:UNESCO+WA1+2024)') }}">
+                  <button type="button" id="olc-add-id-btn" class="btn btn-success">
+                    <i class="fa fa-plus"></i> {{ _('Add by ID') }}
+                  </button>
+                </div>
+              </div>
+              <div id="olc-search-results" class="olc-search-results"></div>
+            </div>
         </div>
 
         <div class="container">
@@ -263,6 +287,70 @@
   .pcard-banner-content h1 { font-size: 1.7rem; }
   .olc-card-actions { align-items: flex-start; margin-top: 10px; }
 }
+
+/* Search API panel */
+.olc-search-panel {
+  background: #f8f9fa; border: 1px solid #e9ecef; border-radius: 12px;
+  padding: 1.5rem 2rem; margin-bottom: 2rem;
+}
+.olc-search-panel h3 {
+  font-size: 1.1rem; font-weight: 700; margin: 0 0 0.5rem 0; color: #2c3e50;
+}
+.olc-search-panel h3 .fa { color: #0072BC; margin-right: 6px; }
+.olc-search-row {
+  display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+}
+.olc-search-field, .olc-add-id-field {
+  display: flex; gap: 6px; flex: 1; min-width: 280px;
+}
+.olc-search-field input, .olc-add-id-field input { border-radius: 8px; }
+.olc-search-field .btn, .olc-add-id-field .btn {
+  border-radius: 8px; font-weight: 600; white-space: nowrap;
+}
+.olc-search-divider {
+  color: #adb5bd; font-size: 0.85rem; font-style: italic; padding: 0 4px;
+}
+.olc-search-results { margin-top: 1rem; }
+.olc-search-result-card {
+  display: flex; align-items: center; gap: 12px;
+  background: #fff; border: 1px solid #e9ecef; border-radius: 10px;
+  padding: 12px 16px; margin-bottom: 8px; transition: box-shadow 0.2s ease;
+}
+.olc-search-result-card:hover { box-shadow: 0 2px 12px rgba(0, 114, 188, 0.1); }
+.olc-search-result-card .olc-src-img {
+  width: 60px; height: 60px; object-fit: cover; border-radius: 8px; flex-shrink: 0;
+}
+.olc-search-result-card .olc-src-img-placeholder {
+  width: 60px; height: 60px; border-radius: 8px; background: #e9ecef;
+  display: flex; align-items: center; justify-content: center;
+  color: #adb5bd; flex-shrink: 0;
+}
+.olc-search-result-card .olc-src-body { flex: 1; min-width: 0; }
+.olc-search-result-card .olc-src-title {
+  font-size: 0.95rem; font-weight: 700; margin: 0 0 2px 0;
+}
+.olc-search-result-card .olc-src-title a { color: #2c3e50; }
+.olc-search-result-card .olc-src-meta {
+  font-size: 0.8rem; color: #6c757d; margin-bottom: 2px;
+}
+.olc-search-result-card .olc-src-meta .fa { margin-right: 3px; }
+.olc-search-result-card .olc-src-desc {
+  font-size: 0.85rem; color: #6c757d; margin: 0;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.olc-search-result-card .olc-src-actions { flex-shrink: 0; }
+.olc-search-result-card .olc-src-actions .btn { border-radius: 16px; font-weight: 600; font-size: 0.8rem; }
+.olc-src-badge-in-db {
+  display: inline-block; padding: 2px 10px; border-radius: 12px;
+  font-size: 0.75rem; font-weight: 600; background: #e9ecef; color: #6c757d;
+}
+.olc-search-loading {
+  text-align: center; padding: 2rem; color: #6c757d;
+}
+.olc-search-loading .fa { margin-right: 6px; }
+.olc-search-empty {
+  text-align: center; padding: 1.5rem; color: #adb5bd; font-size: 0.9rem;
+}
 </style>
 
 <!-- JavaScript -->
@@ -271,7 +359,9 @@
   var URLS = {
     setStatus: '{{ h.url_for("theme_ejemplo.open_learning_set_status") }}',
     setType: '{{ h.url_for("theme_ejemplo.open_learning_set_type") }}',
-    sync: '{{ h.url_for("theme_ejemplo.open_learning_sync_now") }}'
+    sync: '{{ h.url_for("theme_ejemplo.open_learning_sync_now") }}',
+    search: '{{ h.url_for("theme_ejemplo.open_learning_search") }}',
+    add: '{{ h.url_for("theme_ejemplo.open_learning_add_course") }}'
   };
 
   // ── Filtro client-side por status / disponibilidad ──
@@ -361,6 +451,151 @@
         syncBtn.innerHTML = '<i class="fa fa-refresh"></i> {{ _("Sync now") }}';
         alert('Error: ' + e);
       });
+  });
+
+  // ── Buscar en la API de Open Learning ──
+  var searchInput = document.getElementById('olc-search-input');
+  var searchBtn = document.getElementById('olc-search-btn');
+  var searchResults = document.getElementById('olc-search-results');
+
+  function esc(s) {
+    var d = document.createElement('div');
+    d.textContent = s == null ? '' : String(s);
+    return d.innerHTML;
+  }
+  function escAttr(s) {
+    return esc(s).replace(/"/g, '&quot;');
+  }
+
+  function renderSearchResults(results) {
+    if (!results.length) {
+      searchResults.innerHTML = '<div class="olc-search-empty">{{ _("No courses found in the API for that search term.") }}</div>';
+      return;
+    }
+    var html = '';
+    results.forEach(function(c) {
+      var imgHtml = c.image_url
+        ? '<img class="olc-src-img" src="' + escAttr(c.image_url) + '" alt="" loading="lazy">'
+        : '<div class="olc-src-img-placeholder"><i class="fa fa-graduation-cap"></i></div>';
+      var typeLabel = c.course_type === 'scheduled'
+        ? '<i class="fa fa-calendar"></i> {{ _("Scheduled") }}'
+        : '<i class="fa fa-clock-o"></i> {{ _("Self-paced") }}';
+      var actionHtml;
+      if (c.in_db) {
+        actionHtml = '<span class="olc-src-badge-in-db">{{ _("Already in DB") }} (' + esc(c.db_status) + ')</span>';
+      } else {
+        actionHtml = '<button class="btn btn-success btn-sm olc-add-btn" data-course-id="' + escAttr(c.course_id) + '">'
+          + '<i class="fa fa-plus"></i> {{ _("Add course") }}</button>';
+      }
+      html += '<div class="olc-search-result-card">'
+        + '<div>' + imgHtml + '</div>'
+        + '<div class="olc-src-body">'
+        + '<p class="olc-src-title">' + esc(c.name || c.course_id) + '</p>'
+        + '<p class="olc-src-meta"><i class="fa fa-university"></i> ' + esc(c.org) + ' &middot; ' + typeLabel
+        + (c.start_display ? ' &middot; <i class="fa fa-calendar"></i> ' + esc(c.start_display) : '') + '</p>'
+        + '<p class="olc-src-desc">' + esc(c.short_description) + '</p>'
+        + '</div>'
+        + '<div class="olc-src-actions">' + actionHtml + '</div>'
+        + '</div>';
+    });
+    searchResults.innerHTML = html;
+  }
+
+  function doSearch() {
+    var query = searchInput.value.trim();
+    if (!query) return;
+    searchBtn.disabled = true;
+    searchBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i>';
+    searchResults.innerHTML = '<div class="olc-search-loading"><i class="fa fa-spinner fa-spin"></i> {{ _("Searching API...") }}</div>';
+    var formData = new FormData();
+    formData.append('query', query);
+    fetch(URLS.search, { method: 'POST', body: formData })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        searchBtn.disabled = false;
+        searchBtn.innerHTML = '<i class="fa fa-search"></i> {{ _("Search API") }}';
+        if (data.success) {
+          renderSearchResults(data.results);
+        } else {
+          searchResults.innerHTML = '<div class="olc-search-empty">Error: ' + (data.error || '') + '</div>';
+        }
+      })
+      .catch(function(e) {
+        searchBtn.disabled = false;
+        searchBtn.innerHTML = '<i class="fa fa-search"></i> {{ _("Search API") }}';
+        searchResults.innerHTML = '<div class="olc-search-empty">Error: ' + e + '</div>';
+      });
+  }
+
+  searchBtn.addEventListener('click', doSearch);
+  searchInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') { e.preventDefault(); doSearch(); }
+  });
+
+  // ── Agregar curso por botón en resultados de búsqueda ──
+  searchResults.addEventListener('click', function(e) {
+    var btn = e.target.closest('.olc-add-btn');
+    if (!btn) return;
+    var courseId = btn.getAttribute('data-course-id');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i>';
+    var formData = new FormData();
+    formData.append('course_id', courseId);
+    fetch(URLS.add, { method: 'POST', body: formData })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (data.success) {
+          btn.className = 'btn btn-default btn-sm';
+          btn.innerHTML = '<i class="fa fa-check"></i> {{ _("Added") }}';
+          btn.disabled = true;
+          setTimeout(function() { window.location.reload(); }, 800);
+        } else {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fa fa-plus"></i> {{ _("Add course") }}';
+          alert('Error: ' + (data.error || ''));
+        }
+      })
+      .catch(function(e) {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa fa-plus"></i> {{ _("Add course") }}';
+        alert('Error: ' + e);
+      });
+  });
+
+  // ── Agregar curso por course_id directo ──
+  var addIdInput = document.getElementById('olc-add-id-input');
+  var addIdBtn = document.getElementById('olc-add-id-btn');
+
+  function doAddById() {
+    var courseId = addIdInput.value.trim();
+    if (!courseId) return;
+    addIdBtn.disabled = true;
+    addIdBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i>';
+    var formData = new FormData();
+    formData.append('course_id', courseId);
+    fetch(URLS.add, { method: 'POST', body: formData })
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        addIdBtn.disabled = false;
+        addIdBtn.innerHTML = '<i class="fa fa-plus"></i> {{ _("Add by ID") }}';
+        if (data.success) {
+          addIdInput.value = '';
+          alert('{{ _("Course added:") }} ' + data.course.name + ' (' + data.action + ')');
+          window.location.reload();
+        } else {
+          alert('Error: ' + (data.error || ''));
+        }
+      })
+      .catch(function(e) {
+        addIdBtn.disabled = false;
+        addIdBtn.innerHTML = '<i class="fa fa-plus"></i> {{ _("Add by ID") }}';
+        alert('Error: ' + e);
+      });
+  }
+
+  addIdBtn.addEventListener('click', doAddById);
+  addIdInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') { e.preventDefault(); doAddById(); }
   });
 })();
 </script>

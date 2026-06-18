@@ -317,3 +317,11 @@ def open_learning_course_set_type(context, data_dict):
 
 def open_learning_sync(context, data_dict):
     return _sysadmin_only(context, data_dict)
+
+
+def open_learning_course_search(context, data_dict):
+    return _sysadmin_only(context, data_dict)
+
+
+def open_learning_course_add(context, data_dict):
+    return _sysadmin_only(context, data_dict)

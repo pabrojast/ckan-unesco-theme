@@ -765,6 +765,18 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 methods=['POST']
             )
             blueprint.add_url_rule(
+                u'/ckan-admin/open-learning/search',
+                u'open_learning_search',
+                MyLogica.open_learning_search,
+                methods=['POST']
+            )
+            blueprint.add_url_rule(
+                u'/ckan-admin/open-learning/add',
+                u'open_learning_add_course',
+                MyLogica.open_learning_add_course,
+                methods=['POST']
+            )
+            blueprint.add_url_rule(
                 u'/courses',
                 u'courses',
                 MyLogica.courses,
@@ -1062,6 +1074,8 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 'open_learning_course_set_status': custom_actions.open_learning_course_set_status,
                 'open_learning_course_set_type': custom_actions.open_learning_course_set_type,
                 'open_learning_sync': custom_actions.open_learning_sync,
+                'open_learning_course_search': custom_actions.open_learning_course_search,
+                'open_learning_course_add': custom_actions.open_learning_course_add,
             }
 
         # IAuthFunctions
@@ -1125,6 +1139,8 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 'open_learning_course_set_status': custom_auth.open_learning_course_set_status,
                 'open_learning_course_set_type': custom_auth.open_learning_course_set_type,
                 'open_learning_sync': custom_auth.open_learning_sync,
+                'open_learning_course_search': custom_auth.open_learning_course_search,
+                'open_learning_course_add': custom_auth.open_learning_course_add,
             }
         
         def get_commands(self):
