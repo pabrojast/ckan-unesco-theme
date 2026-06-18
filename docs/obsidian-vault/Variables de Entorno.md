@@ -40,7 +40,7 @@ Ver [[Open Learning]] para el flujo completo de sincronización y curación.
 
 | Clave | Default | Descripción |
 |---|---|---|
-| `ckanext.theme_ejemplo.openlearning_search_terms` | `water` | Términos de búsqueda contra la API (CSV, ej. `water,hydrology`) |
+| `ckanext.theme_ejemplo.openlearning_search_terms` | `water,ihp,hydrology,climate change,groundwater,flood,drought,water management,water governance,wash,sdg6,transboundary,ecohydrology,water education,water quality,aquifer` | Términos de búsqueda contra la API (CSV) |
 | `ckanext.theme_ejemplo.openlearning_sync_ttl` | `21600` (6 h) | TTL del sync lazy; `0` desactiva el sync automático (queda solo CLI/botón admin) |
 | `ckanext.theme_ejemplo.openlearning_max_pages` | `10` | Tope de páginas a seguir por término de búsqueda |
 | `ckanext.theme_ejemplo.openlearning_page_size` | `50` | `page_size` enviado a la API |

@@ -50,7 +50,10 @@ def _get_config_int(key, default):
 def _get_search_terms():
     """Términos de búsqueda configurables (CSV)."""
     raw = toolkit.config.get(
-        'ckanext.theme_ejemplo.openlearning_search_terms', 'water')
+        'ckanext.theme_ejemplo.openlearning_search_terms',
+        'water,ihp,hydrology,climate change,groundwater,flood,drought,'
+        'water management,water governance,wash,sdg6,transboundary,'
+        'ecohydrology,water education,water quality,aquifer')
     terms = [t.strip() for t in str(raw).split(',') if t.strip()]
     return terms or ['water']
 
