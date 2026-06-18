@@ -1,5 +1,5 @@
 from random import random
-from flask import render_template, abort, jsonify
+from flask import render_template, abort, jsonify, redirect
 import ckan.plugins.toolkit as toolkit
 import ckan.model as model
 import ckan.logic as logic
@@ -1482,6 +1482,12 @@ class MyLogica():
                 return toolkit.redirect_to('theme_ejemplo.initiatives')
 
             return render_template('initiatives/request.html', form={})
+
+        @staticmethod
+        def group_request_redirect():
+            """Redirección permanente de la URL antigua /group/request al flujo
+            real de solicitud de iniciativa. Evita 404 desde enlaces/cachés viejos."""
+            return redirect(h.url_for('theme_ejemplo.request_initiative'), code=301)
 
         @staticmethod
         def initiative_requests_admin():

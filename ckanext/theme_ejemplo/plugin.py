@@ -578,6 +578,14 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 MyLogica.request_initiative,
                 methods=['GET', 'POST']
             )
+            # Redirección legacy: /group/request -> /initiatives/request
+            # (una ruta estática gana al patrón dinámico /group/<id> en Werkzeug)
+            blueprint.add_url_rule(
+                u'/group/request',
+                u'group_request_redirect',
+                MyLogica.group_request_redirect,
+                methods=['GET']
+            )
             blueprint.add_url_rule(
                 u'/ckan-admin/initiative-requests',
                 u'initiative_requests_admin',
