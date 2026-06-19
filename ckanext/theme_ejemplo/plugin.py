@@ -449,10 +449,21 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 MyLogica.redirect_to_group,
                 methods=['GET']
     )
+            # IMPORTANTE: /initiatives/request DEBE registrarse ANTES que la ruta
+            # dinámica /initiatives/<name>. En este deployment las reglas comparten
+            # match_compare_key, así que la precedencia la decide el ORDEN DE REGISTRO
+            # (no la regla estático-sobre-dinámico de Werkzeug). Si se invierte, vuelve
+            # el bucle ERR_TOO_MANY_REDIRECTS en /initiatives/request.
+            blueprint.add_url_rule(
+                u'/initiatives/request',
+                u'request_initiative',
+                MyLogica.request_initiative,
+                methods=['GET', 'POST']
+            )
             blueprint.add_url_rule(
                 u'/initiatives/<name>',
-                u'redirect_paises',
-                MyLogica.redirect_to_group,
+                u'initiative_by_name',
+                MyLogica.initiative_by_name,
                 methods=['GET']
     )
 # Deshabilita el registro de usuarios
@@ -571,15 +582,10 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 methods=['GET']
             )
 
-            # Initiative requests
-            blueprint.add_url_rule(
-                u'/initiatives/request',
-                u'request_initiative',
-                MyLogica.request_initiative,
-                methods=['GET', 'POST']
-            )
             # Redirección legacy: /group/request -> /initiatives/request
-            # (una ruta estática gana al patrón dinámico /group/<id> en Werkzeug)
+            # (/group/request gana a group.read porque la clave de core ordena al
+            # final; este redirect es seguro mientras /initiatives/request sirva el
+            # formulario)
             blueprint.add_url_rule(
                 u'/group/request',
                 u'group_request_redirect',

@@ -56,3 +56,26 @@ import ckanext.theme_ejemplo.plugin as plugin
 
 def test_plugin():
     assert plugin is not None
+
+
+def test_initiatives_request_resolves_to_form_not_dynamic(app):
+    """Regresión: /initiatives/request debe resolver al endpoint del formulario,
+    NO a la ruta dinámica /initiatives/<name> (que causaría el bucle de redirects)."""
+    adapter = app.flask_app.url_map.bind('test.ckan.net')
+    endpoint, _args = adapter.match('/initiatives/request', method='GET')
+    assert endpoint == 'theme_ejemplo.request_initiative'
+
+
+def test_group_request_redirects_to_initiatives_request(app):
+    """Regresión: /group/request debe dar 301 a /initiatives/request y cerrar
+    la cadena (sin bucle)."""
+    resp = app.get('/group/request', follow_redirects=False)
+    assert resp.status_code == 301
+    assert '/initiatives/request' in resp.headers['Location']
+
+
+def test_initiatives_request_does_not_redirect_to_group_request(app):
+    """Regresión del bucle: GET /initiatives/request NO debe redirigir a /group/request."""
+    resp = app.get('/initiatives/request', follow_redirects=False)
+    location = resp.headers.get('Location', '') or ''
+    assert '/group/request' not in location

@@ -326,6 +326,20 @@ class MyLogica():
         def redirect_to_group(name):
             """Redirige /paises/<nombre> a /group/<nombre>."""
             return toolkit.redirect_to('/group/{}'.format(name))
+
+        # Slugs reservados bajo /initiatives/ que NO son grupos navegables.
+        _RESERVED_INITIATIVE_SLUGS = {'request'}
+
+        @staticmethod
+        def initiative_by_name(name):
+            """Maneja /initiatives/<name>. Para grupos reales redirige a /group/<name>.
+            Defensa en profundidad: si <name> es un slug reservado (p.ej. 'request'),
+            sirve el formulario directamente en vez de redirigir, evitando el bucle
+            /initiatives/request <-> /group/request si el ruteo no priorizara la
+            ruta estática. Comparación en memoria, sin I/O."""
+            if name in MyLogica._RESERVED_INITIATIVE_SLUGS:
+                return MyLogica.request_initiative()
+            return MyLogica.redirect_to_group(name)
 #        Deshabilita el registro de usuarios
 #       @staticmethod
 #       def redirect_to_colab():

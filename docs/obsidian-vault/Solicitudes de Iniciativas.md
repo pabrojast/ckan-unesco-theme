@@ -33,8 +33,19 @@ Definidas en `plugin.py:get_blueprint()`:
 | Ruta | Método | Vista |
 |---|---|---|
 | `/initiatives/request` | GET/POST | `controller.MyLogica.request_initiative` |
+| `/initiatives/<name>` | GET | `controller.MyLogica.initiative_by_name` (302 → `/group/<name>`) |
+| `/group/request` (legacy) | GET | `controller.MyLogica.group_request_redirect` (301 → `/initiatives/request`) |
 | `/ckan-admin/initiative-requests` | GET | `controller.MyLogica.initiative_requests_admin` |
 | `/ckan-admin/initiative-requests/<id>/process` | POST | `controller.MyLogica.initiative_request_process_view` |
+
+### Ruteo legacy y slug reservado `request`
+
+La ruta legacy `/group/request` hace **301** permanente a `/initiatives/request`, donde vive el formulario de solicitud.
+
+`request` es un **slug RESERVADO** bajo `/initiatives/`: no es un grupo navegable. La ruta dinámica `/initiatives/<name>` (que normalmente hace 302 a `/group/<name>`) está cubierta por `controller.MyLogica.initiative_by_name`, que consulta el set `MyLogica._RESERVED_INITIATIVE_SLUGS = {'request'}` y, para esos slugs, sirve el formulario directamente (`request_initiative()`) en vez de redirigir. Esto es defensa en profundidad para evitar el bucle `/initiatives/request` ↔ `/group/request`.
+
+> [!warning] El orden de registro de rutas importa en este deployment
+> En este deployment la precedencia estático-vs-dinámico de Werkzeug no es confiable: las reglas comparten `match_compare_key`, así que el empate lo decide el **ORDEN DE REGISTRO** en `plugin.py:get_blueprint()`. Por eso `/initiatives/request` **debe registrarse ANTES** que la ruta dinámica `/initiatives/<name>`. Si se invierte el orden, la dinámica captura `request`, redirige a `/group/request`, que a su vez redirige a `/initiatives/request`, y se cierra el bucle **ERR_TOO_MANY_REDIRECTS**.
 
 ### Templates
 - `templates/initiatives/request.html` — formulario usuario (multipart/form-data)
