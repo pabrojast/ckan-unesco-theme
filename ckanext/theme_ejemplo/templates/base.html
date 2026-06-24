@@ -13,6 +13,8 @@
   {{ super() }}
   {# Load ckan210-fixes.css LAST to override all other styles #}
   <link rel="stylesheet" href="{{ h.url_for_static('/ckan210-fixes.css') }}" />
+  {# Analytics Umami (client-side, sin cookies y sin carga en el backend) #}
+  <script defer src="https://analytics.dev-wins.com/umami" data-website-id="41d963a2-bde7-46b4-8395-7702aa768e59"></script>
 {% endblock %}
 
 {% block scripts %}
