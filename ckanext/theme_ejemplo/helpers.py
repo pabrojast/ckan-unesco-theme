@@ -31,8 +31,16 @@ def _warn_and_rollback_helper_error(message, error):
 
 
 def _is_tracking_enabled():
-    """Check if CKAN tracking is enabled. When disabled, skip all DB queries."""
-    return toolkit.asbool(toolkit.config.get('ckan.tracking_enabled', False))
+    """True si hay alguna fuente de tracking activa; si no, evitamos queries.
+
+    Soporta tanto el tracking nativo de CKAN (``ckan.tracking_enabled``) como
+    el conteo liviano propio del tema (``ckanext.theme_ejemplo.pageviews_enabled``),
+    que escribe en las mismas tablas que estos helpers leen.
+    """
+    if toolkit.asbool(toolkit.config.get('ckan.tracking_enabled', False)):
+        return True
+    return toolkit.asbool(
+        toolkit.config.get('ckanext.theme_ejemplo.pageviews_enabled', False))
 
 
 def _get_tracking_cache_ttl():

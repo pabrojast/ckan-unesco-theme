@@ -1,0 +1,66 @@
+# CronJob que vuelca los contadores de vistas/descargas de Redis a Postgres.
+#
+# El conteo liviano (ckanext.theme_ejemplo.pageviews_*) acumula incrementos en
+# Redis dentro de cada request. Este job ejecuta `ckan pageviews flush` cada
+# 5 minutos para volcar esos contadores a las tablas que la UI del tema lee
+# (tracking_dataset_stats / tracking_resource_stats / tracking_site_totals).
+#
+# >> Sin este CronJob los conteos se acumulan en Redis pero NUNCA aparecen en
+#    la UI. <<
+#
+# AJUSTAR antes de aplicar (placeholders marcados con CHANGE-ME):
+#   - image: usar la MISMA imagen del Deployment de CKAN (incluye este plugin).
+#   - el path del ckan.ini (-c) según el contenedor.
+#   - envFrom / secrets: reutilizar la config de DB + Redis del Deployment de
+#     CKAN (sqlalchemy.url, ckan.redis.url, etc.). El flush necesita acceso a
+#     Postgres y a la MISMA instancia de Redis donde se registran las vistas.
+#
+# Aplicar:    kubectl -n ckan apply -f deploy/cronjob-pageviews-flush.yaml
+# Verificar:  kubectl -n ckan get cronjobs
+# Corrida manual de prueba:
+#   kubectl -n ckan create job pv-flush-test --from=cronjob/pageviews-flush
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: pageviews-flush
+  namespace: ckan
+  labels:
+    app: ckan
+    component: pageviews-flush
+spec:
+  schedule: "*/5 * * * *"          # cada 5 minutos
+  concurrencyPolicy: Forbid        # no solapar corridas (además hay lock en Redis)
+  startingDeadlineSeconds: 120
+  successfulJobsHistoryLimit: 3
+  failedJobsHistoryLimit: 3
+  jobTemplate:
+    spec:
+      backoffLimit: 1
+      activeDeadlineSeconds: 240
+      template:
+        metadata:
+          labels:
+            app: ckan
+            component: pageviews-flush
+        spec:
+          restartPolicy: Never
+          containers:
+            - name: pageviews-flush
+              image: CHANGE-ME/ckan:latest        # CHANGE-ME: imagen de CKAN con el plugin
+              command:
+                - ckan
+                - -c
+                - /srv/app/ckan.ini                # CHANGE-ME: ruta real del ckan.ini
+                - pageviews
+                - flush
+              # CHANGE-ME: reutilizar la config de DB + Redis del Deployment.
+              envFrom:
+                - secretRef:
+                    name: ckan-env                 # CHANGE-ME: Secret/ConfigMap con la env de CKAN
+              resources:
+                requests:
+                  cpu: "50m"
+                  memory: "128Mi"
+                limits:
+                  cpu: "250m"
+                  memory: "256Mi"

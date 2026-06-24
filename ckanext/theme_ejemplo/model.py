@@ -5,7 +5,7 @@ import datetime
 import uuid
 import logging
 
-from sqlalchemy import Table, Column, UnicodeText, DateTime, Integer, Boolean, Date, Text, Index
+from sqlalchemy import Table, Column, UnicodeText, DateTime, Integer, BigInteger, Boolean, Date, Text, Index
 
 import ckan.model as model
 import ckan.model.meta as meta
@@ -2110,3 +2110,78 @@ def define_open_learning_course_table():
         meta.registry.map_imperatively(OpenLearningCourse, open_learning_course_table)
     except AttributeError:
         meta.mapper(OpenLearningCourse, open_learning_course_table)
+
+
+# ── Conteo liviano de vistas/descargas ──────────────────────────────────────
+#
+# Tablas planas que alimentan los helpers de tracking del tema. Se pueblan desde
+# Redis vía ``ckanext.theme_ejemplo.pageview_tracking.flush_to_db`` (CronJob).
+# Los nombres y columnas coinciden con lo que ``helpers.py`` ya consulta, así la
+# UI se enciende sin tocar templates ni el SQL de los helpers.
+
+tracking_dataset_stats_table = None
+tracking_resource_stats_table = None
+tracking_site_totals_table = None
+tracking_dataset_daily_table = None
+
+
+def define_pageview_tracking_tables():
+    global tracking_dataset_stats_table, tracking_resource_stats_table
+    global tracking_site_totals_table, tracking_dataset_daily_table
+
+    if tracking_dataset_stats_table is None:
+        tracking_dataset_stats_table = Table(
+            'tracking_dataset_stats',
+            meta.metadata,
+            Column('dataset_name', Text, primary_key=True),
+            Column('total_views', BigInteger, nullable=False, default=0),
+            Column('recent_views', BigInteger, nullable=False, default=0),
+            Column('updated', DateTime, default=datetime.datetime.utcnow),
+            Index('idx_tds_total_views', 'total_views'),
+        )
+
+    if tracking_resource_stats_table is None:
+        tracking_resource_stats_table = Table(
+            'tracking_resource_stats',
+            meta.metadata,
+            Column('resource_id', Text, primary_key=True),
+            Column('total_downloads', BigInteger, nullable=False, default=0),
+            Column('updated', DateTime, default=datetime.datetime.utcnow),
+            Index('idx_trs_total_downloads', 'total_downloads'),
+        )
+
+    if tracking_site_totals_table is None:
+        tracking_site_totals_table = Table(
+            'tracking_site_totals',
+            meta.metadata,
+            Column('id', Integer, primary_key=True, autoincrement=False),
+            Column('total_page_views', BigInteger, nullable=False, default=0),
+            Column('total_downloads', BigInteger, nullable=False, default=0),
+            Column('updated', DateTime, default=datetime.datetime.utcnow),
+        )
+
+    if tracking_dataset_daily_table is None:
+        tracking_dataset_daily_table = Table(
+            'tracking_dataset_daily',
+            meta.metadata,
+            Column('dataset_name', Text, primary_key=True),
+            Column('day', Date, primary_key=True),
+            Column('views', BigInteger, nullable=False, default=0),
+            Index('idx_tdd_day', 'day'),
+        )
+
+
+def init_pageview_tracking_db():
+    """Crea las tablas de conteo liviano si no existen (idempotente)."""
+    define_pageview_tracking_tables()
+
+    from sqlalchemy import inspect as sa_inspect
+    inspector = sa_inspect(meta.engine)
+    existing = set(inspector.get_table_names())
+    for table in (tracking_dataset_stats_table, tracking_resource_stats_table,
+                  tracking_site_totals_table, tracking_dataset_daily_table):
+        if table.name not in existing:
+            table.create(meta.engine)
+            log.info(u'%s table created', table.name)
+        else:
+            log.debug(u'%s table already exists', table.name)

@@ -19,7 +19,7 @@
 - `IActions` — `get_actions()`: registra acciones custom
 - `IAuthFunctions` — `get_auth_functions()`: registra funciones de autorización
 - `IClick` — `get_commands()`: registra comandos CLI (ver [[#cli.py]])
-- `IMiddleware` — `make_middleware()`: registra los hooks Flask del [[Modulos#cache.py|caché de respuestas anónimas]]
+- `IMiddleware` — `make_middleware()`: registra los hooks Flask del [[Modulos#pageview_tracking.py|conteo liviano de vistas]] (primero) y del [[Modulos#cache.py|caché de respuestas anónimas]]
 
 ### Caches definidos a nivel de módulo
 - `_courses_cache` — cursos UNESCO (micro-caché de la lectura de BD; la API se consume en [[Modulos#openlearning.py|openlearning.py]])
@@ -186,7 +186,8 @@ Helpers: `is_valid_*`, `normalize_bool`, `filter_valid`.
 ### Cache interno
 - `_tracking_cache` — dict con claves: dataset, resource, totals, popular, popular_resources, expires
 - TTL configurable vía `ckanext.theme_ejemplo.tracking_cache_ttl`
-- Vistas materializadas de PostgreSQL para estadísticas de tracking
+- Leen las tablas `tracking_dataset_stats`, `tracking_resource_stats`, `tracking_site_totals` (con fallback a `tracking_raw`). Esas tablas las crea y puebla [[Modulos#pageview_tracking.py]] (conteo liviano); ya **no** son vistas materializadas externas.
+- `_is_tracking_enabled()` se enciende con `ckan.tracking_enabled` **o** con `ckanext.theme_ejemplo.pageviews_enabled`.
 
 ---
 
@@ -243,6 +244,9 @@ Helpers: `is_valid_*`, `normalize_bool`, `filter_valid`.
 
 ### Inicialización
 Cada modelo tiene `init_*_db()` y `define_*_table()`. Son idempotentes (verifican schema con inspector). Incluyen lógica de migración para agregar columnas nuevas a tablas existentes (e.g., `_migrate_ihpix_activities()`).
+
+### Tablas de conteo liviano (sin ORM)
+`init_pageview_tracking_db()` / `define_pageview_tracking_tables()` crean cuatro tablas planas (sin clase `DomainObject`, se leen/escriben por SQL): `tracking_dataset_stats` (dataset_name, total_views, recent_views), `tracking_resource_stats` (resource_id, total_downloads), `tracking_site_totals` (fila única id=1), `tracking_dataset_daily` (dataset_name, day, views — soporte de `recent_views`). Las puebla [[Modulos#pageview_tracking.py]].
 
 ---
 
@@ -322,9 +326,28 @@ Cada modelo tiene `init_*_db()` y `define_*_table()`. Son idempotentes (verifica
 
 ---
 
+## pageview_tracking.py
+
+**Rol**: Conteo liviano de vistas/descargas — reemplazo de `ckan.tracking_enabled`, que colapsaba la CPU bajo alto tráfico. Se registra vía `IMiddleware` (un `before_request` Flask, espejo de [[Modulos#cache.py]]). Ver el flujo completo en [[Flujos Importantes#Conteo liviano de vistas]].
+
+### Registro (hot path, barato)
+- `init_app(app)` registra `_record` como `before_request`, **antes** que el de la caché anónima (Flask corta en el primer hook que devuelve respuesta; así contamos también los HIT de caché).
+- `_record()` nunca corta el request. En rutas que matchean dataset/descarga: filtra bots por `User-Agent`, deduplica por IP+URL (clave Redis TTL) e incrementa contadores en Redis (`HINCRBY`). Sin DB, sin request extra.
+- Claves Redis (namespace `theme_ejemplo:pv:`): `views` (hash dataset→delta), `downloads` (hash resource→delta), `daily:<fecha>` + set `daily_dates` (para `recent_views`), `seen:<hash>` (dedup), `flush:lock`.
+
+### Volcado (cron)
+- `flush_to_db()` toma un lock, hace `RENAME` atómico de los hashes a `*:flush` (los nuevos incrementos van a un hash fresco), y UPSERTea a las tablas `tracking_*`. Recalcula `recent_views` desde `tracking_dataset_daily` (suma últimos N días) y poda buckets viejos.
+- `get_status()` reporta pendientes en Redis y totales en Postgres.
+- Si Redis no está disponible, el registro es no-op y el serving sigue intacto.
+
+> [!note]
+> Por defecto está **desactivado** (`pageviews_enabled = false`). Requiere `ckan.tracking_enabled = false` y un CronJob que corra `ckan pageviews flush` (ver `deploy/cronjob-pageviews-flush.yaml`). Ver [[Variables de Entorno#Conteo liviano de vistas (pageviews)]].
+
+---
+
 ## cli.py
 
-**Rol**: Comandos CLI del plugin. Registrado vía interfaz `IClick` (grupos `ihpix` y `openlearning`).
+**Rol**: Comandos CLI del plugin. Registrado vía interfaz `IClick` (grupos `ihpix`, `openlearning` y `pageviews`).
 
 ### Grupo `ihpix`
 
@@ -343,6 +366,15 @@ Cada modelo tiene `init_*_db()` y `define_*_table()`. Son idempotentes (verifica
 | `--force` | Ignora el TTL (hoy el comando siempre sincroniza; el TTL aplica al sync lazy) |
 
 Cron sugerido en producción: `0 */6 * * * ckan -c /etc/ckan/default/ckan.ini openlearning sync --force`
+
+### Grupo `pageviews`
+
+| Comando | Descripción |
+|---|---|
+| `ckan pageviews flush` | Vuelca los contadores de Redis a las tablas `tracking_*` (crea las tablas si faltan). Imprime resumen |
+| `ckan pageviews status` | Muestra pendientes en Redis y totales acumulados en Postgres |
+
+Se ejecuta por CronJob de Kubernetes cada ~5 min (ver `deploy/cronjob-pageviews-flush.yaml`). Sin ese cron, los conteos se acumulan en Redis pero no aparecen en la UI. Ver [[Flujos Importantes#Conteo liviano de vistas]].
 
 ### Flujo interno
 1. Inicializa tablas (`init_ihpix_activities_db()`, `init_ihpix_country_summary_db()`)

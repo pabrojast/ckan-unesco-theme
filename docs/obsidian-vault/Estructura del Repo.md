@@ -38,7 +38,8 @@ ckan-unesco-theme/
 | `controller.py` | ~2,896 | Clase `MyLogica` con 67 funciones de vista Flask (portales, admin, personas, datasets) |
 | `actions.py` | ~1,879 | 45+ acciones CKAN custom: perfiles, membresías, publicaciones, tickets, IHP-IX |
 | `helpers.py` | ~661 | 25 funciones helper: tracking, paginación, directorio de personas, organizaciones |
-| `model.py` | ~1,141 | 6 modelos SQLAlchemy: MembershipRequest, FeaturedPublication, BugTicket, PortalCard, IhpixContent, IhpixActivity |
+| `model.py` | ~1,141 | 6 modelos SQLAlchemy + tablas planas de conteo (`tracking_*`): MembershipRequest, FeaturedPublication, BugTicket, PortalCard, IhpixContent, IhpixActivity |
+| `pageview_tracking.py` | — | Conteo liviano de vistas/descargas en Redis + volcado a Postgres (reemplazo de `ckan.tracking_enabled`) |
 | `auth.py` | ~254 | 41 funciones de autorización (sysadmin-only y role-based) |
 | `validators.py` | ~89 | 3 validadores para campos de perfil de usuario |
 | `utils.py` | ~273 | 13 funciones de validación/detección de imágenes (MIME, magic bytes, PIL) |

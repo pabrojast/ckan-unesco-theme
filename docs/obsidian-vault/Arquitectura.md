@@ -94,6 +94,9 @@ Usado para:
 ### 3. Sesión HTTP compartida
 `requests.Session()` a nivel de módulo con connection pooling. Timeout: 5s conexión + 10s lectura.
 
+### 4. Contadores en Redis con volcado por lotes
+El [[Modulos#pageview_tracking.py|conteo liviano de vistas]] registra cada vista/descarga como un `HINCRBY` en Redis dentro del request (vía `IMiddleware`, sin INSERT por vista ni request extra), y un CronJob vuelca esos contadores a Postgres cada ~5 min con UPSERT atómico. Patrón "write-behind" que reemplaza el tracking nativo de CKAN. Ver [[Flujos Importantes#Conteo liviano de vistas]].
+
 ---
 
 ## Modelos de base de datos

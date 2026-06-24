@@ -34,6 +34,22 @@ Estas claves se definen en el archivo de configuración de CKAN (`ckan.ini`) y s
 > [!tip]
 > Para desactivar puntualmente el caché en una request (debug), añade `?_nocache=1` o el header `Cache-Control: no-cache`. Las respuestas servidas/guardadas exponen `X-Anon-Cache: HIT|MISS`.
 
+#### Conteo liviano de vistas (pageviews)
+
+> [!note]
+> Reemplazo del `ckan.tracking_enabled` nativo, que colapsaba la CPU bajo alto tráfico. Registra vistas/descargas en Redis dentro del request (sin INSERT por vista, sin request extra) y vuelca a Postgres por cron. Ver [[Flujos Importantes#Conteo liviano de vistas]]. CKAN tracking debe quedar **desactivado** (`ckan.tracking_enabled = false`).
+
+| Clave | Default | Descripción |
+|---|---|---|
+| `ckanext.theme_ejemplo.pageviews_enabled` | `false` | Activa el conteo liviano. Enciende también los helpers de tracking del tema |
+| `ckanext.theme_ejemplo.pageviews_recent_days` | `14` | Ventana en días para `recent_views` |
+| `ckanext.theme_ejemplo.pageviews_dedup_window` | `1800` (30 min) | Segundos de dedup por IP+URL para no inflar con refrescos (`0` = sin dedup) |
+| `ckanext.theme_ejemplo.pageviews_bot_filter` | `true` | Ignora User-Agents de bots/crawlers conocidos |
+| `ckanext.theme_ejemplo.pageviews_view_paths` | `/dataset` | Prefijos de ruta (CSV) que cuentan como vista de dataset |
+
+> [!tip]
+> El `tracking_cache_ttl` (TTL de lectura) conviene mantenerlo ≥ al intervalo del CronJob de flush (`*/5`). El volcado lo ejecuta `ckan pageviews flush` (ver [[Comandos Utiles]] y `deploy/cronjob-pageviews-flush.yaml`).
+
 ### Open Learning (cursos curados)
 
 Ver [[Open Learning]] para el flujo completo de sincronización y curación.
@@ -86,6 +102,14 @@ ckanext.theme_ejemplo.openlearning_search_terms = water
 ckanext.theme_ejemplo.openlearning_sync_ttl = 21600
 ckanext.theme_ejemplo.openlearning_max_pages = 10
 ckanext.theme_ejemplo.openlearning_page_size = 50
+
+# Conteo liviano de vistas (reemplazo de ckan.tracking_enabled)
+ckan.tracking_enabled = false
+ckanext.theme_ejemplo.pageviews_enabled = true
+ckanext.theme_ejemplo.pageviews_recent_days = 14
+ckanext.theme_ejemplo.pageviews_dedup_window = 1800
+ckanext.theme_ejemplo.pageviews_bot_filter = true
+# ckanext.theme_ejemplo.pageviews_view_paths = /dataset
 
 # Caché de respuestas anónimas (mitiga spider trap)
 ckanext.theme_ejemplo.anon_cache_enabled = true

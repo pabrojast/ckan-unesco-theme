@@ -16,6 +16,7 @@ from . import actions as custom_actions
 from . import auth as custom_auth
 from . import model as membership_model
 from . import cache as anon_cache
+from . import pageview_tracking
 from .utils import normalize_user_image_url
 import logging
 from functools import lru_cache
@@ -333,6 +334,13 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
             es idempotente: sólo se aplica si la app expone before/after
             request (Flask) y se ignora silenciosamente en otros casos.
             """
+            # El conteo de vistas debe registrarse ANTES que la caché anónima:
+            # Flask ejecuta los before_request en orden de registro y la caché
+            # puede cortar con un HIT, así contamos también esos hits.
+            try:
+                pageview_tracking.init_app(app)
+            except Exception as e:
+                log.warning(f"No se pudo registrar el conteo de vistas: {e}")
             try:
                 anon_cache.init_app(app)
             except Exception as e:
@@ -368,6 +376,8 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
             membership_model.init_initiative_requests_db()
             # Create open_learning_course table if needed
             membership_model.init_open_learning_courses_db()
+            # Create lightweight page-view tracking tables if needed
+            membership_model.init_pageview_tracking_db()
 
         def get_blueprint(self):
             
@@ -1158,8 +1168,8 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
             }
         
         def get_commands(self):
-            from ckanext.theme_ejemplo.cli import ihpix, openlearning
-            return [ihpix, openlearning]
+            from ckanext.theme_ejemplo.cli import ihpix, openlearning, pageviews
+            return [ihpix, openlearning, pageviews]
         
         def get_member_states_groups_list(self):
             """Obtiene los grupos de member-states como lista de tuplas (name, display_name).

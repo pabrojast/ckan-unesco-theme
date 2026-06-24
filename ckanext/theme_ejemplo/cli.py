@@ -225,3 +225,49 @@ def openlearning_sync(force):
     if not summary['full_success']:
         click.echo('Aviso: el fetch fue parcial; no se marcaron cursos '
                    'como no disponibles.')
+
+
+@click.group()
+def pageviews():
+    """Conteo liviano de vistas/descargas (volcado Redis -> Postgres)."""
+    pass
+
+
+@pageviews.command(name='flush')
+def pageviews_flush():
+    """Volcar los contadores de Redis a las tablas de tracking.
+
+    Pensado para correr por cron cada ~5 min. Crea las tablas si faltan.
+    """
+    from ckanext.theme_ejemplo.model import init_pageview_tracking_db
+    from ckanext.theme_ejemplo import pageview_tracking
+
+    init_pageview_tracking_db()
+    result = pageview_tracking.flush_to_db()
+    status = result.get('status')
+    if status == 'no-redis':
+        click.echo('Redis no disponible; nada que volcar.')
+        return
+    if status == 'locked':
+        click.echo('Otro flush está en curso; se omite esta corrida.')
+        return
+    click.echo(
+        'Flush pageviews: {datasets_updated} datasets, '
+        '{resources_updated} resources, +{views_added} vistas, '
+        '+{downloads_added} descargas.'.format(**result)
+    )
+
+
+@pageviews.command(name='status')
+def pageviews_status():
+    """Mostrar pendientes en Redis y totales acumulados en Postgres."""
+    from ckanext.theme_ejemplo import pageview_tracking
+
+    s = pageview_tracking.get_status()
+    click.echo('pageviews_enabled: {}'.format(s['enabled']))
+    click.echo('Redis disponible:  {}'.format(s['redis']))
+    click.echo('Pendientes en Redis -> vistas: {pending_views}, '
+               'descargas: {pending_downloads}, '
+               'días: {pending_days}'.format(**s))
+    click.echo('Totales en DB -> page_views: {}, downloads: {}'.format(
+        s['total_page_views'], s['total_downloads']))

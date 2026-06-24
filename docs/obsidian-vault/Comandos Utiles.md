@@ -115,6 +115,29 @@ Ver [[Open Learning]] para el flujo de curación completo.
 
 ---
 
+## Conteo liviano de vistas (pageviews)
+
+```bash
+# Volcar contadores de Redis a Postgres (lo corre el CronJob cada ~5 min)
+ckan -c /etc/ckan/default/ckan.ini pageviews flush
+
+# Ver pendientes en Redis y totales acumulados en Postgres
+ckan -c /etc/ckan/default/ckan.ini pageviews status
+```
+
+En Kubernetes el volcado lo ejecuta un CronJob (`deploy/cronjob-pageviews-flush.yaml`):
+
+```bash
+kubectl -n ckan apply -f deploy/cronjob-pageviews-flush.yaml
+kubectl -n ckan get cronjobs
+# Corrida manual de prueba:
+kubectl -n ckan create job pv-flush-test --from=cronjob/pageviews-flush
+```
+
+Requiere `ckanext.theme_ejemplo.pageviews_enabled = true` y `ckan.tracking_enabled = false`. Ver [[Flujos Importantes#Conteo liviano de vistas]] y [[Variables de Entorno#Conteo liviano de vistas (pageviews)]].
+
+---
+
 ## Packaging y distribución
 
 ```bash

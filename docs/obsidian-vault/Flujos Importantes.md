@@ -354,6 +354,38 @@ ihpix_country_summary_list (datos tabulares):
 
 ---
 
+## 12. Conteo liviano de vistas
+
+Reemplaza el `ckan.tracking_enabled` nativo, que bajo alto tráfico colapsaba la CPU: cada vista disparaba un request extra a `/_tracking` + un `INSERT` síncrono en `tracking_raw`, más un cron que agregaba toda la tabla y empujaba conteos a Solr. Aquí el conteo vive en Redis y se vuelca a Postgres en lotes. Implementado en [[Modulos#pageview_tracking.py]].
+
+```
+Request /dataset/<name> (GET)  ──┐
+.../resource/<id>/download       ┘
+   │  before_request _record() (registrado ANTES que la caché anónima)
+   │    · filtra bots por User-Agent
+   │    · dedup IP+URL en ventana corta (clave Redis TTL)
+   ▼
+ [Redis]  HINCRBY pv:views <name>  (+ pv:daily:<fecha>)  |  HINCRBY pv:downloads <rid>
+   │   (O(1), sin DB, sin request extra; cuenta incluso en HIT de caché anónima)
+   ▼
+ CronJob k8s cada ~5 min:  ckan pageviews flush
+   │   RENAME atómico pv:* → pv:*:flush ; UPSERT ; recalcula recent_views ; poda diario
+   ▼
+ [Postgres]  tracking_dataset_stats / tracking_resource_stats / tracking_site_totals
+             + tracking_dataset_daily
+   ▲
+   │  helpers de tracking (caché TTL en memoria, sin cambios de SQL)
+ UI: badge de vistas en dataset, "más vistos / más descargados" en home, totales del sitio
+```
+
+> [!note] Activación
+> Requiere `ckanext.theme_ejemplo.pageviews_enabled = true`, `ckan.tracking_enabled = false` y el CronJob `deploy/cronjob-pageviews-flush.yaml`. Sin el cron, los conteos se acumulan en Redis pero no llegan a la UI. Claves en [[Variables de Entorno#Conteo liviano de vistas (pageviews)]].
+
+> [!tip] Resiliencia
+> Redis caído → el registro es no-op y el serving sigue intacto. Postgres es la fuente durable; una caída de Redis sólo pierde los deltas aún no volcados (aceptable para conteos de vistas; el flush frecuente lo minimiza). El `RENAME` atómico evita perder incrementos durante el volcado.
+
+---
+
 ## Ver también
 
 - [[Arquitectura]] — Diseño general del sistema
