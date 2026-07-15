@@ -290,16 +290,26 @@
   }
 
   .site-stat-label {
-    font-size: 0.95rem;
+    /* 0.9rem para que labels como "Documents"/"Page views" quepan en
+       una línea en tarjetas de ~180px (6 por fila) sin recortarse. */
+    font-size: 0.9rem;
     font-weight: 600;
     color: var(--unesco-blue-dark, #005a9e);
     margin-top: 0.15rem;
+    /* Evita que etiquetas largas (ej. "Organizations" o sus
+       traducciones) se recorten en tarjetas angostas: se ajustan
+       en varias líneas en vez de quedar cortadas por overflow:hidden.
+       hyphens es una mejora progresiva (depende de la plataforma). */
+    overflow-wrap: break-word;
+    -webkit-hyphens: auto;
+    hyphens: auto;
   }
 
   .site-stat-meta {
     font-size: 0.8rem;
     color: var(--text-secondary, #6b7785);
     margin-top: 0.15rem;
+    overflow-wrap: break-word;
   }
 
   @media (max-width: 768px) {
