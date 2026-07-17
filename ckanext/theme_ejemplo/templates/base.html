@@ -14,7 +14,13 @@
   {# Load ckan210-fixes.css LAST to override all other styles #}
   <link rel="stylesheet" href="{{ h.url_for_static('/ckan210-fixes.css') }}" />
   {# Analytics Umami (client-side, sin cookies y sin carga en el backend) #}
-  <script defer src="https://analytics.dev-wins.com/umami" data-website-id="41d963a2-bde7-46b4-8395-7702aa768e59"></script>
+  {# El tracker varía según el sitio: producción UNESCO usa aquedra, el resto usa dev-wins #}
+  {% set site_url = config.get('ckan.site_url', '') %}
+  {% if 'ihp-wins.unesco.org' in site_url %}
+    <script defer src="https://analytics.aquedra.com/umami" data-website-id="917993ae-a8ec-4e1c-8685-d0b163ce2f98"></script>
+  {% else %}
+    <script defer src="https://analytics.dev-wins.com/umami" data-website-id="41d963a2-bde7-46b4-8395-7702aa768e59"></script>
+  {% endif %}
 {% endblock %}
 
 {% block scripts %}
