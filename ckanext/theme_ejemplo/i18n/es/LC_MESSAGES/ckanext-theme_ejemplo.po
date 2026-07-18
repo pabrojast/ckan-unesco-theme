@@ -2244,3 +2244,57 @@ msgstr "Vistas totales"
 #: ckanext/theme_ejemplo/templates/home/snippets/site_stats_hero.html
 msgid "Total downloads"
 msgstr "Descargas totales"
+
+msgid "Full metadata"
+msgstr "Metadatos completos"
+
+msgid "Medium metadata"
+msgstr "Metadatos intermedios"
+
+msgid "Limited metadata"
+msgstr "Metadatos limitados"
+
+msgid "Metadata completeness"
+msgstr "Completitud de metadatos"
+
+msgid "Fields to improve:"
+msgstr "Campos por mejorar:"
+
+msgid "Contribution"
+msgstr "Contribución"
+
+msgid "Contribution rank"
+msgstr "Posición por contribución"
+
+msgid "Pending approvals"
+msgstr "Aprobaciones pendientes"
+
+msgid "Approvals"
+msgstr "Aprobaciones"
+
+msgid "Water Family submissions"
+msgstr "Envíos de la Familia del Agua"
+
+msgid "Open-source tools"
+msgstr "Herramientas de código abierto"
+
+msgid "Data stories"
+msgstr "Historias de datos"
+
+msgid "Initiative requests"
+msgstr "Solicitudes de iniciativas"
+
+msgid "User registrations"
+msgstr "Registros de usuarios"
+
+msgid "Device approvals"
+msgstr "Aprobaciones de dispositivos"
+
+msgid "Citizen science"
+msgstr "Ciencia ciudadana"
+
+msgid "Membership requests"
+msgstr "Solicitudes de membresía"
+
+msgid "Bug tickets"
+msgstr "Tickets de errores"

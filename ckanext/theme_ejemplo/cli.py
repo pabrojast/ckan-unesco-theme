@@ -271,3 +271,51 @@ def pageviews_status():
                'días: {pending_days}'.format(**s))
     click.echo('Totales en DB -> page_views: {}, downloads: {}'.format(
         s['total_page_views'], s['total_downloads']))
+
+
+@click.group()
+def ranking():
+    """Ranking de contribución de Member States e Initiatives."""
+    pass
+
+
+@ranking.command(name='recompute')
+def ranking_recompute():
+    """Recalcular y persistir los scores de contribución.
+
+    Pensado para correr por cron (diario). Crea la tabla si falta.
+    """
+    from ckanext.theme_ejemplo import ranking as ranking_mod
+
+    summary = ranking_mod.compute_all_scores()
+    click.echo(
+        'Ranking recomputado: {computed} grupos '
+        '({member_states} member states, {initiatives} initiatives, '
+        '{with_completeness} con completitud media).'.format(**summary)
+    )
+
+
+@ranking.command(name='show')
+@click.option('-n', '--limit', default=15, help='Número de filas a mostrar')
+@click.option('--entity', default=None,
+              type=click.Choice(['member_state', 'initiative']),
+              help='Filtrar por tipo de entidad')
+def ranking_show(limit, entity):
+    """Mostrar el ranking persistido (solo lectura)."""
+    from ckanext.theme_ejemplo.model import (
+        ContributionScore, init_contribution_scores_db)
+
+    init_contribution_scores_db()
+    rows = ContributionScore.get_ranked(entity)
+    if not rows:
+        click.echo('Sin scores persistidos. Ejecuta: ckan ranking recompute')
+        return
+    click.echo('{:<4} {:<28} {:<13} {:>6} {:>5} {:>5} {:>5} {:>6} {:>8}'.format(
+        '#', 'group', 'entity', 'score', 'ds', 'doc', 'news', 'rec90', 'avg_c'))
+    for i, r in enumerate(rows[:limit], start=1):
+        click.echo('{:<4} {:<28} {:<13} {:>6.2f} {:>5} {:>5} {:>5} {:>6} {:>8}'.format(
+            i, (r.group_name or '')[:28], r.entity_type, r.score or 0,
+            r.datasets_count or 0, r.documents_count or 0,
+            r.news_events_count or 0, r.recent_90d or 0,
+            '{:.1f}'.format(r.avg_completeness)
+            if r.avg_completeness is not None else '-'))

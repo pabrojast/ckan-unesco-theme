@@ -2067,3 +2067,75 @@ msgstr ""
 #: ckanext/theme_ejemplo/templates/home/snippets/site_stats_hero.html
 msgid "Total downloads"
 msgstr ""
+
+#: ckanext/theme_ejemplo/templates/snippets/completeness_badge.html
+msgid "Full metadata"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/snippets/completeness_badge.html
+msgid "Medium metadata"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/snippets/completeness_badge.html
+msgid "Limited metadata"
+msgstr ""
+
+#: ckanext/theme_ejemplo/plugin.py ckanext/theme_ejemplo/templates/package/search.html
+msgid "Metadata completeness"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/snippets/completeness_badge.html
+msgid "Fields to improve:"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/memberstates/index.html
+msgid "Contribution"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/memberstates/snippets/group_item.html
+msgid "Contribution rank"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/snippets/approvals_dropdown.html
+msgid "Pending approvals"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/snippets/approvals_dropdown.html
+msgid "Approvals"
+msgstr ""
+
+#: ckanext/theme_ejemplo/approvals.py
+msgid "Water Family submissions"
+msgstr ""
+
+#: ckanext/theme_ejemplo/approvals.py
+msgid "Open-source tools"
+msgstr ""
+
+#: ckanext/theme_ejemplo/approvals.py
+msgid "Data stories"
+msgstr ""
+
+#: ckanext/theme_ejemplo/approvals.py
+msgid "Initiative requests"
+msgstr ""
+
+#: ckanext/theme_ejemplo/approvals.py
+msgid "User registrations"
+msgstr ""
+
+#: ckanext/theme_ejemplo/approvals.py
+msgid "Device approvals"
+msgstr ""
+
+#: ckanext/theme_ejemplo/approvals.py
+msgid "Citizen science"
+msgstr ""
+
+#: ckanext/theme_ejemplo/approvals.py
+msgid "Membership requests"
+msgstr ""
+
+#: ckanext/theme_ejemplo/approvals.py
+msgid "Bug tickets"
+msgstr ""

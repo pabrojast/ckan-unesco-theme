@@ -5,7 +5,7 @@ import datetime
 import uuid
 import logging
 
-from sqlalchemy import Table, Column, UnicodeText, DateTime, Integer, BigInteger, Boolean, Date, Text, Index
+from sqlalchemy import Table, Column, UnicodeText, DateTime, Integer, BigInteger, Boolean, Date, Text, Index, Float
 
 import ckan.model as model
 import ckan.model.meta as meta
@@ -2185,3 +2185,120 @@ def init_pageview_tracking_db():
             log.info(u'%s table created', table.name)
         else:
             log.debug(u'%s table already exists', table.name)
+
+
+# ── Contribution Score (ranking of Member States / Initiatives) ──────────────
+
+contribution_score_table = None
+
+
+class ContributionScore(model.DomainObject):
+    """Score de contribución precomputado por grupo (job `ckan ranking recompute`)."""
+
+    ENTITY_MEMBER_STATE = u'member_state'
+    ENTITY_INITIATIVE = u'initiative'
+
+    def __init__(self, group_id, group_name, group_title, entity_type,
+                 datasets_count=0, documents_count=0, news_events_count=0,
+                 recent_90d=0, recent_365d=0, avg_completeness=None,
+                 score=0.0):
+        self.id = str(uuid.uuid4())
+        self.group_id = group_id
+        self.group_name = group_name
+        self.group_title = group_title
+        self.entity_type = entity_type
+        self.datasets_count = datasets_count
+        self.documents_count = documents_count
+        self.news_events_count = news_events_count
+        self.recent_90d = recent_90d
+        self.recent_365d = recent_365d
+        self.avg_completeness = avg_completeness
+        self.score = score
+        self.computed_at = datetime.datetime.utcnow()
+
+    @classmethod
+    def get_ranked(cls, entity_type=None):
+        q = meta.Session.query(cls)
+        if entity_type:
+            q = q.filter(cls.entity_type == entity_type)
+        return q.order_by(cls.score.desc(), cls.group_title).all()
+
+    @classmethod
+    def get_by_group(cls, group_name):
+        return meta.Session.query(cls).filter(
+            cls.group_name == group_name).first()
+
+    @classmethod
+    def replace_all(cls, rows):
+        """Reemplaza todos los scores de forma transaccional.
+
+        rows: iterable de instancias ContributionScore (sin persistir).
+        """
+        try:
+            meta.Session.query(cls).delete(synchronize_session=False)
+            for row in rows:
+                meta.Session.add(row)
+            meta.Session.commit()
+        except Exception:
+            meta.Session.rollback()
+            raise
+
+    def as_dict(self):
+        return {
+            'group_id': self.group_id,
+            'group_name': self.group_name,
+            'group_title': self.group_title,
+            'entity_type': self.entity_type,
+            'datasets_count': self.datasets_count,
+            'documents_count': self.documents_count,
+            'news_events_count': self.news_events_count,
+            'recent_90d': self.recent_90d,
+            'recent_365d': self.recent_365d,
+            'avg_completeness': self.avg_completeness,
+            'score': self.score,
+            'computed_at': self.computed_at.isoformat() if self.computed_at else None,
+        }
+
+
+def define_contribution_score_table():
+    global contribution_score_table
+
+    contribution_score_table = Table(
+        'contribution_score',
+        meta.metadata,
+        Column('id', UnicodeText, primary_key=True,
+               default=lambda: str(uuid.uuid4())),
+        Column('group_id', UnicodeText, nullable=False),
+        Column('group_name', UnicodeText, nullable=False),
+        Column('group_title', UnicodeText, default=u''),
+        Column('entity_type', UnicodeText, nullable=False),
+        Column('datasets_count', Integer, default=0),
+        Column('documents_count', Integer, default=0),
+        Column('news_events_count', Integer, default=0),
+        Column('recent_90d', Integer, default=0),
+        Column('recent_365d', Integer, default=0),
+        Column('avg_completeness', Float, nullable=True),
+        Column('score', Float, default=0.0),
+        Column('computed_at', DateTime, default=datetime.datetime.utcnow),
+        Index('idx_contribution_score_entity', 'entity_type'),
+        Index('idx_contribution_score_group', 'group_name'),
+    )
+
+    try:
+        meta.registry.map_imperatively(ContributionScore, contribution_score_table)
+    except AttributeError:
+        meta.mapper(ContributionScore, contribution_score_table)
+
+
+def init_contribution_scores_db():
+    """Crea la tabla contribution_score si no existe."""
+    if contribution_score_table is None:
+        define_contribution_score_table()
+
+    from sqlalchemy import inspect as sa_inspect
+    inspector = sa_inspect(meta.engine)
+    if 'contribution_score' not in inspector.get_table_names():
+        contribution_score_table.create(meta.engine)
+        log.info(u'contribution_score table created')
+    else:
+        log.debug(u'contribution_score table already exists')

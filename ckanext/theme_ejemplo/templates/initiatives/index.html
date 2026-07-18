@@ -45,12 +45,12 @@
   {% endif %}
 
   {% block groups_search_form %}
-    {% snippet 'snippets/search_form.html', form_id='group-search-form', type='group', query=q, sorting_selected=sort_by_selected, count=groupcount, placeholder=_('Search ...'), show_empty=request.args, no_bottom_border=true if groups, sorting = [(_('Name Ascending'), 'title asc'), (_('Name Descending'), 'title desc')] %}
+    {% snippet 'snippets/search_form.html', form_id='group-search-form', type='group', query=q, sorting_selected=sort_by_selected, count=groupcount, placeholder=_('Search ...'), show_empty=request.args, no_bottom_border=true if groups, sorting = [(_('Contribution'), 'score desc'), (_('Name Ascending'), 'title asc'), (_('Name Descending'), 'title desc')] %}
   {% endblock %}
   {% block groups_list %}
     {% if groups or request.args %}
       {% if groups %}
-        {% snippet "initiatives/snippets/group_list.html", groups=groups %}
+        {% snippet "initiatives/snippets/group_list.html", groups=groups, ranked=ranked, rank_start=rank_start %}
 
       {% endif %}
     {% else %}

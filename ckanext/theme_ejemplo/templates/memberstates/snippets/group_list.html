@@ -12,7 +12,7 @@ Example:
 <div class="org-grid">
 	{% block group_list_inner %}
   {% for group in groups %}
-    {% snippet "memberstates/snippets/group_item.html", group=group, position=loop.index %}
+    {% snippet "memberstates/snippets/group_item.html", group=group, position=loop.index, ranked=ranked, rank_start=rank_start or 0 %}
   {% endfor %}
   {% endblock %}
 </div>

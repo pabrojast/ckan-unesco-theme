@@ -29,6 +29,10 @@ _ = metadata_fields.update({field.field_name: field}) %} {% endfor %}
       "schemingdcat/package/snippets/download_metadata.html", pkg=pkg %} {%
       endblock %}
     </h2>
+    {% block package_completeness %}
+      {% snippet 'snippets/completeness_badge.html', package=pkg,
+         show_missing=h.check_access('package_update', {'id': pkg.id}) %}
+    {% endblock %}
   </header>
 
   {% block package_metadata %} {% asset

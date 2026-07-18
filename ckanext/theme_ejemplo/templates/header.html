@@ -5,43 +5,15 @@
     {% block header_account_container_content %} {% if c.userobj %}
     <div class="account avatar authed" data-module="me" data-me="{{ c.user }}">
       <ul class="list-unstyled2">
-        {% block header_account_logged %} {% if c.userobj and c.userobj.sysadmin %}
+        {% block header_account_logged %}
+        {% snippet 'snippets/approvals_dropdown.html' %}
+        {% if c.userobj and c.userobj.sysadmin %}
         <li>
           <a href="{{ h.url_for(controller='admin', action='index') }}" title="{{ _('Sysadmin settings') }}">
             <i class="fa fa-gavel" aria-hidden="true"></i>
             <span class="text">{{ _('Admin') }}</span>
           </a>
         </li>
-        {% set _pw = h.get_pending_water_count() if 'get_pending_water_count' in h %}
-        {% set _po = h.get_pending_oss_count() if 'get_pending_oss_count' in h %}
-        {% set _ps = h.get_pending_stories_count() if 'get_pending_stories_count' in h %}
-        {% if _pw %}
-        <li>
-          <a href="{{ h.url_for('pages.water_admin_dashboard') }}" title="{{ _('Pending water family approvals') }}" style="position: relative; display: inline-block;">
-            <i class="fa fa-tint" aria-hidden="true"></i>
-            <span class="text">{{ _('Water') }}</span>
-            <span style="position: absolute; top: -4px; right: -8px; background: #dc3545; color: #fff; border-radius: 50%; font-size: 10px; min-width: 18px; height: 18px; line-height: 18px; text-align: center; padding: 0 4px; font-weight: 700; box-shadow: 0 1px 3px rgba(0,0,0,0.3);">{{ _pw }}</span>
-          </a>
-        </li>
-        {% endif %}
-        {% if _po %}
-        <li>
-          <a href="{{ h.url_for('pages.open_source_admin_dashboard') }}" title="{{ _('Pending open-source tools') }}" style="position: relative; display: inline-block;">
-            <i class="fa fa-code" aria-hidden="true"></i>
-            <span class="text">{{ _('Tools') }}</span>
-            <span style="position: absolute; top: -4px; right: -8px; background: #17a2b8; color: #fff; border-radius: 50%; font-size: 10px; min-width: 18px; height: 18px; line-height: 18px; text-align: center; padding: 0 4px; font-weight: 700; box-shadow: 0 1px 3px rgba(0,0,0,0.3);">{{ _po }}</span>
-          </a>
-        </li>
-        {% endif %}
-        {% if _ps %}
-        <li>
-          <a href="{{ h.url_for('data_stories.pending_review') }}" title="{{ _('Pending data stories') }}" style="position: relative; display: inline-block;">
-            <i class="fa fa-book" aria-hidden="true"></i>
-            <span class="text">{{ _('Stories') }}</span>
-            <span style="position: absolute; top: -4px; right: -8px; background: #ffc107; color: #2c3e50; border-radius: 50%; font-size: 10px; min-width: 18px; height: 18px; line-height: 18px; text-align: center; padding: 0 4px; font-weight: 700; box-shadow: 0 1px 3px rgba(0,0,0,0.3);">{{ _ps }}</span>
-          </a>
-        </li>
-        {% endif %}
         <li>
           <a href="{{ h.url_for('theme_ejemplo.featured_datasets_admin') }}" title="{{ _('Featured Datasets') }}">
             <i class="fa fa-star" aria-hidden="true"></i>
@@ -117,15 +89,6 @@
             <span class="text">{{ _('Harvest') }}</span>  </a>
         </li>
         {% endif %}
-        {% set _mr_count = h.get_pending_membership_requests_count() %}
-        {% if _mr_count > 0 %}
-        <li class="membership-requests-notify">
-          <a href="{{ h.url_for('theme_ejemplo.membership_requests_overview') }}" title="{{ _('Pending membership requests') }}">
-            <i class="fa fa-user-plus" aria-hidden="true"></i>
-            <span class="membership-notify-badge">{{ _mr_count }}</span>
-          </a>
-        </li>
-        {% endif %}
         <li>
           <a href="{{ h.url_for('user.read', id=c.user) }}" class="image" title="{{ _('View profile') }}">
                   {% set safe_current_user_image = h.theme_ejemplo_normalize_user_image_url(c.userobj.image_url) if c.userobj else '' %}
@@ -152,13 +115,9 @@
         </li>
         {% endblock %} {% block header_account_log_out_link %}
         <li>
-          <a href="{{ h.url_for('theme_ejemplo.bug_tickets_list') }}" title="{{ _('Bug Tickets') }}" style="position: relative; display: inline-block;">
+          <a href="{{ h.url_for('theme_ejemplo.bug_tickets_list') }}" title="{{ _('Bug Tickets') }}">
             <i class="fa fa-bug" aria-hidden="true"></i>
             <span class="text">{{ _('Bugs') }}</span>
-            {% set _bt_count = h.get_open_bug_tickets_count() %}
-            {% if _bt_count %}
-            <span style="position: absolute; top: -4px; right: -8px; background: #e74c3c; color: #fff; border-radius: 50%; font-size: 10px; min-width: 18px; height: 18px; line-height: 18px; text-align: center; padding: 0 4px; font-weight: 700; box-shadow: 0 1px 3px rgba(0,0,0,0.3);">{{ _bt_count }}</span>
-            {% endif %}
           </a>
         </li>
         <li>
@@ -171,36 +130,6 @@
         <li>
           <a href="{{ h.url_for('/blog') }}" title="{{ _('Blog') }}">{{ _('Blog') }}</a>
         </li>
-        {% set _colab_count = h.colab_pending_count() if 'colab_pending_count' in h else 0 %}
-        {% set _tb_count = h.tb_pending_count() if 'tb_pending_count' in h else 0 %}
-        <li>
-          <a href="{{ h.url_for('colab.show_admin') }}" title="{{ _('Pending user approvals') }}" style="position: relative; display: inline-block;">
-            <i class="fa fa-user-plus" aria-hidden="true"></i>
-            <span class="text">{{ _('Users') }}</span>
-            {% if _colab_count %}
-            <span style="position: absolute; top: -4px; right: -8px; background: #dc3545; color: #fff; border-radius: 50%; font-size: 10px; min-width: 18px; height: 18px; line-height: 18px; text-align: center; padding: 0 4px; font-weight: 700; box-shadow: 0 1px 3px rgba(0,0,0,0.3);">{{ _colab_count }}</span>
-            {% endif %}
-          </a>
-        </li>
-        {% if _tb_count %}
-        <li>
-          <a href="{{ h.url_for('thingsboard.admin_dashboard') }}" title="{{ _('Pending device approvals') }}" style="position: relative; display: inline-block;">
-            <i class="fa fa-microchip" aria-hidden="true"></i>
-            <span class="text">{{ _('Devices') }}</span>
-            <span style="position: absolute; top: -4px; right: -8px; background: #f0ad4e; color: #fff; border-radius: 50%; font-size: 10px; min-width: 18px; height: 18px; line-height: 18px; text-align: center; padding: 0 4px; font-weight: 700; box-shadow: 0 1px 3px rgba(0,0,0,0.3);">{{ _tb_count }}</span>
-          </a>
-        </li>
-        {% endif %}
-        {% set _ir_count = h.get_pending_initiative_requests_count() %}
-        {% if _ir_count %}
-        <li>
-          <a href="{{ h.url_for('theme_ejemplo.initiative_requests_admin') }}" title="{{ _('Pending initiative requests') }}" style="position: relative; display: inline-block;">
-            <i class="fa fa-flag" aria-hidden="true"></i>
-            <span class="text">{{ _('Initiatives') }}</span>
-            <span style="position: absolute; top: -4px; right: -8px; background: #17a2b8; color: #fff; border-radius: 50%; font-size: 10px; min-width: 18px; height: 18px; line-height: 18px; text-align: center; padding: 0 4px; font-weight: 700; box-shadow: 0 1px 3px rgba(0,0,0,0.3);">{{ _ir_count }}</span>
-          </a>
-        </li>
-        {% endif %}
         <li>
           <a href="{{ h.url_for('/pages') }}" title="{{ _('Pages') }}">{{ _('Pages') }}</a>
         </li>

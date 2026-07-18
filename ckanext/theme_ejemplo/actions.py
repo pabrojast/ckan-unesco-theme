@@ -17,6 +17,16 @@ from ckanext.theme_ejemplo.helpers import get_member_state_title
 
 log = logging.getLogger(__name__)
 
+
+def _invalidate_approvals_cache(user_id=None):
+    """Refresh the header approvals bell right after processing a queue item."""
+    try:
+        from ckanext.theme_ejemplo import approvals
+        approvals.invalidate(user_id)
+    except Exception:
+        pass
+
+
 PROFILE_FIELDS = [
     'job_title', 'institution', 'country', 'phone',
     'website', 'orcid', 'expertise_areas', 'social_links',
@@ -760,6 +770,7 @@ def membership_request_process(context, data_dict):
         )
 
     model.Session.commit()
+    _invalidate_approvals_cache(user_obj.id if user_obj else None)
 
     return {
         'id': req.id,
@@ -2759,6 +2770,7 @@ def initiative_request_process(context, data_dict):
         req.handled_at = datetime.datetime.utcnow()
         req.admin_note = admin_note
         model.Session.commit()
+        _invalidate_approvals_cache()
         return req.as_dict()
 
     # action == 'approve' — crear grupo y añadir solicitante como admin
@@ -2811,6 +2823,7 @@ def initiative_request_process(context, data_dict):
     req.created_group_id = created['id']
     req.name = group_name
     model.Session.commit()
+    _invalidate_approvals_cache()
 
     return req.as_dict()
 

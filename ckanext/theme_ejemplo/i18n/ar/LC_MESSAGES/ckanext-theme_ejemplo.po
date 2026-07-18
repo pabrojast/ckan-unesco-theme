@@ -2089,3 +2089,57 @@ msgstr "إجمالي المشاهدات"
 #: ckanext/theme_ejemplo/templates/home/snippets/site_stats_hero.html
 msgid "Total downloads"
 msgstr "إجمالي التنزيلات"
+
+msgid "Full metadata"
+msgstr "بيانات وصفية كاملة"
+
+msgid "Medium metadata"
+msgstr "بيانات وصفية متوسطة"
+
+msgid "Limited metadata"
+msgstr "بيانات وصفية محدودة"
+
+msgid "Metadata completeness"
+msgstr "اكتمال البيانات الوصفية"
+
+msgid "Fields to improve:"
+msgstr "حقول تحتاج إلى تحسين:"
+
+msgid "Contribution"
+msgstr "المساهمة"
+
+msgid "Contribution rank"
+msgstr "الترتيب حسب المساهمة"
+
+msgid "Pending approvals"
+msgstr "موافقات معلّقة"
+
+msgid "Approvals"
+msgstr "الموافقات"
+
+msgid "Water Family submissions"
+msgstr "مساهمات عائلة الماء"
+
+msgid "Open-source tools"
+msgstr "أدوات مفتوحة المصدر"
+
+msgid "Data stories"
+msgstr "قصص البيانات"
+
+msgid "Initiative requests"
+msgstr "طلبات المبادرات"
+
+msgid "User registrations"
+msgstr "تسجيلات المستخدمين"
+
+msgid "Device approvals"
+msgstr "الموافقة على الأجهزة"
+
+msgid "Citizen science"
+msgstr "العلوم المواطنة"
+
+msgid "Membership requests"
+msgstr "طلبات العضوية"
+
+msgid "Bug tickets"
+msgstr "تذاكر الأخطاء"

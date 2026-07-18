@@ -17,6 +17,7 @@ import json
 import logging
 from ckanext.theme_ejemplo.utils import normalize_user_image_url
 from ckanext.theme_ejemplo.helpers import get_member_state_title
+from ckanext.theme_ejemplo import ranking
 
 log = logging.getLogger(__name__)
 group_type = u'group'
@@ -233,18 +234,30 @@ class MyLogica():
                 try:
                     # Obtener parámetros
                     q = c.q = request.args.get('q', '')
-                    sort_by = c.sort_by_selected = request.args.get('sort')
+                    sort_by = request.args.get('sort')
+                    # Orden por contribución (default sin búsqueda); 'score desc'
+                    # no es un sort válido de group_list, se resuelve aquí.
+                    rank_order = not q and sort_by in (None, '', 'score desc')
+                    c.sort_by_selected = 'score desc' if rank_order else sort_by
+                    group_list_sort = 'title asc' if sort_by in (None, '', 'score desc') else sort_by
                     page = h.get_page_number(request.args) or 1
                     items_per_page = 21
-                    
+
                     # Obtener grupos de member-states desde cache
                     member_states_groups = get_member_states_groups()
-                    
+
                     # Obtener todos los grupos desde cache
-                    all_groups = get_all_groups_cached(sort_by)
-                    
+                    all_groups = get_all_groups_cached(group_list_sort)
+
                     # Calcular grupos de iniciativas (excluyendo member-states)
                     initiatives_groups = list(set(all_groups) - set(member_states_groups))
+                    if rank_order:
+                        initiatives_groups = ranking.order_by_score(
+                            initiatives_groups, 'initiative')
+                    else:
+                        # preservar el orden del group_list cacheado
+                        ms = set(member_states_groups)
+                        initiatives_groups = [g for g in all_groups if g not in ms]
                     
                     # Si hay búsqueda, filtrar los grupos
                     if q:
@@ -258,7 +271,7 @@ class MyLogica():
                                 'include_groups': False,
                                 'limit': items_per_page,
                                 'offset': items_per_page * (page - 1),
-                                'sort': sort_by
+                                'sort': group_list_sort
                             }
                         )
                         
@@ -287,10 +300,15 @@ class MyLogica():
                                 'groups': page_groups,
                                 'include_groups': False,
                                 'limit': items_per_page,
-                                'sort': sort_by
+                                'sort': group_list_sort
                             }
                         )
-                    
+                        if rank_order:
+                            # group_list no respeta el orden de page_groups
+                            by_name = {g['name']: g for g in groups_result}
+                            groups_result = [by_name[n] for n in page_groups
+                                             if n in by_name]
+
                     # Configurar paginación
                     c.page = h.Page(
                         collection=initiatives_groups,
@@ -299,13 +317,15 @@ class MyLogica():
                         items_per_page=items_per_page,
                     )
                     c.page.items = groups_result
-                    
-                    return render_template("initiatives/index.html", 
-                                         q=q, 
-                                         page=c.page, 
-                                         groups=groups_result, 
-                                         group_type=group_type, 
-                                         groupcount=groupcount)
+
+                    return render_template("initiatives/index.html",
+                                         q=q,
+                                         page=c.page,
+                                         groups=groups_result,
+                                         group_type=group_type,
+                                         groupcount=groupcount,
+                                         ranked=rank_order,
+                                         rank_start=items_per_page * (page - 1))
                     
                 except Exception as e:
                     log.error(f"Error en initiatives: {e}")
@@ -351,14 +371,22 @@ class MyLogica():
                 try:
                     # Obtener parámetros
                     q = c.q = request.args.get('q', '')
-                    sort_by = c.sort_by_selected = request.args.get('sort')
+                    sort_by = request.args.get('sort')
+                    # Orden por contribución (default sin búsqueda); 'score desc'
+                    # no es un sort válido de group_list, se resuelve aquí.
+                    rank_order = not q and sort_by in (None, '', 'score desc')
+                    c.sort_by_selected = 'score desc' if rank_order else sort_by
+                    group_list_sort = 'title asc' if sort_by in (None, '', 'score desc') else sort_by
                     page = h.get_page_number(request.args) or 1
                     items_per_page = 21
-                    
+
                     # Obtener grupos de member-states desde cache (sin incluir el principal)
                     member_states_groups = get_member_states_groups()
                     # Remover 'member-states' del listado ya que solo queremos los hijos
                     member_states_only = [g for g in member_states_groups if g != 'member-states']
+                    if rank_order:
+                        member_states_only = ranking.order_by_score(
+                            member_states_only, 'member_state')
                     
                     # Si hay búsqueda, hacer consulta filtrada
                     if q:
@@ -372,7 +400,7 @@ class MyLogica():
                                 'include_groups': False,
                                 'limit': items_per_page,
                                 'offset': items_per_page * (page - 1),
-                                'sort': sort_by
+                                'sort': group_list_sort
                             }
                         )
                         
@@ -402,12 +430,17 @@ class MyLogica():
                                     'groups': page_groups,
                                     'include_groups': False,
                                     'limit': items_per_page,
-                                    'sort': sort_by
+                                    'sort': group_list_sort
                                 }
                             )
+                            if rank_order:
+                                # group_list no respeta el orden de page_groups
+                                by_name = {g['name']: g for g in groups_result}
+                                groups_result = [by_name[n] for n in page_groups
+                                                 if n in by_name]
                         else:
                             groups_result = []
-                    
+
                     # Configurar paginación
                     c.page = h.Page(
                         collection=member_states_only,
@@ -416,13 +449,15 @@ class MyLogica():
                         items_per_page=items_per_page,
                     )
                     c.page.items = groups_result
-                    
-                    return render_template("memberstates/index.html", 
-                                         q=q, 
-                                         page=c.page, 
-                                         groups=groups_result, 
-                                         group_type=group_type, 
-                                         groupcount=groupcount)
+
+                    return render_template("memberstates/index.html",
+                                         q=q,
+                                         page=c.page,
+                                         groups=groups_result,
+                                         group_type=group_type,
+                                         groupcount=groupcount,
+                                         ranked=rank_order,
+                                         rank_start=items_per_page * (page - 1))
                     
                 except Exception as e:
                     log.error(f"Error en memberstates: {e}")

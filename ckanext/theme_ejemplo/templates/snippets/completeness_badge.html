@@ -1,0 +1,37 @@
+{#
+  Metadata completeness badge.
+
+  completeness - dict with score/category/missing/languages
+                 (falls back to h.theme_ejemplo_completeness(package))
+  package      - package dict, used only when completeness is not given
+  compact      - if true, renders only the pill (search results)
+  show_missing - if true, lists the fields to improve (dataset page)
+
+  Example:
+    {% snippet 'snippets/completeness_badge.html', package=package, compact=true %}
+#}
+{% set completeness = completeness or h.theme_ejemplo_completeness(package) %}
+{% if completeness %}
+  {% set category = completeness.category %}
+  {% if category == 'full' %}
+    {% set color = '#1e7e34' %}{% set label = _('Full metadata') %}
+  {% elif category == 'medium' %}
+    {% set color = '#b8860b' %}{% set label = _('Medium metadata') %}
+  {% else %}
+    {% set color = '#a94442' %}{% set label = _('Limited metadata') %}
+  {% endif %}
+  <span class="badge completeness-badge completeness-{{ category }}"
+        style="background: {{ color }}; color: #fff; font-weight: 600;"
+        title="{{ _('Metadata completeness') }}: {{ completeness.score }}%">
+    <i class="fa fa-list-check fa-tasks" aria-hidden="true"></i>
+    {{ label }}{% if not compact %} · {{ completeness.score }}%{% endif %}
+  </span>
+  {% if show_missing and completeness.missing %}
+    <div class="completeness-missing" style="margin-top: 6px; font-size: 12px; color: #666;">
+      {{ _('Fields to improve:') }}
+      {% for field in completeness.missing %}
+        <code>{{ field }}</code>{{ ", " if not loop.last }}
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endif %}

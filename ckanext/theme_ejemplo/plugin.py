@@ -15,8 +15,11 @@ from . import helpers
 from . import actions as custom_actions
 from . import auth as custom_auth
 from . import model as membership_model
+from . import approvals
 from . import cache as anon_cache
+from . import completeness
 from . import pageview_tracking
+from . import ranking
 from .utils import normalize_user_image_url
 import logging
 from functools import lru_cache
@@ -52,6 +55,7 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
         plugins.implements(plugins.IAuthFunctions)
         plugins.implements(plugins.IClick)
         plugins.implements(plugins.IMiddleware, inherit=True)
+        plugins.implements(plugins.IFacets, inherit=True)
 
         def __init__(self, name=None):
             super().__init__(name=name)
@@ -103,7 +107,16 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 
                 # Sanitizar campos para evitar problemas con atomic updates de Solr
                 self._sanitize_solr_fields(dataset_dict)
-                
+
+                # Completitud de metadatos → campos indexados para facet/sort
+                try:
+                    score, category = completeness.for_index(dataset_dict)
+                    if score is not None:
+                        dataset_dict['metadata_completeness'] = score
+                        dataset_dict['metadata_completeness_category'] = category
+                except Exception as e:
+                    log.warning(f"Completeness indexing skipped for {package_id}: {e}")
+
                 return dataset_dict
             
             except Exception as e:
@@ -307,6 +320,7 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                             'total': dl.get('total', 0),
                             'recent': 0,
                         }
+                completeness.inject(pkg_dict)
             except Exception as e:
                 log.debug(f"Tracking injection skipped: {e}")
 
@@ -321,9 +335,18 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                             'total': tracking.get('total', 0),
                             'recent': tracking.get('recent', 0),
                         }
+                    completeness.inject(pkg_dict)
             except Exception as e:
                 log.debug(f"Tracking injection in search skipped: {e}")
             return search_results
+
+        # IFacets — defensivo: schemingdcat reemplaza el dict de facets y
+        # resuelve labels con facets_dict.get(); sin esta entrada el facet
+        # de completitud saldría sin etiqueta.
+        def dataset_facets(self, facets_dict, package_type):
+            facets_dict.setdefault('metadata_completeness_category',
+                                   toolkit._('Metadata completeness'))
+            return facets_dict
 
         # IMiddleware
         def make_middleware(self, app, config):
@@ -378,6 +401,8 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
             membership_model.init_open_learning_courses_db()
             # Create lightweight page-view tracking tables if needed
             membership_model.init_pageview_tracking_db()
+            # Create contribution_score table if needed
+            membership_model.init_contribution_scores_db()
 
         def get_blueprint(self):
             
@@ -1031,6 +1056,10 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                  'get_tracking_totals': helpers.get_tracking_totals,
                  'get_popular_datasets': helpers.get_popular_datasets,
                  'get_popular_resources': helpers.get_popular_resources,
+                 'theme_ejemplo_completeness': completeness.get_completeness,
+                 'get_contribution_rank': ranking.get_rank_for_group,
+                 'get_review_queues': approvals.get_review_queues,
+                 'get_review_queues_total': approvals.get_review_queues_total,
                  }
 
         # IActions
@@ -1168,8 +1197,8 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
             }
         
         def get_commands(self):
-            from ckanext.theme_ejemplo.cli import ihpix, openlearning, pageviews
-            return [ihpix, openlearning, pageviews]
+            from ckanext.theme_ejemplo.cli import ihpix, openlearning, pageviews, ranking
+            return [ihpix, openlearning, pageviews, ranking]
         
         def get_member_states_groups_list(self):
             """Obtiene los grupos de member-states como lista de tuplas (name, display_name).
