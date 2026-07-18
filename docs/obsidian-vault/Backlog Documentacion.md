@@ -19,6 +19,7 @@
 | DOC-009 | IHP-IX | Confirmar Key Activities por Output (form acepta texto libre por ahora). | Media |
 | DOC-010 | IHP-IX | Documentar export XLSX del Admin Overview cuando se implemente (hoy solo CSV). | Baja |
 | DOC-011 | IHP-IX | Guía paso-a-paso para IHP National Committees: cómo migrar del Microsoft Form al `/ihpix/report` interno. | Alta |
+| DOC-012 | Módulos | `completeness.py` y `ranking.py` no están descritos en [[Modulos]] (solo el flujo en [[Flujos Importantes]] §13). | Media |
 
 ---
 

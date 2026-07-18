@@ -1633,7 +1633,8 @@ a.heading.truncate {
   border-radius: 0.5rem;
   overflow: hidden;
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-  height: 160px;
+  /* min-height en vez de height: el contenido con boton (ej. View all news) supera los 160px y se cortaba */
+  min-height: 160px;
   display: flex;
   align-items: center;
   border-bottom: none;
@@ -1714,7 +1715,7 @@ a.heading.truncate {
 
 @media (max-width: 768px) {
   .section-title {
-    height: 140px;
+    min-height: 140px;
   }
   
   .section-title h2 {

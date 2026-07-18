@@ -386,6 +386,33 @@ Request /dataset/<name> (GET)  ──┐
 
 ---
 
+## 13. Completitud de metadatos y orden por defecto en /dataset
+
+`completeness.py` puntúa cada dataset/documento (0–100) con pesos por campo, sin persistir nada en el paquete: el score se inyecta al leer y se envía a Solr al indexar (`before_dataset_index` en `plugin.py`).
+
+```
+Indexación (before_dataset_index)
+   │  completeness.for_index() → score, categoría
+   ▼
+ [Solr]  metadata_completeness          (score, para stats/ranking)
+         metadata_completeness_category (facet full/medium/limited)
+         metadata_completeness_sort     (score con cero-padding: '085.3')
+   ▼
+ /dataset sin búsqueda ni orden elegido (before_dataset_search)
+   → sort = 'metadata_completeness_sort desc, metadata_modified desc'
+   → el dropdown de orden marca "Metadata completeness" (package/search.html)
+```
+
+> [!warning] Cero-padding obligatorio
+> Los campos dinámicos del esquema Solr estándar de CKAN se indexan como *string*, así que ordenar por `metadata_completeness` a secas es lexicográfico y queda mal ("9.5" > "85.3"). Por eso existe `metadata_completeness_sort` con padding (`completeness.sort_value()`). Con búsqueda de texto (`q`) se mantiene la relevancia como orden por defecto.
+
+> [!warning] Requiere reindexar
+> El campo `metadata_completeness_sort` solo existe para datasets indexados después del deploy: ejecutar `ckan search-index rebuild`. Los documentos sin el campo quedan al final del orden descendente.
+
+Umbrales de categoría configurables: `ckanext.theme_ejemplo.completeness_full_threshold` (75) y `completeness_medium_threshold` (40).
+
+---
+
 ## Ver también
 
 - [[Arquitectura]] — Diseño general del sistema

@@ -28,6 +28,10 @@ import time
 # Configurar logging
 log = logging.getLogger(__name__)
 
+# Orden por defecto en /dataset: mejor metadata primero, empates por fecha.
+# Usa el campo con cero-padding porque Solr lo indexa como string.
+DEFAULT_DATASET_SORT = 'metadata_completeness_sort desc, metadata_modified desc'
+
 # TTL caches para evitar llamadas repetidas en helpers costosos
 _courses_cache = {'data': None, 'expires': 0}
 _member_states_cache = {'data': None, 'expires': 0}
@@ -114,6 +118,8 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                     if score is not None:
                         dataset_dict['metadata_completeness'] = score
                         dataset_dict['metadata_completeness_category'] = category
+                        dataset_dict['metadata_completeness_sort'] = \
+                            completeness.sort_value(score)
                 except Exception as e:
                     log.warning(f"Completeness indexing skipped for {package_id}: {e}")
 
@@ -128,13 +134,19 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
             return self.before_dataset_search(search_params)
         # for ckan v2.10
         def before_dataset_search(self, search_params):
-            """Exclude documents from the Datasets tab on group/org pages."""
+            """Exclude documents from the Datasets tab on group/org pages.
+            En /dataset, sin busqueda ni orden elegido, ordenar por
+            completitud de metadatos (mejor metadata primero)."""
             try:
                 from flask import request as flask_request
                 endpoint = flask_request.endpoint or ''
                 if endpoint in ('group.read', 'organization.read'):
                     fq = search_params.get('fq', '')
                     search_params['fq'] = fq + ' -type:documents'
+                if (endpoint == 'dataset.search'
+                        and not search_params.get('sort')
+                        and not (search_params.get('q') or '').strip('*: ')):
+                    search_params['sort'] = DEFAULT_DATASET_SORT
             except RuntimeError:
                 pass
             return search_params

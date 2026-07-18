@@ -40,14 +40,20 @@
     'translated_fields': translated_fields,
     'remove_field': remove_field }
   %}
+  {% set completeness_sort = 'metadata_completeness_sort desc, metadata_modified desc' %}
   {% set sorting = [
     (_('Relevance'), 'score desc, metadata_modified desc'),
     (_('Name Ascending'), 'title_string asc'),
     (_('Name Descending'), 'title_string desc'),
     (_('Last Modified'), 'metadata_modified desc'),
     (_('Publicador'), 'publisher_name asc'),
-    (_('Metadata completeness'), 'metadata_completeness desc'),
+    (_('Metadata completeness'), completeness_sort),
     (_('Popular'), 'views_recent desc') if g.tracking_enabled else (false, false) ]
   %}
+  {# Sin busqueda ni orden explicito, el backend ordena por completitud
+     (before_dataset_search); reflejarlo como opcion seleccionada #}
+  {% if not sort_by_selected and not (q or '').strip() %}
+    {% set sort_by_selected = completeness_sort %}
+  {% endif %}
   {% snippet 'schemingdcat/snippets/search_form.html', type='dataset', query=q, sorting=sorting, sorting_selected=sort_by_selected, count=page.item_count, facets=facets, show_empty=request.args, error=query_error %}
 {% endblock %}

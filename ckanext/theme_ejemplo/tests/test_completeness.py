@@ -153,3 +153,16 @@ def test_for_index_unsupported_type():
     score, category = completeness.for_index(
         {'validated_data_dict': json.dumps({'type': 'harvest'})})
     assert score is None and category is None
+
+
+def test_sort_value_orders_lexicographically():
+    scores = [9.5, 100.0, 85.3, 0.0, 20.0]
+    padded = [completeness.sort_value(s) for s in scores]
+    assert padded == ['009.5', '100.0', '085.3', '000.0', '020.0']
+    # el orden lexicografico de las claves coincide con el numerico
+    assert sorted(padded) == [completeness.sort_value(s)
+                              for s in sorted(scores)]
+
+
+def test_sort_value_none_passthrough():
+    assert completeness.sort_value(None) is None

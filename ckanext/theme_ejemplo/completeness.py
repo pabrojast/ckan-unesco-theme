@@ -278,6 +278,15 @@ def for_index(dataset_dict):
     return result['score'], result['category']
 
 
+def sort_value(score):
+    """Clave de orden para Solr: el campo dinamico se indexa como string,
+    asi que se rellena con ceros ('009.5' < '085.3' < '100.0') para que el
+    orden lexicografico coincida con el numerico."""
+    if score is None:
+        return None
+    return '%05.1f' % float(score)
+
+
 def get_completeness(pkg_dict):
     """Template helper: injected value or on-the-fly calculation."""
     if not isinstance(pkg_dict, dict):
