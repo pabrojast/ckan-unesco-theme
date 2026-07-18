@@ -561,47 +561,12 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 /* ============================================================
-   Scroll Reveal — IntersectionObserver para animar secciones
-   al entrar en el viewport
+   Interacciones del home: contadores de stats y tabs de hubs
+   (el scroll-reveal es CSS puro via animation-timeline; el JS
+   ya no participa en mostrar/ocultar secciones)
    ============================================================ */
 (function() {
     'use strict';
-
-    function initScrollReveal() {
-        // Verificar soporte del navegador
-        if (!('IntersectionObserver' in window)) {
-            // Fallback: mostrar todo de inmediato
-            document.querySelectorAll('.reveal-section, .reveal-item').forEach(function(el) {
-                el.classList.add('revealed');
-            });
-            return;
-        }
-
-        // Respetar preferencia de movimiento reducido
-        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-            document.querySelectorAll('.reveal-section, .reveal-item').forEach(function(el) {
-                el.classList.add('revealed');
-            });
-            return;
-        }
-
-        var revealObserver = new IntersectionObserver(function(entries) {
-            entries.forEach(function(entry) {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('revealed');
-                    revealObserver.unobserve(entry.target);
-                }
-            });
-        }, {
-            threshold: 0.1,
-            rootMargin: '0px 0px -50px 0px'
-        });
-
-        // Observar secciones y items
-        document.querySelectorAll('.reveal-section, .reveal-item').forEach(function(el) {
-            revealObserver.observe(el);
-        });
-    }
 
     /* ============================================================
        Stats Bar — Animación de contadores
@@ -703,12 +668,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // Inicializar cuando el DOM esté listo
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function() {
-            initScrollReveal();
             initStatsCounter();
             initHomeTabs();
         });
     } else {
-        initScrollReveal();
         initStatsCounter();
         initHomeTabs();
     }

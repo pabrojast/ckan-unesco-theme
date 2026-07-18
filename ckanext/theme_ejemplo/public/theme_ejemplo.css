@@ -6790,60 +6790,32 @@ p.slide-subtitle {
   box-shadow: 0 2px 8px rgba(0, 105, 180, 0.3) !important;
 }
 
-/* --- Scroll Reveal Animations --- */
-/* Solo ocultar bajo html.js (lo marca base.html): si el JS no carga o
-   falla, el contenido queda visible en vez de una home en blanco */
-html.js .reveal-section,
-html.js .reveal-item {
-  opacity: 0;
-  transform: translateY(30px);
-  transition: opacity 0.6s ease, transform 0.6s ease;
-}
-
-.reveal-section.revealed,
-.reveal-item.revealed {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-/* Efecto escalonado para tarjetas dentro de secciones reveladas */
-.reveal-section.revealed .col-md-4:nth-child(1) .cardsmall-enhanced,
-.reveal-section.revealed .col-md-3:nth-child(1) .cardsmall-enhanced,
-.reveal-section.revealed .col-enhanced:nth-child(1) .cardsmall-enhanced {
-  transition-delay: 0s;
-}
-
-.reveal-section.revealed .col-md-4:nth-child(2) .cardsmall-enhanced,
-.reveal-section.revealed .col-md-3:nth-child(2) .cardsmall-enhanced,
-.reveal-section.revealed .col-enhanced:nth-child(2) .cardsmall-enhanced {
-  transition-delay: 0.1s;
-}
-
-.reveal-section.revealed .col-md-4:nth-child(3) .cardsmall-enhanced,
-.reveal-section.revealed .col-md-3:nth-child(3) .cardsmall-enhanced,
-.reveal-section.revealed .col-enhanced:nth-child(3) .cardsmall-enhanced {
-  transition-delay: 0.2s;
-}
-
-.reveal-section.revealed .col-md-4:nth-child(4) .cardsmall-enhanced,
-.reveal-section.revealed .col-md-3:nth-child(4) .cardsmall-enhanced {
-  transition-delay: 0.3s;
-}
-
-/* Items de lista escalonados */
-.reveal-item:nth-child(1) { transition-delay: 0s; }
-.reveal-item:nth-child(2) { transition-delay: 0.08s; }
-.reveal-item:nth-child(3) { transition-delay: 0.16s; }
-.reveal-item:nth-child(4) { transition-delay: 0.24s; }
-.reveal-item:nth-child(5) { transition-delay: 0.32s; }
-
-/* Desactivar animaciones si el usuario prefiere movimiento reducido */
-@media (prefers-reduced-motion: reduce) {
-  html.js .reveal-section,
-  html.js .reveal-item {
+/* --- Scroll Reveal (CSS scroll-driven, sin JS) --- */
+/* El contenido es visible por defecto SIEMPRE. El fade-in al entrar al
+   viewport solo corre en navegadores con animation-timeline; no depende
+   de JS ni de IntersectionObserver, asi que no puede dejar la home en
+   blanco (JS caido, tabs en background, capturas de pagina completa).
+   Cuidado: ninguna regla de ocultamiento debe superar en especificidad
+   a la de estado visible (eso paso con html.js vs .revealed). */
+@keyframes reveal-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
     opacity: 1;
     transform: none;
-    transition: none;
+  }
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal-section,
+    .reveal-item {
+      animation: reveal-fade-up linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 40%;
+    }
   }
 }
 
