@@ -1,116 +1,63 @@
-<div role="main" class="hero">
+<a class="skip-to-content" href="#home-sections">{{ _('Skip to main content') }}</a>
+<div role="main" id="main-content">
+  <div class="hero">
     <div class="container">
       {% block search %}
         {% snippet 'home/snippets/search.html' %}
       {% endblock %}
     </div>
   </div>
-  <div role="main">
+  <div>
     <div class="container full-width">
       {% block slideshow %}
         {% snippet 'home/snippets/slideshow.html' %}
       {% endblock %}
     </div>
 
-    <div class="container">
+    <div class="container" id="home-sections">
       <div class="row row2">
         <div class="col-md-12 col1 reveal-section" style="border-top: 0 !important;">
           {% block site_stats_hero %}
             {% snippet 'home/snippets/site_stats_hero.html' %}
           {% endblock %}
         </div>
+
+        {# ── Explorar datos: destacados + recientes/trending ── #}
+        <div class="col-md-12 col1 homepage-section reveal-section">
+          {% block featureddata %}
+            {% snippet 'home/snippets/featureddata.html' %}
+          {% endblock %}
+          {% block featureddatasnip %}
+            {% snippet 'home/snippets/featureddatasnip.html' %}
+          {% endblock %}
+        </div>
+        <div class="col-md-12 col1 homepage-section homepage-section-alt reveal-section">
+          {% block explore_tabs %}
+            {% snippet 'home/snippets/explore_tabs.html' %}
+          {% endblock %}
+        </div>
+
+        {# ── Herramientas y recursos (antes 5 secciones) ── #}
+        <div class="col-md-12 col1 homepage-section reveal-section">
+          {% block tools_hub %}
+            {% snippet 'home/snippets/tools_hub.html' %}
+          {% endblock %}
+        </div>
+
+        {# ── Comunidad y conocimiento (antes 8 bloques) ── #}
+        <div class="col-md-12 col1 homepage-section homepage-section-alt reveal-section">
+          {% block community_tabs %}
+            {% snippet 'home/snippets/community_tabs.html' %}
+          {% endblock %}
+        </div>
+
+        {# ── Acerca de IHP-WINS (cierre editorial) ── #}
         <div class="col-md-12 col1 homepage-section reveal-section">
           {% block promoted %}
             {% snippet 'home/snippets/promoted.html' %}
           {% endblock %}
         </div>
-        <div class="col-md-12 col1 homepage-section homepage-section-alt reveal-section">
-          {% block data %}
-            {% snippet 'home/snippets/data.html' %}
-          {% endblock %}
-        </div>
-        <div class="col-md-12 col1 homepage-section reveal-section">
-          {% block recently_added %}
-            {% snippet 'home/snippets/recently_added.html' %}
-          {% endblock %}
-        </div>
-        <div class="col-md-12 col1 homepage-section reveal-section">
-          {% block popular_datasets %}
-            {% snippet 'snippets/popular_datasets.html' %}
-          {% endblock %}
-        </div>
-        <div class="col-md-12 col1 homepage-section homepage-section-alt reveal-section">
-          {% block featureddata %}
-            {% snippet 'home/snippets/featureddata.html' %}
-          {% endblock %}
-        </div>
-        <div class="col-md-12 col1 reveal-section" style="border-top: 0 !important;">
-          {% block featureddatasnip %}
-            {% snippet 'home/snippets/featureddatasnip.html' %}
-          {% endblock %}
-        </div>
-        
-        <div class="col-md-12 col1 homepage-section reveal-section">
-          {% block IHPViewers %}
-            {% snippet 'home/snippets/IHPViewers.html' %}
-          {% endblock %}
-        </div>
-        <div class="col-md-12 col1 homepage-section homepage-section-alt reveal-section" style="border-top: 0 !important;">
-          {% block ThematicViewers %}
-            {% snippet 'home/snippets/ThematicViewers.html' %}
-          {% endblock %}
-        </div>
-        <div class="col-md-12 col1 homepage-section reveal-section">
-          {% block AIWaterTools %}
-            {% snippet 'home/snippets/ai_water_tools.html' %}
-          {% endblock %}
-        </div>
-        <div class="col-md-12 col1 reveal-section" style="border-top: 0 !important;">
-          {% block OpenSourceTools %}
-            {% snippet 'home/snippets/open_source_tools_banner.html' %}
-          {% endblock %}
-        </div>
-        <div class="col-md-12 col1 homepage-section homepage-section-alt reveal-section">
-          {% block IHPEducation %}
-            {% snippet 'home/snippets/IHPEducation.html' %}
-          {% endblock %}
-        </div>
-        <div class="col-md-12 col1 reveal-section" style="border-top: 0 !important;">
-          {% block IHPEducationdata %}
-            {% snippet 'home/snippets/IHPEducationdata.html' %}
-          {% endblock %}
-        </div>
-        <div class="col-md-12 col1 homepage-section reveal-section" style="margin-bottom: 0 !important;">
-          {% block FeaturedPublications %}
-            {% snippet 'home/snippets/FeaturedPublications.html' %}
-          {% endblock %}
-        </div>
-        <div class="col-md-12 col1 reveal-section" style="border-top: 0 !important;">
-          {% block FeaturedPublicationsdata %}
-            {% snippet 'home/snippets/FeaturedPublicationsdata.html' %}
-          {% endblock %}
-        </div>
-        <div class="col-md-12 col1 homepage-section homepage-section-alt reveal-section">
-          {% block WaterFamilyNews %}
-            {% snippet 'home/snippets/WaterFamilyNews.html' %}
-          {% endblock %}
-        </div>
-        <div class="col-md-12 col1 reveal-section" style="border-top: 0 !important;">
-          {% block WaterFamilyNewsdata %}
-            {% snippet 'home/snippets/WaterFamilyNewsdata.html' %}
-          {% endblock %}
-        </div>
-        <div class="col-md-12 col1 homepage-section reveal-section">
-          {% block WaterFamilyEvents %}
-            {% snippet 'home/snippets/WaterFamilyEvents.html' %}
-          {% endblock %}
-        </div>
-        <div class="col-md-12 col1 reveal-section" style="border-top: 0 !important;">
-          {% block WaterFamilyEventsdata %}
-            {% snippet 'home/snippets/WaterFamilyEventsdata.html' %}
-          {% endblock %}
-        </div>
       </div>
     </div>
   </div>
-  
+</div>

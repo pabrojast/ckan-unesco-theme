@@ -2139,3 +2139,30 @@ msgstr ""
 #: ckanext/theme_ejemplo/approvals.py
 msgid "Bug tickets"
 msgstr ""
+
+msgid "Explore Data"
+msgstr ""
+
+msgid "Tools and Resources"
+msgstr ""
+
+msgid "Viewers, AI tools and open source software from the water community"
+msgstr ""
+
+msgid "Community and Knowledge"
+msgstr ""
+
+msgid "News, events, publications and courses from the UNESCO Water Family"
+msgstr ""
+
+msgid "Events"
+msgstr ""
+
+msgid "Publications"
+msgstr ""
+
+msgid "Courses"
+msgstr ""
+
+msgid "Skip to main content"
+msgstr ""

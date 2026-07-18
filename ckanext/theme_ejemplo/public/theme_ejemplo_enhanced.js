@@ -661,14 +661,55 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    /* ============================================================
+       Tabs accesibles de los hubs del home (explore/community)
+       Los paneles se renderizan server-side; sin JS se apilan
+       visibles (el CSS solo los oculta bajo html.js)
+       ============================================================ */
+    function initHomeTabs() {
+        document.querySelectorAll('[data-tabs]').forEach(function(root) {
+            var tabs = Array.prototype.slice.call(
+                root.querySelectorAll('[role="tab"]'));
+            var panels = Array.prototype.slice.call(
+                root.querySelectorAll('[role="tabpanel"]'));
+            if (!tabs.length || !panels.length) return;
+
+            function activate(tab, focus) {
+                tabs.forEach(function(t) {
+                    var on = t === tab;
+                    t.setAttribute('aria-selected', on ? 'true' : 'false');
+                    t.tabIndex = on ? 0 : -1;
+                });
+                panels.forEach(function(p) {
+                    p.classList.toggle(
+                        'is-active', p.id === tab.getAttribute('aria-controls'));
+                });
+                if (focus) tab.focus();
+            }
+
+            tabs.forEach(function(tab, i) {
+                tab.addEventListener('click', function() { activate(tab, false); });
+                tab.addEventListener('keydown', function(e) {
+                    var dir = e.key === 'ArrowRight' ? 1 :
+                              e.key === 'ArrowLeft' ? -1 : 0;
+                    if (!dir) return;
+                    e.preventDefault();
+                    activate(tabs[(i + dir + tabs.length) % tabs.length], true);
+                });
+            });
+        });
+    }
+
     // Inicializar cuando el DOM esté listo
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', function() {
             initScrollReveal();
             initStatsCounter();
+            initHomeTabs();
         });
     } else {
         initScrollReveal();
         initStatsCounter();
+        initHomeTabs();
     }
 })();

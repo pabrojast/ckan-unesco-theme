@@ -2298,3 +2298,30 @@ msgstr "Solicitudes de membresía"
 
 msgid "Bug tickets"
 msgstr "Tickets de errores"
+
+msgid "Explore Data"
+msgstr "Explorar datos"
+
+msgid "Tools and Resources"
+msgstr "Herramientas y recursos"
+
+msgid "Viewers, AI tools and open source software from the water community"
+msgstr "Visores, herramientas de IA y software de código abierto de la comunidad del agua"
+
+msgid "Community and Knowledge"
+msgstr "Comunidad y conocimiento"
+
+msgid "News, events, publications and courses from the UNESCO Water Family"
+msgstr "Noticias, eventos, publicaciones y cursos de la Familia del Agua de la UNESCO"
+
+msgid "Events"
+msgstr "Eventos"
+
+msgid "Publications"
+msgstr "Publicaciones"
+
+msgid "Courses"
+msgstr "Cursos"
+
+msgid "Skip to main content"
+msgstr "Saltar al contenido principal"

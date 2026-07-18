@@ -6,26 +6,18 @@
 {% set popular_res = h.get_popular_resources(5) %}
 {% set tracking_totals = h.get_tracking_totals() %}
 
+{# Solo contenido: el banner y las tabs viven en explore_tabs.html #}
 {% if popular or popular_res %}
-<section class="module module-narrow module-shallow">
-  <div class="section-title section-title-enhanced" style="margin-bottom: 0.5rem;">
-    <div class="section-title-bg" style="background-image: url('/Landing_page/Content/IHPTITLE12TRENDING.jpg');"></div>
-    <div class="section-title-overlay"></div>
-    <div class="section-title-content">
-      <h2><i class="fa fa-line-chart"></i> {{ _('Trending on IHP-WINS') }}</h2>
-      {% if tracking_totals.page_views > 0 %}
-      <p class="section-title-description">
-        {{ h.SI_number_span(tracking_totals.page_views) }} {{ _('total page views') }}
-        {% if tracking_totals.downloads > 0 %}
-          · {{ h.SI_number_span(tracking_totals.downloads) }} {{ _('file downloads') }}
-        {% endif %}
-      </p>
-      {% endif %}
-    </div>
-  </div>
-</section>
-
 <div class="module-content box trending-section">
+  {% if tracking_totals.page_views > 0 %}
+  <p class="trending-totals text-muted">
+    <i class="fa fa-line-chart"></i>
+    {{ h.SI_number_span(tracking_totals.page_views) }} {{ _('total page views') }}
+    {% if tracking_totals.downloads > 0 %}
+      · {{ h.SI_number_span(tracking_totals.downloads) }} {{ _('file downloads') }}
+    {% endif %}
+  </p>
+  {% endif %}
   <div class="row">
     {# ── Most Viewed Datasets ── #}
     {% if popular %}

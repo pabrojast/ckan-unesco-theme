@@ -1194,7 +1194,8 @@ img {
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
-    max-height: 2.8rem;
+    /* 2 lineas a line-height 1.3 ocupan ~2.93rem; 2.8rem decapitaba la 2a */
+    max-height: 3rem;
 }
 .cardsmall-text {
     font-size: 1rem;
@@ -1800,7 +1801,7 @@ a.heading.truncate {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
-  max-height: 2.8rem;
+  max-height: 3rem;
 }
 
 .cardsmall-text {
@@ -2189,7 +2190,7 @@ h2.page-heading {
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   text-overflow: ellipsis;
-  max-height: 2.8rem;
+  max-height: 3rem;
 }
 
 .cardsmall-title-enhanced a {
@@ -6370,6 +6371,12 @@ body .download-links .btn-group .btn i {
   text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
   color: #fff;
   line-height: 1.2;
+  /* Titulos FR/ES largos crecen hacia arriba y el contenedor de altura
+     fija los recorta: limitar a 2 lineas tambien en desktop */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .slideshow-modern .slide-subtitle,
@@ -6784,8 +6791,10 @@ p.slide-subtitle {
 }
 
 /* --- Scroll Reveal Animations --- */
-.reveal-section,
-.reveal-item {
+/* Solo ocultar bajo html.js (lo marca base.html): si el JS no carga o
+   falla, el contenido queda visible en vez de una home en blanco */
+html.js .reveal-section,
+html.js .reveal-item {
   opacity: 0;
   transform: translateY(30px);
   transition: opacity 0.6s ease, transform 0.6s ease;
@@ -6830,8 +6839,8 @@ p.slide-subtitle {
 
 /* Desactivar animaciones si el usuario prefiere movimiento reducido */
 @media (prefers-reduced-motion: reduce) {
-  .reveal-section,
-  .reveal-item {
+  html.js .reveal-section,
+  html.js .reveal-item {
     opacity: 1;
     transform: none;
     transition: none;
@@ -6987,5 +6996,166 @@ p.slide-subtitle {
   .section-title-banner .section-banner-text h2,
   .section-title-banner .section-banner-text .section-title-description {
     text-align: center;
+  }
+}
+
+/* ============================================================
+   Skip link de accesibilidad (visible solo con foco de teclado)
+   ============================================================ */
+.skip-to-content {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 10000;
+  padding: 0.6rem 1.2rem;
+  background: var(--unesco-blue, #0069b4);
+  color: #fff;
+  border-radius: 0 0 8px 0;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.skip-to-content:focus {
+  left: 0;
+  color: #fff;
+  outline: 3px solid #ffd54f;
+  outline-offset: 2px;
+}
+
+/* ============================================================
+   Tabs de los hubs del home (explore_tabs / community_tabs)
+   Progressive enhancement: sin html.js los paneles se apilan
+   visibles y la botonera de tabs se oculta
+   ============================================================ */
+.home-tabs-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0 0 1rem;
+}
+
+html:not(.js) .home-tabs-nav {
+  display: none;
+}
+
+.home-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.55rem 1.1rem;
+  border: 1px solid rgba(0, 105, 180, 0.35);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--unesco-blue, #0069b4);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.home-tab:hover {
+  background: rgba(0, 105, 180, 0.08);
+}
+
+.home-tab[aria-selected="true"] {
+  background: var(--unesco-blue, #0069b4);
+  border-color: var(--unesco-blue, #0069b4);
+  color: #fff;
+}
+
+.home-tab:focus-visible {
+  outline: 3px solid #ffd54f;
+  outline-offset: 2px;
+}
+
+html.js .home-tabs .home-tab-panel:not(.is-active) {
+  display: none;
+}
+
+.home-tab-more {
+  text-align: right;
+  margin-top: 0.75rem;
+}
+
+.home-tab-more a {
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.trending-totals {
+  margin: 0 0 1rem;
+  font-size: 0.95rem;
+}
+
+/* ============================================================
+   Franja de accesos del hub de herramientas (tools_hub)
+   ============================================================ */
+.tools-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.tools-strip-card {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 1rem 1.2rem;
+  background: #fff;
+  border: 1px solid rgba(0, 105, 180, 0.18);
+  border-radius: 16px;
+  box-shadow: var(--shadow-light, 0 2px 6px rgba(0, 0, 0, 0.06));
+  color: var(--text-primary, #1f2d3d);
+  text-decoration: none;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.tools-strip-card:hover,
+.tools-strip-card:focus {
+  text-decoration: none;
+  color: var(--unesco-blue, #0069b4);
+  box-shadow: var(--shadow-medium, 0 6px 16px rgba(0, 105, 180, 0.15));
+  transform: translateY(-2px);
+}
+
+.tools-strip-icon {
+  flex: 0 0 auto;
+  width: 2.6rem;
+  height: 2.6rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(0, 105, 180, 0.1);
+  color: var(--unesco-blue, #0069b4);
+  font-size: 1.15rem;
+}
+
+.tools-strip-label {
+  flex: 1 1 auto;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.tools-strip-arrow {
+  flex: 0 0 auto;
+  opacity: 0.6;
+}
+
+.tools-hub-subheading {
+  margin: 0 0 1rem;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text-primary, #1f2d3d);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tools-strip-card,
+  .home-tab {
+    transition: none;
+  }
+  .tools-strip-card:hover {
+    transform: none;
   }
 }

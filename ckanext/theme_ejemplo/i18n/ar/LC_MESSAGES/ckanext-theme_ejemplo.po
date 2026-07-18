@@ -2143,3 +2143,30 @@ msgstr "طلبات العضوية"
 
 msgid "Bug tickets"
 msgstr "تذاكر الأخطاء"
+
+msgid "Explore Data"
+msgstr "استكشاف البيانات"
+
+msgid "Tools and Resources"
+msgstr "الأدوات والموارد"
+
+msgid "Viewers, AI tools and open source software from the water community"
+msgstr "أدوات العرض وأدوات الذكاء الاصطناعي والبرمجيات مفتوحة المصدر من مجتمع المياه"
+
+msgid "Community and Knowledge"
+msgstr "المجتمع والمعرفة"
+
+msgid "News, events, publications and courses from the UNESCO Water Family"
+msgstr "أخبار وفعاليات ومنشورات ودورات من أسرة المياه في اليونسكو"
+
+msgid "Events"
+msgstr "الفعاليات"
+
+msgid "Publications"
+msgstr "المنشورات"
+
+msgid "Courses"
+msgstr "الدورات"
+
+msgid "Skip to main content"
+msgstr "الانتقال إلى المحتوى الرئيسي"

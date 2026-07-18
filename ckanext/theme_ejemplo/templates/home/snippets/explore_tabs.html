@@ -1,0 +1,36 @@
+{# Hub "Explorar datos": fusiona Recently Added y Trending bajo un solo
+   banner con pestañas. Sin JS las dos pestañas se apilan visibles
+   (progressive enhancement via html.js en el CSS). #}
+<section class="module module-narrow module-shallow">
+  <div class="section-title section-title-enhanced" style="margin-bottom: 0.5rem;">
+    <div class="section-title-bg" style="background-image: url('/Landing_page/Content/IHPTITLE07RECENT.jpg');"></div>
+    <div class="section-title-overlay"></div>
+    <div class="section-title-content">
+      <h2 id="explore-data-title">{{ _('Explore Data') }}</h2>
+      <p class="section-title-description">{{ _('Latest datasets and publications added to IHP-WINS') }}</p>
+    </div>
+  </div>
+</section>
+
+<div class="home-tabs" data-tabs>
+  <div class="home-tabs-nav" role="tablist" aria-labelledby="explore-data-title">
+    <button type="button" class="home-tab" role="tab" id="tab-recent"
+            aria-controls="panel-recent" aria-selected="true">
+      <i class="fa fa-clock-o" aria-hidden="true"></i> {{ _('Recently Added') }}
+    </button>
+    <button type="button" class="home-tab" role="tab" id="tab-trending"
+            aria-controls="panel-trending" aria-selected="false" tabindex="-1">
+      <i class="fa fa-line-chart" aria-hidden="true"></i> {{ _('Trending on IHP-WINS') }}
+    </button>
+  </div>
+
+  <div class="home-tab-panel is-active" role="tabpanel" id="panel-recent"
+       aria-labelledby="tab-recent" tabindex="0">
+    {% snippet 'home/snippets/recently_added.html' %}
+  </div>
+
+  <div class="home-tab-panel" role="tabpanel" id="panel-trending"
+       aria-labelledby="tab-trending" tabindex="0">
+    {% snippet 'snippets/popular_datasets.html' %}
+  </div>
+</div>

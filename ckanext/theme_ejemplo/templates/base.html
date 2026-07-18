@@ -1,5 +1,8 @@
 {% ckan_extends %}
 {% block styles %}
+  {# Marca html.js ANTES del CSS: las animaciones reveal solo ocultan
+     contenido cuando el JS realmente corre (sin JS la home queda visible) #}
+  <script>document.documentElement.classList.add('js');</script>
   {{ super() }}
 <link rel="stylesheet" href="{{ h.url_for_static('/theme_ejemplo.css') }}" />
 <link rel="stylesheet" href="{{ h.url_for_static('/css/people-orgs.css') }}" />

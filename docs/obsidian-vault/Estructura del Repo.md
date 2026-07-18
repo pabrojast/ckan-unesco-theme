@@ -60,7 +60,7 @@ ckan-unesco-theme/
 | `email/` | Templates de correo electrónico |
 | `flood_drought_portal/` | Portal de inundaciones y sequías |
 | `group/` | Vistas de grupos/iniciativas (miembros, noticias, eventos, publicaciones) |
-| `home/` | Homepage con snippets UNESCO (slider, featured, cursos, estadísticas) |
+| `home/` | Homepage con snippets UNESCO. `custom_layout.html` orquesta: buscador → slideshow → stats → Featured Datasets → hub "Explore Data" (tabs Recientes/Trending, `explore_tabs.html`) → hub "Tools and Resources" (`tools_hub.html`) → hub "Community and Knowledge" (tabs News/Events/Publications/Courses, `community_tabs.html`) → About. Los tabs son server-side con progressive enhancement (`html.js`); sin JS los paneles se apilan visibles |
 | `ihpix/` | Portal IHP-IX (página principal, outputs, dashboard, reportes) |
 | `initiatives/` | Portal de iniciativas |
 | `iot_portal/` | Portal IoT |

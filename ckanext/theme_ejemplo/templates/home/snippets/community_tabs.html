@@ -1,0 +1,65 @@
+{# Hub "Comunidad y Conocimiento": fusiona Noticias, Eventos,
+   Publicaciones y Formación (antes 8 bloques apilados) en una sola
+   sección con pestañas. Los paneles se renderizan server-side; sin JS
+   se apilan visibles (progressive enhancement via html.js). #}
+<section class="module module-narrow module-shallow">
+  <div class="section-title section-title-enhanced" style="margin-bottom: 0.5rem;">
+    <div class="section-title-bg" style="background-image: url('/Landing_page/Content/IHPTITLE10FAMILYEVENTS.jpg');"></div>
+    <div class="section-title-overlay"></div>
+    <div class="section-title-content">
+      <h2 id="community-title">{{ _('Community and Knowledge') }}</h2>
+      <p class="section-title-description">{{ _('News, events, publications and courses from the UNESCO Water Family') }}</p>
+    </div>
+  </div>
+</section>
+
+<div class="home-tabs" data-tabs>
+  <div class="home-tabs-nav" role="tablist" aria-labelledby="community-title">
+    <button type="button" class="home-tab" role="tab" id="tab-news"
+            aria-controls="panel-news" aria-selected="true">
+      <i class="fa fa-newspaper-o" aria-hidden="true"></i> {{ _('News') }}
+    </button>
+    <button type="button" class="home-tab" role="tab" id="tab-events"
+            aria-controls="panel-events" aria-selected="false" tabindex="-1">
+      <i class="fa fa-calendar" aria-hidden="true"></i> {{ _('Events') }}
+    </button>
+    <button type="button" class="home-tab" role="tab" id="tab-publications"
+            aria-controls="panel-publications" aria-selected="false" tabindex="-1">
+      <i class="fa fa-book" aria-hidden="true"></i> {{ _('Publications') }}
+    </button>
+    <button type="button" class="home-tab" role="tab" id="tab-courses"
+            aria-controls="panel-courses" aria-selected="false" tabindex="-1">
+      <i class="fa fa-graduation-cap" aria-hidden="true"></i> {{ _('Courses') }}
+    </button>
+  </div>
+
+  <div class="home-tab-panel is-active" role="tabpanel" id="panel-news"
+       aria-labelledby="tab-news" tabindex="0">
+    {% snippet 'home/snippets/WaterFamilyNewsdata.html' %}
+    <div class="home-tab-more">
+      <a href="{{ h.url_for('pages.water_news_index') }}">
+        {{ _('View all news') }} <i class="fa fa-arrow-right" aria-hidden="true"></i>
+      </a>
+    </div>
+  </div>
+
+  <div class="home-tab-panel" role="tabpanel" id="panel-events"
+       aria-labelledby="tab-events" tabindex="0">
+    {% snippet 'home/snippets/WaterFamilyEventsdata.html' %}
+  </div>
+
+  <div class="home-tab-panel" role="tabpanel" id="panel-publications"
+       aria-labelledby="tab-publications" tabindex="0">
+    {% snippet 'home/snippets/FeaturedPublicationsdata.html' %}
+  </div>
+
+  <div class="home-tab-panel" role="tabpanel" id="panel-courses"
+       aria-labelledby="tab-courses" tabindex="0">
+    {% snippet 'home/snippets/IHPEducationdata.html' %}
+    <div class="home-tab-more">
+      <a href="{{ h.url_for('theme_ejemplo.courses') }}">
+        {{ _('View all courses') }} <i class="fa fa-arrow-right" aria-hidden="true"></i>
+      </a>
+    </div>
+  </div>
+</div>
