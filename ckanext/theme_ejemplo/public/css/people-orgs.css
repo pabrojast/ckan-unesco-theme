@@ -858,8 +858,10 @@
 }
 .membership-dashboard-header-text p {
   margin: 0;
-  color: rgba(255, 255, 255, 0.85);
-  font-size: 0.9rem;
+  /* !important: theme_ejemplo.css has a global `p { color/font-size
+     !important }` that would otherwise paint this dark on the blue band */
+  color: rgba(255, 255, 255, 0.85) !important;
+  font-size: 0.9rem !important;
 }
 .membership-dashboard-header-text strong {
   color: #fff;

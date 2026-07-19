@@ -2657,20 +2657,20 @@ def initiative_request_create(context, data_dict):
 
     if not title:
         raise toolkit.ValidationError({
-            'title': [toolkit._('El título es obligatorio.')]
+            'title': [toolkit._('Title is required.')]
         })
 
     user_obj = context.get('auth_user_obj') or model.User.get(context.get('user'))
     if not user_obj:
-        raise toolkit.NotAuthorized(toolkit._('Debes iniciar sesión.'))
+        raise toolkit.NotAuthorized(toolkit._('You must be logged in.'))
 
     # No permitir más de una solicitud pendiente por usuario
     existing = InitiativeRequest.get_pending_for_user(user_obj.id)
     if existing:
         raise toolkit.ValidationError({
             'title': [toolkit._(
-                'Ya tienes una solicitud de iniciativa pendiente. '
-                'Espera a que un administrador la revise.'
+                'You already have a pending initiative request. '
+                'Please wait for an administrator to review it.'
             )]
         })
 
@@ -2679,7 +2679,7 @@ def initiative_request_create(context, data_dict):
         logo_url = _process_initiative_logo_upload(logo_upload)
     elif logo_url and not is_valid_user_image_reference(logo_url):
         raise toolkit.ValidationError({
-            'logo_url': [toolkit._('La URL del logo no es válida.')]
+            'logo_url': [toolkit._('The logo URL is not valid.')]
         })
 
     # Sugerir slug a partir del título

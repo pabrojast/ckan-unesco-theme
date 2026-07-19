@@ -1596,7 +1596,7 @@ class MyLogica():
             tab = request.args.get('tab', 'pending')
 
             if action not in ('approve', 'reject'):
-                h.flash_error(_('Acción inválida.'))
+                h.flash_error(_('Invalid action.'))
                 return toolkit.redirect_to(
                     'theme_ejemplo.initiative_requests_admin', tab=tab
                 )
@@ -1640,7 +1640,7 @@ class MyLogica():
                                     pass
                     except Exception as notify_err:
                         log.warning(f'Approval notification failed: {notify_err}')
-                    h.flash_success(_('Solicitud aprobada y grupo creado.'))
+                    h.flash_success(_('Request approved and initiative created.'))
                 else:
                     # Notificar rechazo
                     try:
@@ -1663,7 +1663,7 @@ class MyLogica():
                                     pass
                     except Exception as notify_err:
                         log.warning(f'Rejection notification failed: {notify_err}')
-                    h.flash_success(_('Solicitud rechazada.'))
+                    h.flash_success(_('Request rejected.'))
             except toolkit.ValidationError as e:
                 err = e.error_dict if hasattr(e, 'error_dict') else {}
                 for field, msgs in (err or {}).items():
