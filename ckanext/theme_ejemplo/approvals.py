@@ -51,7 +51,7 @@ QUEUE_DEFS = [
      'route': 'thingsboard.admin_dashboard'},
     {'id': 'citizen_science', 'icon': 'fa-flask', 'scope': 'sysadmin',
      'helper': 'csunesco_pending_count',
-     'url': '/cs-admin'},
+     'url': '/citizen-science/admin'},
     {'id': 'membership', 'icon': 'fa-users', 'scope': 'user',
      'helper': 'get_pending_membership_requests_count',
      'route': 'theme_ejemplo.membership_requests_overview'},
