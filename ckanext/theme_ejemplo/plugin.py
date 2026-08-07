@@ -143,7 +143,10 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 if endpoint in ('group.read', 'organization.read'):
                     fq = search_params.get('fq', '')
                     search_params['fq'] = fq + ' -type:documents'
-                if (endpoint == 'dataset.search'
+                # schemingdcat reemplaza /dataset con su blueprint
+                # dataset_rate_limit (views.py), asi que el endpoint real
+                # en produccion es dataset_rate_limit.search.
+                if (endpoint in ('dataset.search', 'dataset_rate_limit.search')
                         and not search_params.get('sort')
                         and not (search_params.get('q') or '').strip('*: ')):
                     search_params['sort'] = DEFAULT_DATASET_SORT
