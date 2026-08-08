@@ -75,64 +75,109 @@
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     let currentSlide = 0;
+    const container = document.querySelector('.slideshow-modern');
     const slides = document.querySelectorAll('.slideshow-modern .slide');
     const dots = document.querySelectorAll('.slideshow-modern .dot');
     const progressBar = document.querySelector('.slideshow-progress-bar');
     const totalSlides = slides.length;
     const SLIDE_DURATION = 6000;
-    
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+    let slideInterval = null;
+
+    if (!container || !totalSlides) return;
+
+    function runProgress() {
+      if (!progressBar) return;
+      progressBar.style.transition = 'none';
+      progressBar.style.width = '0%';
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          progressBar.style.transition = 'width ' + SLIDE_DURATION + 'ms linear';
+          progressBar.style.width = '100%';
+        });
+      });
+    }
+
+    function freezeProgress() {
+      if (!progressBar) return;
+      const width = getComputedStyle(progressBar).width;
+      progressBar.style.transition = 'none';
+      progressBar.style.width = width;
+    }
+
     function showSlide(n) {
       const prevSlide = currentSlide;
       currentSlide = (n + totalSlides) % totalSlides;
-      
+
       slides.forEach((slide, i) => {
         slide.classList.remove('slide-active', 'slide-exit');
         if (i === prevSlide && i !== currentSlide) {
           slide.classList.add('slide-exit');
         }
       });
-      
+
       dots.forEach(dot => dot.classList.remove('active'));
-      
+
       slides[currentSlide].classList.add('slide-active');
       dots[currentSlide].classList.add('active');
-      
-      // Reiniciar barra de progreso
-      if (progressBar) {
+
+      // La barra de progreso solo corre con el auto-avance activo;
+      // en pausa queda a cero para no sugerir un avance inminente
+      if (slideInterval !== null) {
+        runProgress();
+      } else if (progressBar) {
         progressBar.style.transition = 'none';
         progressBar.style.width = '0%';
-        requestAnimationFrame(() => {
-          requestAnimationFrame(() => {
-            progressBar.style.transition = 'width ' + SLIDE_DURATION + 'ms linear';
-            progressBar.style.width = '100%';
-          });
-        });
       }
     }
-    
-    showSlide(0);
-    
-    let slideInterval = setInterval(() => {
-      showSlide(currentSlide + 1);
-    }, SLIDE_DURATION);
-    
-    function resetInterval() {
+
+    function stopAuto() {
+      if (slideInterval === null) return;
       clearInterval(slideInterval);
-      slideInterval = setInterval(() => {
-        showSlide(currentSlide + 1);
-      }, SLIDE_DURATION);
+      slideInterval = null;
+      freezeProgress();
     }
-    
+
+    function startAuto() {
+      if (slideInterval !== null || reduceMotion.matches || totalSlides < 2) return;
+      slideInterval = setInterval(() => showSlide(currentSlide + 1), SLIDE_DURATION);
+      runProgress();
+    }
+
+    function resetInterval() {
+      // Interacción manual: reinicia el ciclo solo si el auto-avance está activo
+      if (slideInterval === null) return;
+      clearInterval(slideInterval);
+      slideInterval = setInterval(() => showSlide(currentSlide + 1), SLIDE_DURATION);
+    }
+
+    showSlide(0);
+    startAuto();
+
+    // Pausa en hover y mientras el foco esté dentro del carrusel
+    container.addEventListener('mouseenter', stopAuto);
+    container.addEventListener('mouseleave', startAuto);
+    container.addEventListener('focusin', stopAuto);
+    container.addEventListener('focusout', (e) => {
+      if (!container.contains(e.relatedTarget)) startAuto();
+    });
+
+    if (typeof reduceMotion.addEventListener === 'function') {
+      reduceMotion.addEventListener('change', () => {
+        if (reduceMotion.matches) stopAuto(); else startAuto();
+      });
+    }
+
     document.querySelector('.slideshow-modern .prev-btn').addEventListener('click', () => {
       resetInterval();
       showSlide(currentSlide - 1);
     });
-    
+
     document.querySelector('.slideshow-modern .next-btn').addEventListener('click', () => {
       resetInterval();
       showSlide(currentSlide + 1);
     });
-    
+
     dots.forEach((dot, index) => {
       dot.addEventListener('click', () => {
         resetInterval();
@@ -142,7 +187,6 @@
 
     // Soporte táctil (swipe)
     let touchStartX = 0;
-    const container = document.querySelector('.slideshow-modern');
     container.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; }, {passive: true});
     container.addEventListener('touchend', (e) => {
       const diff = e.changedTouches[0].screenX - touchStartX;
@@ -152,4 +196,4 @@
       }
     }, {passive: true});
   });
-</script> 
+</script>

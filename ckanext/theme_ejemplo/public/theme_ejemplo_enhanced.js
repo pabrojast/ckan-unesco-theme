@@ -518,6 +518,11 @@ document.addEventListener('DOMContentLoaded', function() {
             tabs.forEach(function(tab, i) {
                 tab.addEventListener('click', function() { activate(tab, false); });
                 tab.addEventListener('keydown', function(e) {
+                    if (e.key === 'Home' || e.key === 'End') {
+                        e.preventDefault();
+                        activate(tabs[e.key === 'Home' ? 0 : tabs.length - 1], true);
+                        return;
+                    }
                     var dir = e.key === 'ArrowRight' ? 1 :
                               e.key === 'ArrowLeft' ? -1 : 0;
                     if (!dir) return;

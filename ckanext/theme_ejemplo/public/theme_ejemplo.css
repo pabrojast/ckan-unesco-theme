@@ -7526,3 +7526,11 @@ html.js .home-tabs .home-tab-panel:not(.is-active) {
     transform: none;
   }
 }
+
+/* Con reduced-motion no hay auto-avance del slideshow: la barra
+   de progreso no tiene nada que comunicar */
+@media (prefers-reduced-motion: reduce) {
+  .slideshow-progress {
+    display: none;
+  }
+}
