@@ -162,83 +162,6 @@ function toggleExpandableContent(element) {
     }
 }
 
-// Función para manejar el slideshow mejorado
-function initializeSlideshow() {
-    try {
-        const slides = document.querySelectorAll('.slide');
-        const dots = document.querySelectorAll('.dot');
-        const prevBtn = document.querySelector('.prev-btn');
-        const nextBtn = document.querySelector('.next-btn');
-        let currentSlide = 0;
-        let slideInterval;
-        
-        if (slides.length === 0) return;
-        
-        function showSlide(index) {
-            slides.forEach((slide, i) => {
-                slide.style.display = i === index ? 'block' : 'none';
-            });
-            
-            dots.forEach((dot, i) => {
-                dot.classList.toggle('active', i === index);
-            });
-            
-            currentSlide = index;
-        }
-        
-        function nextSlide() {
-            showSlide((currentSlide + 1) % slides.length);
-        }
-        
-        function prevSlide() {
-            showSlide((currentSlide - 1 + slides.length) % slides.length);
-        }
-        
-        function startAutoSlide() {
-            slideInterval = setInterval(nextSlide, 5000);
-        }
-        
-        function stopAutoSlide() {
-            clearInterval(slideInterval);
-        }
-        
-        // Event listeners
-        if (nextBtn) nextBtn.addEventListener('click', () => {
-            stopAutoSlide();
-            nextSlide();
-            startAutoSlide();
-        });
-        
-        if (prevBtn) prevBtn.addEventListener('click', () => {
-            stopAutoSlide();
-            prevSlide();
-            startAutoSlide();
-        });
-        
-        dots.forEach((dot, index) => {
-            dot.addEventListener('click', () => {
-                stopAutoSlide();
-                showSlide(index);
-                startAutoSlide();
-            });
-        });
-        
-        // Pausar en hover
-        const slideshowContainer = document.querySelector('.slideshow-container');
-        if (slideshowContainer) {
-            slideshowContainer.addEventListener('mouseenter', stopAutoSlide);
-            slideshowContainer.addEventListener('mouseleave', startAutoSlide);
-        }
-        
-        // Inicializar
-        showSlide(0);
-        startAutoSlide();
-        
-    } catch (error) {
-        console.error('Error al inicializar slideshow:', error);
-    }
-}
-
 // Función para cargar imágenes lazy loading
 function initializeLazyLoading() {
     try {
@@ -480,7 +403,6 @@ function fixUriRefFields() {
 // Inicialización cuando el DOM esté listo
 document.addEventListener('DOMContentLoaded', function() {
     initializeEnhancements();
-    initializeSlideshow();
     initializeLazyLoading();
     enhanceForms();
     enhanceSearch();
@@ -506,7 +428,6 @@ window.themeEnhanced = {
     toggleReadMore,
     toggleExpandableContent,
     initializeEnhancements,
-    initializeSlideshow,
     initializeLazyLoading,
     enhanceForms,
     enhanceSearch,
@@ -569,64 +490,6 @@ document.addEventListener('DOMContentLoaded', function() {
     'use strict';
 
     /* ============================================================
-       Stats Bar — Animación de contadores
-       ============================================================ */
-    function initStatsCounter() {
-        var statsBar = document.querySelector('.homepage-stats-bar');
-        if (!statsBar) return;
-
-        var counters = statsBar.querySelectorAll('.stats-bar-number strong');
-        if (!counters.length) return;
-
-        var animated = false;
-
-        function animateCounters() {
-            if (animated) return;
-            animated = true;
-
-            counters.forEach(function(counter) {
-                var target = parseInt(counter.textContent.replace(/[^0-9]/g, ''), 10);
-                if (isNaN(target) || target === 0) return;
-
-                var duration = 1500;
-                var start = 0;
-                var startTime = null;
-
-                function step(timestamp) {
-                    if (!startTime) startTime = timestamp;
-                    var progress = Math.min((timestamp - startTime) / duration, 1);
-                    // Easing: ease-out cubic
-                    var eased = 1 - Math.pow(1 - progress, 3);
-                    var current = Math.floor(eased * target);
-                    counter.textContent = current.toLocaleString();
-                    if (progress < 1) {
-                        requestAnimationFrame(step);
-                    } else {
-                        counter.textContent = target.toLocaleString();
-                    }
-                }
-
-                counter.textContent = '0';
-                requestAnimationFrame(step);
-            });
-        }
-
-        if ('IntersectionObserver' in window) {
-            var observer = new IntersectionObserver(function(entries) {
-                entries.forEach(function(entry) {
-                    if (entry.isIntersecting) {
-                        animateCounters();
-                        observer.unobserve(entry.target);
-                    }
-                });
-            }, { threshold: 0.3 });
-            observer.observe(statsBar);
-        } else {
-            animateCounters();
-        }
-    }
-
-    /* ============================================================
        Tabs accesibles de los hubs del home (explore/community)
        Los paneles se renderizan server-side; sin JS se apilan
        visibles (el CSS solo los oculta bajo html.js)
@@ -667,12 +530,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Inicializar cuando el DOM esté listo
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', function() {
-            initStatsCounter();
-            initHomeTabs();
-        });
+        document.addEventListener('DOMContentLoaded', initHomeTabs);
     } else {
-        initStatsCounter();
         initHomeTabs();
     }
 })();
