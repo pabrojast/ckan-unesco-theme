@@ -7255,3 +7255,122 @@ html.js .home-tabs .home-tab-panel:not(.is-active) {
     transform: none;
   }
 }
+
+/* ============================================================
+   Sección "About IHP-WINS" (migrado desde promoted.html)
+   Banda compacta bajo las stats: intro + 3 highlights en fila
+   + CTA al brochure. Sin la imagen grande del brochure.
+   ============================================================ */
+.homepage-intro-section {
+  padding: 2rem 1.5rem;
+}
+
+.homepage-section-heading {
+  position: relative;
+  padding-bottom: 1rem;
+  margin-bottom: 1.25rem !important;
+}
+
+.homepage-section-heading::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  inset-inline-start: 0;
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--unesco-blue), var(--unesco-blue-light));
+  border-radius: 2px;
+}
+
+.intro-lead {
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: var(--text-primary);
+  margin-bottom: 1.75rem;
+  max-width: 70ch;
+}
+
+.intro-highlights {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.intro-highlight-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  border-radius: 12px;
+  background: var(--unesco-blue-pale);
+  border-inline-start: 3px solid var(--unesco-blue);
+  transition: var(--transition);
+}
+
+.intro-highlight-item:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-light);
+}
+
+.intro-highlight-icon {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--unesco-blue), var(--unesco-blue-light));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 1.2rem;
+}
+
+.intro-highlight-text strong {
+  display: block;
+  font-size: 1rem;
+  color: var(--unesco-blue-dark);
+  margin-bottom: 0.25rem;
+}
+
+.intro-highlight-text p {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.about-band-cta {
+  margin-top: 1.5rem;
+}
+
+.about-band-cta .btn {
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+}
+
+/* Respiro al llegar por ancla desde los CTAs del hero */
+#IHPWINS,
+#WaterFamilyEvents {
+  scroll-margin-top: 24px;
+}
+
+@media (max-width: 900px) {
+  .intro-highlights {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .intro-highlight-item {
+    padding: 0.75rem 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intro-highlight-item {
+    transition: none;
+  }
+  .intro-highlight-item:hover {
+    transform: none;
+  }
+}

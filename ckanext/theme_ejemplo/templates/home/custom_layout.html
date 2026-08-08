@@ -22,6 +22,13 @@
           {% endblock %}
         </div>
 
+        {# ── Acerca de IHP-WINS: banda compacta tras las stats ── #}
+        <div class="col-md-12 col1 homepage-section homepage-section-alt reveal-section">
+          {% block promoted %}
+            {% snippet 'home/snippets/promoted.html' %}
+          {% endblock %}
+        </div>
+
         {# ── Explorar datos: destacados + recientes/trending ── #}
         <div class="col-md-12 col1 homepage-section reveal-section">
           {% block featureddata %}
@@ -48,13 +55,6 @@
         <div class="col-md-12 col1 homepage-section homepage-section-alt reveal-section">
           {% block community_tabs %}
             {% snippet 'home/snippets/community_tabs.html' %}
-          {% endblock %}
-        </div>
-
-        {# ── Acerca de IHP-WINS (cierre editorial) ── #}
-        <div class="col-md-12 col1 homepage-section reveal-section">
-          {% block promoted %}
-            {% snippet 'home/snippets/promoted.html' %}
           {% endblock %}
         </div>
       </div>

@@ -1,200 +1,43 @@
-{% set intro = g.site_intro_text %}
+{# Sección "Acerca de IHP-WINS": banda compacta con intro, 3 highlights
+   en fila y CTA al brochure. El ancla #IHPWINS la usa el botón
+   "Learn More" del slide 1 del hero. Estilos en theme_ejemplo.css. #}
 <div id="IHPWINS"></div>
-<div class="module-content box homepage-intro-section">
-  <div class="row">
-    <!-- Columna principal -->
-    <div class="col-md-7">
-      <h1 class="page-heading homepage-section-heading">{% trans %}The IHP Water Information Network System{% endtrans %}</h1>
-      
-      <p class="intro-lead">{% trans %}The <strong>Intergovernmental Hydrological Programme's Water Information Network System (IHP-WINS)</strong> promotes the sharing of water-related data among countries, organizations, and stakeholders as part of the UNESCO IHP mandate.{% endtrans %}</p>
-      
-      <div class="intro-highlights">
-        <div class="intro-highlight-item reveal-item">
-          <div class="intro-highlight-icon">
-            <i class="fa fa-database"></i>
-          </div>
-          <div class="intro-highlight-text">
-            <strong>{% trans %}Data Integration{% endtrans %}</strong>
-            <p>{% trans %}Integrates water-related data from monitoring networks, research institutions, and international organizations using standardized formats.{% endtrans %}</p>
-          </div>
-        </div>
-        <div class="intro-highlight-item reveal-item">
-          <div class="intro-highlight-icon">
-            <i class="fa fa-globe"></i>
-          </div>
-          <div class="intro-highlight-text">
-            <strong>{% trans %}International Cooperation{% endtrans %}</strong>
-            <p>{% trans %}Strengthens collaboration and knowledge exchange among water professionals at national, regional, and global scales.{% endtrans %}</p>
-          </div>
-        </div>
-        <div class="intro-highlight-item reveal-item">
-          <div class="intro-highlight-icon">
-            <i class="fa fa-line-chart"></i>
-          </div>
-          <div class="intro-highlight-text">
-            <strong>{% trans %}Evidence-Based Decisions{% endtrans %}</strong>
-            <p>{% trans %}Supports sustainable water management through tools for data visualization, analysis, and informed decision-making.{% endtrans %}</p>
-          </div>
-        </div>
+<section class="module-content box homepage-intro-section" aria-labelledby="about-ihpwins-title">
+  <h2 id="about-ihpwins-title" class="page-heading homepage-section-heading">{% trans %}The IHP Water Information Network System{% endtrans %}</h2>
+
+  <p class="intro-lead">{% trans %}The <strong>Intergovernmental Hydrological Programme's Water Information Network System (IHP-WINS)</strong> promotes the sharing of water-related data among countries, organizations, and stakeholders as part of the UNESCO IHP mandate.{% endtrans %}</p>
+
+  <div class="intro-highlights">
+    <div class="intro-highlight-item reveal-item">
+      <div class="intro-highlight-icon">
+        <i class="fa fa-database"></i>
+      </div>
+      <div class="intro-highlight-text">
+        <strong>{% trans %}Data Integration{% endtrans %}</strong>
+        <p>{% trans %}Integrates water-related data from monitoring networks, research institutions, and international organizations using standardized formats.{% endtrans %}</p>
       </div>
     </div>
-    
-    <!-- Columna de brochure -->
-    <div class="col-md-5">
-      <div class="ihp-brochure-container">
-        <div class="ihp-brochure-image">
-          <img src="/brochure-cover.jpg" alt="IHP-WINS Brochure" style="max-height:450px;">
-        </div>
-        <div class="ihp-brochure-link">
-          <a href="https://unesdoc.unesco.org/ark:/48223/pf0000393465" class="btn btn-primary btn-arrow-right">{% trans %}Access Brochure{% endtrans %}</a>
-        </div>
+    <div class="intro-highlight-item reveal-item">
+      <div class="intro-highlight-icon">
+        <i class="fa fa-globe"></i>
+      </div>
+      <div class="intro-highlight-text">
+        <strong>{% trans %}International Cooperation{% endtrans %}</strong>
+        <p>{% trans %}Strengthens collaboration and knowledge exchange among water professionals at national, regional, and global scales.{% endtrans %}</p>
+      </div>
+    </div>
+    <div class="intro-highlight-item reveal-item">
+      <div class="intro-highlight-icon">
+        <i class="fa fa-line-chart"></i>
+      </div>
+      <div class="intro-highlight-text">
+        <strong>{% trans %}Evidence-Based Decisions{% endtrans %}</strong>
+        <p>{% trans %}Supports sustainable water management through tools for data visualization, analysis, and informed decision-making.{% endtrans %}</p>
       </div>
     </div>
   </div>
-</div>
 
-<style>
-  .homepage-intro-section {
-    padding: 2rem 1.5rem;
-  }
-  
-  .homepage-section-heading {
-    position: relative;
-    padding-bottom: 1rem;
-    margin-bottom: 1.25rem !important;
-  }
-  
-  .homepage-section-heading::after {
-    content: '';
-    position: absolute;
-    bottom: 0;
-    left: 0;
-    width: 60px;
-    height: 3px;
-    background: linear-gradient(90deg, var(--unesco-blue), var(--unesco-blue-light));
-    border-radius: 2px;
-  }
-  
-  .intro-lead {
-    font-size: 1.1rem;
-    line-height: 1.7;
-    color: var(--text-primary);
-    margin-bottom: 1.75rem;
-  }
-  
-  .intro-highlights {
-    display: flex;
-    flex-direction: column;
-    gap: 1.25rem;
-  }
-  
-  .intro-highlight-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 1rem;
-    padding: 1rem 1.25rem;
-    border-radius: 12px;
-    background: var(--unesco-blue-pale);
-    border-left: 3px solid var(--unesco-blue);
-    transition: var(--transition);
-  }
-  
-  .intro-highlight-item:hover {
-    transform: translateX(4px);
-    box-shadow: var(--shadow-light);
-  }
-  
-  .intro-highlight-icon {
-    flex-shrink: 0;
-    width: 44px;
-    height: 44px;
-    border-radius: 10px;
-    background: linear-gradient(135deg, var(--unesco-blue), var(--unesco-blue-light));
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    color: #fff;
-    font-size: 1.2rem;
-  }
-  
-  .intro-highlight-text strong {
-    display: block;
-    font-size: 1rem;
-    color: var(--unesco-blue-dark);
-    margin-bottom: 0.25rem;
-  }
-  
-  .intro-highlight-text p {
-    font-size: 0.9rem;
-    line-height: 1.5;
-    color: var(--text-secondary);
-    margin: 0;
-  }
-
-  .ihp-brochure-container {
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-    min-height: 450px;
-    margin-top: 2rem;
-    background-color: #f1f4f6;
-    border-radius: 16px;
-    overflow: hidden;
-    box-shadow: 0 4px 16px rgba(0,0,0,0.08);
-    transition: var(--transition);
-  }
-  
-  .ihp-brochure-container:hover {
-    box-shadow: 0 8px 24px rgba(0,0,0,0.12);
-    transform: translateY(-2px);
-  }
-  
-  .ihp-brochure-image {
-    flex: 1;
-    overflow: hidden;
-    min-height: 350px;
-    max-height: none;
-  }
-  
-  .ihp-brochure-image img {
-    width: 100%;
-    height: 100%;
-    display: block;
-    transition: transform 0.4s ease;
-    object-fit: cover;
-  }
-  
-  .ihp-brochure-image img:hover {
-    transform: scale(1.03);
-  }
-  
-  .ihp-brochure-link {
-    padding: 1.5rem;
-    text-align: center;
-    background-color: white;
-  }
-  
-  .ihp-brochure-link .btn {
-    font-weight: 600;
-    padding: 0.75rem 1.5rem;
-  }
-  
-  @media (max-width: 768px) {
-    .ihp-brochure-container {
-      margin-top: 1rem;
-      margin-bottom: 2rem;
-      min-height: auto;
-    }
-    
-    .intro-highlight-item {
-      padding: 0.75rem 1rem;
-    }
-  }
-</style>
-
-{% block home_image %}
-  <section class="featured media-overlay hidden-xs">
-    {% block home_image_content %}
-    {% endblock %}
-  </section>
-{% endblock %}
+  <div class="about-band-cta">
+    <a href="https://unesdoc.unesco.org/ark:/48223/pf0000393465" class="btn btn-primary btn-arrow-right" target="_blank" rel="noopener">{% trans %}Access Brochure{% endtrans %}</a>
+  </div>
+</section>
