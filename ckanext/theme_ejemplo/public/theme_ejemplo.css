@@ -6880,7 +6880,7 @@ p.slide-subtitle {
 }
 
 /* ============================================================
-   Tabs de los hubs del home (explore_tabs / community_tabs)
+   Tabs del hub "Explore Data" del home (explore_tabs.html)
    Progressive enhancement: sin html.js los paneles se apilan
    visibles y la botonera de tabs se oculta
    ============================================================ */
