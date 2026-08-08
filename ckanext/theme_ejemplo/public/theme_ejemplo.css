@@ -7016,3 +7016,242 @@ html.js .home-tabs .home-tab-panel:not(.is-active) {
     transform: none;
   }
 }
+
+/* ============================================================
+   Stats hero de la home (migrado desde site_stats_hero.html)
+   Tarjetas uniformes: sin variante --primary (era un resaltado
+   arbitrario de "Initiatives" sin semántica).
+   ============================================================ */
+.site-stats-hero {
+  position: relative;
+  max-width: 1181px;
+  margin: -1.25rem auto 1.5rem;
+  padding: 0 0.25rem;
+  background: transparent;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+/* Pieza visual que une el slideshow con las stats */
+.site-stats-bridge {
+  width: 2px;
+  height: 32px;
+  margin: 0 auto 1rem;
+  background: linear-gradient(180deg,
+    rgba(0, 105, 180, 0.0) 0%,
+    rgba(0, 105, 180, 0.45) 100%);
+  border-radius: 2px;
+}
+
+.site-stats-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  padding: 0 0.25rem;
+}
+
+.site-stats-title {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 1.05rem;
+  line-height: 1.3;
+  margin: 0;
+  color: var(--unesco-blue-dark, #005a9e);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.site-stats-bullet {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--unesco-blue, #0069B4);
+  box-shadow: 0 0 0 4px rgba(0, 105, 180, 0.18);
+  flex-shrink: 0;
+}
+
+.site-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  position: relative;
+}
+
+.site-stat-card {
+  display: flex;
+  align-items: center;
+  gap: 0.95rem;
+  padding: 1.1rem 1.15rem;
+  background: #ffffff;
+  border-radius: 14px;
+  border: 1px solid rgba(0, 105, 180, 0.10);
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  transition: transform 0.25s ease,
+              box-shadow 0.25s ease,
+              border-color 0.25s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.site-stat-card::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 3px;
+  width: 0%;
+  background: linear-gradient(90deg,
+    var(--unesco-blue, #0069B4),
+    var(--unesco-blue-light, #0077d4));
+  transition: width 0.3s ease;
+}
+
+.site-stat-card:hover,
+.site-stat-card:focus-visible {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px rgba(0, 105, 180, 0.14);
+  border-color: rgba(0, 105, 180, 0.25);
+  color: inherit;
+  text-decoration: none;
+  outline: none;
+}
+
+.site-stat-card:hover::after,
+.site-stat-card:focus-visible::after {
+  width: 100%;
+}
+
+.site-stat-card--static {
+  cursor: default;
+}
+
+.site-stat-card--static:hover {
+  transform: none;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+  border-color: rgba(0, 105, 180, 0.10);
+}
+
+.site-stat-card--static:hover::after {
+  width: 0%;
+}
+
+.site-stat-icon {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: var(--unesco-blue-pale, #E8F4F8);
+  color: var(--unesco-blue, #0069B4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  transition: transform 0.25s ease;
+}
+
+.site-stat-card:hover .site-stat-icon {
+  transform: scale(1.06) rotate(-3deg);
+}
+
+.site-stat-body {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+  min-width: 0;
+}
+
+.site-stat-value {
+  font-size: 1.85rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: inherit;
+  font-variant-numeric: tabular-nums;
+}
+
+.site-stat-label {
+  /* 0.9rem para que labels como "Documents"/"Page views" quepan en
+     una línea en tarjetas de ~180px (6 por fila) sin recortarse. */
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--unesco-blue-dark, #005a9e);
+  margin-top: 0.15rem;
+  /* Evita que etiquetas largas (ej. "Organizations" o sus
+     traducciones) se recorten en tarjetas angostas: se ajustan
+     en varias líneas en vez de quedar cortadas por overflow:hidden.
+     hyphens es una mejora progresiva (depende de la plataforma). */
+  overflow-wrap: break-word;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+}
+
+.site-stat-meta {
+  font-size: 0.8rem;
+  color: var(--text-secondary, #6b7785);
+  margin-top: 0.15rem;
+  overflow-wrap: break-word;
+}
+
+@media (max-width: 768px) {
+  .site-stats-hero {
+    padding: 0 0.5rem;
+    margin: -0.5rem auto 1rem;
+  }
+  .site-stats-bridge {
+    height: 24px;
+    margin-bottom: 0.75rem;
+  }
+  .site-stats-header {
+    justify-content: center;
+    text-align: center;
+  }
+  .site-stats-title {
+    font-size: 0.95rem;
+  }
+  .site-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+  .site-stat-card {
+    padding: 0.9rem 0.85rem;
+    gap: 0.7rem;
+  }
+  .site-stat-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 1.1rem;
+    border-radius: 10px;
+  }
+  .site-stat-value {
+    font-size: 1.45rem;
+  }
+  .site-stat-label {
+    font-size: 0.85rem;
+  }
+  .site-stat-meta {
+    font-size: 0.72rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .site-stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-stat-card,
+  .site-stat-card::after,
+  .site-stat-icon {
+    transition: none !important;
+  }
+  .site-stat-card:hover {
+    transform: none;
+  }
+}
