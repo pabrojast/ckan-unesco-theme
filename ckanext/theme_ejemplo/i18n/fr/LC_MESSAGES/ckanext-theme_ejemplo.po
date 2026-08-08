@@ -2303,3 +2303,24 @@ msgstr "Cours"
 
 msgid "Skip to main content"
 msgstr "Aller au contenu principal"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/community_grid.html
+msgid "No recent news"
+msgstr "Aucune actualité récente"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/community_grid.html
+msgid "No upcoming events"
+msgstr "Aucun événement à venir"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/community_grid.html
+msgid "No publications available yet"
+msgstr "Aucune publication disponible pour le moment"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/community_grid.html
+msgid "No courses available at the moment"
+msgstr "Aucun cours disponible pour le moment"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/community_grid.html
+#: ckanext/theme_ejemplo/templates/snippets/course_card.html
+msgid "Self-paced"
+msgstr "À votre rythme"

@@ -2170,3 +2170,24 @@ msgstr "الدورات"
 
 msgid "Skip to main content"
 msgstr "الانتقال إلى المحتوى الرئيسي"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/community_grid.html
+msgid "No recent news"
+msgstr "لا توجد أخبار حديثة"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/community_grid.html
+msgid "No upcoming events"
+msgstr "لا توجد فعاليات قادمة"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/community_grid.html
+msgid "No publications available yet"
+msgstr "لا توجد منشورات متاحة بعد"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/community_grid.html
+msgid "No courses available at the moment"
+msgstr "لا توجد دورات متاحة في الوقت الحالي"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/community_grid.html
+#: ckanext/theme_ejemplo/templates/snippets/course_card.html
+msgid "Self-paced"
+msgstr "وفق وتيرتك الخاصة"
