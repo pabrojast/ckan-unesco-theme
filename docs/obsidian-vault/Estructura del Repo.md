@@ -60,7 +60,7 @@ ckan-unesco-theme/
 | `email/` | Templates de correo electrónico |
 | `flood_drought_portal/` | Portal de inundaciones y sequías |
 | `group/` | Vistas de grupos/iniciativas (miembros, noticias, eventos, publicaciones) |
-| `home/` | Homepage con snippets UNESCO. `custom_layout.html` orquesta: buscador → slideshow → stats → Featured Datasets → hub "Explore Data" (tabs Recientes/Trending, `explore_tabs.html`) → hub "Tools and Resources" (`tools_hub.html`) → hub "Community and Knowledge" (tabs News/Events/Publications/Courses, `community_tabs.html`) → About. Los tabs son server-side con progressive enhancement (`html.js`); sin JS los paneles se apilan visibles |
+| `home/` | Homepage con snippets UNESCO. `custom_layout.html` orquesta: buscador → slideshow → stats (`site_stats_hero.html`, 6 tarjetas uniformes) → About compacto (`promoted.html`, banda con 3 highlights) → Featured Datasets → hub "Explore Data" (tabs Recientes/Trending, `explore_tabs.html`) → hub "Tools and Resources" (`tools_hub.html`) → hub "Community and Knowledge" (`community_grid.html`, grid panorámico de 4 columnas con mini-cards `community_mini_card.html`, sin tabs). Solo Explore Data conserva el patrón de tabs server-side con progressive enhancement (`html.js`); sin JS los paneles se apilan visibles. Los snippets huérfanos del refactor de tabs fueron eliminados |
 | `ihpix/` | Portal IHP-IX (página principal, outputs, dashboard, reportes) |
 | `initiatives/` | Portal de iniciativas |
 | `iot_portal/` | Portal IoT |

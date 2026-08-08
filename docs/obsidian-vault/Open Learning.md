@@ -49,7 +49,7 @@ API Open Learning ──sync──► tabla open_learning_course ──get_publi
 - `templates/snippets/course_card.html` — tarjeta reutilizable (home y `/courses`)
 - `templates/courses/index.html` — página pública con secciones "Self-paced courses" y "Scheduled courses"
 - `templates/admin/open_learning.html` — panel de curación (filtros por status, badges, select de tipo, sync)
-- `templates/home/snippets/IHPEducation.html` / `IHPEducationdata.html` — la home muestra hasta 8 cursos curados (`get_latest_courses`) + enlace "View all courses"
+- `templates/home/snippets/community_grid.html` / `community_mini_card.html` — la home muestra 3 cursos curados (`get_latest_courses()[:3]`) como mini-cards en la columna "Courses" del grid Community + enlace "View all courses"
 
 ## Configuración
 
