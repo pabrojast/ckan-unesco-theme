@@ -1,0 +1,89 @@
+{% ckan_extends %}
+
+{#
+  Adds a sort-direction toggle (▲/▼) next to the order-by select.
+  A native <select> fires no event when re-picking the already selected
+  option, so direction is flipped with this explicit button instead.
+  The flipped variants (e.g. "metadata_completeness_sort asc, ...") are
+  not in the options list; the script marks the option with the same
+  primary field as selected so the dropdown still reads correctly.
+#}
+{% block search_sortby %}
+{% if sorting %}
+  <div class="form-group control-order-by">
+    <label for="field-order-by">{{ _('Order by') }}</label>
+    <div style="display: flex; align-items: center; gap: 6px;">
+      <select id="field-order-by" name="sort" class="form-control form-select">
+        {% for label, value in sorting %}
+          {% if label and value %}
+            <option value="{{ value }}"{% if sorting_selected == value %} selected="selected"{% endif %}>{{ label }}</option>
+          {% endif %}
+        {% endfor %}
+      </select>
+      <button type="button" id="sort-direction-toggle"
+              title="{{ _('Toggle sort direction') }}"
+              aria-label="{{ _('Toggle sort direction') }}"
+              style="flex: 0 0 auto; border: 1px solid #ccc; background: #fff; border-radius: 4px; padding: 6px 10px; cursor: pointer; font-size: 14px; line-height: 1;">&#8595;</button>
+    </div>
+  </div>
+  <script>
+  (function() {
+    var select = document.getElementById('field-order-by');
+    var btn = document.getElementById('sort-direction-toggle');
+    if (!select || !btn || !select.form) return;
+
+    function primary(sort) {
+      var first = (sort || '').split(',')[0].trim().split(/\s+/);
+      return { field: first[0] || '', dir: (first[1] || 'asc').toLowerCase() };
+    }
+    function flipped(sort) {
+      var parts = (sort || '').split(',');
+      var first = parts[0].trim().split(/\s+/);
+      var dir = (first[1] || 'asc').toLowerCase() === 'desc' ? 'asc' : 'desc';
+      parts[0] = first[0] + ' ' + dir;
+      return parts.map(function(p) { return p.trim(); }).join(', ');
+    }
+
+    var urlSort = null;
+    try {
+      urlSort = new URLSearchParams(window.location.search).get('sort');
+    } catch (e) { /* navegadores sin URLSearchParams: solo pierde el estado invertido */ }
+    var current = urlSort || select.value;
+
+    // Sort activo sin opcion equivalente (variante invertida): marcar la
+    // opcion del mismo campo primario para que el dropdown lo refleje.
+    var matched = false;
+    for (var i = 0; i < select.options.length; i++) {
+      if (select.options[i].value === current) { matched = true; break; }
+    }
+    if (!matched && current) {
+      var field = primary(current).field;
+      for (var j = 0; j < select.options.length; j++) {
+        if (primary(select.options[j].value).field === field) {
+          select.selectedIndex = j;
+          break;
+        }
+      }
+    }
+
+    var p = primary(current);
+    if (p.field === 'score') {
+      // Relevancia ascendente no tiene sentido: sin toggle.
+      btn.style.display = 'none';
+      return;
+    }
+    btn.innerHTML = p.dir === 'desc' ? '&#8595;' : '&#8593;';
+
+    btn.addEventListener('click', function() {
+      var input = document.createElement('input');
+      input.type = 'hidden';
+      input.name = 'sort';
+      input.value = flipped(current);
+      select.name = '';
+      select.form.appendChild(input);
+      select.form.submit();
+    });
+  })();
+  </script>
+{% endif %}
+{% endblock %}

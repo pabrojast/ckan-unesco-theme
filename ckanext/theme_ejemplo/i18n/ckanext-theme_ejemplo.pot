@@ -2187,3 +2187,7 @@ msgstr ""
 #: ckanext/theme_ejemplo/templates/snippets/course_card.html
 msgid "Self-paced"
 msgstr ""
+
+#: ckanext/theme_ejemplo/templates/schemingdcat/snippets/search_form.html
+msgid "Toggle sort direction"
+msgstr ""

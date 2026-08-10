@@ -2324,3 +2324,6 @@ msgstr "Aucun cours disponible pour le moment"
 #: ckanext/theme_ejemplo/templates/snippets/course_card.html
 msgid "Self-paced"
 msgstr "À votre rythme"
+
+msgid "Toggle sort direction"
+msgstr "Inverser l'ordre de tri"
