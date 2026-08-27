@@ -1,0 +1,60 @@
+{#
+  Visores destacados en la home. Los datos vienen de ckanext-pages
+  (accion `featured_viewer_list`) via `h.theme_ejemplo_get_featured_viewers`.
+  Reutiliza las mismas clases `cardsmall-*` que la antigua seccion de datasets
+  destacados para no introducir CSS nuevo.
+#}
+{% set viewers = viewers if viewers is defined else h.theme_ejemplo_get_featured_viewers() %}
+{% set fallback_thumb = '/Landing_page/Content/terria_viewer_button_image.png' %}
+<div class="row">
+{% for viewer in viewers %}
+  {% set viewer_url = h.url_for('featured_viewers.show', slug=viewer.slug) %}
+  {# thumbnail_url es texto libre en BD: solo aceptamos esquemas seguros #}
+  {% set raw_thumb = viewer.thumbnail_url or '' %}
+  {% set thumb = raw_thumb if (raw_thumb.startswith('/') or raw_thumb.startswith('http://') or raw_thumb.startswith('https://')) else fallback_thumb %}
+  {% set summary = h.theme_ejemplo_markdown_excerpt(viewer.description, 10000) %}
+<div class="col-md-4 col3 col-enhanced">
+  <div class="col-small">
+    <div class="cardsmall cardsmall-enhanced cardsmall-height-fixed cardsmall-cta cardsmall-hero content-wrapper-enhanced hover-lift">
+      <img class="cardsmall-img-top2-enhanced image-style-cardsmall-1-column" src="{{ thumb }}" width="289" height="424" alt="{{ viewer.title }}" loading="lazy">
+
+      <div class="cardsmall-body-enhanced content-body-enhanced">
+        <div class="cardsmall-title-enhanced">
+          <a href="{{ viewer_url }}" title="{{ viewer.title }}">{{ viewer.title }}</a>
+        </div>
+
+        <div class="cardsmall-text-enhanced">
+          <div class="text-content">
+            {% if summary|length > 200 %}
+              <div class="text-preview">{{ h.theme_ejemplo_markdown_excerpt(viewer.description, 200) }}</div>
+              <div class="text-full">{{ summary }}</div>
+              <button type="button" class="read-more-btn" onclick="toggleReadMore(this)">
+                <i class="fa fa-plus"></i>
+                <span class="read-more-text">{{ _("Read more") }}</span>
+              </button>
+            {% else %}
+              <p>{{ summary or _("No description available") }}</p>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+
+      <div class="content-footer-enhanced">
+        <div class="field field--name-field-link field--type-link field--label-hidden field__item">
+          <a href="{{ viewer_url }}" class="btn btn-primary btn-arrow-right">
+            {{ _("Explore viewer") }}
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endfor %}
+</div>
+{% if viewers %}
+<div class="recently-added-more" style="text-align: center;">
+  <a href="{{ h.url_for('featured_viewers.index') }}" class="btn btn-sm btn-default btn-modern-outline">
+    {{ _('View all viewers') }} <i class="fa fa-arrow-right"></i>
+  </a>
+</div>
+{% endif %}

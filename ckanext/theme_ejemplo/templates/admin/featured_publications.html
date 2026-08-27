@@ -945,12 +945,12 @@
         saveOrderBtn.classList.add('btn-success');
         setTimeout(function() {
           saveOrderBtn.style.display = 'none';
-          saveOrderBtn.innerHTML = '<i class="fa fa-save"></i> {{ _("Save Order") }}';
+          saveOrderBtn.innerHTML = '<i class="fa fa-save"></i> ' + {{ _("Save Order")|tojson }};
           saveOrderBtn.classList.remove('btn-success');
           saveOrderBtn.disabled = false;
         }, 2000);
       } else {
-        saveOrderBtn.innerHTML = '<i class="fa fa-save"></i> {{ _("Save Order") }}';
+        saveOrderBtn.innerHTML = '<i class="fa fa-save"></i> ' + {{ _("Save Order")|tojson }};
         saveOrderBtn.disabled = false;
         alert('Error: ' + (data.error || ''));
       }

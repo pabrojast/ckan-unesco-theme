@@ -113,7 +113,7 @@
 
 ## 4. Paneles de administración
 
-**Patrón común**: Todas las rutas `/admin/*` siguen este flujo.
+**Patrón común**: Todas las rutas `/ckan-admin/*` siguen este flujo.
 
 ```
 1. Verificación de autorización:
@@ -130,11 +130,23 @@
    → Almacenamiento en directorio público de CKAN
 ```
 
+> [!warning] Excepción: visores destacados
+> `/ckan-admin/featured-viewers` **no** usa `auth._sysadmin_only`, porque no
+> puede registrar auth functions con nombres de ckanext-pages sin romper el
+> arranque de CKAN. Comprueba `c.userobj.sysadmin` directamente en cada vista
+> (`controller.py`, `MyLogica._fv_admin_guard`).
+>
+> Además, `featured_viewer_update` valida contra un schema donde `title` es
+> `not_empty`: un update parcial `{'id', 'is_featured'}` falla con
+> *Missing value*. Por eso `MyLogica._fv_patch` relee el visor y reenvía su
+> título; el resto de campos del schema son `ignore_missing` y no se tocan.
+
 ### Paneles disponibles
 
 | Panel | Modelo de datos | Operaciones |
 |---|---|---|
 | Datasets destacados | Tag `FeaturedDataset` en datasets | search, add, remove |
+| Visores destacados | `featured_viewers` de **ckanext-pages** | search, add, remove, reorder |
 | Publicaciones destacadas | `FeaturedPublication` | CRUD, reorder, upload image, import legacy |
 | Tarjetas de portal | `PortalCard` | CRUD, reorder, upload image |
 | Tickets de errores | `BugTicket` | create, list, show, close, update status |

@@ -20,6 +20,9 @@
 | DOC-010 | IHP-IX | Documentar export XLSX del Admin Overview cuando se implemente (hoy solo CSV). | Baja |
 | DOC-011 | IHP-IX | Guía paso-a-paso para IHP National Committees: cómo migrar del Microsoft Form al `/ihpix/report` interno. | Alta |
 | DOC-012 | Módulos | `completeness.py` y `ranking.py` no están descritos en [[Modulos]] (solo el flujo en [[Flujos Importantes]] §13). | Media |
+| DOC-013 | i18n | El `.pot` (`i18n/ckanext-theme_ejemplo.pot`) está desactualizado respecto a los templates: le faltan cadenas de los paneles admin (p. ej. `Save Order`) desde antes de este cambio. Los `.po`/`.mo` se editan y compilan a mano; falta regenerar el `.pot` completo con `extract_messages` en un commit aparte. | Media |
+| DOC-014 | Helpers | `h.get_featured_datasets` ya no tiene consumidor dentro del repo desde que la portada muestra visores en vez de datasets; sigue registrado y el panel `/ckan-admin/featured-datasets` sigue operativo. Decidir si se retira. | Baja |
+| DOC-015 | Admin/i18n | **Bug preexistente**: `templates/admin/ihpix_reports.html` interpola `{{ _("An error occurred.") }}` dentro de un literal JS entre comillas simples; la traducción francesa («Une erreur s'est produite.») rompe el parseo y deja el panel sin JS en `/fr`. Se arregla igual que en los otros paneles: `' + {{ _("An error occurred.")|tojson }}`. | Alta |
 
 ---
 

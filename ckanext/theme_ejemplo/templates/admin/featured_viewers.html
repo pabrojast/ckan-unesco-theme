@@ -1,0 +1,645 @@
+{% extends "page.html" %}
+
+{% block title %}
+{{ _('Featured Viewers') }} - {{ super() }}
+{% endblock %}
+
+{% block content %}
+<div class="homepage layout-1">
+    <div id="content" class="container">
+      {{ self.flash() }}
+    </div>
+
+    {% block primary_content %}
+    <div class="main">
+        <div class="container">
+            <!-- Breadcrumb -->
+            <div class="toolbar" role="navigation" aria-label="Breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="home"><a href="{{ h.url_for('/') }}"><i class="fa fa-home"></i><span> {{ _('Home') }}</span></a></li>
+                    <li><a href="{{ h.url_for(controller='admin', action='index') }}">{{ _('Admin') }}</a></li>
+                    <li class="active">{{ _('Featured Viewers') }}</li>
+                </ol>
+            </div>
+
+            <!-- Header Banner -->
+            <section class="module module-narrow module-shallow">
+              <div class="fviewer-banner">
+                <div class="fviewer-banner-bg"></div>
+                <div class="fviewer-banner-overlay"></div>
+                <div class="fviewer-banner-content">
+                  <h1><i class="fa fa-map"></i> {{ _('Featured Viewers') }}</h1>
+                  <p>{{ _('Choose and order the map viewers shown on the homepage.') }}</p>
+                </div>
+              </div>
+            </section>
+        </div>
+
+        <div class="container">
+          <div class="row">
+            <div class="col-md-12">
+
+            {% if fv_unavailable %}
+              <div class="fviewer-empty-state">
+                <section class="module module-narrow">
+                  <div class="module-content text-center" style="padding: 4rem 2.5rem;">
+                    <div class="fviewer-empty-icon"><i class="fa fa-plug fa-4x"></i></div>
+                    <h3>{{ fv_unavailable_msg }}</h3>
+                    <p class="text-muted">
+                      {{ _('The Featured Viewers module lives in the pages extension.') }}
+                      <br>
+                      <code>ckanext.featured_viewers.enabled = true</code>
+                    </p>
+                  </div>
+                </section>
+              </div>
+            {% else %}
+
+              <!-- Add a viewer -->
+              <div class="fviewer-action-bar">
+                <section class="module module-narrow">
+                  <div class="module-content" style="padding: 2rem 2.5rem;">
+                    <h2 class="fviewer-section-title"><i class="fa fa-plus-circle"></i> {{ _('Add a Viewer') }}</h2>
+                    <p class="text-muted" style="margin-bottom: 1rem;">
+                      {{ _('Only published viewers can be featured. Search by title or description.') }}
+                    </p>
+                    <div class="row">
+                      <div class="col-md-9">
+                        <input type="text" id="fviewer-search-input" class="form-control fviewer-input"
+                               placeholder="{{ _('Type to search viewers...') }}" />
+                      </div>
+                      <div class="col-md-3">
+                        <button type="button" id="fviewer-search-btn" class="btn btn-primary btn-block">
+                          <i class="fa fa-search"></i> {{ _('Search') }}
+                        </button>
+                      </div>
+                    </div>
+                    <div id="fviewer-search-results" class="fviewer-search-results"></div>
+                  </div>
+                </section>
+              </div>
+
+              <!-- Currently featured -->
+              <div class="fviewer-list-header">
+                <div class="row">
+                  <div class="col-md-8">
+                    <h2 class="fviewer-section-title">
+                      <i class="fa fa-star"></i> {{ _('Currently Featured') }}
+                      <span class="fviewer-count-badge" id="fviewer-count">{{ featured_count }}</span>
+                    </h2>
+                  </div>
+                  <div class="col-md-4 text-right">
+                    <button type="button" id="fviewer-save-order-btn" class="btn btn-default" style="display:none;">
+                      <i class="fa fa-save"></i> {{ _('Save Order') }}
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              <p class="text-muted fviewer-cache-note">
+                <i class="fa fa-clock-o"></i>
+                {{ _('Changes can take up to 5 minutes to appear on the homepage (cached).') }}
+              </p>
+
+              <div id="fviewer-list" class="fviewer-sortable-list">
+                {% for viewer in featured_viewers %}
+                {% include "admin/snippets/featured_viewer_card.html" %}
+                {% endfor %}
+              </div>
+
+              <div class="fviewer-empty-state" id="fviewer-empty" {% if featured_viewers %}style="display:none;"{% endif %}>
+                <section class="module module-narrow">
+                  <div class="module-content text-center" style="padding: 4rem 2.5rem;">
+                    <div class="fviewer-empty-icon"><i class="fa fa-map-o fa-4x"></i></div>
+                    <h3>{{ _('No Featured Viewers') }}</h3>
+                    <p class="text-muted">{{ _('Use the search above to add viewers. Meanwhile the homepage shows the most recently published ones.') }}</p>
+                  </div>
+                </section>
+              </div>
+
+            {% endif %}
+
+            </div>
+          </div>
+        </div>
+    </div>
+    {% endblock %}
+</div>
+
+<style>
+.fviewer-banner {
+  position: relative;
+  height: 200px;
+  overflow: hidden;
+  border-radius: 16px;
+  margin-bottom: 2.5rem;
+  box-shadow: 0 8px 32px rgba(0, 114, 188, 0.16);
+}
+
+.fviewer-banner-bg {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background-image: url('/Landing_page/Content/IHPTITLE04VIEWERS.jpg');
+  background-size: cover;
+  background-position: center;
+}
+
+.fviewer-banner-overlay {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: linear-gradient(135deg, rgba(0, 90, 156, 0.92) 0%, rgba(0, 114, 188, 0.82) 50%, rgba(0, 158, 224, 0.78) 100%);
+}
+
+.fviewer-banner-content {
+  position: absolute;
+  top: 50%; left: 50%;
+  transform: translate(-50%, -50%);
+  text-align: center;
+  color: white;
+  z-index: 10;
+  width: 90%;
+  max-width: 700px;
+}
+
+.fviewer-banner-content h1 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 0.8rem;
+  text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+  color: white;
+}
+
+.fviewer-banner-content h1 .fa { margin-right: 10px; }
+
+.fviewer-banner-content p {
+  font-size: 1.1rem;
+  margin-bottom: 0;
+  opacity: 0.95;
+  text-shadow: 1px 1px 4px rgba(0,0,0,0.3);
+  font-weight: 300;
+}
+
+/* Breadcrumb */
+.toolbar { margin-bottom: 2rem; padding: 1rem 0; }
+.breadcrumb {
+  background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+  padding: 12px 20px; margin: 0; border-radius: 12px;
+  border: 1px solid #e9ecef;
+  box-shadow: 0 2px 8px rgba(0, 114, 188, 0.08);
+}
+.breadcrumb > li + li:before { content: "\203A"; padding: 0 12px; color: #6c757d; font-weight: 600; }
+
+/* Section titles */
+.fviewer-section-title {
+  margin: 0; border: none; font-size: 1.3rem;
+  font-weight: 700; color: #0072BC;
+}
+.fviewer-section-title .fa { margin-right: 8px; }
+
+.fviewer-count-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #0072BC 0%, #005A9C 100%);
+  color: white; padding: 3px 12px; border-radius: 20px;
+  font-size: 0.85rem; font-weight: 600; margin-left: 8px; vertical-align: middle;
+}
+
+.fviewer-cache-note { font-size: 0.85rem; margin-bottom: 1rem; }
+.fviewer-cache-note .fa { margin-right: 5px; color: #0072BC; }
+
+/* Inputs */
+.fviewer-input {
+  border-radius: 10px !important;
+  border: 2px solid #e0e0e0 !important;
+  padding: 10px 16px !important;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+.fviewer-input:focus {
+  border-color: #0072BC !important;
+  box-shadow: 0 0 0 3px rgba(0, 114, 188, 0.15) !important;
+}
+
+.fviewer-action-bar { margin-bottom: 2rem; }
+.fviewer-list-header { margin-bottom: 0.5rem; margin-top: 1rem; }
+
+.fviewer-action-bar .btn-primary {
+  border-radius: 25px;
+  padding: 10px 28px;
+  font-weight: 600;
+  background: linear-gradient(135deg, #0072BC 0%, #005A9C 100%);
+  border: none;
+  color: white;
+  transition: all 0.2s ease;
+}
+.fviewer-action-bar .btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 114, 188, 0.3);
+  color: white;
+}
+
+.fviewer-action-bar .module,
+.fviewer-card .module,
+.fviewer-empty-state .module {
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 16px rgba(0, 114, 188, 0.12);
+  transition: all 0.3s ease;
+  overflow: hidden;
+}
+
+/* Search results */
+.fviewer-search-results { margin-top: 1.5rem; }
+.fviewer-result {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 16px;
+  border: 1px solid #e9ecef;
+  border-radius: 12px;
+  margin-bottom: 8px;
+  background: #fff;
+  transition: all 0.2s ease;
+}
+.fviewer-result:hover { border-color: #0072BC; background: #f8fbff; }
+.fviewer-result-thumb {
+  width: 64px; height: 44px; object-fit: cover;
+  border-radius: 8px; flex-shrink: 0; background: #f0f0f0;
+}
+.fviewer-result-placeholder {
+  width: 64px; height: 44px; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  background: #f0f0f0; border-radius: 8px; color: #ccc;
+}
+.fviewer-result-info { flex: 1; min-width: 0; }
+.fviewer-result-title {
+  font-weight: 600; color: #2c3e50; margin: 0;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.fviewer-result-meta { font-size: 0.85rem; color: #6c757d; }
+.fviewer-result .btn { border-radius: 20px; font-weight: 600; font-size: 0.85rem; white-space: nowrap; }
+.fviewer-search-empty { color: #6c757d; padding: 1rem 0; }
+
+/* Featured cards */
+.fviewer-card { margin-bottom: 1rem; }
+.fviewer-card .module { border-left: 5px solid #005A9C; margin-bottom: 0; }
+.fviewer-card .module:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 32px rgba(0, 114, 188, 0.16);
+}
+
+.fviewer-drag-handle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+  color: #ccc;
+  transition: color 0.2s ease;
+}
+.fviewer-drag-handle:hover { color: #0072BC; }
+.fviewer-card.dragging { opacity: 0.5; }
+.fviewer-card.drag-over .module { border-left-color: #ffc107; }
+
+.fviewer-card-img {
+  width: 100%;
+  max-height: 100px;
+  object-fit: cover;
+  border-radius: 10px;
+}
+
+.fviewer-card-img-placeholder {
+  width: 100%;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f0f0f0;
+  border-radius: 10px;
+  color: #ccc;
+}
+
+.fviewer-card-title {
+  margin: 0 0 6px 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #0072BC;
+}
+
+.fviewer-card-meta { font-size: 0.85rem; color: #6c757d; }
+.fviewer-card-meta .meta-item { margin-right: 14px; }
+.fviewer-card-meta .meta-item i { margin-right: 5px; color: #0072BC; }
+.fviewer-card-link { color: #0072BC; text-decoration: none; }
+.fviewer-card-link:hover { text-decoration: underline; }
+
+.fviewer-card-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+  flex-wrap: wrap;
+}
+
+.fviewer-card-actions .btn {
+  border-radius: 20px;
+  padding: 7px 16px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+
+.fviewer-card-actions .btn-danger {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  border: none; color: white;
+}
+.fviewer-card-actions .btn-danger:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+  color: white;
+}
+.fviewer-card-actions .btn-default {
+  background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+  border: 2px solid #e9ecef; color: #2c3e50;
+}
+.fviewer-card-actions .btn-default:hover {
+  background: #E3F2FD; border-color: #0072BC; color: #0072BC;
+}
+
+/* Empty state */
+.fviewer-empty-state .module { border-left: 5px solid #005A9C; }
+.fviewer-empty-icon { color: #005A9C; opacity: 0.7; margin-bottom: 1.5rem; }
+.fviewer-empty-state h3 { color: #2c3e50; font-weight: 700; margin-bottom: 0.8rem; }
+
+/* Save order button */
+#fviewer-save-order-btn {
+  border-radius: 25px;
+  padding: 8px 20px;
+  font-weight: 600;
+  border: 2px solid #28a745;
+  color: #28a745;
+  background: white;
+}
+#fviewer-save-order-btn:hover { background: #28a745; color: white; }
+
+/* Responsive */
+@media (max-width: 768px) {
+  .fviewer-banner { height: 160px; }
+  .fviewer-banner-content h1 { font-size: 1.7rem; }
+  .fviewer-card-actions { justify-content: flex-start; margin-top: 10px; }
+  .fviewer-drag-handle { display: none; }
+}
+</style>
+
+{% if not fv_unavailable %}
+<script>
+(function() {
+  // Cadenas traducidas via |tojson: hay traducciones con apostrofe (fr) que
+  // romperian el literal JS si se interpolaran en crudo.
+  var T = {
+    addToHomepage: {{ _('Add to homepage')|tojson }},
+    featured:      {{ _('Featured')|tojson }},
+    remove:        {{ _('Remove')|tojson }},
+    dragToReorder: {{ _('Drag to reorder')|tojson }},
+    saveOrder:     {{ _('Save Order')|tojson }},
+    saving:        {{ _('Saving...')|tojson }},
+    saved:         {{ _('Saved!')|tojson }},
+    searching:     {{ _('Searching...')|tojson }},
+    searchFailed:  {{ _('Search failed. Please try again.')|tojson }},
+    noResults:     {{ _('No published viewers found.')|tojson }},
+  };
+
+  var URLS = {
+    search:  '{{ h.url_for("theme_ejemplo.featured_viewers_search") }}',
+    add:     '{{ h.url_for("theme_ejemplo.featured_viewers_add") }}',
+    remove:  '{{ h.url_for("theme_ejemplo.featured_viewers_remove") }}',
+    reorder: '{{ h.url_for("theme_ejemplo.featured_viewers_reorder") }}',
+  };
+  var VIEWER_URL_TEMPLATE = '{{ h.url_for("featured_viewers.show", slug="__SLUG__") }}';
+
+  var listEl = document.getElementById('fviewer-list');
+  var emptyEl = document.getElementById('fviewer-empty');
+  var countEl = document.getElementById('fviewer-count');
+  var resultsEl = document.getElementById('fviewer-search-results');
+  var searchInput = document.getElementById('fviewer-search-input');
+  var searchBtn = document.getElementById('fviewer-search-btn');
+  var saveOrderBtn = document.getElementById('fviewer-save-order-btn');
+
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/[&<>"']/g, function(m) {
+      return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m];
+    });
+  }
+
+  function safeThumb(url) {
+    var u = String(url || '');
+    return (u.indexOf('/') === 0 || u.indexOf('http://') === 0 || u.indexOf('https://') === 0) ? u : '';
+  }
+
+  function viewerUrl(slug) {
+    return VIEWER_URL_TEMPLATE.replace('__SLUG__', encodeURIComponent(slug || ''));
+  }
+
+  function featuredIds() {
+    return Array.prototype.map.call(
+      listEl.querySelectorAll('.fviewer-card'),
+      function(c) { return c.getAttribute('data-id'); });
+  }
+
+  function refreshEmptyState() {
+    var n = listEl.querySelectorAll('.fviewer-card').length;
+    countEl.textContent = n;
+    emptyEl.style.display = n ? 'none' : '';
+  }
+
+  // ── Search ──
+  function doSearch() {
+    var q = searchInput.value.trim();
+    resultsEl.innerHTML = '<p class="fviewer-search-empty"><i class="fa fa-spinner fa-spin"></i> ' + esc(T.searching) + '</p>';
+    fetch(URLS.search + '?q=' + encodeURIComponent(q), {credentials: 'same-origin'})
+      .then(function(r) { return r.json(); })
+      .then(function(data) { renderResults(data.results || []); })
+      .catch(function() {
+        resultsEl.innerHTML = '<p class="fviewer-search-empty">' + esc(T.searchFailed) + '</p>';
+      });
+  }
+
+  function renderResults(results) {
+    if (!results.length) {
+      resultsEl.innerHTML = '<p class="fviewer-search-empty">' + esc(T.noResults) + '</p>';
+      return;
+    }
+    var current = featuredIds();
+    resultsEl.innerHTML = results.map(function(v) {
+      var isIn = current.indexOf(v.id) !== -1;
+      var thumb = safeThumb(v.thumbnail_url);
+      var img = thumb
+        ? '<img class="fviewer-result-thumb" src="' + esc(thumb) + '" alt="">'
+        : '<div class="fviewer-result-placeholder"><i class="fa fa-map"></i></div>';
+      var btn = isIn
+        ? '<button type="button" class="btn btn-default" disabled><i class="fa fa-check"></i> ' + esc(T.featured) + '</button>'
+        : '<button type="button" class="btn btn-primary fviewer-add-btn" data-id="' + esc(v.id) + '"><i class="fa fa-plus"></i> ' + esc(T.addToHomepage) + '</button>';
+      return '<div class="fviewer-result" id="fviewer-result-' + esc(v.id) + '">' + img +
+        '<div class="fviewer-result-info">' +
+          '<p class="fviewer-result-title">' + esc(v.title) + '</p>' +
+          '<div class="fviewer-result-meta">' + esc(v.organization_title || '') + '</div>' +
+        '</div>' + btn + '</div>';
+    }).join('');
+  }
+
+  searchBtn.addEventListener('click', doSearch);
+  searchInput.addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') { e.preventDefault(); doSearch(); }
+  });
+
+  // ── Add / remove ──
+  resultsEl.addEventListener('click', function(e) {
+    var btn = e.target.closest('.fviewer-add-btn');
+    if (!btn) return;
+    var id = btn.getAttribute('data-id');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i>';
+    var body = new FormData();
+    body.append('id', id);
+    fetch(URLS.add, {method: 'POST', body: body, credentials: 'same-origin'})
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (!data.success) {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fa fa-plus"></i> ' + esc(T.addToHomepage);
+          alert('Error: ' + (data.error || ''));
+          return;
+        }
+        btn.outerHTML = '<button type="button" class="btn btn-default" disabled><i class="fa fa-check"></i> ' + esc(T.featured) + '</button>';
+        appendCard(data.viewer);
+      });
+  });
+
+  function appendCard(v) {
+    var thumb = safeThumb(v.thumbnail_url);
+    var img = thumb
+      ? '<img src="' + esc(thumb) + '" class="fviewer-card-img" alt="' + esc(v.title) + '">'
+      : '<div class="fviewer-card-img-placeholder"><i class="fa fa-map fa-2x"></i></div>';
+    var wrapper = document.createElement('div');
+    wrapper.className = 'fviewer-card';
+    wrapper.id = 'fviewer-card-' + v.id;
+    wrapper.setAttribute('data-id', v.id);
+    wrapper.setAttribute('draggable', 'true');
+    wrapper.innerHTML =
+      '<article class="module module-narrow"><div class="module-content" style="padding: 1.5rem 2rem;"><div class="row">' +
+        '<div class="col-md-1 col-sm-1 fviewer-drag-handle"><i class="fa fa-bars fa-lg" title="' + esc(T.dragToReorder) + '"></i></div>' +
+        '<div class="col-md-2 col-sm-3">' + img + '</div>' +
+        '<div class="col-md-6 col-sm-5">' +
+          '<h3 class="fviewer-card-title">' + esc(v.title) + '</h3>' +
+          '<div class="fviewer-card-meta">' +
+            (v.organization_title ? '<span class="meta-item"><i class="fa fa-building"></i>' + esc(v.organization_title) + '</span>' : '') +
+            '<span class="meta-item"><i class="fa fa-external-link"></i><a class="fviewer-card-link" href="' + viewerUrl(v.slug) + '" target="_blank" rel="noopener">' + esc(v.slug) + '</a></span>' +
+          '</div>' +
+        '</div>' +
+        '<div class="col-md-3 col-sm-3"><div class="fviewer-card-actions">' +
+          '<button class="btn btn-danger btn-sm fviewer-remove-btn" data-id="' + esc(v.id) + '"><i class="fa fa-times"></i> ' + esc(T.remove) + '</button>' +
+        '</div></div>' +
+      '</div></div></article>';
+    listEl.appendChild(wrapper);
+    initDragForCard(wrapper);
+    refreshEmptyState();
+  }
+
+  listEl.addEventListener('click', function(e) {
+    var btn = e.target.closest('.fviewer-remove-btn');
+    if (!btn) return;
+    var id = btn.getAttribute('data-id');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i>';
+    var body = new FormData();
+    body.append('id', id);
+    fetch(URLS.remove, {method: 'POST', body: body, credentials: 'same-origin'})
+      .then(function(r) { return r.json(); })
+      .then(function(data) {
+        if (!data.success) {
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fa fa-times"></i> ' + esc(T.remove);
+          alert('Error: ' + (data.error || ''));
+          return;
+        }
+        var card = document.getElementById('fviewer-card-' + id);
+        if (card) card.parentNode.removeChild(card);
+        refreshEmptyState();
+        var resultBtn = document.querySelector('#fviewer-result-' + CSS.escape(id) + ' button');
+        if (resultBtn) {
+          resultBtn.outerHTML = '<button type="button" class="btn btn-primary fviewer-add-btn" data-id="' + esc(id) + '"><i class="fa fa-plus"></i> ' + esc(T.addToHomepage) + '</button>';
+        }
+      });
+  });
+
+  // ── Drag & drop reorder ──
+  var dragSrcEl = null;
+
+  function initDragForCard(card) {
+    card.addEventListener('dragstart', function(e) {
+      dragSrcEl = card;
+      card.classList.add('dragging');
+      e.dataTransfer.effectAllowed = 'move';
+      e.dataTransfer.setData('text/plain', card.getAttribute('data-id'));
+    });
+    card.addEventListener('dragend', function() {
+      card.classList.remove('dragging');
+      listEl.querySelectorAll('.fviewer-card').forEach(function(c) { c.classList.remove('drag-over'); });
+    });
+    card.addEventListener('dragover', function(e) {
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      if (card !== dragSrcEl) card.classList.add('drag-over');
+    });
+    card.addEventListener('dragleave', function() { card.classList.remove('drag-over'); });
+    card.addEventListener('drop', function(e) {
+      e.preventDefault();
+      card.classList.remove('drag-over');
+      if (dragSrcEl && dragSrcEl !== card) {
+        var allCards = Array.prototype.slice.call(listEl.querySelectorAll('.fviewer-card'));
+        var srcIdx = allCards.indexOf(dragSrcEl);
+        var tgtIdx = allCards.indexOf(card);
+        if (srcIdx < tgtIdx) {
+          listEl.insertBefore(dragSrcEl, card.nextSibling);
+        } else {
+          listEl.insertBefore(dragSrcEl, card);
+        }
+        saveOrderBtn.style.display = 'inline-block';
+      }
+    });
+  }
+
+  listEl.querySelectorAll('.fviewer-card').forEach(initDragForCard);
+
+  saveOrderBtn.addEventListener('click', function() {
+    saveOrderBtn.disabled = true;
+    saveOrderBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> ' + esc(T.saving);
+    fetch(URLS.reorder, {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      credentials: 'same-origin',
+      body: JSON.stringify({order: featuredIds()})
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (data.success) {
+        saveOrderBtn.innerHTML = '<i class="fa fa-check"></i> ' + esc(T.saved);
+        saveOrderBtn.classList.add('btn-success');
+        setTimeout(function() {
+          saveOrderBtn.style.display = 'none';
+          saveOrderBtn.innerHTML = '<i class="fa fa-save"></i> ' + esc(T.saveOrder);
+          saveOrderBtn.classList.remove('btn-success');
+          saveOrderBtn.disabled = false;
+        }, 2000);
+      } else {
+        saveOrderBtn.innerHTML = '<i class="fa fa-save"></i> ' + esc(T.saveOrder);
+        saveOrderBtn.disabled = false;
+        alert('Error: ' + (data.error || ''));
+      }
+    });
+  });
+
+  // Prime the picker so it is usable without typing.
+  doSearch();
+})();
+</script>
+{% endif %}
+{% endblock %}

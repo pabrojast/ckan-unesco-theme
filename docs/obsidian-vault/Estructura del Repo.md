@@ -53,14 +53,14 @@ ckan-unesco-theme/
 
 | Directorio | Contenido |
 |---|---|
-| `admin/` | Paneles de administración (datasets, publicaciones, portal cards, usuarios, IHP-IX) |
+| `admin/` | Paneles de administración (datasets, visores, publicaciones, portal cards, usuarios, IHP-IX). `admin/snippets/` guarda las filas reutilizables de esos paneles |
 | `bug_tickets/` | Lista, creación y detalle de tickets |
 | `citizen_science_portal/` | Portal de ciencia ciudadana |
 | `doi/` | Templates relacionados con DOI |
 | `email/` | Templates de correo electrónico |
 | `flood_drought_portal/` | Portal de inundaciones y sequías |
 | `group/` | Vistas de grupos/iniciativas (miembros, noticias, eventos, publicaciones) |
-| `home/` | Homepage con snippets UNESCO. `custom_layout.html` orquesta: buscador → slideshow → stats (`site_stats_hero.html`, 6 tarjetas uniformes) → About compacto (`promoted.html`, banda con 3 highlights) → Featured Datasets → hub "Explore Data" (tabs Recientes/Trending, `explore_tabs.html`) → hub "Tools and Resources" (`tools_hub.html`) → hub "Community and Knowledge" (`community_grid.html`, grid panorámico de 4 columnas con mini-cards `community_mini_card.html`, sin tabs). Solo Explore Data conserva el patrón de tabs server-side con progressive enhancement (`html.js`); sin JS los paneles se apilan visibles. Los snippets huérfanos del refactor de tabs fueron eliminados |
+| `home/` | Homepage con snippets UNESCO. `custom_layout.html` orquesta: buscador → slideshow → stats (`site_stats_hero.html`, 6 tarjetas uniformes) → About compacto (`promoted.html`, banda con 3 highlights) → Featured Viewers (`featuredviewers.html` + `featuredviewerssnip.html`, datos de [[Glosario#Featured Viewer|ckanext-pages]] con fallback a los publicados más recientes) → hub "Explore Data" (tabs Recientes/Trending, `explore_tabs.html`) → hub "Tools and Resources" (`tools_hub.html`) → hub "Community and Knowledge" (`community_grid.html`, grid panorámico de 4 columnas con mini-cards `community_mini_card.html`, sin tabs). Solo Explore Data conserva el patrón de tabs server-side con progressive enhancement (`html.js`); sin JS los paneles se apilan visibles. Los snippets huérfanos del refactor de tabs fueron eliminados |
 | `ihpix/` | Portal IHP-IX (página principal, outputs, dashboard, reportes) |
 | `initiatives/` | Portal de iniciativas |
 | `iot_portal/` | Portal IoT |

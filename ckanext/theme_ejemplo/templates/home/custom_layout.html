@@ -29,15 +29,20 @@
           {% endblock %}
         </div>
 
-        {# ── Explorar datos: destacados + recientes/trending ── #}
+        {# ── Visores destacados: sustituye a Featured Datasets ── #}
+        {% if h.theme_ejemplo_featured_viewers_available() %}
+          {% set featured_viewers = h.theme_ejemplo_get_featured_viewers() %}
+          {% if featured_viewers %}
         <div class="col-md-12 col1 homepage-section reveal-section">
-          {% block featureddata %}
-            {% snippet 'home/snippets/featureddata.html' %}
+          {% block featuredviewers %}
+            {% snippet 'home/snippets/featuredviewers.html' %}
           {% endblock %}
-          {% block featureddatasnip %}
-            {% snippet 'home/snippets/featureddatasnip.html' %}
+          {% block featuredviewerssnip %}
+            {% snippet 'home/snippets/featuredviewerssnip.html', viewers=featured_viewers %}
           {% endblock %}
         </div>
+          {% endif %}
+        {% endif %}
         <div class="col-md-12 col1 homepage-section homepage-section-alt reveal-section">
           {% block explore_tabs %}
             {% snippet 'home/snippets/explore_tabs.html' %}

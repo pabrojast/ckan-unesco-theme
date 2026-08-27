@@ -124,7 +124,10 @@ ckan -c /etc/ckan/default/ckan.ini run
    - `/memberstates`
    - `/ihpix`
    - `/people`
-3. Si eres sysadmin, verifica los paneles de admin en `/admin/featured-datasets`
+3. Si eres sysadmin, verifica los paneles de admin:
+   - `/ckan-admin/featured-datasets`
+   - `/ckan-admin/featured-viewers` (requiere `pages` y `ckanext.featured_viewers.enabled`)
+   - `/ckan-admin/featured-publications`
 
 ---
 

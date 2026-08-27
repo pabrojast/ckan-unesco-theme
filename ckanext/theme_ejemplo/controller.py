@@ -2340,6 +2340,222 @@ class MyLogica():
                 log.error(f'Error importing legacy publications: {e}')
                 return jsonify({'success': False, 'error': str(e)}), 500
 
+        # ── Featured Viewers Admin Panel ─────────────────────────────────────
+        # Los datos viven en ckanext-pages (tabla `featured_viewers`). Este
+        # panel NO registra acciones ni auth propias: los nombres
+        # `featured_viewer_*` pertenecen a ckanext-pages y duplicarlos hace que
+        # CKAN falle al arrancar (NameConflict en logic, Exception en authz).
+        # Por eso el gate es una comprobación directa de sysadmin, equivalente
+        # a `auth._sysadmin_only` y al gate de la masthead.
+
+        @staticmethod
+        def _fv_admin_guard():
+            """Devuelve (context, error) donde error es (mensaje, status)."""
+            if not (c.userobj and getattr(c.userobj, 'sysadmin', False)):
+                return None, (_('Not authorized'), 403)
+            if not toolkit.asbool(
+                    config.get('ckanext.featured_viewers.enabled', False)):
+                return None, (_('Featured Viewers is not enabled on this site'), 404)
+            try:
+                toolkit.get_action('featured_viewer_list')
+            except KeyError:
+                return None, (_('Featured Viewers is not available'), 404)
+            return {'user': c.user, 'auth_user_obj': c.userobj}, None
+
+        @staticmethod
+        def _fv_anon_context():
+            """Contexto sin usuario: la acción filtra a `published` por sí sola."""
+            return {'user': '', 'auth_user_obj': None, 'ignore_auth': True}
+
+        @staticmethod
+        def _fv_card(viewer):
+            """Proyección mínima de un viewer para las respuestas JSON."""
+            org = viewer.get('organization') or {}
+            return {
+                'id': viewer.get('id'),
+                'title': viewer.get('title'),
+                'slug': viewer.get('slug'),
+                'thumbnail_url': viewer.get('thumbnail_url') or '',
+                'category': viewer.get('category') or '',
+                'organization_title': org.get('title') or '',
+                'is_featured': bool(viewer.get('is_featured')),
+                'order_index': viewer.get('order_index') or 0,
+            }
+
+        @staticmethod
+        def _fv_patch(context, viewer_id, **fields):
+            """Update parcial de un viewer de ckanext-pages.
+
+            OJO: `featured_viewer_update` valida contra `featured_viewer_schema()`,
+            donde `title` es `not_empty`. Un data_dict {'id', 'is_featured'}
+            falla con "Missing value", así que hay que releer y reenviar el
+            título actual. El resto de claves del schema son `ignore_missing`,
+            de modo que no se toca nada más.
+            """
+            current = toolkit.get_action('featured_viewer_show')(
+                dict(MyLogica._fv_anon_context()),
+                {'id': viewer_id, 'include_datasets': False})
+            data_dict = {'id': current['id'], 'title': current.get('title') or ''}
+            data_dict.update(fields)
+            return toolkit.get_action('featured_viewer_update')(
+                dict(context), data_dict)
+
+        @staticmethod
+        def _fv_featured_list():
+            """Viewers destacados actualmente, en orden de aparición."""
+            result = toolkit.get_action('featured_viewer_list')(
+                dict(MyLogica._fv_anon_context()),
+                {'is_featured': True, 'status': 'published',
+                 'sort': 'order', 'limit': 100}) or {}
+            viewers = result.get('viewers') or []
+            return sorted(viewers,
+                          key=lambda v: (v.get('order_index') or 0,
+                                         v.get('created_at') or ''))
+
+        @staticmethod
+        def featured_viewers_admin():
+            """Panel para elegir y ordenar los visores de la home. Sysadmin."""
+            if not (c.userobj and getattr(c.userobj, 'sysadmin', False)):
+                return base.abort(403, _('Not authorized'))
+
+            context, error = MyLogica._fv_admin_guard()
+            if error:
+                # El módulo está apagado: renderizamos el panel con el aviso en
+                # lugar de un 404 seco, para que el sysadmin sepa qué activar.
+                return base.render('admin/featured_viewers.html', extra_vars={
+                    'fv_unavailable': True,
+                    'fv_unavailable_msg': error[0],
+                    'featured_viewers': [],
+                    'featured_count': 0,
+                })
+
+            try:
+                featured = MyLogica._fv_featured_list()
+            except Exception as e:
+                log.error(f'Error loading featured viewers: {e}')
+                model.Session.rollback()
+                featured = []
+
+            return base.render('admin/featured_viewers.html', extra_vars={
+                'fv_unavailable': False,
+                'fv_unavailable_msg': '',
+                'featured_viewers': featured,
+                'featured_count': len(featured),
+            })
+
+        @staticmethod
+        def featured_viewers_search():
+            """AJAX: busca visores publicados para añadir a la home."""
+            context, error = MyLogica._fv_admin_guard()
+            if error:
+                return jsonify({'success': False, 'error': error[0]}), error[1]
+
+            q = (request.args.get('q') or '').strip()
+            data_dict = {'status': 'published', 'sort': 'alphabetical', 'limit': 20}
+            if q:
+                data_dict['q'] = q
+
+            try:
+                result = toolkit.get_action('featured_viewer_list')(
+                    dict(MyLogica._fv_anon_context()), data_dict) or {}
+                return jsonify({
+                    'success': True,
+                    'results': [MyLogica._fv_card(v)
+                                for v in (result.get('viewers') or [])],
+                })
+            except Exception as e:
+                log.error(f'Error searching featured viewers: {e}')
+                model.Session.rollback()
+                return jsonify({'success': False, 'results': [],
+                                'error': str(e)}), 500
+
+        @staticmethod
+        def featured_viewers_add():
+            """AJAX: marca un visor como destacado, al final de la lista."""
+            context, error = MyLogica._fv_admin_guard()
+            if error:
+                return jsonify({'success': False, 'error': error[0]}), error[1]
+
+            viewer_id = request.form.get('id')
+            if not viewer_id:
+                return jsonify({'success': False,
+                                'error': _('Viewer ID is required')}), 400
+
+            try:
+                next_index = len(MyLogica._fv_featured_list())
+                updated = MyLogica._fv_patch(context, viewer_id,
+                                             is_featured=True,
+                                             order_index=next_index)
+                return jsonify({'success': True,
+                                'viewer': MyLogica._fv_card(updated)})
+            except toolkit.ObjectNotFound:
+                return jsonify({'success': False,
+                                'error': _('Viewer not found')}), 404
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False,
+                                'error': _('Not authorized')}), 403
+            except toolkit.ValidationError as e:
+                return jsonify({'success': False, 'error': str(e.error_dict)}), 400
+            except Exception as e:
+                log.error(f'Error adding featured viewer: {e}')
+                model.Session.rollback()
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        @staticmethod
+        def featured_viewers_remove():
+            """AJAX: quita un visor de la sección destacada de la home."""
+            context, error = MyLogica._fv_admin_guard()
+            if error:
+                return jsonify({'success': False, 'error': error[0]}), error[1]
+
+            viewer_id = request.form.get('id')
+            if not viewer_id:
+                return jsonify({'success': False,
+                                'error': _('Viewer ID is required')}), 400
+
+            try:
+                MyLogica._fv_patch(context, viewer_id,
+                                   is_featured=False, order_index=0)
+                return jsonify({'success': True})
+            except toolkit.ObjectNotFound:
+                return jsonify({'success': False,
+                                'error': _('Viewer not found')}), 404
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False,
+                                'error': _('Not authorized')}), 403
+            except Exception as e:
+                log.error(f'Error removing featured viewer: {e}')
+                model.Session.rollback()
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        @staticmethod
+        def featured_viewers_reorder():
+            """AJAX: reescribe order_index segun el orden recibido."""
+            context, error = MyLogica._fv_admin_guard()
+            if error:
+                return jsonify({'success': False, 'error': error[0]}), error[1]
+
+            order = []
+            try:
+                payload = request.get_json(force=True, silent=True) or {}
+                order = payload.get('order') or []
+            except Exception:
+                order = []
+            if not order:
+                order = request.form.getlist('order[]')
+
+            if not order:
+                return jsonify({'success': False,
+                                'error': _('No order provided')}), 400
+
+            try:
+                for index, viewer_id in enumerate(order):
+                    MyLogica._fv_patch(context, viewer_id, order_index=index)
+                return jsonify({'success': True, 'updated': len(order)})
+            except Exception as e:
+                log.error(f'Error reordering featured viewers: {e}')
+                model.Session.rollback()
+                return jsonify({'success': False, 'error': str(e)}), 500
         # ── Portal Card Admin Views ──────────────────────────────────────────
 
         PORTAL_META = {

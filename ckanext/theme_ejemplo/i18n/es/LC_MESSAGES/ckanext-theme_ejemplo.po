@@ -2349,3 +2349,123 @@ msgstr "A tu propio ritmo"
 
 msgid "Toggle sort direction"
 msgstr "Invertir el orden"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Featured Viewers"
+msgstr "Visores Destacados"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Viewers"
+msgstr "Visores"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Interactive map viewers curated by UNESCO's Water Family"
+msgstr "Visores de mapas interactivos curados por la Familia del Agua de la UNESCO"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Explore viewer"
+msgstr "Explorar visor"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "View all viewers"
+msgstr "Ver todos los visores"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Choose and order the map viewers shown on the homepage."
+msgstr "Elige y ordena los visores de mapas que aparecen en la portada."
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Add a Viewer"
+msgstr "Añadir un visor"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Only published viewers can be featured. Search by title or description."
+msgstr "Solo se pueden destacar visores publicados. Busca por título o descripción."
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Type to search viewers..."
+msgstr "Escribe para buscar visores..."
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Currently Featured"
+msgstr "Destacados actualmente"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Save Order"
+msgstr "Guardar orden"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Saving..."
+msgstr "Guardando..."
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Saved!"
+msgstr "¡Guardado!"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Changes can take up to 5 minutes to appear on the homepage (cached)."
+msgstr "Los cambios pueden tardar hasta 5 minutos en verse en la portada (caché)."
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "No Featured Viewers"
+msgstr "No hay visores destacados"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Use the search above to add viewers. Meanwhile the homepage shows the most recently published ones."
+msgstr "Usa el buscador de arriba para añadir visores. Mientras tanto, la portada muestra los publicados más recientemente."
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "The Featured Viewers module lives in the pages extension."
+msgstr "El módulo de visores destacados vive en la extensión pages."
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Drag to reorder"
+msgstr "Arrastra para reordenar"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Edit"
+msgstr "Editar"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Add to homepage"
+msgstr "Añadir a la portada"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Featured"
+msgstr "Destacado"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Searching..."
+msgstr "Buscando..."
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Search failed. Please try again."
+msgstr "La búsqueda ha fallado. Inténtalo de nuevo."
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "No published viewers found."
+msgstr "No se han encontrado visores publicados."
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Not authorized"
+msgstr "No autorizado"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Featured Viewers is not enabled on this site"
+msgstr "Los visores destacados no están activados en este sitio"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Featured Viewers is not available"
+msgstr "Los visores destacados no están disponibles"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Viewer ID is required"
+msgstr "Se requiere el ID del visor"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Viewer not found"
+msgstr "Visor no encontrado"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "No order provided"
+msgstr "No se ha indicado ningún orden"

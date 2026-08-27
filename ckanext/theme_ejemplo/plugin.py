@@ -764,6 +764,42 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 methods=['POST']
             )
 
+            # Featured viewers admin panel (sysadmin only).
+            # Los datos viven en ckanext-pages; el gate de disponibilidad va en
+            # la vista, no aquí: registrando las rutas siempre garantizamos que
+            # `h.url_for('theme_ejemplo.featured_viewers_admin')` en header.html
+            # nunca pueda lanzar BuildError.
+            blueprint.add_url_rule(
+                u'/ckan-admin/featured-viewers',
+                u'featured_viewers_admin',
+                MyLogica.featured_viewers_admin,
+                methods=['GET']
+            )
+            blueprint.add_url_rule(
+                u'/ckan-admin/featured-viewers/search',
+                u'featured_viewers_search',
+                MyLogica.featured_viewers_search,
+                methods=['GET']
+            )
+            blueprint.add_url_rule(
+                u'/ckan-admin/featured-viewers/add',
+                u'featured_viewers_add',
+                MyLogica.featured_viewers_add,
+                methods=['POST']
+            )
+            blueprint.add_url_rule(
+                u'/ckan-admin/featured-viewers/remove',
+                u'featured_viewers_remove',
+                MyLogica.featured_viewers_remove,
+                methods=['POST']
+            )
+            blueprint.add_url_rule(
+                u'/ckan-admin/featured-viewers/reorder',
+                u'featured_viewers_reorder',
+                MyLogica.featured_viewers_reorder,
+                methods=['POST']
+            )
+
             # Portal cards admin panel (sysadmin only)
             # Static routes must be registered before the wildcard <portal_id>
             blueprint.add_url_rule(
@@ -1042,6 +1078,8 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                  'get_featured_datasets': self.get_featured_datasets,
                  'get_organization_image_by_name': self.get_organization_image_by_name,
                  'get_featured_datasets_filtered': self.get_featured_datasets_filtered,
+                 'theme_ejemplo_get_featured_viewers': helpers.get_featured_viewers,
+                 'theme_ejemplo_featured_viewers_available': helpers.featured_viewers_available,
                  'theme_ejemplo_get_paged_resources': helpers.get_paged_resources,
                  'theme_ejemplo_markdown_excerpt': helpers.markdown_excerpt,
                  'theme_ejemplo_site_statistics': self.get_site_statistics_cached,

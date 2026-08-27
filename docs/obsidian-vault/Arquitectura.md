@@ -136,18 +136,29 @@ Las tablas se crean automáticamente con `init_db()` idempotente y soporte de mi
 
 ## Paneles de administración
 
-Todos bajo `/admin/*`, requieren rol sysadmin. Ver rutas completas en [[Flujos Importantes#Paneles de administración]].
+Todos bajo `/ckan-admin/*`, requieren rol sysadmin. Ver rutas completas en [[Flujos Importantes#Paneles de administración]].
 
 | Panel | Ruta | Función |
 |---|---|---|
-| Datasets destacados | `/admin/featured-datasets` | Marcar/desmarcar datasets |
-| Publicaciones | `/admin/featured-publications` | CRUD + reordenar + imágenes |
-| Tarjetas de portales | `/admin/portal-cards/<portal_id>` | CRUD + reordenar + imágenes |
-| Tickets de errores | `/admin/bug-tickets` | Ver y gestionar tickets |
-| Usuarios | `/admin/users` | Gestión completa de usuarios |
-| Contenido IHP-IX | `/admin/ihpix/content` | Editar secciones IHP-IX |
-| Actividades IHP-IX | `/admin/ihpix/activities` | CRUD actividades |
-| Reportes IHP-IX | `/admin/ihpix/reports` | Revisar reportes |
+| Datasets destacados | `/ckan-admin/featured-datasets` | Marcar/desmarcar datasets |
+| Visores destacados | `/ckan-admin/featured-viewers` | Marcar `is_featured` + reordenar `order_index` |
+| Publicaciones | `/ckan-admin/featured-publications` | CRUD + reordenar + imágenes |
+| Tarjetas de portales | `/ckan-admin/portal-cards/<portal_id>` | CRUD + reordenar + imágenes |
+| Tickets de errores | `/ckan-admin/bug-tickets` | Ver y gestionar tickets |
+| Usuarios | `/ckan-admin/users` | Gestión completa de usuarios |
+| Contenido IHP-IX | `/ckan-admin/ihpix/content` | Editar secciones IHP-IX |
+| Actividades IHP-IX | `/ckan-admin/ihpix/activities` | CRUD actividades |
+| Reportes IHP-IX | `/ckan-admin/ihpix/reports` | Revisar reportes |
+
+> [!warning] Visores destacados: los datos NO son de este repo
+> El modelo `featured_viewers`, su workflow y sus acciones viven en
+> **ckanext-pages** (`ckanext/pages/featured_viewers/`). El tema sólo lee y
+> escribe `is_featured` / `order_index` a través de las acciones
+> `featured_viewer_list`, `featured_viewer_show` y `featured_viewer_update`.
+> Este panel **no registra acciones ni auth functions propias**: duplicar un
+> nombre `featured_viewer_*` haría que CKAN fallase al arrancar
+> (`NameConflict` en `ckan/logic/__init__.py`, `Exception` en `ckan/authz.py`).
+> Por eso el gate es una comprobación directa de `c.userobj.sysadmin`.
 
 ---
 

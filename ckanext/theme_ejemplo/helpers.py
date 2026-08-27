@@ -693,6 +693,102 @@ def get_featured_publications():
         return []
 
 
+# ── Featured viewers (datos en ckanext-pages) ─────────────────────────
+
+# Nº de visores que caben en la sección de la home (3 columnas x 2 filas).
+FEATURED_VIEWERS_LIMIT = 6
+_HOME_CACHE_TTL = 300
+_featured_viewers_cache = {'data': None, 'expires': 0, 'limit': None}
+
+
+def _get_home_cache_ttl():
+    """Mismo TTL que usa el resto de secciones de la home."""
+    try:
+        return max(0, int(toolkit.config.get(
+            'ckanext.theme_ejemplo.home_cache_ttl', _HOME_CACHE_TTL)))
+    except Exception:
+        return _HOME_CACHE_TTL
+
+
+def featured_viewers_available():
+    """True si ckanext-pages tiene el módulo de featured viewers activo.
+
+    Hay que comprobar las dos condiciones: los helpers `get_viewer_*` de
+    ckanext-pages se registran siempre que el módulo importe, incluso con el
+    flag apagado, así que su presencia no sirve como test. La acción, en
+    cambio, sólo se registra si el flag está encendido.
+    """
+    try:
+        if not toolkit.asbool(toolkit.config.get(
+                'ckanext.featured_viewers.enabled', False)):
+            return False
+        toolkit.get_action('featured_viewer_list')
+    except KeyError:
+        return False
+    except Exception as e:
+        log.warning('Could not determine featured viewers availability: %s', e)
+        return False
+    return True
+
+
+def _get_featured_viewers_uncached(limit):
+    if not featured_viewers_available():
+        return []
+    list_action = toolkit.get_action('featured_viewer_list')
+    # Contexto anónimo explícito: `featured_viewer_list` filtra por usuario
+    # internamente, así que forzamos usuario vacío para que el resultado sea
+    # idéntico para todo el mundo y se pueda cachear sin riesgo de filtrar
+    # borradores de un sysadmin al resto de visitantes.
+    base_ctx = {'user': '', 'auth_user_obj': None, 'ignore_auth': True}
+    try:
+        result = list_action(dict(base_ctx), {
+            'is_featured': True,
+            'status': 'published',
+            'sort': 'order',
+            'limit': limit,
+        }) or {}
+        viewers = result.get('viewers') or []
+        if not viewers:
+            # Fallback: si nadie ha destacado nada todavía, mostrar los últimos
+            # publicados en vez de dejar la sección vacía.
+            result = list_action(dict(base_ctx), {
+                'status': 'published',
+                'sort': 'recent',
+                'limit': limit,
+            }) or {}
+            viewers = result.get('viewers') or []
+        # `sort=order` no tiene desempate y hoy todos comparten order_index=0;
+        # estabilizamos aquí para que el orden no baile entre peticiones.
+        viewers = sorted(viewers, key=lambda v: (v.get('order_index') or 0,
+                                                 v.get('created_at') or ''))
+        return viewers[:limit]
+    except Exception as e:
+        # A diferencia de los datasets destacados (Solr), esta acción consulta
+        # Postgres: si falla deja la sesión ORM abortada y rompería el resto de
+        # secciones de la home.
+        _warn_and_rollback_helper_error('Error getting featured viewers', e)
+        return []
+
+
+def get_featured_viewers(limit=FEATURED_VIEWERS_LIMIT):
+    """Visores destacados para la home, con el mismo TTL que el resto."""
+    cache_ttl = _get_home_cache_ttl()
+    if cache_ttl <= 0:
+        return _get_featured_viewers_uncached(limit)
+
+    now = time.time()
+    if (_featured_viewers_cache['data'] is not None
+            and _featured_viewers_cache['limit'] == limit
+            and _featured_viewers_cache['expires'] > now):
+        return _featured_viewers_cache['data']
+
+    viewers = _get_featured_viewers_uncached(limit)
+    _featured_viewers_cache['data'] = viewers
+    _featured_viewers_cache['limit'] = limit
+    _featured_viewers_cache['expires'] = now + cache_ttl
+    return viewers
+
+
 def get_open_bug_tickets_count():
     """Get count of open bug tickets for the current user (or all for sysadmin)."""
     try:

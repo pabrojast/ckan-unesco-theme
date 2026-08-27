@@ -14,7 +14,7 @@ Estas claves se definen en el archivo de configuración de CKAN (`ckan.ini`) y s
 |---|---|---|
 | `ckanext.theme_ejemplo.courses_cache_ttl` | `600` (10 min) | TTL del micro-caché en memoria de la lectura de cursos desde BD (helper `get_latest_courses`) |
 | `ckanext.theme_ejemplo.groups_cache_ttl` | `300` (5 min) | TTL del caché de estados miembros e iniciativas |
-| `ckanext.theme_ejemplo.home_cache_ttl` | `300` (5 min) | TTL del caché de datasets destacados y estadísticas del sitio |
+| `ckanext.theme_ejemplo.home_cache_ttl` | `300` (5 min) | TTL del caché de datasets destacados, visores destacados y estadísticas del sitio |
 | `ckanext.theme_ejemplo.recently_added_cache_ttl` | `300` (5 min) | TTL del caché de datasets/documentos recientes |
 | `ckanext.theme_ejemplo.tracking_cache_ttl` | `300` (5 min) | TTL del caché de estadísticas de tracking (mínimo 60s) |
 
@@ -66,6 +66,17 @@ Ver [[Open Learning]] para el flujo completo de sincronización y curación.
 | Clave | Default | Descripción |
 |---|---|---|
 | `ckanext.theme_ejemplo.index_followers` | `false` | Habilitar indexación de seguidores de datasets en Solr |
+
+### Claves de otras extensiones que este tema lee
+
+| Clave | Dueño | Efecto aquí |
+|---|---|---|
+| `ckanext.featured_viewers.enabled` | **ckanext-pages** | Con `false` (o sin `pages` en `ckan.plugins`) desaparecen la sección *Featured Viewers* de la portada y el item «Viewers» de la masthead, y `/ckan-admin/featured-viewers` muestra un aviso en vez de la lista. La comprueba `helpers.featured_viewers_available()`. |
+
+> [!note] Inferencia
+> Es una dependencia **blanda**: el tema nunca importa `ckanext.pages`, sólo
+> consulta la config y el registro de acciones de CKAN. Si `pages` no está
+> instalado, todo degrada en silencio.
 
 ---
 

@@ -79,3 +79,32 @@ def test_initiatives_request_does_not_redirect_to_group_request(app):
     resp = app.get('/initiatives/request', follow_redirects=False)
     location = resp.headers.get('Location', '') or ''
     assert '/group/request' not in location
+
+
+def test_featured_viewers_admin_routes_are_registered(app):
+    """Las rutas del panel se registran SIEMPRE, con el flag encendido o no.
+
+    Así `h.url_for('theme_ejemplo.featured_viewers_admin')` en header.html
+    nunca puede lanzar BuildError; el gate de disponibilidad vive en la vista.
+    """
+    adapter = app.flask_app.url_map.bind('test.ckan.net')
+
+    endpoint, _args = adapter.match('/ckan-admin/featured-viewers', method='GET')
+    assert endpoint == 'theme_ejemplo.featured_viewers_admin'
+
+    endpoint, _args = adapter.match('/ckan-admin/featured-viewers/search', method='GET')
+    assert endpoint == 'theme_ejemplo.featured_viewers_search'
+
+    for path, expected in (
+            ('/ckan-admin/featured-viewers/add', 'featured_viewers_add'),
+            ('/ckan-admin/featured-viewers/remove', 'featured_viewers_remove'),
+            ('/ckan-admin/featured-viewers/reorder', 'featured_viewers_reorder'),
+    ):
+        endpoint, _args = adapter.match(path, method='POST')
+        assert endpoint == 'theme_ejemplo.' + expected
+
+
+def test_featured_viewers_admin_is_forbidden_for_anonymous(app):
+    """Regresión: el panel es sólo para sysadmins."""
+    resp = app.get('/ckan-admin/featured-viewers', follow_redirects=False)
+    assert resp.status_code in (302, 403)

@@ -2194,3 +2194,123 @@ msgstr "وفق وتيرتك الخاصة"
 
 msgid "Toggle sort direction"
 msgstr "عكس اتجاه الترتيب"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Featured Viewers"
+msgstr "عارضات الخرائط المميزة"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Viewers"
+msgstr "العارضات"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Interactive map viewers curated by UNESCO's Water Family"
+msgstr "عارضات خرائط تفاعلية منسقة من أسرة المياه في اليونسكو"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Explore viewer"
+msgstr "استكشاف العارض"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "View all viewers"
+msgstr "عرض جميع العارضات"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Choose and order the map viewers shown on the homepage."
+msgstr "اختر ورتّب عارضات الخرائط الظاهرة في الصفحة الرئيسية."
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Add a Viewer"
+msgstr "إضافة عارض"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Only published viewers can be featured. Search by title or description."
+msgstr "لا يمكن تمييز سوى العارضات المنشورة. ابحث بالعنوان أو الوصف."
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Type to search viewers..."
+msgstr "اكتب للبحث عن العارضات..."
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Currently Featured"
+msgstr "المميزة حاليًا"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Save Order"
+msgstr "حفظ الترتيب"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Saving..."
+msgstr "جارٍ الحفظ..."
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Saved!"
+msgstr "تم الحفظ!"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Changes can take up to 5 minutes to appear on the homepage (cached)."
+msgstr "قد تستغرق التغييرات حتى 5 دقائق لتظهر في الصفحة الرئيسية (مخزنة مؤقتًا)."
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "No Featured Viewers"
+msgstr "لا توجد عارضات مميزة"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Use the search above to add viewers. Meanwhile the homepage shows the most recently published ones."
+msgstr "استخدم البحث أعلاه لإضافة عارضات. في هذه الأثناء تعرض الصفحة الرئيسية أحدث العارضات المنشورة."
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "The Featured Viewers module lives in the pages extension."
+msgstr "وحدة العارضات المميزة موجودة في إضافة pages."
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Drag to reorder"
+msgstr "اسحب لإعادة الترتيب"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Edit"
+msgstr "تعديل"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Add to homepage"
+msgstr "إضافة إلى الصفحة الرئيسية"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Featured"
+msgstr "مميز"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Searching..."
+msgstr "جارٍ البحث..."
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Search failed. Please try again."
+msgstr "فشل البحث. يُرجى المحاولة مرة أخرى."
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "No published viewers found."
+msgstr "لم يتم العثور على عارضات منشورة."
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Not authorized"
+msgstr "غير مصرح"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Featured Viewers is not enabled on this site"
+msgstr "العارضات المميزة غير مفعّلة في هذا الموقع"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Featured Viewers is not available"
+msgstr "العارضات المميزة غير متاحة"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Viewer ID is required"
+msgstr "معرّف العارض مطلوب"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Viewer not found"
+msgstr "لم يتم العثور على العارض"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "No order provided"
+msgstr "لم يتم تحديد ترتيب"

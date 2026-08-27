@@ -37,13 +37,13 @@
 
 ---
 
-## controller.py (~2,896 líneas)
+## controller.py (~3,960 líneas)
 
 **Rol**: Todas las funciones de vista Flask.
 
 **Clase**: `MyLogica` (métodos estáticos)
 
-### Categorías de vistas (67 funciones)
+### Categorías de vistas (72 funciones)
 
 **Portales** (11 funciones):
 `initiatives()`, `redirect_to_group()`, `memberstates()`, `thematicbuilder()`, `ihpix()`, `ihpix_outputs()`, `ihpix_report()`, `ihpix_dashboard()`, `iot_portal()`, `flood_drought_portal()`, `citizen_science_portal()`
@@ -69,8 +69,15 @@
 **Dataset** (2):
 `dataset_resources_ajax()`, `dataset_read()`
 
-**Admin** (35 funciones):
+**Admin** (40 funciones):
 Ver [[Flujos Importantes#Paneles de administración]] para la lista completa.
+
+De ellas, 5 son el panel de visores destacados —`featured_viewers_admin`,
+`_search`, `_add`, `_remove`, `_reorder`— apoyadas en los auxiliares
+`_fv_admin_guard`, `_fv_anon_context`, `_fv_card`, `_fv_patch` y
+`_fv_featured_list`. No tocan ninguna tabla de este repo: hablan con las
+acciones de **ckanext-pages**. Ver la advertencia en
+[[Flujos Importantes#Paneles de administración]].
 
 ### Funciones auxiliares del módulo
 - `timed_lru_cache(seconds, maxsize)` — decorador de cache TTL
@@ -104,6 +111,11 @@ Ver [[Flujos Importantes#Paneles de administración]] para la lista completa.
 
 **Datasets destacados** (3):
 - `featured_dataset_list`, `featured_dataset_add`, `featured_dataset_remove`
+
+**Visores destacados** (0):
+- **Ninguna acción ni auth propia**. El panel `/ckan-admin/featured-viewers`
+  consume `featured_viewer_list` / `_show` / `_update` de **ckanext-pages**.
+  Registrar aquí un nombre `featured_viewer_*` haría fallar el arranque de CKAN.
 
 **Publicaciones destacadas** (6):
 - `featured_publication_list`, `featured_publication_create`, `featured_publication_update`, `featured_publication_delete`, `featured_publication_reorder`, `featured_publication_import_legacy`
@@ -180,8 +192,25 @@ Helpers: `is_valid_*`, `normalize_bool`, `filter_valid`.
 **Solicitudes de iniciativas** (2):
 `get_pending_initiative_requests_count()` (sysadmin badge), `get_my_pending_initiative_request()` (CTA en `/initiatives`)
 
-**Contenido destacado** (2):
-`get_featured_publications()`, `get_open_bug_tickets_count()`
+**Contenido destacado** (4):
+`get_featured_publications()`, `get_open_bug_tickets_count()`,
+`get_featured_viewers(limit=6)` y `featured_viewers_available()` — registrados como
+`h.theme_ejemplo_get_featured_viewers` y `h.theme_ejemplo_featured_viewers_available`.
+
+> [!note] Por qué van prefijados
+> Las colisiones de nombres de *helpers* entre plugins son **silenciosas** (a
+> diferencia de acciones y auth, que revientan el arranque). Como los datos son
+> de ckanext-pages, un `get_featured_viewers` sin prefijo se pisaría con el suyo
+> el día que lo añada. Ver [[Arquitectura#Paneles de administración]].
+
+> [!note] Caché y sesión ORM
+> `get_featured_viewers` consulta Postgres a través de `featured_viewer_list`
+> (no Solr, a diferencia de los datasets destacados), así que su `except` llama
+> a `_warn_and_rollback_helper_error`: sin el rollback, un fallo dejaría la
+> sesión abortada y se caería el resto de la portada. El caché
+> (`_featured_viewers_cache`, TTL de `ckanext.theme_ejemplo.home_cache_ttl`) usa
+> un contexto **sin usuario**, lo que hace el resultado idéntico para todo el
+> mundo y por tanto seguro de compartir.
 
 ### Cache interno
 - `_tracking_cache` — dict con claves: dataset, resource, totals, popular, popular_resources, expires

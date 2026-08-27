@@ -1,0 +1,53 @@
+{#
+  Una fila de la lista ordenable del panel de visores destacados.
+  Requiere `viewer` (dict devuelto por `featured_viewer_list` de ckanext-pages).
+#}
+{% set raw_thumb = viewer.thumbnail_url or '' %}
+{% set thumb = raw_thumb if (raw_thumb.startswith('/') or raw_thumb.startswith('http://') or raw_thumb.startswith('https://')) else '' %}
+<div class="fviewer-card" id="fviewer-card-{{ viewer.id }}" data-id="{{ viewer.id }}" draggable="true">
+  <article class="module module-narrow">
+    <div class="module-content" style="padding: 1.5rem 2rem;">
+      <div class="row">
+        <div class="col-md-1 col-sm-1 fviewer-drag-handle">
+          <i class="fa fa-bars fa-lg" title="{{ _('Drag to reorder') }}"></i>
+        </div>
+        <div class="col-md-2 col-sm-3">
+          {% if thumb %}
+          <img src="{{ thumb }}" class="fviewer-card-img" alt="{{ viewer.title }}" />
+          {% else %}
+          <div class="fviewer-card-img-placeholder"><i class="fa fa-map fa-2x"></i></div>
+          {% endif %}
+        </div>
+        <div class="col-md-6 col-sm-5">
+          <h3 class="fviewer-card-title">{{ viewer.title }}</h3>
+          <div class="fviewer-card-meta">
+            {% if viewer.category %}
+            <span class="meta-item">
+              <i class="fa fa-tag"></i>{{ h.get_viewer_category_title(viewer.category) }}
+            </span>
+            {% endif %}
+            {% if viewer.organization and viewer.organization.title %}
+            <span class="meta-item">
+              <i class="fa fa-building"></i>{{ viewer.organization.title }}
+            </span>
+            {% endif %}
+            <span class="meta-item">
+              <i class="fa fa-external-link"></i>
+              <a class="fviewer-card-link" href="{{ h.url_for('featured_viewers.show', slug=viewer.slug) }}" target="_blank" rel="noopener">{{ viewer.slug }}</a>
+            </span>
+          </div>
+        </div>
+        <div class="col-md-3 col-sm-3">
+          <div class="fviewer-card-actions">
+            <a class="btn btn-default btn-sm" href="{{ h.url_for('featured_viewers.edit', slug=viewer.slug) }}">
+              <i class="fa fa-edit"></i> {{ _('Edit') }}
+            </a>
+            <button class="btn btn-danger btn-sm fviewer-remove-btn" data-id="{{ viewer.id }}">
+              <i class="fa fa-times"></i> {{ _('Remove') }}
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+</div>

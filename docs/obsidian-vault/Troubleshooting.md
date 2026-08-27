@@ -117,6 +117,29 @@ SELECT table_name FROM information_schema.tables
 WHERE table_name IN ('membership_request', 'featured_publication', 'bug_ticket', 'portal_card', 'ihpix_content', 'ihpix_activity');
 ```
 
+### La sección «Featured Viewers» no aparece en la portada
+
+**Síntoma**: la home no muestra el bloque de visores destacados.
+
+**Causa y solución**, en orden de comprobación:
+
+1. `pages` está en `ckan.plugins` y `ckanext.featured_viewers.enabled = true`
+   en el `.ini`. Sin esto la acción `featured_viewer_list` ni siquiera se
+   registra y `h.theme_ejemplo_featured_viewers_available()` devuelve `False`.
+2. Hay al menos un visor con `status = 'published'`. Si no hay ninguno, ni la
+   consulta de destacados ni el fallback a los más recientes devuelven nada y
+   la sección se oculta a propósito (no es un error).
+   ```bash
+   curl -s -X POST -H 'Content-Type: application/json' \
+     -d '{"status":"published","limit":6}' \
+     http://localhost:5000/api/3/action/featured_viewer_list
+   ```
+3. Acabas de cambiar los destacados y no se reflejan: el caché de la portada es
+   de `ckanext.theme_ejemplo.home_cache_ttl` (300 s por defecto). Espera o baja
+   el TTL a `0` mientras pruebas.
+4. Si aparecen visores que **no** marcaste, es el fallback funcionando: ningún
+   visor tiene `is_featured = true`. Márcalos desde `/ckan-admin/featured-viewers`.
+
 ---
 
 ## Problemas de testing

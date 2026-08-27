@@ -2327,3 +2327,123 @@ msgstr "À votre rythme"
 
 msgid "Toggle sort direction"
 msgstr "Inverser l'ordre de tri"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Featured Viewers"
+msgstr "Visualiseurs en vedette"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Viewers"
+msgstr "Visualiseurs"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Interactive map viewers curated by UNESCO's Water Family"
+msgstr "Visualiseurs cartographiques interactifs sélectionnés par la Famille de l'eau de l'UNESCO"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Explore viewer"
+msgstr "Explorer le visualiseur"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "View all viewers"
+msgstr "Voir tous les visualiseurs"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Choose and order the map viewers shown on the homepage."
+msgstr "Choisissez et ordonnez les visualiseurs affichés sur la page d'accueil."
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Add a Viewer"
+msgstr "Ajouter un visualiseur"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Only published viewers can be featured. Search by title or description."
+msgstr "Seuls les visualiseurs publiés peuvent être mis en vedette. Recherchez par titre ou description."
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Type to search viewers..."
+msgstr "Saisissez pour rechercher des visualiseurs..."
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Currently Featured"
+msgstr "Actuellement en vedette"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Save Order"
+msgstr "Enregistrer l'ordre"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Saving..."
+msgstr "Enregistrement..."
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Saved!"
+msgstr "Enregistré !"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Changes can take up to 5 minutes to appear on the homepage (cached)."
+msgstr "Les modifications peuvent prendre jusqu'à 5 minutes pour apparaître sur la page d'accueil (mise en cache)."
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "No Featured Viewers"
+msgstr "Aucun visualiseur en vedette"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Use the search above to add viewers. Meanwhile the homepage shows the most recently published ones."
+msgstr "Utilisez la recherche ci-dessus pour ajouter des visualiseurs. En attendant, la page d'accueil affiche les plus récemment publiés."
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "The Featured Viewers module lives in the pages extension."
+msgstr "Le module Visualiseurs en vedette se trouve dans l'extension pages."
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Drag to reorder"
+msgstr "Glisser pour réordonner"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Edit"
+msgstr "Modifier"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Add to homepage"
+msgstr "Ajouter à la page d'accueil"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Featured"
+msgstr "En vedette"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Searching..."
+msgstr "Recherche..."
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Search failed. Please try again."
+msgstr "La recherche a échoué. Veuillez réessayer."
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "No published viewers found."
+msgstr "Aucun visualiseur publié trouvé."
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Not authorized"
+msgstr "Non autorisé"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Featured Viewers is not enabled on this site"
+msgstr "Les visualiseurs en vedette ne sont pas activés sur ce site"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Featured Viewers is not available"
+msgstr "Les visualiseurs en vedette ne sont pas disponibles"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Viewer ID is required"
+msgstr "L'identifiant du visualiseur est requis"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "Viewer not found"
+msgstr "Visualiseur introuvable"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/featuredviewers.html
+msgid "No order provided"
+msgstr "Aucun ordre fourni"

@@ -20,6 +20,14 @@
             <span class="text">{{ _('Featured') }}</span>
           </a>
         </li>
+        {% if h.theme_ejemplo_featured_viewers_available() %}
+        <li>
+          <a href="{{ h.url_for('theme_ejemplo.featured_viewers_admin') }}" title="{{ _('Featured Viewers') }}">
+            <i class="fa fa-map" aria-hidden="true"></i>
+            <span class="text">{{ _('Viewers') }}</span>
+          </a>
+        </li>
+        {% endif %}
         <li>
           <a href="{{ h.url_for('theme_ejemplo.featured_publications_admin') }}" title="{{ _('Featured Publications') }}">
             <i class="fa fa-book" aria-hidden="true"></i>

@@ -46,6 +46,7 @@
 | **Portal Card** | Tarjeta configurable que aparece en los portales temáticos (IoT, inundaciones, ciencia ciudadana) |
 | **Featured Dataset** | Dataset marcado como destacado por un sysadmin. Se muestra en la homepage |
 | **Featured Publication** | Publicación externa destacada, gestionada desde el panel de admin |
+| **Featured Viewer** | Visor de mapa interactivo destacado en la portada. El modelo vive en **ckanext-pages**; este tema sólo controla `is_featured` y `order_index` desde `/ckan-admin/featured-viewers` |
 | **Bug Ticket** | Reporte de error creado por usuarios autenticados |
 | **Thematic Builder** | Herramienta para construir vistas temáticas de datos |
 | **Data Story** | Narrativa basada en datos publicada por una organización o grupo |
