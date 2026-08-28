@@ -4380,6 +4380,61 @@ nav.nav-facet li,
   min-width: 150px !important;
 }
 
+/* Order by: select + boton de direccion (ver schemingdcat/snippets/search_form.html)
+   Va despues del bloque anterior a proposito: gana por especificidad (0,2,1) y por
+   orden de aparicion sobre las reglas de .search-form select de mas arriba, que
+   forzaban padding-right: 12px y dejaban el caret encima del texto (la opcion
+   "Metadata completeness" se veia cortada). Caret propio para que se vea igual
+   con Bootstrap 3 y con Bootstrap 5. */
+.search-form .control-order-by .order-by-controls {
+  display: flex;
+  align-items: stretch; /* iguala la altura del boton a la del select */
+  gap: 6px;
+}
+
+.search-form .control-order-by select {
+  /* 34px a la derecha = hueco reservado para el caret */
+  padding: 8px 34px 8px 12px !important;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%236c757d' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 12px 9px;
+  max-width: 100%;
+  text-overflow: ellipsis;
+}
+
+.search-form .control-order-by .order-by-controls select {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.search-form .control-order-by .sort-direction-toggle {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  padding: 0 10px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  background: #fff;
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.search-form .control-order-by .sort-direction-toggle:hover,
+.search-form .control-order-by .sort-direction-toggle:focus-visible {
+  border-color: var(--unesco-blue);
+  color: var(--unesco-blue);
+  background: var(--unesco-blue-pale);
+}
+
 /* Dataset list container */
 ul.dataset-list,
 .dataset-list {
@@ -4662,6 +4717,14 @@ li.dataset-item:hover {
   .search-form .input-group button {
     border-radius: 4px !important;
     width: 100% !important;
+  }
+  
+  /* El control de orden ocupa el ancho y el select puede encogerse sin
+     desbordar la tarjeta blanca del formulario */
+  .search-form .control-order-by {
+    float: none !important;
+    width: 100% !important;
+    margin-left: 0 !important;
   }
 }
 

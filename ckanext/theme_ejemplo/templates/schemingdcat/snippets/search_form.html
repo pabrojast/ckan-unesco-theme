@@ -12,7 +12,7 @@
 {% if sorting %}
   <div class="form-group control-order-by">
     <label for="field-order-by">{{ _('Order by') }}</label>
-    <div style="display: flex; align-items: center; gap: 6px;">
+    <div class="order-by-controls">
       <select id="field-order-by" name="sort" class="form-control form-select">
         {% for label, value in sorting %}
           {% if label and value %}
@@ -20,10 +20,9 @@
           {% endif %}
         {% endfor %}
       </select>
-      <button type="button" id="sort-direction-toggle"
+      <button type="button" id="sort-direction-toggle" class="sort-direction-toggle"
               title="{{ _('Toggle sort direction') }}"
-              aria-label="{{ _('Toggle sort direction') }}"
-              style="flex: 0 0 auto; border: 1px solid #ccc; background: #fff; border-radius: 4px; padding: 6px 10px; cursor: pointer; font-size: 14px; line-height: 1;">&#8595;</button>
+              aria-label="{{ _('Toggle sort direction') }}">&#8595;</button>
     </div>
   </div>
   <script>
