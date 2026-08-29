@@ -2187,21 +2187,26 @@ def init_pageview_tracking_db():
             log.debug(u'%s table already exists', table.name)
 
 
-# ── Contribution Score (ranking of Member States / Initiatives) ──────────────
+# ── Contribution Score (ranking de Member States / Initiatives / Orgs) ───────
 
 contribution_score_table = None
 
 
 class ContributionScore(model.DomainObject):
-    """Score de contribución precomputado por grupo (job `ckan ranking recompute`)."""
+    """Score de contribución precomputado por grupo (job `ckan ranking recompute`).
+
+    ``group_name`` vale también para organizaciones: CKAN guarda grupos y orgs
+    en la misma tabla ``group``, así que el nombre es único en todo el sitio.
+    """
 
     ENTITY_MEMBER_STATE = u'member_state'
     ENTITY_INITIATIVE = u'initiative'
+    ENTITY_ORGANIZATION = u'organization'
 
     def __init__(self, group_id, group_name, group_title, entity_type,
                  datasets_count=0, documents_count=0, news_events_count=0,
                  recent_90d=0, recent_365d=0, avg_completeness=None,
-                 score=0.0):
+                 score=0.0, views_total=0, views_recent=0):
         self.id = str(uuid.uuid4())
         self.group_id = group_id
         self.group_name = group_name
@@ -2214,6 +2219,8 @@ class ContributionScore(model.DomainObject):
         self.recent_365d = recent_365d
         self.avg_completeness = avg_completeness
         self.score = score
+        self.views_total = views_total
+        self.views_recent = views_recent
         self.computed_at = datetime.datetime.utcnow()
 
     @classmethod
@@ -2256,6 +2263,8 @@ class ContributionScore(model.DomainObject):
             'recent_365d': self.recent_365d,
             'avg_completeness': self.avg_completeness,
             'score': self.score,
+            'views_total': self.views_total,
+            'views_recent': self.views_recent,
             'computed_at': self.computed_at.isoformat() if self.computed_at else None,
         }
 
@@ -2279,6 +2288,8 @@ def define_contribution_score_table():
         Column('recent_365d', Integer, default=0),
         Column('avg_completeness', Float, nullable=True),
         Column('score', Float, default=0.0),
+        Column('views_total', BigInteger, default=0),
+        Column('views_recent', BigInteger, default=0),
         Column('computed_at', DateTime, default=datetime.datetime.utcnow),
         Index('idx_contribution_score_entity', 'entity_type'),
         Index('idx_contribution_score_group', 'group_name'),
@@ -2290,8 +2301,17 @@ def define_contribution_score_table():
         meta.mapper(ContributionScore, contribution_score_table)
 
 
+# Columnas añadidas después del despliegue inicial de la tabla. `create()` sólo
+# corre cuando la tabla no existe, así que sin este ALTER un despliegue con la
+# tabla ya creada rompería al insertar (columna inexistente).
+_CONTRIBUTION_SCORE_ADDED_COLUMNS = (
+    ('views_total', 'BIGINT DEFAULT 0'),
+    ('views_recent', 'BIGINT DEFAULT 0'),
+)
+
+
 def init_contribution_scores_db():
-    """Crea la tabla contribution_score si no existe."""
+    """Crea la tabla contribution_score si no existe, y la migra si es vieja."""
     if contribution_score_table is None:
         define_contribution_score_table()
 
@@ -2300,5 +2320,18 @@ def init_contribution_scores_db():
     if 'contribution_score' not in inspector.get_table_names():
         contribution_score_table.create(meta.engine)
         log.info(u'contribution_score table created')
-    else:
-        log.debug(u'contribution_score table already exists')
+        return
+
+    log.debug(u'contribution_score table already exists')
+    existing = {c['name'] for c in inspector.get_columns('contribution_score')}
+    missing = [(name, ddl) for name, ddl in _CONTRIBUTION_SCORE_ADDED_COLUMNS
+               if name not in existing]
+    if not missing:
+        return
+    from sqlalchemy import text as sa_text
+    with meta.engine.begin() as conn:
+        for name, ddl in missing:
+            conn.execute(sa_text(
+                'ALTER TABLE contribution_score '
+                'ADD COLUMN IF NOT EXISTS %s %s' % (name, ddl)))
+            log.info(u'contribution_score.%s column added', name)

@@ -43,6 +43,25 @@ def _is_tracking_enabled():
         toolkit.config.get('ckanext.theme_ejemplo.pageviews_enabled', False))
 
 
+def tracking_enabled():
+    """Versión pública de _is_tracking_enabled, para las plantillas.
+
+    Las plantillas usaban ``g.tracking_enabled``, que sólo mira
+    ``ckan.tracking_enabled`` (desactivado aquí), así que la opción de orden
+    "Popular" nunca se renderizaba pese a haber conteos propios.
+    """
+    return _is_tracking_enabled()
+
+
+def _tracked_view_paths():
+    """Rutas cuyas vistas se cuentan; misma config que pageview_tracking."""
+    try:
+        from ckanext.theme_ejemplo import pageview_tracking
+        return pageview_tracking._view_paths()
+    except Exception:
+        return ('/dataset',)
+
+
 def _get_tracking_cache_ttl():
     try:
         return max(60, int(toolkit.config.get(
@@ -106,14 +125,19 @@ def get_dataset_tracking(package_name):
                 if row:
                     result = {'total': row[0] or 0, 'recent': row[1] or 0}
         else:
+            # Los datasets viven bajo /dataset y las publicaciones bajo
+            # /documents (ckanext.theme_ejemplo.pageviews_view_paths), así que
+            # el patrón no puede quedarse fijo en /dataset.
+            patterns = [f'{path}/{package_name}%'
+                        for path in _tracked_view_paths()]
             sql = text("""
                 SELECT count(*) AS total
                 FROM tracking_raw
                 WHERE tracking_type = 'page'
-                  AND url LIKE :pattern
+                  AND url LIKE ANY(:patterns)
             """)
             with engine.connect() as conn:
-                row = conn.execute(sql, {'pattern': f'/dataset/{package_name}%'}).fetchone()
+                row = conn.execute(sql, {'patterns': patterns}).fetchone()
                 if row:
                     result = {'total': row[0] or 0, 'recent': 0}
     except Exception as e:
@@ -423,8 +447,26 @@ def get_org_members_with_profiles(org_id):
         return []
 
 
+# org_id -> {'expires': ts, 'data': {...}}. get_org_statistics cuesta tres
+# acciones (dos package_search + un organization_show con include_users) y se
+# renderiza en cada carga de la ficha de organización.
+_org_stats_cache = {}
+
+
 def get_org_statistics(org_id):
-    """Get aggregated statistics for an organization."""
+    """Get aggregated statistics for an organization (TTL-cached)."""
+    ttl = _get_tracking_cache_ttl()
+    now = time.time()
+    cached = _org_stats_cache.get(org_id)
+    if ttl > 0 and cached and now < cached['expires']:
+        return cached['data']
+    stats = _get_org_statistics_uncached(org_id)
+    if ttl > 0:
+        _org_stats_cache[org_id] = {'expires': now + ttl, 'data': stats}
+    return stats
+
+
+def _get_org_statistics_uncached(org_id):
     try:
         stats = {'datasets': 0, 'publications': 0, 'members': 0}
 

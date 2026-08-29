@@ -31,7 +31,7 @@
     </div>
     <div class="org-grid-card-footer">
       {% if ranked %}
-        <span class="count" style="background: #eef3f8; color: #33607f; border-radius: 10px; padding: 1px 8px; font-weight: 600;" title="{{ _('Contribution rank') }}">#{{ (rank_start or 0) + position }}</span>
+        <span class="count rank-pill" title="{{ _('Contribution rank') }}">#{{ (rank_start or 0) + position }}</span>
       {% endif %}
       {% if group.package_count %}
         <span class="count">{{ ungettext('{num} Dataset', '{num} Datasets', group.package_count).format(num=group.package_count) }}</span>

@@ -1,0 +1,16 @@
+{#
+Why an organization or group sits where it does in the contribution ranking.
+
+rank - dict from h.get_contribution_rank(): rank, total, score and the
+       signals that produced it (datasets, documents, news_events, views,
+       avg_completeness).
+#}
+<ul class="contribution-breakdown">
+  <li><span>{{ _('Datasets') }}</span><span>{{ rank.datasets or 0 }}</span></li>
+  <li><span>{{ _('Publications') }}</span><span>{{ rank.documents or 0 }}</span></li>
+  <li><span>{{ _('News and events') }}</span><span>{{ rank.news_events or 0 }}</span></li>
+  <li><span>{{ _('Views') }}</span><span>{{ rank.views or 0 }}</span></li>
+  {% if rank.avg_completeness is not none %}
+    <li><span>{{ _('Average metadata completeness') }}</span><span>{{ '%.0f'|format(rank.avg_completeness) }}%</span></li>
+  {% endif %}
+</ul>

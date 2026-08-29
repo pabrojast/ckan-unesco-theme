@@ -80,7 +80,19 @@
           <dt>{{ _('Members') }}</dt>
           <dd>{{ stats.members }}</dd>
         </dl>
+        {% set rank = h.get_contribution_rank(group_dict.name) %}
+        {% if rank %}
+        <dl>
+          <dt>{{ _('Contribution rank') }}</dt>
+          <dd title="{{ _('Score') }}: {{ '%.2f'|format(rank.score or 0) }}">
+            #{{ rank.rank }} <small>{{ _('of') }} {{ rank.total }}</small>
+          </dd>
+        </dl>
+        {% endif %}
       </div>
+      {% if rank %}
+        {% snippet 'snippets/contribution_breakdown.html', rank=rank %}
+      {% endif %}
     </div>
   </div>
   {% endif %}

@@ -15,6 +15,12 @@
           </a>
         </li>
         <li>
+          <a href="{{ h.url_for('theme_ejemplo.stats_admin') }}" title="{{ _('Platform statistics') }}">
+            <i class="fa fa-bar-chart" aria-hidden="true"></i>
+            <span class="text">{{ _('Stats') }}</span>
+          </a>
+        </li>
+        <li>
           <a href="{{ h.url_for('theme_ejemplo.featured_datasets_admin') }}" title="{{ _('Featured Datasets') }}">
             <i class="fa fa-star" aria-hidden="true"></i>
             <span class="text">{{ _('Featured') }}</span>
@@ -216,6 +222,11 @@
         </ul>
       </div>
     </div>
+
+    <!-- FILA INTERMEDIA: indicadores resumen de la plataforma -->
+    {% block header_site_stats %}
+      {% snippet "snippets/site_stats_strip.html" %}
+    {% endblock %}
 
     <!-- SEGUNDA FILA: Logo + menú principal + search -->
     <div class="masthead-nav" id="main-navigation-toggle">

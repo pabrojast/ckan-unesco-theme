@@ -227,21 +227,114 @@ def _get_data_stories_by_group(group_id, limit=50):
         return []
 
 
-class MyLogica():  
+def _ranked_entity_index(entity_type, list_action, ckan_type, template):
+    """Listado de organizaciones/grupos ordenado por contribución.
+
+    Sustituye a ``ckan.views.group.index`` para /organization y /group (las
+    reglas de un blueprint de extensión se ordenan por encima de las del core,
+    ver flask_app.register_extension_blueprint).
+
+    El core pasa el ``?sort=`` tal cual a group_list/organization_list, cuya
+    lista blanca es name|packages|package_count|title, así que 'score desc'
+    reventaría con ValidationError. Igual que en /memberstates, el orden por
+    ranking se resuelve aquí y a la acción sólo le llega un sort real.
+
+    entity_type: tipo de entidad en contribution_score; None ordena con el
+    ranking completo (útil en /group, que mezcla member states e initiatives).
+    """
+    items_per_page = int(config.get('ckan.datasets_per_page') or 20)
+    page = 1
+    q = c.q = request.args.get('q', '')
+    sort_by = request.args.get('sort')
+    # El ranking también aplica con búsqueda: la acción devuelve los nombres ya
+    # filtrados por `q` y el orden se resuelve después, sobre esa lista.
+    rank_order = sort_by in (None, '', 'score desc')
+    c.sort_by_selected = 'score desc' if rank_order else sort_by
+    # 'score desc' es un pseudo-sort nuestro: nunca debe llegar a la acción.
+    list_sort = 'title asc' if sort_by in (None, '', 'score desc') else sort_by
+
+    def _render(items, collection, current_page):
+        c.page = h.Page(
+            collection=collection,
+            page=current_page,
+            url=h.pager_url,
+            items_per_page=items_per_page,
+        )
+        c.page.items = items
+        return render_template(
+            template,
+            q=q,
+            page=c.page,
+            group_type=ckan_type,
+            sort_by_selected=c.sort_by_selected,
+            ranked=rank_order,
+            rank_start=items_per_page * (current_page - 1),
+        )
+
+    try:
+        page = h.get_page_number(request.args) or 1
+        context = {'model': model, 'session': model.Session,
+                   'user': c.user, 'for_view': True}
+        action = toolkit.get_action(list_action)
+
+        # 1) nombres completos, para el contador y la paginación
+        names = action(context, {
+            'all_fields': False,
+            'q': q,
+            'sort': list_sort,
+            'type': ckan_type,
+        })
+        if rank_order:
+            names = ranking.order_by_score(names, entity_type)
+
+        # 2) detalle sólo de la página actual
+        start = items_per_page * (page - 1)
+        page_names = names[start:start + items_per_page]
+        items = []
+        if page_names:
+            items = action(context, {
+                'all_fields': True,
+                'include_extras': True,
+                'groups': page_names,
+                'type': ckan_type,
+                'limit': items_per_page,
+                'sort': list_sort,
+            })
+            if rank_order:
+                # la acción no respeta el orden de `groups`
+                by_name = {g['name']: g for g in items}
+                items = [by_name[n] for n in page_names if n in by_name]
+
+        return _render(items, names, page)
+
+    except toolkit.ValidationError as e:
+        # ?sort= inválido escrito a mano: mismo comportamiento que el core.
+        h.flash_error(str(e))
+        return _render([], [], 1)
+    except Exception as e:
+        log.error(f"Error en {list_action} index: {e}")
+        return _render([], [], 1)
+
+
+class MyLogica():
         
         def initiatives():
             if request.method == 'GET':
+                # Ligado fuera del try: el handler de error lo usa y, si algo
+                # falla antes de esta línea, el except daba UnboundLocalError.
+                items_per_page = 21
                 try:
                     # Obtener parámetros
                     q = c.q = request.args.get('q', '')
                     sort_by = request.args.get('sort')
-                    # Orden por contribución (default sin búsqueda); 'score desc'
-                    # no es un sort válido de group_list, se resuelve aquí.
-                    rank_order = not q and sort_by in (None, '', 'score desc')
+                    # Orden por contribución por defecto; 'score desc' no es un
+                    # sort válido de group_list, así que se resuelve aquí. Con
+                    # búsqueda también aplica: se ordena la lista de nombres ya
+                    # filtrada, antes de paginar.
+                    rank_order = sort_by in (None, '', 'score desc')
                     c.sort_by_selected = 'score desc' if rank_order else sort_by
                     group_list_sort = 'title asc' if sort_by in (None, '', 'score desc') else sort_by
                     page = h.get_page_number(request.args) or 1
-                    items_per_page = 21
 
                     # Obtener grupos de member-states desde cache
                     member_states_groups = get_member_states_groups()
@@ -249,50 +342,33 @@ class MyLogica():
                     # Obtener todos los grupos desde cache
                     all_groups = get_all_groups_cached(group_list_sort)
 
-                    # Calcular grupos de iniciativas (excluyendo member-states)
-                    initiatives_groups = list(set(all_groups) - set(member_states_groups))
-                    if rank_order:
-                        initiatives_groups = ranking.order_by_score(
-                            initiatives_groups, 'initiative')
-                    else:
-                        # preservar el orden del group_list cacheado
-                        ms = set(member_states_groups)
-                        initiatives_groups = [g for g in all_groups if g not in ms]
-                    
-                    # Si hay búsqueda, filtrar los grupos
+                    # Iniciativas = todos los grupos menos los member states.
+                    # Se filtra sobre all_groups (no con set()) para conservar
+                    # el orden del group_list cacheado.
+                    ms = set(member_states_groups)
+                    initiatives_groups = [g for g in all_groups if g not in ms]
+
                     if q:
-                        # Hacer una sola consulta con todos los filtros
-                        groups_result = toolkit.get_action('group_list')(
+                        # Nombres que coinciden con la búsqueda; el orden y la
+                        # paginación se resuelven aquí, no en la acción.
+                        initiatives_groups = toolkit.get_action('group_list')(
                             data_dict={
                                 'q': q,
-                                'include_dataset_count': True,
-                                'all_fields': True,
-                                'groups': initiatives_groups,
-                                'include_groups': False,
-                                'limit': items_per_page,
-                                'offset': items_per_page * (page - 1),
-                                'sort': group_list_sort
-                            }
-                        )
-                        
-                        # Para el conteo total con búsqueda
-                        total_result = toolkit.get_action('group_list')(
-                            data_dict={
-                                'q': q,
-                                'include_dataset_count': True,
                                 'groups': initiatives_groups,
                                 'limit': 500
                             }
                         )
-                        groupcount = len(total_result)
-                    else:
-                        # Sin búsqueda, usar los datos cacheados y paginar manualmente
-                        groupcount = len(initiatives_groups)
-                        start = items_per_page * (page - 1)
-                        end = start + items_per_page
-                        
-                        # Obtener detalles completos solo para la página actual
-                        page_groups = initiatives_groups[start:end]
+                    if rank_order:
+                        initiatives_groups = ranking.order_by_score(
+                            initiatives_groups, 'initiative')
+
+                    # Con y sin búsqueda se pagina igual: sobre la lista de
+                    # nombres ya ordenada.
+                    groupcount = len(initiatives_groups)
+                    start = items_per_page * (page - 1)
+                    page_groups = initiatives_groups[start:start + items_per_page]
+                    groups_result = []
+                    if page_groups:
                         groups_result = toolkit.get_action('group_list')(
                             data_dict={
                                 'include_dataset_count': True,
@@ -368,78 +444,63 @@ class MyLogica():
             
         def memberstates():
             if request.method == 'GET':
+                # Ligado fuera del try: el handler de error lo usa y, si algo
+                # falla antes de esta línea, el except daba UnboundLocalError.
+                items_per_page = 21
                 try:
                     # Obtener parámetros
                     q = c.q = request.args.get('q', '')
                     sort_by = request.args.get('sort')
-                    # Orden por contribución (default sin búsqueda); 'score desc'
-                    # no es un sort válido de group_list, se resuelve aquí.
-                    rank_order = not q and sort_by in (None, '', 'score desc')
+                    # Orden por contribución por defecto; 'score desc' no es un
+                    # sort válido de group_list, así que se resuelve aquí. Con
+                    # búsqueda también aplica: se ordena la lista de nombres ya
+                    # filtrada, antes de paginar.
+                    rank_order = sort_by in (None, '', 'score desc')
                     c.sort_by_selected = 'score desc' if rank_order else sort_by
                     group_list_sort = 'title asc' if sort_by in (None, '', 'score desc') else sort_by
                     page = h.get_page_number(request.args) or 1
-                    items_per_page = 21
 
                     # Obtener grupos de member-states desde cache (sin incluir el principal)
                     member_states_groups = get_member_states_groups()
                     # Remover 'member-states' del listado ya que solo queremos los hijos
                     member_states_only = [g for g in member_states_groups if g != 'member-states']
-                    if rank_order:
-                        member_states_only = ranking.order_by_score(
-                            member_states_only, 'member_state')
-                    
-                    # Si hay búsqueda, hacer consulta filtrada
+
                     if q:
-                        # Consulta paginada con búsqueda
-                        groups_result = toolkit.get_action('group_list')(
+                        # Nombres que coinciden con la búsqueda; el orden y la
+                        # paginación se resuelven aquí, no en la acción.
+                        member_states_only = toolkit.get_action('group_list')(
                             data_dict={
                                 'q': q,
-                                'include_dataset_count': True,
-                                'all_fields': True,
-                                'groups': member_states_only,
-                                'include_groups': False,
-                                'limit': items_per_page,
-                                'offset': items_per_page * (page - 1),
-                                'sort': group_list_sort
-                            }
-                        )
-                        
-                        # Para el conteo total con búsqueda
-                        total_result = toolkit.get_action('group_list')(
-                            data_dict={
-                                'q': q,
-                                'include_dataset_count': True,
                                 'groups': member_states_only,
                                 'limit': 500
                             }
                         )
-                        groupcount = len(total_result)
-                    else:
-                        # Sin búsqueda, usar cache y paginar manualmente
-                        groupcount = len(member_states_only)
-                        start = items_per_page * (page - 1)
-                        end = start + items_per_page
-                        
-                        # Obtener detalles completos solo para la página actual
-                        page_groups = member_states_only[start:end]
-                        if page_groups:
-                            groups_result = toolkit.get_action('group_list')(
-                                data_dict={
-                                    'include_dataset_count': True,
-                                    'all_fields': True,
-                                    'groups': page_groups,
-                                    'include_groups': False,
-                                    'limit': items_per_page,
-                                    'sort': group_list_sort
-                                }
-                            )
-                            if rank_order:
-                                # group_list no respeta el orden de page_groups
-                                by_name = {g['name']: g for g in groups_result}
-                                groups_result = [by_name[n] for n in page_groups
-                                                 if n in by_name]
-                        else:
-                            groups_result = []
+                    if rank_order:
+                        member_states_only = ranking.order_by_score(
+                            member_states_only, 'member_state')
+
+                    # Con y sin búsqueda se pagina igual: sobre la lista de
+                    # nombres ya ordenada.
+                    groupcount = len(member_states_only)
+                    start = items_per_page * (page - 1)
+                    page_groups = member_states_only[start:start + items_per_page]
+                    groups_result = []
+                    if page_groups:
+                        groups_result = toolkit.get_action('group_list')(
+                            data_dict={
+                                'include_dataset_count': True,
+                                'all_fields': True,
+                                'groups': page_groups,
+                                'include_groups': False,
+                                'limit': items_per_page,
+                                'sort': group_list_sort
+                            }
+                        )
+                        if rank_order:
+                            # group_list no respeta el orden de page_groups
+                            by_name = {g['name']: g for g in groups_result}
+                            groups_result = [by_name[n] for n in page_groups
+                                             if n in by_name]
 
                     # Configurar paginación
                     c.page = h.Page(
@@ -468,13 +529,87 @@ class MyLogica():
                         url=h.pager_url,
                         items_per_page=items_per_page,
                     )
-                    return render_template("memberstates/index.html", 
-                                         q='', 
-                                         page=c.page, 
-                                         groups=[], 
-                                         group_type=group_type, 
+                    return render_template("memberstates/index.html",
+                                         q='',
+                                         page=c.page,
+                                         groups=[],
+                                         group_type=group_type,
                                          groupcount=0)
-        
+
+        @staticmethod
+        def stats_admin():
+            """Panel de estadísticas de uso. Sólo sysadmin.
+
+            Reúne en una página lo que hasta ahora sólo se veía por CLI
+            (`ckan pageviews status`, `ckan ranking show`) o disperso por la
+            home. Todo sale de helpers ya cacheados.
+            """
+            if not (c.userobj and c.userobj.sysadmin):
+                return base.abort(403, _('Not authorized'))
+
+            from ckanext.theme_ejemplo import helpers as theme_helpers
+
+            extra_vars = {
+                'totals': theme_helpers.get_tracking_totals(),
+                'site_stats': {},
+                'popular_datasets': [],
+                'popular_resources': [],
+                'completeness': [],
+                'ranking': {},
+            }
+            try:
+                extra_vars['popular_datasets'] = \
+                    theme_helpers.get_popular_datasets(limit=10)
+                extra_vars['popular_resources'] = \
+                    theme_helpers.get_popular_resources(limit=10)
+            except Exception as e:
+                log.warning(f"stats_admin: popular lists unavailable: {e}")
+
+            try:
+                result = toolkit.get_action('package_search')(
+                    {'ignore_auth': True},
+                    {'rows': 0, 'facet.field': ['metadata_completeness_category']})
+                facet = (result.get('search_facets', {})
+                         .get('metadata_completeness_category', {}))
+                order = {'full': 0, 'medium': 1, 'limited': 2}
+                extra_vars['completeness'] = sorted(
+                    facet.get('items', []),
+                    key=lambda i: order.get(i['name'], 9))
+                extra_vars['dataset_total'] = result.get('count', 0)
+            except Exception as e:
+                log.warning(f"stats_admin: completeness facet unavailable: {e}")
+                extra_vars['dataset_total'] = 0
+
+            try:
+                from ckanext.theme_ejemplo.model import ContributionScore
+                for entity in (ContributionScore.ENTITY_ORGANIZATION,
+                               ContributionScore.ENTITY_MEMBER_STATE,
+                               ContributionScore.ENTITY_INITIATIVE):
+                    extra_vars['ranking'][entity] = \
+                        ContributionScore.get_ranked(entity)[:10]
+            except Exception as e:
+                log.warning(f"stats_admin: ranking unavailable: {e}")
+
+            return base.render('admin/stats.html', extra_vars=extra_vars)
+
+        @staticmethod
+        def organization_index():
+            """/organization ordenado por contribución (ver _ranked_entity_index)."""
+            return _ranked_entity_index(
+                entity_type='organization',
+                list_action='organization_list',
+                ckan_type='organization',
+                template='organization/index.html')
+
+        @staticmethod
+        def group_index():
+            """/group ordenado por contribución (ver _ranked_entity_index)."""
+            return _ranked_entity_index(
+                entity_type=None,
+                list_action='group_list',
+                ckan_type='group',
+                template='group/index.html')
+
         def thematicbuilder():
             
             if request.method == 'GET':

@@ -1,0 +1,35 @@
+{% ckan_extends %}
+
+{# Añade "Contribution" como orden por defecto. El orden real lo resuelve
+   MyLogica.organization_index (controller._ranked_entity_index): 'score desc'
+   es un pseudo-sort que nunca llega a organization_list. #}
+{% block organizations_search_form %}
+  {% snippet 'schemingdcat/snippets/search_form.html',
+     form_id='organization-search-form',
+     type='organization',
+     query=q,
+     sorting_selected=sort_by_selected,
+     count=page.item_count,
+     placeholder=_('Search organizations...'),
+     show_empty=h.schemingdcat_request_params(),
+     no_bottom_border=true if page.items,
+     sorting=[(_('Contribution'), 'score desc'),
+              (_('Name Ascending'), 'title asc'),
+              (_('Name Descending'), 'title desc')] %}
+{% endblock %}
+
+{% block organizations_list %}
+  {% if page.items or request.args %}
+    {% if page.items %}
+      {% snippet "organization/snippets/organization_list.html",
+         organizations=page.items, ranked=ranked, rank_start=rank_start %}
+    {% endif %}
+  {% else %}
+    <p class="empty">
+      {{ _('There are currently no organizations for this site') }}.
+      {% if h.check_access('organization_create') %}
+        {% link_for _('How about creating one?'), named_route=group_type+'.new' %}.
+      {% endif %}
+    </p>
+  {% endif %}
+{% endblock %}

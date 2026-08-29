@@ -1,0 +1,56 @@
+{#
+Franja de indicadores de la barra superior.
+
+Los seis contadores del contrato: datasets, usuarios, organizaciones,
+initiatives, noticias y publicaciones. Se renderiza en TODAS las páginas, así
+que se apoya en h.theme_ejemplo_site_statistics(), que va cacheado
+(ckanext.theme_ejemplo.home_cache_ttl, 300s por defecto).
+
+A diferencia del hero de la home, aquí los números se pintan directamente: el
+contador animado está acotado a .site-stats-hero y no debe dispararse en cada
+navegación.
+#}
+{% set stats = h.theme_ejemplo_site_statistics() %}
+{% if stats %}
+{% set dataset_count = stats.dataset_only_count if stats.dataset_only_count is defined else stats.dataset_count %}
+<div class="masthead-stats-strip">
+  <ul class="masthead-stats">
+    <li>
+      <a href="{{ h.url_for('dataset.search') }}">
+        <strong>{{ '{:,}'.format(dataset_count or 0) }}</strong>
+        <span>{% trans %}Datasets{% endtrans %}</span>
+      </a>
+    </li>
+    <li>
+      <a href="{{ h.url_for('/people') }}">
+        <strong>{{ '{:,}'.format(stats.user_count or 0) }}</strong>
+        <span>{% trans %}Users{% endtrans %}</span>
+      </a>
+    </li>
+    <li>
+      <a href="{{ h.url_for('organization.index') }}">
+        <strong>{{ '{:,}'.format(stats.organization_count or 0) }}</strong>
+        <span>{% trans %}Organizations{% endtrans %}</span>
+      </a>
+    </li>
+    <li>
+      <a href="{{ h.url_for('/initiatives') }}">
+        <strong>{{ '{:,}'.format(stats.initiative_count or 0) }}</strong>
+        <span>{% trans %}Initiatives{% endtrans %}</span>
+      </a>
+    </li>
+    <li>
+      <a href="{{ h.url_for('/water-news') }}">
+        <strong>{{ '{:,}'.format(stats.news_count or 0) }}</strong>
+        <span>{% trans %}News{% endtrans %}</span>
+      </a>
+    </li>
+    <li>
+      <a href="{{ h.url_for('/water-publications') }}">
+        <strong>{{ '{:,}'.format(stats.publication_count or 0) }}</strong>
+        <span>{% trans %}Publications{% endtrans %}</span>
+      </a>
+    </li>
+  </ul>
+</div>
+{% endif %}

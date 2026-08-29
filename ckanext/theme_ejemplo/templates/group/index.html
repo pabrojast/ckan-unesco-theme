@@ -1,0 +1,35 @@
+{% ckan_extends %}
+
+{# Igual que organization/index.html: el orden por contribución lo resuelve
+   MyLogica.group_index. /group mezcla member states e initiatives, así que
+   se ordena contra el ranking completo. #}
+{% block groups_search_form %}
+  {% snippet 'schemingdcat/snippets/search_form.html',
+     form_id='group-search-form',
+     type='group',
+     query=q,
+     sorting_selected=sort_by_selected,
+     count=page.item_count,
+     placeholder=_('Search groups...'),
+     show_empty=h.schemingdcat_request_params(),
+     no_bottom_border=true if page.items,
+     sorting=[(_('Contribution'), 'score desc'),
+              (_('Name Ascending'), 'title asc'),
+              (_('Name Descending'), 'title desc')] %}
+{% endblock %}
+
+{% block groups_list %}
+  {% if page.items or request.args %}
+    {% if page.items %}
+      {% snippet "group/snippets/group_list.html",
+         groups=page.items, ranked=ranked, rank_start=rank_start %}
+    {% endif %}
+  {% else %}
+    <p class="empty">
+      {{ _('There are currently no groups for this site') }}.
+      {% if h.check_access('group_create') %}
+        {% link_for _('How about creating one?'), named_route=group_type+'.new' %}.
+      {% endif %}
+    </p>
+  {% endif %}
+{% endblock %}

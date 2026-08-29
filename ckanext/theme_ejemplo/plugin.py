@@ -123,6 +123,19 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 except Exception as e:
                     log.warning(f"Completeness indexing skipped for {package_id}: {e}")
 
+                # Vistas y descargas → Solr, para que el orden "Popular"
+                # funcione. CKAN core llena views_total/views_recent desde su
+                # TrackingSummary (lib/search/index.py), que aquí está vacía:
+                # el conteo vive en tracking_dataset_stats.
+                try:
+                    name = dataset_dict.get('name')
+                    if name:
+                        tracking = helpers.get_dataset_tracking(name)
+                        dataset_dict['views_total'] = tracking.get('total', 0)
+                        dataset_dict['views_recent'] = tracking.get('recent', 0)
+                except Exception as e:
+                    log.warning(f"View indexing skipped for {package_id}: {e}")
+
                 return dataset_dict
             
             except Exception as e:
@@ -694,6 +707,34 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 methods=['GET']
             )
 
+            # Listados de organizaciones y grupos ordenados por contribución.
+            # Sombrean organization.index / group.index del core: las reglas de
+            # un blueprint de extensión se ordenan por encima de las del core
+            # (flask_app.register_extension_blueprint), el mismo mecanismo que
+            # usa schemingdcat para /dataset.
+            blueprint.add_url_rule(
+                u'/organization',
+                u'organization_index',
+                MyLogica.organization_index,
+                methods=['GET'],
+                strict_slashes=False,
+            )
+            blueprint.add_url_rule(
+                u'/group',
+                u'group_index',
+                MyLogica.group_index,
+                methods=['GET'],
+                strict_slashes=False,
+            )
+
+            # Panel de estadísticas de uso (sysadmin)
+            blueprint.add_url_rule(
+                u'/ckan-admin/stats',
+                u'stats_admin',
+                MyLogica.stats_admin,
+                methods=['GET']
+            )
+
             # Featured datasets admin panel (sysadmin only)
             blueprint.add_url_rule(
                 u'/ckan-admin/featured-datasets',
@@ -1104,6 +1145,7 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                  'get_open_bug_tickets_count': helpers.get_open_bug_tickets_count,
                  'get_pending_initiative_requests_count': helpers.get_pending_initiative_requests_count,
                  'get_my_pending_initiative_request': helpers.get_my_pending_initiative_request,
+                 'theme_ejemplo_tracking_enabled': helpers.tracking_enabled,
                  'get_dataset_tracking': helpers.get_dataset_tracking,
                  'get_resource_downloads': helpers.get_resource_downloads,
                  'get_tracking_totals': helpers.get_tracking_totals,
@@ -1484,6 +1526,35 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
             except Exception as e:
                 log.warning(f"Error counting member states: {e}")
                 stats['member_state_count'] = 0
+
+            # Usuarios activos. COUNT(*) directo: user_list monta una subquery
+            # de paquetes por usuario y devuelve la lista entera.
+            try:
+                from ckan import model as ckan_model
+                site_user = toolkit.config.get('ckan.site_id') or ''
+                stats['user_count'] = ckan_model.Session.query(
+                    ckan_model.User
+                ).filter(
+                    ckan_model.User.state == 'active',
+                    ckan_model.User.name.notin_(
+                        ('default', 'harvest', site_user)),
+                ).count()
+            except Exception as e:
+                log.warning(f"Error counting users: {e}")
+                stats['user_count'] = 0
+
+            # Noticias, eventos y publicaciones de la Water Family (páginas de
+            # ckanext-pages aprobadas y públicas). Ojo: 'document_count' cuenta
+            # datasets de tipo documents, que es otra cosa.
+            counts = {}
+            try:
+                from ckanext.pages.plugin import get_published_page_counts
+                counts = get_published_page_counts() or {}
+            except Exception as e:
+                log.warning(f"Error counting water family pages: {e}")
+            stats['news_count'] = counts.get('water-news', 0)
+            stats['event_count'] = counts.get('water-events', 0)
+            stats['publication_count'] = counts.get('water-publications', 0)
 
             return stats
 

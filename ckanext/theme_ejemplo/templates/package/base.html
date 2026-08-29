@@ -27,15 +27,27 @@
 
 {% block scripts %}
   {{ super() }}
-  {% if pkg and pkg.tracking_summary and pkg.tracking_summary.total %}
+  {# La barra se muestra si hay vistas O descargas: un dataset recién
+     publicado puede tener descargas y cero vistas todavía. #}
+  {% set dl = namespace(total=0) %}
+  {% for res in pkg.resources if pkg %}
+    {% set dl.total = dl.total + (res.tracking_summary.total if res.tracking_summary else 0) %}
+  {% endfor %}
+  {% if pkg and pkg.tracking_summary and (pkg.tracking_summary.total or dl.total) %}
   <script id="tracking-data" type="application/json">
     {
-      "total": {{ pkg.tracking_summary.total }},
+      "total": {{ pkg.tracking_summary.total|default(0) }},
       "recent": {{ pkg.tracking_summary.recent|default(0) }},
       "resources": {
         {% for res in pkg.resources %}
         "{{ res.id }}": {{ res.tracking_summary.total if res.tracking_summary else 0 }}{{ "," if not loop.last }}
         {% endfor %}
+      },
+      "labels": {
+        "view": {{ _('view')|tojson }},
+        "views": {{ _('views')|tojson }},
+        "download": {{ _('download')|tojson }},
+        "downloads": {{ _('downloads')|tojson }}
       }
     }
   </script>

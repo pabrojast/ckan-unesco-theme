@@ -166,7 +166,7 @@ Enhanced citation template with professional styling
                     }, 2000);
                 }).catch(function(err) {
                     console.error('Error copying DOI:', err);
-                    alert('{{ _("Error copying DOI. Please copy manually.") }}');
+                    alert({{ _("Error copying DOI. Please copy manually.")|tojson }});
                 });
             } else {
                 // Fallback for older browsers
@@ -185,7 +185,7 @@ Enhanced citation template with professional styling
                     }, 2000);
                 } catch (err) {
                     console.error('Error copying DOI:', err);
-                    alert('{{ _("Error copying DOI. Please copy manually.") }}');
+                    alert({{ _("Error copying DOI. Please copy manually.")|tojson }});
                 }
                 document.body.removeChild(textArea);
             }
@@ -200,10 +200,10 @@ Enhanced citation template with professional styling
 
             if (navigator.clipboard && navigator.clipboard.writeText) {
                 navigator.clipboard.writeText(citation).then(function() {
-                    alert('{{ _("Citation copied to clipboard!") }}');
+                    alert({{ _("Citation copied to clipboard!")|tojson }});
                 }).catch(function(err) {
                     console.error('Error copying citation:', err);
-                    alert('{{ _("Error copying citation. Please copy manually.") }}');
+                    alert({{ _("Error copying citation. Please copy manually.")|tojson }});
                 });
             } else {
                 // Fallback for older browsers
@@ -215,10 +215,10 @@ Enhanced citation template with professional styling
                 textArea.select();
                 try {
                     document.execCommand('copy');
-                    alert('{{ _("Citation copied to clipboard!") }}');
+                    alert({{ _("Citation copied to clipboard!")|tojson }});
                 } catch (err) {
                     console.error('Error copying citation:', err);
-                    alert('{{ _("Error copying citation. Please copy manually.") }}');
+                    alert({{ _("Error copying citation. Please copy manually.")|tojson }});
                 }
                 document.body.removeChild(textArea);
             }

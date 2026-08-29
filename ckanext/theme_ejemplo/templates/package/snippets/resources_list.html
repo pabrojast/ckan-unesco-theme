@@ -123,12 +123,12 @@ document.addEventListener('click', function (event) {
     full.hidden = true;
     excerpt.hidden = false;
     button.setAttribute('aria-expanded', 'false');
-    button.textContent = button.dataset.labelMore || 'Read more';
+    button.textContent = button.dataset.labelMore || {{ _('Read more')|tojson }};
   } else {
     full.hidden = false;
     excerpt.hidden = true;
     button.setAttribute('aria-expanded', 'true');
-    button.textContent = button.dataset.labelLess || 'Read less';
+    button.textContent = button.dataset.labelLess || {{ _('Read less')|tojson }};
   }
 });
 </script>
@@ -189,8 +189,8 @@ document.addEventListener('click', function (event) {
       return;
     }
     var msg = count === 0
-      ? '{{ _("No resources found") }}'
-      : count + ' {{ _("resource(s) found") }}';
+      ? {{ _("No resources found")|tojson }}
+      : count + ' ' + {{ _("resource(s) found")|tojson }};
     statusEl.textContent = msg;
     statusEl.hidden = false;
   }

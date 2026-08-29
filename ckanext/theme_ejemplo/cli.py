@@ -275,7 +275,7 @@ def pageviews_status():
 
 @click.group()
 def ranking():
-    """Ranking de contribución de Member States e Initiatives."""
+    """Ranking de contribución de Member States, Initiatives y Organizations."""
     pass
 
 
@@ -289,8 +289,9 @@ def ranking_recompute():
 
     summary = ranking_mod.compute_all_scores()
     click.echo(
-        'Ranking recomputado: {computed} grupos '
+        'Ranking recomputado: {computed} entidades '
         '({member_states} member states, {initiatives} initiatives, '
+        '{organizations} organizations, '
         '{with_completeness} con completitud media).'.format(**summary)
     )
 
@@ -298,7 +299,8 @@ def ranking_recompute():
 @ranking.command(name='show')
 @click.option('-n', '--limit', default=15, help='Número de filas a mostrar')
 @click.option('--entity', default=None,
-              type=click.Choice(['member_state', 'initiative']),
+              type=click.Choice(['member_state', 'initiative',
+                                 'organization']),
               help='Filtrar por tipo de entidad')
 def ranking_show(limit, entity):
     """Mostrar el ranking persistido (solo lectura)."""
@@ -310,12 +312,17 @@ def ranking_show(limit, entity):
     if not rows:
         click.echo('Sin scores persistidos. Ejecuta: ckan ranking recompute')
         return
-    click.echo('{:<4} {:<28} {:<13} {:>6} {:>5} {:>5} {:>5} {:>6} {:>8}'.format(
-        '#', 'group', 'entity', 'score', 'ds', 'doc', 'news', 'rec90', 'avg_c'))
+    click.echo(
+        '{:<4} {:<28} {:<13} {:>6} {:>5} {:>5} {:>5} {:>6} {:>8} {:>8}'.format(
+            '#', 'group', 'entity', 'score', 'ds', 'doc', 'news', 'rec90',
+            'views', 'avg_c'))
     for i, r in enumerate(rows[:limit], start=1):
-        click.echo('{:<4} {:<28} {:<13} {:>6.2f} {:>5} {:>5} {:>5} {:>6} {:>8}'.format(
-            i, (r.group_name or '')[:28], r.entity_type, r.score or 0,
-            r.datasets_count or 0, r.documents_count or 0,
-            r.news_events_count or 0, r.recent_90d or 0,
-            '{:.1f}'.format(r.avg_completeness)
-            if r.avg_completeness is not None else '-'))
+        click.echo(
+            '{:<4} {:<28} {:<13} {:>6.2f} {:>5} {:>5} {:>5} {:>6} {:>8} {:>8}'
+            .format(
+                i, (r.group_name or '')[:28], r.entity_type, r.score or 0,
+                r.datasets_count or 0, r.documents_count or 0,
+                r.news_events_count or 0, r.recent_90d or 0,
+                getattr(r, 'views_total', 0) or 0,
+                '{:.1f}'.format(r.avg_completeness)
+                if r.avg_completeness is not None else '-'))

@@ -38,7 +38,19 @@
           <dt>{{ _('Datasets') }}</dt>
           <dd>{{ h.SI_number_span(group.package_count) }}</dd>
         </dl>
+        {% set rank = h.get_contribution_rank(group.name) %}
+        {% if rank %}
+        <dl>
+          <dt>{{ _('Contribution rank') }}</dt>
+          <dd title="{{ _('Score') }}: {{ '%.2f'|format(rank.score or 0) }}">
+            #{{ rank.rank }} <small>{{ _('of') }} {{ rank.total }}</small>
+          </dd>
+        </dl>
+        {% endif %}
       </div>
+      {% if rank %}
+        {% snippet 'snippets/contribution_breakdown.html', rank=rank %}
+      {% endif %}
       {% endblock %}
       {% block follow %}
       <div class="follow_button">

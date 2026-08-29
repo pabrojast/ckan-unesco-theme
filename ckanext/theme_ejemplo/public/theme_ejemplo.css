@@ -7597,3 +7597,236 @@ html.js .home-tabs .home-tab-panel:not(.is-active) {
     display: none;
   }
 }
+
+/* ── Pastilla de puesto en el ranking de contribución ────────────────────────
+   La usan los cuatro listados (organizaciones, grupos, member states e
+   initiatives); antes cada snippet repetía estos valores en un style="" */
+.org-grid-card-footer .rank-pill {
+  background: #eef3f8;
+  color: #33607f;
+  border-radius: 10px;
+  padding: 1px 8px;
+  font-weight: 600;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+/* ── Grid de tarjetas de organización/grupo ──────────────────────────────────
+   Mismos valores que los <style> embebidos en organization_list.html y en los
+   group_list.html de memberstates/initiatives. Se suben aquí para que
+   /group pueda reusarlos sin una cuarta copia. */
+.org-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+.org-grid-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  transition: box-shadow 0.15s;
+}
+.org-grid-card:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  text-decoration: none;
+  color: inherit;
+}
+.org-grid-card-img {
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  background: #f9f9f9;
+}
+.org-grid-card-img img {
+  max-height: 76px;
+  max-width: 100%;
+  object-fit: contain;
+}
+.org-grid-card-img .fa {
+  font-size: 36px;
+  color: #ccc;
+}
+.org-grid-card-body {
+  flex: 1;
+  padding: 10px 12px 4px;
+}
+.org-grid-card-title {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0 0 4px;
+  line-height: 1.3;
+}
+.org-grid-card-desc {
+  font-size: 12px;
+  color: #666;
+  margin: 0;
+  line-height: 1.4;
+}
+.org-grid-card-footer {
+  padding: 6px 12px 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.org-grid-card-footer .count {
+  font-size: 12px;
+  color: #999;
+}
+
+/* Desglose del score de contribución en la ficha de org/grupo */
+.contribution-breakdown {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 8px 0 0;
+  border-top: 1px solid #e6e9ec;
+  font-size: 12px;
+}
+.contribution-breakdown li {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 2px 0;
+  color: #5b6670;
+}
+.contribution-breakdown li span:last-child {
+  font-weight: 600;
+  color: #33607f;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Franja de indicadores en la barra superior ──────────────────────────────
+   Va entre la fila de idioma/login y la de logo+menú. Se renderiza en todas
+   las páginas, así que es deliberadamente sobria: sin animación, sin sombras,
+   y en móvil se convierte en una fila con scroll horizontal. */
+.masthead-stats-strip {
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+  margin: 0 0 4px;
+}
+.masthead-stats {
+  list-style: none;
+  margin: 0;
+  padding: 6px 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 26px;
+}
+.masthead-stats li {
+  margin: 0;
+}
+.masthead-stats a {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  color: #fff;
+  text-decoration: none;
+  opacity: 0.92;
+  white-space: nowrap;
+}
+.masthead-stats a:hover,
+.masthead-stats a:focus {
+  color: #fff;
+  opacity: 1;
+  text-decoration: none;
+}
+.masthead-stats a:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+.masthead-stats strong {
+  font-size: 14px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+.masthead-stats span {
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+
+@media (max-width: 767px) {
+  .masthead-stats {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 18px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .masthead-stats::-webkit-scrollbar {
+    display: none;
+  }
+  .masthead-stats span {
+    font-size: 10px;
+  }
+}
+
+/* ── Panel /ckan-admin/stats ─────────────────────────────────────────────── */
+.admin-stats-note {
+  color: #5b6670;
+  font-size: 13px;
+  margin: 0 0 18px;
+}
+.admin-stats-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 14px;
+  margin-bottom: 26px;
+}
+.admin-stats-card {
+  border: 1px solid #e0e4e8;
+  border-radius: 6px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.admin-stats-card .v {
+  font-size: 24px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+}
+.admin-stats-card .k {
+  font-size: 12px;
+  color: #5b6670;
+}
+.admin-stats-table {
+  max-width: 520px;
+}
+.admin-stats-columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px;
+  margin-bottom: 20px;
+}
+.admin-stats-list {
+  margin: 0;
+  padding-left: 20px;
+  font-size: 13px;
+}
+.admin-stats-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 3px 0;
+  border-bottom: 1px solid #f0f2f4;
+}
+.admin-stats-list li span:last-child {
+  font-variant-numeric: tabular-nums;
+  color: #33607f;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.admin-stats-list small {
+  color: #99a2aa;
+  font-size: 11px;
+}

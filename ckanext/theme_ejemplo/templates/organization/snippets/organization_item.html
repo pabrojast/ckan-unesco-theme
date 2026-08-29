@@ -15,6 +15,9 @@
     {% endif %}
   </div>
   <div class="org-grid-card-footer">
+    {% if ranked %}
+      <span class="count rank-pill" title="{{ _('Contribution rank') }}">#{{ (rank_start or 0) + position }}</span>
+    {% endif %}
     {% if organization.package_count %}
       <span class="count">{{ ungettext('{num} Dataset', '{num} Datasets', organization.package_count).format(num=organization.package_count) }}</span>
     {% else %}
