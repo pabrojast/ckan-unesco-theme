@@ -227,6 +227,21 @@ def _get_data_stories_by_group(group_id, limit=50):
         return []
 
 
+def _name_filter_key(list_action):
+    """Clave con la que cada acción acepta un filtro por lista de nombres.
+
+    ``group_list`` lee ``groups``, pero ``organization_list`` lo documenta como
+    ``organizations`` y empieza haciendo::
+
+        data_dict['groups'] = data_dict.pop('organizations', [])
+
+    (ckan/logic/action/get.py), así que un ``groups`` pasado a mano queda
+    sobrescrito con ``[]`` y el filtro se ignora **en silencio**: la acción
+    devuelve la primera página en orden ``sort`` en vez del subconjunto pedido.
+    """
+    return 'organizations' if list_action == 'organization_list' else 'groups'
+
+
 def _ranked_entity_index(entity_type, list_action, ckan_type, template):
     """Listado de organizaciones/grupos ordenado por contribución.
 
@@ -292,10 +307,15 @@ def _ranked_entity_index(entity_type, list_action, ckan_type, template):
         page_names = names[start:start + items_per_page]
         items = []
         if page_names:
+            # Ver _name_filter_key: con la clave equivocada el filtro se
+            # ignora y, como abajo intersectamos con page_names, /organization
+            # se quedaba sólo con las organizaciones que caían a la vez en el
+            # top por score y en las primeras por título -- una de 230.
+            name_filter = _name_filter_key(list_action)
             items = action(context, {
                 'all_fields': True,
                 'include_extras': True,
-                'groups': page_names,
+                name_filter: page_names,
                 'type': ckan_type,
                 'limit': items_per_page,
                 'sort': list_sort,
