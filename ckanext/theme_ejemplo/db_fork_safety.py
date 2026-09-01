@@ -69,17 +69,47 @@ def init_postfork():
     plugin), que es cuando uWSGI aún acepta registrar hooks. Fuera de uWSGI
     (CLI ``ckan``, tests, jobs worker) el import falla y no hacemos nada:
     esos procesos no forkean después de abrir conexiones.
+
+    La imagen instala uWSGI como binario pelado, SIN el módulo
+    ``uwsgidecorators`` que trae el paquete pip, así que se intenta primero
+    el decorator y si no está se usa directamente ``uwsgi.post_fork_hook``
+    (el módulo ``uwsgi`` es built-in del plugin python y siempre existe
+    dentro de uWSGI), encadenando cualquier hook previo.
     """
     global _postfork_registered
     if _postfork_registered:
         return
     try:
         from uwsgidecorators import postfork
-    except Exception:
+        postfork(_dispose_engines)
+        _postfork_registered = True
+        log.info('theme_ejemplo: dispose post-fork registrado (uwsgidecorators)')
         return
-    postfork(_dispose_engines)
+    except Exception:
+        pass
+    try:
+        import uwsgi
+    except Exception:
+        # Proceso normal fuera de uWSGI (CLI, tests, jobs worker): no-op.
+        return
+    _prev_hook = getattr(uwsgi, 'post_fork_hook', None)
+
+    def _chained_post_fork():
+        if _prev_hook is not None:
+            try:
+                _prev_hook()
+            except Exception:
+                log.exception('theme_ejemplo: fallo en post_fork_hook previo')
+        _dispose_engines()
+
+    try:
+        uwsgi.post_fork_hook = _chained_post_fork
+    except Exception:
+        log.warning('theme_ejemplo: uWSGI presente pero no se pudo registrar '
+                    'post_fork_hook; los workers heredan el pool del master')
+        return
     _postfork_registered = True
-    log.info('theme_ejemplo: dispose de engines post-fork registrado')
+    log.info('theme_ejemplo: dispose post-fork registrado (uwsgi built-in)')
 
 
 def _cleanup_session(exc):
