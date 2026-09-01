@@ -18,6 +18,7 @@ from . import model as membership_model
 from . import approvals
 from . import cache as anon_cache
 from . import completeness
+from . import db_fork_safety
 from . import pageview_tracking
 from . import ranking
 from .utils import normalize_user_image_url
@@ -27,6 +28,10 @@ import time
 
 # Configurar logging
 log = logging.getLogger(__name__)
+
+# Debe correr en el import (la carga de la app en el master de uWSGI) para
+# que el hook postfork quede registrado antes de que se creen los workers.
+db_fork_safety.init_postfork()
 
 # Orden por defecto en /dataset: mejor metadata primero, empates por fecha.
 # Usa el campo con cero-padding porque Solr lo indexa como string.
@@ -396,6 +401,10 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 anon_cache.init_app(app)
             except Exception as e:
                 log.warning(f"No se pudo registrar el caché anónimo: {e}")
+            try:
+                db_fork_safety.init_app(app)
+            except Exception as e:
+                log.warning(f"No se pudo registrar el saneador de sesión: {e}")
             return app
 
         def update_config(self, config):
