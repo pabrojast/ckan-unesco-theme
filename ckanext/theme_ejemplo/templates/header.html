@@ -223,10 +223,9 @@
       </div>
     </div>
 
-    <!-- FILA INTERMEDIA: indicadores resumen de la plataforma -->
-    {% block header_site_stats %}
-      {% snippet "snippets/site_stats_strip.html" %}
-    {% endblock %}
+    {# La franja de contadores (site_stats_strip) se retiró del header a
+       pedido del equipo; el bloque queda para que un hijo pueda reponerla. #}
+    {% block header_site_stats %}{% endblock %}
 
     <!-- SEGUNDA FILA: Logo + menú principal + search -->
     <div class="masthead-nav" id="main-navigation-toggle">
