@@ -44,8 +44,13 @@ Estas claves se definen en el archivo de configuración de CKAN (`ckan.ini`) y s
 | `ckanext.theme_ejemplo.pageviews_enabled` | `false` | Activa el conteo liviano. Enciende también los helpers de tracking del tema |
 | `ckanext.theme_ejemplo.pageviews_recent_days` | `14` | Ventana en días para `recent_views` |
 | `ckanext.theme_ejemplo.pageviews_dedup_window` | `1800` (30 min) | Segundos de dedup por IP+URL para no inflar con refrescos (`0` = sin dedup) |
-| `ckanext.theme_ejemplo.pageviews_bot_filter` | `true` | Ignora User-Agents de bots/crawlers conocidos |
+| `ckanext.theme_ejemplo.pageviews_bot_filter` | `true` | Ignora User-Agents de bots/crawlers conocidos (incluye herramientas server-side: `CKAN-TerriaView`, `python-urllib`, `okhttp`, etc.) |
 | `ckanext.theme_ejemplo.pageviews_view_paths` | `/dataset` | Prefijos de ruta (CSV) que cuentan como vista de dataset |
+| `ckanext.theme_ejemplo.pageviews_downloads_navigation_only` | `true` | Cuenta como descarga solo navegaciones de usuario (`Sec-Fetch-Mode: navigate`, dest `document`/`empty`, sin `Range`). Excluye los fetch de visores embebidos (Terria, MapLibre, PDF), embeds y lectores tileados COG, que inflaban el contador |
+| `ckanext.theme_ejemplo.pageviews_excluded_referrer_hosts` | _(vacío)_ | Fallback para navegadores sin cabeceras `Sec-Fetch-*` (Safari < 16.4): CSV de `host` o `host/prefijo` de visores cuyos `Referer` no cuentan como descarga (ej. `terria.water-data.org, ihp-wins.unesco.org/terria`) |
+
+> [!note]
+> Solo cuentan peticiones `GET` (antes también `HEAD`, que sumaba sondas y health-checks como descargas).
 
 > [!tip]
 > El `tracking_cache_ttl` (TTL de lectura) conviene mantenerlo ≥ al intervalo del CronJob de flush (`*/5`). El volcado lo ejecuta `ckan pageviews flush` (ver [[Comandos Utiles]] y `deploy/cronjob-pageviews-flush.yaml`).
@@ -121,6 +126,8 @@ ckanext.theme_ejemplo.pageviews_recent_days = 14
 ckanext.theme_ejemplo.pageviews_dedup_window = 1800
 ckanext.theme_ejemplo.pageviews_bot_filter = true
 # ckanext.theme_ejemplo.pageviews_view_paths = /dataset
+ckanext.theme_ejemplo.pageviews_downloads_navigation_only = true
+ckanext.theme_ejemplo.pageviews_excluded_referrer_hosts = terria.water-data.org, map.dev-wins.com, ihp-wins.unesco.org/terria
 
 # Caché de respuestas anónimas (mitiga spider trap)
 ckanext.theme_ejemplo.anon_cache_enabled = true

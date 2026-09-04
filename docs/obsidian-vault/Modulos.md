@@ -361,7 +361,8 @@ Cada modelo tiene `init_*_db()` y `define_*_table()`. Son idempotentes (verifica
 
 ### Registro (hot path, barato)
 - `init_app(app)` registra `_record` como `before_request`, **antes** que el de la caché anónima (Flask corta en el primer hook que devuelve respuesta; así contamos también los HIT de caché).
-- `_record()` nunca corta el request. En rutas que matchean dataset/descarga: filtra bots por `User-Agent`, deduplica por IP+URL (clave Redis TTL) e incrementa contadores en Redis (`HINCRBY`). Sin DB, sin request extra.
+- `_record()` nunca corta el request. En rutas que matchean dataset/descarga (solo `GET`): filtra bots por `User-Agent`, deduplica por IP+URL (clave Redis TTL) e incrementa contadores en Redis (`HINCRBY`). Sin DB, sin request extra.
+- **Gate de navegación para descargas** (`_is_user_download`): solo cuentan navegaciones reales (`Sec-Fetch-Mode: navigate` con dest `document`/`empty`, sin `Range` ni prefetch). Los visores embebidos (Terria, MapLibre, PDF) fetchean `/download` en cada render e inflaban el contador; ahora se descartan antes del dedup (para no quemar la ventana del clic real). Fallback sin `Sec-Fetch-*` (Safari < 16.4): se excluyen los `Referer` de `pageviews_excluded_referrer_hosts`. El `_BOT_RE` cubre además herramientas server-side (`CKAN-TerriaView`, `python-urllib`, `node-fetch`, `okhttp`, …). Kill-switch: `pageviews_downloads_navigation_only = false`.
 - Claves Redis (namespace `theme_ejemplo:pv:`): `views` (hash dataset→delta), `downloads` (hash resource→delta), `daily:<fecha>` + set `daily_dates` (para `recent_views`), `seen:<hash>` (dedup), `flush:lock`.
 
 ### Volcado (cron)

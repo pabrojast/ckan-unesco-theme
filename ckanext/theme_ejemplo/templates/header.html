@@ -253,6 +253,18 @@
       <li><a href="{{ h.url_for('/memberstates') }}">{% trans %}Member States{% endtrans %}</a></li>
       <li><a href="{{ h.url_for('/initiatives') }}">{% trans %}Initiatives{% endtrans %}</a></li>
       <li><a href="https://www.unesco.org/en/ihp">{{ _('About') }} IHP</a></li>
+      {# La pestaña vive AQUÍ y no en el header.html de ckanext-c4w: en este
+         despliegue la precedencia de templates la gana el plugin más temprano
+         de ckan.plugins, así que este header es el que se renderiza y la
+         cadena ckan_extends de c4w/csunesco nunca corre. El guard mantiene al
+         theme utilizable sin el plugin c4w cargado. #}
+      {% if 'c4w_url' in h %}
+        {% set c4w_active = request and request.blueprint in ('c4w', 'c4w_preview') %}
+        <li{% if c4w_active %} class="active"{% endif %}>
+          <a href="{{ h.c4w_url('index') }}"
+             {% if c4w_active %}aria-current="page"{% endif %}>{{ _('Citizens4Water') }}</a>
+        </li>
+      {% endif %}
       {% endblock %}
         </ul>
       </nav>

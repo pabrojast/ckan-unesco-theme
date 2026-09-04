@@ -374,7 +374,9 @@ Reemplaza el `ckan.tracking_enabled` nativo, que bajo alto tráfico colapsaba la
 Request /dataset/<name> (GET)  ──┐
 .../resource/<id>/download       ┘
    │  before_request _record() (registrado ANTES que la caché anónima)
-   │    · filtra bots por User-Agent
+   │    · solo GET; filtra bots por User-Agent
+   │    · descargas: solo navegaciones de usuario (Sec-Fetch navigate,
+   │      sin Range/prefetch) — excluye fetch de visores Terria/MapLibre/PDF
    │    · dedup IP+URL en ventana corta (clave Redis TTL)
    ▼
  [Redis]  HINCRBY pv:views <name>  (+ pv:daily:<fecha>)  |  HINCRBY pv:downloads <rid>

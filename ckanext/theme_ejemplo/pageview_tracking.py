@@ -13,6 +13,9 @@ ocurre (un ``before_request`` de Flask, espejo de :mod:`ckanext.theme_ejemplo.ca
   la página se sirve desde la caché anónima.
 - Filtra bots por ``User-Agent`` y deduplica la misma vista (IP+URL) en una
   ventana corta con una clave Redis TTL.
+- Las descargas sólo cuentan si parecen iniciadas por el usuario (navegación
+  real según Fetch Metadata): los visores embebidos (Terria, MapLibre, PDF)
+  fetchean ``/download`` en cada render e inflaban el contador.
 
 Un comando CLI (``ckan pageviews flush``, ejecutado por un CronJob cada ~5 min)
 vuelca los contadores de Redis a tablas planas de Postgres
@@ -27,6 +30,7 @@ import datetime
 import hashlib
 import logging
 import re
+from urllib.parse import urlsplit
 
 from flask import request
 import ckan.plugins.toolkit as toolkit
@@ -56,12 +60,16 @@ _BOT_RE = re.compile(
     r'embedly|quora|outbrain|pinterest|slack|whatsapp|telegram|semrush|'
     r'ahrefs|mj12|dotbot|petalbot|bytespider|gptbot|ccbot|claudebot|'
     r'python-requests|aiohttp|curl|wget|scrapy|headless|monitor|uptime|'
-    r'pingdom|statuscake|datadog',
+    r'pingdom|statuscake|datadog|python-urllib|terriaview|node-fetch|axios|'
+    r'okhttp|java/|go-http|libwww',
     re.IGNORECASE,
 )
 
 # Cache de patrones compilados, reconstruido sólo si cambia ``pageviews_view_paths``.
 _pattern_cache = {'paths': None, 'view': None, 'download': None}
+
+# Cache del parseo de ``pageviews_excluded_referrer_hosts`` (espejo de arriba).
+_referrer_cache = {'raw': None, 'parsed': ()}
 
 _redis_client = None
 _redis_init_attempted = False
@@ -137,6 +145,34 @@ def _view_paths():
     return tuple(p.strip().rstrip('/') for p in str(raw).split(',') if p.strip())
 
 
+def _downloads_navigation_only():
+    # Kill-switch por config: en ``false`` vuelve al conteo antiguo (todo GET).
+    return _cfg_bool(
+        'ckanext.theme_ejemplo.pageviews_downloads_navigation_only', True)
+
+
+def _excluded_referrers():
+    """Tuple de ``(host, path_prefix)`` de visores cuyos Referer no cuentan.
+
+    Config ``pageviews_excluded_referrer_hosts``: CSV de ``host`` o
+    ``host/prefijo`` (p.ej. ``ihp-wins.unesco.org/terria`` cuando Terria vive
+    bajo el mismo host que el portal).
+    """
+    raw = toolkit.config.get(
+        'ckanext.theme_ejemplo.pageviews_excluded_referrer_hosts', '') or ''
+    if _referrer_cache['raw'] != raw:
+        parsed = []
+        for entry in str(raw).split(','):
+            entry = entry.strip().lower()
+            if not entry:
+                continue
+            host, _, prefix = entry.partition('/')
+            parsed.append((host, '/' + prefix if prefix else ''))
+        _referrer_cache['parsed'] = tuple(parsed)
+        _referrer_cache['raw'] = raw
+    return _referrer_cache['parsed']
+
+
 # ─── Heurísticas de matching ──────────────────────────────────────────────
 
 
@@ -176,6 +212,55 @@ def _is_bot(user_agent):
     return bool(user_agent) and bool(_BOT_RE.search(user_agent))
 
 
+def _referer_excluded(referer):
+    """True si el ``Referer`` pertenece a un host(/prefijo) de visor excluido."""
+    if not referer:
+        return False
+    try:
+        parts = urlsplit(referer)
+        host = (parts.hostname or '').lower()
+        path = parts.path or '/'
+    except Exception:
+        return False
+    for exc_host, exc_prefix in _excluded_referrers():
+        if host == exc_host and (not exc_prefix or path.startswith(exc_prefix)):
+            return True
+    return False
+
+
+def _is_user_download(headers):
+    """True si la petición parece una descarga iniciada por el usuario.
+
+    Distingue el clic real (navegación) de los fetch automáticos de visores
+    embebidos, embeds y lectores tileados, usando Fetch Metadata:
+
+    - clic en enlace normal: ``Sec-Fetch-Mode: navigate`` + ``Dest: document``
+    - clic en ``<a download>``: ``navigate`` + ``Dest: empty``
+    - fetch/XHR de un visor (Terria, MapLibre, PDF.js): ``Mode: cors`` -> no
+    - ``<img>``/``<iframe>``/``<embed>``: ``Dest: image/iframe/embed`` -> no
+      (un iframe también es ``Mode: navigate``, por eso el check de Dest)
+    - Chrome 76-79 mandaba Mode pero no Dest: Dest vacío se acepta.
+    """
+    # Lectores tileados (COG) y resúmenes de descarga; nunca un clic inicial.
+    if headers.get('Range'):
+        return False
+    # Prefetch especulativo del navegador.
+    if headers.get('Sec-Purpose') or headers.get('Purpose') == 'prefetch' \
+            or headers.get('X-Moz') == 'prefetch':
+        return False
+    mode = (headers.get('Sec-Fetch-Mode') or '').lower()
+    dest = (headers.get('Sec-Fetch-Dest') or '').lower()
+    if mode or dest:
+        if mode != 'navigate':
+            return False
+        return dest in ('document', 'empty', '')
+    # Sin Fetch Metadata (Safari < 16.4, clientes no-navegador): descartar
+    # herramientas y Referers de visores conocidos; el resto cuenta.
+    if _is_bot(headers.get('User-Agent', '')):
+        return False
+    return not _referer_excluded(headers.get('Referer', ''))
+
+
 def _client_ip():
     fwd = request.headers.get('X-Forwarded-For')
     if fwd:
@@ -193,7 +278,7 @@ def _utc_today():
 def _record():
     """Registra una vista/descarga en Redis. Nunca corta el request."""
     try:
-        if not _is_enabled() or request.method not in ('GET', 'HEAD'):
+        if not _is_enabled() or request.method != 'GET':
             return None
 
         norm_path = _strip_locale(request.path)
@@ -203,6 +288,14 @@ def _record():
         kind, ident = matched
 
         if _bot_filter_enabled() and _is_bot(request.headers.get('User-Agent', '')):
+            return None
+
+        # Descargas: sólo navegaciones de usuario. Va ANTES del dedup para que
+        # un fetch de visor no queme la ventana del clic real del mismo IP+URL.
+        if kind == 'download' and _downloads_navigation_only() \
+                and not _is_user_download(request.headers):
+            log.debug('pageviews: download descartado (no-navegacion) path=%s',
+                      norm_path)
             return None
 
         redis = _get_redis()
