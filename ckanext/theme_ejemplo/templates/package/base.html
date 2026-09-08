@@ -30,7 +30,7 @@
   {# La barra se muestra si hay vistas O descargas: un dataset recién
      publicado puede tener descargas y cero vistas todavía. #}
   {% set dl = namespace(total=0) %}
-  {% for res in pkg.resources if pkg %}
+  {% for res in (pkg.resources if pkg else []) %}
     {% set dl.total = dl.total + (res.tracking_summary.total if res.tracking_summary else 0) %}
   {% endfor %}
   {% if pkg and pkg.tracking_summary and (pkg.tracking_summary.total or dl.total) %}
