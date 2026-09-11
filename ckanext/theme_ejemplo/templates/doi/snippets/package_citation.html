@@ -7,6 +7,19 @@ Enhanced citation template with professional styling
     <h3>{{ _('Cite this as') }}</h3>
 
     <div class="citation-container">
+        {% set publisher = h.doi_get_citation_publisher(pkg_dict) %}
+        {% set pub_year = pkg_dict.get('publication_year') %}
+        {% if not pub_year and pkg_dict.get('metadata_created') %}
+            {% set pub_year = h.package_get_year(pkg_dict) %}
+        {% endif %}
+        {% set doi_link = pkg_dict.get('custom_doi') %}
+        {% if not doi_link and pkg_dict.get('document_doi') %}
+            {% set doi_link = 'https://doi.org/' + pkg_dict['document_doi'] %}
+        {% elif not doi_link and pkg_dict.get('doi') %}
+            {% set doi_link = 'https://doi.org/' + pkg_dict['doi'] %}
+        {% endif %}
+        {% set resource_label = _('[Document]') if pkg_dict.get('type') in ['documents', 'document'] else _('[Data set]') %}
+
         {# --- DOI Information Bar --- #}
         {% if pkg_dict.get('doi') or pkg_dict.get('custom_doi') %}
         <div class="doi-bar">
@@ -49,14 +62,18 @@ Enhanced citation template with professional styling
                 {% if pkg_dict.get('custom_citation') %}
                     {{ pkg_dict.get('custom_citation')|safe }}
 
+                {# Respetar la cita automática del formulario de documentos. #}
+                {% elif pkg_dict.get('citation') %}
+                    {{ pkg_dict.get('citation')|safe }}
+
                 {# --- 2) Enhanced citation with authors --- #}
                 {% else %}
-                    {% set authors_data = pkg_dict.get('authors') %}
+                    {% set authors_data = pkg_dict.get('authors') or pkg_dict.get('authors_json') %}
                     {% set legacy_author = pkg_dict.get('author') %}
+                    {% set authors = h.parse_json_authors(authors_data) if authors_data else [] %}
 
                     {# Parse enhanced authors if available #}
-                    {% if authors_data %}
-                        {% set authors = h.parse_json_authors(authors_data) %}
+                    {% if authors %}
 
                         {# Display enhanced authors with ORCID and affiliations #}
                         {% for author in authors %}
@@ -77,12 +94,13 @@ Enhanced citation template with professional styling
                         <span class="author-name">{{ legacy_author }}</span>
                     {% endif %}
 
-                    {% if (authors_data or legacy_author) and pkg_dict.get('title') %}
-                        ({{ h.package_get_year(pkg_dict) }}).
-                        <i>{{ pkg_dict.get('title') }}</i> [Data set].
-                        {{ pkg_dict.get('doi_publisher', '') }}
-                        {% if pkg_dict['doi_status'] %}.{% endif %}
-                    {% else %}
+                    {% if pub_year %}({{ pub_year }}).{% endif %}
+                    {% if pkg_dict.get('title') %}
+                        <i>{{ pkg_dict.get('title') }}</i> {{ resource_label }}.
+                    {% endif %}
+                    {% if publisher %}{{ publisher }}.{% endif %}
+                    {% if doi_link %}{{ doi_link }}{% endif %}
+                    {% if not (authors or legacy_author or pub_year or pkg_dict.get('title') or publisher or doi_link) %}
                         <em>{{ _('Citation information not available') }}</em>
                     {% endif %}
                 {% endif %}
@@ -123,8 +141,8 @@ Enhanced citation template with professional styling
             <small class="text-muted">
                 <i class="fa fa-calendar"></i>
                 {{ _('Published:') }} {{ pkg_dict['doi_date_published'] }}
-                {% if pkg_dict.get('doi_publisher') %}
-                    | {{ _('Publisher:') }} {{ pkg_dict['doi_publisher'] }}
+                {% if publisher %}
+                    | {{ _('Publisher:') }} {{ publisher }}
                 {% endif %}
             </small>
         </div>
