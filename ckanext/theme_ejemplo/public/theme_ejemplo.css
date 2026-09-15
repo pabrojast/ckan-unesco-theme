@@ -4435,6 +4435,87 @@ nav.nav-facet li,
   background: var(--unesco-blue-pale);
 }
 
+/* Organizaciones: busqueda y orden en una fila, contador debajo. */
+#organization-search-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 16px 20px;
+}
+
+#organization-search-form::before,
+#organization-search-form::after {
+  content: none;
+}
+
+#organization-search-form > * {
+  grid-column: 1 / -1;
+  min-width: 0;
+}
+
+#organization-search-form > .search-input.search-giant,
+#organization-search-form > .input-group.search-input-group {
+  grid-column: 1;
+  grid-row: 1;
+  flex-direction: row !important;
+  margin: 0 !important;
+}
+
+#organization-search-form input[name="q"] {
+  min-width: 0;
+  margin-bottom: 0 !important;
+}
+
+#organization-search-form .input-group-btn {
+  position: static;
+}
+
+#organization-search-form button[type="submit"] {
+  width: 50px !important;
+  margin: 0 !important;
+}
+
+#organization-search-form > .control-order-by {
+  grid-column: 2;
+  grid-row: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  float: none !important;
+  width: auto !important;
+  margin: 0 !important;
+}
+
+#organization-search-form .control-order-by label {
+  margin: 0;
+  white-space: nowrap;
+}
+
+#organization-search-form .order-by-controls {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+#organization-search-form .control-order-by select {
+  min-width: 0 !important;
+}
+
+#organization-search-form > h1,
+#organization-search-form > h2 {
+  margin: 0 !important;
+}
+
+@media (max-width: 768px) {
+  #organization-search-form {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  #organization-search-form > .control-order-by {
+    grid-column: 1;
+    grid-row: 2;
+  }
+}
+
 /* Dataset list container */
 ul.dataset-list,
 .dataset-list {

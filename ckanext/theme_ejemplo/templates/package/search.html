@@ -1,7 +1,17 @@
 {% ckan_extends %}
 
 {% block page_primary_action %}
-  {{ super() }}
+  {% if h.check_access('package_create') %}
+    {% if dataset_type == 'dataset' %}
+      {% set create_label = _('Add Dataset') %}
+    {% elif dataset_type == 'documents' %}
+      {% set create_label = _('Add Documents') %}
+    {% else %}
+      {% set type_label = h.schemingdcat_dataset_type_label(dataset_type, plural=dataset_type.lower().endswith('s')) or _(dataset_type.title()) %}
+      {% set create_label = _('Add %(label)s', label=type_label) %}
+    {% endif %}
+    {% link_for create_label, named_route='%s.new' % dataset_type, class_='btn btn-primary', icon='plus-square' %}
+  {% endif %}
 {% endblock %}
 
 {% block secondary_content %}

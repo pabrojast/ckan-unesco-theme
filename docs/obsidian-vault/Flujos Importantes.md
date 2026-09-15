@@ -4,6 +4,22 @@
 
 ---
 
+## Controles de los listados del catálogo
+
+El tema controla las acciones de creación en `templates/package/search.html`:
+`/dataset/` muestra únicamente **Add Dataset** (`dataset.new`) y `/documents`
+muestra únicamente **Add Documents** (`documents.new`). Ambos conservan la
+comprobación de permiso `package_create` y las etiquetas traducibles. El override
+reemplaza el bloque heredado de `ckanext-schemingdcat`, que ofrece todos los tipos
+de contenido registrados.
+
+En `/organization/`, los estilos de `#organization-search-form` en
+`public/theme_ejemplo.css` colocan el buscador y **Order by** en una misma fila
+en escritorio, con el contador de resultados debajo. En móvil los controles se
+apilan. Se mantienen las opciones de orden y el envío de búsqueda existentes.
+
+---
+
 ## 1. Indexación de datasets (Pipeline espacial)
 
 **Trigger**: CKAN indexa un dataset en Solr
