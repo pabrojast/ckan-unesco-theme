@@ -6843,3 +6843,7 @@ msgstr ""
 #~ "A growing global hub for water knowledge — real-time figures from our "
 #~ "network."
 #~ msgstr "مركز عالمي متنامٍ للمعرفة المائية — أرقام فورية من شبكتنا."
+
+#: ckanext/theme_ejemplo/templates/overrides/snippets/changes/license.html
+msgid "Unknown license"
+msgstr "ترخيص غير معروف"

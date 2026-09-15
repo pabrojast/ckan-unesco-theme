@@ -8,6 +8,7 @@ import ckan.plugins.toolkit as toolkit
 from ckan.lib.plugins import DefaultTranslation
 import shapely.geometry
 import json
+import os
 import ckanext.schemingdcat.utils as utils
 from flask import Blueprint
 from ckanext.theme_ejemplo.controller import MyLogica
@@ -408,6 +409,13 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
             return app
 
         def update_config(self, config):
+            # Activity precede al tema en dev. Dar prioridad sólo a las
+            # correcciones puntuales, respetando los overrides del operador.
+            overrides_path = os.path.join(os.path.dirname(__file__), 'templates', 'overrides')
+            extra_paths = [path.strip() for path in
+                           (config.get('extra_template_paths') or '').split(',') if path.strip()]
+            if overrides_path not in extra_paths:
+                config['extra_template_paths'] = ','.join(extra_paths + [overrides_path])
             # Add this plugin's templates dir to CKAN's extra_template_paths, so
             # that CKAN will use this plugin's custom templates.
             # 'templates' is the path to the templates dir, relative to this

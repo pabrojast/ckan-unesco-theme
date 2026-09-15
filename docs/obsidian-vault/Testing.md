@@ -26,6 +26,23 @@
 
 ## Cómo ejecutar tests
 
+### Historial de licencias
+
+`test_license_history_template.py` renderiza el override
+`templates/overrides/snippets/changes/license.html` con títulos/URLs ausentes y combinaciones
+con y sin enlaces. También verifica el escape HTML y los cierres de enlaces.
+Estas pruebas no necesitan servicios CKAN:
+
+```bash
+PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python3 -m pytest -q ckanext/theme_ejemplo/tests/test_license_history_template.py
+```
+
+El override permite leer actividades antiguas sin título de licencia sin
+modificar los metadatos del dataset ni el registro histórico.
+Se registra en `extra_template_paths` porque `activity` precede al tema en
+la lista de plugins de dev. Sólo ese directorio tiene prioridad; los overrides
+configurados por el operador conservan su posición.
+
 ### Prerrequisitos
 
 Los tests requieren una instancia CKAN con servicios de infraestructura:

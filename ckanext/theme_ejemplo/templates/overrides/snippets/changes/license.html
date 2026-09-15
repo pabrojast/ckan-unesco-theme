@@ -1,0 +1,22 @@
+{# Los registros históricos pueden carecer de título o URL de licencia. #}
+{% set new_title = change.new_title or _('Unknown license') %}
+{% set old_title = change.old_title or _('Unknown license') %}
+<li>
+  <p>
+    {{ _('Changed the license of') }}
+    <a href="{{ h.url_for('dataset.read', id=change.pkg_id) }}">{{ change.title }}</a>
+    {{ _('to') }}
+    {% if change.new_url %}
+      <a href="{{ change.new_url }}">{{ new_title }}</a>
+    {% else %}
+      {{ new_title }}
+    {% endif %}
+    {{ _('(previously') }}
+    {% if change.old_url %}
+      <a href="{{ change.old_url }}">{{ old_title }}</a>
+    {% else %}
+      {{ old_title }}
+    {% endif %}
+    )
+  </p>
+</li>

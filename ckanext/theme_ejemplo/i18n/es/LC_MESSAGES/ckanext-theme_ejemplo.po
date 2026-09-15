@@ -7070,3 +7070,7 @@ msgstr "Iniciar sesión"
 #~ msgstr ""
 #~ "Un núcleo global creciente de conocimiento sobre el agua: cifras en tiempo "
 #~ "real desde nuestra red."
+
+#: ckanext/theme_ejemplo/templates/overrides/snippets/changes/license.html
+msgid "Unknown license"
+msgstr "Licencia desconocida"
