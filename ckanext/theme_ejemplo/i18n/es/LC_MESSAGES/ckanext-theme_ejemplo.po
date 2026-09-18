@@ -7074,3 +7074,15 @@ msgstr "Iniciar sesión"
 #: ckanext/theme_ejemplo/templates/overrides/snippets/changes/license.html
 msgid "Unknown license"
 msgstr "Licencia desconocida"
+
+#: ckanext/theme_ejemplo/templates/base.html
+msgid "See all results for"
+msgstr "Ver todos los resultados para"
+
+#: ckanext/theme_ejemplo/templates/base.html
+msgid "No suggestions found"
+msgstr "No se encontraron sugerencias"
+
+#: ckanext/theme_ejemplo/templates/base.html
+msgid "Search suggestions"
+msgstr "Sugerencias de búsqueda"

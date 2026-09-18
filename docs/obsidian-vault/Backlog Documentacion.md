@@ -24,7 +24,6 @@
 | DOC-014 | Helpers | `h.get_featured_datasets` ya no tiene consumidor dentro del repo desde que la portada muestra visores en vez de datasets; sigue registrado y el panel `/ckan-admin/featured-datasets` sigue operativo. Decidir si se retira. | Baja |
 | DOC-015 | Admin/i18n | **Bug preexistente**: `templates/admin/ihpix_reports.html` interpola `{{ _("An error occurred.") }}` dentro de un literal JS entre comillas simples; la traducción francesa («Une erreur s'est produite.») rompe el parseo y deja el panel sin JS en `/fr`. Se arregla igual que en los otros paneles: `' + {{ _("An error occurred.")|tojson }}`. | Alta |
 | DOC-016 | Deployment | No hay pipeline documentado de CKAN hacia dev (`data.dev-wins.com`): en `ckan-unesco-docker` el workflow `deploy` sólo apunta a producción y `deploy-terria-dev` despliega TerriaMap. Pendiente por confirmar cómo se actualiza dev. | Media |
-| DOC-017 | i18n | Cadenas nuevas del buscador (`Relevance`, `See all results for`, `No suggestions found`, `Search suggestions`, `Member States`) sin traducir en ar/es/fr. Ver [[Busqueda]]. | Media |
 
 ---
 

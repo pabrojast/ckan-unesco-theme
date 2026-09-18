@@ -7095,3 +7095,15 @@ msgstr "Connexion"
 #: ckanext/theme_ejemplo/templates/overrides/snippets/changes/license.html
 msgid "Unknown license"
 msgstr "Licence inconnue"
+
+#: ckanext/theme_ejemplo/templates/base.html
+msgid "See all results for"
+msgstr "Voir tous les résultats pour"
+
+#: ckanext/theme_ejemplo/templates/base.html
+msgid "No suggestions found"
+msgstr "Aucune suggestion trouvée"
+
+#: ckanext/theme_ejemplo/templates/base.html
+msgid "Search suggestions"
+msgstr "Suggestions de recherche"

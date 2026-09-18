@@ -6347,3 +6347,15 @@ msgstr ""
 msgid "Login"
 msgstr ""
 
+
+#: ckanext/theme_ejemplo/templates/base.html
+msgid "See all results for"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/base.html
+msgid "No suggestions found"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/base.html
+msgid "Search suggestions"
+msgstr ""

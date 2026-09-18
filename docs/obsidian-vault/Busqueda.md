@@ -88,8 +88,7 @@ Respuesta:
 
 Comportamiento: debounce de 200 ms, `AbortController` para descartar respuestas viejas, patrón ARIA combobox/listbox, ↑/↓/Enter/Esc, resaltado insensible a acentos. **Enter sin sugerencia seleccionada envía el formulario normal**; sin JS o si el endpoint falla, el buscador funciona como siempre. La URL del endpoint y los textos llegan por atributos `data-*` del `<script>` (pasan por `url_for` y `_()`, así respetan el idioma).
 
-> [!note] Pendiente por confirmar
-> Las cadenas nuevas (`Relevance`, `See all results for`, `No suggestions found`, `Search suggestions`, `Member States`) aún no están en los catálogos ar/es/fr; hasta traducirlas salen en inglés.
+Las cadenas del desplegable (`See all results for`, `No suggestions found`, `Search suggestions`) están traducidas en ar/es/fr; `Relevance`, `Member States` y las etiquetas de grupo ya existían en los catálogos.
 
 ## Tests
 

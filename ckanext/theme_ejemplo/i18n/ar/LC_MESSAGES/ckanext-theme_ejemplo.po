@@ -6847,3 +6847,15 @@ msgstr ""
 #: ckanext/theme_ejemplo/templates/overrides/snippets/changes/license.html
 msgid "Unknown license"
 msgstr "ترخيص غير معروف"
+
+#: ckanext/theme_ejemplo/templates/base.html
+msgid "See all results for"
+msgstr "عرض جميع النتائج لـ"
+
+#: ckanext/theme_ejemplo/templates/base.html
+msgid "No suggestions found"
+msgstr "لم يتم العثور على اقتراحات"
+
+#: ckanext/theme_ejemplo/templates/base.html
+msgid "Search suggestions"
+msgstr "اقتراحات البحث"
