@@ -71,6 +71,7 @@ Ver [[Open Learning]] para el flujo completo de sincronización y curación.
 | Clave | Default | Descripción |
 |---|---|---|
 | `ckanext.theme_ejemplo.index_followers` | `false` | Habilitar indexación de seguidores de datasets en Solr |
+| `ckanext.theme_ejemplo.search_partial_match` | `true` | Suma `title_ngram`/`name_ngram` al `qf` de la búsqueda de datasets para encontrar palabras a medio escribir. Ver [[Busqueda#Datasets: coincidencia parcial]] |
 
 ### Claves de otras extensiones que este tema lee
 
@@ -112,6 +113,7 @@ ckanext.theme_ejemplo.home_cache_ttl = 300
 ckanext.theme_ejemplo.recently_added_cache_ttl = 300
 ckanext.theme_ejemplo.tracking_cache_ttl = 300
 ckanext.theme_ejemplo.index_followers = false
+ckanext.theme_ejemplo.search_partial_match = true
 
 # Cursos UNESCO Open Learning (caché curada)
 ckanext.theme_ejemplo.openlearning_search_terms = water

@@ -4,6 +4,8 @@
    MyLogica.group_index. /group mezcla member states e initiatives, así que
    se ordena contra el ranking completo. #}
 {% block groups_search_form %}
+  {# data-suggest-scope: sugerencias mientras se escribe (search-suggest.js) #}
+  <div data-suggest-scope="group">
   {% snippet 'schemingdcat/snippets/search_form.html',
      form_id='group-search-form',
      type='group',
@@ -13,9 +15,11 @@
      placeholder=_('Search groups...'),
      show_empty=h.schemingdcat_request_params(),
      no_bottom_border=true if page.items,
-     sorting=[(_('Contribution'), 'score desc'),
+     sorting=([(_('Relevance'), 'relevance')] if q else []) +
+             [(_('Contribution'), 'score desc'),
               (_('Name Ascending'), 'title asc'),
               (_('Name Descending'), 'title desc')] %}
+  </div>
 {% endblock %}
 
 {% block groups_list %}

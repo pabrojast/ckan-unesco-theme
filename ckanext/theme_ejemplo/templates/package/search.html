@@ -65,5 +65,7 @@
   {% if not sort_by_selected and not (q or '').strip() %}
     {% set sort_by_selected = completeness_sort %}
   {% endif %}
+  <div data-suggest-scope="dataset">
   {% snippet 'schemingdcat/snippets/search_form.html', type='dataset', query=q, sorting=sorting, sorting_selected=sort_by_selected, count=page.item_count, facets=facets, show_empty=request.args, error=query_error %}
+  </div>
 {% endblock %}

@@ -212,6 +212,8 @@ Patrón LRU con buster:
 2. controller.py: people_index() extrae query params
 3. helpers.py: get_people_directory(q, country, organization, expertise)
    → actions.py: people_list() ejecuta búsqueda con filtros
+     (q se parte en palabras: cada una debe aparecer en name o fullname,
+      en cualquier orden — search.filter_by_tokens, ver [[Busqueda]])
    → Consulta users con plugin_extras.theme_ejemplo
 4. Renderiza template people/directory.html con resultados paginados
 ```

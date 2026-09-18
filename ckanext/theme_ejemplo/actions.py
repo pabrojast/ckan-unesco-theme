@@ -14,6 +14,7 @@ from ckanext.theme_ejemplo.utils import (
     normalize_user_image_url,
 )
 from ckanext.theme_ejemplo.helpers import get_member_state_title
+from ckanext.theme_ejemplo import search as theme_search
 
 log = logging.getLogger(__name__)
 
@@ -428,11 +429,9 @@ def people_list(context, data_dict):
     )
 
     if q:
-        q_like = f'%{q}%'
-        query = query.filter(
-            model.User.name.ilike(q_like) |
-            model.User.fullname.ilike(q_like)
-        )
+        # Por tokens, en cualquier orden: "perez juan" encuentra "Juan Perez".
+        query = theme_search.filter_by_tokens(
+            query, q, [model.User.name, model.User.fullname])
 
     users = query.order_by(model.User.fullname.asc()).all()
 
@@ -1375,12 +1374,9 @@ def admin_user_list(context, data_dict):
         query = query.filter(model.User.sysadmin == sysadmin_filter)
 
     if q:
-        q_like = f'%{q}%'
-        query = query.filter(
-            model.User.name.ilike(q_like) |
-            model.User.fullname.ilike(q_like) |
-            model.User.email.ilike(q_like)
-        )
+        query = theme_search.filter_by_tokens(
+            query, q,
+            [model.User.name, model.User.fullname, model.User.email])
 
     # Ordenamiento
     order_map = {

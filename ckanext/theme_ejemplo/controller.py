@@ -18,6 +18,7 @@ import logging
 from ckanext.theme_ejemplo.utils import normalize_user_image_url
 from ckanext.theme_ejemplo.helpers import get_member_state_title
 from ckanext.theme_ejemplo import ranking
+from ckanext.theme_ejemplo import search as theme_search
 
 log = logging.getLogger(__name__)
 group_type = u'group'
@@ -242,6 +243,43 @@ def _name_filter_key(list_action):
     return 'organizations' if list_action == 'organization_list' else 'groups'
 
 
+def _resolve_entity_sort(q, sort_by):
+    """Traduce el ``?sort=`` de los listados de entidades.
+
+    Devuelve (modo, sort seleccionado en el desplegable, sort real para la
+    acción). Modos: 'relevance' (por defecto con búsqueda), 'rank' (por
+    contribución, por defecto sin búsqueda) y 'plain' (un sort real del core).
+    'relevance' y 'score desc' son pseudo-sorts: la lista blanca de
+    group_list/organization_list los rechazaría con ValidationError.
+    """
+    has_q = bool((q or '').strip())
+    if sort_by in (None, '', 'relevance'):
+        mode = 'relevance' if has_q else 'rank'
+    elif sort_by == 'score desc':
+        mode = 'rank'
+    else:
+        mode = 'plain'
+    if mode == 'relevance':
+        return mode, 'relevance', 'title asc'
+    if mode == 'rank':
+        return mode, 'score desc', 'title asc'
+    return mode, sort_by, sort_by
+
+
+def _filter_names_by_query(names, q, sort_mode, **search_kwargs):
+    """Acota ``names`` a los que coinciden con ``q`` (tokens en cualquier orden).
+
+    En modo 'relevance' manda el orden del buscador; en el resto se conserva el
+    orden en que venían los nombres.
+    """
+    matched = theme_search.search_entity_names(q, **search_kwargs)
+    if sort_mode == 'relevance':
+        available = set(names)
+        return [n for n in matched if n in available]
+    matched = set(matched)
+    return [n for n in names if n in matched]
+
+
 def _ranked_entity_index(entity_type, list_action, ckan_type, template):
     """Listado de organizaciones/grupos ordenado por contribución.
 
@@ -261,12 +299,11 @@ def _ranked_entity_index(entity_type, list_action, ckan_type, template):
     page = 1
     q = c.q = request.args.get('q', '')
     sort_by = request.args.get('sort')
-    # El ranking también aplica con búsqueda: la acción devuelve los nombres ya
-    # filtrados por `q` y el orden se resuelve después, sobre esa lista.
-    rank_order = sort_by in (None, '', 'score desc')
-    c.sort_by_selected = 'score desc' if rank_order else sort_by
-    # 'score desc' es un pseudo-sort nuestro: nunca debe llegar a la acción.
-    list_sort = 'title asc' if sort_by in (None, '', 'score desc') else sort_by
+    # Con búsqueda el orden por defecto es la relevancia; sin búsqueda, el
+    # ranking por contribución. Ambos son pseudo-sorts nuestros y nunca deben
+    # llegar a la acción (ver _resolve_entity_sort).
+    sort_mode, c.sort_by_selected, list_sort = _resolve_entity_sort(q, sort_by)
+    rank_order = sort_mode == 'rank'
 
     def _render(items, collection, current_page):
         c.page = h.Page(
@@ -293,12 +330,19 @@ def _ranked_entity_index(entity_type, list_action, ckan_type, template):
         action = toolkit.get_action(list_action)
 
         # 1) nombres completos, para el contador y la paginación
+        # `q` no se pasa a la acción: el core busca la frase completa con
+        # ILIKE ("quality water" no encontraba "Water Quality ..."). El filtro
+        # por tokens, en cualquier orden, vive en theme_search.
         names = action(context, {
             'all_fields': False,
-            'q': q,
             'sort': list_sort,
             'type': ckan_type,
         })
+        if q.strip():
+            names = _filter_names_by_query(
+                names, q, sort_mode,
+                is_organization=(list_action == 'organization_list'),
+                ckan_type=ckan_type)
         if rank_order:
             names = ranking.order_by_score(names, entity_type)
 
@@ -320,7 +364,7 @@ def _ranked_entity_index(entity_type, list_action, ckan_type, template):
                 'limit': items_per_page,
                 'sort': list_sort,
             })
-            if rank_order:
+            if sort_mode != 'plain':
                 # la acción no respeta el orden de `groups`
                 by_name = {g['name']: g for g in items}
                 items = [by_name[n] for n in page_names if n in by_name]
@@ -336,6 +380,79 @@ def _ranked_entity_index(entity_type, list_action, ckan_type, template):
         return _render([], [], 1)
 
 
+# Qué fuentes consulta cada scope del endpoint de sugerencias, en el orden en
+# que se muestran.
+SUGGEST_SCOPES = {
+    'all': ('dataset', 'organization', 'initiative', 'memberstate'),
+    'dataset': ('dataset',),
+    'organization': ('organization',),
+    'initiative': ('initiative',),
+    'memberstate': ('memberstate',),
+    'group': ('initiative', 'memberstate'),
+}
+SUGGEST_LIMIT = 6
+# Los n-gramas van primero: permiten completar una palabra a medio escribir.
+SUGGEST_DATASET_QF = 'title_ngram^3 name_ngram title^4 tags^2 text^0.5'
+
+
+def _suggest_label(kind):
+    return {
+        'dataset': _('Datasets'),
+        'organization': _('Organizations'),
+        'initiative': _('Initiatives'),
+        'memberstate': _('Member States'),
+    }[kind]
+
+
+def _suggest_items(kind, q):
+    """Items {title, url, subtitle} de una fuente de sugerencias."""
+    if kind == 'dataset':
+        solr_q = theme_search.escape_solr(q)
+        if not solr_q:
+            return []
+        context = {'model': model, 'session': model.Session, 'user': c.user}
+        result = toolkit.get_action('package_search')(context, {
+            'q': solr_q,
+            'qf': SUGGEST_DATASET_QF,
+            'mm': '100%',
+            'rows': SUGGEST_LIMIT,
+            'fl': 'name,title,type,organization',
+        })
+        # Con `fl`, `organization` llega como slug (el doc crudo de Solr).
+        org_titles = {e['name']: e['title']
+                      for e in theme_search.get_entity_index()
+                      if e['is_organization']}
+        return [{
+            'title': pkg.get('title') or pkg.get('name'),
+            'url': h.url_for('dataset.read', id=pkg.get('name')),
+            'subtitle': org_titles.get(pkg.get('organization'), ''),
+        } for pkg in result.get('results', []) if pkg.get('name')]
+
+    if kind == 'organization':
+        found = theme_search.search_entities(
+            q, is_organization=True, limit=SUGGEST_LIMIT,
+            include_description=False)
+        route = 'organization.read'
+    else:
+        member_states = get_member_states_groups()
+        if kind == 'memberstate':
+            found = theme_search.search_entities(
+                q, is_organization=False, limit=SUGGEST_LIMIT,
+                include_description=False,
+                allowed=[g for g in member_states if g != 'member-states'])
+        else:
+            found = theme_search.search_entities(
+                q, is_organization=False, limit=SUGGEST_LIMIT,
+                include_description=False,
+                excluded=member_states)
+        route = 'group.read'
+    return [{
+        'title': item['title'],
+        'url': h.url_for(route, id=item['name']),
+        'subtitle': '',
+    } for item in found]
+
+
 class MyLogica():
         
         def initiatives():
@@ -347,13 +464,12 @@ class MyLogica():
                     # Obtener parámetros
                     q = c.q = request.args.get('q', '')
                     sort_by = request.args.get('sort')
-                    # Orden por contribución por defecto; 'score desc' no es un
-                    # sort válido de group_list, así que se resuelve aquí. Con
-                    # búsqueda también aplica: se ordena la lista de nombres ya
-                    # filtrada, antes de paginar.
-                    rank_order = sort_by in (None, '', 'score desc')
-                    c.sort_by_selected = 'score desc' if rank_order else sort_by
-                    group_list_sort = 'title asc' if sort_by in (None, '', 'score desc') else sort_by
+                    # Orden por contribución por defecto (por relevancia si
+                    # hay búsqueda); ninguno es un sort válido de group_list,
+                    # así que se resuelven aquí, antes de paginar.
+                    sort_mode, c.sort_by_selected, group_list_sort = \
+                        _resolve_entity_sort(q, sort_by)
+                    rank_order = sort_mode == 'rank'
                     page = h.get_page_number(request.args) or 1
 
                     # Obtener grupos de member-states desde cache
@@ -368,16 +484,13 @@ class MyLogica():
                     ms = set(member_states_groups)
                     initiatives_groups = [g for g in all_groups if g not in ms]
 
-                    if q:
-                        # Nombres que coinciden con la búsqueda; el orden y la
-                        # paginación se resuelven aquí, no en la acción.
-                        initiatives_groups = toolkit.get_action('group_list')(
-                            data_dict={
-                                'q': q,
-                                'groups': initiatives_groups,
-                                'limit': 500
-                            }
-                        )
+                    if q.strip():
+                        # Coincidencia por tokens en cualquier orden (el `q` de
+                        # group_list busca la frase completa con ILIKE); el
+                        # orden y la paginación se resuelven aquí.
+                        initiatives_groups = _filter_names_by_query(
+                            initiatives_groups, q, sort_mode,
+                            is_organization=False)
                     if rank_order:
                         initiatives_groups = ranking.order_by_score(
                             initiatives_groups, 'initiative')
@@ -399,7 +512,7 @@ class MyLogica():
                                 'sort': group_list_sort
                             }
                         )
-                        if rank_order:
+                        if sort_mode != 'plain':
                             # group_list no respeta el orden de page_groups
                             by_name = {g['name']: g for g in groups_result}
                             groups_result = [by_name[n] for n in page_groups
@@ -471,13 +584,12 @@ class MyLogica():
                     # Obtener parámetros
                     q = c.q = request.args.get('q', '')
                     sort_by = request.args.get('sort')
-                    # Orden por contribución por defecto; 'score desc' no es un
-                    # sort válido de group_list, así que se resuelve aquí. Con
-                    # búsqueda también aplica: se ordena la lista de nombres ya
-                    # filtrada, antes de paginar.
-                    rank_order = sort_by in (None, '', 'score desc')
-                    c.sort_by_selected = 'score desc' if rank_order else sort_by
-                    group_list_sort = 'title asc' if sort_by in (None, '', 'score desc') else sort_by
+                    # Orden por contribución por defecto (por relevancia si
+                    # hay búsqueda); ninguno es un sort válido de group_list,
+                    # así que se resuelven aquí, antes de paginar.
+                    sort_mode, c.sort_by_selected, group_list_sort = \
+                        _resolve_entity_sort(q, sort_by)
+                    rank_order = sort_mode == 'rank'
                     page = h.get_page_number(request.args) or 1
 
                     # Obtener grupos de member-states desde cache (sin incluir el principal)
@@ -485,16 +597,13 @@ class MyLogica():
                     # Remover 'member-states' del listado ya que solo queremos los hijos
                     member_states_only = [g for g in member_states_groups if g != 'member-states']
 
-                    if q:
-                        # Nombres que coinciden con la búsqueda; el orden y la
-                        # paginación se resuelven aquí, no en la acción.
-                        member_states_only = toolkit.get_action('group_list')(
-                            data_dict={
-                                'q': q,
-                                'groups': member_states_only,
-                                'limit': 500
-                            }
-                        )
+                    if q.strip():
+                        # Coincidencia por tokens en cualquier orden (el `q` de
+                        # group_list busca la frase completa con ILIKE); el
+                        # orden y la paginación se resuelven aquí.
+                        member_states_only = _filter_names_by_query(
+                            member_states_only, q, sort_mode,
+                            is_organization=False)
                     if rank_order:
                         member_states_only = ranking.order_by_score(
                             member_states_only, 'member_state')
@@ -516,7 +625,7 @@ class MyLogica():
                                 'sort': group_list_sort
                             }
                         )
-                        if rank_order:
+                        if sort_mode != 'plain':
                             # group_list no respeta el orden de page_groups
                             by_name = {g['name']: g for g in groups_result}
                             groups_result = [by_name[n] for n in page_groups
@@ -629,6 +738,39 @@ class MyLogica():
                 list_action='group_list',
                 ckan_type='group',
                 template='group/index.html')
+
+        @staticmethod
+        def search_suggest():
+            """GET /api/theme/suggest?q=&scope= — sugerencias mientras se escribe.
+
+            scope: all | dataset | organization | initiative | memberstate.
+            Devuelve grupos de {title, url, subtitle}; el orden de las palabras
+            y los acentos no importan, y la última palabra puede ir a medias.
+            """
+            q = (request.args.get('q') or '').strip()[:200]
+            scope = request.args.get('scope') or 'all'
+            if scope not in SUGGEST_SCOPES:
+                scope = 'all'
+            groups = []
+            if len(q) >= theme_search.MIN_SUGGEST_CHARS:
+                for kind in SUGGEST_SCOPES[scope]:
+                    try:
+                        items = _suggest_items(kind, q)
+                    except Exception as e:
+                        # Una fuente caída no debe tumbar el resto del desplegable.
+                        log.warning('search_suggest: falló %s para %r: %s', kind, q, e)
+                        items = []
+                    if items:
+                        groups.append({
+                            'type': kind,
+                            'label': _suggest_label(kind),
+                            'items': items,
+                        })
+            response = jsonify({'query': q, 'scope': scope, 'groups': groups})
+            if not c.user:
+                # Sólo anónimos: con sesión los resultados incluyen privados.
+                response.headers['Cache-Control'] = 'public, max-age=60'
+            return response
 
         def thematicbuilder():
             

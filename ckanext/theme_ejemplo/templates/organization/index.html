@@ -4,6 +4,8 @@
    MyLogica.organization_index (controller._ranked_entity_index): 'score desc'
    es un pseudo-sort que nunca llega a organization_list. #}
 {% block organizations_search_form %}
+  {# data-suggest-scope: sugerencias mientras se escribe (search-suggest.js) #}
+  <div data-suggest-scope="organization">
   {% snippet 'schemingdcat/snippets/search_form.html',
      form_id='organization-search-form',
      type='organization',
@@ -13,9 +15,11 @@
      placeholder=_('Search organizations...'),
      show_empty=h.schemingdcat_request_params(),
      no_bottom_border=true if page.items,
-     sorting=[(_('Contribution'), 'score desc'),
+     sorting=([(_('Relevance'), 'relevance')] if q else []) +
+             [(_('Contribution'), 'score desc'),
               (_('Name Ascending'), 'title asc'),
               (_('Name Descending'), 'title desc')] %}
+  </div>
 {% endblock %}
 
 {% block organizations_list %}

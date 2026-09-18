@@ -37,6 +37,9 @@ db_fork_safety.init_postfork()
 # Orden por defecto en /dataset: mejor metadata primero, empates por fecha.
 # Usa el campo con cero-padding porque Solr lo indexa como string.
 DEFAULT_DATASET_SORT = 'metadata_completeness_sort desc, metadata_modified desc'
+# qf del core (ckan.lib.search.query.QUERY_FIELDS) + campos n-grama.
+PARTIAL_MATCH_QF = ('name^4 title^4 tags^2 groups^2 text '
+                    'title_ngram^0.8 name_ngram^0.5')
 
 # TTL caches para evitar llamadas repetidas en helpers costosos
 _courses_cache = {'data': None, 'expires': 0}
@@ -171,7 +174,26 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                     search_params['sort'] = DEFAULT_DATASET_SORT
             except RuntimeError:
                 pass
+            self._enable_partial_match(search_params)
             return search_params
+
+        @staticmethod
+        def _enable_partial_match(search_params):
+            """Suma los campos n-grama al ``qf`` para que una palabra a medio
+            escribir ("hidro", "quali") encuentre datasets. title_ngram y
+            name_ngram ya se indexan (schema.xml) pero el qf del core no los
+            consulta. Boost bajo: la palabra completa sigue ganando.
+
+            No se toca si quien llama trae su propio ``qf`` ni en consultas
+            de campo (``campo:valor``), que el core no pasa por dismax.
+            """
+            if not toolkit.asbool(toolkit.config.get(
+                    'ckanext.theme_ejemplo.search_partial_match', True)):
+                return
+            q = (search_params.get('q') or '').strip()
+            if not q or ':' in q or search_params.get('qf'):
+                return
+            search_params['qf'] = PARTIAL_MATCH_QF
 
         def _process_spatial_data(self, dataset_dict):
             """Procesamiento optimizado de datos espaciales"""
@@ -729,6 +751,13 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
             # un blueprint de extensión se ordenan por encima de las del core
             # (flask_app.register_extension_blueprint), el mismo mecanismo que
             # usa schemingdcat para /dataset.
+            # Sugerencias mientras se escribe (public/search-suggest.js)
+            blueprint.add_url_rule(
+                u'/api/theme/suggest',
+                u'search_suggest',
+                MyLogica.search_suggest,
+                methods=['GET'],
+            )
             blueprint.add_url_rule(
                 u'/organization',
                 u'organization_index',

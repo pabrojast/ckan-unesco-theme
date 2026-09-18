@@ -7,6 +7,7 @@
   {{ super() }}
 <link rel="stylesheet" href="{{ h.url_for_static('/theme_ejemplo.css') }}" />
 <link rel="stylesheet" href="{{ h.url_for_static('/css/people-orgs.css') }}" />
+<link rel="stylesheet" href="{{ h.url_for_static('/css/search-suggest.css') }}" />
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
 {# Load schemingdcat icons for INSPIRE theme icons globally #}
 {% asset 'ckanext-schemingdcat/schemingdcat-icons' %}
@@ -31,4 +32,11 @@
   {% asset 'theme/ckan-bs5-compat-js' %}
   {{ super() }}
   {% asset 'theme/theme-ejemplo-runtime-js' %}
+  {# Sugerencias mientras se escribe: se activa en inputs con (o dentro de)
+     data-suggest-scope. La URL pasa por url_for para respetar el idioma. #}
+  <script defer src="{{ h.url_for_static('/search-suggest.js') }}"
+          data-suggest-url="{{ h.url_for('theme_ejemplo.search_suggest') }}"
+          data-label-all="{{ _('See all results for') }}"
+          data-label-empty="{{ _('No suggestions found') }}"
+          data-label-list="{{ _('Search suggestions') }}"></script>
 {% endblock %}

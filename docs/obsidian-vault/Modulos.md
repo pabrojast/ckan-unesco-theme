@@ -421,12 +421,32 @@ Se ejecuta por CronJob de Kubernetes cada ~5 min (ver `deploy/cronjob-pageviews-
 ### Funciones principales
 - `_fetch_all_courses(search_terms)` — fetch paginado por término (sigue `pagination.next`, salta cursos `hidden`, deduplica por `course_id`). Devuelve `(courses_by_id, full_success)`
 - `_detect_course_type(api_course)` — `pacing == 'self'` → permanent; `'instructor'` → scheduled; fallback por `start_type`/`end`
-- `sync_courses(force)` — upsert transaccional que preserva la curación (nunca toca `status` ni `display_order`); marca `is_available=False` **solo si el fetch fue completo**
+- `sync_courses(force)` — upsert transaccional que preserva la curación (nunca toca `status` ni `display_order`); marca `is_available=False` **solo si el fetch fue completo** y tras re-verificar cada curso ausente por ID (`OpenLearningCourse.get_not_in()` + `_fetch_course_by_id`)
+- `_fetch_course_by_id(course_id)` — endpoint de detalle `<API>/<course_id>/`; devuelve `None` si 404 o `hidden`, lanza `RuntimeError` si la API falla
+- `_course_fields()` / `_apply_api_course()` — mapeo API → columnas de display y refresco de una fila existente (compartidos por el sync y el alta manual)
+- `search_courses_api(query)` / `fetch_and_upsert_course(course_id)` — búsqueda y alta manual desde el panel admin
 - `maybe_sync_courses()` — gatillo lazy con TTL contra `max(last_seen_at)` en BD + cooldown de 5 min en memoria; nunca lanza excepción
 
 ### Notas
 - Sesión `requests.Session` propia (timeout `(5, 10)`) para evitar import circular con plugin.py
 - API: `https://openlearning.unesco.org/api/courses/v1/courses/` (Open edX courses v1)
+
+---
+
+## search.py
+
+**Rol**: Búsqueda de organizaciones/grupos insensible al orden de las palabras y a los acentos, y utilidades compartidas por los buscadores. Ver [[Busqueda]].
+
+### Funciones principales
+- `normalize_text()` / `match_score()` / `filter_ranked()` — matching por tokens (AND, cualquier orden) y puntaje de relevancia. Puras: no importan CKAN, se testean sin entorno
+- `get_entity_index()` / `clear_entity_index()` — índice en memoria de `group` activos (TTL 300 s, por proceso)
+- `search_entities()` / `search_entity_names()` — búsqueda sobre el índice con filtros `is_organization`, `ckan_type`, `allowed`, `excluded`, `include_description`
+- `filter_by_tokens(sa_query, q, columns)` — AND de `ILIKE '%token%'` para tablas grandes (usuarios); escapa `%` y `_`
+- `escape_solr()` — neutraliza la sintaxis de Solr en el texto de las sugerencias
+
+### Notas
+- Portado de `ckanext-colab/lib/org_search.py`; se copia porque colab es opcional
+- Se importa como `theme_search` en `controller.py` y `actions.py` (en `controller.py` el nombre `search` ya es `ckan.lib.search`)
 
 ---
 

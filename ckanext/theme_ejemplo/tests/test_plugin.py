@@ -108,3 +108,39 @@ def test_featured_viewers_admin_is_forbidden_for_anonymous(app):
     """Regresión: el panel es sólo para sysadmins."""
     resp = app.get('/ckan-admin/featured-viewers', follow_redirects=False)
     assert resp.status_code in (302, 403)
+
+
+def test_search_suggest_route_is_registered(app):
+    adapter = app.flask_app.url_map.bind('test.ckan.net')
+    endpoint, _args = adapter.match('/api/theme/suggest', method='GET')
+    assert endpoint == 'theme_ejemplo.search_suggest'
+
+
+def test_search_suggest_ignores_too_short_queries(app):
+    resp = app.get('/api/theme/suggest?q=a&scope=all')
+    assert resp.status_code == 200
+    assert resp.json['groups'] == []
+
+
+def test_search_suggest_falls_back_to_all_on_unknown_scope(app):
+    resp = app.get('/api/theme/suggest?q=&scope=nope')
+    assert resp.json['scope'] == 'all'
+
+
+def test_partial_match_adds_ngram_fields_to_qf():
+    params = {'q': 'hidro'}
+    plugin.ThemeEjemploPlugin._enable_partial_match(params)
+    assert 'title_ngram' in params['qf']
+    # conserva los campos y boosts del core
+    assert params['qf'].startswith('name^4 title^4 tags^2 groups^2 text')
+
+
+def test_partial_match_leaves_explicit_qf_and_field_queries_alone():
+    params = {'q': 'hidro', 'qf': 'title'}
+    plugin.ThemeEjemploPlugin._enable_partial_match(params)
+    assert params['qf'] == 'title'
+
+    for q in ('', '*:*', 'title:hidro'):
+        params = {'q': q}
+        plugin.ThemeEjemploPlugin._enable_partial_match(params)
+        assert 'qf' not in params
