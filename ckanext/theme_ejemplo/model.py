@@ -2023,6 +2023,13 @@ class OpenLearningCourse(model.DomainObject):
         return q.all()
 
     @classmethod
+    def get_not_in(cls, course_ids):
+        """Cursos de la BD cuyo course_id no está en ``course_ids``."""
+        return meta.Session.query(cls).filter(
+            ~cls.course_id.in_(list(course_ids))
+        ).all()
+
+    @classmethod
     def last_sync_at(cls):
         """Fecha del último sync exitoso (max last_seen_at) o None."""
         from sqlalchemy import func

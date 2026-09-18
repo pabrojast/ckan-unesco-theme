@@ -117,6 +117,21 @@ SELECT table_name FROM information_schema.tables
 WHERE table_name IN ('membership_request', 'featured_publication', 'bug_ticket', 'portal_card', 'ihpix_content', 'ihpix_activity');
 ```
 
+### Cursos Open Learning aprobados no aparecen en la home ni en `/courses`
+
+Las vistas públicas exigen `status='approved'` **y** `is_available=true`. Si el panel muestra los cursos como aprobados pero la home dice "No courses available", revisar la disponibilidad:
+
+```sql
+select status, is_available, count(*), max(last_seen_at)
+from open_learning_course group by 1, 2;
+```
+
+- Filas `approved | f`: el sync las marcó como no disponibles. Ejecutar `ckan -c ckan.ini openlearning sync --force` (o "Sync now") y volver a consultar.
+- Si un curso concreto sigue en `f`, consultar `https://openlearning.unesco.org/api/courses/v1/courses/<course_id>/`: un 404 o `"hidden": true` significa que Open Learning lo retiró del catálogo.
+- La home anónima pasa por caché (Varnish `s-maxage=300`): esperar ~5 min tras el sync.
+
+Detalle del mecanismo en [[Open Learning]].
+
 ### La sección «Featured Viewers» no aparece en la portada
 
 **Síntoma**: la home no muestra el bloque de visores destacados.

@@ -21,6 +21,14 @@ API Open Learning ──sync──► tabla open_learning_course ──get_publi
 - **Sync** ([[Modulos#openlearning.py|openlearning.py]]): upsert que **preserva la curación** — nunca toca `status` ni `display_order` de filas existentes.
 - **Cursos nuevos** entran con `status='pending'` (ocultos) hasta que un sysadmin los aprueba.
 - **Cursos que desaparecen de la API** se marcan `is_available=False` (no se borran: si reaparecen, recuperan su curación). Esto **solo ocurre si el fetch fue 100% exitoso** (`full_success`), para que una caída parcial de la API no desactive cursos por error.
+- **Detección de ausentes por `course_id`**: las filas de la BD que no vinieron en la búsqueda (`OpenLearningCourse.get_not_in()`) se **re-verifican una a una** contra el endpoint de detalle (`/api/courses/v1/courses/<course_id>/`). Si el curso existe y no está `hidden` se refresca y queda (o vuelve a quedar) disponible — así sobreviven los cursos agregados a mano que no coinciden con los search terms. Si responde 404 o `hidden` → `is_available=False`. Si la API falla → la fila no se toca.
+
+> [!warning]
+> No detectar ausentes comparando `last_seen_at` en una query: `meta.Session` de CKAN usa `autoflush=False`, así que la query lee los valores viejos de la BD. Ese bug (corregido 2026-09-18) marcaba **todos** los cursos como no disponibles en syncs alternos y la home quedaba vacía aunque hubiera cursos aprobados.
+
+> [!note]
+> El listado de la API **ignora** el parámetro `?course_id=` (devuelve la primera página del catálogo completo); para un curso individual hay que usar el endpoint de detalle. Verificado contra la API real el 2026-09-18.
+
 - **Tipo de curso**: auto-detectado del campo `pacing` de Open edX (`self` → `permanent`, `instructor` → `scheduled`; fallback por `start_type`/`end`). El admin puede corregirlo manualmente, lo que activa `course_type_override` y el sync deja de recalcularlo.
 
 ## Disparadores del sync
@@ -43,6 +51,8 @@ API Open Learning ──sync──► tabla open_learning_course ──get_publi
 | `POST /ckan-admin/open-learning/set-status` | `open_learning_set_status()` (AJAX) | Sysadmin |
 | `POST /ckan-admin/open-learning/set-type` | `open_learning_set_type()` (AJAX) | Sysadmin |
 | `POST /ckan-admin/open-learning/sync` | `open_learning_sync_now()` (AJAX) | Sysadmin |
+| `POST /ckan-admin/open-learning/search` | `open_learning_search()` (AJAX) | Sysadmin |
+| `POST /ckan-admin/open-learning/add` | `open_learning_add_course()` (AJAX) | Sysadmin |
 
 ## Templates
 

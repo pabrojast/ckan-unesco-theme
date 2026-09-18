@@ -14,6 +14,7 @@ import json
 import logging
 import threading
 import time
+from urllib.parse import quote
 
 import requests
 
@@ -137,6 +138,70 @@ def _fetch_all_courses(search_terms):
     return courses_by_id, full_success
 
 
+def _course_fields(api_course):
+    """Campos de display de un curso a partir del dict de la API."""
+    media = api_course.get('media') or {}
+    return {
+        'name': (api_course.get('name') or u'').strip(),
+        'org': api_course.get('org') or u'',
+        'short_description': api_course.get('short_description') or u'',
+        'image_url': ((media.get('image') or {}).get('raw')) or u'',
+        'start': _parse_iso_datetime(api_course.get('start')),
+        'end': _parse_iso_datetime(api_course.get('end')),
+        'start_display': api_course.get('start_display') or u'',
+        'pacing': api_course.get('pacing') or u'',
+        'raw_json': json.dumps(api_course, ensure_ascii=False),
+    }
+
+
+def _fetch_course_by_id(course_id):
+    """Fetcha un curso individual de la API por course_id.
+
+    Devuelve el dict del curso, o None si la API no lo trae (o está hidden).
+    Lanza RuntimeError si la API falla (red/HTTP/JSON).
+    """
+    # Se usa el endpoint de detalle: el listado ignora el parámetro
+    # course_id y devuelve la primera página del catálogo completo.
+    url = API_URL + quote(course_id, safe=':+') + '/'
+    try:
+        response = _http_session.get(url, timeout=(5, 10))
+        if response.status_code == 404:
+            return None
+        response.raise_for_status()
+        api_course = response.json()
+    except requests.exceptions.RequestException as e:
+        log.warning(
+            u'Open Learning: error HTTP al fetchar curso %s: %s', course_id, e)
+        raise RuntimeError('Open Learning API request failed')
+    except ValueError as e:
+        log.warning(u'Open Learning: respuesta no-JSON para curso %s: %s',
+                    course_id, e)
+        raise RuntimeError('Open Learning API returned invalid JSON')
+
+    if not isinstance(api_course, dict) or api_course.get('hidden'):
+        return None
+    # El detalle trae 'id' además de 'course_id'; normalizamos por si acaso
+    if (api_course.get('course_id') or api_course.get('id')) != course_id:
+        return None
+    api_course.setdefault('course_id', course_id)
+    return api_course
+
+
+def _apply_api_course(existing, api_course, seen_at):
+    """Refresca una fila existente con datos de la API y la reactiva.
+
+    Nunca toca status ni display_order; recalcula el tipo solo si no hay
+    override del admin.
+    """
+    for attr, value in _course_fields(api_course).items():
+        setattr(existing, attr, value)
+    existing.last_seen_at = seen_at
+    existing.updated_at = seen_at
+    existing.is_available = True
+    if not existing.course_type_override:
+        existing.course_type = _detect_course_type(api_course)
+
+
 def sync_courses(force=False):
     """Sincroniza la tabla open_learning_course con la API.
 
@@ -167,53 +232,44 @@ def sync_courses(force=False):
 
     try:
         for course_id, api_course in courses_by_id.items():
-            name = (api_course.get('name') or u'').strip()
-            if not name:
+            if not (api_course.get('name') or u'').strip():
                 continue
-            media = api_course.get('media') or {}
-            image_url = ((media.get('image') or {}).get('raw')) or u''
-            fields = {
-                'name': name,
-                'org': api_course.get('org') or u'',
-                'short_description': api_course.get('short_description') or u'',
-                'image_url': image_url,
-                'start': _parse_iso_datetime(api_course.get('start')),
-                'end': _parse_iso_datetime(api_course.get('end')),
-                'start_display': api_course.get('start_display') or u'',
-                'pacing': api_course.get('pacing') or u'',
-                'raw_json': json.dumps(api_course, ensure_ascii=False),
-            }
 
             existing = OpenLearningCourse.get_by_course_id(course_id)
             if existing is None:
                 course = OpenLearningCourse(
                     course_id=course_id,
                     course_type=_detect_course_type(api_course),
-                    **fields
+                    **_course_fields(api_course)
                 )
                 meta.Session.add(course)
                 summary['created'] += 1
             else:
-                for attr, value in fields.items():
-                    setattr(existing, attr, value)
-                existing.last_seen_at = sync_started_at
-                existing.updated_at = sync_started_at
-                existing.is_available = True
-                if not existing.course_type_override:
-                    existing.course_type = _detect_course_type(api_course)
+                _apply_api_course(existing, api_course, sync_started_at)
                 summary['updated'] += 1
 
         if full_success:
-            # Cursos que ya no aparecen en la API: marcarlos no disponibles
-            # (sin borrarlos, para conservar la curación si reaparecen)
-            missing = meta.Session.query(OpenLearningCourse).filter(
-                OpenLearningCourse.last_seen_at < sync_started_at,
-                OpenLearningCourse.is_available == True,  # noqa: E712
-            ).all()
-            for course in missing:
-                course.is_available = False
-                course.updated_at = sync_started_at
-                summary['marked_unavailable'] += 1
+            # Cursos que no vinieron en la búsqueda. Se detectan por
+            # course_id y NO por last_seen_at: meta.Session de CKAN usa
+            # autoflush=False, así que una query por timestamp lee los
+            # valores viejos de la BD y marcaría todos como ausentes.
+            # Antes de decidir se re-verifica cada uno por ID, porque los
+            # cursos agregados a mano pueden no coincidir con los search
+            # terms. Incluye los ya no disponibles, para reactivarlos.
+            for course in OpenLearningCourse.get_not_in(courses_by_id.keys()):
+                try:
+                    api_course = _fetch_course_by_id(course.course_id)
+                except RuntimeError:
+                    # Error de API: no tocar la fila (evita falso negativo)
+                    continue
+                if api_course and (api_course.get('name') or u'').strip():
+                    _apply_api_course(course, api_course, sync_started_at)
+                    summary['updated'] += 1
+                elif api_course is None and course.is_available:
+                    # Sin borrar, para conservar la curación si reaparece
+                    course.is_available = False
+                    course.updated_at = sync_started_at
+                    summary['marked_unavailable'] += 1
 
         meta.Session.commit()
     except Exception as e:
@@ -331,49 +387,15 @@ def fetch_and_upsert_course(course_id):
 
     course_id = course_id.strip()
 
-    # Fetch del curso individual desde la API
-    try:
-        response = _http_session.get(
-            API_URL, params={'course_id': course_id}, timeout=(5, 10))
-        response.raise_for_status()
-        data = response.json()
-    except requests.exceptions.RequestException as e:
-        log.warning(
-            u'Open Learning: error HTTP al fetchar curso %s: %s', course_id, e)
-        raise RuntimeError('Open Learning API request failed')
-    except ValueError as e:
-        log.warning(u'Open Learning: respuesta no-JSON para curso %s: %s',
-                    course_id, e)
-        raise RuntimeError('Open Learning API returned invalid JSON')
-
-    # La API devuelve {results: [...]} — buscar el curso solicitado
-    api_course = None
-    for c in data.get('results', []):
-        if c.get('course_id') == course_id and not c.get('hidden'):
-            api_course = c
-            break
-
+    api_course = _fetch_course_by_id(course_id)
     if api_course is None:
         raise toolkit.ObjectNotFound(
             'Course not found in API: {}'.format(course_id))
 
-    name = (api_course.get('name') or u'').strip()
-    if not name:
+    if not (api_course.get('name') or u'').strip():
         raise toolkit.ValidationError({'name': 'Course has no name'})
 
-    media = api_course.get('media') or {}
     sync_started_at = datetime.datetime.utcnow()
-    fields = {
-        'name': name,
-        'org': api_course.get('org') or u'',
-        'short_description': api_course.get('short_description') or u'',
-        'image_url': ((media.get('image') or {}).get('raw')) or u'',
-        'start': _parse_iso_datetime(api_course.get('start')),
-        'end': _parse_iso_datetime(api_course.get('end')),
-        'start_display': api_course.get('start_display') or u'',
-        'pacing': api_course.get('pacing') or u'',
-        'raw_json': json.dumps(api_course, ensure_ascii=False),
-    }
 
     try:
         existing = OpenLearningCourse.get_by_course_id(course_id)
@@ -381,20 +403,14 @@ def fetch_and_upsert_course(course_id):
             course = OpenLearningCourse(
                 course_id=course_id,
                 course_type=_detect_course_type(api_course),
-                **fields
+                **_course_fields(api_course)
             )
             meta.Session.add(course)
             meta.Session.commit()
             log.info(u'Open Learning: curso %s agregado manualmente', course_id)
             return course, 'created'
         else:
-            for attr, value in fields.items():
-                setattr(existing, attr, value)
-            existing.last_seen_at = sync_started_at
-            existing.updated_at = sync_started_at
-            existing.is_available = True
-            if not existing.course_type_override:
-                existing.course_type = _detect_course_type(api_course)
+            _apply_api_course(existing, api_course, sync_started_at)
             meta.Session.commit()
             log.info(u'Open Learning: curso %s actualizado manualmente', course_id)
             return existing, 'updated'
