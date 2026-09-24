@@ -144,3 +144,38 @@ def test_partial_match_leaves_explicit_qf_and_field_queries_alone():
         params = {'q': q}
         plugin.ThemeEjemploPlugin._enable_partial_match(params)
         assert 'qf' not in params
+
+
+# ── IHP-IX reporting (fase i) ──────────────────────────────────────────────
+
+def test_ihpix_report_routes_are_registered(app):
+    adapter = app.flask_app.url_map.bind('test.ckan.net')
+    for path, method, expected in (
+            ('/ihpix/report', 'GET', 'ihpix_report'),
+            ('/ihpix/report', 'POST', 'ihpix_report'),
+            ('/ihpix/report/abc-123/edit', 'GET', 'ihpix_report_edit'),
+            ('/ihpix/report/abc-123/edit', 'POST', 'ihpix_report_edit'),
+            ('/ihpix/report/abc-123/delete', 'POST', 'ihpix_report_delete_view'),
+            ('/ihpix/my-reports', 'GET', 'ihpix_my_reports'),
+            ('/user/someone/ihpix', 'GET', 'user_ihpix'),
+    ):
+        endpoint, _args = adapter.match(path, method=method)
+        assert endpoint == 'theme_ejemplo.' + expected, path
+
+
+def test_ihpix_my_reports_requires_login(app):
+    resp = app.get('/ihpix/my-reports', follow_redirects=False)
+    assert resp.status_code in (302, 403)
+    location = resp.headers.get('Location', '') or ''
+    if resp.status_code == 302:
+        assert '/user/login' in location
+
+
+def test_ihpix_report_edit_requires_login(app):
+    resp = app.get('/ihpix/report/abc-123/edit', follow_redirects=False)
+    assert resp.status_code in (302, 403)
+
+
+def test_ihpix_report_form_is_public(app):
+    resp = app.get('/ihpix/report')
+    assert resp.status_code == 200

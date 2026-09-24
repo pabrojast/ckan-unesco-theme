@@ -658,6 +658,14 @@
       </div>
 
       <div class="ihpix-hero-actions">
+        {% if c.userobj %}
+        <a href="{{ h.url_for('theme_ejemplo.ihpix_report') }}" class="ihpix-btn ihpix-btn-white">
+          <i class="fa fa-paper-plane"></i> {{ _('Report an activity') }}
+        </a>
+        <a href="{{ h.url_for('theme_ejemplo.ihpix_my_reports') }}" class="ihpix-btn ihpix-btn-ghost">
+          <i class="fa fa-folder-open-o"></i> {{ _('My reports') }}
+        </a>
+        {% endif %}
         {% if is_sysadmin %}
         <a href="{{ h.url_for('/ihpix/outputs') }}" class="ihpix-btn ihpix-btn-white">
           <i class="fa fa-list-alt"></i> {{ _('Explore Activities') }}
@@ -821,7 +829,7 @@
               <h3 class="ihpix-cta-card-title">{{ card.title }}</h3>
               <p class="ihpix-cta-card-desc">{{ card.description }}</p>
               <a href="{{ card.link }}" class="ihpix-cta-card-link"
-                 {% if card.link and card.link != '#' %}target="_blank"{% endif %}>
+                 {% if card.link and card.link != '#' and not card.link.startswith('/') %}target="_blank" rel="noopener"{% endif %}>
                 {{ _('Learn more') }} <i class="fa fa-arrow-right"></i>
               </a>
             </div>
@@ -829,7 +837,7 @@
         </div>
         {% endfor %}
       {% else %}
-        {% if is_sysadmin %}
+        {% if c.userobj %}
         <div class="col-md-4">
           <div class="ihpix-cta-card">
             <div class="ihpix-cta-card-placeholder" style="background: var(--ix-primary-light);">
@@ -844,6 +852,8 @@
             </div>
           </div>
         </div>
+        {% endif %}
+        {% if is_sysadmin %}
         <div class="col-md-4">
           <div class="ihpix-cta-card">
             <div class="ihpix-cta-card-placeholder" style="background: #E0F2FE;">

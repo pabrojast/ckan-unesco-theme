@@ -70,6 +70,13 @@ def _sysadmin_only(context, data_dict):
     return {'success': False, 'msg': toolkit._('Only sysadmins can manage featured datasets')}
 
 
+def _logged_in_only(context, data_dict):
+    """Cualquier usuario autenticado (API o web)."""
+    if context.get('auth_user_obj') or context.get('user'):
+        return {'success': True}
+    return {'success': False, 'msg': toolkit._('Must be logged in')}
+
+
 def featured_dataset_list(context, data_dict):
     return _sysadmin_only(context, data_dict)
 
@@ -242,6 +249,46 @@ def ihpix_report_submit(context, data_dict):
         return {'success': False,
                 'msg': 'You must be logged in to submit a report'}
     return {'success': True}
+
+
+def _ihpix_report_owner_or_sysadmin(context, data_dict):
+    """Propietario del reporte (`reported_by`) o sysadmin.
+
+    Si el reporte no existe se autoriza igualmente para que la acción
+    devuelva ObjectNotFound (404) en vez de NotAuthorized (403).
+    """
+    user_obj = context.get('auth_user_obj')
+    if not user_obj and context.get('user'):
+        user_obj = model.User.get(context['user'])
+    if not user_obj:
+        return {'success': False, 'msg': toolkit._('Must be logged in')}
+    if user_obj.sysadmin:
+        return {'success': True}
+    activity_id = (data_dict or {}).get('id')
+    if not activity_id:
+        return {'success': False, 'msg': toolkit._('Report id is required')}
+    from ckanext.theme_ejemplo.model import IhpixActivity
+    activity = IhpixActivity.get(activity_id)
+    if activity is None or activity.is_owned_by(user_obj):
+        return {'success': True}
+    return {'success': False,
+            'msg': toolkit._('You can only manage your own IHP-IX reports')}
+
+
+def ihpix_report_show(context, data_dict):
+    return _ihpix_report_owner_or_sysadmin(context, data_dict)
+
+
+def ihpix_report_update(context, data_dict):
+    return _ihpix_report_owner_or_sysadmin(context, data_dict)
+
+
+def ihpix_report_delete(context, data_dict):
+    return _ihpix_report_owner_or_sysadmin(context, data_dict)
+
+
+def ihpix_my_reports_list(context, data_dict):
+    return _logged_in_only(context, data_dict)
 
 
 def ihpix_report_review(context, data_dict):

@@ -710,6 +710,7 @@ def init_ihpix_content_db():
         else:
             log.debug(u'ihpix_content table already exists with %d rows', count)
             _ensure_new_ihpix_sections()
+            _migrate_ihpix_cta_links()
 
 
 def _seed_default_ihpix_content():
@@ -765,6 +766,30 @@ def _ensure_new_ihpix_sections():
         log.info(u'ihpix_content: added %d new sections (hero/headers)', added)
 
 
+# Prefijo del Microsoft Form externo que usaba el CTA de reporte hasta 2026-09
+_LEGACY_IHPIX_REPORT_FORM_PREFIX = 'https://forms.office.com'
+
+
+def _migrate_ihpix_cta_links():
+    """Apunta la tarjeta 'IHP IX Reporting' al formulario interno.
+
+    El reporte IHP-IX se hace ahora dentro de IHP-WINS (`/ihpix/report`).
+    Sólo se modifica si el enlace sigue siendo el Microsoft Form externo,
+    para respetar cualquier edición posterior del administrador.
+    """
+    try:
+        card = IhpixContent.get_by_key('cta_1')
+        if card and (card.link or u'').startswith(
+                _LEGACY_IHPIX_REPORT_FORM_PREFIX):
+            card.link = u'/ihpix/report'
+            card.updated_at = datetime.datetime.utcnow()
+            meta.Session.commit()
+            log.info(u'ihpix_content: cta_1 ahora enlaza a /ihpix/report')
+    except Exception as e:
+        meta.Session.rollback()
+        log.warning(u'ihpix_content: no se pudo migrar el enlace del CTA: %s', e)
+
+
 def _get_default_ihpix_content():
     """Return the default IHP-IX page content matching the original templates."""
     return [
@@ -775,7 +800,7 @@ def _get_default_ihpix_content():
             'title': 'IHP IX Reporting',
             'description': 'Submit your reports and view progress on IHP IX implementation.',
             'image_url': '/Landing_page/Content/ihpix_1.png',
-            'link': 'https://forms.office.com/Pages/ResponsePage.aspx?Host=Teams&lang={locale}&groupId={groupId}&tid={tid}&teamsTheme={theme}&upn={upn}&id=Uq5PHbM5-kuwswIpVrERlPV3XlCBEXFBjwvcm5ZTrWNUNlYxQTFQRUgxUjBSNUJNMUlJVTBBTDFBQSQlQCN0PWcu',
+            'link': '/ihpix/report',
             'badge_text': 'Members Only',
             'display_order': 0,
         },
@@ -956,6 +981,7 @@ class IhpixActivity(model.DomainObject):
         self.review_notes = u''
         self.reviewed_by = u''
         self.reviewed_at = None
+        self.submitted_at = None
         # Campos extendidos del Excel
         self.key_activity = key_activity
         self.outcomes = outcomes
@@ -1138,6 +1164,61 @@ class IhpixActivity(model.DomainObject):
         total = q.count()
         results = q.order_by(cls.created_at.desc()).offset(offset).limit(limit).all()
         return results, total
+
+    @classmethod
+    def _reporter_values(cls, user_obj):
+        """Valores que `reported_by` puede contener para un usuario.
+
+        Compat: hasta 2026-09 el formulario guardaba el *username* y el
+        admin el *id*; las filas viejas se migran, pero se consulta por
+        ambos para no perder ninguna.
+        """
+        values = []
+        for attr in ('id', 'name'):
+            val = getattr(user_obj, attr, None)
+            if val:
+                values.append(val)
+        return values
+
+    def is_owned_by(self, user_obj):
+        """True si el reporte fue creado por `user_obj`."""
+        return bool(self.reported_by) and (
+            self.reported_by in self._reporter_values(user_obj))
+
+    @classmethod
+    def get_by_reporter(cls, user_obj, status=None, limit=20, offset=0):
+        """Reportes de un usuario ("mis reportes"), más recientes primero."""
+        values = cls._reporter_values(user_obj)
+        if not values:
+            return [], 0
+        q = meta.Session.query(cls).filter(cls.reported_by.in_(values))
+        if status:
+            q = q.filter(cls.status == status)
+        total = q.count()
+        q = q.order_by(cls.updated_at.desc())
+        if offset:
+            q = q.offset(offset)
+        if limit:
+            q = q.limit(limit)
+        return q.all(), total
+
+    @classmethod
+    def count_by_status_for_reporter(cls, user_obj):
+        """{status: n} para las pestañas de "mis reportes"."""
+        from sqlalchemy import func
+        values = cls._reporter_values(user_obj)
+        if not values:
+            return {}
+        rows = meta.Session.query(cls.status, func.count(cls.id)).filter(
+            cls.reported_by.in_(values)).group_by(cls.status).all()
+        return {status: count for status, count in rows}
+
+    @classmethod
+    def count_by_status(cls, status):
+        """Número de actividades en un estado (p. ej. la cola pendiente)."""
+        from sqlalchemy import func
+        return meta.Session.query(func.count(cls.id)).filter(
+            cls.status == status).scalar() or 0
 
     @classmethod
     def get_pending(cls, limit=100, offset=0):
@@ -1409,6 +1490,8 @@ class IhpixActivity(model.DomainObject):
             'outcomes': self.outcomes or u'',
             'biennium': self.biennium or u'',
             'institution_type': self.institution_type or u'',
+            'institution_type_other': self.institution_type_other or u'',
+            'focal_point_name': self.focal_point_name or u'',
             'partners': self.partners or u'',
             'unesco_participation': self.unesco_participation or u'',
             'flagships': self.flagships or u'',
@@ -1433,15 +1516,45 @@ class IhpixActivity(model.DomainObject):
             'stakeholders_awareness_youth': self.stakeholders_awareness_youth or 0,
             'num_stakeholder_groups': self.num_stakeholder_groups or 0,
             'stakeholder_group_type': self.stakeholder_group_type or u'',
+            'stakeholder_group_type_other': self.stakeholder_group_type_other or u'',
+            'stakeholder_group_name': self.stakeholder_group_name or u'',
             'notes': self.notes or u'',
             'cross_cutting_wg': self.cross_cutting_wg or u'',
             'synergies': self.synergies or u'',
             'supporting_member_state': self.supporting_member_state or u'',
             'original_timestamp': self.original_timestamp or u'',
             'original_id': self.original_id or u'',
+            # Gates Y/N del PDF 2026 (booleanos explícitos)
+            'unesco_secretariat_participation': bool(self.unesco_secretariat_participation),
+            'has_member_state_support': bool(self.has_member_state_support),
+            'has_flagship': bool(self.has_flagship),
+            'has_synergies': bool(self.has_synergies),
+            'regions_benefit': bool(self.regions_benefit),
+            'kpi_1a_active': bool(self.kpi_1a_active),
+            'kpi_1b_active': bool(self.kpi_1b_active),
+            'kpi_2_active': bool(self.kpi_2_active),
+            'kpi_3_active': bool(self.kpi_3_active),
+            'kpi_4_active': bool(self.kpi_4_active),
+            'kpi_5_active': bool(self.kpi_5_active),
+            'kpi_6_active': bool(self.kpi_6_active),
+            'kpi_8_active': bool(self.kpi_8_active),
+            'additional_notes': self.additional_notes or u'',
+            'submitted_at': self.submitted_at.isoformat() if self.submitted_at else None,
             'created_at': self.created_at.isoformat() if self.created_at else None,
             'updated_at': self.updated_at.isoformat() if self.updated_at else None,
         }
+
+
+# Índices para los filtros más usados (explorador, dashboard, "mis reportes").
+# Se declaran en la tabla (instancias nuevas) y se crean con
+# CREATE INDEX IF NOT EXISTS en `_migrate_ihpix_activities` (existentes).
+_IHPIX_ACTIVITY_INDEXES = (
+    ('idx_ihpix_activity_status', 'status'),
+    ('idx_ihpix_activity_pa', 'priority_area'),
+    ('idx_ihpix_activity_output', 'output'),
+    ('idx_ihpix_activity_biennium', 'biennium'),
+    ('idx_ihpix_activity_reported_by', 'reported_by'),
+)
 
 
 def define_ihpix_activity_table():
@@ -1524,8 +1637,10 @@ def define_ihpix_activity_table():
         Column('additional_notes', UnicodeText, default=u''),
         Column('original_timestamp', UnicodeText, default=u''),
         Column('original_id', UnicodeText, default=u''),
+        Column('submitted_at', DateTime, nullable=True),
         Column('created_at', DateTime, default=datetime.datetime.utcnow),
         Column('updated_at', DateTime, default=datetime.datetime.utcnow),
+        *[Index(name, col) for name, col in _IHPIX_ACTIVITY_INDEXES]
     )
 
     try:
@@ -1549,89 +1664,126 @@ def init_ihpix_activities_db():
         log.debug(u'ihpix_activity table already exists')
 
 
+# Columnas añadidas a `ihpix_activity` después de su creación original. Las
+# instancias nuevas ya las traen desde `define_ihpix_activity_table`; las
+# existentes las reciben con ADD COLUMN IF NOT EXISTS (idempotente).
+_IHPIX_ACTIVITY_ADDED_COLUMNS = (
+    ('contact_name', "TEXT DEFAULT ''"),
+    ('contact_email', "TEXT DEFAULT ''"),
+    ('start_date', 'DATE'),
+    ('end_date', 'DATE'),
+    ('review_notes', "TEXT DEFAULT ''"),
+    ('reviewed_by', "TEXT DEFAULT ''"),
+    ('reviewed_at', 'TIMESTAMP'),
+    # Campos extendidos del Excel
+    ('key_activity', "TEXT DEFAULT ''"),
+    ('outcomes', "TEXT DEFAULT ''"),
+    ('biennium', "TEXT DEFAULT ''"),
+    ('institution_type', "TEXT DEFAULT ''"),
+    ('partners', "TEXT DEFAULT ''"),
+    ('unesco_participation', "TEXT DEFAULT ''"),
+    ('flagships', "TEXT DEFAULT ''"),
+    ('regions', "TEXT DEFAULT ''"),
+    ('member_states', "TEXT DEFAULT ''"),
+    ('knowledge_product_type', "TEXT DEFAULT ''"),
+    ('knowledge_product_type_other', "TEXT DEFAULT ''"),
+    ('num_knowledge_products', 'INTEGER DEFAULT 0'),
+    ('scientific_product_type', "TEXT DEFAULT ''"),
+    ('num_scientific_products', 'INTEGER DEFAULT 0'),
+    ('training_type', "TEXT DEFAULT ''"),
+    ('num_training_materials', 'INTEGER DEFAULT 0'),
+    ('num_curricula', 'INTEGER DEFAULT 0'),
+    ('num_transboundary_ms', 'INTEGER DEFAULT 0'),
+    ('knowledge_activity_type', "TEXT DEFAULT ''"),
+    ('knowledge_activity_type_other', "TEXT DEFAULT ''"),
+    ('stakeholders_knowledge', 'INTEGER DEFAULT 0'),
+    ('stakeholders_knowledge_female', 'INTEGER DEFAULT 0'),
+    ('stakeholders_knowledge_youth', 'INTEGER DEFAULT 0'),
+    ('stakeholders_awareness', 'INTEGER DEFAULT 0'),
+    ('stakeholders_awareness_female', 'INTEGER DEFAULT 0'),
+    ('stakeholders_awareness_youth', 'INTEGER DEFAULT 0'),
+    ('num_stakeholder_groups', 'INTEGER DEFAULT 0'),
+    ('stakeholder_group_type', "TEXT DEFAULT ''"),
+    ('notes', "TEXT DEFAULT ''"),
+    ('cross_cutting_wg', "TEXT DEFAULT ''"),
+    ('synergies', "TEXT DEFAULT ''"),
+    ('supporting_member_state', "TEXT DEFAULT ''"),
+    # PDF 2026 conditional gates — Section I / V
+    ('focal_point_name', "TEXT DEFAULT ''"),
+    ('institution_type_other', "TEXT DEFAULT ''"),
+    ('stakeholder_group_type_other', "TEXT DEFAULT ''"),
+    ('stakeholder_group_name', "TEXT DEFAULT ''"),
+    ('unesco_secretariat_participation', 'BOOLEAN DEFAULT FALSE'),
+    ('has_member_state_support', 'BOOLEAN DEFAULT FALSE'),
+    ('has_flagship', 'BOOLEAN DEFAULT FALSE'),
+    ('has_synergies', 'BOOLEAN DEFAULT FALSE'),
+    ('regions_benefit', 'BOOLEAN DEFAULT FALSE'),
+    ('kpi_1a_active', 'BOOLEAN DEFAULT FALSE'),
+    ('kpi_1b_active', 'BOOLEAN DEFAULT FALSE'),
+    ('kpi_2_active', 'BOOLEAN DEFAULT FALSE'),
+    ('kpi_3_active', 'BOOLEAN DEFAULT FALSE'),
+    ('kpi_4_active', 'BOOLEAN DEFAULT FALSE'),
+    ('kpi_5_active', 'BOOLEAN DEFAULT FALSE'),
+    ('kpi_6_active', 'BOOLEAN DEFAULT FALSE'),
+    ('kpi_8_active', 'BOOLEAN DEFAULT FALSE'),
+    ('additional_notes', "TEXT DEFAULT ''"),
+    ('original_timestamp', "TEXT DEFAULT ''"),
+    ('original_id', "TEXT DEFAULT ''"),
+    # Workflow de reporte (2026-09): fecha del último envío a revisión
+    ('submitted_at', 'TIMESTAMP'),
+)
+
+
 def _migrate_ihpix_activities(inspector):
-    """Add new columns to existing ihpix_activity table if missing."""
+    """Añade columnas e índices nuevos a una tabla ihpix_activity existente.
+
+    Idempotente: ADD COLUMN / CREATE INDEX IF NOT EXISTS dentro de una
+    transacción explícita (`engine.begin()`), válido en SQLAlchemy 1.3 y 1.4+.
+    La normalización de `reported_by` sólo corre cuando hubo columnas que
+    añadir (es decir, una vez por despliegue), no en cada request.
+    """
+    from sqlalchemy import text as sa_text
     existing = {col['name'] for col in inspector.get_columns('ihpix_activity')}
-    new_columns = [
-        ('contact_name', "TEXT DEFAULT ''"),
-        ('contact_email', "TEXT DEFAULT ''"),
-        ('start_date', 'DATE'),
-        ('end_date', 'DATE'),
-        ('review_notes', "TEXT DEFAULT ''"),
-        ('reviewed_by', "TEXT DEFAULT ''"),
-        ('reviewed_at', 'TIMESTAMP'),
-        # Campos extendidos del Excel
-        ('key_activity', "TEXT DEFAULT ''"),
-        ('outcomes', "TEXT DEFAULT ''"),
-        ('biennium', "TEXT DEFAULT ''"),
-        ('institution_type', "TEXT DEFAULT ''"),
-        ('partners', "TEXT DEFAULT ''"),
-        ('unesco_participation', "TEXT DEFAULT ''"),
-        ('flagships', "TEXT DEFAULT ''"),
-        ('regions', "TEXT DEFAULT ''"),
-        ('member_states', "TEXT DEFAULT ''"),
-        ('knowledge_product_type', "TEXT DEFAULT ''"),
-        ('knowledge_product_type_other', "TEXT DEFAULT ''"),
-        ('num_knowledge_products', 'INTEGER DEFAULT 0'),
-        ('scientific_product_type', "TEXT DEFAULT ''"),
-        ('num_scientific_products', 'INTEGER DEFAULT 0'),
-        ('training_type', "TEXT DEFAULT ''"),
-        ('num_training_materials', 'INTEGER DEFAULT 0'),
-        ('num_curricula', 'INTEGER DEFAULT 0'),
-        ('num_transboundary_ms', 'INTEGER DEFAULT 0'),
-        ('knowledge_activity_type', "TEXT DEFAULT ''"),
-        ('knowledge_activity_type_other', "TEXT DEFAULT ''"),
-        ('stakeholders_knowledge', 'INTEGER DEFAULT 0'),
-        ('stakeholders_knowledge_female', 'INTEGER DEFAULT 0'),
-        ('stakeholders_knowledge_youth', 'INTEGER DEFAULT 0'),
-        ('stakeholders_awareness', 'INTEGER DEFAULT 0'),
-        ('stakeholders_awareness_female', 'INTEGER DEFAULT 0'),
-        ('stakeholders_awareness_youth', 'INTEGER DEFAULT 0'),
-        ('num_stakeholder_groups', 'INTEGER DEFAULT 0'),
-        ('stakeholder_group_type', "TEXT DEFAULT ''"),
-        ('notes', "TEXT DEFAULT ''"),
-        ('cross_cutting_wg', "TEXT DEFAULT ''"),
-        ('synergies', "TEXT DEFAULT ''"),
-        ('supporting_member_state', "TEXT DEFAULT ''"),
-        # PDF 2026 conditional gates — Section I / V
-        ('focal_point_name', "TEXT DEFAULT ''"),
-        ('institution_type_other', "TEXT DEFAULT ''"),
-        ('stakeholder_group_type_other', "TEXT DEFAULT ''"),
-        ('stakeholder_group_name', "TEXT DEFAULT ''"),
-        ('unesco_secretariat_participation', 'BOOLEAN DEFAULT FALSE'),
-        ('has_member_state_support', 'BOOLEAN DEFAULT FALSE'),
-        ('has_flagship', 'BOOLEAN DEFAULT FALSE'),
-        ('has_synergies', 'BOOLEAN DEFAULT FALSE'),
-        ('regions_benefit', 'BOOLEAN DEFAULT FALSE'),
-        ('kpi_1a_active', 'BOOLEAN DEFAULT FALSE'),
-        ('kpi_1b_active', 'BOOLEAN DEFAULT FALSE'),
-        ('kpi_2_active', 'BOOLEAN DEFAULT FALSE'),
-        ('kpi_3_active', 'BOOLEAN DEFAULT FALSE'),
-        ('kpi_4_active', 'BOOLEAN DEFAULT FALSE'),
-        ('kpi_5_active', 'BOOLEAN DEFAULT FALSE'),
-        ('kpi_6_active', 'BOOLEAN DEFAULT FALSE'),
-        ('kpi_8_active', 'BOOLEAN DEFAULT FALSE'),
-        ('additional_notes', "TEXT DEFAULT ''"),
-        ('original_timestamp', "TEXT DEFAULT ''"),
-        ('original_id', "TEXT DEFAULT ''"),
-    ]
-    conn = meta.engine.connect()
-    for col_name, col_type in new_columns:
-        if col_name not in existing:
-            try:
-                conn.execute(
-                    'ALTER TABLE ihpix_activity ADD COLUMN {} {}'.format(
-                        col_name, col_type
-                    )
-                )
-                log.info(u'ihpix_activity: added column %s', col_name)
-            except Exception as e:
-                log.warning(u'ihpix_activity: could not add column %s: %s',
-                            col_name, e)
+    missing = [(name, ddl) for name, ddl in _IHPIX_ACTIVITY_ADDED_COLUMNS
+               if name not in existing]
     try:
-        conn.close()
-    except Exception:
-        pass
+        with meta.engine.begin() as conn:
+            for name, ddl in missing:
+                conn.execute(sa_text(
+                    'ALTER TABLE ihpix_activity '
+                    'ADD COLUMN IF NOT EXISTS %s %s' % (name, ddl)))
+                log.info(u'ihpix_activity: columna %s añadida', name)
+            for idx_name, col in _IHPIX_ACTIVITY_INDEXES:
+                conn.execute(sa_text(
+                    'CREATE INDEX IF NOT EXISTS %s ON ihpix_activity (%s)'
+                    % (idx_name, col)))
+    except Exception as e:
+        log.warning(u'ihpix_activity: no se pudo migrar el esquema: %s', e)
+        return
+    if missing:
+        _migrate_ihpix_reported_by()
+
+
+def _migrate_ihpix_reported_by():
+    """Normaliza `reported_by` al id de usuario.
+
+    `ihpix_report_submit` guardaba el *username* y `ihpix_activity_create`
+    el *id*; desde 2026-09 siempre se guarda el id. Las filas del seed
+    Excel (texto libre o vacío) no coinciden con ningún usuario y no se
+    tocan. Idempotente.
+    """
+    from sqlalchemy import text as sa_text
+    try:
+        with meta.engine.begin() as conn:
+            result = conn.execute(sa_text(
+                'UPDATE ihpix_activity a SET reported_by = u.id '
+                'FROM "user" u '
+                'WHERE a.reported_by = u.name AND a.reported_by <> u.id'))
+            if result.rowcount:
+                log.info(u'ihpix_activity: %d filas de reported_by '
+                         u'migradas a user id', result.rowcount)
+    except Exception as e:
+        log.warning(u'ihpix_activity: no se pudo migrar reported_by: %s', e)
 
 
 # ── IHP-IX Country Summary Model ────────────────────────────────────────────

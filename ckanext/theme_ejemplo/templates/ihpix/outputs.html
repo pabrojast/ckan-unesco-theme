@@ -884,6 +884,11 @@
                   <div class="ox-detail-label">{{ _('UNESCO Participation') }}</div>
                   <div class="ox-detail-value">{{ activity.unesco_participation }}</div>
                 </div>
+              {% elif activity.unesco_secretariat_participation %}
+                <div class="ox-detail-item">
+                  <div class="ox-detail-label">{{ _('UNESCO Secretariat participation') }}</div>
+                  <div class="ox-detail-value">{{ _('Yes') }}</div>
+                </div>
               {% endif %}
               {% if activity.supporting_member_state %}
                 <div class="ox-detail-item">
@@ -1051,6 +1056,10 @@
             {% if activity.notes %}
               <div class="ox-section-title"><i class="fa fa-sticky-note-o"></i> {{ _('Notes') }}</div>
               <div class="ox-detail-value" style="white-space: pre-line;">{{ activity.notes }}</div>
+            {% endif %}
+            {% if activity.additional_notes %}
+              <div class="ox-section-title"><i class="fa fa-sticky-note-o"></i> {{ _('Additional notes') }}</div>
+              <div class="ox-detail-value" style="white-space: pre-line;">{{ activity.additional_notes }}</div>
             {% endif %}
           </div>
 

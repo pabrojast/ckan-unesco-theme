@@ -511,6 +511,27 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
             )
 
             blueprint.add_url_rule(
+                u'/ihpix/report/<id>/edit',
+                u'ihpix_report_edit',
+                MyLogica.ihpix_report_edit,
+                methods=['GET', 'POST']
+            )
+
+            blueprint.add_url_rule(
+                u'/ihpix/report/<id>/delete',
+                u'ihpix_report_delete_view',
+                MyLogica.ihpix_report_delete_view,
+                methods=['POST']
+            )
+
+            blueprint.add_url_rule(
+                u'/ihpix/my-reports',
+                u'ihpix_my_reports',
+                MyLogica.ihpix_my_reports,
+                methods=['GET']
+            )
+
+            blueprint.add_url_rule(
                 u'/ihpix/dashboard',
                 u'ihpix_dashboard',
                 MyLogica.ihpix_dashboard,
@@ -736,6 +757,12 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 u'/user/<id>/events',
                 u'user_events',
                 MyLogica.user_events,
+                methods=['GET']
+            )
+            blueprint.add_url_rule(
+                u'/user/<id>/ihpix',
+                u'user_ihpix',
+                MyLogica.user_ihpix,
                 methods=['GET']
             )
 
@@ -1190,6 +1217,8 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                  'get_featured_publications': helpers.get_featured_publications,
                  'get_open_bug_tickets_count': helpers.get_open_bug_tickets_count,
                  'get_pending_initiative_requests_count': helpers.get_pending_initiative_requests_count,
+                 'get_pending_ihpix_reports_count': helpers.get_pending_ihpix_reports_count,
+                 'get_ihpix_reporter': helpers.get_ihpix_reporter,
                  'get_my_pending_initiative_request': helpers.get_my_pending_initiative_request,
                  'theme_ejemplo_tracking_enabled': helpers.tracking_enabled,
                  'get_dataset_tracking': helpers.get_dataset_tracking,
@@ -1251,6 +1280,10 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 'ihpix_activity_delete': custom_actions.ihpix_activity_delete,
                 # IHP-IX reporting & dashboard
                 'ihpix_report_submit': custom_actions.ihpix_report_submit,
+                'ihpix_report_update': custom_actions.ihpix_report_update,
+                'ihpix_report_show': custom_actions.ihpix_report_show,
+                'ihpix_report_delete': custom_actions.ihpix_report_delete,
+                'ihpix_my_reports_list': custom_actions.ihpix_my_reports_list,
                 'ihpix_report_review': custom_actions.ihpix_report_review,
                 'ihpix_dashboard_stats': custom_actions.ihpix_dashboard_stats,
                 'ihpix_admin_overview_stats': custom_actions.ihpix_admin_overview_stats,
@@ -1317,6 +1350,10 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 # IHP-IX reporting & dashboard
                 'ihpix_admin_overview_stats': custom_auth.ihpix_admin_overview_stats,
                 'ihpix_report_submit': custom_auth.ihpix_report_submit,
+                'ihpix_report_update': custom_auth.ihpix_report_update,
+                'ihpix_report_show': custom_auth.ihpix_report_show,
+                'ihpix_report_delete': custom_auth.ihpix_report_delete,
+                'ihpix_my_reports_list': custom_auth.ihpix_my_reports_list,
                 'ihpix_report_review': custom_auth.ihpix_report_review,
                 'ihpix_dashboard_stats': custom_auth.ihpix_dashboard_stats,
                 # IHP-IX GeoJSON & country summary

@@ -120,6 +120,12 @@
             <span class="text">{{ _('Dashboard') }}</span>
           </a>
         </li>
+        <li>
+          <a href="{{ h.url_for('theme_ejemplo.ihpix_my_reports') }}" title="{{ _('My IHP-IX reports') }}">
+            <i class="fa fa-university" aria-hidden="true"></i>
+            <span class="text">{{ _('IHP-IX') }}</span>
+          </a>
+        </li>
         {% block header_account_settings_link %}
         <li>
           <a href="{{ h.url_for('user.edit', id=c.user) }}" title="{{ _('Profile settings') }}">

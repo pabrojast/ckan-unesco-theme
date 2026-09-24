@@ -867,6 +867,63 @@ def get_pending_initiative_requests_count():
         return 0
 
 
+def get_pending_ihpix_reports_count():
+    """Reportes IHP-IX pendientes de revisión (solo sysadmins, 0 si no)."""
+    try:
+        from ckan.common import current_user
+        if not current_user or not current_user.is_authenticated:
+            return 0
+        if not current_user.sysadmin:
+            return 0
+        from ckanext.theme_ejemplo.model import (
+            IhpixActivity, init_ihpix_activities_db,
+        )
+        init_ihpix_activities_db()
+        return IhpixActivity.count_by_status(IhpixActivity.STATUS_PENDING)
+    except Exception as e:
+        _rollback_session_after_helper_error()
+        log.error(f'Error getting pending IHP-IX reports count: {e}')
+        return 0
+
+
+# reported_by → (expira, info). `reported_by` puede ser id, username o el
+# texto libre del seed Excel; se cachea 5 min porque los listados lo
+# resuelven para cada tarjeta.
+_ihpix_reporter_cache = {}
+_IHPIX_REPORTER_CACHE_TTL = 300
+
+
+def get_ihpix_reporter(reported_by):
+    """Resuelve `IhpixActivity.reported_by` a {id, name, display_name, url}.
+
+    Si no corresponde a ningún usuario (filas del seed) devuelve el texto
+    tal cual como `display_name`, sin `url`. None si está vacío.
+    """
+    raw = (reported_by or '').strip()
+    if not raw:
+        return None
+    now = time.time()
+    cached = _ihpix_reporter_cache.get(raw)
+    if cached and cached[0] > now:
+        return cached[1]
+    info = {'id': '', 'name': '', 'display_name': raw, 'url': ''}
+    try:
+        user = model.User.get(raw)
+        if user:
+            info = {
+                'id': user.id,
+                'name': user.name,
+                'display_name': user.display_name or user.name,
+                'url': core_helpers.url_for('user.read', id=user.name),
+            }
+    except Exception as e:
+        _warn_and_rollback_helper_error('Error resolving IHP-IX reporter', e)
+    if len(_ihpix_reporter_cache) > 2000:
+        _ihpix_reporter_cache.clear()
+    _ihpix_reporter_cache[raw] = (now + _IHPIX_REPORTER_CACHE_TTL, info)
+    return info
+
+
 def get_my_pending_initiative_request():
     """Devuelve la solicitud pendiente del usuario actual, o None."""
     try:

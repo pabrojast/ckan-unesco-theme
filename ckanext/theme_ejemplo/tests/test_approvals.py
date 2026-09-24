@@ -48,3 +48,20 @@ def test_queue_defs_have_required_fields():
         assert queue['scope'] in ('sysadmin', 'user')
         assert 'helper' in queue
         assert 'route' in queue or 'url' in queue
+
+
+def test_ihpix_reports_queue_is_registered():
+    ids = [q['id'] for q in approvals.QUEUE_DEFS]
+    assert 'ihpix_reports' in ids
+    queue = next(q for q in approvals.QUEUE_DEFS if q['id'] == 'ihpix_reports')
+    assert queue['scope'] == 'sysadmin'
+    assert queue['helper'] == 'get_pending_ihpix_reports_count'
+    assert queue['route'] == 'theme_ejemplo.ihpix_reports_admin'
+
+
+def test_every_queue_has_a_label(monkeypatch):
+    import ckan.plugins.toolkit as toolkit
+    monkeypatch.setattr(toolkit, '_', lambda s: s, raising=False)
+    labels = approvals._labels()
+    for queue in approvals.QUEUE_DEFS:
+        assert queue['id'] in labels

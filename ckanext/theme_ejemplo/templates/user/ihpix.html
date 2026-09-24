@@ -1,0 +1,127 @@
+{% extends "user/read_base.html" %}
+
+{% block subtitle %}{{ _('IHP-IX Reports') }} {{ g.template_title_delimiter }} {{ user_dict.display_name }}{% endblock %}
+
+{% block page_primary_action %}
+  {% if is_myself or is_sysadmin %}
+    <a class="btn btn-primary" href="{{ h.url_for('theme_ejemplo.ihpix_report') }}">
+      <i class="fa fa-plus-square"></i> {{ _('New IHP-IX report') }}
+    </a>
+  {% endif %}
+{% endblock %}
+
+{% block primary_content_inner %}
+  {% set status_labels = {
+    'draft': _('Draft'),
+    'pending': _('Pending review'),
+    'published': _('Published'),
+    'rejected': _('Needs changes'),
+  } %}
+  <style>
+    .ihpix-my-tabs { margin-bottom: 1rem; }
+    .ihpix-my-tabs .badge { margin-left: .35rem; }
+    .ihpix-my-table td { vertical-align: middle; }
+    .ihpix-my-actions { white-space: nowrap; text-align: right; }
+    .ihpix-my-actions form { display: inline-block; margin-left: .25rem; }
+    .ihpix-status-pill {
+      display: inline-block; padding: .15rem .6rem; border-radius: 999px;
+      font-size: .75rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: .03em; color: #fff; background: #6b7280;
+    }
+    .ihpix-status-pill.is-draft { background: #6b7280; }
+    .ihpix-status-pill.is-pending { background: #d97706; }
+    .ihpix-status-pill.is-published { background: #15803d; }
+    .ihpix-status-pill.is-rejected { background: #b91c1c; }
+    .ihpix-my-intro { color: #555; margin-bottom: 1rem; }
+  </style>
+
+  <h2 class="hide-heading">{{ _('IHP-IX Reports') }}</h2>
+
+  {% if can_see_all %}
+    <p class="ihpix-my-intro">
+      {{ _('Activity reports submitted under IHP-IX (2022–2029). Drafts and returned reports can be edited and resubmitted; published reports appear in the IHP-IX portal.') }}
+    </p>
+    {% set tabs = [
+      ('', _('All'), counts_total),
+      ('draft', status_labels['draft'], counts.get('draft', 0)),
+      ('pending', status_labels['pending'], counts.get('pending', 0)),
+      ('published', status_labels['published'], counts.get('published', 0)),
+      ('rejected', status_labels['rejected'], counts.get('rejected', 0)),
+    ] %}
+    <ul class="nav nav-tabs ihpix-my-tabs">
+      {% for value, label, n in tabs %}
+        <li class="{% if status_filter == value %}active{% endif %}">
+          {% if value %}
+            <a href="{{ h.url_for('theme_ejemplo.user_ihpix', id=user_dict.name, status=value) }}">{{ label }} <span class="badge">{{ n }}</span></a>
+          {% else %}
+            <a href="{{ h.url_for('theme_ejemplo.user_ihpix', id=user_dict.name) }}">{{ label }} <span class="badge">{{ n }}</span></a>
+          {% endif %}
+        </li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+
+  {% if reports %}
+    <table class="table table-striped ihpix-my-table">
+      <thead>
+        <tr>
+          <th>{{ _('Title') }}</th>
+          <th>{{ _('Priority Area / Output') }}</th>
+          <th>{{ _('Biennium') }}</th>
+          <th>{{ _('Status') }}</th>
+          <th>{{ _('Updated') }}</th>
+          {% if can_see_all %}<th></th>{% endif %}
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in reports %}
+          <tr>
+            <td>
+              <strong>{{ r.title }}</strong>
+              {% if r.institution %}<br><small class="text-muted">{{ r.institution }}</small>{% endif %}
+            </td>
+            <td>{{ r.priority_area }}{% if r.output %} &middot; {{ r.output }}{% endif %}</td>
+            <td>{{ r.biennium or '&mdash;'|safe }}</td>
+            <td>
+              <span class="ihpix-status-pill is-{{ r.status }}">{{ status_labels.get(r.status, r.status) }}</span>
+              {% if r.status == 'rejected' and r.review_notes %}
+                <br><small class="text-muted" title="{{ r.review_notes }}">{{ r.review_notes|truncate(80) }}</small>
+              {% endif %}
+            </td>
+            <td>{{ h.render_datetime(r.updated_at, with_hours=True) if r.updated_at else '' }}</td>
+            {% if can_see_all %}
+              <td class="ihpix-my-actions">
+                {% if r.status in ('draft', 'rejected') or is_sysadmin %}
+                  <a class="btn btn-default btn-sm" href="{{ h.url_for('theme_ejemplo.ihpix_report_edit', id=r.id) }}">
+                    <i class="fa fa-pencil"></i> {{ _('Edit') }}
+                  </a>
+                {% else %}
+                  <a class="btn btn-default btn-sm" href="{{ h.url_for('theme_ejemplo.ihpix_report_edit', id=r.id) }}">
+                    <i class="fa fa-eye"></i> {{ _('View') }}
+                  </a>
+                {% endif %}
+                {% if r.status == 'draft' or is_sysadmin %}
+                  <form method="post" action="{{ h.url_for('theme_ejemplo.ihpix_report_delete_view', id=r.id) }}"
+                        onsubmit="return confirm({{ _('Delete this report? This cannot be undone.')|tojson }});">
+                    {{ h.csrf_input() }}
+                    <button type="submit" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> {{ _('Delete') }}</button>
+                  </form>
+                {% endif %}
+              </td>
+            {% endif %}
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {{ page.pager() }}
+  {% else %}
+    <p class="empty">
+      {% if is_myself %}
+        {{ _("You haven't submitted any IHP-IX reports yet.") }}
+        <a href="{{ h.url_for('theme_ejemplo.ihpix_report') }}">{{ _('Report an activity') }}</a>
+      {% else %}
+        {{ _("This user hasn't published any IHP-IX reports.") }}
+      {% endif %}
+    </p>
+  {% endif %}
+{% endblock %}

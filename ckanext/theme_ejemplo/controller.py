@@ -110,6 +110,41 @@ def get_member_states_for_select():
         return []
 
 
+def _require_login():
+    """Redirige al login (con came_from) si no hay sesión; None si la hay.
+
+    Uso: ``redirect = _require_login(); if redirect: return redirect``.
+    """
+    if c.userobj:
+        return None
+    came_from = request.full_path.rstrip('?') if request.query_string else request.path
+    return h.redirect_to('user.login', came_from=came_from)
+
+
+def _collect_report_form(form):
+    """Extrae de `request.form` el payload completo del reporte IHP-IX.
+
+    Los nombres de campo viven en `ihpix_forms` (única fuente de verdad
+    compartida con la validación); aquí sólo se distingue valor único de
+    lista (`getlist`).
+    """
+    from ckanext.theme_ejemplo import ihpix_forms
+    data = {f: form.get(f, '') for f in ihpix_forms.SINGLE_FORM_FIELDS}
+    for f in ihpix_forms.MULTI_FORM_FIELDS:
+        data[f] = form.getlist(f)
+    return data
+
+
+def _format_error_dict(error_dict):
+    """'campo: mensaje; campo2: mensaje2' para toasts/flash."""
+    parts = []
+    for key, val in (error_dict or {}).items():
+        if isinstance(val, (list, tuple)):
+            val = '; '.join(str(v) for v in val)
+        parts.append('{}: {}'.format(key, val))
+    return '; '.join(parts)
+
+
 @timed_lru_cache(seconds=300, maxsize=20)  # Cache de 5 minutos
 def get_all_groups_cached(sort_by=None):
     """Obtiene todos los grupos con cache"""
@@ -3777,96 +3812,13 @@ class MyLogica():
         # ── IHP-IX Reporting Form ──────────────────────────────────────────
 
         @staticmethod
-        def ihpix_report():
-            """Formulario IHP-IX (PDF 2026 spec) — público para usuarios autenticados."""
-            from ckanext.theme_ejemplo.model import init_ihpix_activities_db
+        def _ihpix_report_form_context():
+            """Vocabularios controlados que consume `ihpix/report.html`."""
             from ckanext.theme_ejemplo import ihpix_constants as C
-            init_ihpix_activities_db()
-
-            if request.method == 'POST':
-                if not c.user:
-                    return jsonify({'success': False,
-                                    'error': 'You must be logged in'}), 403
-                try:
-                    # Single-value fields
-                    single_fields = (
-                        'title', 'description', 'priority_area', 'output',
-                        'country', 'institution', 'link', 'contact_name',
-                        'contact_email', 'reported_date', 'start_date',
-                        'end_date', 'outcomes',
-                        # Section I extras
-                        'focal_point_name', 'institution_type',
-                        'institution_type_other', 'partners', 'biennium',
-                        'unesco_secretariat_participation',
-                        'has_member_state_support', 'supporting_member_state',
-                        'has_flagship',
-                        # Section II / III / IV
-                        'key_activity', 'has_synergies', 'synergies',
-                        'regions_benefit',
-                        # Section V — gates and counts (single-value)
-                        'kpi_1a_active', 'kpi_1b_active', 'kpi_2_active',
-                        'kpi_3_active', 'kpi_4_active', 'kpi_5_active',
-                        'kpi_6_active', 'kpi_8_active',
-                        'knowledge_product_type_other',
-                        'knowledge_activity_type_other',
-                        'stakeholder_group_type_other',
-                        'stakeholder_group_name',
-                        'num_knowledge_products', 'num_scientific_products',
-                        'num_training_materials', 'num_curricula',
-                        'num_transboundary_ms', 'num_stakeholder_groups',
-                        'stakeholders_knowledge',
-                        'stakeholders_knowledge_youth',
-                        'stakeholders_knowledge_female',
-                        'stakeholders_awareness',
-                        'stakeholders_awareness_youth',
-                        'stakeholders_awareness_female',
-                        # Section VI
-                        'additional_notes',
-                        # draft flag
-                        'save_as_draft',
-                    )
-                    multi_fields = (
-                        'flagships', 'cross_cutting_wg', 'regions',
-                        'member_states', 'knowledge_product_type',
-                        'scientific_product_type', 'knowledge_activity_type',
-                        'training_type', 'stakeholder_group_type',
-                    )
-
-                    context = {'user': c.user, 'model': model}
-                    data_dict = {f: request.form.get(f, '') for f in single_fields}
-                    for f in multi_fields:
-                        data_dict[f] = request.form.getlist(f)
-
-                    result = toolkit.get_action('ihpix_report_submit')(
-                        context, data_dict
-                    )
-                    msg = (_('Draft saved.')
-                           if C.normalize_bool(data_dict.get('save_as_draft'))
-                           else _('Report submitted successfully!'))
-                    return jsonify({'success': True, 'message': msg,
-                                    'data': result})
-                except toolkit.ValidationError as e:
-                    return jsonify({'success': False,
-                                    'error': str(e.error_dict)}), 400
-                except toolkit.NotAuthorized:
-                    return jsonify({'success': False,
-                                    'error': 'Not authorized'}), 403
-                except Exception as e:
-                    log.error('Error submitting IHP-IX report: %s', e)
-                    return jsonify({'success': False, 'error': str(e)}), 500
-
-            # GET: render the form with controlled vocabularies
-            # Member states come from CKAN groups (children of `member-states`)
-            # so the list matches whatever the portal has configured. Falls
-            # back to the static ISO-2 list when no groups exist yet.
-            ms_groups = get_member_states_for_select()
-            if not ms_groups:
-                ms_groups = list(C.MEMBER_STATES)
-
-            is_logged_in = bool(c.user)
-            return render_template(
-                'ihpix/report.html',
-                is_logged_in=is_logged_in,
+            # Member states desde los grupos CKAN (hijos de `member-states`);
+            # fallback a la lista ISO-2 si el portal aún no los tiene.
+            ms_groups = get_member_states_for_select() or list(C.MEMBER_STATES)
+            return dict(
                 priority_areas=C.PRIORITY_AREAS,
                 outputs_by_pa=C.OUTPUTS,
                 biennia=C.BIENNIA,
@@ -3880,6 +3832,217 @@ class MyLogica():
                 knowledge_activity_types=C.KNOWLEDGE_ACTIVITY_TYPES,
                 training_types=C.TRAINING_TYPES,
                 stakeholder_group_types=C.STAKEHOLDER_GROUP_TYPES,
+            )
+
+        @staticmethod
+        def _ihpix_handle_report_post(action_name, extra):
+            """POST (fetch/JSON) compartido por el reporte nuevo y la edición.
+
+            Devuelve `next_url`: el borrador continúa en su página de edición
+            (fuente de verdad en servidor) y el envío vuelve a "mis reportes".
+            """
+            from ckanext.theme_ejemplo import ihpix_constants as C
+            if not c.user:
+                return jsonify({'success': False,
+                                'error': _('You must be logged in')}), 403
+            try:
+                data_dict = _collect_report_form(request.form)
+                data_dict.update(extra)
+                context = {'user': c.user, 'model': model,
+                           'auth_user_obj': c.userobj}
+                result = toolkit.get_action(action_name)(context, data_dict)
+                is_draft = C.normalize_bool(data_dict.get('save_as_draft'))
+                if is_draft:
+                    msg = _('Draft saved.')
+                    next_url = h.url_for('theme_ejemplo.ihpix_report_edit',
+                                         id=result['id'])
+                else:
+                    msg = _('Report submitted successfully!')
+                    next_url = h.url_for('theme_ejemplo.user_ihpix',
+                                         id=c.user, status='pending')
+                    h.flash_success(_(
+                        'Your report "%(title)s" was submitted and will be '
+                        'reviewed by an administrator.') % {
+                            'title': result.get('title', '')})
+                return jsonify({'success': True, 'message': msg,
+                                'data': result, 'next_url': next_url})
+            except toolkit.ValidationError as e:
+                return jsonify({'success': False,
+                                'errors': e.error_dict,
+                                'error': _format_error_dict(e.error_dict)}), 400
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False,
+                                'error': _('Not authorized')}), 403
+            except toolkit.ObjectNotFound:
+                return jsonify({'success': False,
+                                'error': _('Report not found')}), 404
+            except Exception as e:
+                log.error('Error saving IHP-IX report: %s', e)
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        @staticmethod
+        def ihpix_report():
+            """Formulario IHP-IX (PDF 2026): reporte nuevo.
+
+            GET es público (muestra el aviso de login); POST exige sesión.
+            Acepta ``?pa=PA1&output=1.1`` para prellenar desde las páginas
+            por Output / workspaces.
+            """
+            from ckanext.theme_ejemplo.model import init_ihpix_activities_db
+            from ckanext.theme_ejemplo import ihpix_constants as C
+            init_ihpix_activities_db()
+
+            if request.method == 'POST':
+                return MyLogica._ihpix_handle_report_post(
+                    'ihpix_report_submit', {})
+
+            form_initial = {}
+            pa = request.args.get('pa', '').strip()
+            output = request.args.get('output', '').strip()
+            if output and not pa:
+                # Deducir la PA a partir del código de Output (1.3 → PA1)
+                for candidate in C.PRIORITY_AREAS:
+                    if C.is_valid_output_for_pa(candidate, output):
+                        pa = candidate
+                        break
+            if pa in C.PRIORITY_AREAS:
+                form_initial['priority_area'] = pa
+                if output and C.is_valid_output_for_pa(pa, output):
+                    form_initial['output'] = output
+
+            return render_template(
+                'ihpix/report.html',
+                is_logged_in=bool(c.user),
+                edit_mode=False,
+                activity=None,
+                can_edit=True,
+                form_initial=form_initial,
+                form_action_url=h.url_for('theme_ejemplo.ihpix_report'),
+                **MyLogica._ihpix_report_form_context()
+            )
+
+        @staticmethod
+        def ihpix_report_edit(id):
+            """Edición / reenvío de un reporte propio (o cualquiera, sysadmin)."""
+            redirect = _require_login()
+            if redirect:
+                return redirect
+            from ckanext.theme_ejemplo.model import init_ihpix_activities_db
+            init_ihpix_activities_db()
+
+            if request.method == 'POST':
+                return MyLogica._ihpix_handle_report_post(
+                    'ihpix_report_update', {'id': id})
+
+            context = {'user': c.user, 'model': model,
+                       'auth_user_obj': c.userobj}
+            try:
+                activity = toolkit.get_action('ihpix_report_show')(
+                    context, {'id': id})
+            except toolkit.ObjectNotFound:
+                return abort(404, _('Report not found'))
+            except toolkit.NotAuthorized:
+                return abort(403, _('Not authorized'))
+
+            return render_template(
+                'ihpix/report.html',
+                is_logged_in=True,
+                edit_mode=True,
+                activity=activity,
+                can_edit=activity.get('can_edit', False),
+                form_initial=activity.get('form', {}),
+                form_action_url=h.url_for('theme_ejemplo.ihpix_report_edit',
+                                          id=id),
+                **MyLogica._ihpix_report_form_context()
+            )
+
+        @staticmethod
+        def ihpix_report_delete_view(id):
+            """POST: borra un borrador propio (o cualquier reporte, sysadmin)."""
+            redirect = _require_login()
+            if redirect:
+                return redirect
+            context = {'user': c.user, 'model': model,
+                       'auth_user_obj': c.userobj}
+            try:
+                toolkit.get_action('ihpix_report_delete')(context, {'id': id})
+                h.flash_success(_('Report deleted.'))
+            except toolkit.ObjectNotFound:
+                return abort(404, _('Report not found'))
+            except toolkit.NotAuthorized:
+                return abort(403, _('Not authorized'))
+            except toolkit.ValidationError as e:
+                h.flash_error(_format_error_dict(e.error_dict))
+            return h.redirect_to('theme_ejemplo.user_ihpix', id=c.user)
+
+        @staticmethod
+        def ihpix_my_reports():
+            """Atajo /ihpix/my-reports → pestaña IHP-IX del perfil propio."""
+            redirect = _require_login()
+            if redirect:
+                return redirect
+            status = request.args.get('status', '').strip()
+            kwargs = {'status': status} if status else {}
+            return h.redirect_to('theme_ejemplo.user_ihpix', id=c.user, **kwargs)
+
+        @staticmethod
+        def user_ihpix(id):
+            """Pestaña IHP-IX del perfil: reportes del usuario.
+
+            El propio usuario y los sysadmins ven todos los estados con
+            contadores; el resto sólo los publicados.
+            """
+            from ckanext.theme_ejemplo.model import (
+                IhpixActivity, init_ihpix_activities_db,
+            )
+            init_ihpix_activities_db()
+            try:
+                user_dict, is_myself, is_sysadmin = MyLogica._get_user_context(id)
+            except toolkit.ObjectNotFound:
+                return abort(404, _('User not found'))
+            user_obj = model.User.get(user_dict['id'])
+
+            can_see_all = bool(is_myself or is_sysadmin)
+            status_filter = request.args.get('status', '').strip()
+            if not can_see_all:
+                status_filter = IhpixActivity.STATUS_PUBLISHED
+            elif status_filter not in IhpixActivity.VALID_STATUSES:
+                status_filter = ''
+
+            page = h.get_page_number(request.args) or 1
+            items_per_page = 20
+            try:
+                results, total = IhpixActivity.get_by_reporter(
+                    user_obj, status=status_filter or None,
+                    limit=items_per_page,
+                    offset=items_per_page * (page - 1))
+                reports = [r.as_dict() for r in results]
+                counts = (IhpixActivity.count_by_status_for_reporter(user_obj)
+                          if can_see_all else {})
+            except Exception as e:
+                log.error('Error listing IHP-IX reports for user %s: %s', id, e)
+                reports, total, counts = [], 0, {}
+
+            pager = h.Page(
+                collection=range(total),
+                page=page,
+                url=h.pager_url,
+                items_per_page=items_per_page,
+            )
+            pager.items = reports
+
+            return render_template(
+                'user/ihpix.html',
+                user_dict=user_dict,
+                reports=reports,
+                total=total,
+                page=pager,
+                status_filter=status_filter,
+                counts=counts,
+                counts_total=sum(counts.values()) if counts else total,
+                can_see_all=can_see_all,
+                is_myself=is_myself,
+                is_sysadmin=is_sysadmin,
             )
 
         # ── IHP-IX Dashboard ──────────────────────────────────────────────
@@ -3949,39 +4112,29 @@ class MyLogica():
             init_ihpix_activities_db()
 
             status_filter = request.args.get('status', 'pending')
+            if status_filter not in IhpixActivity.VALID_STATUSES + ('all',):
+                status_filter = 'pending'
             page = int(request.args.get('page', 1))
             items_per_page = 20
             offset = items_per_page * (page - 1)
 
             try:
-                if status_filter == 'all':
-                    results, total = IhpixActivity.get_all(
-                        limit=items_per_page, offset=offset
-                    )
-                elif status_filter == 'rejected':
-                    results, total = IhpixActivity.get_all(
-                        status='rejected',
-                        limit=items_per_page, offset=offset
-                    )
-                else:
-                    results, total = IhpixActivity.get_all(
-                        status='pending',
-                        limit=items_per_page, offset=offset
-                    )
+                results, total = IhpixActivity.get_all(
+                    status=None if status_filter == 'all' else status_filter,
+                    limit=items_per_page, offset=offset
+                )
                 reports = [r.as_dict() for r in results]
             except Exception as e:
                 log.error('Error fetching IHP-IX reports: %s', e)
                 reports = []
                 total = 0
 
-            try:
-                _, pending_count = IhpixActivity.get_all(status='pending',
-                                                          limit=1, offset=0)
-                _, rejected_count = IhpixActivity.get_all(status='rejected',
-                                                           limit=1, offset=0)
-            except Exception:
-                pending_count = 0
-                rejected_count = 0
+            counts = {}
+            for status in IhpixActivity.VALID_STATUSES:
+                try:
+                    counts[status] = IhpixActivity.count_by_status(status)
+                except Exception:
+                    counts[status] = 0
 
             return render_template(
                 'admin/ihpix_reports.html',
@@ -3990,8 +4143,10 @@ class MyLogica():
                 status_filter=status_filter,
                 page=page,
                 items_per_page=items_per_page,
-                pending_count=pending_count,
-                rejected_count=rejected_count,
+                pending_count=counts.get('pending', 0),
+                rejected_count=counts.get('rejected', 0),
+                draft_count=counts.get('draft', 0),
+                published_count=counts.get('published', 0),
             )
 
         @staticmethod

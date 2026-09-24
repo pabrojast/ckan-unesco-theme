@@ -52,6 +52,19 @@
             <li class="active"><a href="/ckan-admin/ihpix/reports?status=pending">{{ _('Reports') }}</a></li>
           </ul>
 
+          <style>
+            .ihpix-rev-tab-count-green { background: #dcfce7; color: #166534; }
+            .ihpix-rev-gates { display: flex; flex-wrap: wrap; gap: 0.35rem; margin: 0.75rem 0; }
+            .ihpix-rev-gate {
+              display: inline-block; padding: 0.15rem 0.55rem; border-radius: 999px;
+              font-size: 0.72rem; font-weight: 600; background: #f1f5f9; color: #94a3b8;
+              border: 1px solid #e2e8f0; text-decoration: line-through;
+            }
+            .ihpix-rev-gate.is-on { background: #e0f2fe; color: #075985; border-color: #bae6fd; text-decoration: none; }
+            .ihpix-rev-gate.ihpix-rev-kpi.is-on { background: #dcfce7; color: #166534; border-color: #bbf7d0; }
+            .ihpix-rev-notes { font-size: 0.88rem; color: #475569; margin: 0.5rem 0 0.75rem; white-space: pre-line; }
+            .ihpix-rev-actions .btn-default { margin-left: 0.35rem; }
+          </style>
           <!-- Status Filter Tabs -->
           <div class="ihpix-rev-status-tabs">
             <a href="?status=pending"
@@ -63,6 +76,16 @@
                class="ihpix-rev-status-tab {% if status_filter == 'rejected' %}active{% endif %}">
               <i class="fa fa-times-circle"></i> {{ _('Rejected') }}
               <span class="ihpix-rev-tab-count ihpix-rev-tab-count-red">{{ rejected_count }}</span>
+            </a>
+            <a href="?status=published"
+               class="ihpix-rev-status-tab {% if status_filter == 'published' %}active{% endif %}">
+              <i class="fa fa-check-circle"></i> {{ _('Published') }}
+              <span class="ihpix-rev-tab-count ihpix-rev-tab-count-green">{{ published_count }}</span>
+            </a>
+            <a href="?status=draft"
+               class="ihpix-rev-status-tab {% if status_filter == 'draft' %}active{% endif %}">
+              <i class="fa fa-pencil"></i> {{ _('Drafts') }}
+              <span class="ihpix-rev-tab-count">{{ draft_count }}</span>
             </a>
             <a href="?status=all"
                class="ihpix-rev-status-tab {% if status_filter == 'all' %}active{% endif %}">
@@ -152,10 +175,19 @@
                             </span>
                           </div>
                           {% endif %}
-                          {% if report.reported_by %}
+                          {% set reporter = h.get_ihpix_reporter(report.reported_by) %}
+                          {% if reporter %}
                           <div class="ihpix-rev-meta-item">
                             <span class="ihpix-rev-meta-label"><i class="fa fa-paper-plane"></i> {{ _('Submitted by') }}</span>
-                            <span class="ihpix-rev-meta-value">{{ report.reported_by }}</span>
+                            <span class="ihpix-rev-meta-value">
+                              {% if reporter.url %}<a href="{{ reporter.url }}">{{ reporter.display_name }}</a>{% else %}{{ reporter.display_name }}{% endif %}
+                            </span>
+                          </div>
+                          {% endif %}
+                          {% if report.focal_point_name %}
+                          <div class="ihpix-rev-meta-item">
+                            <span class="ihpix-rev-meta-label"><i class="fa fa-user"></i> {{ _('Focal point') }}</span>
+                            <span class="ihpix-rev-meta-value">{{ report.focal_point_name }}</span>
                           </div>
                           {% endif %}
                         </div>
@@ -169,7 +201,7 @@
                           {% if report.institution %}
                           <div class="ihpix-rev-meta-item">
                             <span class="ihpix-rev-meta-label"><i class="fa fa-building"></i> {{ _('Institution') }}</span>
-                            <span class="ihpix-rev-meta-value">{{ report.institution }}</span>
+                            <span class="ihpix-rev-meta-value">{{ report.institution }}{% if report.institution_type %} <small class="text-muted">({{ report.institution_type }}{% if report.institution_type_other %}: {{ report.institution_type_other }}{% endif %})</small>{% endif %}</span>
                           </div>
                           {% endif %}
                           <div class="ihpix-rev-meta-item">
@@ -194,14 +226,36 @@
                             </span>
                           </div>
                           {% endif %}
-                          {% if report.created_at %}
+                          {% set submitted = report.submitted_at or report.created_at %}
+                          {% if submitted %}
                           <div class="ihpix-rev-meta-item">
                             <span class="ihpix-rev-meta-label"><i class="fa fa-clock-o"></i> {{ _('Submitted') }}</span>
-                            <span class="ihpix-rev-meta-value">{{ report.created_at }}</span>
+                            <span class="ihpix-rev-meta-value">{{ h.render_datetime(submitted, with_hours=True) }}</span>
                           </div>
                           {% endif %}
                         </div>
                       </div>
+
+                      {# PDF 2026: gates y KPIs activos #}
+                      {% set kpi_flags = [
+                        ('1a', report.kpi_1a_active), ('1b', report.kpi_1b_active),
+                        ('2', report.kpi_2_active), ('3', report.kpi_3_active),
+                        ('4', report.kpi_4_active), ('5', report.kpi_5_active),
+                        ('6', report.kpi_6_active), ('8', report.kpi_8_active),
+                      ] %}
+                      <div class="ihpix-rev-gates" title="{{ _('Yes/No answers of the report; crossed-out items were answered No') }}">
+                        <span class="ihpix-rev-gate {% if report.unesco_secretariat_participation %}is-on{% endif %}">{{ _('UNESCO Secretariat') }}</span>
+                        <span class="ihpix-rev-gate {% if report.has_member_state_support %}is-on{% endif %}">{{ _('Member State support') }}{% if report.has_member_state_support and report.supporting_member_state %}: {{ report.supporting_member_state }}{% endif %}</span>
+                        <span class="ihpix-rev-gate {% if report.has_flagship %}is-on{% endif %}">{{ _('Flagship') }}</span>
+                        <span class="ihpix-rev-gate {% if report.has_synergies %}is-on{% endif %}">{{ _('Synergies') }}</span>
+                        <span class="ihpix-rev-gate {% if report.regions_benefit %}is-on{% endif %}">{{ _('Regions') }}</span>
+                        {% for code, on in kpi_flags %}
+                          <span class="ihpix-rev-gate ihpix-rev-kpi {% if on %}is-on{% endif %}">KPI {{ code }}</span>
+                        {% endfor %}
+                      </div>
+                      {% if report.additional_notes %}
+                      <div class="ihpix-rev-notes"><strong>{{ _('Additional notes') }}:</strong> {{ report.additional_notes }}</div>
+                      {% endif %}
 
                       {# Rejection Info #}
                       {% if report.status == 'rejected' and report.review_notes %}
@@ -228,6 +282,9 @@
                                 data-id="{{ report.id }}" data-title="{{ report.title }}">
                           <i class="fa fa-times"></i> {{ _('Reject') }}
                         </button>
+                        <a class="btn btn-default" href="{{ h.url_for('theme_ejemplo.ihpix_report_edit', id=report.id) }}">
+                          <i class="fa fa-pencil"></i> {{ _('Open full report') }}
+                        </a>
                       </div>
 
                       {# Inline Reject Form (hidden by default) #}
@@ -257,6 +314,17 @@
                                 data-id="{{ report.id }}" data-title="{{ report.title }}">
                           <i class="fa fa-check"></i> {{ _('Re-approve') }}
                         </button>
+                        <a class="btn btn-default" href="{{ h.url_for('theme_ejemplo.ihpix_report_edit', id=report.id) }}">
+                          <i class="fa fa-pencil"></i> {{ _('Open full report') }}
+                        </a>
+                      </div>
+                      {% endif %}
+
+                      {% if report.status in ('draft', 'published') %}
+                      <div class="ihpix-rev-actions">
+                        <a class="btn btn-default" href="{{ h.url_for('theme_ejemplo.ihpix_report_edit', id=report.id) }}">
+                          <i class="fa fa-pencil"></i> {{ _('Open full report') }}
+                        </a>
                       </div>
                       {% endif %}
 
@@ -312,6 +380,10 @@
                           {{ _('There are no pending reports at this time.') }}
                         {% elif status_filter == 'rejected' %}
                           {{ _('There are no rejected reports.') }}
+                        {% elif status_filter == 'draft' %}
+                          {{ _('There are no draft reports.') }}
+                        {% elif status_filter == 'published' %}
+                          {{ _('There are no published reports.') }}
                         {% else %}
                           {{ _('No reports match the current filter.') }}
                         {% endif %}
@@ -864,7 +936,7 @@
           showToast('{{ _("Report") }} ' + label + '.', 'success');
           removeCard(reportId);
         } else {
-          showToast(data.error || '{{ _("An error occurred.") }}', 'error');
+          showToast(data.error || {{ _("An error occurred.")|tojson }}, 'error');
           btn.disabled = false;
           btn.innerHTML = originalHtml;
         }

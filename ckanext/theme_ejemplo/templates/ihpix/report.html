@@ -625,6 +625,40 @@
   }
   .ihpix-restore-banner button:hover { background: #fdf0c8; }
 
+  /* Estado del reporte (modo edición) */
+  .ihpix-status-banner {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.8rem;
+    flex-wrap: wrap;
+    background: #eef6ff;
+    border: 1px solid #b9d7f7;
+    border-left: 4px solid #1f6fd1;
+    border-radius: 8px;
+    padding: 0.85rem 1.2rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.9rem;
+    color: #123c6b;
+  }
+  .ihpix-status-banner.is-rejected { background: #fff1f0; border-color: #f3b8b5; border-left-color: #d9363e; color: #7a1f24; }
+  .ihpix-status-banner.is-readonly { background: #f4f5f7; border-color: #d5d9e0; border-left-color: #6b7280; color: #374151; }
+  .ihpix-status-banner.is-published { background: #ecfdf5; border-color: #a7f3d0; border-left-color: #15803d; color: #14532d; }
+  .ihpix-status-badge {
+    display: inline-block; padding: 0.2rem 0.6rem; border-radius: 999px;
+    font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.03em; background: #1f6fd1; color: #fff; margin-top: 0.15rem;
+  }
+  .ihpix-status-banner.is-rejected .ihpix-status-badge { background: #d9363e; }
+  .ihpix-status-banner.is-readonly .ihpix-status-badge { background: #6b7280; }
+  .ihpix-status-banner.is-published .ihpix-status-badge { background: #15803d; }
+  .ihpix-status-text { flex: 1; min-width: 200px; line-height: 1.45; }
+  .ihpix-status-text blockquote {
+    margin: 0.4rem 0 0; padding: 0.4rem 0.8rem; border-left: 3px solid currentColor;
+    font-size: 0.88rem; white-space: pre-line; background: rgba(255,255,255,0.5);
+  }
+  .ihpix-status-text a { font-weight: 600; color: inherit; text-decoration: underline; }
+  .ihpix-report-form.is-readonly .ihpix-report-actions { display: none; }
+
   /* ── Barra de progreso ────────────────────────────────────────── */
   .ihpix-progress {
     display: flex;
@@ -908,11 +942,15 @@
 <div class="ihpix-report-toast-container" id="ihpix-report-toasts" role="status" aria-live="polite"></div>
 
 <div class="ihpix-report-banner">
-  <h1><i class="fa fa-file-text-o"></i> {{ _('Submit IHP-IX Activity Report') }}</h1>
+  <h1><i class="fa fa-file-text-o"></i> {% if edit_mode %}{{ _('Edit IHP-IX Activity Report') }}{% else %}{{ _('Submit IHP-IX Activity Report') }}{% endif %}</h1>
   <p>{{ _('Report activities implemented under IHP-IX (2022–2029). The form covers 6 sections aligned with the official UNESCO reporting guidelines.') }}</p>
   <div class="ihpix-banner-meta">
     <span><i class="fa fa-clock-o" aria-hidden="true"></i> {{ _('About 10 minutes to complete') }}</span>
+    {% if edit_mode %}
+    <span><i class="fa fa-floppy-o" aria-hidden="true"></i> {{ _('Changes are saved on the server when you click "Save as draft"') }}</span>
+    {% else %}
     <span><i class="fa fa-floppy-o" aria-hidden="true"></i> {{ _('Your progress is saved automatically in this browser') }}</span>
+    {% endif %}
     <span><i class="fa fa-asterisk" aria-hidden="true" style="font-size:0.6rem;"></i> {{ _('Fields marked with * are required') }}</span>
   </div>
 </div>
@@ -947,6 +985,34 @@
     <button type="button" id="ihpix-restore-discard">{{ _('Discard and start over') }}</button>
   </div>
 
+  {% if edit_mode and activity %}
+  {% set status_labels = {
+    'draft': _('Draft'),
+    'pending': _('Pending review'),
+    'published': _('Published'),
+    'rejected': _('Needs changes'),
+  } %}
+  <div class="ihpix-status-banner {% if activity.status == 'rejected' %}is-rejected{% elif activity.status == 'published' %}is-published{% elif not can_edit %}is-readonly{% endif %}" role="status">
+    <span class="ihpix-status-badge">{{ status_labels.get(activity.status, activity.status) }}</span>
+    <span class="ihpix-status-text">
+      {% if activity.status == 'draft' %}
+        {{ _('This is a draft. Only you can see it until you submit it for review.') }}
+      {% elif activity.status == 'rejected' %}
+        {{ _('The reviewer returned this report. Update it and submit it again.') }}
+        {% if activity.review_notes %}<blockquote>{{ activity.review_notes }}</blockquote>{% endif %}
+      {% elif activity.status == 'pending' %}
+        {% if can_edit %}{{ _('This report is awaiting review.') }}{% else %}{{ _('This report is awaiting review and can no longer be edited.') }}{% endif %}
+      {% elif activity.status == 'published' %}
+        {% if can_edit %}{{ _('This report is published. Changes are applied directly without a new review.') }}{% else %}{{ _('This report is published and can no longer be edited.') }}{% endif %}
+      {% endif %}
+      {% if activity.updated_at %}
+        <br><small>{{ _('Last saved') }}: {{ h.render_datetime(activity.updated_at, with_hours=True) }}</small>
+      {% endif %}
+      <br><a href="{{ h.url_for('theme_ejemplo.user_ihpix', id=c.user) }}"><i class="fa fa-arrow-left" aria-hidden="true"></i> {{ _('Back to my reports') }}</a>
+    </span>
+  </div>
+  {% endif %}
+
   {# Nav de secciones + barra de progreso (pegajosa) #}
   <div class="ihpix-form-sticky">
     <nav class="ihpix-section-nav" aria-label="{{ _('Form sections') }}">
@@ -971,7 +1037,8 @@
   </div>
 
   {# Report form #}
-  <form id="ihpix-report-form" novalidate>
+  <form id="ihpix-report-form" class="ihpix-report-form{% if not can_edit %} is-readonly{% endif %}" novalidate>
+    {{ h.csrf_input() }}
 
     {# Resumen de errores tras un envío inválido #}
     <div class="ihpix-error-summary" id="ihpix-error-summary" role="alert" tabindex="-1">
@@ -1116,6 +1183,14 @@
               {% endfor %}
             </select>
             <div class="ihpix-report-error-text" role="alert" id="ihpix-error-biennium">{{ _('Please select a biennium.') }}</div>
+          </div>
+          <div class="ihpix-report-field">
+            <label class="ihpix-report-label" for="ihpix-field-start-date">
+              {{ _('Start date') }}
+            </label>
+            <span class="ihpix-report-help">{{ _('If applicable, the date when the activity started.') }}</span>
+            <input type="date" id="ihpix-field-start-date" name="start_date"
+                   class="ihpix-report-input">
           </div>
           <div class="ihpix-report-field">
             <label class="ihpix-report-label" for="ihpix-field-end-date">
@@ -1661,6 +1736,12 @@
     var prefersReducedMotion = !!(window.matchMedia &&
       window.matchMedia('(prefers-reduced-motion: reduce)').matches);
 
+    /* Modo del formulario (lo fija el controller) */
+    var FORM_ACTION_URL = {{ form_action_url|tojson }};
+    var EDIT_MODE = {{ 'true' if edit_mode else 'false' }};
+    var READ_ONLY = {{ 'false' if can_edit else 'true' }};
+    var INITIAL_DATA = {{ (form_initial or {})|tojson }};
+
     /* ── Toasts ─────────────────────────────────────────────────── */
     function showToast(message, type) {
       var toast = document.createElement('div');
@@ -1841,6 +1922,33 @@
       errorSummary.classList.add('show');
     }
 
+    /* Errores de validación del servidor → mismos estilos que los locales */
+    function highlightServerErrors(errors) {
+      clearFieldErrors();
+      var failed = [];
+      Object.keys(errors).forEach(function(name) {
+        var cfg = null;
+        REQUIRED_FIELDS.forEach(function(c) { if (c.name === name) cfg = c; });
+        var inp = form.querySelector('[name="' + name + '"]');
+        var fieldId = cfg ? cfg.fieldId : (inp && inp.id ? inp.id : '');
+        if (cfg) {
+          showFieldError(cfg.fieldId, cfg.errorId);
+        } else if (inp) {
+          var box = inp.closest ? inp.closest('.ihpix-report-field') : null;
+          (box || inp).classList.add('ihpix-report-field-error');
+        }
+        var msg = errors[name];
+        if (Array.isArray(msg)) msg = msg.join(', ');
+        var label = fieldId ? labelTextFor(fieldId) : name;
+        failed.push({ fieldId: fieldId, label: label + ': ' + msg });
+      });
+      updateSectionStatus();
+      if (failed.length && errorSummary) {
+        buildErrorSummary(failed);
+        errorSummary.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'start' });
+      }
+    }
+
     function validateForm(isDraft) {
       clearFieldErrors();
       var failed = [];
@@ -1883,7 +1991,7 @@
       var formData = new FormData(form);
       if (asDraft) formData.append('save_as_draft', '1');
 
-      fetch('{{ h.url_for("theme_ejemplo.ihpix_report") }}', {
+      fetch(FORM_ACTION_URL, {
         method: 'POST',
         body: formData,
         headers: { 'X-Requested-With': 'XMLHttpRequest' }
@@ -1901,18 +2009,28 @@
             ? '{{ _("Draft saved.") }}'
             : '{{ _("Report submitted successfully!") }}');
           showToast(msg, 'success');
-          if (!asDraft) {
-            clearDraft();
-            if (errorSummary) errorSummary.classList.remove('show');
-            if (restoreBanner) restoreBanner.classList.remove('show');
-            form.style.display = 'none';
-            successState.classList.add('ihpix-report-visible');
-            successState.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'start' });
-            form.reset();
+          // El servidor pasa a ser la fuente de verdad: el borrador local sobra
+          clearDraft();
+          if (errorSummary) errorSummary.classList.remove('show');
+          if (restoreBanner) restoreBanner.classList.remove('show');
+          if (asDraft && EDIT_MODE) {
+            // Seguimos en el mismo borrador; sólo actualizamos el indicador
+            setAutosaveStatus('server');
+            return;
           }
+          if (result.data.next_url) {
+            // Borrador nuevo → su página de edición; envío → "mis reportes"
+            window.location.href = result.data.next_url;
+            return;
+          }
+          form.style.display = 'none';
+          successState.classList.add('ihpix-report-visible');
+          successState.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'start' });
+          form.reset();
         } else {
           var err = result.data.error || result.data.message || '{{ _("An error occurred. Please try again.") }}';
           showToast(err, 'error');
+          if (result.data.errors) highlightServerErrors(result.data.errors);
         }
       })
       .catch(function() {
@@ -2120,6 +2238,8 @@
         autosaveStatus.innerHTML = '<i class="fa fa-spinner fa-spin" aria-hidden="true"></i> {{ _("Saving…") }}';
       } else if (state === 'saved') {
         autosaveStatus.innerHTML = '<i class="fa fa-check" aria-hidden="true"></i> {{ _("Saved in this browser") }}';
+      } else if (state === 'server') {
+        autosaveStatus.innerHTML = '<i class="fa fa-cloud" aria-hidden="true"></i> {{ _("Saved on the server") }}';
       } else {
         autosaveStatus.innerHTML = '';
       }
@@ -2196,9 +2316,28 @@
       setAutosaveStatus('');
     }
 
+    /* Valores iniciales del servidor (edición) o de la URL (?pa=&output=) */
+    function applyInitialData() {
+      if (!INITIAL_DATA || !Object.keys(INITIAL_DATA).length) return false;
+      restoreFormData(INITIAL_DATA);
+      refreshDerivedUI();
+      if (INITIAL_DATA.output && outputSelect) {
+        outputSelect.value = INITIAL_DATA.output;
+      }
+      return true;
+    }
+
     function initAutosave() {
+      if (EDIT_MODE) {
+        // En edición la base de datos es la única fuente de verdad: nada de
+        // localStorage, que podría pisar el borrador guardado en servidor.
+        applyInitialData();
+        if (autosaveStatus) autosaveStatus.style.display = 'none';
+        return;
+      }
       if (!storageOk) {
         if (autosaveStatus) autosaveStatus.style.display = 'none';
+        applyInitialData();
         return;
       }
       var raw = null;
@@ -2224,6 +2363,9 @@
           }
         } catch (e) {}
       }
+      // El prefill de la URL (p. ej. "Report for this output") manda sobre
+      // el borrador local sólo en los campos que trae.
+      applyInitialData();
       // Los listeners se conectan tras restaurar para no reguardar al cargar.
       form.addEventListener('input', scheduleAutosave);
       form.addEventListener('change', scheduleAutosave);
@@ -2258,6 +2400,12 @@
     /* ── Arranque ───────────────────────────────────────────────── */
     initAutosave();
     updateProgress();
+    if (READ_ONLY) {
+      // Pendiente/publicado para su autor: se puede consultar, no editar
+      form.querySelectorAll('input, select, textarea, button').forEach(function(el) {
+        el.disabled = true;
+      });
+    }
   })();
   </script>
 

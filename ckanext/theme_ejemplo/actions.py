@@ -1724,6 +1724,9 @@ from ckanext.theme_ejemplo.model import (
     IhpixContent, init_ihpix_content_db, VALID_IHPIX_SECTION_KEYS,
     IhpixActivity, init_ihpix_activities_db, VALID_PRIORITY_AREAS,
 )
+from ckanext.theme_ejemplo import ihpix_constants as C
+from ckanext.theme_ejemplo import ihpix_forms
+import datetime as _dt
 
 
 @toolkit.side_effect_free
@@ -1872,7 +1875,14 @@ _IHPIX_TEXT_FIELDS = (
     'knowledge_activity_type', 'knowledge_activity_type_other',
     'stakeholder_group_type', 'notes',
     'cross_cutting_wg', 'synergies', 'supporting_member_state',
+    # PDF 2026
+    'focal_point_name', 'institution_type_other',
+    'stakeholder_group_type_other', 'stakeholder_group_name',
+    'additional_notes',
 )
+
+# Gates Y/N del PDF 2026 (booleanos explícitos)
+_IHPIX_BOOL_FIELDS = ihpix_forms.BOOL_FIELDS
 
 # Campos numéricos de IhpixActivity
 _IHPIX_INT_FIELDS = (
@@ -1902,9 +1912,10 @@ def ihpix_activity_create(context, data_dict):
         )
 
     status = data_dict.get('status', 'published')
-    if status not in ('draft', 'published'):
+    if status not in IhpixActivity.VALID_STATUSES:
         raise toolkit.ValidationError(
-            {'status': 'Must be draft or published'}
+            {'status': 'Must be one of: {}'.format(
+                ', '.join(IhpixActivity.VALID_STATUSES))}
         )
 
     user_obj = context.get('auth_user_obj')
@@ -1925,6 +1936,9 @@ def ihpix_activity_create(context, data_dict):
 
     for field in _IHPIX_INT_FIELDS:
         kwargs[field] = _parse_int_field(data_dict, field, 0)
+
+    for field in _IHPIX_BOOL_FIELDS:
+        kwargs[field] = C.normalize_bool(data_dict.get(field))
 
     for field in _IHPIX_DATE_FIELDS:
         kwargs[field] = _parse_date_field(data_dict, field)
@@ -1961,9 +1975,10 @@ def ihpix_activity_update(context, data_dict):
 
     if 'status' in data_dict:
         status = data_dict['status']
-        if status not in ('draft', 'published'):
+        if status not in IhpixActivity.VALID_STATUSES:
             raise toolkit.ValidationError(
-                {'status': 'Must be draft or published'}
+                {'status': 'Must be one of: {}'.format(
+                    ', '.join(IhpixActivity.VALID_STATUSES))}
             )
         activity.status = status
 
@@ -1977,7 +1992,11 @@ def ihpix_activity_update(context, data_dict):
         if field in data_dict:
             setattr(activity, field, _parse_int_field(data_dict, field, 0))
 
-    import datetime as _dt
+    # Gates Y/N
+    for field in _IHPIX_BOOL_FIELDS:
+        if field in data_dict:
+            setattr(activity, field, C.normalize_bool(data_dict[field]))
+
     activity.updated_at = _dt.datetime.utcnow()
     model.Session.commit()
     return activity.as_dict()
@@ -2000,271 +2019,277 @@ def ihpix_activity_delete(context, data_dict):
 
 # ── IHP-IX Reporting & Dashboard ────────────────────────────────────────────
 
-def ihpix_report_submit(context, data_dict):
-    """Submit an IHP-IX activity report (PDF 2026 spec).
+# ── Helpers del workflow de reporte ─────────────────────────────────────────
 
-    Maps all fields of the 6-section reporting form to `IhpixActivity`.
-    Multi-select values arrive as lists (via `request.form.getlist` in the
-    controller) and are persisted as JSON strings in the corresponding
-    column.
+def _ihpix_user_obj(context):
+    """Objeto usuario del contexto (auth_user_obj, o lookup por nombre)."""
+    user_obj = context.get('auth_user_obj')
+    if user_obj is None and context.get('user'):
+        user_obj = model.User.get(context['user'])
+    return user_obj
 
-    Behaviour:
-    - `save_as_draft=1` → status=draft, only `title` required.
-    - Otherwise → status=pending (awaits admin review), full required-field
-      validation per PDF.
+
+def _ihpix_get_report_or_404(data_dict):
+    activity_id = toolkit.get_or_bust(data_dict, 'id')
+    activity = IhpixActivity.get(activity_id)
+    if not activity:
+        raise toolkit.ObjectNotFound('IHP-IX report not found')
+    return activity
+
+
+def _ihpix_validate(data_dict, is_draft):
+    """Traduce `ReportValidationError` (módulo puro) a `toolkit.ValidationError`."""
+    try:
+        return ihpix_forms.validate_report_payload(data_dict, is_draft)
+    except ihpix_forms.ReportValidationError as e:
+        raise toolkit.ValidationError(e.errors)
+
+
+def _apply_report_values(activity, values):
+    """Vuelca el dict validado (columna → valor) sobre la actividad."""
+    for key, value in values.items():
+        setattr(activity, key, value)
+    activity.updated_at = _dt.datetime.utcnow()
+
+
+def _ihpix_mark_submitted(activity):
+    """Pasa el reporte a la cola de revisión."""
+    now = _dt.datetime.utcnow()
+    activity.status = IhpixActivity.STATUS_PENDING
+    activity.submitted_at = now
+    if not activity.reported_date:
+        activity.reported_date = now.date()
+    # La revisión anterior (si la hubo) deja de aplicar; review_notes se
+    # conserva como "última observación" visible para el reportante.
+    activity.reviewed_by = u''
+    activity.reviewed_at = None
+
+
+def _ihpix_notify_reporter(activity, action):
+    """Email al reportante con el resultado de la revisión (best effort).
+
+    Nunca bloquea la acción: cualquier fallo (sin SMTP, usuario sin email,
+    fila del seed sin usuario) sólo deja un warning en el log.
     """
-    from ckanext.theme_ejemplo import ihpix_constants as C
+    try:
+        if not activity.reported_by:
+            return
+        user = model.User.get(activity.reported_by)
+        if not user or not user.email:
+            return
+        import ckan.lib.mailer as mailer
+        _ = toolkit._
+        site_title = toolkit.config.get('ckan.site_title', 'IHP-WINS')
+        try:
+            reports_url = toolkit.url_for(
+                'theme_ejemplo.user_ihpix', id=user.name, qualified=True)
+        except Exception:
+            reports_url = toolkit.config.get('ckan.site_url', '') + '/ihpix/my-reports'
+        if action == 'approve':
+            subject = _('Your IHP-IX report "{title}" has been published').format(
+                title=activity.title)
+            body = _(
+                'Dear {name},\n\n'
+                'Your IHP-IX activity report "{title}" has been reviewed and '
+                'published on {site}.\n\n'
+                'You can see all your reports here: {url}\n\n'
+                'Thank you for contributing to IHP-IX.\n'
+            ).format(name=user.display_name or user.name, title=activity.title,
+                     site=site_title, url=reports_url)
+        else:
+            subject = _('Your IHP-IX report "{title}" needs changes').format(
+                title=activity.title)
+            body = _(
+                'Dear {name},\n\n'
+                'Your IHP-IX activity report "{title}" was reviewed on {site} '
+                'and could not be published as submitted.\n\n'
+                'Reviewer notes:\n{notes}\n\n'
+                'You can edit and resubmit it here: {url}\n'
+            ).format(name=user.display_name or user.name, title=activity.title,
+                     site=site_title, notes=activity.review_notes or '-',
+                     url=reports_url)
+        mailer.mail_user(user, subject, body)
+    except Exception as e:
+        log.warning('IHP-IX: no se pudo enviar el email de revisión: %s', e)
 
+
+def ihpix_report_submit(context, data_dict):
+    """Crea un reporte IHP-IX (PDF 2026) desde el formulario.
+
+    - `save_as_draft=1` → status=draft (sólo exige título).
+    - Si no → status=pending (validación completa) y entra en la cola de
+      revisión.
+
+    La validación vive en `ihpix_forms.validate_report_payload`; aquí sólo
+    se persiste. `reported_by` guarda el **id** del usuario.
+    """
     toolkit.check_access('ihpix_report_submit', context, data_dict)
     init_ihpix_activities_db()
 
     is_draft = C.normalize_bool(data_dict.get('save_as_draft'))
+    values = _ihpix_validate(data_dict, is_draft)
+    user_obj = _ihpix_user_obj(context)
 
-    title = data_dict.get('title', u'').strip()
-    priority_area = data_dict.get('priority_area', u'').strip()
-
-    if not title:
-        raise toolkit.ValidationError({'title': 'Title is required'})
-
-    # Server-side length enforcement (client maxlength is bypassable)
-    for fname in ('description', 'outcomes'):
-        val = data_dict.get(fname, u'')
-        if isinstance(val, str) and len(val.strip()) > 250:
-            raise toolkit.ValidationError(
-                {fname: '{} must be 250 characters or fewer'.format(fname)}
-            )
-
+    activity = IhpixActivity(title=values['title'],
+                             priority_area=values['priority_area'])
+    _apply_report_values(activity, values)
+    activity.status = IhpixActivity.STATUS_DRAFT
+    activity.reported_by = user_obj.id if user_obj else context.get('user', u'')
     if not is_draft:
-        # Full required-field validation per PDF Section I/II
-        required = {
-            'focal_point_name': 'Focal point name is required',
-            'contact_email': 'Focal point email is required',
-            'institution_type': 'Lead Implementing Institution category is required',
-            'institution': 'Institution name is required',
-            'biennium': 'Biennium is required',
-        }
-        for fname, msg in required.items():
-            if not str(data_dict.get(fname, u'')).strip():
-                raise toolkit.ValidationError({fname: msg})
-        if priority_area not in C.PRIORITY_AREAS:
-            raise toolkit.ValidationError({
-                'priority_area': 'Must be one of: {}'.format(', '.join(C.PRIORITY_AREAS))
-            })
-        biennium = str(data_dict.get('biennium', u'')).strip()
-        if biennium and not C.is_valid_biennium(biennium):
-            raise toolkit.ValidationError({
-                'biennium': 'Must be one of: {}'.format(', '.join(C.BIENNIA))
-            })
-        inst_type = str(data_dict.get('institution_type', u'')).strip()
-        if inst_type and not C.is_valid_institution_type(inst_type):
-            raise toolkit.ValidationError({
-                'institution_type': 'Invalid institution type'
-            })
-
-    def _list(field, allowed=None):
-        """Extract a list from data_dict (supports list, JSON string, comma-string)."""
-        val = data_dict.get(field, [])
-        if isinstance(val, (list, tuple)):
-            items = [str(v).strip() for v in val if str(v).strip()]
-        else:
-            s = str(val or u'').strip()
-            if not s:
-                return []
-            if s.startswith('['):
-                try:
-                    import json as _json
-                    items = [str(v).strip() for v in _json.loads(s) if str(v).strip()]
-                except Exception:
-                    items = [p.strip() for p in s.split(',') if p.strip()]
-            else:
-                items = [p.strip() for p in s.split(',') if p.strip()]
-        if allowed:
-            items = [i for i in items if i in allowed]
-        return items
-
-    def _json(field, allowed=None):
-        items = _list(field, allowed)
-        import json as _json_mod
-        return _json_mod.dumps(items) if items else u''
-
-    def _int(field):
-        val = data_dict.get(field, 0)
-        try:
-            return max(0, int(val or 0))
-        except (TypeError, ValueError):
-            return 0
-
-    def _bool(field):
-        return C.normalize_bool(data_dict.get(field))
-
-    import datetime as _dt
-
-    activity = IhpixActivity(
-        title=title,
-        priority_area=priority_area or 'PA1',
-        description=data_dict.get('description', u'').strip(),
-        output=data_dict.get('output', u'').strip(),
-        country=data_dict.get('country', u'').strip(),
-        institution=data_dict.get('institution', u'').strip(),
-        link=data_dict.get('link', u'').strip(),
-        outcomes=data_dict.get('outcomes', u'').strip(),
-        image_url=data_dict.get('image_url', u''),
-        status=(IhpixActivity.STATUS_DRAFT if is_draft else IhpixActivity.STATUS_PENDING),
-        reported_by=context.get('user', u''),
-        contact_name=data_dict.get('contact_name', u'').strip()
-            or data_dict.get('focal_point_name', u'').strip(),
-        contact_email=data_dict.get('contact_email', u'').strip(),
-
-        # Section I extras
-        focal_point_name=data_dict.get('focal_point_name', u'').strip(),
-        institution_type=data_dict.get('institution_type', u'').strip(),
-        institution_type_other=data_dict.get('institution_type_other', u'').strip(),
-        partners=data_dict.get('partners', u'').strip(),
-        biennium=data_dict.get('biennium', u'').strip(),
-        unesco_secretariat_participation=_bool('unesco_secretariat_participation'),
-        has_member_state_support=_bool('has_member_state_support'),
-        supporting_member_state=data_dict.get('supporting_member_state', u'').strip(),
-        has_flagship=_bool('has_flagship'),
-        flagships=_json('flagships', allowed=C.FLAGSHIPS),
-
-        # Section II
-        key_activity=data_dict.get('key_activity', u'').strip(),
-
-        # Section III
-        cross_cutting_wg=_json('cross_cutting_wg', allowed=C.CROSS_CUTTING_WGS),
-        has_synergies=_bool('has_synergies'),
-        synergies=data_dict.get('synergies', u'').strip(),
-
-        # Section IV
-        regions_benefit=_bool('regions_benefit'),
-        regions=_json('regions', allowed=C.REGIONS),
-        member_states=_json('member_states'),
-
-        # Section V — KPIs
-        kpi_1a_active=_bool('kpi_1a_active'),
-        knowledge_product_type=_json('knowledge_product_type', allowed=C.KNOWLEDGE_PRODUCT_TYPES),
-        knowledge_product_type_other=data_dict.get('knowledge_product_type_other', u'').strip(),
-        num_knowledge_products=_int('num_knowledge_products'),
-
-        kpi_1b_active=_bool('kpi_1b_active'),
-        scientific_product_type=_json('scientific_product_type', allowed=C.SCIENTIFIC_PRODUCT_TYPES),
-        num_scientific_products=_int('num_scientific_products'),
-
-        kpi_2_active=_bool('kpi_2_active'),
-        knowledge_activity_type=_json('knowledge_activity_type', allowed=C.KNOWLEDGE_ACTIVITY_TYPES),
-        knowledge_activity_type_other=data_dict.get('knowledge_activity_type_other', u'').strip(),
-        stakeholders_knowledge=_int('stakeholders_knowledge'),
-        stakeholders_knowledge_youth=_int('stakeholders_knowledge_youth'),
-        stakeholders_knowledge_female=_int('stakeholders_knowledge_female'),
-
-        kpi_3_active=_bool('kpi_3_active'),
-        training_type=_json('training_type', allowed=C.TRAINING_TYPES),
-        num_training_materials=_int('num_training_materials'),
-
-        kpi_4_active=_bool('kpi_4_active'),
-        num_curricula=_int('num_curricula'),
-
-        kpi_5_active=_bool('kpi_5_active'),
-        stakeholders_awareness=_int('stakeholders_awareness'),
-        stakeholders_awareness_youth=_int('stakeholders_awareness_youth'),
-        stakeholders_awareness_female=_int('stakeholders_awareness_female'),
-
-        kpi_6_active=_bool('kpi_6_active'),
-        num_transboundary_ms=_int('num_transboundary_ms'),
-
-        kpi_8_active=_bool('kpi_8_active'),
-        stakeholder_group_type=_json('stakeholder_group_type', allowed=C.STAKEHOLDER_GROUP_TYPE_VALUES),
-        stakeholder_group_type_other=data_dict.get('stakeholder_group_type_other', u'').strip(),
-        stakeholder_group_name=data_dict.get('stakeholder_group_name', u'').strip(),
-        num_stakeholder_groups=_int('num_stakeholder_groups'),
-
-        # Section VI
-        additional_notes=data_dict.get('additional_notes', u'').strip(),
-    )
-
-    # If kpi gate is False, also reset the gate-related ints to 0 to keep DB clean.
-    if not activity.kpi_1a_active:
-        activity.num_knowledge_products = 0
-        activity.knowledge_product_type = u''
-    if not activity.kpi_1b_active:
-        activity.num_scientific_products = 0
-        activity.scientific_product_type = u''
-    if not activity.kpi_2_active:
-        activity.stakeholders_knowledge = 0
-        activity.stakeholders_knowledge_youth = 0
-        activity.stakeholders_knowledge_female = 0
-    if not activity.kpi_3_active:
-        activity.num_training_materials = 0
-        activity.training_type = u''
-    if not activity.kpi_4_active:
-        activity.num_curricula = 0
-    if not activity.kpi_5_active:
-        activity.stakeholders_awareness = 0
-        activity.stakeholders_awareness_youth = 0
-        activity.stakeholders_awareness_female = 0
-    if not activity.kpi_6_active:
-        activity.num_transboundary_ms = 0
-    if not activity.kpi_8_active:
-        activity.num_stakeholder_groups = 0
-        activity.stakeholder_group_type = u''
-
-    # Reset conditional text fields when their gate is "no"
-    if not activity.has_member_state_support:
-        activity.supporting_member_state = u''
-    if not activity.has_flagship:
-        activity.flagships = u''
-    if not activity.has_synergies:
-        activity.synergies = u''
-    if not activity.regions_benefit:
-        activity.regions = u''
-        activity.member_states = u''
-
-    # Parse dates
-    for field in ('reported_date', 'start_date', 'end_date'):
-        val = data_dict.get(field, u'')
-        val = str(val).strip() if val is not None else u''
-        if val:
-            try:
-                setattr(activity, field, _dt.datetime.strptime(val, '%Y-%m-%d').date())
-            except (ValueError, TypeError):
-                raise toolkit.ValidationError(
-                    {field: 'Invalid date format. Use YYYY-MM-DD'}
-                )
+        _ihpix_mark_submitted(activity)
 
     model.Session.add(activity)
     model.Session.commit()
+    if not is_draft:
+        _invalidate_approvals_cache()
     return activity.as_dict()
 
 
+def ihpix_report_update(context, data_dict):
+    """Edita un reporte y, opcionalmente, lo (re)envía a revisión.
+
+    Recibe el payload *completo* del formulario (igual que submit) más `id`.
+    - Propietario: sólo si el reporte está en `draft` o `rejected`.
+    - Sysadmin: cualquier estado; un reporte `published` se corrige sin
+      volver a la cola.
+    - `save_as_draft=1` → draft; si no → pending.
+    """
+    toolkit.check_access('ihpix_report_update', context, data_dict)
+    init_ihpix_activities_db()
+
+    activity = _ihpix_get_report_or_404(data_dict)
+    user_obj = _ihpix_user_obj(context)
+    is_sysadmin = bool(user_obj and user_obj.sysadmin)
+    if (not is_sysadmin
+            and activity.status not in ihpix_forms.OWNER_EDITABLE_STATUSES):
+        raise toolkit.ValidationError(
+            {'status': 'Only draft or rejected reports can be edited'})
+
+    is_draft = C.normalize_bool(data_dict.get('save_as_draft'))
+    values = _ihpix_validate(data_dict, is_draft)
+    _apply_report_values(activity, values)
+
+    if is_draft:
+        activity.status = IhpixActivity.STATUS_DRAFT
+    elif is_sysadmin and activity.status == IhpixActivity.STATUS_PUBLISHED:
+        pass  # corrección editorial: sigue publicado
+    else:
+        _ihpix_mark_submitted(activity)
+
+    model.Session.commit()
+    if activity.status == IhpixActivity.STATUS_PENDING:
+        _invalidate_approvals_cache()
+    return activity.as_dict()
+
+
+@toolkit.side_effect_free
+def ihpix_report_show(context, data_dict):
+    """Reporte completo para su propietario o un sysadmin.
+
+    Devuelve `as_dict()` más `form` (valores listos para rellenar el
+    formulario) y `reporter` (usuario resuelto).
+    """
+    toolkit.check_access('ihpix_report_show', context, data_dict)
+    init_ihpix_activities_db()
+
+    activity = _ihpix_get_report_or_404(data_dict)
+    result = activity.as_dict()
+    result['form'] = ihpix_forms.activity_to_form_dict(result)
+    from ckanext.theme_ejemplo.helpers import get_ihpix_reporter
+    result['reporter'] = get_ihpix_reporter(activity.reported_by)
+    result['can_edit'] = bool(
+        (context.get('auth_user_obj') and context['auth_user_obj'].sysadmin)
+        or activity.status in ihpix_forms.OWNER_EDITABLE_STATUSES)
+    return result
+
+
+def ihpix_report_delete(context, data_dict):
+    """Borra un reporte: el propietario sólo sus borradores; sysadmin cualquiera."""
+    toolkit.check_access('ihpix_report_delete', context, data_dict)
+    init_ihpix_activities_db()
+
+    activity = _ihpix_get_report_or_404(data_dict)
+    user_obj = _ihpix_user_obj(context)
+    if (not (user_obj and user_obj.sysadmin)
+            and activity.status != IhpixActivity.STATUS_DRAFT):
+        raise toolkit.ValidationError(
+            {'status': 'Only draft reports can be deleted'})
+
+    activity_id = activity.id
+    model.Session.delete(activity)
+    model.Session.commit()
+    return {'success': True, 'id': activity_id}
+
+
+@toolkit.side_effect_free
+def ihpix_my_reports_list(context, data_dict):
+    """Reportes del usuario autenticado, con contadores por estado."""
+    toolkit.check_access('ihpix_my_reports_list', context, data_dict)
+    init_ihpix_activities_db()
+
+    user_obj = _ihpix_user_obj(context)
+    status = (data_dict.get('status') or u'').strip() or None
+    if status and status not in IhpixActivity.VALID_STATUSES:
+        raise toolkit.ValidationError(
+            {'status': 'Must be one of: {}'.format(
+                ', '.join(IhpixActivity.VALID_STATUSES))})
+    limit = min(_parse_int_field(data_dict, 'limit', 20), 100)
+    offset = max(_parse_int_field(data_dict, 'offset', 0), 0)
+
+    results, total = IhpixActivity.get_by_reporter(
+        user_obj, status=status, limit=limit, offset=offset)
+    return {
+        'results': [a.as_dict() for a in results],
+        'count': total,
+        'counts_by_status': IhpixActivity.count_by_status_for_reporter(user_obj),
+    }
+
+
+# Transiciones válidas de la revisión: acción → estados de origen permitidos.
+# `rejected → published` cubre el botón "Re-approve" del panel admin.
+_IHPIX_REVIEW_TRANSITIONS = {
+    'approve': (IhpixActivity.STATUS_PENDING, IhpixActivity.STATUS_REJECTED),
+    'reject': (IhpixActivity.STATUS_PENDING,),
+}
+
+
 def ihpix_report_review(context, data_dict):
-    """Approve or reject a pending report. Sysadmin only.
-    action: 'approve' → published, 'reject' → rejected."""
+    """Aprueba o rechaza un reporte. Sysadmin only.
+
+    action: 'approve' → published, 'reject' → rejected (exige review_notes).
+    Valida la transición de estado y avisa por email al reportante.
+    """
     toolkit.check_access('ihpix_report_review', context, data_dict)
     init_ihpix_activities_db()
 
-    activity_id = toolkit.get_or_bust(data_dict, 'id')
-    action = data_dict.get('action', u'').strip().lower()
-    if action not in ('approve', 'reject'):
+    activity = _ihpix_get_report_or_404(data_dict)
+    action = (data_dict.get('action') or u'').strip().lower()
+    if action not in _IHPIX_REVIEW_TRANSITIONS:
         raise toolkit.ValidationError(
-            {'action': "Must be 'approve' or 'reject'"}
-        )
+            {'action': "Must be 'approve' or 'reject'"})
+    if activity.status not in _IHPIX_REVIEW_TRANSITIONS[action]:
+        raise toolkit.ValidationError(
+            {'status': "Cannot {} a report in status '{}'".format(
+                action, activity.status)})
 
-    activity = IhpixActivity.get(activity_id)
-    if not activity:
-        raise toolkit.ObjectNotFound('IHP-IX activity not found')
+    review_notes = (data_dict.get('review_notes') or u'').strip()
+    if action == 'reject' and not review_notes:
+        raise toolkit.ValidationError(
+            {'review_notes': 'Review notes are required when rejecting'})
 
-    import datetime as _dt
+    now = _dt.datetime.utcnow()
     if action == 'approve':
         activity.status = IhpixActivity.STATUS_PUBLISHED
     else:
         activity.status = IhpixActivity.STATUS_REJECTED
-
-    activity.review_notes = data_dict.get('review_notes', u'').strip()
+    activity.review_notes = review_notes
     activity.reviewed_by = context.get('user', u'')
-    activity.reviewed_at = _dt.datetime.utcnow()
-    activity.updated_at = _dt.datetime.utcnow()
+    activity.reviewed_at = now
+    activity.updated_at = now
 
     model.Session.commit()
+    _invalidate_approvals_cache()
+    _ihpix_notify_reporter(activity, action)
     return activity.as_dict()
 
 
