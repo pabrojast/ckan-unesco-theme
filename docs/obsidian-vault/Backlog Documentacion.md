@@ -26,6 +26,8 @@
 | DOC-016 | Deployment | No hay pipeline documentado de CKAN hacia dev (`data.dev-wins.com`): en `ckan-unesco-docker` el workflow `deploy` sólo apunta a producción y `deploy-terria-dev` despliega TerriaMap. Pendiente por confirmar cómo se actualiza dev. | Media |
 | DOC-017 | IHP-IX/i18n | Las cadenas nuevas del workflow de reporte (fase i: `user/ihpix.html`, banner de estado en `report.html`, pestañas Draft/Published, emails de revisión) aún no tienen traducción es/fr/ar en los `.po`. Se completan junto con las cadenas vacías de index/outputs/dashboard en la fase iii (descubribilidad). | Media |
 | DOC-018 | IHP-IX | `reported_by` de las filas del seed Excel es texto libre o vacío: esas actividades no aparecen en "mis reportes" ni en el futuro directorio de contribuidores. Decidir si se asignan a un usuario "IHP Secretariat" o se dejan sin autor. | Baja |
+| DOC-019 | IHP-IX | Los atajos "Create a publication / event" de la Sección VII abren `/documents/new` (scheming, fork externo) y `/water-events/new` (ckanext-pages) en otra pestaña porque esos formularios **no soportan `came_from`**. Si el fork lo añade, bastará cambiar el enlace. | Baja |
+| DOC-020 | IHP-IX | "Webinar" es solo un tipo de adjunto (enlace o página `water-events`): no existe entidad webinar en IHP-WINS. La búsqueda de eventos depende de `ckanext.pages.db.Page` (columnas `page_type`, `title`, `extras`, `publish_date`, `private`); **pendiente por confirmar** en dev que el fork de producción tenga esas columnas y que `submission_status` viva en `extras`. | Media |
 
 ---
 
@@ -39,7 +41,7 @@
 | TEST-004 | `model.py` | Tests para los 6 modelos y sus métodos | Media |
 | TEST-005 | `auth.py` | Tests para funciones de autorización | Media |
 | TEST-006 | `validators.py` | Tests para los 3 validadores | Baja |
-| TEST-007 | IHP-IX | Hecho en fase i: `test_ihpix_forms.py` (validación pura, 17 tests) y rutas en `test_plugin.py`. Pendiente: tests con BD (`clean_db`) para `ihpix_report_update` (transiciones owner/sysadmin), `ihpix_report_review` (email, transiciones) y la migración `_migrate_ihpix_reported_by`. | Media |
+| TEST-007 | IHP-IX | Hecho: `test_ihpix_forms.py` (17), `test_ihpix_links.py` (12) y rutas en `test_plugin.py`. Pendiente: tests con BD (`clean_db`) para `ihpix_report_update` (transiciones owner/sysadmin), `ihpix_report_review` (email, transiciones), `_sync_activity_links` (full replace) y la migración `_migrate_ihpix_reported_by`. | Media |
 
 ---
 

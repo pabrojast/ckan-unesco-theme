@@ -111,6 +111,7 @@ El [[Modulos#pageview_tracking.py|conteo liviano de vistas]] registra cada vista
 | `PortalCard` | portal_card | Tarjetas configurables para portales |
 | `IhpixContent` | ihpix_content | Contenido editable de IHP-IX |
 | `IhpixActivity` | ihpix_activity | Actividades / reportes del programa IHP-IX (~70 columnas: biennium, flagships, regions, member_states, métricas de stakeholders, gates Y/N del PDF 2026, `submitted_at`; `reported_by` = id de usuario). Índices en status, PA, output, biennium y reported_by |
+| `IhpixActivityLink` | ihpix_activity_link | Adjuntos de una actividad: publicación / webinar / evento / dataset / output_data / other, apuntando a un package CKAN, una página `water-events` o una URL |
 | `IhpixCountrySummary` | ihpix_country_summary | Datos geográficos agregados por país (lat/lng, region, conteos por PA, datos transboundary, flagship_data JSON) |
 
 Las tablas se crean automáticamente con `init_db()` idempotente y soporte de migraciones (e.g., `_migrate_ihpix_activities()` para columnas nuevas).

@@ -142,8 +142,13 @@ acciones de **ckanext-pages**. Ver la advertencia en
 - `ihpix_report_delete` — propietario solo `draft`; sysadmin cualquiera.
 - `ihpix_my_reports_list` — reportes del usuario autenticado con `counts_by_status`.
 - `ihpix_report_review` — approve/reject por sysadmin. Valida la transición (`pending → published|rejected`, `rejected → published` para "Re-approve"), exige `review_notes` al rechazar y **envía email** al reportante (best effort, `mailer.mail_user`).
-- `ihpix_dashboard_stats` — público; KPI cards + breakdowns base para `/ihpix/dashboard`.
+- `ihpix_dashboard_stats` — público; KPI cards + breakdowns base para `/ihpix/dashboard` (incluye `links_by_type`).
 - `ihpix_admin_overview_stats` — **sysadmin only**; metrics extendidas para `/ckan-admin/ihpix/overview`: KPI targets totals (Σ + youth/female), breakdowns por flagship/CTWG/institution_type, completeness histogram, recent pending.
+
+**IHP-IX adjuntos** (4) — ver [[Flujos Importantes#7.1 Adjuntos (Sección VII)]]:
+- `ihpix_activity_link_list` — adjuntos de una actividad (publicada, o propia / sysadmin).
+- `ihpix_activity_link_create` / `ihpix_activity_link_delete` — alta/baja individual (propietario o sysadmin). El formulario **no** los usa: envía `links_json` y `_sync_activity_links()` hace *full replace* dentro de la misma transacción que el reporte.
+- `ihpix_link_search` — busca objetos existentes para adjuntar: `kind=publication` (datasets `type:documents`), `dataset`/`output_data` (`type:dataset`) vía `package_search`; `event`/`webinar` → páginas `water-events` de ckanext-pages (`_search_water_events`, devuelve `search_available=False` si la extensión no está).
 
 **Taxonomías centralizadas** (nuevo módulo `ihpix_constants.py`, 2026-05):
 `PRIORITY_AREAS` (5), `OUTPUTS` (34, dict por PA), `FLAGSHIPS` (15), `REGIONS` (7),
@@ -177,6 +182,19 @@ Helpers: `is_valid_*`, `normalize_bool`, `filter_valid`.
 
 ---
 
+## ihpix_links.py
+
+**Rol**: Adjuntos de un reporte IHP-IX (publicaciones, webinars, eventos, datasets). Módulo **puro**, testeado en `tests/test_ihpix_links.py`.
+
+- `LINK_TYPES` = publication · webinar · event · dataset · output_data · other; `TARGET_KINDS` = package (dataset CKAN, `target_id` = id) · page (página `water-events`, `target_id` = name) · url (enlace plano).
+- `ALLOWED_KINDS` — coherencia tipo↔kind (una publicación no puede apuntar a una page; un evento no a un package). `SEARCH_KIND_FOR_TYPE` — qué busca cada tipo en IHP-WINS.
+- `parse_links_json(raw)` (tolerante con `''`/`[]`), `validate_link(d)` (título ≤300, URL http(s) obligatoria en `url`, `event_date` ISO, descripción ≤500), `link_public_url(link)` (`/documents/<id>`, `/dataset/<id>`, `/water-events/<name>` o la URL), `dedupe_key(link)`.
+
+> [!note] Sin creación inline
+> No se crean packages ni páginas desde el reporte: solo se referencian existentes o se guarda un enlace. Los atajos "Create a publication / event" abren los formularios propios en otra pestaña.
+
+---
+
 ## helpers.py (~661 líneas)
 
 **Rol**: Funciones helper independientes para templates Jinja2.
@@ -207,8 +225,8 @@ Helpers: `is_valid_*`, `normalize_bool`, `filter_valid`.
 **Solicitudes de iniciativas** (2):
 `get_pending_initiative_requests_count()` (sysadmin badge), `get_my_pending_initiative_request()` (CTA en `/initiatives`)
 
-**IHP-IX** (2):
-`get_pending_ihpix_reports_count()` (cola `ihpix_reports` de la campana, sysadmin), `get_ihpix_reporter(reported_by)` → `{id, name, display_name, url}` resolviendo id o username (caché 5 min; texto libre del seed → solo `display_name`)
+**IHP-IX** (4):
+`get_pending_ihpix_reports_count()` (cola `ihpix_reports` de la campana, sysadmin), `get_ihpix_reporter(reported_by)` → `{id, name, display_name, url}` resolviendo id o username (caché 5 min; texto libre del seed → solo `display_name`), `ihpix_link_url(link)` y `ihpix_link_type_label(link_type)` (adjuntos; usados por el macro `ihpix/snippets/activity_links.html`)
 
 **Contenido destacado** (4):
 `get_featured_publications()`, `get_open_bug_tickets_count()`,
@@ -278,6 +296,11 @@ Helpers: `is_valid_*`, `normalize_bool`, `filter_valid`.
 - Métodos: `get()`, `get_by_priority_area()`, `get_published()`, `get_all()`, `get_pending()`, `get_facets()`, `get_stats()`, `get_timeline()`, `get_country_stats()`, `as_dict()` (incluye todos los gates), `get_by_reporter(user_obj, status, limit, offset)`, `count_by_status_for_reporter(user_obj)`, `count_by_status(status)`, `is_owned_by(user_obj)`
 - Auto-migración: `_migrate_ihpix_activities()` aplica `_IHPIX_ACTIVITY_ADDED_COLUMNS` con `ADD COLUMN IF NOT EXISTS` + `CREATE INDEX IF NOT EXISTS` dentro de `engine.begin()` (patrón de `init_contribution_scores_db`)
 
+**IhpixActivityLink**: Adjuntos de una actividad IHP-IX (tabla `ihpix_activity_link`, 2026-09)
+- Campos: id, activity_id, link_type, target_kind (package/page/url), target_id, title, url, description, event_date, added_by, display_order, created_at. Sin FK (patrón del repo); índices en activity_id, link_type y (target_kind, target_id)
+- Métodos: `get()`, `get_by_activity()`, `get_for_activities(ids)` (una query para listados), `count_by_type(filters, status)` (join con actividades publicadas; alimenta `get_stats()['links_by_type']`), `delete_for_activity()`, `as_dict()` (incluye `public_url`)
+- Init: `init_ihpix_activity_links_db()` (tupla `_IHPIX_LINK_ADDED_COLUMNS` vacía + `CREATE INDEX IF NOT EXISTS`)
+
 **IhpixCountrySummary**: Datos geográficos agregados por país para GeoJSON y dashboard IHP-IX
 - Campos: id, country, latitude, longitude, region, total_activities, pa1_count–pa5_count, transboundary_all, transboundary_pa1–pa5, supporting_all, supporting_pa1–pa5, flagship_data (JSON), pa_output_data (JSON), created_at, updated_at
 - Métodos: `get()`, `get_by_country()`, `get_all(region)`, `get_as_geojson(region)`, `delete_all()`, `as_dict()`
@@ -309,8 +332,9 @@ Cada modelo tiene `init_*_db()` y `define_*_table()`. Son idempotentes (verifica
 | Patrón | Acciones |
 |---|---|
 | **Sysadmin only** | featured_dataset_*, featured_publication_*, portal_card_*, admin_user_*, ihpix_content_*, ihpix_activity_create/update/delete, ihpix_report_review, bug_ticket_api_list, open_learning_* |
-| **Autenticado** | membership_request_create, membership_request_count, initiative_request_create, initiative_request_count, bug_ticket_create/list/show/update, ihpix_report_submit, ihpix_my_reports_list |
-| **Propietario del reporte o sysadmin** | ihpix_report_show, ihpix_report_update, ihpix_report_delete (`_ihpix_report_owner_or_sysadmin`: compara `reported_by` con id y username; si el reporte no existe autoriza para que la acción devuelva 404) |
+| **Autenticado** | membership_request_create, membership_request_count, initiative_request_create, initiative_request_count, bug_ticket_create/list/show/update, ihpix_report_submit, ihpix_my_reports_list, ihpix_link_search |
+| **Propietario del reporte o sysadmin** | ihpix_report_show, ihpix_report_update, ihpix_report_delete, ihpix_activity_link_create, ihpix_activity_link_delete (`_ihpix_report_owner_or_sysadmin`: compara `reported_by` con id y username; si el reporte no existe autoriza para que la acción devuelva 404) |
+| **Publicada, o propietario/sysadmin** | ihpix_activity_link_list |
 | **Admin de org o sysadmin** | membership_request_list, membership_request_process |
 | **Sysadmin only (iniciativas)** | initiative_request_list, initiative_request_process |
 | **Público** | ihpix_activity_list, ihpix_activity_show, ihpix_dashboard_stats, ihpix_geojson, ihpix_activity_geojson, ihpix_country_summary_list |

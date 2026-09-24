@@ -237,7 +237,7 @@ Patrón LRU con buster:
 2. Outputs (/ihpix/outputs):
    → Lista actividades publicadas de IhpixActivity
    → Filtros avanzados: biennium, region, country, priority_area, output
-   → Vistas expandibles con detalle, exportación CSV
+   → Vistas expandibles con detalle (incl. adjuntos), exportación CSV
 3. Reporte (/ihpix/report) — alineado al PDF UNESCO 2026:
    → 6 secciones (I General, II Priority Areas, III CTWGs, IV Region,
      V KPIs, VI Notes), ~50 campos con lógica condicional Y/N
@@ -258,6 +258,7 @@ Patrón LRU con buster:
      que el JS resalta (highlightServerErrors)
    → Tras guardar borrador → redirige a /ihpix/report/<id>/edit;
      tras enviar → /user/<me>/ihpix?status=pending con flash
+   → Sección VII "Publications, events & data": adjuntos (ver 7.1)
 3b. Mis reportes (/user/<id>/ihpix, atajo /ihpix/my-reports):
    → Pestaña "IHP-IX" del perfil (user/ihpix.html); el propio usuario y
      sysadmin ven todos los estados con contadores; terceros solo published
@@ -323,6 +324,38 @@ draft ──submit──▶ pending ──approve──▶ published
 > [!note] Inferencia
 > `reviewed_by` guarda el username del revisor (contexto `user`), mientras que
 > `reported_by` guarda el id del reportante. Se resuelven en UI con `h.get_ihpix_reporter`.
+
+### 7.1 Adjuntos (Sección VII)
+
+**Módulos**: `ihpix_links.py`, `model.py` (`IhpixActivityLink`), `actions.py`,
+`templates/ihpix/snippets/report_links_section.html` (widget),
+`templates/ihpix/snippets/activity_links.html` (macro de listado).
+
+```
+1. El widget de la Sección VII mantiene la lista de adjuntos en el campo
+   oculto links_json (JSON). Va en el FormData del reporte, así que:
+   → se guarda con el borrador (misma transacción) y
+   → viaja en el autoguardado de localStorage sin código extra.
+2. Añadir un adjunto:
+   a. "Search in IHP-WINS" → GET /api/3/action/ihpix_link_search?kind=&q=
+      · publication → datasets type:documents · dataset/output_data →
+      type:dataset · event/webinar → páginas water-events (si ckanext-pages
+      no está, search_available=false y el widget abre la entrada manual)
+   b. "Add an external link manually" → title + URL http(s) (+ fecha, descr.)
+   c. Atajos "Create a publication / Create an event" abren /documents/new y
+      /water-events/new en otra pestaña (sin came_from: no lo soportan)
+3. POST del reporte → actions._sync_activity_links(activity, links_json):
+   → valida cada item (ihpix_links.validate_link), upsert por id, crea los
+     nuevos, borra los ausentes (full replace), deduplica por objeto/URL
+   → errores: ValidationError {'links[i].campo': msg}
+4. Lectura: IhpixActivityLink.get_for_activities(ids) en una query →
+   links_by_activity → macro render_links() en outputs, tabs org/grupo y
+   cola admin. Contadores: get_stats()['links_by_type'] (dashboard, overview)
+```
+
+> [!warning] Solo referencias
+> El reporte nunca crea packages ni páginas. Si el objeto no existe en
+> IHP-WINS, el usuario lo crea con su formulario propio y luego lo busca.
 
 ---
 

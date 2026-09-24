@@ -14,6 +14,7 @@
 | `test_plugin.py` | 1 (placeholder) | `plugin.py` — test básico de carga |
 | `test_utils.py` | ~14 | `utils.py` — validación de imágenes de usuario |
 | `test_ihpix_forms.py` | 17 | `ihpix_forms.py` — validación del reporte IHP-IX (módulo puro, corre sin CKAN) |
+| `test_ihpix_links.py` | 12 | `ihpix_links.py` — validación de adjuntos del reporte (módulo puro) |
 
 ### Módulos sin tests
 - `actions.py` (45 acciones)
