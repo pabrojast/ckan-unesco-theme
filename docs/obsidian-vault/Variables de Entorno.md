@@ -76,6 +76,9 @@ Ver [[Open Learning]] para el flujo completo de sincronización y curación.
 | `ckanext.theme_ejemplo.ihpix_geojson_max` | `5000` | Máximo de features que devuelve `ihpix_activity_geojson` (antes estaba capado a 20 por accidente) |
 | `ckanext.theme_ejemplo.ihpix_wg_open_join` | `false` | Si `true`, unirse a un working group IHP-IX es inmediato (`active`); si no, queda `pending` hasta que el lead lo apruebe. Ver [[Flujos Importantes#7.4 Working groups (workspaces por Output)]] |
 | `ckanext.theme_ejemplo.ihpix_wg_auto_contributor` | `true` | Al publicar un reporte, su autor pasa a ser contributor activo del workspace del Output (no reactiva membresías `removed`) |
+| `ckanext.theme_ejemplo.ihpix_basemap_url` | Esri World Light Gray Canvas (`server.arcgisonline.com/.../World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}`) | Plantilla de teselas Leaflet de los mapas IHP-IX (landing y dashboard). Se cambió desde CARTO porque `basemaps.cartocdn.com` exige API key y mostraba "API key required" |
+| `ckanext.theme_ejemplo.ihpix_basemap_attribution` | `Tiles © Esri — Esri, HERE, Garmin, FAO, NOAA, USGS` | Atribución HTML del basemap |
+| `ckanext.theme_ejemplo.ihpix_basemap_max_zoom` | `16` | Zoom máximo del basemap |
 
 ### Claves de otras extensiones que este tema lee
 

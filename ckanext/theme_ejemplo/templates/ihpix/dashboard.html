@@ -1633,9 +1633,10 @@
         center: [20, 0], zoom: 2,
         scrollWheelZoom: false, zoomControl: true
       });
-      L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
-        maxZoom: 18, subdomains: 'abcd'
+      {% set basemap = h.ihpix_basemap() %}
+      L.tileLayer({{ basemap.url|tojson }}, {
+        attribution: {{ basemap.attribution|tojson }},
+        maxZoom: {{ basemap.max_zoom }}
       }).addTo(leafletMap);
       mapMarkersLayer = L.layerGroup().addTo(leafletMap);
     }

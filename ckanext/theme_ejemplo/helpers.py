@@ -1081,6 +1081,39 @@ def ihpix_contribution_label(kind):
     }.get(kind, kind or '')
 
 
+# Basemap por defecto de los mapas IHP-IX. CARTO (basemaps.cartocdn.com)
+# pasó a exigir API key en 2026 y sus teselas muestran "API key required";
+# Esri World Light Gray Canvas es gratuito con atribución y no requiere clave.
+_IHPIX_BASEMAP_DEFAULT = {
+    'url': 'https://server.arcgisonline.com/ArcGIS/rest/services/Canvas/'
+           'World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}',
+    'attribution': 'Tiles &copy; <a href="https://www.esri.com/">Esri</a> '
+                   '&mdash; Esri, HERE, Garmin, FAO, NOAA, USGS',
+    'max_zoom': 16,
+}
+
+
+def ihpix_basemap():
+    """Capa base Leaflet de los mapas IHP-IX: {url, attribution, max_zoom}.
+
+    Configurable con `ckanext.theme_ejemplo.ihpix_basemap_url`,
+    `ihpix_basemap_attribution` e `ihpix_basemap_max_zoom`.
+    """
+    cfg = toolkit.config
+    try:
+        max_zoom = int(cfg.get('ckanext.theme_ejemplo.ihpix_basemap_max_zoom',
+                               _IHPIX_BASEMAP_DEFAULT['max_zoom']))
+    except (TypeError, ValueError):
+        max_zoom = _IHPIX_BASEMAP_DEFAULT['max_zoom']
+    return {
+        'url': cfg.get('ckanext.theme_ejemplo.ihpix_basemap_url',
+                       _IHPIX_BASEMAP_DEFAULT['url']),
+        'attribution': cfg.get('ckanext.theme_ejemplo.ihpix_basemap_attribution',
+                               _IHPIX_BASEMAP_DEFAULT['attribution']),
+        'max_zoom': max_zoom,
+    }
+
+
 def ihpix_link_url(link):
     """URL navegable de un adjunto IHP-IX (dict de `IhpixActivityLink.as_dict`)."""
     from ckanext.theme_ejemplo import ihpix_links

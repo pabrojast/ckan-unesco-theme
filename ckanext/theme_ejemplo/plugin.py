@@ -1306,6 +1306,7 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                  'ihpix_output_label': helpers.ihpix_output_label,
                  'ihpix_priority_area_for_output': helpers.ihpix_priority_area_for_output,
                  'ihpix_t': helpers.ihpix_t,
+                 'ihpix_basemap': helpers.ihpix_basemap,
                  'get_pending_ihpix_wg_members_count': helpers.get_pending_ihpix_wg_members_count,
                  'get_user_ihpix_summary': helpers.get_user_ihpix_summary,
                  'ihpix_wg_role_label': helpers.ihpix_wg_role_label,

@@ -24,7 +24,7 @@ Hub de la implementación del **reporting y gestión del conocimiento IHP-IX** e
 
 ## Configuración
 
-`ckanext.theme_ejemplo.ihpix_recompute_on_approve`, `ihpix_geojson_max`, `ihpix_wg_open_join`, `ihpix_wg_auto_contributor` → [[Variables de Entorno]].
+`ckanext.theme_ejemplo.ihpix_recompute_on_approve`, `ihpix_geojson_max`, `ihpix_wg_open_join`, `ihpix_wg_auto_contributor`, `ihpix_basemap_url` / `_attribution` / `_max_zoom` (basemap Leaflet; por defecto Esri Light Gray porque CARTO exige API key) → [[Variables de Entorno]].
 
 ## Operación
 

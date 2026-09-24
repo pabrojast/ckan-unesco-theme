@@ -1012,10 +1012,10 @@
       attributionControl: true
     }).setView([20, 0], 2);
 
-    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OSM</a> &copy; <a href="https://carto.com/">CARTO</a>',
-      subdomains: 'abcd',
-      maxZoom: 12
+    {% set basemap = h.ihpix_basemap() %}
+    L.tileLayer({{ basemap.url|tojson }}, {
+      attribution: {{ basemap.attribution|tojson }},
+      maxZoom: {{ basemap.max_zoom }}
     }).addTo(map);
 
     fetch('/api/3/action/ihpix_geojson')
