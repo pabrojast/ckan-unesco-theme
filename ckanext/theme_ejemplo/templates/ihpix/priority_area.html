@@ -1,0 +1,134 @@
+{% extends "page.html" %}
+{% import 'ihpix/snippets/activity_links.html' as links_ui %}
+{% import 'ihpix/snippets/page_styles.html' as ui %}
+
+{% block title %}{{ pa }} - {{ h.ihpix_t(pa_title) }} - {{ super() }}{% endblock %}
+
+{% block breadcrumb_content %}
+  <li><a href="{{ h.url_for('/ihpix') }}">{% trans %}IHP IX{% endtrans %}</a></li>
+  <li class="active"><a href="{{ h.url_for('theme_ejemplo.ihpix_priority_area', pa=pa) }}">{{ pa }}</a></li>
+{% endblock %}
+
+{% block page_header %}{% endblock %}
+
+{% block content %}
+<div class="main">
+<div class="container ixp">
+  {{ ui.page_styles() }}
+  {{ links_ui.links_styles() }}
+
+  <div class="ixp-header" data-pa="{{ pa }}">
+    <div class="ixp-breadcrumb"><a href="{{ h.url_for('/ihpix') }}">IHP-IX</a> &rsaquo; {{ _('Priority Area') }} {{ pa_index }}</div>
+    <span class="ixp-kicker">{{ _('Priority Area') }} {{ pa_index }}</span>
+    <h1>{{ (content.title if content and content.title else h.ihpix_t(pa_title)) }}</h1>
+    <p>{{ (content.description if content and content.description else _('Activities, outputs and contributors reported under this Priority Area of the IHP-IX Strategic Plan (2022–2029).')) }}</p>
+    <div class="ixp-header-actions">
+      <a class="ixp-btn ixp-btn-white" href="{{ h.url_for('theme_ejemplo.ihpix_report', pa=pa) }}">
+        <i class="fa fa-paper-plane"></i> {{ _('Report an activity') }}
+      </a>
+      <a class="ixp-btn ixp-btn-ghost" href="{{ h.url_for('/ihpix/outputs', pa=pa) }}">
+        <i class="fa fa-list-alt"></i> {{ _('Open in explorer') }}
+      </a>
+      <a class="ixp-btn ixp-btn-ghost" href="{{ h.url_for('/ihpix/dashboard', pa=pa) }}">
+        <i class="fa fa-bar-chart"></i> {{ _('Dashboard') }}
+      </a>
+      {% if content and content.link %}
+      <a class="ixp-btn ixp-btn-ghost" href="{{ content.link }}" target="_blank" rel="noopener">
+        <i class="fa fa-external-link"></i> {{ _('Official document') }}
+      </a>
+      {% endif %}
+    </div>
+  </div>
+
+  <div class="ixp-stats">
+    <div class="ixp-stat"><div class="ixp-stat-n">{{ stats.total_activities | default(0) }}</div><div class="ixp-stat-l">{{ _('Published activities') }}</div></div>
+    <div class="ixp-stat"><div class="ixp-stat-n">{{ stats.total_countries | default(0) }}</div><div class="ixp-stat-l">{{ _('Countries') }}</div></div>
+    <div class="ixp-stat"><div class="ixp-stat-n">{{ stats.total_institutions | default(0) }}</div><div class="ixp-stat-l">{{ _('Institutions') }}</div></div>
+    <div class="ixp-stat"><div class="ixp-stat-n">{{ contributors_total | default(0) }}</div><div class="ixp-stat-l">{{ _('Contributors') }}</div></div>
+    <div class="ixp-stat"><div class="ixp-stat-n">{{ (links_by_type or {}).total | default(0) }}</div><div class="ixp-stat-l">{{ _('Linked publications, events & data') }}</div></div>
+  </div>
+
+  <div class="ixp-card">
+    <h2><i class="fa fa-sitemap"></i> {{ _('Outputs') }} <span class="ixp-count">{{ outputs|length }}</span></h2>
+    <div class="ixp-outputs">
+      {% for o in outputs %}
+        <a class="ixp-output" href="{{ h.url_for('theme_ejemplo.ihpix_output_detail', code=o.code) }}">
+          <span class="ixp-output-code">{{ o.code }}</span>
+          <div class="ixp-output-title">{{ o.title }}</div>
+          <div class="ixp-output-count"><strong>{{ o.count }}</strong> {{ ngettext('activity', 'activities', o.count) }}</div>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+
+  <div class="ixp-grid">
+    <div>
+      <div class="ixp-card">
+        <h2><i class="fa fa-flag"></i> {{ _('Recent activities') }}</h2>
+        {% if recent %}
+          <ul class="ixp-list">
+            {% for activity in recent %}
+              {{ ui.activity_row(activity, links_ui, (links_by_activity or {}).get(activity.id, [])) }}
+            {% endfor %}
+          </ul>
+          <p style="margin:0.8rem 0 0;"><a href="{{ h.url_for('/ihpix/outputs', pa=pa) }}">{{ _('See all activities of') }} {{ pa }} &rarr;</a></p>
+        {% else %}
+          <p class="ixp-empty">{{ _('No published activities for this Priority Area yet.') }}</p>
+        {% endif %}
+      </div>
+    </div>
+    <aside>
+      <div class="ixp-card">
+        <h2><i class="fa fa-users"></i> {{ _('Top contributors') }} <span class="ixp-count">{{ contributors_total }}</span></h2>
+        {% if contributors %}
+          <div class="ixp-people">
+            {% for c_row in contributors %}
+              {% set reporter = c_row.reporter %}
+              <div class="ixp-person">
+                {{ ui.avatar(reporter) }}
+                <div class="ixp-person-body">
+                  {% if reporter and reporter.url %}
+                    <a class="ixp-person-name" href="{{ h.url_for('theme_ejemplo.user_ihpix', id=reporter.name) }}">{{ reporter.display_name }}</a>
+                  {% else %}
+                    <span class="ixp-person-name">{{ (reporter.display_name if reporter else c_row.reported_by) }}</span>
+                  {% endif %}
+                  <span class="ixp-person-meta">{{ ngettext('%(n)d activity', '%(n)d activities', c_row.count, n=c_row.count) }} &middot; {{ c_row.output_count }} {{ _('outputs') }}</span>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+          <p style="margin:0.8rem 0 0;"><a href="{{ h.url_for('theme_ejemplo.ihpix_contributors', pa=pa) }}">{{ _('All contributors') }} &rarr;</a></p>
+        {% else %}
+          <p class="ixp-empty">{{ _('No contributors yet.') }}</p>
+        {% endif %}
+      </div>
+      {% if top_institutions %}
+      <div class="ixp-card">
+        <h2><i class="fa fa-university"></i> {{ _('Lead institutions') }}</h2>
+        <ul class="ixp-list">
+          {% for row in top_institutions %}
+            <li style="display:flex;justify-content:space-between;gap:.5rem;padding:.3rem 0;font-size:.88rem;border-bottom:1px solid #F1F5F9;">
+              <span>{{ row.name }}</span><strong>{{ row.count }}</strong>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+      <div class="ixp-card">
+        <h2><i class="fa fa-compass"></i> {{ _('Priority Areas') }}</h2>
+        <ul class="ixp-list">
+          {% for code, name in all_pas.items() %}
+            <li style="padding:.3rem 0;font-size:.88rem;">
+              <a class="ixp-tag ixp-tag--pa" data-pa="{{ code }}" href="{{ h.url_for('theme_ejemplo.ihpix_priority_area', pa=code) }}">{{ code }}</a>
+              {% if code == pa %}<strong>{{ h.ihpix_t(name) }}</strong>{% else %}<a href="{{ h.url_for('theme_ejemplo.ihpix_priority_area', pa=code) }}">{{ h.ihpix_t(name) }}</a>{% endif %}
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </aside>
+  </div>
+</div>
+</div>
+{% endblock %}
+
+{% block secondary %}{% endblock %}

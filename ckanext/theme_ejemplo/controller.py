@@ -1,5 +1,5 @@
 from random import random
-from flask import render_template, abort, jsonify, redirect
+from flask import render_template, abort, jsonify, redirect, Response, stream_with_context
 import ckan.plugins.toolkit as toolkit
 import ckan.model as model
 import ckan.logic as logic
@@ -16,7 +16,7 @@ import time
 import json
 import logging
 from ckanext.theme_ejemplo.utils import normalize_user_image_url
-from ckanext.theme_ejemplo.helpers import get_member_state_title
+from ckanext.theme_ejemplo.helpers import get_member_state_title, get_ihpix_reporter
 from ckanext.theme_ejemplo import ranking
 from ckanext.theme_ejemplo import search as theme_search
 
@@ -873,11 +873,14 @@ class MyLogica():
                     except Exception:
                         priority_areas[pa_key] = []
 
-                # Obtener stats globales para la landing
+                # Stats globales para la landing pública: la acción exige
+                # login, así que se llama en servidor con ignore_auth y el
+                # template las recibe inyectadas (sin fetch a la API).
                 try:
-                    ctx = {'user': c.user, 'model': model}
+                    ctx = {'ignore_auth': True, 'model': model}
                     stats = toolkit.get_action('ihpix_dashboard_stats')(ctx, {})
-                except Exception:
+                except Exception as e:
+                    log.warning('IHP-IX landing: sin stats: %s', e)
                     stats = {}
 
                 is_sysadmin = False
@@ -897,9 +900,10 @@ class MyLogica():
                                        is_sysadmin=is_sysadmin)
 
         def ihpix_outputs():
-            # Solo sysadmin puede acceder a esta vista
-            if not (c.userobj and c.userobj.sysadmin):
-                return abort(403, _('Not authorized'))
+            """Explorador de actividades: cualquier usuario logueado."""
+            redirect = _require_login()
+            if redirect:
+                return redirect
             if request.method == 'GET':
                 from ckanext.theme_ejemplo.model import (
                     IhpixActivity, init_ihpix_activities_db,
@@ -911,6 +915,7 @@ class MyLogica():
                 biennium_filter = request.args.get('biennium', '')
                 region_filter = request.args.get('region', '')
                 country_filter = request.args.get('country', '')
+                organization_filter = request.args.get('organization', '')
                 q = request.args.get('q', '')
                 page = int(request.args.get('page', 1))
                 items_per_page = 20
@@ -924,6 +929,7 @@ class MyLogica():
                         biennium=biennium_filter or None,
                         country=country_filter or None,
                         region=region_filter or None,
+                        organization=organization_filter or None,
                         limit=items_per_page,
                         offset=offset,
                     )
@@ -945,9 +951,208 @@ class MyLogica():
                                        biennium_filter=biennium_filter,
                                        region_filter=region_filter,
                                        country_filter=country_filter,
+                                       organization_filter=organization_filter,
                                        q=q,
                                        page=page,
                                        items_per_page=items_per_page)
+
+        # ── IHP-IX: páginas navegables (fase iii) ─────────────────────────
+
+        @staticmethod
+        def _ihpix_pager(total, page, items_per_page, items):
+            pager = h.Page(
+                collection=range(total),
+                page=page,
+                url=h.pager_url,
+                items_per_page=items_per_page,
+            )
+            pager.items = items
+            return pager
+
+        @staticmethod
+        def _ihpix_resolve_contributors(rows):
+            for row in rows:
+                row['reporter'] = get_ihpix_reporter(row.get('reported_by'))
+            return rows
+
+        @staticmethod
+        def ihpix_output_detail(code):
+            """Página de un Output: actividades, contribuidores y adjuntos."""
+            redirect = _require_login()
+            if redirect:
+                return redirect
+            from ckanext.theme_ejemplo.model import (
+                IhpixActivity, init_ihpix_activities_db,
+            )
+            from ckanext.theme_ejemplo import ihpix_constants as C
+            init_ihpix_activities_db()
+
+            code = (code or '').strip()
+            pa = C.priority_area_for_output(code)
+            if not pa:
+                return abort(404, _('Output not found'))
+
+            page = h.get_page_number(request.args) or 1
+            items_per_page = 12
+            try:
+                results, total = IhpixActivity.get_published(
+                    output=code, limit=items_per_page,
+                    offset=items_per_page * (page - 1))
+                activities = [a.as_dict() for a in results]
+                stats = IhpixActivity.get_stats({'output': code})
+                contributors, contributors_total = IhpixActivity.get_contributor_stats(
+                    {'output': code}, limit=12)
+                MyLogica._ihpix_resolve_contributors(contributors)
+                top_institutions = IhpixActivity.get_top_institutions(
+                    {'output': code}, limit=8)
+                timeline = IhpixActivity.get_timeline({'output': code})
+            except Exception as e:
+                log.error('IHP-IX output %s: %s', code, e)
+                activities, total, stats = [], 0, {}
+                contributors, contributors_total, top_institutions, timeline = [], 0, [], []
+
+            links_by_activity = _ihpix_links_map(activities)
+            links_grouped = {}
+            for links in links_by_activity.values():
+                for link in links:
+                    links_grouped.setdefault(link.get('link_type', 'other'), []).append(link)
+
+            return render_template(
+                'ihpix/output_detail.html',
+                code=code,
+                pa=pa,
+                pa_title=C.PRIORITY_AREAS.get(pa, pa),
+                output_title=C.output_title(code),
+                sibling_outputs=C.output_codes_for(pa),
+                activities=activities,
+                total=total,
+                page=MyLogica._ihpix_pager(total, page, items_per_page, activities),
+                stats=stats,
+                contributors=contributors,
+                contributors_total=contributors_total,
+                top_institutions=top_institutions,
+                timeline=timeline,
+                links_by_activity=links_by_activity,
+                links_grouped=links_grouped,
+            )
+
+        @staticmethod
+        def ihpix_priority_area(pa):
+            """Página de una Priority Area: sus Outputs con conteos y stats."""
+            redirect = _require_login()
+            if redirect:
+                return redirect
+            from ckanext.theme_ejemplo.model import (
+                IhpixActivity, init_ihpix_activities_db,
+                IhpixContent, init_ihpix_content_db,
+            )
+            from ckanext.theme_ejemplo import ihpix_constants as C
+            init_ihpix_activities_db()
+            init_ihpix_content_db()
+
+            pa = (pa or '').strip().upper()
+            if pa not in C.PRIORITY_AREAS:
+                return abort(404, _('Priority Area not found'))
+
+            content = None
+            try:
+                item = IhpixContent.get_by_key('pa_' + pa[-1])
+                content = item.as_dict() if item else None
+            except Exception:
+                content = None
+
+            try:
+                stats = IhpixActivity.get_stats({'priority_area': pa})
+                facet_items = IhpixActivity.get_facets().get('ihpix_output', {}).get('items', [])
+                counts = {item['name']: item['count'] for item in facet_items}
+                results, _total = IhpixActivity.get_published(
+                    priority_area=pa, limit=6)
+                recent = [a.as_dict() for a in results]
+                contributors, contributors_total = IhpixActivity.get_contributor_stats(
+                    {'priority_area': pa}, limit=8)
+                MyLogica._ihpix_resolve_contributors(contributors)
+                top_institutions = IhpixActivity.get_top_institutions(
+                    {'priority_area': pa}, limit=8)
+                links_by_type = stats.get('links_by_type', {})
+            except Exception as e:
+                log.error('IHP-IX priority area %s: %s', pa, e)
+                stats, counts, recent = {}, {}, []
+                contributors, contributors_total, top_institutions = [], 0, []
+                links_by_type = {}
+
+            outputs = [{'code': code, 'title': C.output_title(code),
+                        'count': counts.get(code, 0)}
+                       for code in C.output_codes_for(pa)]
+
+            return render_template(
+                'ihpix/priority_area.html',
+                pa=pa,
+                pa_title=C.PRIORITY_AREAS[pa],
+                pa_index=int(pa[-1]),
+                content=content,
+                outputs=outputs,
+                stats=stats,
+                recent=recent,
+                links_by_activity=_ihpix_links_map(recent),
+                contributors=contributors,
+                contributors_total=contributors_total,
+                top_institutions=top_institutions,
+                links_by_type=links_by_type,
+                all_pas=C.PRIORITY_AREAS,
+            )
+
+        @staticmethod
+        def ihpix_contributors():
+            """Directorio de contribuidores IHP-IX (usuarios con reportes publicados)."""
+            redirect = _require_login()
+            if redirect:
+                return redirect
+            from ckanext.theme_ejemplo.model import (
+                IhpixActivity, init_ihpix_activities_db,
+            )
+            from ckanext.theme_ejemplo import ihpix_constants as C
+            init_ihpix_activities_db()
+
+            q = request.args.get('q', '').strip()
+            pa_filter = request.args.get('pa', '').strip()
+            output_filter = request.args.get('output', '').strip()
+            biennium_filter = request.args.get('biennium', '').strip()
+            filters = {}
+            if pa_filter in C.PRIORITY_AREAS:
+                filters['priority_area'] = pa_filter
+            if output_filter:
+                filters['output'] = output_filter
+            if biennium_filter:
+                filters['biennium'] = biennium_filter
+
+            page = h.get_page_number(request.args) or 1
+            items_per_page = 24
+            try:
+                rows, total = IhpixActivity.get_contributor_stats(
+                    filters, q_text=q or None, limit=items_per_page,
+                    offset=items_per_page * (page - 1))
+                MyLogica._ihpix_resolve_contributors(rows)
+                for row in rows:
+                    reporter = row.get('reporter') or {}
+                    row['profile'] = (h.get_user_profile(reporter['name'])
+                                      if reporter.get('name') else None)
+                contributors_total = IhpixActivity.count_distinct_reporters(filters)
+            except Exception as e:
+                log.error('IHP-IX contributors: %s', e)
+                rows, total, contributors_total = [], 0, 0
+
+            return render_template(
+                'ihpix/contributors.html',
+                contributors=rows,
+                total=total,
+                contributors_total=contributors_total,
+                page=MyLogica._ihpix_pager(total, page, items_per_page, rows),
+                q=q,
+                pa_filter=pa_filter,
+                output_filter=output_filter,
+                biennium_filter=biennium_filter,
+                taxonomies=h.get_ihpix_taxonomies(),
+            )
 
         def iot_portal():
             if request.method == 'GET':
@@ -1237,9 +1442,10 @@ class MyLogica():
                 abort(500)
 
         def organization_ihpix(name):
-            """Organization IHP-IX tab — shows IHP-IX activities for this organization. Sysadmin only."""
-            if not (c.userobj and c.userobj.sysadmin):
-                abort(403, _('Not authorized'))
+            """Organization IHP-IX tab — actividades IHP-IX de esta organización (usuarios logueados)."""
+            redirect = _require_login()
+            if redirect:
+                return redirect
 
             try:
                 context = {'ignore_auth': True}
@@ -1467,10 +1673,10 @@ class MyLogica():
                 abort(500)
 
         def group_ihpix(name):
-            """Group/Initiative IHP-IX tab — shows IHP-IX activities for this country. Sysadmin only."""
-            # Solo sysadmins pueden ver esta pestaña
-            if not (c.userobj and c.userobj.sysadmin):
-                abort(403, _('Not authorized'))
+            """Group/Member State IHP-IX tab — actividades IHP-IX de este país (usuarios logueados)."""
+            redirect = _require_login()
+            if redirect:
+                return redirect
 
             try:
                 context = {'ignore_auth': True}
@@ -4070,10 +4276,10 @@ class MyLogica():
 
         @staticmethod
         def ihpix_dashboard():
-            """Dashboard solo para sysadmin."""
-            # Solo sysadmin puede acceder a esta vista
-            if not (c.userobj and c.userobj.sysadmin):
-                return abort(403, _('Not authorized'))
+            """Dashboard IHP-IX: cualquier usuario logueado."""
+            redirect = _require_login()
+            if redirect:
+                return redirect
             from ckanext.theme_ejemplo.model import (
                 IhpixActivity, init_ihpix_activities_db,
             )
@@ -4219,6 +4425,9 @@ class MyLogica():
                        for k in filter_keys}
             filters = {k: v for k, v in filters.items() if v}
 
+            if request.args.get('export') == 'csv':
+                return MyLogica._ihpix_export_csv(filters)
+
             context = {'user': c.user, 'model': model}
             try:
                 stats = toolkit.get_action('ihpix_admin_overview_stats')(
@@ -4240,6 +4449,76 @@ class MyLogica():
                 kpis=C.KPIS,
                 statuses=['draft', 'pending', 'published', 'rejected'],
             )
+
+        @staticmethod
+        def _ihpix_export_csv(filters):
+            """CSV completo de actividades con los filtros del overview (streaming)."""
+            import csv
+            import io as _io
+            import datetime as _dt
+            from ckanext.theme_ejemplo.model import (
+                IhpixActivity, init_ihpix_activities_db,
+            )
+            init_ihpix_activities_db()
+
+            results, _total = IhpixActivity.get_filtered(
+                status=filters.get('status') or None,
+                priority_area=filters.get('priority_area') or None,
+                biennium=filters.get('biennium') or None,
+                output=filters.get('output') or None,
+                country=filters.get('country') or None,
+                region=filters.get('region') or None,
+                flagship=filters.get('flagship') or None,
+                ctwg=filters.get('ctwg') or None,
+                limit=None,
+            )
+            rows = [a.as_dict() for a in results]
+            links_map = _ihpix_links_map(rows)
+            fields = list(rows[0].keys()) if rows else ['id', 'title']
+            fields.append('links_count')
+            fields.append('links')
+
+            def generate():
+                buf = _io.StringIO()
+                writer = csv.writer(buf)
+                writer.writerow(fields)
+                yield buf.getvalue()
+                for row in rows:
+                    buf.seek(0)
+                    buf.truncate(0)
+                    links = links_map.get(row['id'], [])
+                    row['links_count'] = len(links)
+                    row['links'] = ' | '.join(
+                        '{} ({})'.format(l.get('title', ''), l.get('public_url') or l.get('url', ''))
+                        for l in links)
+                    writer.writerow([
+                        '' if row.get(f) is None else row.get(f) for f in fields
+                    ])
+                    yield buf.getvalue()
+
+            filename = 'ihpix-activities-{}.csv'.format(
+                _dt.date.today().isoformat())
+            return Response(
+                stream_with_context(generate()),
+                mimetype='text/csv; charset=utf-8',
+                headers={'Content-Disposition': 'attachment; filename="%s"' % filename},
+            )
+
+        @staticmethod
+        def ihpix_recompute_summary_view():
+            """POST: recalcula ihpix_country_summary y vuelve al overview."""
+            if not (c.userobj and c.userobj.sysadmin):
+                return abort(403, _('Not authorized'))
+            context = {'user': c.user, 'model': model, 'auth_user_obj': c.userobj}
+            try:
+                result = toolkit.get_action('ihpix_country_summary_recompute')(
+                    context, {})
+                h.flash_success(_('Country summary recomputed for %(n)d countries.')
+                                % {'n': result.get('updated', 0)})
+            except Exception as e:
+                log.error('IHP-IX recompute summary: %s', e)
+                h.flash_error(_('Could not recompute the country summary.'))
+            return h.redirect_to('theme_ejemplo.ihpix_admin_overview')
 
         # ── Open Learning Courses (caché curada) ──────────────────────────
 

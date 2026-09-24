@@ -8,7 +8,7 @@
   {{ h.build_nav_icon('theme_ejemplo.organization_news', _('News'), name=group_dict.name, icon='newspaper') }}
   {{ h.build_nav_icon('theme_ejemplo.organization_events', _('Events'), name=group_dict.name, icon='calendar') }}
   {{ h.build_nav_icon('theme_ejemplo.organization_data_stories', _('Data Stories'), name=group_dict.name, icon='book') }}
-  {% if current_user.is_authenticated and current_user.sysadmin %}
+  {% if current_user.is_authenticated %}
     {{ h.build_nav_icon('theme_ejemplo.organization_ihpix', _('IHP-IX'), name=group_dict.name, icon='flask') }}
   {% endif %}
   {{ h.build_nav_icon(group_type + '.about', _('About'), id=group_dict.name, icon='info-circle') }}

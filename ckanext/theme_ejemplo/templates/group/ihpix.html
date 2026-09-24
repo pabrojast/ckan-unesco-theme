@@ -558,7 +558,7 @@
           <label for="gix-biennium">{{ _('Biennium') }}</label>
           <select name="biennium" id="gix-biennium" class="gix-select">
             <option value="">{{ _('All') }}</option>
-            {% for b in ['2022-2023', '2024-2025', '2026-2027', '2028-2029'] %}
+            {% for b in h.get_ihpix_taxonomies().biennia %}
               <option value="{{ b }}" {% if biennium_filter is defined and biennium_filter == b %}selected{% endif %}>
                 {{ b }}
               </option>

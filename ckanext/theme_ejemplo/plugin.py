@@ -533,6 +533,26 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 methods=['GET']
             )
 
+            # Páginas navegables (fase iii): por Output, por PA, contribuidores
+            blueprint.add_url_rule(
+                u'/ihpix/outputs/<code>',
+                u'ihpix_output_detail',
+                MyLogica.ihpix_output_detail,
+                methods=['GET']
+            )
+            blueprint.add_url_rule(
+                u'/ihpix/priority-area/<pa>',
+                u'ihpix_priority_area',
+                MyLogica.ihpix_priority_area,
+                methods=['GET']
+            )
+            blueprint.add_url_rule(
+                u'/ihpix/contributors',
+                u'ihpix_contributors',
+                MyLogica.ihpix_contributors,
+                methods=['GET']
+            )
+
             blueprint.add_url_rule(
                 u'/ihpix/dashboard',
                 u'ihpix_dashboard',
@@ -1071,6 +1091,12 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
 
             # IHP-IX admin overview dashboard (sysadmin) — PDF 2026 spec
             blueprint.add_url_rule(
+                u'/ckan-admin/ihpix/recompute-summary',
+                u'ihpix_recompute_summary_view',
+                MyLogica.ihpix_recompute_summary_view,
+                methods=['POST']
+            )
+            blueprint.add_url_rule(
                 u'/ckan-admin/ihpix/overview',
                 u'ihpix_admin_overview',
                 MyLogica.ihpix_admin_overview,
@@ -1223,6 +1249,11 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                  'get_ihpix_reporter': helpers.get_ihpix_reporter,
                  'ihpix_link_url': helpers.ihpix_link_url,
                  'ihpix_link_type_label': helpers.ihpix_link_type_label,
+                 'get_ihpix_taxonomies': helpers.get_ihpix_taxonomies,
+                 'ihpix_output_title': helpers.ihpix_output_title,
+                 'ihpix_output_label': helpers.ihpix_output_label,
+                 'ihpix_priority_area_for_output': helpers.ihpix_priority_area_for_output,
+                 'ihpix_t': helpers.ihpix_t,
                  'get_my_pending_initiative_request': helpers.get_my_pending_initiative_request,
                  'theme_ejemplo_tracking_enabled': helpers.tracking_enabled,
                  'get_dataset_tracking': helpers.get_dataset_tracking,
@@ -1294,6 +1325,9 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 'ihpix_activity_link_create': custom_actions.ihpix_activity_link_create,
                 'ihpix_activity_link_delete': custom_actions.ihpix_activity_link_delete,
                 'ihpix_link_search': custom_actions.ihpix_link_search,
+                # IHP-IX descubribilidad / analítica
+                'ihpix_contributor_list': custom_actions.ihpix_contributor_list,
+                'ihpix_country_summary_recompute': custom_actions.ihpix_country_summary_recompute,
                 'ihpix_dashboard_stats': custom_actions.ihpix_dashboard_stats,
                 'ihpix_admin_overview_stats': custom_actions.ihpix_admin_overview_stats,
                 # IHP-IX GeoJSON & country summary
@@ -1369,6 +1403,8 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 'ihpix_activity_link_create': custom_auth.ihpix_activity_link_create,
                 'ihpix_activity_link_delete': custom_auth.ihpix_activity_link_delete,
                 'ihpix_link_search': custom_auth.ihpix_link_search,
+                'ihpix_contributor_list': custom_auth.ihpix_contributor_list,
+                'ihpix_country_summary_recompute': custom_auth.ihpix_country_summary_recompute,
                 'ihpix_dashboard_stats': custom_auth.ihpix_dashboard_stats,
                 # IHP-IX GeoJSON & country summary
                 'ihpix_geojson': custom_auth.ihpix_geojson,

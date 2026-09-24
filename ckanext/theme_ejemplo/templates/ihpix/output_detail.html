@@ -1,0 +1,149 @@
+{% extends "page.html" %}
+{% import 'ihpix/snippets/activity_links.html' as links_ui %}
+{% import 'ihpix/snippets/page_styles.html' as ui %}
+
+{% block title %}{{ _('Output') }} {{ code }} - {{ _('IHP-IX') }} - {{ super() }}{% endblock %}
+
+{% block breadcrumb_content %}
+  <li><a href="{{ h.url_for('/ihpix') }}">{% trans %}IHP IX{% endtrans %}</a></li>
+  <li><a href="{{ h.url_for('theme_ejemplo.ihpix_priority_area', pa=pa) }}">{{ pa }}</a></li>
+  <li class="active"><a href="{{ h.url_for('theme_ejemplo.ihpix_output_detail', code=code) }}">{{ _('Output') }} {{ code }}</a></li>
+{% endblock %}
+
+{% block page_header %}{% endblock %}
+
+{% block content %}
+<div class="main">
+<div class="container ixp">
+  {{ ui.page_styles() }}
+  {{ links_ui.links_styles() }}
+
+  <div class="ixp-header" data-pa="{{ pa }}">
+    <div class="ixp-breadcrumb">
+      <a href="{{ h.url_for('/ihpix') }}">IHP-IX</a> &rsaquo;
+      <a href="{{ h.url_for('theme_ejemplo.ihpix_priority_area', pa=pa) }}">{{ pa }} &middot; {{ h.ihpix_t(pa_title) }}</a>
+    </div>
+    <span class="ixp-kicker">{{ _('IHP-IX Output') }}</span>
+    <h1>{{ _('Output') }} {{ code }}{% if output_title %} &mdash; {{ output_title }}{% endif %}</h1>
+    <p>{{ _('Activities reported under this output of the IHP-IX Strategic Plan (2022–2029), the people who contributed them and the publications, events and data they produced.') }}</p>
+    <div class="ixp-header-actions">
+      <a class="ixp-btn ixp-btn-white" href="{{ h.url_for('theme_ejemplo.ihpix_report', pa=pa, output=code) }}">
+        <i class="fa fa-paper-plane"></i> {{ _('Report an activity for this output') }}
+      </a>
+      <a class="ixp-btn ixp-btn-ghost" href="{{ h.url_for('/ihpix/outputs', output=code) }}">
+        <i class="fa fa-list-alt"></i> {{ _('Open in explorer') }}
+      </a>
+      <a class="ixp-btn ixp-btn-ghost" href="{{ h.url_for('/ihpix/dashboard', output=code) }}">
+        <i class="fa fa-bar-chart"></i> {{ _('Dashboard') }}
+      </a>
+    </div>
+  </div>
+
+  <div class="ixp-stats">
+    <div class="ixp-stat"><div class="ixp-stat-n">{{ stats.total_activities | default(0) }}</div><div class="ixp-stat-l">{{ _('Published activities') }}</div></div>
+    <div class="ixp-stat"><div class="ixp-stat-n">{{ stats.total_countries | default(0) }}</div><div class="ixp-stat-l">{{ _('Countries') }}</div></div>
+    <div class="ixp-stat"><div class="ixp-stat-n">{{ stats.total_institutions | default(0) }}</div><div class="ixp-stat-l">{{ _('Institutions') }}</div></div>
+    <div class="ixp-stat"><div class="ixp-stat-n">{{ contributors_total | default(0) }}</div><div class="ixp-stat-l">{{ _('Contributors') }}</div></div>
+    {% set lt = stats.links_by_type or {} %}
+    <div class="ixp-stat"><div class="ixp-stat-n">{{ lt.total | default(0) }}</div><div class="ixp-stat-l">{{ _('Linked publications, events & data') }}</div></div>
+  </div>
+
+  <div class="ixp-grid">
+    <div>
+      <div class="ixp-card">
+        <h2><i class="fa fa-flag"></i> {{ _('Activities') }} <span class="ixp-count">{{ total }}</span></h2>
+        {% if activities %}
+          <ul class="ixp-list">
+            {% for activity in activities %}
+              {{ ui.activity_row(activity, links_ui, (links_by_activity or {}).get(activity.id, [])) }}
+            {% endfor %}
+          </ul>
+          <div class="ixp-pager">{{ page.pager() }}</div>
+        {% else %}
+          <p class="ixp-empty">{{ _('No published activities for this output yet.') }}
+            <a href="{{ h.url_for('theme_ejemplo.ihpix_report', pa=pa, output=code) }}">{{ _('Be the first to report one.') }}</a></p>
+        {% endif %}
+      </div>
+
+      {% if links_grouped %}
+      <div class="ixp-card">
+        <h2><i class="fa fa-paperclip"></i> {{ _('Publications, events & data') }}</h2>
+        {% for link_type in ['publication', 'webinar', 'event', 'dataset', 'output_data', 'other'] %}
+          {% if links_grouped.get(link_type) %}
+            <h3 style="font-size:0.85rem;text-transform:uppercase;letter-spacing:.05em;color:#64748B;margin:0.8rem 0 0.4rem;">{{ h.ihpix_link_type_label(link_type) }} ({{ links_grouped[link_type]|length }})</h3>
+            {{ links_ui.render_links(links_grouped[link_type], compact=True, heading=False) }}
+          {% endif %}
+        {% endfor %}
+      </div>
+      {% endif %}
+    </div>
+
+    <aside>
+      <div class="ixp-card">
+        <h2><i class="fa fa-users"></i> {{ _('Contributors') }} <span class="ixp-count">{{ contributors_total }}</span></h2>
+        {% if contributors %}
+          <div class="ixp-people">
+            {% for c_row in contributors %}
+              {% set reporter = c_row.reporter %}
+              <div class="ixp-person">
+                {{ ui.avatar(reporter) }}
+                <div class="ixp-person-body">
+                  {% if reporter and reporter.url %}
+                    <a class="ixp-person-name" href="{{ h.url_for('theme_ejemplo.user_ihpix', id=reporter.name) }}">{{ reporter.display_name }}</a>
+                  {% else %}
+                    <span class="ixp-person-name">{{ (reporter.display_name if reporter else c_row.reported_by) }}</span>
+                  {% endif %}
+                  <span class="ixp-person-meta">{{ ngettext('%(n)d activity', '%(n)d activities', c_row.count, n=c_row.count) }}</span>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+          <p style="margin:0.8rem 0 0;"><a href="{{ h.url_for('theme_ejemplo.ihpix_contributors', output=code) }}">{{ _('All contributors to this output') }} &rarr;</a></p>
+        {% else %}
+          <p class="ixp-empty">{{ _('No contributors yet.') }}</p>
+        {% endif %}
+      </div>
+
+      {% if top_institutions %}
+      <div class="ixp-card">
+        <h2><i class="fa fa-university"></i> {{ _('Lead institutions') }}</h2>
+        <ul class="ixp-list">
+          {% for row in top_institutions %}
+            <li style="display:flex;justify-content:space-between;gap:.5rem;padding:.3rem 0;font-size:.88rem;border-bottom:1px solid #F1F5F9;">
+              <span>{{ row.name }}</span><strong>{{ row.count }}</strong>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+      {% endif %}
+
+      {% if timeline %}
+      <div class="ixp-card">
+        <h2><i class="fa fa-line-chart"></i> {{ _('Activities over time') }}</h2>
+        {% set max_n = (timeline|map(attribute='count')|max) or 1 %}
+        <div class="ixp-timeline" role="img" aria-label="{{ _('Monthly count of activities') }}">
+          {% for t in timeline %}
+            <span style="height: {{ (t.count / max_n * 100)|round|int }}%;" title="{{ t.year }}-{{ '%02d'|format(t.month) }}: {{ t.count }}"></span>
+          {% endfor %}
+        </div>
+        <div class="ixp-timeline-labels"><span>{{ timeline[0].year }}-{{ '%02d'|format(timeline[0].month) }}</span><span>{{ timeline[-1].year }}-{{ '%02d'|format(timeline[-1].month) }}</span></div>
+      </div>
+      {% endif %}
+
+      <div class="ixp-card">
+        <h2><i class="fa fa-sitemap"></i> {{ _('Other outputs of') }} {{ pa }}</h2>
+        <div class="ixp-outputs" style="grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));">
+          {% for sibling in sibling_outputs %}
+            <a class="ixp-output {% if sibling == code %}is-current{% endif %}" href="{{ h.url_for('theme_ejemplo.ihpix_output_detail', code=sibling) }}" title="{{ h.ihpix_output_label(sibling) }}">
+              <span class="ixp-output-code">{{ sibling }}</span>
+            </a>
+          {% endfor %}
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>
+</div>
+{% endblock %}
+
+{% block secondary %}{% endblock %}

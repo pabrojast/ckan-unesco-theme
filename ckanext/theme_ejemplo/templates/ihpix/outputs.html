@@ -11,6 +11,7 @@
 {% block page_header %}{% endblock %}
 
 {% block content %}
+{% set tax = h.get_ihpix_taxonomies() %}
 <div class="main">
 <div class="container">
 <style>
@@ -667,9 +668,9 @@
           <label for="ihpix-out-pa">{{ _('Priority Area') }}</label>
           <select name="pa" id="ihpix-out-pa" class="ox-select">
             <option value="">{{ _('All') }}</option>
-            {% for pa_num in range(1, 6) %}
-              <option value="PA{{ pa_num }}" {% if pa_filter == 'PA' ~ pa_num %}selected{% endif %}>
-                PA{{ pa_num }}
+            {% for pa_code, pa_name in tax.priority_areas.items() %}
+              <option value="{{ pa_code }}" {% if pa_filter == pa_code %}selected{% endif %} title="{{ h.ihpix_t(pa_name) }}">
+                {{ pa_code }} &middot; {{ h.ihpix_t(pa_name)|truncate(48) }}
               </option>
             {% endfor %}
           </select>
@@ -693,7 +694,7 @@
           <label for="ihpix-out-biennium">{{ _('Biennium') }}</label>
           <select name="biennium" id="ihpix-out-biennium" class="ox-select">
             <option value="">{{ _('All') }}</option>
-            {% for b in ['2022-2023', '2024-2025', '2026-2027', '2028-2029'] %}
+            {% for b in tax.biennia %}
               <option value="{{ b }}" {% if biennium_filter is defined and biennium_filter == b %}selected{% endif %}>
                 {{ b }}
               </option>
@@ -705,15 +706,9 @@
           <label for="ihpix-out-region">{{ _('Region') }}</label>
           <select name="region" id="ihpix-out-region" class="ox-select">
             <option value="">{{ _('All') }}</option>
-            {% for r in [
-              'Africa',
-              'Asia and the Pacific',
-              'Europe and North America',
-              'Latin America and the Caribbean',
-              'Arab States'
-            ] %}
+            {% for r in tax.regions %}
               <option value="{{ r }}" {% if region_filter is defined and region_filter == r %}selected{% endif %}>
-                {{ _(r) }}
+                {{ h.ihpix_t(r) }}
               </option>
             {% endfor %}
           </select>
@@ -841,10 +836,10 @@
 
           <div class="ox-card-tags">
             {% if pa %}
-              <span class="ox-tag ox-tag--pa" data-pa="{{ pa }}">{{ pa }}</span>
+              <a class="ox-tag ox-tag--pa" data-pa="{{ pa }}" href="{{ h.url_for('theme_ejemplo.ihpix_priority_area', pa=pa) }}" title="{{ _('Priority Area page') }}">{{ pa }}</a>
             {% endif %}
             {% if activity.output %}
-              <span class="ox-tag ox-tag--output">{{ activity.output }}</span>
+              <a class="ox-tag ox-tag--output" href="{{ h.url_for('theme_ejemplo.ihpix_output_detail', code=activity.output) }}" title="{{ _('Output page') }}">{{ activity.output }}</a>
             {% endif %}
             {% if activity.biennium %}
               <span class="ox-tag ox-tag--biennium">{{ activity.biennium }}</span>

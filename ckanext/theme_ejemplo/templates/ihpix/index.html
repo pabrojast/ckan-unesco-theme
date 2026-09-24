@@ -662,19 +662,22 @@
         <a href="{{ h.url_for('theme_ejemplo.ihpix_report') }}" class="ihpix-btn ihpix-btn-white">
           <i class="fa fa-paper-plane"></i> {{ _('Report an activity') }}
         </a>
-        <a href="{{ h.url_for('theme_ejemplo.ihpix_my_reports') }}" class="ihpix-btn ihpix-btn-ghost">
-          <i class="fa fa-folder-open-o"></i> {{ _('My reports') }}
-        </a>
-        {% endif %}
-        {% if is_sysadmin %}
-        <a href="{{ h.url_for('/ihpix/outputs') }}" class="ihpix-btn ihpix-btn-white">
+        <a href="{{ h.url_for('/ihpix/outputs') }}" class="ihpix-btn ihpix-btn-ghost">
           <i class="fa fa-list-alt"></i> {{ _('Explore Activities') }}
         </a>
         <a href="{{ h.url_for('/ihpix/dashboard') }}" class="ihpix-btn ihpix-btn-ghost">
           <i class="fa fa-bar-chart"></i> {{ _('Dashboard') }}
         </a>
+        <a href="{{ h.url_for('theme_ejemplo.ihpix_contributors') }}" class="ihpix-btn ihpix-btn-ghost">
+          <i class="fa fa-users"></i> {{ _('Contributors') }}
+        </a>
+        {% else %}
+        <a href="{{ h.url_for('user.login', came_from='/ihpix/outputs') }}" class="ihpix-btn ihpix-btn-white">
+          <i class="fa fa-sign-in"></i> {{ _('Log in to explore and report') }}
+        </a>
         {% endif %}
       </div>
+      <script type="application/json" id="ihpix-stats-initial">{{ (stats or {})|tojson }}</script>
     </div>
   </div>
 
@@ -734,8 +737,13 @@
           <div class="ihpix-pa-count" id="ihpix-pa-count-{{ pa_num }}">
             <i class="fa fa-flag"></i> <span>&mdash;</span>
           </div>
+          {% if c.userobj %}
+          <a href="{{ h.url_for('theme_ejemplo.ihpix_priority_area', pa=pa_key) }}" class="ihpix-pa-link">
+            {{ _('Activities and outputs') }} &rarr;
+          </a>
+          {% endif %}
           {% if pa.link and c.userobj %}
-          <a href="{{ pa.link }}" class="ihpix-pa-link" target="_blank">
+          <a href="{{ pa.link }}" class="ihpix-pa-link" target="_blank" rel="noopener">
             {{ _('Explore') }} &rarr;
           </a>
           {% endif %}
@@ -852,8 +860,6 @@
             </div>
           </div>
         </div>
-        {% endif %}
-        {% if is_sysadmin %}
         <div class="col-md-4">
           <div class="ihpix-cta-card">
             <div class="ihpix-cta-card-placeholder" style="background: #E0F2FE;">
@@ -956,12 +962,13 @@
     requestAnimationFrame(step);
   }
 
-  /* ── Load stats from API ──────────────────────────────── */
-  fetch('/api/3/action/ihpix_dashboard_stats')
-    .then(function (r) { return r.json(); })
-    .then(function (data) {
-      if (!data.success) return;
-      var s = data.result || {};
+  /* ── Stats inyectadas por el servidor (la API exige login) ── */
+  (function () {
+      var s = {};
+      try {
+        var statsEl = document.getElementById('ihpix-stats-initial');
+        s = statsEl ? (JSON.parse(statsEl.textContent || '{}') || {}) : {};
+      } catch (e) { s = {}; }
 
       /* Hero stat pills */
       var elAct = document.getElementById('ihpix-stat-activities');
@@ -995,8 +1002,7 @@
       if (mKnowledge)  mKnowledge.setAttribute('data-target', s.knowledge_products || 0);
       if (mScientific) mScientific.setAttribute('data-target', s.scientific_products || 0);
       if (mTraining)   mTraining.setAttribute('data-target', s.training_materials || 0);
-    })
-    .catch(function () { /* silently degrade */ });
+  })();
 
   /* ── Initialize Leaflet map (solo si Leaflet está cargado) ─ */
   var mapEl = document.getElementById('ihpix-map');

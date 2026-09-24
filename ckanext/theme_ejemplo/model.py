@@ -1056,11 +1056,15 @@ class IhpixActivity(model.DomainObject):
         return q.all()
 
     @classmethod
-    def get_published(cls, priority_area=None, output=None, q_text=None,
-                      biennium=None, country=None, region=None, flagship=None,
-                      organization=None, limit=20, offset=0):
-        """Return published activities with optional filters."""
-        q = meta.Session.query(cls).filter(cls.status == cls.STATUS_PUBLISHED)
+    def get_filtered(cls, status=None, priority_area=None, output=None,
+                     q_text=None, biennium=None, country=None, region=None,
+                     flagship=None, organization=None, ctwg=None,
+                     reported_by=None, limit=20, offset=0):
+        """Listado con filtros. `status=None` → todos los estados (admin);
+        `limit=None` → sin tope (exportaciones, GeoJSON)."""
+        q = meta.Session.query(cls)
+        if status:
+            q = q.filter(cls.status == status)
         if priority_area:
             q = q.filter(cls.priority_area == priority_area)
         if output:
@@ -1096,14 +1100,172 @@ class IhpixActivity(model.DomainObject):
             q = q.filter(cls.regions.ilike(u'%' + region + u'%'))
         if flagship:
             q = q.filter(cls.flagships.ilike(u'%' + flagship + u'%'))
+        if ctwg:
+            q = q.filter(cls.cross_cutting_wg.ilike(u'%' + ctwg + u'%'))
+        if reported_by:
+            values = (list(reported_by) if isinstance(reported_by, (list, tuple))
+                      else [reported_by])
+            q = q.filter(cls.reported_by.in_(values))
         if q_text:
             like = u'%' + q_text + u'%'
             q = q.filter(
                 (cls.title.ilike(like)) | (cls.description.ilike(like))
             )
         total = q.count()
-        results = q.order_by(cls.created_at.desc()).offset(offset).limit(limit).all()
-        return results, total
+        q = q.order_by(cls.created_at.desc())
+        if offset:
+            q = q.offset(offset)
+        if limit:
+            q = q.limit(limit)
+        return q.all(), total
+
+    @classmethod
+    def get_published(cls, priority_area=None, output=None, q_text=None,
+                      biennium=None, country=None, region=None, flagship=None,
+                      organization=None, limit=20, offset=0):
+        """Return published activities with optional filters."""
+        return cls.get_filtered(
+            status=cls.STATUS_PUBLISHED, priority_area=priority_area,
+            output=output, q_text=q_text, biennium=biennium, country=country,
+            region=region, flagship=flagship, organization=organization,
+            limit=limit, offset=offset)
+
+    @classmethod
+    def _apply_stat_filters(cls, q, filters):
+        """Filtros comunes de las agregaciones (dashboard, páginas por Output)."""
+        filters = filters or {}
+        pa = filters.get('priority_area')
+        if pa:
+            q = q.filter(cls.priority_area == pa)
+        bi = filters.get('biennium')
+        if bi:
+            q = q.filter(cls.biennium == bi)
+        country = filters.get('country')
+        if country:
+            q = q.filter(cls.country == country)
+        output = filters.get('output')
+        if output:
+            q = q.filter(cls.output == output)
+        region = filters.get('region')
+        if region:
+            q = q.filter(cls.regions.ilike(u'%' + region + u'%'))
+        flagship = filters.get('flagship')
+        if flagship:
+            q = q.filter(cls.flagships.ilike(u'%' + flagship + u'%'))
+        return q
+
+    @classmethod
+    def count_distinct_reporters(cls, filters=None):
+        """Nº de usuarios distintos con reportes publicados."""
+        from sqlalchemy import func, distinct
+        q = meta.Session.query(func.count(distinct(cls.reported_by))).filter(
+            cls.status == cls.STATUS_PUBLISHED,
+            cls.reported_by != u'',
+            cls.reported_by != None  # noqa: E711
+        )
+        return cls._apply_stat_filters(q, filters).scalar() or 0
+
+    @classmethod
+    def get_contributor_stats(cls, filters=None, q_text=None, limit=50, offset=0):
+        """Reportantes con nº de reportes publicados, PAs cubiertas y última fecha.
+
+        `q_text` filtra por nombre de usuario (join con `user`). Devuelve
+        (rows, total); cada row es un dict con `reported_by` sin resolver
+        (el caller usa `helpers.get_ihpix_reporter`).
+        """
+        from sqlalchemy import func, distinct, or_
+        q = meta.Session.query(
+            cls.reported_by.label('reported_by'),
+            func.count(cls.id).label('count'),
+            func.count(distinct(cls.priority_area)).label('pa_count'),
+            func.count(distinct(cls.output)).label('output_count'),
+            func.max(cls.updated_at).label('last_at'),
+        ).filter(
+            cls.status == cls.STATUS_PUBLISHED,
+            cls.reported_by != u'',
+            cls.reported_by != None  # noqa: E711
+        )
+        q = cls._apply_stat_filters(q, filters)
+        if q_text:
+            like = u'%' + q_text + u'%'
+            q = q.join(model.User, or_(model.User.id == cls.reported_by,
+                                       model.User.name == cls.reported_by))
+            q = q.filter(or_(model.User.fullname.ilike(like),
+                             model.User.name.ilike(like)))
+        q = q.group_by(cls.reported_by)
+        total = q.count()
+        rows = q.order_by(func.count(cls.id).desc()).offset(offset).limit(limit).all()
+        return [{
+            'reported_by': r.reported_by,
+            'count': r.count,
+            'pa_count': r.pa_count,
+            'output_count': r.output_count,
+            'last_at': r.last_at.isoformat() if r.last_at else None,
+        } for r in rows], total
+
+    @classmethod
+    def get_top_institutions(cls, filters=None, limit=10):
+        """Instituciones líderes con más actividades publicadas."""
+        from sqlalchemy import func
+        q = meta.Session.query(cls.institution, func.count(cls.id)).filter(
+            cls.status == cls.STATUS_PUBLISHED,
+            cls.institution != u'',
+            cls.institution != None  # noqa: E711
+        )
+        q = cls._apply_stat_filters(q, filters).group_by(cls.institution)
+        q = q.order_by(func.count(cls.id).desc()).limit(limit)
+        return [{'name': name, 'count': n} for name, n in q.all()]
+
+    @classmethod
+    def get_output_biennium_matrix(cls, filters=None):
+        """Actividades publicadas por Output × biennium (heatmap del dashboard)."""
+        from sqlalchemy import func
+        q = meta.Session.query(
+            cls.priority_area, cls.output, cls.biennium, func.count(cls.id)
+        ).filter(
+            cls.status == cls.STATUS_PUBLISHED,
+            cls.output != u'', cls.output != None,  # noqa: E711
+            cls.biennium != u'', cls.biennium != None  # noqa: E711
+        )
+        q = cls._apply_stat_filters(q, filters)
+        rows = q.group_by(cls.priority_area, cls.output, cls.biennium).all()
+        cells = {}
+        bienniums = set()
+        for pa, output, biennium, n in rows:
+            cells.setdefault(output, {'priority_area': pa, 'total': 0, 'by_biennium': {}})
+            cells[output]['by_biennium'][biennium] = n
+            cells[output]['total'] += n
+            bienniums.add(biennium)
+
+        def _sort_key(code):
+            try:
+                return tuple(int(p) for p in code.split('.'))
+            except ValueError:
+                return (99, 0)
+        outputs = sorted(cells, key=_sort_key)
+        return {
+            'bienniums': sorted(bienniums),
+            'outputs': outputs,
+            'rows': [dict(output=o, **cells[o]) for o in outputs],
+        }
+
+    @classmethod
+    def get_country_counts(cls, filters=None):
+        """{country: {'total': n, 'pa1_count': n, ...}} de actividades publicadas."""
+        from sqlalchemy import func
+        q = meta.Session.query(cls.country, cls.priority_area, func.count(cls.id)).filter(
+            cls.status == cls.STATUS_PUBLISHED,
+            cls.country != u'', cls.country != None  # noqa: E711
+        )
+        q = cls._apply_stat_filters(q, filters).group_by(cls.country, cls.priority_area)
+        out = {}
+        for country, pa, n in q.all():
+            d = out.setdefault(country, {'total': 0, 'pa1_count': 0, 'pa2_count': 0,
+                                         'pa3_count': 0, 'pa4_count': 0, 'pa5_count': 0})
+            d['total'] += n
+            if pa in VALID_PRIORITY_AREAS:
+                d[pa.lower() + '_count'] += n
+        return out
 
     @staticmethod
     def _build_org_search_variants(org_name):
@@ -1408,29 +1570,17 @@ class IhpixActivity(model.DomainObject):
 
     @classmethod
     def get_timeline(cls, filters=None):
-        """Monthly activity counts for timeline chart."""
+        """Actividades publicadas por mes según la **fecha de la actividad**
+        (start_date → reported_date → created_at), no la fecha de alta."""
         from sqlalchemy import func, extract
-        filters = filters or {}
+        activity_date = func.coalesce(cls.start_date, cls.reported_date,
+                                      func.date(cls.created_at))
         q = meta.Session.query(
-            extract('year', cls.created_at).label('year'),
-            extract('month', cls.created_at).label('month'),
+            extract('year', activity_date).label('year'),
+            extract('month', activity_date).label('month'),
             func.count(cls.id).label('count')
         ).filter(cls.status == cls.STATUS_PUBLISHED)
-        pa = filters.get('priority_area')
-        if pa:
-            q = q.filter(cls.priority_area == pa)
-        bi = filters.get('biennium')
-        if bi:
-            q = q.filter(cls.biennium == bi)
-        country = filters.get('country')
-        if country:
-            q = q.filter(cls.country == country)
-        output = filters.get('output')
-        if output:
-            q = q.filter(cls.output == output)
-        region = filters.get('region')
-        if region:
-            q = q.filter(cls.regions.ilike(u'%' + region + u'%'))
+        q = cls._apply_stat_filters(q, filters)
         q = q.group_by('year', 'month').order_by('year', 'month')
         return [
             {'year': int(r.year), 'month': int(r.month), 'count': r.count}
@@ -2068,6 +2218,103 @@ class IhpixCountrySummary(model.DomainObject):
         No hace commit — el caller debe manejar la transacción.
         """
         meta.Session.query(cls).delete()
+
+    @classmethod
+    def recompute_from_activities(cls, country=None, resolve_name=None):
+        """Recalcula los conteos por país desde las actividades publicadas.
+
+        - Conserva `latitude/longitude/region` de las filas existentes; los
+          países nuevos quedan con 0/0 (no salen en el mapa hasta cargarles
+          coordenadas con el seed).
+        - `resolve_name(value)` normaliza el país (el formulario guarda el
+          slug del grupo CKAN; el seed Excel, el nombre).
+        - `country` limita el recálculo a ese país (tras aprobar un reporte).
+        - `flagship_data` pasa a ser {flagship: n} y `pa_output_data`
+          {'paN_outputs': {code: n}}; el resto de columnas mantiene su semántica.
+        Devuelve el nº de países actualizados. Hace commit.
+        """
+        import json as _json
+        from ckanext.theme_ejemplo.ihpix_forms import as_list
+
+        def _norm(value):
+            value = (value or u'').strip()
+            if value and resolve_name:
+                try:
+                    value = resolve_name(value) or value
+                except Exception:
+                    pass
+            return value
+
+        target = _norm(country) if country else None
+        q = meta.Session.query(IhpixActivity).filter(
+            IhpixActivity.status == IhpixActivity.STATUS_PUBLISHED)
+        if target:
+            q = q.filter(IhpixActivity.country.in_([country, target]))
+        agg = {}
+        for a in q.all():
+            name = _norm(a.country)
+            if not name:
+                continue
+            d = agg.setdefault(name, {
+                'total': 0, 'pa': [0] * 6, 'tb': [0] * 6, 'sup': [0] * 6,
+                'flagships': {}, 'pa_outputs': {},
+            })
+            d['total'] += 1
+            pa_num = 0
+            if a.priority_area in VALID_PRIORITY_AREAS:
+                pa_num = int(a.priority_area[-1])
+            d['pa'][pa_num] += 1
+            if a.kpi_6_active or (a.num_transboundary_ms or 0) > 0:
+                d['tb'][0] += 1
+                d['tb'][pa_num] += 1
+            if a.supporting_member_state:
+                d['sup'][0] += 1
+                d['sup'][pa_num] += 1
+            for flagship in as_list(a.flagships):
+                d['flagships'][flagship] = d['flagships'].get(flagship, 0) + 1
+            if a.output and pa_num:
+                key = 'pa%d_outputs' % pa_num
+                bucket = d['pa_outputs'].setdefault(key, {})
+                bucket[a.output] = bucket.get(a.output, 0) + 1
+
+        existing = {cs.country: cs for cs in cls.get_all()}
+        now = datetime.datetime.utcnow()
+        updated = 0
+        for name, d in agg.items():
+            cs = existing.get(name)
+            if cs is None:
+                cs = cls(country=name)
+                meta.Session.add(cs)
+                existing[name] = cs
+            cs.total_activities = d['total']
+            for i in range(1, 6):
+                setattr(cs, 'pa%d_count' % i, d['pa'][i])
+                setattr(cs, 'transboundary_pa%d' % i, d['tb'][i])
+                setattr(cs, 'supporting_pa%d' % i, d['sup'][i])
+            cs.transboundary_all = d['tb'][0]
+            cs.supporting_all = d['sup'][0]
+            cs.flagship_data = _json.dumps(d['flagships'])
+            cs.pa_output_data = _json.dumps(d['pa_outputs'])
+            cs.updated_at = now
+            updated += 1
+
+        if not target:
+            # Países que ya no tienen actividades publicadas → contadores a 0
+            for name, cs in existing.items():
+                if name not in agg and (cs.total_activities or 0):
+                    cs.total_activities = 0
+                    for i in range(1, 6):
+                        setattr(cs, 'pa%d_count' % i, 0)
+                        setattr(cs, 'transboundary_pa%d' % i, 0)
+                        setattr(cs, 'supporting_pa%d' % i, 0)
+                    cs.transboundary_all = 0
+                    cs.supporting_all = 0
+                    cs.updated_at = now
+                    updated += 1
+
+        meta.Session.commit()
+        log.info(u'ihpix_country_summary: %d países recalculados', updated)
+        return updated
 
     def as_dict(self):
         return {

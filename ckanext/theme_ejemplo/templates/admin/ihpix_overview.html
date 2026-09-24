@@ -543,9 +543,16 @@
      class="ihpix-ov-btn ihpix-ov-btn-secondary">
     <i class="fa fa-list"></i> {{ _('Manage activities') }}
   </a>
-  <a href="?{{ request.query_string.decode() if request.query_string else '' }}&export=xlsx"
+  <form method="post" action="{{ h.url_for('theme_ejemplo.ihpix_recompute_summary_view') }}" style="display:inline-block;"
+        onsubmit="return confirm({{ _('Recompute the country summary (map counts) from published activities?')|tojson }});">
+    {{ h.csrf_input() }}
+    <button type="submit" class="ihpix-ov-btn ihpix-ov-btn-secondary">
+      <i class="fa fa-refresh"></i> {{ _('Recompute map counts') }}
+    </button>
+  </form>
+  <a href="?{{ request.query_string.decode() if request.query_string else '' }}&export=csv"
      class="ihpix-ov-btn ihpix-ov-btn-success">
-    <i class="fa fa-file-excel-o"></i> {{ _('Export full dataset') }}
+    <i class="fa fa-download"></i> {{ _('Export full dataset (CSV)') }}
   </a>
 </div>
 

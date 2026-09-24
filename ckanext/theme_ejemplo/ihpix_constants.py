@@ -18,6 +18,9 @@ Convención:
 """
 from __future__ import unicode_literals
 
+import io
+import json
+import os
 from collections import OrderedDict
 
 
@@ -94,6 +97,57 @@ def output_codes_for(pa):
 def all_output_codes():
     u"""Devuelve la lista plana de los 34 códigos de Output."""
     return [code for pairs in OUTPUTS.values() for code, _ in pairs]
+
+
+def priority_area_for_output(code):
+    u"""PA a la que pertenece un código de Output ('1.3' → 'PA1'), o None."""
+    for pa in PRIORITY_AREAS:
+        if code in output_codes_for(pa):
+            return pa
+    return None
+
+
+# Títulos oficiales de los Outputs. `OUTPUTS` sólo trae códigos (ver
+# DOC-008): cuando llegue la lista del OIP basta con crear
+# data/ihpix_output_titles.json = {"1.1": "…", ...} sin tocar código.
+OUTPUT_TITLES_FILE = os.path.join(os.path.dirname(__file__), 'data',
+                                  'ihpix_output_titles.json')
+_output_titles_cache = None
+
+
+def load_output_titles(path=None, force=False):
+    u"""{code: title} combinando `OUTPUTS` y el JSON opcional (que manda)."""
+    global _output_titles_cache
+    if _output_titles_cache is not None and not force and path is None:
+        return _output_titles_cache
+    titles = {}
+    for pairs in OUTPUTS.values():
+        for code, title in pairs:
+            if title:
+                titles[code] = title
+    try:
+        with io.open(path or OUTPUT_TITLES_FILE, encoding='utf-8') as fh:
+            data = json.load(fh)
+        if isinstance(data, dict):
+            for code, title in data.items():
+                if title:
+                    titles[str(code)] = str(title).strip()
+    except (IOError, OSError, ValueError):
+        pass
+    if path is None:
+        _output_titles_cache = titles
+    return titles
+
+
+def output_title(code):
+    u"""Título del Output o '' si aún no se conoce."""
+    return load_output_titles().get(code, '')
+
+
+def output_label(code):
+    u"""'1.3 – Título' si hay título; si no, solo el código."""
+    title = output_title(code)
+    return u'{} \u2013 {}'.format(code, title) if title else code
 
 
 # ─── Cross-cutting Working Groups (Section III, 3) ───────────────────────

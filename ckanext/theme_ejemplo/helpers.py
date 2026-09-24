@@ -924,6 +924,57 @@ def get_ihpix_reporter(reported_by):
     return info
 
 
+def get_ihpix_taxonomies():
+    """Vocabularios oficiales IHP-IX para los templates (única fuente:
+    `ihpix_constants`; evita listas hardcodeadas que se desincronizan)."""
+    from ckanext.theme_ejemplo import ihpix_constants as C
+    return {
+        'priority_areas': C.PRIORITY_AREAS,
+        'outputs_by_pa': C.OUTPUTS,
+        'output_codes': C.all_output_codes(),
+        'biennia': C.BIENNIA,
+        'regions': C.REGIONS,
+        'flagships': C.FLAGSHIPS,
+        'cross_cutting_wgs': C.CROSS_CUTTING_WGS,
+        'institution_types': C.LEAD_INSTITUTION_TYPES,
+        'knowledge_product_types': C.KNOWLEDGE_PRODUCT_TYPES,
+        'scientific_product_types': C.SCIENTIFIC_PRODUCT_TYPES,
+        'knowledge_activity_types': C.KNOWLEDGE_ACTIVITY_TYPES,
+        'training_types': C.TRAINING_TYPES,
+        'stakeholder_group_types': C.STAKEHOLDER_GROUP_TYPES,
+        'stakeholder_group_type_values': C.STAKEHOLDER_GROUP_TYPE_VALUES,
+        'kpis': C.KPIS,
+    }
+
+
+def ihpix_output_title(code):
+    """Título oficial del Output ('' si aún no está cargado; ver DOC-008)."""
+    from ckanext.theme_ejemplo import ihpix_constants as C
+    return C.output_title(code)
+
+
+def ihpix_output_label(code):
+    """'1.3 – Título' o solo el código."""
+    from ckanext.theme_ejemplo import ihpix_constants as C
+    return C.output_label(code)
+
+
+def ihpix_priority_area_for_output(code):
+    from ckanext.theme_ejemplo import ihpix_constants as C
+    return C.priority_area_for_output(code)
+
+
+def ihpix_t(value):
+    """Traduce un valor de taxonomía en runtime (las cadenas están en
+    `ihpix_i18n_strings.py` para que Babel las extraiga)."""
+    if not value:
+        return value
+    try:
+        return toolkit._(value)
+    except Exception:
+        return value
+
+
 def ihpix_link_url(link):
     """URL navegable de un adjunto IHP-IX (dict de `IhpixActivityLink.as_dict`)."""
     from ckanext.theme_ejemplo import ihpix_links

@@ -1790,30 +1790,36 @@ def ihpix_activity_list(context, data_dict):
     toolkit.check_access('ihpix_activity_list', context, data_dict)
     init_ihpix_activities_db()
 
-    priority_area = data_dict.get('priority_area', '')
-    output = data_dict.get('output', '')
-    q_text = data_dict.get('q', '')
-    status = data_dict.get('status', '')
-    limit = min(int(data_dict.get('limit', 20)), 100)
-    offset = max(int(data_dict.get('offset', 0)), 0)
+    def _arg(key):
+        return (data_dict.get(key) or u'').strip() or None
+
+    status = _arg('status')
+    limit = min(_parse_int_field(data_dict, 'limit', 20), 100)
+    offset = max(_parse_int_field(data_dict, 'offset', 0), 0)
 
     user_obj = context.get('auth_user_obj')
-    is_sysadmin = user_obj and user_obj.sysadmin
+    is_sysadmin = bool(user_obj and user_obj.sysadmin)
+    if status and status not in IhpixActivity.VALID_STATUSES:
+        raise toolkit.ValidationError(
+            {'status': 'Must be one of: {}'.format(
+                ', '.join(IhpixActivity.VALID_STATUSES))})
+    # Sólo el sysadmin puede listar estados distintos de published
+    if not is_sysadmin:
+        status = IhpixActivity.STATUS_PUBLISHED
 
-    if is_sysadmin and status:
-        results, total = IhpixActivity.get_all(
-            status=status, priority_area=priority_area,
-            limit=limit, offset=offset
-        )
-    elif is_sysadmin and not status:
-        results, total = IhpixActivity.get_all(
-            priority_area=priority_area, limit=limit, offset=offset
-        )
-    else:
-        results, total = IhpixActivity.get_published(
-            priority_area=priority_area, output=output,
-            q_text=q_text, limit=limit, offset=offset
-        )
+    results, total = IhpixActivity.get_filtered(
+        status=status,
+        priority_area=_arg('priority_area'),
+        output=_arg('output'),
+        q_text=_arg('q'),
+        biennium=_arg('biennium'),
+        country=_arg('country'),
+        region=_arg('region'),
+        flagship=_arg('flagship'),
+        organization=_arg('organization'),
+        ctwg=_arg('ctwg'),
+        limit=limit, offset=offset,
+    )
 
     facets = IhpixActivity.get_facets()
 
@@ -2537,7 +2543,30 @@ def ihpix_report_review(context, data_dict):
     model.Session.commit()
     _invalidate_approvals_cache()
     _ihpix_notify_reporter(activity, action)
+    if action == 'approve':
+        _ihpix_recompute_country_after_approve(activity)
     return activity.as_dict()
+
+
+def _ihpix_recompute_country_after_approve(activity):
+    """Mantiene el mapa al día tras publicar un reporte (best effort).
+
+    Gobernado por `ckanext.theme_ejemplo.ihpix_recompute_on_approve`
+    (default true). Sólo recalcula el país del reporte.
+    """
+    if not toolkit.asbool(toolkit.config.get(
+            'ckanext.theme_ejemplo.ihpix_recompute_on_approve', True)):
+        return
+    if not (activity.country or u'').strip():
+        return
+    try:
+        init_ihpix_country_summary_db()
+        IhpixCountrySummary.recompute_from_activities(
+            country=activity.country, resolve_name=ihpix_country_name)
+    except Exception as e:
+        model.Session.rollback()
+        log.warning('IHP-IX: no se pudo recalcular el país %s: %s',
+                    activity.country, e)
 
 
 @toolkit.side_effect_free
@@ -2550,8 +2579,9 @@ def ihpix_dashboard_stats(context, data_dict):
     init_ihpix_activities_db()
 
     filters = {}
-    for key in ('priority_area', 'biennium', 'region', 'country', 'output'):
-        val = data_dict.get(key, u'').strip()
+    for key in ('priority_area', 'biennium', 'region', 'country', 'output',
+                'flagship'):
+        val = (data_dict.get(key) or u'').strip()
         if val:
             filters[key] = val
 
@@ -2560,7 +2590,39 @@ def ihpix_dashboard_stats(context, data_dict):
     stats['by_country'] = IhpixActivity.get_country_stats(
         filters=filters, limit=20
     )
+    # Analítica adicional (fase iii): contribuidores, instituciones, matriz
+    stats['contributors_total'] = IhpixActivity.count_distinct_reporters(filters)
+    stats['top_institutions'] = IhpixActivity.get_top_institutions(filters, limit=10)
+    stats['output_biennium_matrix'] = IhpixActivity.get_output_biennium_matrix(filters)
     return stats
+
+
+@toolkit.side_effect_free
+def ihpix_contributor_list(context, data_dict):
+    """Usuarios que han reportado actividades publicadas, con sus conteos.
+
+    Filtros: q (nombre de usuario), priority_area, output, biennium, region,
+    country, flagship. Cada resultado incluye `reporter` resuelto.
+    """
+    toolkit.check_access('ihpix_contributor_list', context, data_dict)
+    init_ihpix_activities_db()
+    from ckanext.theme_ejemplo.helpers import get_ihpix_reporter
+
+    filters = {}
+    for key in ('priority_area', 'biennium', 'region', 'country', 'output',
+                'flagship'):
+        val = (data_dict.get(key) or u'').strip()
+        if val:
+            filters[key] = val
+    q_text = (data_dict.get('q') or u'').strip() or None
+    limit = min(_parse_int_field(data_dict, 'limit', 24), 100)
+    offset = max(_parse_int_field(data_dict, 'offset', 0), 0)
+
+    rows, total = IhpixActivity.get_contributor_stats(
+        filters=filters, q_text=q_text, limit=limit, offset=offset)
+    for row in rows:
+        row['reporter'] = get_ihpix_reporter(row['reported_by'])
+    return {'results': rows, 'count': total}
 
 
 @toolkit.side_effect_free
@@ -2796,8 +2858,38 @@ def ihpix_geojson(context, data_dict):
     toolkit.check_access('ihpix_geojson', context, data_dict)
     init_ihpix_country_summary_db()
 
-    region = data_dict.get('region', u'').strip() or None
-    return IhpixCountrySummary.get_as_geojson(region=region)
+    region = (data_dict.get('region') or u'').strip() or None
+    live_filters = {}
+    for key in ('priority_area', 'biennium', 'output', 'flagship'):
+        val = (data_dict.get(key) or u'').strip()
+        if val:
+            live_filters[key] = val
+    if not live_filters:
+        return IhpixCountrySummary.get_as_geojson(region=region)
+
+    # Con filtros de actividad los conteos se calculan en vivo y se cruzan
+    # con las coordenadas del snapshot por país.
+    init_ihpix_activities_db()
+    if region:
+        live_filters['region'] = region
+    counts = IhpixActivity.get_country_counts(live_filters)
+    features = []
+    for cs in IhpixCountrySummary.get_all(region=region):
+        live = counts.get(cs.country)
+        if not live or not (cs.latitude and cs.longitude):
+            continue
+        props = cs.as_dict()
+        props['total_activities'] = live['total']
+        for i in range(1, 6):
+            props['pa%d_count' % i] = live['pa%d_count' % i]
+        features.append({
+            'type': 'Feature',
+            'geometry': {'type': 'Point',
+                         'coordinates': [float(cs.longitude), float(cs.latitude)]},
+            'properties': props,
+        })
+    return {'type': 'FeatureCollection', 'features': features,
+            'filters_applied': live_filters}
 
 
 @toolkit.side_effect_free
@@ -2817,14 +2909,21 @@ def ihpix_activity_geojson(context, data_dict):
     init_ihpix_activities_db()
     init_ihpix_country_summary_db()
 
-    # Obtener actividades filtradas
-    activities = IhpixActivity.get_published(
-        priority_area=data_dict.get('priority_area', u'').strip() or None,
-        output=data_dict.get('output', u'').strip() or None,
-        biennium=data_dict.get('biennium', u'').strip() or None,
-        country=data_dict.get('country', u'').strip() or None,
-        flagship=data_dict.get('flagship', u'').strip() or None,
-        region=data_dict.get('region', u'').strip() or None,
+    # Obtener actividades filtradas (sin el tope por defecto de 20; el máximo
+    # es configurable para no serializar decenas de miles de features)
+    try:
+        max_features = int(toolkit.config.get(
+            'ckanext.theme_ejemplo.ihpix_geojson_max', 5000))
+    except (TypeError, ValueError):
+        max_features = 5000
+    activities, _total = IhpixActivity.get_published(
+        priority_area=(data_dict.get('priority_area') or u'').strip() or None,
+        output=(data_dict.get('output') or u'').strip() or None,
+        biennium=(data_dict.get('biennium') or u'').strip() or None,
+        country=(data_dict.get('country') or u'').strip() or None,
+        flagship=(data_dict.get('flagship') or u'').strip() or None,
+        region=(data_dict.get('region') or u'').strip() or None,
+        limit=max_features,
     )
 
     # Construir lookup de coordenadas por país
@@ -2854,6 +2953,37 @@ def ihpix_activity_geojson(context, data_dict):
         'type': 'FeatureCollection',
         'features': features,
     }
+
+
+def ihpix_country_name(value):
+    """Slug de grupo Member State → título del grupo; cualquier otro valor
+    (nombre completo del seed Excel) se devuelve tal cual.
+
+    No usa `get_member_state_title` porque su fallback capitaliza el texto
+    ("Republic of Korea" → "Republic Of Korea") y duplicaría filas.
+    """
+    value = (value or u'').strip()
+    if not value:
+        return value
+    try:
+        for name, title in toolkit.h.get_member_states_groups_list():
+            if name == value:
+                return title or value
+    except Exception:
+        pass
+    return value
+
+
+def ihpix_country_summary_recompute(context, data_dict):
+    """Recalcula ihpix_country_summary desde las actividades publicadas.
+    Sysadmin only. `country` opcional para limitar el recálculo."""
+    toolkit.check_access('ihpix_country_summary_recompute', context, data_dict)
+    init_ihpix_activities_db()
+    init_ihpix_country_summary_db()
+    country = (data_dict.get('country') or u'').strip() or None
+    updated = IhpixCountrySummary.recompute_from_activities(
+        country=country, resolve_name=ihpix_country_name)
+    return {'success': True, 'updated': updated}
 
 
 @toolkit.side_effect_free

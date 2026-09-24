@@ -5,53 +5,18 @@
 {% endblock %}
 
 {% block content %}
-{# ── Option lists used in form sections ── #}
-{% set institution_type_options = [
-  'IHP National Committee', 'UNESCO Category II Center', 'University',
-  'Research Institution', 'Governmental Organization',
-  'Non-Governmental Organization', 'UNESCO Chair or UNITWIN',
-  'UNESCO Field Office', 'UNESCO IHP Secretariat',
-  'UNESCO Category I Center', 'Private Partner',
-  'Groundwater Management Institution', 'Other'
-] %}
-{% set biennium_options = ['2022-2023', '2024-2025', '2026-2027', '2028-2029'] %}
-{% set region_options = [
-  'Africa', 'Arab States', 'Asia and the Pacific', 'Eastern Europe',
-  'Europe and North America', 'Global', 'Latin America and the Caribbean'
-] %}
-{% set flagship_options = [
-  'FRIEND', 'G-WADI', 'HELP', 'IDI', 'IFI', 'IIWQ', 'ISARM', 'ISI',
-  'IWRM', 'JIIHP', 'MAR', 'PCCP', 'WAMU-NET', 'WHYMAP', 'WLRI'
-] %}
-{% set cross_cutting_options = [
-  'Ecohydrology and Water Quality',
-  'Groundwater and Human Settlements',
-  'Hydrological Systems, Rivers, Climate Risk and Water-Food-Energy Nexus'
-] %}
-{% set knowledge_product_type_options = [
-  'Assessment', 'Book', 'Brochure', 'Methodology', 'Report',
-  'Statistic or data source', 'Tool', 'Website', 'Other'
-] %}
-{% set scientific_product_type_options = [
-  'Patents', 'Peer-reviewed articles',
-  'Scientific conference proceedings', 'Scientific journal editions'
-] %}
-{% set knowledge_activity_type_options = [
-  'Conference session or roundtable discussion',
-  'International Conference', 'Seminar or online webinar',
-  'Workshop or physical/online training course', 'Other'
-] %}
-{% set training_type_options = [
-  'Handout', 'Lecture', 'Manual', 'Module', 'Online Course',
-  'Physical training course', 'Presentation', 'Textbook',
-  'Training Video', 'Workshop'
-] %}
-{% set stakeholder_group_type_options = [
-  'Government Agencies', 'Research and Academic Institutions',
-  'Non-Governmental Organizations (NGOs)', 'Private Sector',
-  'International Organizations', 'Community Groups',
-  'River Basin Organizations', 'Other'
-] %}
+{# ── Listas de opciones: única fuente ihpix_constants (vía helper) ── #}
+{% set tax = h.get_ihpix_taxonomies() %}
+{% set institution_type_options = tax.institution_types %}
+{% set biennium_options = tax.biennia %}
+{% set region_options = tax.regions %}
+{% set flagship_options = tax.flagships %}
+{% set cross_cutting_options = tax.cross_cutting_wgs %}
+{% set knowledge_product_type_options = tax.knowledge_product_types %}
+{% set scientific_product_type_options = tax.scientific_product_types %}
+{% set knowledge_activity_type_options = tax.knowledge_activity_types %}
+{% set training_type_options = tax.training_types %}
+{% set stakeholder_group_type_options = tax.stakeholder_group_type_values %}
 
 {# ── Macro: Render all 8 accordion form sections ── #}
 {% macro form_sections(p, is_edit=false) %}
@@ -1286,12 +1251,11 @@
     show: '/ckan-admin/ihpix/activities/show'
   };
 
+  /* Outputs por PA desde ihpix_constants (34 códigos oficiales) */
   var PA_OUTPUTS = {
-    'PA1': ['1.1','1.2','1.3','1.4','1.5','1.6','1.7','1.8','1.9','1.10'],
-    'PA2': ['2.1','2.2','2.3','2.4','2.5'],
-    'PA3': ['3.1','3.2','3.3','3.4','3.5'],
-    'PA4': ['4.1','4.2','4.3','4.4','4.5','4.6'],
-    'PA5': ['5.1','5.2','5.3','5.4']
+    {% for pa_code, pairs in tax.outputs_by_pa.items() %}
+    {{ pa_code|tojson }}: {{ (pairs|map(attribute=0)|list)|tojson }}{% if not loop.last %},{% endif %}
+    {% endfor %}
   };
 
   /* ── Text fields (ID suffix → form field name) ── */

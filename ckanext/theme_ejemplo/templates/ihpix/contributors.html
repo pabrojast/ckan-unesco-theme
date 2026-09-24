@@ -1,0 +1,110 @@
+{% extends "page.html" %}
+{% import 'ihpix/snippets/page_styles.html' as ui %}
+
+{% block title %}{{ _('IHP-IX Contributors') }} - {{ super() }}{% endblock %}
+
+{% block breadcrumb_content %}
+  <li><a href="{{ h.url_for('/ihpix') }}">{% trans %}IHP IX{% endtrans %}</a></li>
+  <li class="active"><a href="{{ h.url_for('theme_ejemplo.ihpix_contributors') }}">{{ _('Contributors') }}</a></li>
+{% endblock %}
+
+{% block page_header %}{% endblock %}
+
+{% block content %}
+<div class="main">
+<div class="container ixp">
+  {{ ui.page_styles() }}
+
+  <div class="ixp-header">
+    <span class="ixp-kicker">{{ _('IHP-IX') }}</span>
+    <h1>{{ _('Contributors') }}</h1>
+    <p>{{ _('People who have reported published IHP-IX activities in IHP-WINS. Filter by Priority Area, Output or biennium to find who is working on what.') }}</p>
+    <div class="ixp-header-actions">
+      <a class="ixp-btn ixp-btn-white" href="{{ h.url_for('theme_ejemplo.ihpix_report') }}"><i class="fa fa-paper-plane"></i> {{ _('Report an activity') }}</a>
+      <a class="ixp-btn ixp-btn-ghost" href="{{ h.url_for('/people') }}"><i class="fa fa-address-book-o"></i> {{ _('People directory') }}</a>
+    </div>
+  </div>
+
+  <div class="ixp-stats">
+    <div class="ixp-stat"><div class="ixp-stat-n">{{ contributors_total }}</div><div class="ixp-stat-l">{{ _('Contributors') }}</div></div>
+    <div class="ixp-stat"><div class="ixp-stat-n">{{ total }}</div><div class="ixp-stat-l">{{ _('Matching your filters') }}</div></div>
+  </div>
+
+  <form method="get" class="ixp-filters" action="{{ h.url_for('theme_ejemplo.ihpix_contributors') }}">
+    <div>
+      <label for="ixc-q">{{ _('Name') }}</label>
+      <input type="search" id="ixc-q" name="q" value="{{ q }}" placeholder="{{ _('Search by name…') }}">
+    </div>
+    <div>
+      <label for="ixc-pa">{{ _('Priority Area') }}</label>
+      <select id="ixc-pa" name="pa">
+        <option value="">{{ _('All') }}</option>
+        {% for code, name in taxonomies.priority_areas.items() %}
+          <option value="{{ code }}" {% if pa_filter == code %}selected{% endif %}>{{ code }} &middot; {{ h.ihpix_t(name)|truncate(40) }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div>
+      <label for="ixc-output">{{ _('Output') }}</label>
+      <select id="ixc-output" name="output">
+        <option value="">{{ _('All') }}</option>
+        {% for code in taxonomies.output_codes %}
+          <option value="{{ code }}" {% if output_filter == code %}selected{% endif %}>{{ h.ihpix_output_label(code) }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div>
+      <label for="ixc-biennium">{{ _('Biennium') }}</label>
+      <select id="ixc-biennium" name="biennium">
+        <option value="">{{ _('All') }}</option>
+        {% for b in taxonomies.biennia %}
+          <option value="{{ b }}" {% if biennium_filter == b %}selected{% endif %}>{{ b }}</option>
+        {% endfor %}
+      </select>
+    </div>
+    <div>
+      <button type="submit" class="btn btn-primary"><i class="fa fa-search"></i> {{ _('Apply') }}</button>
+      {% if q or pa_filter or output_filter or biennium_filter %}
+        <a class="btn btn-default" href="{{ h.url_for('theme_ejemplo.ihpix_contributors') }}">{{ _('Reset') }}</a>
+      {% endif %}
+    </div>
+  </form>
+
+  {% if contributors %}
+    <div class="ixp-people-grid">
+      {% for c_row in contributors %}
+        {% set reporter = c_row.reporter %}
+        {% set profile = (c_row.profile or {}).get('profile', {}) if c_row.profile else {} %}
+        <div class="ixp-people-card">
+          {% set img = h.theme_ejemplo_normalize_user_image_url(c_row.profile.image_url) if c_row.profile and c_row.profile.image_url else '' %}
+          <span class="ixp-avatar">{% if img %}<img src="{{ img }}" alt="">{% else %}{{ ((reporter.display_name if reporter else c_row.reported_by) or '?')[:1]|upper }}{% endif %}</span>
+          <div class="ixp-person-body">
+            {% if reporter and reporter.name %}
+              <a class="ixp-person-name" href="{{ h.url_for('theme_ejemplo.user_ihpix', id=reporter.name) }}">{{ reporter.display_name }}</a>
+            {% else %}
+              <span class="ixp-person-name">{{ (reporter.display_name if reporter else c_row.reported_by) }}</span>
+            {% endif %}
+            <div class="ixp-person-meta">
+              {% if profile.get('job_title') %}{{ profile.job_title }}{% endif %}
+              {% if profile.get('institution') %}{% if profile.get('job_title') %} &middot; {% endif %}{{ profile.institution }}{% endif %}
+              {% if profile.get('country') %}<br><i class="fa fa-globe"></i> {{ h.get_member_state_title(profile.country) }}{% endif %}
+            </div>
+            <div class="ixp-people-stats">
+              <span><strong>{{ c_row.count }}</strong> {{ ngettext('activity', 'activities', c_row.count) }}</span>
+              <span><strong>{{ c_row.output_count }}</strong> {{ _('outputs') }}</span>
+              <span><strong>{{ c_row.pa_count }}</strong> {{ _('PAs') }}</span>
+            </div>
+            {% if c_row.last_at %}<div class="ixp-person-meta" style="margin-top:.25rem;">{{ _('Last report') }}: {{ h.render_datetime(c_row.last_at) }}</div>{% endif %}
+          </div>
+        </div>
+      {% endfor %}
+    </div>
+    <div class="ixp-pager">{{ page.pager() }}</div>
+  {% else %}
+    <p class="ixp-empty">{{ _('No contributors match these filters.') }}</p>
+  {% endif %}
+</div>
+</div>
+{% endblock %}
+
+{% block secondary %}{% endblock %}

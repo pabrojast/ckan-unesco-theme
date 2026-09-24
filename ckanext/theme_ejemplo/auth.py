@@ -219,13 +219,17 @@ def ihpix_content_update(context, data_dict):
 # ── IHP-IX Activity Auth ────────────────────────────────────────────────────
 
 def ihpix_activity_list(context, data_dict):
-    """Public read access to published activities."""
-    return {'success': True}
+    """Actividades publicadas: cualquier usuario autenticado (2026-09)."""
+    return _logged_in_only(context, data_dict)
 
 
 def ihpix_activity_show(context, data_dict):
-    """Public read access to a single activity."""
-    return {'success': True}
+    """Una actividad: cualquier usuario autenticado."""
+    return _logged_in_only(context, data_dict)
+
+
+def ihpix_contributor_list(context, data_dict):
+    return _logged_in_only(context, data_dict)
 
 
 def ihpix_activity_create(context, data_dict):
@@ -327,8 +331,9 @@ def ihpix_report_review(context, data_dict):
 
 
 def ihpix_dashboard_stats(context, data_dict):
-    """Public read access to dashboard statistics."""
-    return {'success': True}
+    """Estadísticas del dashboard: usuarios autenticados. La landing
+    pública las obtiene en servidor con `ignore_auth`."""
+    return _logged_in_only(context, data_dict)
 
 
 def ihpix_admin_overview_stats(context, data_dict):
@@ -339,18 +344,19 @@ def ihpix_admin_overview_stats(context, data_dict):
 # ── IHP-IX GeoJSON & Country Summary Auth ──────────────────────────────────
 
 def ihpix_geojson(context, data_dict):
-    """Public read access to GeoJSON data."""
-    return {'success': True}
+    return _logged_in_only(context, data_dict)
 
 
 def ihpix_activity_geojson(context, data_dict):
-    """Public read access to activity GeoJSON data."""
-    return {'success': True}
+    return _logged_in_only(context, data_dict)
 
 
 def ihpix_country_summary_list(context, data_dict):
-    """Public read access to country summary data."""
-    return {'success': True}
+    return _logged_in_only(context, data_dict)
+
+
+def ihpix_country_summary_recompute(context, data_dict):
+    return _sysadmin_only(context, data_dict)
 
 
 # ── Initiative Request Auth ─────────────────────────────────────────────────

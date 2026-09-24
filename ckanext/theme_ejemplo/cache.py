@@ -58,6 +58,15 @@ _DEFAULT_EXCLUDE_PREFIXES = (
     '/_tracking',
     '/membership-requests',
     '/bug-tickets',
+    # IHP-IX: reporte y páginas para usuarios logueados (la landing /ihpix
+    # sigue siendo cacheable; _matches_prefix no confunde /ihpix con /ihpix/x)
+    '/ihpix/report',
+    '/ihpix/my-reports',
+    '/ihpix/outputs',
+    '/ihpix/dashboard',
+    '/ihpix/priority-area',
+    '/ihpix/contributors',
+    '/ihpix/workspaces',
 )
 
 # Si la lista de inclusión está vacía, se cachea todo lo que no esté excluido.

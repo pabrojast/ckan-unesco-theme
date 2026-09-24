@@ -201,6 +201,43 @@ def seed_data(json_file, excel_file, append):
         raise SystemExit(1)
 
 
+@ihpix.command(name='recompute-summary')
+@click.option('--country', default=None,
+              help='Recalcular sólo este país (nombre o slug del grupo)')
+@click.option('--dry-run', is_flag=True, default=False,
+              help='Mostrar los conteos sin escribir en la BD')
+def recompute_summary(country, dry_run):
+    """Recalcular ihpix_country_summary desde las actividades publicadas."""
+    from ckanext.theme_ejemplo.model import (
+        IhpixActivity, init_ihpix_activities_db,
+        IhpixCountrySummary, init_ihpix_country_summary_db,
+    )
+    from ckanext.theme_ejemplo.actions import ihpix_country_name
+    import ckan.model.meta as meta
+
+    init_ihpix_activities_db()
+    init_ihpix_country_summary_db()
+
+    if dry_run:
+        counts = IhpixActivity.get_country_counts({})
+        for name in sorted(counts, key=lambda n: -counts[n]['total']):
+            d = counts[name]
+            click.echo('{:40s} total={:4d}  PA1={} PA2={} PA3={} PA4={} PA5={}'.format(
+                name[:40], d['total'], d['pa1_count'], d['pa2_count'],
+                d['pa3_count'], d['pa4_count'], d['pa5_count']))
+        click.echo('{} países con actividades publicadas (sin cambios).'.format(len(counts)))
+        return
+
+    try:
+        updated = IhpixCountrySummary.recompute_from_activities(
+            country=country, resolve_name=ihpix_country_name)
+        click.echo('Country summaries recalculados: {}'.format(updated))
+    except Exception as e:
+        meta.Session.rollback()
+        click.echo('Error recalculando country summaries: {}'.format(e))
+        raise SystemExit(1)
+
+
 @click.group()
 def openlearning():
     """Comandos de sincronización de cursos UNESCO Open Learning."""

@@ -179,3 +179,33 @@ def test_ihpix_report_edit_requires_login(app):
 def test_ihpix_report_form_is_public(app):
     resp = app.get('/ihpix/report')
     assert resp.status_code == 200
+
+
+# ── IHP-IX descubribilidad (fase iii) ──────────────────────────────────────
+
+def test_ihpix_browse_routes_are_registered(app):
+    adapter = app.flask_app.url_map.bind('test.ckan.net')
+    for path, expected in (
+            ('/ihpix/outputs/1.1', 'ihpix_output_detail'),
+            ('/ihpix/priority-area/PA3', 'ihpix_priority_area'),
+            ('/ihpix/contributors', 'ihpix_contributors'),
+    ):
+        endpoint, _args = adapter.match(path, method='GET')
+        assert endpoint == 'theme_ejemplo.' + expected, path
+    endpoint, _args = adapter.match('/ckan-admin/ihpix/recompute-summary', method='POST')
+    assert endpoint == 'theme_ejemplo.ihpix_recompute_summary_view'
+
+
+def test_ihpix_browse_pages_require_login(app):
+    for path in ('/ihpix/outputs', '/ihpix/dashboard', '/ihpix/outputs/1.1',
+                 '/ihpix/priority-area/PA1', '/ihpix/contributors'):
+        resp = app.get(path, follow_redirects=False)
+        assert resp.status_code in (302, 403), path
+        if resp.status_code == 302:
+            assert '/user/login' in (resp.headers.get('Location') or ''), path
+
+
+def test_ihpix_landing_is_public(app):
+    resp = app.get('/ihpix')
+    assert resp.status_code == 200
+    assert b'ihpix-stats-initial' in resp.data

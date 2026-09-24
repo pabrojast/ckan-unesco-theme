@@ -842,6 +842,19 @@
         </div>
       </div>
     </div>
+    <div class="{{ 'col-md-3 col-sm-6' if is_sysadmin else 'col-md-4 col-sm-6' }}">
+      <a class="dx-card dx-kpi" href="{{ h.url_for('theme_ejemplo.ihpix_contributors') }}" style="display:flex;text-decoration:none;color:inherit;">
+        <div class="dx-kpi-icon dx-kpi-icon--teal">
+          <i class="fa fa-users"></i>
+        </div>
+        <div class="dx-kpi-body">
+          <div class="dx-kpi-number" data-count="{{ stats.contributors_total | default(0) }}">
+            {{ stats.contributors_total | default(0) }}
+          </div>
+          <div class="dx-kpi-label">{{ _('Contributors') }}</div>
+        </div>
+      </a>
+    </div>
     {% if is_sysadmin %}
     <div class="col-md-3 col-sm-6">
       <div class="dx-card dx-kpi">
@@ -1027,6 +1040,82 @@
             <i class="fa fa-map-o"></i>
             <p>{{ _('No region data available') }}</p>
           </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {# ── Row 3: Top institutions + Output × Biennium matrix ── #}
+  <style>
+    .dx-table { width: 100%; border-collapse: collapse; font-size: 0.86rem; }
+    .dx-table th, .dx-table td { padding: 0.45rem 0.6rem; border-bottom: 1px solid #E2E8F0; text-align: left; }
+    .dx-table th { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.04em; color: #64748B; font-weight: 600; }
+    .dx-table td.num, .dx-table th.num { text-align: right; font-variant-numeric: tabular-nums; }
+    .dx-table a { color: #0069B4; font-weight: 600; }
+    .dx-matrix-wrap { overflow-x: auto; max-height: 420px; overflow-y: auto; }
+    .dx-matrix td.cell { text-align: center; font-variant-numeric: tabular-nums; }
+    .dx-matrix td.cell.is-hot { background: #E8F4FD; font-weight: 700; color: #004E8C; }
+    .dx-matrix td.cell.is-warm { background: #F3F9FE; }
+    .dx-bar { display: inline-block; height: 8px; border-radius: 4px; background: #0069B4; vertical-align: middle; margin-right: 0.4rem; }
+  </style>
+  <div class="row">
+    <div class="col-md-5">
+      <div class="dx-card dx-section" id="dx-card-institutions">
+        <h2 class="dx-section-title">
+          <i class="fa fa-university"></i> {{ _('Top Lead Institutions') }}
+        </h2>
+        <div id="dx-top-institutions">
+          {% set top_inst = stats.top_institutions or [] %}
+          {% if top_inst %}
+            {% set max_inst = top_inst[0].count if top_inst[0].count else 1 %}
+            <table class="dx-table">
+              <tbody>
+                {% for row in top_inst %}
+                  <tr>
+                    <td><span class="dx-bar" style="width: {{ (row.count / max_inst * 90)|round|int }}px;"></span>{{ row.name }}</td>
+                    <td class="num">{{ row.count }}</td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          {% else %}
+            <div class="dx-empty"><i class="fa fa-university"></i><p>{{ _('No institution data available') }}</p></div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+    <div class="col-md-7">
+      <div class="dx-card dx-section" id="dx-card-matrix">
+        <h2 class="dx-section-title">
+          <i class="fa fa-th"></i> {{ _('Activities by Output and Biennium') }}
+        </h2>
+        <div class="dx-matrix-wrap" id="dx-matrix">
+          {% set matrix = stats.output_biennium_matrix or {} %}
+          {% if matrix.rows %}
+            <table class="dx-table dx-matrix">
+              <thead>
+                <tr>
+                  <th>{{ _('Output') }}</th>
+                  {% for b in matrix.bienniums %}<th class="num">{{ b }}</th>{% endfor %}
+                  <th class="num">{{ _('Total') }}</th>
+                </tr>
+              </thead>
+              <tbody>
+                {% for row in matrix.rows %}
+                  <tr>
+                    <td><a href="{{ h.url_for('theme_ejemplo.ihpix_output_detail', code=row.output) }}">{{ row.output }}</a> <small style="color:#94A3B8;">{{ row.priority_area }}</small></td>
+                    {% for b in matrix.bienniums %}
+                      {% set n = row.by_biennium.get(b, 0) %}
+                      <td class="cell {% if n >= 10 %}is-hot{% elif n > 0 %}is-warm{% endif %}">{{ n if n else '' }}</td>
+                    {% endfor %}
+                    <td class="num"><strong>{{ row.total }}</strong></td>
+                  </tr>
+                {% endfor %}
+              </tbody>
+            </table>
+          {% else %}
+            <div class="dx-empty"><i class="fa fa-th"></i><p>{{ _('No output data available') }}</p></div>
+          {% endif %}
         </div>
       </div>
     </div>
@@ -1487,6 +1576,53 @@
     }
 
     /* ═══════════════════════════════════════════════════════
+       TABLES (top institutions, output × biennium)
+       ═══════════════════════════════════════════════════════ */
+    function escapeHtml(s) {
+      return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) {
+        return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c];
+      });
+    }
+    function buildTopInstitutions(rows) {
+      var box = document.getElementById('dx-top-institutions');
+      if (!box) return;
+      if (!rows.length) {
+        box.innerHTML = '<div class="dx-empty"><i class="fa fa-university"></i><p>{{ _("No institution data available") }}</p></div>';
+        return;
+      }
+      var max = rows[0].count || 1;
+      var html = '<table class="dx-table"><tbody>';
+      rows.forEach(function (r) {
+        var w = Math.round(r.count / max * 90);
+        html += '<tr><td><span class="dx-bar" style="width:' + w + 'px;"></span>' + escapeHtml(r.name) +
+                '</td><td class="num">' + r.count + '</td></tr>';
+      });
+      box.innerHTML = html + '</tbody></table>';
+    }
+    function buildMatrix(m) {
+      var box = document.getElementById('dx-matrix');
+      if (!box) return;
+      var rows = m.rows || [], bienniums = m.bienniums || [];
+      if (!rows.length) {
+        box.innerHTML = '<div class="dx-empty"><i class="fa fa-th"></i><p>{{ _("No output data available") }}</p></div>';
+        return;
+      }
+      var html = '<table class="dx-table dx-matrix"><thead><tr><th>{{ _("Output") }}</th>';
+      bienniums.forEach(function (b) { html += '<th class="num">' + escapeHtml(b) + '</th>'; });
+      html += '<th class="num">{{ _("Total") }}</th></tr></thead><tbody>';
+      rows.forEach(function (r) {
+        html += '<tr><td><a href="/ihpix/outputs/' + encodeURIComponent(r.output) + '">' + escapeHtml(r.output) +
+                '</a> <small style="color:#94A3B8;">' + escapeHtml(r.priority_area) + '</small></td>';
+        bienniums.forEach(function (b) {
+          var n = (r.by_biennium || {})[b] || 0;
+          html += '<td class="cell' + (n >= 10 ? ' is-hot' : (n > 0 ? ' is-warm' : '')) + '">' + (n ? n : '') + '</td>';
+        });
+        html += '<td class="num"><strong>' + r.total + '</strong></td></tr>';
+      });
+      box.innerHTML = html + '</tbody></table>';
+    }
+
+    /* ═══════════════════════════════════════════════════════
        MAP
        ═══════════════════════════════════════════════════════ */
     function initMap() {
@@ -1508,7 +1644,12 @@
       if (!leafletMap) return;
       mapMarkersLayer.clearLayers();
 
-      var url = '/api/3/action/ihpix_geojson';
+      /* PA / biennium se aplican en servidor (conteos en vivo por país);
+         el país se filtra en cliente para mantener el resto del mapa. */
+      var mapParams = [];
+      if (filters.priority_area) mapParams.push('priority_area=' + encodeURIComponent(filters.priority_area));
+      if (filters.biennium) mapParams.push('biennium=' + encodeURIComponent(filters.biennium));
+      var url = '/api/3/action/ihpix_geojson' + (mapParams.length ? '?' + mapParams.join('&') : '');
       fetch(url)
         .then(function (r) { return r.json(); })
         .then(function (data) {
@@ -1588,6 +1729,7 @@
             '{{ _("Total Activities") }}': s.total_activities,
             '{{ _("Countries") }}': s.total_countries,
             '{{ _("Institutions") }}': s.total_institutions,
+            '{{ _("Contributors") }}': s.contributors_total || 0,
             '{{ _("Pending Reports") }}': s.pending_reports
           };
           kpis.forEach(function (el) {
@@ -1620,6 +1762,8 @@
           buildPaChart(s.by_priority_area);
           buildBienniumChart(s.by_biennium);
           buildOutputsChart(s.by_output);
+          buildTopInstitutions(s.top_institutions || []);
+          buildMatrix(s.output_biennium_matrix || {});
 
           /* Map */
           updateMap(activeFilters);
