@@ -17,14 +17,15 @@
 | DOC-007 | Admin | Crear guía de usuario para cada panel de administración | Media |
 | DOC-008 | IHP-IX | Confirmar lista oficial completa de los 34 Outputs (códigos + títulos) con OIP UNESCO; hoy `ihpix_constants.OUTPUTS` solo tiene códigos. | Alta |
 | DOC-009 | IHP-IX | Confirmar Key Activities por Output (form acepta texto libre por ahora). | Media |
-| DOC-010 | IHP-IX | Documentar export XLSX del Admin Overview cuando se implemente (hoy solo CSV). | Baja |
+| ~~DOC-010~~ | IHP-IX | **Resuelto 2026-09-24**: el export CSV del Admin Overview funciona (`?export=csv`, streaming, incluye adjuntos). El enlace XLSX se retiró porque `openpyxl` no es dependencia del plugin. | — |
 | DOC-011 | IHP-IX | Guía paso-a-paso para IHP National Committees: cómo migrar del Microsoft Form al `/ihpix/report` interno. | Alta |
 | DOC-012 | Módulos | `completeness.py` y `ranking.py` no están descritos en [[Modulos]] (solo el flujo en [[Flujos Importantes]] §13). | Media |
 | DOC-013 | i18n | El `.pot` (`i18n/ckanext-theme_ejemplo.pot`) está desactualizado respecto a los templates: le faltan cadenas de los paneles admin (p. ej. `Save Order`) desde antes de este cambio. Los `.po`/`.mo` se editan y compilan a mano; falta regenerar el `.pot` completo con `extract_messages` en un commit aparte. | Media |
 | DOC-014 | Helpers | `h.get_featured_datasets` ya no tiene consumidor dentro del repo desde que la portada muestra visores en vez de datasets; sigue registrado y el panel `/ckan-admin/featured-datasets` sigue operativo. Decidir si se retira. | Baja |
 | ~~DOC-015~~ | Admin/i18n | **Resuelto 2026-09-24** (fase i IHP-IX): `templates/admin/ihpix_reports.html` ya usa `{{ _("An error occurred.")|tojson }}` en el literal JS; el panel vuelve a funcionar en `/fr`. | — |
 | DOC-016 | Deployment | No hay pipeline documentado de CKAN hacia dev (`data.dev-wins.com`): en `ckan-unesco-docker` el workflow `deploy` sólo apunta a producción y `deploy-terria-dev` despliega TerriaMap. Pendiente por confirmar cómo se actualiza dev. | Media |
-| DOC-017 | IHP-IX/i18n | Las cadenas nuevas del workflow de reporte (fase i: `user/ihpix.html`, banner de estado en `report.html`, pestañas Draft/Published, emails de revisión) aún no tienen traducción es/fr/ar en los `.po`. Se completan junto con las cadenas vacías de index/outputs/dashboard en la fase iii (descubribilidad). | Media |
+| ~~DOC-017~~ | IHP-IX/i18n | **Resuelto 2026-09-24** (fase iii): ~390 cadenas IHP-IX traducidas a es/fr/ar (169 añadidas + 224 rellenadas por idioma) directamente en los `.po` con `polib` y compiladas con `msgfmt`. El `.pot` sigue desactualizado (DOC-013). Quedan vacías ~159 cadenas es/fr y ~597 ar **no** relacionadas con IHP-IX. | — |
+| DOC-021 | IHP-IX | `ihpix_activity.country` mezcla **slugs** de grupo (formulario) y **nombres** del seed Excel. `actions.ihpix_country_name` normaliza slug → título del grupo al recalcular el mapa, pero títulos distintos al nombre del seed producen filas duplicadas en `ihpix_country_summary` sin coordenadas. Decidir: migrar `country` a slug + resolver nombre en lectura, o cargar coordenadas para los títulos de grupo. | Media |
 | DOC-018 | IHP-IX | `reported_by` de las filas del seed Excel es texto libre o vacío: esas actividades no aparecen en "mis reportes" ni en el futuro directorio de contribuidores. Decidir si se asignan a un usuario "IHP Secretariat" o se dejan sin autor. | Baja |
 | DOC-019 | IHP-IX | Los atajos "Create a publication / event" de la Sección VII abren `/documents/new` (scheming, fork externo) y `/water-events/new` (ckanext-pages) en otra pestaña porque esos formularios **no soportan `came_from`**. Si el fork lo añade, bastará cambiar el enlace. | Baja |
 | DOC-020 | IHP-IX | "Webinar" es solo un tipo de adjunto (enlace o página `water-events`): no existe entidad webinar en IHP-WINS. La búsqueda de eventos depende de `ckanext.pages.db.Page` (columnas `page_type`, `title`, `extras`, `publish_date`, `private`); **pendiente por confirmar** en dev que el fork de producción tenga esas columnas y que `submission_status` viva en `extras`. | Media |
@@ -41,7 +42,7 @@
 | TEST-004 | `model.py` | Tests para los 6 modelos y sus métodos | Media |
 | TEST-005 | `auth.py` | Tests para funciones de autorización | Media |
 | TEST-006 | `validators.py` | Tests para los 3 validadores | Baja |
-| TEST-007 | IHP-IX | Hecho: `test_ihpix_forms.py` (17), `test_ihpix_links.py` (12) y rutas en `test_plugin.py`. Pendiente: tests con BD (`clean_db`) para `ihpix_report_update` (transiciones owner/sysadmin), `ihpix_report_review` (email, transiciones), `_sync_activity_links` (full replace) y la migración `_migrate_ihpix_reported_by`. | Media |
+| TEST-007 | IHP-IX | Hecho: `test_ihpix_forms.py` (17), `test_ihpix_links.py` (12), `test_ihpix_constants.py` (5) y rutas/visibilidad en `test_plugin.py`. Pendiente: tests con BD (`clean_db`) para `ihpix_report_update` (transiciones owner/sysadmin), `ihpix_report_review` (email, transiciones, recompute), `_sync_activity_links` (full replace), `get_contributor_stats`, `recompute_from_activities` y la migración `_migrate_ihpix_reported_by`. | Media |
 
 ---
 

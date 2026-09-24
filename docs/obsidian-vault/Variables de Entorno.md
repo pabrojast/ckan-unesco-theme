@@ -29,7 +29,7 @@ Estas claves se definen en el archivo de configuración de CKAN (`ckan.ini`) y s
 | `ckanext.theme_ejemplo.anon_cache_ttl` | `300` (5 min) | TTL en segundos de cada entrada |
 | `ckanext.theme_ejemplo.anon_cache_max_bytes` | `1048576` (1 MB) | Tamaño máximo del body para guardarlo en caché |
 | `ckanext.theme_ejemplo.anon_cache_include_paths` | _(vacío = todo)_ | Prefijos de path a cachear (CSV). Si está vacío, se cachea todo lo no excluido |
-| `ckanext.theme_ejemplo.anon_cache_exclude_paths` | `/api,/ckan-admin,/user,/dashboard,/feeds,/util,/_tracking,/membership-requests,/bug-tickets` | Prefijos a saltar siempre |
+| `ckanext.theme_ejemplo.anon_cache_exclude_paths` | `/api,/ckan-admin,/user,/dashboard,/feeds,/util,/_tracking,/membership-requests,/bug-tickets,/ihpix/report,/ihpix/my-reports,/ihpix/outputs,/ihpix/dashboard,/ihpix/priority-area,/ihpix/contributors,/ihpix/workspaces` | Prefijos a saltar siempre (las rutas IHP-IX para usuarios logueados quedan fuera; `/ihpix` landing sí se cachea) |
 
 > [!tip]
 > Para desactivar puntualmente el caché en una request (debug), añade `?_nocache=1` o el header `Cache-Control: no-cache`. Las respuestas servidas/guardadas exponen `X-Anon-Cache: HIT|MISS`.
@@ -72,6 +72,8 @@ Ver [[Open Learning]] para el flujo completo de sincronización y curación.
 |---|---|---|
 | `ckanext.theme_ejemplo.index_followers` | `false` | Habilitar indexación de seguidores de datasets en Solr |
 | `ckanext.theme_ejemplo.search_partial_match` | `true` | Suma `title_ngram`/`name_ngram` al `qf` de la búsqueda de datasets para encontrar palabras a medio escribir. Ver [[Busqueda#Datasets: coincidencia parcial]] |
+| `ckanext.theme_ejemplo.ihpix_recompute_on_approve` | `true` | Al aprobar un reporte IHP-IX recalcula `ihpix_country_summary` para el país del reporte (mapa al día). Ver [[Flujos Importantes#7.3 Recompute del resumen por país]] |
+| `ckanext.theme_ejemplo.ihpix_geojson_max` | `5000` | Máximo de features que devuelve `ihpix_activity_geojson` (antes estaba capado a 20 por accidente) |
 
 ### Claves de otras extensiones que este tema lee
 

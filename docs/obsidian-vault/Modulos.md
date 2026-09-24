@@ -134,6 +134,7 @@ acciones de **ckanext-pages**. Ver la advertencia en
 
 **IHP-IX actividades** (5):
 - `ihpix_activity_list`, `ihpix_activity_show`, `ihpix_activity_create`, `ihpix_activity_update`, `ihpix_activity_delete`
+- `ihpix_activity_list` acepta `priority_area, output, q, biennium, country, region, flagship, organization, ctwg, status` (este último solo sysadmin; el resto siempre ve `published`). Usa `IhpixActivity.get_filtered()`.
 
 **IHP-IX reportes** (8) — workflow completo en [[Flujos Importantes#7. Portal IHP-IX]]:
 - `ihpix_report_submit` — crea un reporte desde el formulario PDF 2026 (6 secciones, gates Y/N, listas JSON). `save_as_draft=1` → `draft` (solo exige título); si no → `pending`. La validación vive en [[Modulos#ihpix_forms.py]]. Guarda `reported_by` = **id** de usuario.
@@ -158,9 +159,16 @@ acciones de **ckanext-pages**. Ver la advertencia en
 `MEMBER_STATES` (195 ISO-2), `KPIS` (8 con metadata para tablas).
 Helpers: `is_valid_*`, `normalize_bool`, `filter_valid`.
 
+**Títulos de Output** (`ihpix_constants`, 2026-09): `OUTPUTS` sigue trayendo solo códigos (DOC-008). `load_output_titles()` lee `data/ihpix_output_titles.json` (`{"1.1": "…"}`) si existe y lo cachea; `output_title(code)`, `output_label(code)` ("1.3 – Título" o solo el código), `priority_area_for_output(code)`. Helpers de template: `h.ihpix_output_title`, `h.ihpix_output_label`, `h.ihpix_priority_area_for_output`.
+
+**IHP-IX descubribilidad y analítica** (2, 2026-09):
+- `ihpix_contributor_list` — usuarios con reportes publicados (`GROUP BY reported_by`) con conteos y `reporter` resuelto. Filtros: `q` (nombre), `priority_area`, `output`, `biennium`, `region`, `country`, `flagship`. Autenticado.
+- `ihpix_country_summary_recompute` — recalcula `ihpix_country_summary` desde actividades publicadas (`country` opcional). Sysadmin. También corre solo para el país afectado al aprobar un reporte (`ihpix_recompute_on_approve`).
+- `ihpix_dashboard_stats` devuelve además `contributors_total`, `top_institutions`, `output_biennium_matrix` y `links_by_type`; acepta `flagship`.
+
 **IHP-IX GeoJSON y datos geográficos** (3):
-- `ihpix_geojson` — GeoJSON FeatureCollection de países con coordenadas y datos por PA. Filtro: `region`
-- `ihpix_activity_geojson` — GeoJSON de actividades geolocalizadas via coordenadas de país. Filtros: `priority_area`, `output`, `biennium`, `country`, `flagship`, `region`
+- `ihpix_geojson` — GeoJSON FeatureCollection de países con coordenadas y datos por PA. Filtro `region` sobre el snapshot; con `priority_area`, `biennium`, `output` o `flagship` los conteos se calculan **en vivo** (`IhpixActivity.get_country_counts`) sobre las coordenadas del snapshot
+- `ihpix_activity_geojson` — GeoJSON de actividades geolocalizadas via coordenadas de país. Filtros: `priority_area`, `output`, `biennium`, `country`, `flagship`, `region`. Sin el tope de 20 de antes: máximo `ckanext.theme_ejemplo.ihpix_geojson_max` (5000)
 - `ihpix_country_summary_list` — Datos tabulares de países. Filtro: `region`
 
 **Cursos Open Learning** (4) — ver [[Open Learning]]:
@@ -195,6 +203,12 @@ Helpers: `is_valid_*`, `normalize_bool`, `filter_valid`.
 
 ---
 
+## ihpix_i18n_strings.py
+
+**Rol**: Lista de literales de las taxonomías (`ihpix_constants`) envueltos en un `_()` no-op para que Babel los extraiga al `.pot`. Los templates traducen los valores en runtime con `h.ihpix_t(valor)`. No se importa desde producción; `tests/test_ihpix_constants.py` comprueba que cubre las constantes.
+
+---
+
 ## helpers.py (~661 líneas)
 
 **Rol**: Funciones helper independientes para templates Jinja2.
@@ -225,8 +239,8 @@ Helpers: `is_valid_*`, `normalize_bool`, `filter_valid`.
 **Solicitudes de iniciativas** (2):
 `get_pending_initiative_requests_count()` (sysadmin badge), `get_my_pending_initiative_request()` (CTA en `/initiatives`)
 
-**IHP-IX** (4):
-`get_pending_ihpix_reports_count()` (cola `ihpix_reports` de la campana, sysadmin), `get_ihpix_reporter(reported_by)` → `{id, name, display_name, url}` resolviendo id o username (caché 5 min; texto libre del seed → solo `display_name`), `ihpix_link_url(link)` y `ihpix_link_type_label(link_type)` (adjuntos; usados por el macro `ihpix/snippets/activity_links.html`)
+**IHP-IX** (9):
+`get_pending_ihpix_reports_count()` (cola `ihpix_reports` de la campana, sysadmin), `get_ihpix_reporter(reported_by)` → `{id, name, display_name, url}` resolviendo id o username (caché 5 min; texto libre del seed → solo `display_name`), `ihpix_link_url(link)` y `ihpix_link_type_label(link_type)` (adjuntos; usados por el macro `ihpix/snippets/activity_links.html`), `get_ihpix_taxonomies()` (todas las listas de `ihpix_constants` para los `<select>` de los templates: **única fuente**, sustituye las listas hardcodeadas que se habían desincronizado), `ihpix_output_title()`, `ihpix_output_label()`, `ihpix_priority_area_for_output()`, `ihpix_t(valor)` (traducción runtime de valores de taxonomía)
 
 **Contenido destacado** (4):
 `get_featured_publications()`, `get_open_bug_tickets_count()`,
@@ -293,7 +307,7 @@ Helpers: `is_valid_*`, `normalize_bool`, `filter_valid`.
 - Gates PDF 2026 (booleanos): `unesco_secretariat_participation`, `has_member_state_support`, `has_flagship`, `has_synergies`, `regions_benefit`, `kpi_{1a,1b,2,3,4,5,6,8}_active`; textos `focal_point_name`, `*_other`, `stakeholder_group_name`, `additional_notes`
 - Workflow (2026-09): `submitted_at` (último envío a revisión); `reported_by` guarda el **id** de usuario (antes mezclaba username e id; `_migrate_ihpix_reported_by()` normaliza filas viejas)
 - Índices: `idx_ihpix_activity_{status,pa,output,biennium,reported_by}` (`_IHPIX_ACTIVITY_INDEXES`)
-- Métodos: `get()`, `get_by_priority_area()`, `get_published()`, `get_all()`, `get_pending()`, `get_facets()`, `get_stats()`, `get_timeline()`, `get_country_stats()`, `as_dict()` (incluye todos los gates), `get_by_reporter(user_obj, status, limit, offset)`, `count_by_status_for_reporter(user_obj)`, `count_by_status(status)`, `is_owned_by(user_obj)`
+- Métodos: `get()`, `get_by_priority_area()`, `get_filtered(status=None, …, limit=None)` (base de listados/export; `get_published()` es `get_filtered(status='published')`), `get_all()`, `get_pending()`, `get_facets()`, `get_stats()` (+ `links_by_type`), `get_timeline()` (por **fecha de la actividad**: `coalesce(start_date, reported_date, created_at)`), `get_country_stats()`, `get_country_counts(filters)`, `count_distinct_reporters()`, `get_contributor_stats(filters, q_text, limit, offset)`, `get_top_institutions()`, `get_output_biennium_matrix()`, `as_dict()` (incluye todos los gates), `get_by_reporter(user_obj, status, limit, offset)`, `count_by_status_for_reporter(user_obj)`, `count_by_status(status)`, `is_owned_by(user_obj)`
 - Auto-migración: `_migrate_ihpix_activities()` aplica `_IHPIX_ACTIVITY_ADDED_COLUMNS` con `ADD COLUMN IF NOT EXISTS` + `CREATE INDEX IF NOT EXISTS` dentro de `engine.begin()` (patrón de `init_contribution_scores_db`)
 
 **IhpixActivityLink**: Adjuntos de una actividad IHP-IX (tabla `ihpix_activity_link`, 2026-09)
@@ -303,7 +317,7 @@ Helpers: `is_valid_*`, `normalize_bool`, `filter_valid`.
 
 **IhpixCountrySummary**: Datos geográficos agregados por país para GeoJSON y dashboard IHP-IX
 - Campos: id, country, latitude, longitude, region, total_activities, pa1_count–pa5_count, transboundary_all, transboundary_pa1–pa5, supporting_all, supporting_pa1–pa5, flagship_data (JSON), pa_output_data (JSON), created_at, updated_at
-- Métodos: `get()`, `get_by_country()`, `get_all(region)`, `get_as_geojson(region)`, `delete_all()`, `as_dict()`
+- Métodos: `get()`, `get_by_country()`, `get_all(region)`, `get_as_geojson(region)`, `delete_all()`, `recompute_from_activities(country=None, resolve_name=None)` (recalcula conteos desde actividades publicadas conservando lat/lng/region; `flagship_data` pasa a `{flagship: n}` y `pa_output_data` a `{'paN_outputs': {code: n}}`), `as_dict()`
 
 **InitiativeRequest**: Solicitudes de creación de iniciativas (grupos CKAN) enviadas por usuarios
 - Campos: id, user_id, title, name (slug), description, logo_url, status (pending/approved/rejected), handled_by, handled_at, admin_note, created_group_id, created_at
@@ -331,13 +345,13 @@ Cada modelo tiene `init_*_db()` y `define_*_table()`. Son idempotentes (verifica
 
 | Patrón | Acciones |
 |---|---|
-| **Sysadmin only** | featured_dataset_*, featured_publication_*, portal_card_*, admin_user_*, ihpix_content_*, ihpix_activity_create/update/delete, ihpix_report_review, bug_ticket_api_list, open_learning_* |
-| **Autenticado** | membership_request_create, membership_request_count, initiative_request_create, initiative_request_count, bug_ticket_create/list/show/update, ihpix_report_submit, ihpix_my_reports_list, ihpix_link_search |
+| **Sysadmin only** | featured_dataset_*, featured_publication_*, portal_card_*, admin_user_*, ihpix_content_*, ihpix_activity_create/update/delete, ihpix_report_review, ihpix_admin_overview_stats, ihpix_country_summary_recompute, bug_ticket_api_list, open_learning_* |
+| **Autenticado** | membership_request_create, membership_request_count, initiative_request_create, initiative_request_count, bug_ticket_create/list/show/update, ihpix_report_submit, ihpix_my_reports_list, ihpix_link_search, ihpix_contributor_list, **ihpix_activity_list, ihpix_activity_show, ihpix_dashboard_stats, ihpix_geojson, ihpix_activity_geojson, ihpix_country_summary_list** (eran públicas hasta 2026-09; la landing `/ihpix` obtiene sus stats en servidor con `ignore_auth`) |
 | **Propietario del reporte o sysadmin** | ihpix_report_show, ihpix_report_update, ihpix_report_delete, ihpix_activity_link_create, ihpix_activity_link_delete (`_ihpix_report_owner_or_sysadmin`: compara `reported_by` con id y username; si el reporte no existe autoriza para que la acción devuelva 404) |
 | **Publicada, o propietario/sysadmin** | ihpix_activity_link_list |
 | **Admin de org o sysadmin** | membership_request_list, membership_request_process |
 | **Sysadmin only (iniciativas)** | initiative_request_list, initiative_request_process |
-| **Público** | ihpix_activity_list, ihpix_activity_show, ihpix_dashboard_stats, ihpix_geojson, ihpix_activity_geojson, ihpix_country_summary_list |
+| **Público** | _(ninguna acción IHP-IX desde 2026-09)_ |
 
 ### Funciones helper
 - `_sysadmin_only(context, data_dict)` — verifica `context['auth_user_obj'].sysadmin`
@@ -435,6 +449,7 @@ Cada modelo tiene `init_*_db()` y `define_*_table()`. Son idempotentes (verifica
 | `ckan ihpix seed-data --from-excel <xlsx>` | Genera seed desde Excel y carga directamente |
 | `ckan ihpix seed-data` (sin args) | Busca `data/ihpix_seed_data.json` por defecto |
 | `--append` | Flag para agregar sin borrar datos existentes |
+| `ckan ihpix recompute-summary [--country X] [--dry-run]` | Recalcula `ihpix_country_summary` desde las actividades publicadas (conserva coordenadas). `--dry-run` imprime los conteos por país sin escribir |
 
 ### Grupo `openlearning`
 

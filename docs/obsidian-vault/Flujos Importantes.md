@@ -222,7 +222,7 @@ Patrón LRU con buster:
 
 ## 7. Portal IHP-IX
 
-**Rutas**: `/ihpix`, `/ihpix/outputs`, `/ihpix/report`, `/ihpix/report/<id>/edit`, `/ihpix/my-reports`, `/user/<id>/ihpix`, `/ihpix/dashboard`, `/ckan-admin/ihpix/overview`
+**Rutas**: `/ihpix` (pública), `/ihpix/outputs`, `/ihpix/outputs/<code>`, `/ihpix/priority-area/<pa>`, `/ihpix/contributors`, `/ihpix/report`, `/ihpix/report/<id>/edit`, `/ihpix/my-reports`, `/user/<id>/ihpix`, `/ihpix/dashboard` (todas las demás: **usuarios logueados**), `/ckan-admin/ihpix/overview`
 
 **Taxonomías oficiales**: ver [[Modulos]] → `ihpix_constants.py` (5 Priority Areas, 34 Outputs, 15 Flagships, 7 Regions, 3 CTWGs, 12 Institution Types, 8 KPIs, 195 Member States, 4 Biennia 2022-2029).
 
@@ -234,10 +234,21 @@ Patrón LRU con buster:
    → Priority Areas: título, descripción e imagen editables desde admin
    → Muestra mapa mundial Leaflet con estadísticas globales
    → Métricas de impacto con contadores animados
-2. Outputs (/ihpix/outputs):
+2. Outputs (/ihpix/outputs) — usuarios logueados:
    → Lista actividades publicadas de IhpixActivity
-   → Filtros avanzados: biennium, region, country, priority_area, output
+   → Filtros: biennium, region, country, organization, priority_area, output
+     (listas desde h.get_ihpix_taxonomies(), ya no hardcodeadas)
    → Vistas expandibles con detalle (incl. adjuntos), exportación CSV
+   → Los chips PA / Output enlazan a las páginas por PA y por Output
+2b. Páginas navegables (fase iii, usuarios logueados):
+   → /ihpix/outputs/<code>: stats del Output, actividades paginadas,
+     contribuidores, adjuntos agrupados por tipo, instituciones líderes,
+     mini-timeline, botón "Report an activity for this output"
+     (prellena ?pa=&output=), otros Outputs de la PA
+   → /ihpix/priority-area/<pa>: descripción (IhpixContent pa_N), grid de
+     Outputs con conteos, stats, actividades recientes, top contribuidores
+   → /ihpix/contributors: directorio de reportantes (GROUP BY reported_by,
+     usuario resuelto + perfil) con filtros nombre / PA / Output / bienio
 3. Reporte (/ihpix/report) — alineado al PDF UNESCO 2026:
    → 6 secciones (I General, II Priority Areas, III CTWGs, IV Region,
      V KPIs, VI Notes), ~50 campos con lógica condicional Y/N
@@ -267,9 +278,13 @@ Patrón LRU con buster:
    → Propietario edita solo draft/rejected; pending/published se abren en
      solo lectura (READ_ONLY deshabilita los inputs)
    → Eliminar (POST /ihpix/report/<id>/delete): solo borradores propios
-4. Dashboard público (/ihpix/dashboard):
-   → ihpix_dashboard_stats() genera estadísticas expandidas
-   → Mapa interactivo Leaflet con GeoJSON de países
+4. Dashboard (/ihpix/dashboard) — usuarios logueados:
+   → ihpix_dashboard_stats() genera estadísticas expandidas (+ contributors_total,
+     top_institutions, output_biennium_matrix, links_by_type)
+   → Mapa interactivo Leaflet con GeoJSON de países; PA/bienio se aplican en
+     servidor (conteos en vivo), el país en cliente
+   → Tablas "Top Lead Institutions" y "Activities by Output and Biennium"
+     que se refrescan con los filtros (AJAX)
    → Gráficas por biennium, paneles de región e impacto
 5. Admin Overview (/ckan-admin/ihpix/overview) — sysadmin:
    → ihpix_admin_overview_stats() expone métricas extendidas
@@ -357,6 +372,47 @@ draft ──submit──▶ pending ──approve──▶ published
 > El reporte nunca crea packages ni páginas. Si el objeto no existe en
 > IHP-WINS, el usuario lo crea con su formulario propio y luego lo busca.
 
+### 7.2 Visibilidad (2026-09)
+
+- La landing `/ihpix` sigue siendo **pública**; sus contadores se calculan
+  en servidor (`ihpix()` llama a `ihpix_dashboard_stats` con `ignore_auth`)
+  y se inyectan en `<script id="ihpix-stats-initial">` (sin fetch a la API).
+- Todo lo demás (explorador, dashboard, páginas por Output/PA, contribuidores,
+  pestañas IHP-IX de org/grupo) exige sesión: `controller._require_login()`
+  redirige a `/user/login?came_from=…`. Las acciones de lectura pasan a
+  `_logged_in_only`.
+- `cache.py` excluye `/ihpix/report`, `/ihpix/outputs`, `/ihpix/dashboard`,
+  `/ihpix/priority-area`, `/ihpix/contributors`, `/ihpix/workspaces`,
+  `/ihpix/my-reports` de la caché anónima (la landing sí se cachea).
+
+### 7.3 Recompute del resumen por país
+
+`IhpixCountrySummary` era un snapshot del Excel que nunca se actualizaba.
+
+```
+1. IhpixCountrySummary.recompute_from_activities(country=None, resolve_name)
+   → agrega actividades published por país: total, paN_count,
+     transboundary_* (KPI 6 activo o num_transboundary_ms>0),
+     supporting_* (supporting_member_state), flagship_data {flagship: n},
+     pa_output_data {'paN_outputs': {code: n}}
+   → conserva latitude/longitude/region; países nuevos quedan en 0/0
+     (no salen en el mapa hasta cargarles coordenadas con el seed)
+   → resolve_name = actions.ihpix_country_name: slug de grupo → título;
+     los nombres del seed se dejan tal cual
+2. Disparadores:
+   → CLI: ckan ihpix recompute-summary [--country X] [--dry-run]
+   → Admin Overview: botón "Recompute map counts" (POST
+     /ckan-admin/ihpix/recompute-summary → ihpix_country_summary_recompute)
+   → Al aprobar un reporte (ihpix_report_review) se recalcula solo su país
+     si ckanext.theme_ejemplo.ihpix_recompute_on_approve = true (default)
+```
+
+> [!warning] País: slug vs nombre
+> El formulario guarda el **slug** del grupo Member State en `country`; el seed
+> Excel guarda el **nombre**. `ihpix_country_name` normaliza slug → título,
+> pero si el título del grupo no coincide exactamente con el nombre del seed
+> ("Republic of Korea" vs "Korea, Republic of") se crean dos filas. Ver DOC-021.
+
 ---
 
 ## 8. Validación de imágenes de usuario
@@ -414,8 +470,10 @@ Re-ingesta con datos actualizados:
 
 ```
 ihpix_geojson (datos de país):
-1. Request → API action ihpix_geojson (público)
-2. Filtro opcional: region
+1. Request → API action ihpix_geojson (usuarios autenticados)
+2. Filtro opcional: region (sobre el snapshot)
+   Con priority_area / biennium / output / flagship: conteos en vivo con
+   IhpixActivity.get_country_counts() cruzados con las coordenadas
 3. IhpixCountrySummary.get_as_geojson(region)
 4. Retorna GeoJSON FeatureCollection con Point por país
    → coordinates: [lng, lat]

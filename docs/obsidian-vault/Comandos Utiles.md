@@ -95,6 +95,11 @@ ckan ihpix seed-data -f data.json --append
 
 # Regenerar JSON seed desde Excel
 cd ckanext/theme_ejemplo && python scripts/generate_seed.py
+
+# Recalcular el resumen por país (mapa) desde las actividades publicadas
+ckan ihpix recompute-summary            # todos los países, conserva coordenadas
+ckan ihpix recompute-summary --dry-run  # solo imprime los conteos
+ckan ihpix recompute-summary --country france
 ```
 
 > [!warning] Sin `--append`, el comando elimina actividades con `original_id` y todos los country summaries antes de cargar.

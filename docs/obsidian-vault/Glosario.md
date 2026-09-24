@@ -30,8 +30,14 @@
 |---|---|
 | **IHP** | International Hydrological Programme — programa intergubernamental de UNESCO sobre agua |
 | **IHP-IX** | Novena fase del IHP (2022-2029), "Science for a Water Secure World" |
-| **Priority Area (PA)** | Área prioritaria de IHP-IX (ej: research, capacity, advocacy) |
-| **Output** | Resultado esperado dentro de una Priority Area |
+| **Priority Area (PA)** | Una de las 5 áreas prioritarias de IHP-IX (`PA1`–`PA5`, ver `ihpix_constants.PRIORITY_AREAS`). Página propia en `/ihpix/priority-area/<pa>` |
+| **Output** | Uno de los 34 resultados esperados del Plan Estratégico IHP-IX, codificado `N.M` bajo su PA (`1.1`…`5.5`). Página propia en `/ihpix/outputs/<code>`; los títulos oficiales se cargan desde `data/ihpix_output_titles.json` (DOC-008) |
+| **Reporte IHP-IX** | Fila de `ihpix_activity` creada desde `/ihpix/report` (formulario PDF 2026). Estados: `draft` → `pending` → `published` / `rejected` |
+| **Gate KPI** | Pregunta Sí/No del formulario (`kpi_*_active`, `has_*`) que habilita sus campos hijos; en "No" los hijos se resetean |
+| **Bienio** | Periodo de implementación de dos años (`2022-2023` … `2028-2029`) |
+| **Contribuidor** | Usuario de IHP-WINS con reportes IHP-IX publicados (`reported_by`). Directorio en `/ihpix/contributors` |
+| **Adjunto (link)** | Publicación, webinar, evento, dataset o enlace asociado a un reporte (`ihpix_activity_link`). Referencia un package CKAN, una página `water-events` o una URL |
+| **Webinar** | Tipo de adjunto: no existe como entidad propia; se registra como enlace o página `water-events` |
 | **Member State** | País miembro de UNESCO. En el portal, representado como un group de CKAN |
 | **Initiative** | Programa o proyecto hídrico de UNESCO. Representado como group |
 | **Center** | Centro de categoría 2 de UNESCO (institutos asociados) |

@@ -150,6 +150,7 @@ Todos bajo `/ckan-admin/*`, requieren rol sysadmin. Ver rutas completas en [[Flu
 | Contenido IHP-IX | `/ckan-admin/ihpix/content` | Editar secciones IHP-IX |
 | Actividades IHP-IX | `/ckan-admin/ihpix/activities` | CRUD actividades |
 | Reportes IHP-IX | `/ckan-admin/ihpix/reports` | Cola de revisión (pending / rejected / published / draft), approve/reject con email al reportante, enlace al formulario completo |
+| Overview IHP-IX | `/ckan-admin/ihpix/overview` | KPIs, distribuciones, geografía, completeness, adjuntos; export CSV completo (`?export=csv`) y botón "Recompute map counts" |
 
 > [!warning] Visores destacados: los datos NO son de este repo
 > El modelo `featured_viewers`, su workflow y sus acciones viven en
@@ -169,11 +170,11 @@ El portal IHP-IX expone 3 API actions públicas que sirven datos geográficos:
 
 | Endpoint | Datos | Formato |
 |---|---|---|
-| `ihpix_geojson` | Países con coordenadas y conteos por PA | GeoJSON FeatureCollection (Point) |
-| `ihpix_activity_geojson` | Actividades geolocalizadas vía country coords | GeoJSON FeatureCollection (Point) |
+| `ihpix_geojson` | Países con coordenadas y conteos por PA (snapshot); con filtros `priority_area/biennium/output/flagship` conteos en vivo | GeoJSON FeatureCollection (Point) |
+| `ihpix_activity_geojson` | Actividades geolocalizadas vía country coords (tope `ihpix_geojson_max`) | GeoJSON FeatureCollection (Point) |
 | `ihpix_country_summary_list` | Datos tabulares por país | Lista JSON |
 
-Las coordenadas provienen de `IhpixCountrySummary` (cargadas via seed data). Los mapas frontend usan **Leaflet** cargado desde CDN. Ver [[Flujos Importantes#10. API GeoJSON de IHP-IX]] para el flujo completo.
+Las coordenadas provienen de `IhpixCountrySummary` (cargadas via seed data); los conteos se recalculan desde las actividades publicadas con `ckan ihpix recompute-summary`, el botón del Admin Overview o automáticamente al aprobar un reporte (ver [[Flujos Importantes#7.3 Recompute del resumen por país]]). Los mapas frontend usan **Leaflet** (vendor local). Desde 2026-09 estas acciones exigen usuario autenticado. Ver [[Flujos Importantes#10. API GeoJSON de IHP-IX]] para el flujo completo.
 
 ---
 
