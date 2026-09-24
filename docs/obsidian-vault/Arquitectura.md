@@ -110,7 +110,7 @@ El [[Modulos#pageview_tracking.py|conteo liviano de vistas]] registra cada vista
 | `BugTicket` | bug_ticket | Sistema de tickets de errores |
 | `PortalCard` | portal_card | Tarjetas configurables para portales |
 | `IhpixContent` | ihpix_content | Contenido editable de IHP-IX |
-| `IhpixActivity` | ihpix_activity | Actividades del programa IHP-IX (30+ columnas: biennium, flagships, regions, member_states, métricas de stakeholders, productos de conocimiento, etc.) |
+| `IhpixActivity` | ihpix_activity | Actividades / reportes del programa IHP-IX (~70 columnas: biennium, flagships, regions, member_states, métricas de stakeholders, gates Y/N del PDF 2026, `submitted_at`; `reported_by` = id de usuario). Índices en status, PA, output, biennium y reported_by |
 | `IhpixCountrySummary` | ihpix_country_summary | Datos geográficos agregados por país (lat/lng, region, conteos por PA, datos transboundary, flagship_data JSON) |
 
 Las tablas se crean automáticamente con `init_db()` idempotente y soporte de migraciones (e.g., `_migrate_ihpix_activities()` para columnas nuevas).
@@ -148,7 +148,7 @@ Todos bajo `/ckan-admin/*`, requieren rol sysadmin. Ver rutas completas en [[Flu
 | Usuarios | `/ckan-admin/users` | Gestión completa de usuarios |
 | Contenido IHP-IX | `/ckan-admin/ihpix/content` | Editar secciones IHP-IX |
 | Actividades IHP-IX | `/ckan-admin/ihpix/activities` | CRUD actividades |
-| Reportes IHP-IX | `/ckan-admin/ihpix/reports` | Revisar reportes |
+| Reportes IHP-IX | `/ckan-admin/ihpix/reports` | Cola de revisión (pending / rejected / published / draft), approve/reject con email al reportante, enlace al formulario completo |
 
 > [!warning] Visores destacados: los datos NO son de este repo
 > El modelo `featured_viewers`, su workflow y sus acciones viven en

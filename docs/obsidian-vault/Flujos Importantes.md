@@ -222,7 +222,7 @@ Patrón LRU con buster:
 
 ## 7. Portal IHP-IX
 
-**Rutas**: `/ihpix`, `/ihpix/outputs`, `/ihpix/report`, `/ihpix/dashboard`, `/ckan-admin/ihpix/overview`
+**Rutas**: `/ihpix`, `/ihpix/outputs`, `/ihpix/report`, `/ihpix/report/<id>/edit`, `/ihpix/my-reports`, `/user/<id>/ihpix`, `/ihpix/dashboard`, `/ckan-admin/ihpix/overview`
 
 **Taxonomías oficiales**: ver [[Modulos]] → `ihpix_constants.py` (5 Priority Areas, 34 Outputs, 15 Flagships, 7 Regions, 3 CTWGs, 12 Institution Types, 8 KPIs, 195 Member States, 4 Biennia 2022-2029).
 
@@ -244,14 +244,28 @@ Patrón LRU con buster:
    → Char counters 250 chars (description, outcomes)
    → Sticky section nav con barra de progreso (7 campos obligatorios)
      e indicadores de estado por sección
-   → Autoguardado en localStorage (clave `ihpix-report-draft-v1`);
-     restaura respuestas no enviadas al recargar y se limpia al enviar
+   → Autoguardado en localStorage (clave `ihpix-report-draft-v1`) solo
+     en reporte nuevo; en modo edición la BD es la única fuente de verdad
+   → Acepta ?pa=PA1&output=1.1 para prellenar (páginas por Output)
+   → CSRF: {{ h.csrf_input() }} dentro del form (viaja en el FormData)
    → Validación inline al salir de cada campo + resumen de errores
      con enlaces de salto tras un envío inválido
    → Member States: buscador con etiquetas removibles (checkboxes
      name="member_states", contrato POST sin cambios)
    → Botones: "Save as draft" (status=draft) y "Submit for review" (status=pending)
-   → POST: ihpix_report_submit() persiste con todas las flags KPI activas
+   → POST (fetch/JSON): ihpix_report_submit(); la validación vive en
+     ihpix_forms.validate_report_payload(). Errores → {errors: {campo: msg}}
+     que el JS resalta (highlightServerErrors)
+   → Tras guardar borrador → redirige a /ihpix/report/<id>/edit;
+     tras enviar → /user/<me>/ihpix?status=pending con flash
+3b. Mis reportes (/user/<id>/ihpix, atajo /ihpix/my-reports):
+   → Pestaña "IHP-IX" del perfil (user/ihpix.html); el propio usuario y
+     sysadmin ven todos los estados con contadores; terceros solo published
+   → Editar (/ihpix/report/<id>/edit): mismo template en edit_mode con
+     prefill desde ihpix_report_show()['form']; POST → ihpix_report_update()
+   → Propietario edita solo draft/rejected; pending/published se abren en
+     solo lectura (READ_ONLY deshabilita los inputs)
+   → Eliminar (POST /ihpix/report/<id>/delete): solo borradores propios
 4. Dashboard público (/ihpix/dashboard):
    → ihpix_dashboard_stats() genera estadísticas expandidas
    → Mapa interactivo Leaflet con GeoJSON de países
@@ -263,8 +277,12 @@ Patrón LRU con buster:
    → Charts.js (PA donut, biennium/output/flagship/CTWG/institution bars)
    → Exportación CSV/XLSX (en pipeline)
 6. Admin Reports (/ckan-admin/ihpix/reports):
-   → Cola de revisión approve/reject/re-approve
-   → Stats pending/rejected, paginación, filtro por status
+   → Cola de revisión approve/reject/re-approve (+ "Open full report")
+   → Filtros pending / rejected / published / draft / all con contadores
+   → Muestra gates Y/N y KPIs activos, focal point, reportante resuelto
+     (h.get_ihpix_reporter) y notas adicionales
+   → Aparece en la campana de aprobaciones (approvals.QUEUE_DEFS
+     'ihpix_reports', helper get_pending_ihpix_reports_count)
 7. Admin Content/Activities (/ckan-admin/ihpix, /activities):
    → Edición de hero, CTA cards, priority areas
    → CRUD completo de actividades, importación bulk Excel
@@ -280,6 +298,31 @@ Para preservar la diferencia entre "no aplica" y "no se contestó", el modelo gu
 
 Cuando el gate es `False`, los campos hijos se resetean al submit (`num_*=0`,
 listas `JSON=''`). Esto permite reportar fielmente "actividad NO contribuyó al KPI X".
+La tabla gate → hijos es `ihpix_forms.GATE_RESETS`.
+
+### Estados del reporte (workflow 2026-09)
+
+```
+draft ──submit──▶ pending ──approve──▶ published
+  ▲                  │                    ▲
+  │                reject                 │
+  └──save as draft── rejected ──re-approve┘
+                       │
+                       └──edit + submit──▶ pending
+```
+
+- `ihpix_report_submit` / `ihpix_report_update` fijan `submitted_at` y
+  `reported_date` al pasar a `pending`, y limpian `reviewed_by/reviewed_at`
+  (las `review_notes` se conservan como última observación).
+- `ihpix_report_review` valida la transición (`approve` desde pending o
+  rejected; `reject` solo desde pending, con `review_notes` obligatorias)
+  y envía un email al reportante (`mailer.mail_user`, nunca bloquea).
+- El propietario solo puede editar `draft`/`rejected` y borrar `draft`;
+  el sysadmin puede editar cualquier estado (un `published` no vuelve a la cola).
+
+> [!note] Inferencia
+> `reviewed_by` guarda el username del revisor (contexto `user`), mientras que
+> `reported_by` guarda el id del reportante. Se resuelven en UI con `h.get_ihpix_reporter`.
 
 ---
 

@@ -22,8 +22,10 @@
 | DOC-012 | Módulos | `completeness.py` y `ranking.py` no están descritos en [[Modulos]] (solo el flujo en [[Flujos Importantes]] §13). | Media |
 | DOC-013 | i18n | El `.pot` (`i18n/ckanext-theme_ejemplo.pot`) está desactualizado respecto a los templates: le faltan cadenas de los paneles admin (p. ej. `Save Order`) desde antes de este cambio. Los `.po`/`.mo` se editan y compilan a mano; falta regenerar el `.pot` completo con `extract_messages` en un commit aparte. | Media |
 | DOC-014 | Helpers | `h.get_featured_datasets` ya no tiene consumidor dentro del repo desde que la portada muestra visores en vez de datasets; sigue registrado y el panel `/ckan-admin/featured-datasets` sigue operativo. Decidir si se retira. | Baja |
-| DOC-015 | Admin/i18n | **Bug preexistente**: `templates/admin/ihpix_reports.html` interpola `{{ _("An error occurred.") }}` dentro de un literal JS entre comillas simples; la traducción francesa («Une erreur s'est produite.») rompe el parseo y deja el panel sin JS en `/fr`. Se arregla igual que en los otros paneles: `' + {{ _("An error occurred.")|tojson }}`. | Alta |
+| ~~DOC-015~~ | Admin/i18n | **Resuelto 2026-09-24** (fase i IHP-IX): `templates/admin/ihpix_reports.html` ya usa `{{ _("An error occurred.")|tojson }}` en el literal JS; el panel vuelve a funcionar en `/fr`. | — |
 | DOC-016 | Deployment | No hay pipeline documentado de CKAN hacia dev (`data.dev-wins.com`): en `ckan-unesco-docker` el workflow `deploy` sólo apunta a producción y `deploy-terria-dev` despliega TerriaMap. Pendiente por confirmar cómo se actualiza dev. | Media |
+| DOC-017 | IHP-IX/i18n | Las cadenas nuevas del workflow de reporte (fase i: `user/ihpix.html`, banner de estado en `report.html`, pestañas Draft/Published, emails de revisión) aún no tienen traducción es/fr/ar en los `.po`. Se completan junto con las cadenas vacías de index/outputs/dashboard en la fase iii (descubribilidad). | Media |
+| DOC-018 | IHP-IX | `reported_by` de las filas del seed Excel es texto libre o vacío: esas actividades no aparecen en "mis reportes" ni en el futuro directorio de contribuidores. Decidir si se asignan a un usuario "IHP Secretariat" o se dejan sin autor. | Baja |
 
 ---
 
@@ -37,6 +39,7 @@
 | TEST-004 | `model.py` | Tests para los 6 modelos y sus métodos | Media |
 | TEST-005 | `auth.py` | Tests para funciones de autorización | Media |
 | TEST-006 | `validators.py` | Tests para los 3 validadores | Baja |
+| TEST-007 | IHP-IX | Hecho en fase i: `test_ihpix_forms.py` (validación pura, 17 tests) y rutas en `test_plugin.py`. Pendiente: tests con BD (`clean_db`) para `ihpix_report_update` (transiciones owner/sysadmin), `ihpix_report_review` (email, transiciones) y la migración `_migrate_ihpix_reported_by`. | Media |
 
 ---
 

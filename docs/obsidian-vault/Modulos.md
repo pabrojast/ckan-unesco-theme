@@ -135,9 +135,13 @@ acciones de **ckanext-pages**. Ver la advertencia en
 **IHP-IX actividades** (5):
 - `ihpix_activity_list`, `ihpix_activity_show`, `ihpix_activity_create`, `ihpix_activity_update`, `ihpix_activity_delete`
 
-**IHP-IX reportes** (4):
-- `ihpix_report_submit` — captura formulario PDF 2026 completo (6 secciones, gates Y/N, lista JSON multi-select). Soporta `save_as_draft=1`.
-- `ihpix_report_review` — approve/reject por sysadmin.
+**IHP-IX reportes** (8) — workflow completo en [[Flujos Importantes#7. Portal IHP-IX]]:
+- `ihpix_report_submit` — crea un reporte desde el formulario PDF 2026 (6 secciones, gates Y/N, listas JSON). `save_as_draft=1` → `draft` (solo exige título); si no → `pending`. La validación vive en [[Modulos#ihpix_forms.py]]. Guarda `reported_by` = **id** de usuario.
+- `ihpix_report_update` — edita y (re)envía un reporte propio (`draft`/`rejected`) o cualquiera (sysadmin; un `published` se corrige sin volver a la cola). Payload completo del form + `id`.
+- `ihpix_report_show` — propietario o sysadmin; devuelve `as_dict()` + `form` (prefill) + `reporter` + `can_edit`.
+- `ihpix_report_delete` — propietario solo `draft`; sysadmin cualquiera.
+- `ihpix_my_reports_list` — reportes del usuario autenticado con `counts_by_status`.
+- `ihpix_report_review` — approve/reject por sysadmin. Valida la transición (`pending → published|rejected`, `rejected → published` para "Re-approve"), exige `review_notes` al rechazar y **envía email** al reportante (best effort, `mailer.mail_user`).
 - `ihpix_dashboard_stats` — público; KPI cards + breakdowns base para `/ihpix/dashboard`.
 - `ihpix_admin_overview_stats` — **sysadmin only**; metrics extendidas para `/ckan-admin/ihpix/overview`: KPI targets totals (Σ + youth/female), breakdowns por flagship/CTWG/institution_type, completeness histogram, recent pending.
 
@@ -159,6 +163,17 @@ Helpers: `is_valid_*`, `normalize_bool`, `filter_valid`.
 - `open_learning_course_set_status` — cambia status de curación (`pending`/`approved`/`hidden`)
 - `open_learning_course_set_type` — corrige el tipo (`permanent`/`scheduled`) con override manual; `reset_override` vuelve a la auto-detección
 - `open_learning_sync` — fuerza sincronización con la API
+
+---
+
+## ihpix_forms.py
+
+**Rol**: Validación y normalización del formulario de reporte IHP-IX (PDF 2026). Módulo **puro** (sin imports de CKAN, como `completeness.py`) para testearlo con pytest sin la pila CKAN (`tests/test_ihpix_forms.py`).
+
+- `validate_report_payload(data_dict, is_draft)` → dict `{columna: valor}` listo para `setattr` sobre `IhpixActivity`: listas → JSON, `'yes'/'no'` → bool, fechas → `date`, hijos de un gate en "no" reseteados (`GATE_RESETS`). Lanza `ReportValidationError` con **todos** los errores a la vez. Valida también `output` ∈ PA (`is_valid_output_for_pa`) y el email del focal point al enviar.
+- `activity_to_form_dict(activity_dict)` → inverso para el modo edición (bool → `'yes'/'no'`, JSON → lista, None → `''`).
+- Listas que comparte con el controller: `SINGLE_FORM_FIELDS`, `MULTI_FORM_FIELDS` (única fuente de nombres de campo del form), `BOOL_FIELDS`, `OWNER_EDITABLE_STATUSES = ('draft', 'rejected')`.
+- Las fechas solo se tocan si vienen en el payload (`reported_date` la fija el servidor al enviar).
 
 ---
 
@@ -191,6 +206,9 @@ Helpers: `is_valid_*`, `normalize_bool`, `filter_valid`.
 
 **Solicitudes de iniciativas** (2):
 `get_pending_initiative_requests_count()` (sysadmin badge), `get_my_pending_initiative_request()` (CTA en `/initiatives`)
+
+**IHP-IX** (2):
+`get_pending_ihpix_reports_count()` (cola `ihpix_reports` de la campana, sysadmin), `get_ihpix_reporter(reported_by)` → `{id, name, display_name, url}` resolviendo id o username (caché 5 min; texto libre del seed → solo `display_name`)
 
 **Contenido destacado** (4):
 `get_featured_publications()`, `get_open_bug_tickets_count()`,
@@ -249,13 +267,16 @@ Helpers: `is_valid_*`, `normalize_bool`, `filter_valid`.
 - section_types: `cta_card`, `priority_area`, `hero`, `section_header`
 - section_keys: `cta_1`–`cta_3`, `pa_1`–`pa_5`, `hero`, `section_pa`, `section_metrics`, `section_cta`
 - Auto-seed: 12 secciones por defecto (8 originales + 4 nuevas: hero, section headers)
-- Auto-migración: `_ensure_new_ihpix_sections()` agrega secciones nuevas (hero, section_header) a instancias existentes
+- Auto-migración: `_ensure_new_ihpix_sections()` agrega secciones nuevas (hero, section_header) a instancias existentes; `_migrate_ihpix_cta_links()` cambia el CTA `cta_1` del Microsoft Form externo a `/ihpix/report` (solo si aún apunta a `forms.office.com`)
 
 **IhpixActivity**: Actividades del programa IHP-IX
 - Campos base: id, title, priority_area, description, output, stakeholders (JSON), partner_organizations, start_date, end_date, status (planned/ongoing/completed), responsible_party, responsible_country, url, country_stats (JSON), created_at, updated_at
 - Campos expandidos (v2): biennium, flagships (JSON), regions (JSON), member_states (JSON), original_id, stakeholders_knowledge, stakeholders_awareness, knowledge_products, scientific_products, training_materials, among others (30+ columnas)
-- Métodos: `get()`, `get_by_priority_area()`, `get_published()`, `get_all()`, `get_pending()`, `get_facets()`, `get_stats()`, `get_timeline()`, `get_country_stats()`, `as_dict()`
-- Auto-migración: `_migrate_ihpix_activities()` agrega columnas nuevas a tablas existentes
+- Gates PDF 2026 (booleanos): `unesco_secretariat_participation`, `has_member_state_support`, `has_flagship`, `has_synergies`, `regions_benefit`, `kpi_{1a,1b,2,3,4,5,6,8}_active`; textos `focal_point_name`, `*_other`, `stakeholder_group_name`, `additional_notes`
+- Workflow (2026-09): `submitted_at` (último envío a revisión); `reported_by` guarda el **id** de usuario (antes mezclaba username e id; `_migrate_ihpix_reported_by()` normaliza filas viejas)
+- Índices: `idx_ihpix_activity_{status,pa,output,biennium,reported_by}` (`_IHPIX_ACTIVITY_INDEXES`)
+- Métodos: `get()`, `get_by_priority_area()`, `get_published()`, `get_all()`, `get_pending()`, `get_facets()`, `get_stats()`, `get_timeline()`, `get_country_stats()`, `as_dict()` (incluye todos los gates), `get_by_reporter(user_obj, status, limit, offset)`, `count_by_status_for_reporter(user_obj)`, `count_by_status(status)`, `is_owned_by(user_obj)`
+- Auto-migración: `_migrate_ihpix_activities()` aplica `_IHPIX_ACTIVITY_ADDED_COLUMNS` con `ADD COLUMN IF NOT EXISTS` + `CREATE INDEX IF NOT EXISTS` dentro de `engine.begin()` (patrón de `init_contribution_scores_db`)
 
 **IhpixCountrySummary**: Datos geográficos agregados por país para GeoJSON y dashboard IHP-IX
 - Campos: id, country, latitude, longitude, region, total_activities, pa1_count–pa5_count, transboundary_all, transboundary_pa1–pa5, supporting_all, supporting_pa1–pa5, flagship_data (JSON), pa_output_data (JSON), created_at, updated_at
@@ -288,13 +309,16 @@ Cada modelo tiene `init_*_db()` y `define_*_table()`. Son idempotentes (verifica
 | Patrón | Acciones |
 |---|---|
 | **Sysadmin only** | featured_dataset_*, featured_publication_*, portal_card_*, admin_user_*, ihpix_content_*, ihpix_activity_create/update/delete, ihpix_report_review, bug_ticket_api_list, open_learning_* |
-| **Autenticado** | membership_request_create, membership_request_count, initiative_request_create, initiative_request_count, bug_ticket_create/list/show/update, ihpix_report_submit |
+| **Autenticado** | membership_request_create, membership_request_count, initiative_request_create, initiative_request_count, bug_ticket_create/list/show/update, ihpix_report_submit, ihpix_my_reports_list |
+| **Propietario del reporte o sysadmin** | ihpix_report_show, ihpix_report_update, ihpix_report_delete (`_ihpix_report_owner_or_sysadmin`: compara `reported_by` con id y username; si el reporte no existe autoriza para que la acción devuelva 404) |
 | **Admin de org o sysadmin** | membership_request_list, membership_request_process |
 | **Sysadmin only (iniciativas)** | initiative_request_list, initiative_request_process |
 | **Público** | ihpix_activity_list, ihpix_activity_show, ihpix_dashboard_stats, ihpix_geojson, ihpix_activity_geojson, ihpix_country_summary_list |
 
-### Función helper
+### Funciones helper
 - `_sysadmin_only(context, data_dict)` — verifica `context['auth_user_obj'].sysadmin`
+- `_logged_in_only(context, data_dict)` — cualquier usuario autenticado
+- `_ihpix_report_owner_or_sysadmin(context, data_dict)` — ver tabla
 
 ---
 
