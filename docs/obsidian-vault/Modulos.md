@@ -479,3 +479,8 @@ Se ejecuta por CronJob de Kubernetes cada ~5 min (ver `deploy/cronjob-pageviews-
 
 El esquema, modelos auxiliares, API, CLI y pantallas de aprendizaje pertenecen
 a `ckanext-learning`, alojado inicialmente en el repositorio Docker.
+
+La cabecera muestra la sección como **Learning**, con el título completo en el catálogo.
+Con learning activo, la navegación usa una distribución adaptable: una fila en
+escritorio amplio, dos en tablet y menú desplegable con desplazamiento en móvil.
+Los enlaces no se ocultan para hacer espacio y el buscador conserva su ancho disponible.

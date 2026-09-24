@@ -7911,3 +7911,97 @@ html.js .home-tabs .home-tab-panel:not(.is-active) {
   color: #99a2aa;
   font-size: 11px;
 }
+
+
+/* La nueva sección cabe en la cabecera sin recortar enlaces ni buscador. */
+@media (min-width: 769px) {
+    .masthead-learning .masthead-nav {
+        display: grid !important;
+        grid-template-columns: auto minmax(0, 1fr) 180px;
+        gap: 12px;
+    }
+    .masthead-learning .masthead-nav .masthead-brand { margin: 0 10px 0 0; }
+    .masthead-learning .masthead-nav .masthead-brand .logo { margin-top: -32px; }
+    .masthead-learning .masthead-nav .masthead-brand .logo img {
+        height: 50px !important;
+        max-width: 240px !important;
+    }
+    .masthead-learning .masthead-nav .navigation {
+        display: flex !important;
+        min-width: 0;
+        margin: 0;
+        width: auto;
+    }
+    .masthead-learning .masthead-nav .navigation .nav {
+        gap: 2px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+    }
+    .masthead-learning .masthead-nav .navigation .nav li {
+        display: block !important;
+        margin: 0 !important;
+    }
+    .masthead-learning .masthead-nav .navigation .nav li a {
+        display: block;
+        font-size: 13px !important;
+        padding: 8px 6px !important;
+        border-radius: 5px;
+    }
+    .masthead-learning .masthead-nav .navigation .nav li.active a,
+    .masthead-learning .masthead-nav .navigation .nav li a:hover {
+        background: rgba(255, 255, 255, .14) !important;
+    }
+    .masthead-learning .masthead-nav .site-search {
+        display: block !important;
+        width: 100%;
+        max-width: none;
+        min-width: 0;
+        margin: 0;
+    }
+    .masthead-learning .masthead-nav .site-search .form-control,
+    .masthead-learning .masthead-nav .site-search .form-control:focus {
+        width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+    }
+    .masthead-learning .masthead-nav .masthead-actions { display: none; }
+}
+@media (min-width: 769px) and (max-width: 1199px) {
+    .masthead-learning .masthead-nav { grid-template-columns: 1fr 210px; gap: 8px 20px; }
+    .masthead-learning .masthead-nav .masthead-brand { grid-column: 1; grid-row: 1; }
+    .masthead-learning .masthead-nav .masthead-brand .logo { margin-top: 0; }
+    .masthead-learning .masthead-nav .site-search { grid-column: 2; grid-row: 1; }
+    .masthead-learning .masthead-nav .navigation { grid-column: 1 / -1; grid-row: 2; }
+    .masthead-learning .masthead-nav .navigation .nav { justify-content: space-between; width: 100%; }
+}
+@media (max-width: 768px) {
+    .masthead-learning .masthead-nav { align-items: center; gap: 10px; }
+    .masthead-learning .masthead-nav .masthead-brand { margin: 0; min-width: 0; }
+    .masthead-learning .masthead-nav .masthead-brand .logo { margin-top: 0; }
+    .masthead-learning .masthead-nav .masthead-brand .logo img {
+        height: 36px !important;
+        max-width: 180px !important;
+    }
+    .masthead-learning .masthead-nav .masthead-actions { margin-left: 0; gap: 6px; }
+    .masthead-learning .masthead-nav .navigation .nav li { display: block !important; }
+    .masthead-learning .masthead-nav.show .navigation,
+    .masthead-learning .masthead-nav.in .navigation {
+        max-height: 65vh;
+        overflow-y: auto;
+        margin-right: 0;
+        box-sizing: border-box;
+    }
+    .masthead-learning .masthead-nav .navbar-toggle { min-width: 44px; min-height: 44px; }
+}
+
+@media (max-width: 360px) {
+    .masthead-learning .masthead-nav .masthead-brand .logo img { height: 30px !important; }
+    .masthead-learning .masthead-nav .masthead-actions { gap: 4px; }
+}
+
+@media (max-width: 768px) {
+    .masthead-learning .masthead-nav .masthead-lang-mobile { width: 90px; min-width: 0; }
+    .masthead-learning .masthead-lang-mobile form,
+    .masthead-learning .masthead-lang-mobile .form-group { margin: 0; }
+    .masthead-learning .masthead-lang-mobile select { width: 90px; min-width: 0; max-width: 100%; font-size: 12px; }
+}

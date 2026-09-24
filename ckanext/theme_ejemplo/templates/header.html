@@ -165,7 +165,7 @@
 {% else %}
 {% set is_index = False %}
 {% endif %}
-<header class="navbar navbar-static-top masthead" {{ '' if is_index else 'style="background-color: #0077d4 !important;"' | safe }} > 
+<header class="navbar navbar-static-top masthead{% if h.learning_enabled is defined and h.learning_enabled() %} masthead-learning{% endif %}" {{ '' if is_index else 'style="background-color: #0077d4 !important;"' | safe }} >
   {% block header_debug %} {% if g.debug and not g.debug_supress_header %}
   <div class="debug">Controller : {{ c.controller }}<br/>Action : {{ c.action }}</div>
   {% endif %} {% endblock %}
@@ -248,7 +248,7 @@
 
 		    <li{% if request.endpoint == 'dataset.search' %} class="active"{% endif %}><a href="{{ h.url_for('dataset.search') }}">{{ _('Datasets') }}</a></li>
       <li><a href="{{ h.url_for('/documents') }}">{% trans %}Documents{% endtrans %}</a></li>
-      {% if h.learning_enabled is defined and h.learning_enabled() %}<li><a href="{{ h.url_for('learning.search') }}">{{ _('Learning resources') }}</a></li>{% endif %}
+      {% if h.learning_enabled is defined and h.learning_enabled() %}<li{% if request.endpoint and request.endpoint.startswith('learning.') %} class="active"{% endif %}><a href="{{ h.url_for('learning.search') }}" title="{{ _('Learning resources') }}">{{ _('Learning') }}</a></li>{% endif %}
 		    <li{% if request.endpoint == 'organization.index' %} class="active"{% endif %}><a href="{{ h.url_for('organization.index') }}">{{ _('Organizations') }}</a></li>
 	    
       <li><a href="{{ h.url_for('/memberstates') }}">{% trans %}Member States{% endtrans %}</a></li>
