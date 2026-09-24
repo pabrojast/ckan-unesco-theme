@@ -434,6 +434,21 @@
         <h4>{{ _('By Institution Type') }}</h4>
         <div class="ihpix-ov-chart-canvas"><canvas id="chart-itype"></canvas></div>
       </div>
+      {% set lt = stats.links_by_type or {} %}
+      <div class="ihpix-ov-chart-card">
+        <h4>{{ _('Linked publications, events & data') }}</h4>
+        <table class="table table-condensed" style="margin: 0;">
+          <tbody>
+            <tr><td>{{ _('Publications') }}</td><td class="text-right"><strong>{{ lt.publication | default(0) }}</strong></td></tr>
+            <tr><td>{{ _('Webinars') }}</td><td class="text-right"><strong>{{ lt.webinar | default(0) }}</strong></td></tr>
+            <tr><td>{{ _('Events') }}</td><td class="text-right"><strong>{{ lt.event | default(0) }}</strong></td></tr>
+            <tr><td>{{ _('Datasets') }}</td><td class="text-right"><strong>{{ lt.dataset | default(0) }}</strong></td></tr>
+            <tr><td>{{ _('Output data') }}</td><td class="text-right"><strong>{{ lt.output_data | default(0) }}</strong></td></tr>
+            <tr><td>{{ _('Other links') }}</td><td class="text-right"><strong>{{ lt.other | default(0) }}</strong></td></tr>
+            <tr><td><strong>{{ _('Total') }}</strong></td><td class="text-right"><strong>{{ lt.total | default(0) }}</strong></td></tr>
+          </tbody>
+        </table>
+      </div>
     </div>
   </div>
 

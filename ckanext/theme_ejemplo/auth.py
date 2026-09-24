@@ -291,6 +291,37 @@ def ihpix_my_reports_list(context, data_dict):
     return _logged_in_only(context, data_dict)
 
 
+# ── IHP-IX Adjuntos ─────────────────────────────────────────────────────────
+
+def ihpix_activity_link_list(context, data_dict):
+    """Adjuntos visibles si la actividad está publicada, o para su
+    propietario / sysadmin. Si no existe, se autoriza para devolver 404."""
+    from ckanext.theme_ejemplo.model import IhpixActivity
+    activity_id = (data_dict or {}).get('activity_id')
+    activity = IhpixActivity.get(activity_id) if activity_id else None
+    if activity is None or activity.status == IhpixActivity.STATUS_PUBLISHED:
+        return {'success': True}
+    return _ihpix_report_owner_or_sysadmin(context, {'id': activity_id})
+
+
+def ihpix_activity_link_create(context, data_dict):
+    return _ihpix_report_owner_or_sysadmin(
+        context, {'id': (data_dict or {}).get('activity_id')})
+
+
+def ihpix_activity_link_delete(context, data_dict):
+    from ckanext.theme_ejemplo.model import IhpixActivityLink
+    link_id = (data_dict or {}).get('id')
+    link = IhpixActivityLink.get(link_id) if link_id else None
+    if link is None:
+        return _logged_in_only(context, data_dict)
+    return _ihpix_report_owner_or_sysadmin(context, {'id': link.activity_id})
+
+
+def ihpix_link_search(context, data_dict):
+    return _logged_in_only(context, data_dict)
+
+
 def ihpix_report_review(context, data_dict):
     return _sysadmin_only(context, data_dict)
 

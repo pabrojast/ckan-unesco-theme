@@ -1398,6 +1398,7 @@ class IhpixActivity(model.DomainObject):
             'by_biennium': [
                 {'name': b, 'count': c} for b, c in biennium_counts
             ],
+            'links_by_type': IhpixActivityLink.count_by_type(filters=filters),
             'filter_options': {
                 'bienniums': [b[0] for b in all_bienniums],
                 'countries': [c[0] for c in all_countries],
@@ -1784,6 +1785,196 @@ def _migrate_ihpix_reported_by():
                          u'migradas a user id', result.rowcount)
     except Exception as e:
         log.warning(u'ihpix_activity: no se pudo migrar reported_by: %s', e)
+
+
+# ── IHP-IX Activity Link (adjuntos: publicaciones, eventos, datos) ─────────
+
+ihpix_activity_link_table = None
+
+
+class IhpixActivityLink(model.DomainObject):
+    """Adjunto de una actividad IHP-IX.
+
+    Referencia un objeto existente de IHP-WINS (`target_kind` package/page)
+    o guarda un enlace plano (`url`). Las reglas de coherencia viven en
+    `ihpix_links.validate_link`; aquí sólo se persiste.
+    """
+
+    def __init__(self, activity_id, link_type, title, target_kind=u'url',
+                 target_id=u'', url=u'', description=u'', event_date=None,
+                 added_by=u'', display_order=0):
+        self.id = str(uuid.uuid4())
+        self.activity_id = activity_id
+        self.link_type = link_type
+        self.target_kind = target_kind
+        self.target_id = target_id or u''
+        self.title = title
+        self.url = url or u''
+        self.description = description or u''
+        self.event_date = event_date
+        self.added_by = added_by or u''
+        self.display_order = display_order or 0
+        self.created_at = datetime.datetime.utcnow()
+
+    @classmethod
+    def get(cls, id):
+        return meta.Session.query(cls).get(id)
+
+    @classmethod
+    def get_by_activity(cls, activity_id):
+        return meta.Session.query(cls).filter(
+            cls.activity_id == activity_id
+        ).order_by(cls.display_order, cls.created_at).all()
+
+    @classmethod
+    def get_for_activities(cls, activity_ids):
+        """{activity_id: [dict, ...]} en una sola query (evita N+1 en listados)."""
+        ids = [i for i in (activity_ids or []) if i]
+        if not ids:
+            return {}
+        rows = meta.Session.query(cls).filter(
+            cls.activity_id.in_(ids)
+        ).order_by(cls.display_order, cls.created_at).all()
+        out = {}
+        for row in rows:
+            out.setdefault(row.activity_id, []).append(row.as_dict())
+        return out
+
+    @classmethod
+    def count_by_type(cls, filters=None, status=None):
+        """{link_type: n, 'total': n} de adjuntos de actividades publicadas.
+
+        Acepta los mismos filtros que `IhpixActivity.get_stats`.
+        """
+        from sqlalchemy import func
+        from ckanext.theme_ejemplo import ihpix_links
+        filters = filters or {}
+        status = status or IhpixActivity.STATUS_PUBLISHED
+        counts = {t: 0 for t in ihpix_links.LINK_TYPES}
+        counts['total'] = 0
+        try:
+            q = meta.Session.query(cls.link_type, func.count(cls.id)).join(
+                IhpixActivity, IhpixActivity.id == cls.activity_id
+            ).filter(IhpixActivity.status == status)
+            pa = filters.get('priority_area')
+            if pa:
+                q = q.filter(IhpixActivity.priority_area == pa)
+            bi = filters.get('biennium')
+            if bi:
+                q = q.filter(IhpixActivity.biennium == bi)
+            country = filters.get('country')
+            if country:
+                q = q.filter(IhpixActivity.country == country)
+            output = filters.get('output')
+            if output:
+                q = q.filter(IhpixActivity.output == output)
+            region = filters.get('region')
+            if region:
+                q = q.filter(IhpixActivity.regions.ilike(u'%' + region + u'%'))
+            for link_type, n in q.group_by(cls.link_type).all():
+                counts[link_type] = n
+                counts['total'] += n
+        except Exception as e:
+            meta.Session.rollback()
+            log.warning(u'ihpix_activity_link: no se pudieron contar adjuntos: %s', e)
+        return counts
+
+    @classmethod
+    def delete_for_activity(cls, activity_id):
+        """Borra los adjuntos de una actividad (sin commit)."""
+        meta.Session.query(cls).filter(
+            cls.activity_id == activity_id
+        ).delete(synchronize_session=False)
+
+    def as_dict(self):
+        from ckanext.theme_ejemplo import ihpix_links
+        return {
+            'id': self.id,
+            'activity_id': self.activity_id,
+            'link_type': self.link_type,
+            'target_kind': self.target_kind,
+            'target_id': self.target_id or u'',
+            'title': self.title,
+            'url': self.url or u'',
+            'description': self.description or u'',
+            'event_date': self.event_date.isoformat() if self.event_date else u'',
+            'added_by': self.added_by or u'',
+            'display_order': self.display_order or 0,
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'public_url': ihpix_links.link_public_url(self),
+        }
+
+
+_IHPIX_LINK_INDEXES = (
+    ('idx_ihpix_link_activity', 'activity_id'),
+    ('idx_ihpix_link_type', 'link_type'),
+    ('idx_ihpix_link_target', 'target_kind, target_id'),
+)
+
+# Columnas añadidas tras la creación de la tabla (vacío por ahora; deja el
+# patrón de migración listo, igual que `_IHPIX_ACTIVITY_ADDED_COLUMNS`).
+_IHPIX_LINK_ADDED_COLUMNS = ()
+
+
+def define_ihpix_activity_link_table():
+    global ihpix_activity_link_table
+
+    ihpix_activity_link_table = Table(
+        'ihpix_activity_link',
+        meta.metadata,
+        Column('id', UnicodeText, primary_key=True,
+               default=lambda: str(uuid.uuid4())),
+        Column('activity_id', UnicodeText, nullable=False),
+        Column('link_type', UnicodeText, nullable=False),
+        Column('target_kind', UnicodeText, default=u'url'),
+        Column('target_id', UnicodeText, default=u''),
+        Column('title', UnicodeText, nullable=False),
+        Column('url', UnicodeText, default=u''),
+        Column('description', UnicodeText, default=u''),
+        Column('event_date', Date, nullable=True),
+        Column('added_by', UnicodeText, default=u''),
+        Column('display_order', Integer, default=0),
+        Column('created_at', DateTime, default=datetime.datetime.utcnow),
+        Index('idx_ihpix_link_activity', 'activity_id'),
+        Index('idx_ihpix_link_type', 'link_type'),
+        Index('idx_ihpix_link_target', 'target_kind', 'target_id'),
+    )
+
+    try:
+        meta.registry.map_imperatively(IhpixActivityLink,
+                                       ihpix_activity_link_table)
+    except AttributeError:
+        meta.mapper(IhpixActivityLink, ihpix_activity_link_table)
+
+
+def init_ihpix_activity_links_db():
+    """Crea la tabla ihpix_activity_link si no existe y la migra (idempotente)."""
+    if ihpix_activity_link_table is None:
+        define_ihpix_activity_link_table()
+
+    from sqlalchemy import inspect as sa_inspect, text as sa_text
+    inspector = sa_inspect(meta.engine)
+    if 'ihpix_activity_link' not in inspector.get_table_names():
+        ihpix_activity_link_table.create(meta.engine)
+        log.info(u'ihpix_activity_link table created')
+        return
+
+    existing = {c['name'] for c in inspector.get_columns('ihpix_activity_link')}
+    missing = [(n, ddl) for n, ddl in _IHPIX_LINK_ADDED_COLUMNS
+               if n not in existing]
+    try:
+        with meta.engine.begin() as conn:
+            for name, ddl in missing:
+                conn.execute(sa_text(
+                    'ALTER TABLE ihpix_activity_link '
+                    'ADD COLUMN IF NOT EXISTS %s %s' % (name, ddl)))
+                log.info(u'ihpix_activity_link: columna %s añadida', name)
+            for idx_name, cols in _IHPIX_LINK_INDEXES:
+                conn.execute(sa_text(
+                    'CREATE INDEX IF NOT EXISTS %s ON ihpix_activity_link (%s)'
+                    % (idx_name, cols)))
+    except Exception as e:
+        log.warning(u'ihpix_activity_link: no se pudo migrar el esquema: %s', e)
 
 
 # ── IHP-IX Country Summary Model ────────────────────────────────────────────

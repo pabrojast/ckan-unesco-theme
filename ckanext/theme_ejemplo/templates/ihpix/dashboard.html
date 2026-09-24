@@ -903,6 +903,35 @@
     </div>
   </div>
 
+  {# ── Linked resources (adjuntos de los reportes) ──────────── #}
+  {% set lt = stats.links_by_type or {} %}
+  <div class="dx-impact-row">
+    <div class="dx-impact-col">
+      <div class="dx-impact dx-impact--blue">
+        <div class="dx-impact-number" data-count="{{ lt.publication | default(0) }}">
+          {{ lt.publication | default(0) }}
+        </div>
+        <div class="dx-impact-label">{{ _('Linked Publications') }}</div>
+      </div>
+    </div>
+    <div class="dx-impact-col">
+      <div class="dx-impact dx-impact--amber">
+        <div class="dx-impact-number" data-count="{{ (lt.event | default(0)) + (lt.webinar | default(0)) }}">
+          {{ (lt.event | default(0)) + (lt.webinar | default(0)) }}
+        </div>
+        <div class="dx-impact-label">{{ _('Linked Events & Webinars') }}</div>
+      </div>
+    </div>
+    <div class="dx-impact-col">
+      <div class="dx-impact dx-impact--green">
+        <div class="dx-impact-number" data-count="{{ (lt.dataset | default(0)) + (lt.output_data | default(0)) }}">
+          {{ (lt.dataset | default(0)) + (lt.output_data | default(0)) }}
+        </div>
+        <div class="dx-impact-label">{{ _('Linked Datasets') }}</div>
+      </div>
+    </div>
+  </div>
+
   {# ── Interactive Map ───────────────────────────────────── #}
   <div class="row">
     <div class="col-md-12">
@@ -1575,7 +1604,10 @@
             '{{ _("Stakeholders Awareness") }}': s.stakeholders_awareness,
             '{{ _("Knowledge Products") }}': s.knowledge_products,
             '{{ _("Scientific Products") }}': s.scientific_products,
-            '{{ _("Training Materials") }}': s.training_materials
+            '{{ _("Training Materials") }}': s.training_materials,
+            '{{ _("Linked Publications") }}': (s.links_by_type || {}).publication || 0,
+            '{{ _("Linked Events & Webinars") }}': ((s.links_by_type || {}).event || 0) + ((s.links_by_type || {}).webinar || 0),
+            '{{ _("Linked Datasets") }}': ((s.links_by_type || {}).dataset || 0) + ((s.links_by_type || {}).output_data || 0)
           };
           impacts.forEach(function (el) {
             var label = el.closest('.dx-impact').querySelector('.dx-impact-label');

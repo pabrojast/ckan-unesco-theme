@@ -460,6 +460,8 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
             membership_model.init_ihpix_content_db()
             # Create ihpix_activity table if needed
             membership_model.init_ihpix_activities_db()
+            # Create ihpix_activity_link table (adjuntos) if needed
+            membership_model.init_ihpix_activity_links_db()
             # Create ihpix_country_summary table if needed
             membership_model.init_ihpix_country_summary_db()
             # Create initiative_request table if needed
@@ -1219,6 +1221,8 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                  'get_pending_initiative_requests_count': helpers.get_pending_initiative_requests_count,
                  'get_pending_ihpix_reports_count': helpers.get_pending_ihpix_reports_count,
                  'get_ihpix_reporter': helpers.get_ihpix_reporter,
+                 'ihpix_link_url': helpers.ihpix_link_url,
+                 'ihpix_link_type_label': helpers.ihpix_link_type_label,
                  'get_my_pending_initiative_request': helpers.get_my_pending_initiative_request,
                  'theme_ejemplo_tracking_enabled': helpers.tracking_enabled,
                  'get_dataset_tracking': helpers.get_dataset_tracking,
@@ -1285,6 +1289,11 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 'ihpix_report_delete': custom_actions.ihpix_report_delete,
                 'ihpix_my_reports_list': custom_actions.ihpix_my_reports_list,
                 'ihpix_report_review': custom_actions.ihpix_report_review,
+                # IHP-IX adjuntos (publicaciones, webinars, eventos, datos)
+                'ihpix_activity_link_list': custom_actions.ihpix_activity_link_list,
+                'ihpix_activity_link_create': custom_actions.ihpix_activity_link_create,
+                'ihpix_activity_link_delete': custom_actions.ihpix_activity_link_delete,
+                'ihpix_link_search': custom_actions.ihpix_link_search,
                 'ihpix_dashboard_stats': custom_actions.ihpix_dashboard_stats,
                 'ihpix_admin_overview_stats': custom_actions.ihpix_admin_overview_stats,
                 # IHP-IX GeoJSON & country summary
@@ -1355,6 +1364,11 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 'ihpix_report_delete': custom_auth.ihpix_report_delete,
                 'ihpix_my_reports_list': custom_auth.ihpix_my_reports_list,
                 'ihpix_report_review': custom_auth.ihpix_report_review,
+                # IHP-IX adjuntos
+                'ihpix_activity_link_list': custom_auth.ihpix_activity_link_list,
+                'ihpix_activity_link_create': custom_auth.ihpix_activity_link_create,
+                'ihpix_activity_link_delete': custom_auth.ihpix_activity_link_delete,
+                'ihpix_link_search': custom_auth.ihpix_link_search,
                 'ihpix_dashboard_stats': custom_auth.ihpix_dashboard_stats,
                 # IHP-IX GeoJSON & country summary
                 'ihpix_geojson': custom_auth.ihpix_geojson,

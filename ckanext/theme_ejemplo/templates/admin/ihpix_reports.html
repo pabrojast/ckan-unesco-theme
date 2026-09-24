@@ -1,4 +1,5 @@
 {% extends "page.html" %}
+{% import 'ihpix/snippets/activity_links.html' as links_ui %}
 
 {% block title %}{{ _('IHP-IX Report Review') }} - {{ super() }}{% endblock %}
 
@@ -119,6 +120,7 @@
             <div class="col-md-12">
 
               {% if reports %}
+                {{ links_ui.links_styles() }}
                 {% for report in reports %}
                 <div class="ihpix-rev-card" id="ihpix-rev-card-{{ report.id }}" data-id="{{ report.id }}">
                   <section class="module module-narrow">
@@ -256,6 +258,9 @@
                       {% if report.additional_notes %}
                       <div class="ihpix-rev-notes"><strong>{{ _('Additional notes') }}:</strong> {{ report.additional_notes }}</div>
                       {% endif %}
+
+                      {# Adjuntos del reporte #}
+                      {{ links_ui.render_links((links_by_activity or {}).get(report.id, []), compact=True) }}
 
                       {# Rejection Info #}
                       {% if report.status == 'rejected' and report.review_notes %}

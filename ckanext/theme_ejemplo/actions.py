@@ -1724,8 +1724,12 @@ from ckanext.theme_ejemplo.model import (
     IhpixContent, init_ihpix_content_db, VALID_IHPIX_SECTION_KEYS,
     IhpixActivity, init_ihpix_activities_db, VALID_PRIORITY_AREAS,
 )
+from ckanext.theme_ejemplo.model import (
+    IhpixActivityLink, init_ihpix_activity_links_db,
+)
 from ckanext.theme_ejemplo import ihpix_constants as C
 from ckanext.theme_ejemplo import ihpix_forms
+from ckanext.theme_ejemplo import ihpix_links
 import datetime as _dt
 
 
@@ -1836,7 +1840,9 @@ def ihpix_activity_show(context, data_dict):
     if activity.status != 'published' and not is_sysadmin:
         raise toolkit.ObjectNotFound('IHP-IX activity not found')
 
-    return activity.as_dict()
+    result = activity.as_dict()
+    result['links'] = _ihpix_links_for(activity.id)
+    return result
 
 
 def _parse_date_field(data_dict, field_name):
@@ -1997,9 +2003,15 @@ def ihpix_activity_update(context, data_dict):
         if field in data_dict:
             setattr(activity, field, C.normalize_bool(data_dict[field]))
 
+    if 'links_json' in data_dict:
+        _sync_activity_links(activity, data_dict.get('links_json'),
+                             context.get('auth_user_obj'))
+
     activity.updated_at = _dt.datetime.utcnow()
     model.Session.commit()
-    return activity.as_dict()
+    result = activity.as_dict()
+    result['links'] = _ihpix_links_for(activity.id)
+    return result
 
 
 def ihpix_activity_delete(context, data_dict):
@@ -2012,6 +2024,8 @@ def ihpix_activity_delete(context, data_dict):
     if not activity:
         raise toolkit.ObjectNotFound('IHP-IX activity not found')
 
+    init_ihpix_activity_links_db()
+    IhpixActivityLink.delete_for_activity(activity.id)
     model.Session.delete(activity)
     model.Session.commit()
     return {'success': True}
@@ -2063,6 +2077,66 @@ def _ihpix_mark_submitted(activity):
     # conserva como "última observación" visible para el reportante.
     activity.reviewed_by = u''
     activity.reviewed_at = None
+
+
+def _ihpix_links_for(activity_id):
+    """Adjuntos de una actividad como lista de dicts (orden de display)."""
+    init_ihpix_activity_links_db()
+    return [link.as_dict() for link in IhpixActivityLink.get_by_activity(activity_id)]
+
+
+def _sync_activity_links(activity, links_payload, user_obj):
+    """Sincroniza los adjuntos de una actividad con `links_json` (full replace).
+
+    Valida cada item con `ihpix_links.validate_link`, actualiza los que traen
+    `id`, crea los nuevos y borra los que ya no vienen. No hace commit: el
+    caller lo hace junto con la actividad para que sea atómico.
+    """
+    init_ihpix_activity_links_db()
+    try:
+        items = ihpix_links.parse_links_json(links_payload)
+    except ihpix_links.LinkValidationError as e:
+        raise toolkit.ValidationError(e.errors)
+
+    validated = []
+    errors = {}
+    for idx, item in enumerate(items):
+        try:
+            validated.append(ihpix_links.validate_link(item))
+        except ihpix_links.LinkValidationError as e:
+            for key, msg in e.errors.items():
+                errors['links[{}].{}'.format(idx, key)] = msg
+    if errors:
+        raise toolkit.ValidationError(errors)
+
+    existing = {link.id: link for link in IhpixActivityLink.get_by_activity(activity.id)}
+    keep = set()
+    seen_keys = set()
+    created = []
+    for order, values in enumerate(validated):
+        key = ihpix_links.dedupe_key(values)
+        if key in seen_keys:
+            continue  # el mismo objeto/URL dos veces: se conserva el primero
+        seen_keys.add(key)
+        link = existing.get(values['id']) if values['id'] else None
+        if link is None:
+            link = IhpixActivityLink(
+                activity_id=activity.id,
+                link_type=values['link_type'],
+                title=values['title'],
+                added_by=(user_obj.id if user_obj else u''),
+            )
+            model.Session.add(link)
+            created.append(link)
+        for field in ('link_type', 'target_kind', 'target_id', 'title',
+                      'url', 'description', 'event_date'):
+            setattr(link, field, values[field])
+        link.display_order = order
+        keep.add(link.id)
+    for link_id, link in existing.items():
+        if link_id not in keep:
+            model.Session.delete(link)
+    return created
 
 
 def _ihpix_notify_reporter(activity, action):
@@ -2139,10 +2213,14 @@ def ihpix_report_submit(context, data_dict):
         _ihpix_mark_submitted(activity)
 
     model.Session.add(activity)
+    if 'links_json' in data_dict:
+        _sync_activity_links(activity, data_dict.get('links_json'), user_obj)
     model.Session.commit()
     if not is_draft:
         _invalidate_approvals_cache()
-    return activity.as_dict()
+    result = activity.as_dict()
+    result['links'] = _ihpix_links_for(activity.id)
+    return result
 
 
 def ihpix_report_update(context, data_dict):
@@ -2176,10 +2254,14 @@ def ihpix_report_update(context, data_dict):
     else:
         _ihpix_mark_submitted(activity)
 
+    if 'links_json' in data_dict:
+        _sync_activity_links(activity, data_dict.get('links_json'), user_obj)
     model.Session.commit()
     if activity.status == IhpixActivity.STATUS_PENDING:
         _invalidate_approvals_cache()
-    return activity.as_dict()
+    result = activity.as_dict()
+    result['links'] = _ihpix_links_for(activity.id)
+    return result
 
 
 @toolkit.side_effect_free
@@ -2195,6 +2277,7 @@ def ihpix_report_show(context, data_dict):
     activity = _ihpix_get_report_or_404(data_dict)
     result = activity.as_dict()
     result['form'] = ihpix_forms.activity_to_form_dict(result)
+    result['links'] = _ihpix_links_for(activity.id)
     from ckanext.theme_ejemplo.helpers import get_ihpix_reporter
     result['reporter'] = get_ihpix_reporter(activity.reported_by)
     result['can_edit'] = bool(
@@ -2216,6 +2299,8 @@ def ihpix_report_delete(context, data_dict):
             {'status': 'Only draft reports can be deleted'})
 
     activity_id = activity.id
+    init_ihpix_activity_links_db()
+    IhpixActivityLink.delete_for_activity(activity_id)
     model.Session.delete(activity)
     model.Session.commit()
     return {'success': True, 'id': activity_id}
@@ -2243,6 +2328,168 @@ def ihpix_my_reports_list(context, data_dict):
         'count': total,
         'counts_by_status': IhpixActivity.count_by_status_for_reporter(user_obj),
     }
+
+
+# ── Adjuntos (publicaciones, webinars, eventos, datos) ─────────────────────
+
+@toolkit.side_effect_free
+def ihpix_activity_link_list(context, data_dict):
+    """Adjuntos de una actividad (publicada, o propia / sysadmin)."""
+    toolkit.check_access('ihpix_activity_link_list', context, data_dict)
+    activity_id = toolkit.get_or_bust(data_dict, 'activity_id')
+    activity = IhpixActivity.get(activity_id)
+    if not activity:
+        raise toolkit.ObjectNotFound('IHP-IX activity not found')
+    results = _ihpix_links_for(activity.id)
+    return {'results': results, 'count': len(results)}
+
+
+def ihpix_activity_link_create(context, data_dict):
+    """Añade un adjunto a una actividad propia (o cualquiera, sysadmin)."""
+    toolkit.check_access('ihpix_activity_link_create', context, data_dict)
+    init_ihpix_activity_links_db()
+    activity_id = toolkit.get_or_bust(data_dict, 'activity_id')
+    activity = IhpixActivity.get(activity_id)
+    if not activity:
+        raise toolkit.ObjectNotFound('IHP-IX activity not found')
+    try:
+        values = ihpix_links.validate_link(data_dict)
+    except ihpix_links.LinkValidationError as e:
+        raise toolkit.ValidationError(e.errors)
+
+    existing = [l.as_dict() for l in IhpixActivityLink.get_by_activity(activity.id)]
+    key = ihpix_links.dedupe_key(values)
+    for link in existing:
+        if ihpix_links.dedupe_key(link) == key:
+            raise toolkit.ValidationError(
+                {'target_id': 'This item is already attached to the activity'})
+
+    user_obj = _ihpix_user_obj(context)
+    link = IhpixActivityLink(
+        activity_id=activity.id,
+        link_type=values['link_type'],
+        title=values['title'],
+        target_kind=values['target_kind'],
+        target_id=values['target_id'],
+        url=values['url'],
+        description=values['description'],
+        event_date=values['event_date'],
+        added_by=(user_obj.id if user_obj else u''),
+        display_order=len(existing),
+    )
+    model.Session.add(link)
+    activity.updated_at = _dt.datetime.utcnow()
+    model.Session.commit()
+    return link.as_dict()
+
+
+def ihpix_activity_link_delete(context, data_dict):
+    """Quita un adjunto (propietario de la actividad o sysadmin)."""
+    toolkit.check_access('ihpix_activity_link_delete', context, data_dict)
+    init_ihpix_activity_links_db()
+    link_id = toolkit.get_or_bust(data_dict, 'id')
+    link = IhpixActivityLink.get(link_id)
+    if not link:
+        raise toolkit.ObjectNotFound('IHP-IX attachment not found')
+    activity = IhpixActivity.get(link.activity_id)
+    model.Session.delete(link)
+    if activity:
+        activity.updated_at = _dt.datetime.utcnow()
+    model.Session.commit()
+    return {'success': True, 'id': link_id}
+
+
+def _search_water_events(q, limit):
+    """Busca páginas `water-events` de ckanext-pages por título.
+
+    Devuelve None si la extensión no está disponible (la UI ofrece entonces
+    la entrada manual). Se omiten páginas privadas o no aprobadas.
+    """
+    try:
+        from ckanext.pages.db import Page
+    except ImportError:
+        return None
+    try:
+        query = model.Session.query(Page).filter(Page.page_type == 'water-events')
+        if q:
+            query = query.filter(Page.title.ilike(u'%' + q + u'%'))
+        query = query.order_by(Page.created.desc()).limit(limit * 3)
+        results = []
+        for pg in query.all():
+            if getattr(pg, 'private', False):
+                continue
+            extras = {}
+            if pg.extras:
+                try:
+                    extras = json.loads(pg.extras)
+                except (ValueError, TypeError):
+                    extras = {}
+            if extras.get('submission_status') in ('pending', 'rejected'):
+                continue
+            publish_date = getattr(pg, 'publish_date', None)
+            results.append({
+                'target_kind': 'page',
+                'target_id': pg.name,
+                'title': pg.title,
+                'event_date': publish_date.date().isoformat() if publish_date else '',
+                'location': extras.get('location', ''),
+                'url': '/water-events/' + pg.name,
+            })
+            if len(results) >= limit:
+                break
+        return results
+    except Exception as e:
+        model.Session.rollback()
+        log.warning('IHP-IX: no se pudieron buscar eventos: %s', e)
+        return None
+
+
+@toolkit.side_effect_free
+def ihpix_link_search(context, data_dict):
+    """Busca objetos existentes de IHP-WINS para adjuntar a un reporte.
+
+    kind: publication (datasets type:documents), dataset / output_data
+    (type:dataset), event / webinar (páginas water-events).
+    """
+    toolkit.check_access('ihpix_link_search', context, data_dict)
+    kind = (data_dict.get('kind') or u'').strip().lower()
+    q = (data_dict.get('q') or u'').strip()
+    limit = min(max(_parse_int_field(data_dict, 'limit', 10), 1), 25)
+
+    if kind in ('publication', 'dataset', 'output_data'):
+        fq = 'type:documents' if kind == 'publication' else 'type:dataset'
+        res = toolkit.get_action('package_search')(context, {
+            'q': q or '*:*',
+            'fq': fq,
+            'rows': limit,
+            'include_private': True,
+        })
+        results = []
+        for pkg in res.get('results', []):
+            org = pkg.get('organization') or {}
+            results.append({
+                'target_kind': 'package',
+                'target_id': pkg['id'],
+                'name': pkg.get('name', ''),
+                'title': pkg.get('title') or pkg.get('name', ''),
+                'organization': org.get('title', '') if isinstance(org, dict) else '',
+                'year': str(pkg.get('publication_year') or ''),
+                'url': ('/documents/' if kind == 'publication' else '/dataset/')
+                       + pkg.get('name', pkg['id']),
+            })
+        return {'results': results, 'count': len(results), 'kind': kind,
+                'search_available': True}
+
+    if kind in ('event', 'webinar'):
+        results = _search_water_events(q, limit)
+        if results is None:
+            return {'results': [], 'count': 0, 'kind': kind,
+                    'search_available': False}
+        return {'results': results, 'count': len(results), 'kind': kind,
+                'search_available': True}
+
+    raise toolkit.ValidationError(
+        {'kind': 'Must be one of: publication, dataset, output_data, event, webinar'})
 
 
 # Transiciones válidas de la revisión: acción → estados de origen permitidos.
@@ -2521,6 +2768,11 @@ def ihpix_admin_overview_stats(context, data_dict):
         'completeness_buckets': completeness_buckets,
         'section_blank_counts': section_blank_counts,
         'recent_pending': recent_pending_list,
+        # Adjuntos (publicaciones, eventos, datos) de las actividades filtradas
+        'links_by_type': IhpixActivityLink.count_by_type(
+            filters={k: v for k, v in filters.items()
+                     if k in ('priority_area', 'biennium', 'output', 'country')},
+            status=filters.get('status')),
     }
 
 

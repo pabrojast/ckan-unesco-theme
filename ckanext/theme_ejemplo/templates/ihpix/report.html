@@ -1023,6 +1023,7 @@
         <a href="#section-4"><span class="roman">IV.</span>{{ _('Region') }}<span class="ihpix-nav-status" aria-hidden="true"></span></a>
         <a href="#section-5"><span class="roman">V.</span>{{ _('KPIs') }}<span class="ihpix-nav-status" aria-hidden="true"></span></a>
         <a href="#section-6"><span class="roman">VI.</span>{{ _('Notes') }}<span class="ihpix-nav-status" aria-hidden="true"></span></a>
+        <a href="#section-7"><span class="roman">VII.</span>{{ _('Links') }}<span class="ihpix-nav-status" aria-hidden="true"></span></a>
       </div>
     </nav>
     <div class="ihpix-progress">
@@ -1694,6 +1695,9 @@
       </div>
     </div>
 
+    {# ── Section VII: Publications, events & data (adjuntos) ─────── #}
+    {% include 'ihpix/snippets/report_links_section.html' %}
+
     {# Submit + Save Draft #}
     <div class="ihpix-report-actions">
       <button type="button" class="ihpix-report-btn is-secondary" id="ihpix-report-draft-btn">
@@ -1757,6 +1761,8 @@
       toastContainer.appendChild(toast);
       setTimeout(function() { removeToast(toast); }, 6000);
     }
+    /* Disponible para widgets incluidos (p. ej. Sección VII) */
+    window.ihpixReportToast = showToast;
     function removeToast(toast) {
       if (!toast.parentNode) return;
       toast.style.animation = 'ihpix-report-slideOut 0.3s ease forwards';
@@ -2282,6 +2288,8 @@
     function refreshDerivedUI() {
       evaluateConditionals();
       if (paSelect) filterOutputs();
+      // Sección VII: vuelve a pintar los adjuntos desde el hidden restaurado
+      if (window.ihpixLinks) window.ihpixLinks.reload();
       form.querySelectorAll('[data-counter]').forEach(function(ta) {
         ta.dispatchEvent(new Event('input', { bubbles: true }));
       });

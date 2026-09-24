@@ -1,0 +1,368 @@
+{#
+  Sección VII del formulario IHP-IX: adjuntar publicaciones, webinars,
+  eventos y datos al reporte.
+
+  Se incluye desde ihpix/report.html dentro de #ihpix-report-form. El estado
+  vive en el campo oculto `links_json` (lista JSON de adjuntos); el servidor
+  lo valida en ihpix_links.validate_link y lo sincroniza (full replace) en
+  actions._sync_activity_links. Al ir en el FormData se guarda junto con el
+  borrador y viaja en el autoguardado de localStorage sin código extra.
+
+  Contexto esperado: `activity` (None en reporte nuevo; su `links` prellena).
+#}
+{% set initial_links = (activity.links if activity and activity.links else []) %}
+{% set link_types = [
+  ('publication', _('Publication'), 'fa-book'),
+  ('webinar', _('Webinar'), 'fa-video-camera'),
+  ('event', _('Event'), 'fa-calendar'),
+  ('dataset', _('Dataset'), 'fa-database'),
+  ('output_data', _('Output data'), 'fa-table'),
+  ('other', _('Other link'), 'fa-link'),
+] %}
+
+<style>
+  .ihpix-links-widget { display: grid; gap: 1rem; }
+  .ihpix-lw-list { display: grid; gap: 0.5rem; }
+  .ihpix-lw-empty { color: #64748b; font-size: 0.9rem; margin: 0; padding: 0.75rem 1rem; border: 1px dashed #cbd5e1; border-radius: 8px; }
+  .ihpix-lw-item {
+    display: flex; align-items: flex-start; gap: 0.7rem; padding: 0.6rem 0.8rem;
+    border: 1px solid #dbe4ee; border-radius: 8px; background: #f8fafc;
+  }
+  .ihpix-lw-item > i { margin-top: 0.25rem; color: #0369a1; width: 1rem; text-align: center; }
+  .ihpix-lw-item-body { flex: 1; min-width: 0; display: flex; flex-wrap: wrap; gap: 0.25rem 0.6rem; align-items: baseline; }
+  .ihpix-lw-item-title { font-weight: 600; color: #0f3d6b; word-break: break-word; }
+  .ihpix-lw-item-title a { color: inherit; }
+  .ihpix-lw-badge {
+    font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.04em;
+    padding: 0.05rem 0.45rem; border-radius: 999px; background: #e2e8f0; color: #334155;
+  }
+  .ihpix-lw-meta { font-size: 0.78rem; color: #64748b; }
+  .ihpix-lw-item-actions { display: flex; gap: 0.25rem; }
+  .ihpix-lw-item-actions button {
+    border: 1px solid #cbd5e1; background: #fff; border-radius: 6px; width: 32px; height: 32px;
+    cursor: pointer; color: #475569;
+  }
+  .ihpix-lw-item-actions button:hover { background: #eef2f7; }
+  .ihpix-lw-item-actions button.is-danger { color: #b91c1c; }
+  .ihpix-lw-add { border: 1px solid #e2e8f0; border-radius: 10px; padding: 1rem; background: #fff; }
+  .ihpix-lw-add h4 { margin: 0 0 0.75rem; font-size: 0.95rem; color: #0f3d6b; }
+  .ihpix-lw-search-wrap { position: relative; }
+  .ihpix-lw-results {
+    position: absolute; z-index: 30; left: 0; right: 0; top: 100%; margin-top: 0.25rem;
+    background: #fff; border: 1px solid #cbd5e1; border-radius: 8px; box-shadow: 0 8px 24px rgba(15,23,42,.12);
+    max-height: 280px; overflow-y: auto;
+  }
+  .ihpix-lw-results[hidden] { display: none; }
+  .ihpix-lw-result {
+    display: block; width: 100%; text-align: left; background: none; border: 0;
+    border-bottom: 1px solid #eef2f7; padding: 0.55rem 0.8rem; cursor: pointer; font: inherit; color: #1e293b;
+  }
+  .ihpix-lw-result:last-child { border-bottom: 0; }
+  .ihpix-lw-result:hover, .ihpix-lw-result:focus { background: #f1f5f9; }
+  .ihpix-lw-result small { display: block; color: #64748b; font-size: 0.78rem; }
+  .ihpix-lw-result.is-note { cursor: default; color: #64748b; font-size: 0.85rem; }
+  .ihpix-lw-manual summary { cursor: pointer; font-weight: 600; color: #0f3d6b; margin: 0.75rem 0 0.5rem; }
+  .ihpix-lw-manual .ihpix-report-btn { margin-top: 0.5rem; }
+  .ihpix-lw-create { font-size: 0.85rem; color: #475569; margin: 0.75rem 0 0; }
+  .ihpix-lw-create a { font-weight: 600; }
+</style>
+
+<div class="ihpix-report-section" id="section-7">
+  <div class="ihpix-report-section-header">
+    <i class="fa fa-paperclip"></i>
+    <span class="ihpix-roman">VII.</span>
+    <h3>{{ _('Publications, events & data') }}</h3>
+  </div>
+  <div class="ihpix-report-section-intro">
+    <i class="fa fa-quote-left"></i>{{ _('Attach the outputs of this activity: publications, webinars, events and datasets already in IHP-WINS, or external links. They will be shown with the activity once it is published.') }}
+  </div>
+  <div class="ihpix-report-section-body">
+    <div class="ihpix-links-widget" id="ihpix-links-widget"
+         data-search-url="/api/3/action/ihpix_link_search">
+      <input type="hidden" name="links_json" id="ihpix-links-json" value="">
+      <script type="application/json" id="ihpix-links-initial">{{ initial_links|tojson }}</script>
+
+      <div class="ihpix-lw-list" id="ihpix-lw-list" aria-live="polite"></div>
+
+      <div class="ihpix-lw-add">
+        <h4><i class="fa fa-plus-circle" aria-hidden="true"></i> {{ _('Add an item') }}</h4>
+        <div class="ihpix-report-row">
+          <div class="ihpix-report-field" style="flex: 0 1 220px;">
+            <label class="ihpix-report-label" for="ihpix-lw-type">{{ _('Type') }}</label>
+            <select id="ihpix-lw-type" class="ihpix-report-select">
+              {% for value, label, icon in link_types %}
+                <option value="{{ value }}">{{ label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          <div class="ihpix-report-field" id="ihpix-lw-search-field">
+            <label class="ihpix-report-label" for="ihpix-lw-search">{{ _('Search in IHP-WINS') }}</label>
+            <span class="ihpix-report-help" id="ihpix-lw-search-help">{{ _('Type at least 2 characters and pick a result to attach it.') }}</span>
+            <div class="ihpix-lw-search-wrap">
+              <input type="search" id="ihpix-lw-search" class="ihpix-report-input" autocomplete="off"
+                     placeholder="{{ _('Search by title…') }}">
+              <div class="ihpix-lw-results" id="ihpix-lw-results" hidden></div>
+            </div>
+          </div>
+        </div>
+
+        <details class="ihpix-lw-manual" id="ihpix-lw-manual">
+          <summary>{{ _('Add an external link manually') }}</summary>
+          <div class="ihpix-report-row">
+            <div class="ihpix-report-field">
+              <label class="ihpix-report-label" for="ihpix-lw-title">{{ _('Title') }} <span class="ihpix-report-required">*</span></label>
+              <input type="text" id="ihpix-lw-title" class="ihpix-report-input" maxlength="300">
+            </div>
+            <div class="ihpix-report-field">
+              <label class="ihpix-report-label" for="ihpix-lw-url">{{ _('URL') }} <span class="ihpix-report-required">*</span></label>
+              <input type="url" id="ihpix-lw-url" class="ihpix-report-input" placeholder="https://">
+            </div>
+          </div>
+          <div class="ihpix-report-row">
+            <div class="ihpix-report-field" style="flex: 0 1 220px;">
+              <label class="ihpix-report-label" for="ihpix-lw-date">{{ _('Date') }}</label>
+              <input type="date" id="ihpix-lw-date" class="ihpix-report-input">
+            </div>
+            <div class="ihpix-report-field">
+              <label class="ihpix-report-label" for="ihpix-lw-desc">{{ _('Short description') }}</label>
+              <input type="text" id="ihpix-lw-desc" class="ihpix-report-input" maxlength="500">
+            </div>
+          </div>
+          <button type="button" class="ihpix-report-btn is-secondary" id="ihpix-lw-add-btn">
+            <i class="fa fa-plus"></i> {{ _('Add link') }}
+          </button>
+        </details>
+
+        <p class="ihpix-lw-create">
+          {{ _('Not in IHP-WINS yet?') }}
+          <a href="{{ h.url_for('/documents/new') }}" target="_blank" rel="noopener">{{ _('Create a publication') }}</a>
+          &middot;
+          <a href="/water-events/new" target="_blank" rel="noopener">{{ _('Create an event') }}</a>
+          &mdash; {{ _('when you are done, come back to this tab and search for it.') }}
+        </p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  'use strict';
+  var widget = document.getElementById('ihpix-links-widget');
+  if (!widget) return;
+
+  var hidden = document.getElementById('ihpix-links-json');
+  var initialEl = document.getElementById('ihpix-links-initial');
+  var listEl = document.getElementById('ihpix-lw-list');
+  var typeSel = document.getElementById('ihpix-lw-type');
+  var searchField = document.getElementById('ihpix-lw-search-field');
+  var searchInput = document.getElementById('ihpix-lw-search');
+  var searchHelp = document.getElementById('ihpix-lw-search-help');
+  var resultsEl = document.getElementById('ihpix-lw-results');
+  var manual = document.getElementById('ihpix-lw-manual');
+  var addBtn = document.getElementById('ihpix-lw-add-btn');
+  var titleIn = document.getElementById('ihpix-lw-title');
+  var urlIn = document.getElementById('ihpix-lw-url');
+  var dateIn = document.getElementById('ihpix-lw-date');
+  var descIn = document.getElementById('ihpix-lw-desc');
+  var searchUrl = widget.getAttribute('data-search-url');
+
+  var TYPE_LABELS = {
+    {% for value, label, icon in link_types %}
+    {{ value|tojson }}: {{ label|tojson }}{% if not loop.last %},{% endif %}
+    {% endfor %}
+  };
+  var TYPE_ICONS = {
+    {% for value, label, icon in link_types %}
+    {{ value|tojson }}: {{ icon|tojson }}{% if not loop.last %},{% endif %}
+    {% endfor %}
+  };
+  /* Qué busca cada tipo (igual que ihpix_links.SEARCH_KIND_FOR_TYPE) */
+  var SEARCH_KIND = { publication: 'publication', dataset: 'dataset', output_data: 'dataset',
+                      event: 'event', webinar: 'event', other: null };
+  var MSG = {
+    empty: {{ _('No publications, events or data attached yet.')|tojson }},
+    remove: {{ _('Remove')|tojson }},
+    up: {{ _('Move up')|tojson }},
+    down: {{ _('Move down')|tojson }},
+    noResults: {{ _('No results. You can add it manually below.')|tojson }},
+    searching: {{ _('Searching…')|tojson }},
+    unavailable: {{ _('Search is not available for this type here. Add the link manually below.')|tojson }},
+    duplicate: {{ _('This item is already attached.')|tojson }},
+    needTitle: {{ _('Title and URL are required.')|tojson }},
+    badUrl: {{ _('The URL must start with http:// or https://')|tojson }},
+    error: {{ _('Search failed. Please try again.')|tojson }}
+  };
+
+  var links = [];
+
+  function keyOf(l) {
+    return (l.target_kind === 'url' || !l.target_kind)
+      ? 'url:' + String(l.url || '').trim().toLowerCase()
+      : l.target_kind + ':' + (l.target_id || '');
+  }
+  function load() {
+    try { links = JSON.parse(hidden.value || '[]'); } catch (e) { links = []; }
+    if (!Array.isArray(links)) links = [];
+  }
+  function save(silent) {
+    hidden.value = JSON.stringify(links);
+    if (!silent) hidden.dispatchEvent(new Event('change', { bubbles: true }));
+  }
+  function el(tag, cls, text) {
+    var n = document.createElement(tag);
+    if (cls) n.className = cls;
+    if (text != null) n.textContent = text;
+    return n;
+  }
+  function publicUrl(l) {
+    if (l.target_kind === 'package' && l.target_id) {
+      return (l.link_type === 'publication' ? '/documents/' : '/dataset/') + l.target_id;
+    }
+    if (l.target_kind === 'page' && l.target_id) return '/water-events/' + l.target_id;
+    return l.url || '';
+  }
+  function render() {
+    listEl.innerHTML = '';
+    if (!links.length) {
+      listEl.appendChild(el('p', 'ihpix-lw-empty', MSG.empty));
+      return;
+    }
+    links.forEach(function(l, i) {
+      var item = el('div', 'ihpix-lw-item is-' + l.link_type);
+      var icon = el('i', 'fa ' + (TYPE_ICONS[l.link_type] || 'fa-link'));
+      icon.setAttribute('aria-hidden', 'true');
+      item.appendChild(icon);
+      var body = el('div', 'ihpix-lw-item-body');
+      var title = el('span', 'ihpix-lw-item-title');
+      var url = publicUrl(l);
+      if (url) {
+        var a = el('a', null, l.title); a.href = url; a.target = '_blank'; a.rel = 'noopener';
+        title.appendChild(a);
+      } else { title.textContent = l.title; }
+      body.appendChild(title);
+      body.appendChild(el('span', 'ihpix-lw-badge', TYPE_LABELS[l.link_type] || l.link_type));
+      if (l.event_date) body.appendChild(el('span', 'ihpix-lw-meta', l.event_date));
+      if (l.description) body.appendChild(el('span', 'ihpix-lw-meta', l.description));
+      item.appendChild(body);
+      var actions = el('div', 'ihpix-lw-item-actions');
+      var up = el('button', null); up.type = 'button'; up.title = MSG.up; up.innerHTML = '<i class="fa fa-arrow-up" aria-hidden="true"></i>';
+      up.disabled = (i === 0);
+      up.addEventListener('click', function() { move(i, -1); });
+      var down = el('button', null); down.type = 'button'; down.title = MSG.down; down.innerHTML = '<i class="fa fa-arrow-down" aria-hidden="true"></i>';
+      down.disabled = (i === links.length - 1);
+      down.addEventListener('click', function() { move(i, 1); });
+      var rm = el('button', 'is-danger'); rm.type = 'button'; rm.title = MSG.remove; rm.innerHTML = '<i class="fa fa-trash" aria-hidden="true"></i>';
+      rm.addEventListener('click', function() { links.splice(i, 1); save(); render(); });
+      actions.appendChild(up); actions.appendChild(down); actions.appendChild(rm);
+      item.appendChild(actions);
+      listEl.appendChild(item);
+    });
+  }
+  function move(i, delta) {
+    var j = i + delta;
+    if (j < 0 || j >= links.length) return;
+    var tmp = links[i]; links[i] = links[j]; links[j] = tmp;
+    save(); render();
+  }
+  function notify(msg, type) {
+    if (typeof window.ihpixReportToast === 'function') { window.ihpixReportToast(msg, type || 'error'); }
+    else if (type !== 'success') { window.alert(msg); }
+  }
+  function add(item) {
+    var k = keyOf(item);
+    if (links.some(function(l) { return keyOf(l) === k; })) { notify(MSG.duplicate); return false; }
+    links.push(item); save(); render();
+    return true;
+  }
+
+  /* ── Búsqueda en IHP-WINS ─────────────────────────────────── */
+  var timer = null, lastQ = '';
+  function currentKind() { return SEARCH_KIND[typeSel.value] || null; }
+  function syncTypeUI() {
+    var kind = currentKind();
+    searchField.style.display = kind ? '' : 'none';
+    if (!kind && manual) manual.open = true;
+    hideResults();
+  }
+  function hideResults() { resultsEl.hidden = true; resultsEl.innerHTML = ''; }
+  function showNote(text) {
+    resultsEl.innerHTML = '';
+    var n = el('div', 'ihpix-lw-result is-note', text);
+    resultsEl.appendChild(n); resultsEl.hidden = false;
+  }
+  function runSearch() {
+    var q = searchInput.value.trim();
+    var kind = currentKind();
+    if (!kind || q.length < 2) { hideResults(); return; }
+    lastQ = q;
+    showNote(MSG.searching);
+    fetch(searchUrl + '?kind=' + encodeURIComponent(kind) + '&q=' + encodeURIComponent(q) + '&limit=10', {
+      credentials: 'same-origin', headers: { 'Accept': 'application/json' }
+    })
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (q !== lastQ) return;
+      var res = (data && data.result) || {};
+      if (res.search_available === false) { showNote(MSG.unavailable); if (manual) manual.open = true; return; }
+      var items = res.results || [];
+      if (!items.length) { showNote(MSG.noResults); return; }
+      resultsEl.innerHTML = '';
+      items.forEach(function(r) {
+        var b = el('button', 'ihpix-lw-result'); b.type = 'button';
+        b.appendChild(document.createTextNode(r.title || r.name || r.target_id));
+        var meta = [r.organization, r.year, r.event_date, r.location].filter(Boolean).join(' · ');
+        if (meta) b.appendChild(el('small', null, meta));
+        b.addEventListener('click', function() {
+          add({
+            link_type: typeSel.value,
+            target_kind: r.target_kind,
+            target_id: r.target_id,
+            title: r.title || r.name || r.target_id,
+            url: r.url || '',
+            event_date: r.event_date || '',
+            description: r.organization || r.location || ''
+          });
+          searchInput.value = ''; hideResults();
+        });
+        resultsEl.appendChild(b);
+      });
+      resultsEl.hidden = false;
+    })
+    .catch(function() { showNote(MSG.error); });
+  }
+  searchInput.addEventListener('input', function() {
+    if (timer) clearTimeout(timer);
+    timer = setTimeout(runSearch, 300);
+  });
+  searchInput.addEventListener('keydown', function(e) { if (e.key === 'Escape') hideResults(); });
+  document.addEventListener('click', function(e) {
+    if (!resultsEl.contains(e.target) && e.target !== searchInput) hideResults();
+  });
+  typeSel.addEventListener('change', syncTypeUI);
+
+  /* ── Alta manual ──────────────────────────────────────────── */
+  addBtn.addEventListener('click', function() {
+    var title = titleIn.value.trim(), url = urlIn.value.trim();
+    if (!title || !url) { notify(MSG.needTitle); return; }
+    if (!/^https?:\/\//i.test(url)) { notify(MSG.badUrl); return; }
+    var ok = add({
+      link_type: typeSel.value, target_kind: 'url', target_id: '',
+      title: title, url: url, event_date: dateIn.value || '', description: descIn.value.trim()
+    });
+    if (ok) { titleIn.value = ''; urlIn.value = ''; dateIn.value = ''; descIn.value = ''; }
+  });
+
+  /* API para el formulario principal (restaura desde el hidden input) */
+  window.ihpixLinks = { reload: function() { load(); render(); } };
+
+  /* ── Arranque: hidden vacío → adjuntos del servidor (edición) ── */
+  load();
+  if (!links.length && initialEl) {
+    try { var initial = JSON.parse(initialEl.textContent || '[]'); if (Array.isArray(initial)) links = initial; } catch (e) {}
+    save(true);
+  }
+  syncTypeUI();
+  render();
+})();
+</script>

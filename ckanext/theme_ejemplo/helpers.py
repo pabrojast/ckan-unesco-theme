@@ -924,6 +924,26 @@ def get_ihpix_reporter(reported_by):
     return info
 
 
+def ihpix_link_url(link):
+    """URL navegable de un adjunto IHP-IX (dict de `IhpixActivityLink.as_dict`)."""
+    from ckanext.theme_ejemplo import ihpix_links
+    return ihpix_links.link_public_url(link)
+
+
+def ihpix_link_type_label(link_type):
+    """Etiqueta traducida del tipo de adjunto."""
+    _ = toolkit._
+    labels = {
+        'publication': _('Publication'),
+        'webinar': _('Webinar'),
+        'event': _('Event'),
+        'dataset': _('Dataset'),
+        'output_data': _('Output data'),
+        'other': _('Other link'),
+    }
+    return labels.get(link_type, link_type or '')
+
+
 def get_my_pending_initiative_request():
     """Devuelve la solicitud pendiente del usuario actual, o None."""
     try:

@@ -132,7 +132,25 @@ def _collect_report_form(form):
     data = {f: form.get(f, '') for f in ihpix_forms.SINGLE_FORM_FIELDS}
     for f in ihpix_forms.MULTI_FORM_FIELDS:
         data[f] = form.getlist(f)
+    # Adjuntos (Sección VII): sólo si el form los envía; si faltara (página
+    # vieja en caché) no se tocan los existentes.
+    if 'links_json' in form:
+        data['links_json'] = form.get('links_json', '')
     return data
+
+
+def _ihpix_links_map(activities):
+    """{activity_id: [adjuntos]} para una lista de dicts de actividades."""
+    try:
+        from ckanext.theme_ejemplo.model import (
+            IhpixActivityLink, init_ihpix_activity_links_db,
+        )
+        init_ihpix_activity_links_db()
+        return IhpixActivityLink.get_for_activities(
+            [a.get('id') for a in activities or []])
+    except Exception as e:
+        log.warning('IHP-IX: no se pudieron cargar los adjuntos: %s', e)
+        return {}
 
 
 def _format_error_dict(error_dict):
@@ -919,6 +937,7 @@ class MyLogica():
 
                 return render_template("ihpix/outputs.html",
                                        activities=activities,
+                                       links_by_activity=_ihpix_links_map(activities),
                                        facets=facets,
                                        total=total,
                                        pa_filter=pa_filter,
@@ -1267,6 +1286,7 @@ class MyLogica():
                     group_dict=org,
                     group_type='organization',
                     activities=activities,
+                    links_by_activity=_ihpix_links_map(activities),
                     facets=facets,
                     total=total,
                     pa_filter=pa_filter,
@@ -1494,6 +1514,7 @@ class MyLogica():
                     group_dict=group,
                     group_type='group',
                     activities=activities,
+                    links_by_activity=_ihpix_links_map(activities),
                     facets=facets,
                     total=total,
                     pa_filter=pa_filter,
@@ -4139,6 +4160,7 @@ class MyLogica():
             return render_template(
                 'admin/ihpix_reports.html',
                 reports=reports,
+                links_by_activity=_ihpix_links_map(reports),
                 total=total,
                 status_filter=status_filter,
                 page=page,

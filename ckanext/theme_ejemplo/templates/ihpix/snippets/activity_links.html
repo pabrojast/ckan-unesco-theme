@@ -1,0 +1,83 @@
+{#
+  Adjuntos de una actividad IHP-IX (publicaciones, webinars, eventos, datos).
+
+  Uso:
+    {% import 'ihpix/snippets/activity_links.html' as links_ui %}
+    {{ links_ui.links_styles() }}                     {# una vez por página #}
+    {{ links_ui.render_links(links_by_activity.get(activity.id, [])) }}
+
+  `links` es la lista de dicts de `IhpixActivityLink.as_dict()` (con `public_url`).
+#}
+
+{% macro links_styles() %}
+<style>
+  .ihpix-links { margin-top: 0.9rem; }
+  .ihpix-links-heading {
+    font-size: 0.8rem; font-weight: 700; text-transform: uppercase;
+    letter-spacing: 0.04em; color: #475569; margin-bottom: 0.4rem;
+    display: flex; align-items: center; gap: 0.4rem;
+  }
+  .ihpix-links-count {
+    display: inline-block; min-width: 1.4rem; padding: 0 0.4rem; border-radius: 999px;
+    background: #e2e8f0; color: #334155; font-size: 0.72rem; text-align: center;
+  }
+  .ihpix-links-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.4rem; }
+  .ihpix-link-item {
+    display: flex; align-items: flex-start; gap: 0.6rem; padding: 0.5rem 0.7rem;
+    border: 1px solid #e2e8f0; border-radius: 8px; background: #fff; font-size: 0.88rem;
+  }
+  .ihpix-links.is-compact .ihpix-link-item { padding: 0.3rem 0.55rem; font-size: 0.82rem; }
+  .ihpix-link-item > i { margin-top: 0.2rem; color: #0369a1; width: 1rem; text-align: center; }
+  .ihpix-link-item.is-publication > i { color: #7c3aed; }
+  .ihpix-link-item.is-event > i, .ihpix-link-item.is-webinar > i { color: #b45309; }
+  .ihpix-link-item.is-dataset > i, .ihpix-link-item.is-output_data > i { color: #047857; }
+  .ihpix-link-body { display: flex; flex-wrap: wrap; gap: 0.3rem 0.6rem; align-items: baseline; min-width: 0; }
+  .ihpix-link-body a { font-weight: 600; color: #0f3d6b; word-break: break-word; }
+  .ihpix-link-type {
+    font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.04em;
+    padding: 0.05rem 0.45rem; border-radius: 999px; background: #f1f5f9; color: #475569;
+  }
+  .ihpix-link-date { font-size: 0.78rem; color: #64748b; }
+  .ihpix-link-desc { flex-basis: 100%; font-size: 0.8rem; color: #475569; }
+</style>
+{% endmacro %}
+
+{% macro render_links(links, compact=False, heading=True) %}
+  {% if links %}
+  <div class="ihpix-links{% if compact %} is-compact{% endif %}">
+    {% if heading %}
+    <div class="ihpix-links-heading">
+      <i class="fa fa-paperclip" aria-hidden="true"></i>
+      {{ _('Publications, events & data') }}
+      <span class="ihpix-links-count">{{ links|length }}</span>
+    </div>
+    {% endif %}
+    <ul class="ihpix-links-list">
+      {% for l in links %}
+        {% set icon = {
+          'publication': 'fa-book', 'webinar': 'fa-video-camera', 'event': 'fa-calendar',
+          'dataset': 'fa-database', 'output_data': 'fa-table', 'other': 'fa-link',
+        }.get(l.link_type, 'fa-link') %}
+        {% set url = l.public_url or h.ihpix_link_url(l) %}
+        <li class="ihpix-link-item is-{{ l.link_type }}">
+          <i class="fa {{ icon }}" aria-hidden="true"></i>
+          <span class="ihpix-link-body">
+            {% if url %}
+              <a href="{{ url }}"{% if url.startswith('http') %} target="_blank" rel="noopener"{% endif %}>{{ l.title }}</a>
+            {% else %}
+              <span>{{ l.title }}</span>
+            {% endif %}
+            <span class="ihpix-link-type">{{ h.ihpix_link_type_label(l.link_type) }}</span>
+            {% if l.event_date %}
+              <span class="ihpix-link-date"><i class="fa fa-clock-o" aria-hidden="true"></i> {{ l.event_date }}</span>
+            {% endif %}
+            {% if l.description and not compact %}
+              <span class="ihpix-link-desc">{{ l.description }}</span>
+            {% endif %}
+          </span>
+        </li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+{% endmacro %}
