@@ -17,14 +17,13 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 "
-"&& n%100<=10 ? 3 : n%100>=0 && n%100<=2 ? 4 : 5)\n"
+"Plural-Forms: nplurals=6; plural=(n==0 ? 0 : n==1 ? 1 : n==2 ? 2 : n%100>=3 && n%100<=10 ? 3 : n%100>=0 && n%100<=2 ? 4 : 5)\n"
 "Generated-By: Babel 2.7.0\n"
 
 #: ckanext/theme_ejemplo/actions.py:161
 msgid ""
-"Profile picture must be a valid image file. Allowed formats: PNG, JPG, JPEG, "
-"GIF, WEBP, BMP, TIFF and AVIF."
+"Profile picture must be a valid image file. Allowed formats: PNG, JPG, JPEG,"
+" GIF, WEBP, BMP, TIFF and AVIF."
 msgstr ""
 
 #: ckanext/theme_ejemplo/actions.py:639 ckanext/theme_ejemplo/auth.py:12
@@ -239,8 +238,8 @@ msgstr ""
 
 #: ckanext/theme_ejemplo/controller.py:1609
 msgid ""
-"Ya tienes una solicitud de iniciativa pendiente de revisión. Espera a que un "
-"administrador la procese antes de enviar otra."
+"Ya tienes una solicitud de iniciativa pendiente de revisión. Espera a que un"
+" administrador la procese antes de enviar otra."
 msgstr ""
 
 #: ckanext/theme_ejemplo/controller.py:1647
@@ -253,8 +252,7 @@ msgstr ""
 
 #: ckanext/theme_ejemplo/controller.py:1661
 msgid ""
-"El usuario {user} ({fullname}) ha solicitado la creación de una nueva "
-"iniciativa.\n"
+"El usuario {user} ({fullname}) ha solicitado la creación de una nueva iniciativa.\n"
 "\n"
 "Título: {title}\n"
 "Descripción:\n"
@@ -698,7 +696,7 @@ msgstr ""
 
 #: ckanext/theme_ejemplo/templates/header.html:90
 msgid "IHP-IX Reports"
-msgstr ""
+msgstr "تقارير البرنامج الهيدرولوجي الدولي"
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:4
 #: ckanext/theme_ejemplo/templates/admin/users.html:22
@@ -935,7 +933,7 @@ msgstr "المميزة حاليًا"
 #: ckanext/theme_ejemplo/templates/admin/featured_datasets.html:112
 #: ckanext/theme_ejemplo/templates/admin/featured_datasets.html:660
 msgid "View"
-msgstr ""
+msgstr "عرض"
 
 #: ckanext/theme_ejemplo/templates/admin/featured_datasets.html:117
 #: ckanext/theme_ejemplo/templates/admin/featured_datasets.html:661
@@ -983,7 +981,8 @@ msgid "from featured datasets?"
 msgstr ""
 
 #: ckanext/theme_ejemplo/templates/admin/featured_publications.html:31
-msgid "Manage UNESDOC and Water Family publications displayed on the homepage."
+msgid ""
+"Manage UNESDOC and Water Family publications displayed on the homepage."
 msgstr ""
 
 #: ckanext/theme_ejemplo/templates/admin/featured_publications.html:45
@@ -994,7 +993,7 @@ msgstr ""
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:73
 #: ckanext/theme_ejemplo/templates/admin/portal_cards.html:59
 msgid "Drag & drop an image here"
-msgstr ""
+msgstr "اسحب صورة وأفلتها هنا"
 
 #: ckanext/theme_ejemplo/templates/admin/featured_publications.html:53
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:74
@@ -1007,7 +1006,7 @@ msgstr ""
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:81
 #: ckanext/theme_ejemplo/templates/admin/portal_cards.html:67
 msgid "or paste image URL"
-msgstr ""
+msgstr "أو الصق رابط صورة"
 
 #: ckanext/theme_ejemplo/templates/admin/featured_publications.html:67
 #: ckanext/theme_ejemplo/templates/admin/featured_publications.html:227
@@ -1021,7 +1020,7 @@ msgstr ""
 #: ckanext/theme_ejemplo/templates/bug_tickets/list.html:56
 #: ckanext/theme_ejemplo/templates/bug_tickets/new.html:38
 msgid "Title"
-msgstr ""
+msgstr "العنوان"
 
 #: ckanext/theme_ejemplo/templates/admin/featured_publications.html:69
 msgid "Publication title"
@@ -1071,8 +1070,8 @@ msgstr ""
 #: ckanext/theme_ejemplo/templates/admin/featured_publications.html:108
 #, python-format
 msgid ""
-"Found %(count)s publication(s) added using the old tag-based system (UNESDOC "
-"datasets). Import them here to manage from this panel."
+"Found %(count)s publication(s) added using the old tag-based system (UNESDOC"
+" datasets). Import them here to manage from this panel."
 msgstr ""
 
 #: ckanext/theme_ejemplo/templates/admin/featured_publications.html:113
@@ -1155,7 +1154,7 @@ msgstr ""
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:162
 #: ckanext/theme_ejemplo/templates/admin/portal_cards.html:245
 msgid "Or upload new image"
-msgstr ""
+msgstr "أو ارفع صورة جديدة"
 
 #: ckanext/theme_ejemplo/templates/admin/featured_publications.html:251
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:843
@@ -1183,14 +1182,14 @@ msgstr "إلغاء"
 #: ckanext/theme_ejemplo/templates/admin/portal_cards.html:262
 #: ckanext/theme_ejemplo/templates/admin/portal_cards.html:806
 msgid "Save Changes"
-msgstr ""
+msgstr "حفظ التغييرات"
 
 #: ckanext/theme_ejemplo/templates/admin/featured_publications.html:650
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:1561
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:750
 #: ckanext/theme_ejemplo/templates/admin/portal_cards.html:618
 msgid "Please upload an image file"
-msgstr ""
+msgstr "يرجى رفع ملف صورة"
 
 #: ckanext/theme_ejemplo/templates/admin/featured_publications.html:686
 #: ckanext/theme_ejemplo/templates/admin/portal_cards.html:645
@@ -1201,7 +1200,7 @@ msgstr ""
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:1636
 #: ckanext/theme_ejemplo/templates/admin/portal_cards.html:649
 msgid "Adding..."
-msgstr ""
+msgstr "جارٍ الإضافة..."
 
 #: ckanext/theme_ejemplo/templates/admin/featured_publications.html:934
 #: ckanext/theme_ejemplo/templates/admin/featured_viewers.html:403
@@ -1248,7 +1247,8 @@ msgid "Add a Viewer"
 msgstr "إضافة عارض"
 
 #: ckanext/theme_ejemplo/templates/admin/featured_viewers.html:64
-msgid "Only published viewers can be featured. Search by title or description."
+msgid ""
+"Only published viewers can be featured. Search by title or description."
 msgstr "لا يمكن تمييز سوى العارضات المنشورة. ابحث بالعنوان أو الوصف."
 
 #: ckanext/theme_ejemplo/templates/admin/featured_viewers.html:69
@@ -1291,19 +1291,19 @@ msgstr "لم يتم العثور على عارضات منشورة."
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:4
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:616
 msgid "IHP-IX Activities Management"
-msgstr ""
+msgstr "إدارة أنشطة البرنامج الهيدرولوجي الدولي"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:63
 msgid "Basic Information"
-msgstr ""
+msgstr "معلومات أساسية"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:95
 msgid "Activity title"
-msgstr ""
+msgstr "عنوان النشاط"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:100
 msgid "Brief description of the activity..."
-msgstr ""
+msgstr "وصف موجز للنشاط..."
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:105
 #: ckanext/theme_ejemplo/templates/admin/ihpix_overview.html:275
@@ -1318,7 +1318,7 @@ msgstr "مجال الأولوية"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:107
 msgid "Select priority area"
-msgstr ""
+msgstr "اختر المجال ذا الأولوية"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:118
 #: ckanext/theme_ejemplo/templates/admin/ihpix_reports.html:165
@@ -1333,7 +1333,7 @@ msgstr "ناتج"
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:120
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:1336
 msgid "Select output"
-msgstr ""
+msgstr "اختر المخرج"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:126
 #: ckanext/theme_ejemplo/templates/admin/ihpix_overview.html:284
@@ -1346,7 +1346,7 @@ msgstr "فترة سنتين"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:128
 msgid "Select biennium"
-msgstr ""
+msgstr "اختر فترة السنتين"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:139
 #: ckanext/theme_ejemplo/templates/admin/ihpix_overview.html:320
@@ -1370,7 +1370,7 @@ msgstr "مسودة"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:174
 msgid "Organization & Geography"
-msgstr ""
+msgstr "المنظمة والجغرافيا"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:181
 #: ckanext/theme_ejemplo/templates/admin/ihpix_reports.html:171
@@ -1380,11 +1380,11 @@ msgstr "المؤسسة"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:183
 msgid "Search institutions..."
-msgstr ""
+msgstr "ابحث عن مؤسسات..."
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:193
 msgid "Institution Type"
-msgstr ""
+msgstr "نوع المؤسسة"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:195
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:386
@@ -1393,7 +1393,7 @@ msgstr ""
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:464
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:565
 msgid "Select type"
-msgstr ""
+msgstr "اختر النوع"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:206
 #: ckanext/theme_ejemplo/templates/admin/ihpix_reports.html:140
@@ -1404,18 +1404,18 @@ msgstr "البلد"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:208
 msgid "Country name"
-msgstr ""
+msgstr "اسم البلد"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:213
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:715
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:890
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:715
 msgid "Supporting Member State"
-msgstr ""
+msgstr "الدولة العضو الداعمة"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:215
 msgid "Supporting member state"
-msgstr ""
+msgstr "الدولة العضو الداعمة"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:226
 #: ckanext/theme_ejemplo/templates/user/edit_user_form.html:304
@@ -1427,11 +1427,11 @@ msgstr ""
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:905
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:730
 msgid "Regions"
-msgstr ""
+msgstr "المناطق"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:256
 msgid "Activity Details"
-msgstr ""
+msgstr "تفاصيل النشاط"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:261
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:691
@@ -1443,78 +1443,78 @@ msgstr "النشاط الرئيسي"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:263
 msgid "Describe the key activity..."
-msgstr ""
+msgstr "صف النشاط الرئيسي..."
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:266
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:697
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:872
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:697
 msgid "Outcomes"
-msgstr ""
+msgstr "النتائج"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:268
 msgid "Expected or achieved outcomes..."
-msgstr ""
+msgstr "النتائج المتوقعة أو المحققة..."
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:273
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:703
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:878
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:703
 msgid "Partners"
-msgstr ""
+msgstr "الشركاء"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:275
 msgid "Partner organizations"
-msgstr ""
+msgstr "المنظمات الشريكة"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:280
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:709
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:884
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:709
 msgid "UNESCO Participation"
-msgstr ""
+msgstr "مشاركة اليونسكو"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:282
 msgid "UNESCO participation details"
-msgstr ""
+msgstr "تفاصيل مشاركة اليونسكو"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:287
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:729
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:904
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:729
 msgid "Flagships"
-msgstr ""
+msgstr "المبادرات الرائدة"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:299
 msgid "Cross-Cutting Working Groups"
-msgstr ""
+msgstr "مجموعات العمل الشاملة"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:311
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:721
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:896
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:721
 msgid "Synergies"
-msgstr ""
+msgstr "أوجه التآزر"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:313
 msgid "Synergies with other programmes..."
-msgstr ""
+msgstr "أوجه التآزر مع برامج أخرى..."
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:318
 msgid "Start Date"
-msgstr ""
+msgstr "تاريخ البدء"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:324
 msgid "End Date"
-msgstr ""
+msgstr "تاريخ الانتهاء"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:335
 msgid "Contact & Reporting"
-msgstr ""
+msgstr "جهة الاتصال والإبلاغ"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:342
 msgid "Contact Name"
-msgstr ""
+msgstr "اسم جهة الاتصال"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:344
 #: ckanext/theme_ejemplo/templates/user/edit_user_form.html:13
@@ -1523,129 +1523,129 @@ msgstr ""
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:349
 msgid "Contact Email"
-msgstr ""
+msgstr "البريد الإلكتروني للاتصال"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:358
 msgid "Reported By"
-msgstr ""
+msgstr "أبلغ عنه"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:360
 msgid "Person who reported"
-msgstr ""
+msgstr "الشخص المبلِّغ"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:365
 msgid "Reported Date"
-msgstr ""
+msgstr "تاريخ الإبلاغ"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:376
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:885
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:1576
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:772
 msgid "Knowledge Products"
-msgstr ""
+msgstr "المنتجات المعرفية"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:383
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:752
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:927
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:752
 msgid "Knowledge Product Type"
-msgstr ""
+msgstr "نوع المنتج المعرفي"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:395
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:443
 msgid "Other (specify)"
-msgstr ""
+msgstr "آخر (حدد)"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:397
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:445
 msgid "Specify type"
-msgstr ""
+msgstr "حدد النوع"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:402
 msgid "Number of Knowledge Products"
-msgstr ""
+msgstr "عدد المنتجات المعرفية"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:411
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:770
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:945
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:770
 msgid "Scientific Product Type"
-msgstr ""
+msgstr "نوع المنتج العلمي"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:422
 msgid "Number of Scientific Products"
-msgstr ""
+msgstr "عدد المنتجات العلمية"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:431
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:806
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:981
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:806
 msgid "Knowledge Activity Type"
-msgstr ""
+msgstr "نوع النشاط المعرفي"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:455
 msgid "Training & Capacity Building"
-msgstr ""
+msgstr "التدريب وبناء القدرات"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:462
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:782
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:957
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:782
 msgid "Training Type"
-msgstr ""
+msgstr "نوع التدريب"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:473
 msgid "Number of Training Materials"
-msgstr ""
+msgstr "عدد المواد التدريبية"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:482
 msgid "Number of Curricula"
-msgstr ""
+msgstr "عدد المناهج"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:489
 msgid "Number of Transboundary Member States"
-msgstr ""
+msgstr "عدد الدول الأعضاء العابرة للحدود"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:501
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:754
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:763
 msgid "Stakeholders"
-msgstr ""
+msgstr "أصحاب المصلحة"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:505
 msgid "Knowledge Stakeholders"
-msgstr ""
+msgstr "أصحاب المصلحة المدرَّبون"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:509
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:533
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:1291
 msgid "Total"
-msgstr ""
+msgstr "الإجمالي"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:516
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:540
 msgid "Female"
-msgstr ""
+msgstr "إناث"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:523
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:547
 msgid "Youth"
-msgstr ""
+msgstr "الشباب"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:529
 msgid "Awareness Stakeholders"
-msgstr ""
+msgstr "أصحاب المصلحة الذين تمت توعيتهم"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:556
 msgid "Number of Stakeholder Groups"
-msgstr ""
+msgstr "عدد مجموعات أصحاب المصلحة"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:563
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:869
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:1044
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:869
 msgid "Stakeholder Group Type"
-msgstr ""
+msgstr "نوع مجموعة أصحاب المصلحة"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:579
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:584
@@ -1658,11 +1658,11 @@ msgstr "ملاحظات"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:586
 msgid "Additional notes..."
-msgstr ""
+msgstr "ملاحظات إضافية..."
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:617
 msgid "Manage IHP-IX activities reported by member states and institutions."
-msgstr ""
+msgstr "إدارة أنشطة البرنامج التي أبلغت عنها الدول الأعضاء والمؤسسات."
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:626
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:39
@@ -1683,125 +1683,125 @@ msgstr "الأنشطة"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:637
 msgid "Add New Activity"
-msgstr ""
+msgstr "إضافة نشاط جديد"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:642
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:1653
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:1659
 msgid "Add Activity"
-msgstr ""
+msgstr "إضافة نشاط"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:662
 msgid "All Priority Areas"
-msgstr ""
+msgstr "جميع المجالات ذات الأولوية"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:731
 msgid "member states"
-msgstr ""
+msgstr "الدول الأعضاء"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:774
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:1777
 msgid "No Activities Yet"
-msgstr ""
+msgstr "لا توجد أنشطة بعد"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:775
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:1778
 msgid "Use the form above to add IHP-IX activities."
-msgstr ""
+msgstr "استخدم النموذج أعلاه لإضافة أنشطة البرنامج."
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:810
 #, python-format
 msgid "Showing %(start)s to %(end)s of %(total)s activities"
-msgstr ""
+msgstr "عرض %(start)s إلى %(end)s من %(total)s نشاطًا"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:829
 msgid "Edit Activity"
-msgstr ""
+msgstr "تعديل النشاط"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:836
 msgid "Loading activity data..."
-msgstr ""
+msgstr "جارٍ تحميل بيانات النشاط..."
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:1580
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:1582
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:762
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:766
 msgid "Upload error"
-msgstr ""
+msgstr "خطأ في الرفع"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:1631
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:1743
 msgid "Title and Priority Area are required"
-msgstr ""
+msgstr "العنوان والمجال ذو الأولوية إلزاميان"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:1651
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:887
 msgid "Unknown error"
-msgstr ""
+msgstr "خطأ غير معروف"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:1720
 msgid "Error loading activity"
-msgstr ""
+msgstr "خطأ في تحميل النشاط"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:4
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:30
 msgid "IHP-IX Content Management"
-msgstr ""
+msgstr "إدارة محتوى البرنامج الهيدرولوجي الدولي"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:31
 msgid "Manage the content displayed on the IHP-IX portal page."
-msgstr ""
+msgstr "إدارة المحتوى المعروض في صفحة بوابة البرنامج."
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:56
 msgid "Hero Section"
-msgstr ""
+msgstr "قسم الواجهة الرئيسية"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:58
 msgid "Main banner at the top of the IHP-IX page (title and subtitle)."
-msgstr ""
+msgstr "اللافتة الرئيسية في أعلى صفحة البرنامج (العنوان والعنوان الفرعي)."
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:66
 msgid "Hero"
-msgstr ""
+msgstr "الواجهة الرئيسية"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:74
 msgid "Main page title"
-msgstr ""
+msgstr "العنوان الرئيسي للصفحة"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:77
 msgid "Subtitle"
-msgstr ""
+msgstr "العنوان الفرعي"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:80
 msgid "Hero subtitle text..."
-msgstr ""
+msgstr "نص العنوان الفرعي للواجهة..."
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:84
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:121
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:223
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:361
 msgid "Save"
-msgstr ""
+msgstr "حفظ"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:97
 msgid "Section Titles"
-msgstr ""
+msgstr "عناوين الأقسام"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:100
 msgid "Edit the heading text for each section of the IHP-IX landing page."
-msgstr ""
+msgstr "حرّر نص العنوان لكل قسم من الصفحة الرئيسية للبرنامج."
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:117
 msgid "Section heading"
-msgstr ""
+msgstr "عنوان القسم"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:136
 msgid "Call to Action Cards"
-msgstr ""
+msgstr "بطاقات الدعوة إلى العمل"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:139
 msgid "Manage the call-to-action cards displayed on the IHP-IX landing page."
-msgstr ""
+msgstr "إدارة بطاقات الدعوة إلى العمل في الصفحة الرئيسية للبرنامج."
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:151
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:216
@@ -1811,95 +1811,95 @@ msgstr ""
 #: ckanext/theme_ejemplo/templates/admin/users.html:55
 #: ckanext/theme_ejemplo/templates/admin/users.html:121
 msgid "Active"
-msgstr ""
+msgstr "نشط"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:151
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:282
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:873
 msgid "Inactive"
-msgstr ""
+msgstr "غير نشط"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:163
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:301
 msgid "No image"
-msgstr ""
+msgstr "لا توجد صورة"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:172
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:308
 msgid "Drop image or click"
-msgstr ""
+msgstr "أفلت صورة أو انقر"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:179
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:315
 msgid "Or paste image URL..."
-msgstr ""
+msgstr "أو الصق رابط صورة..."
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:187
 #: ckanext/theme_ejemplo/templates/admin/portal_cards.html:76
 msgid "Card title"
-msgstr ""
+msgstr "عنوان البطاقة"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:193
 #: ckanext/theme_ejemplo/templates/admin/portal_cards.html:86
 msgid "Brief description..."
-msgstr ""
+msgstr "وصف موجز..."
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:203
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:341
 msgid "Badge Text"
-msgstr ""
+msgstr "نص الشارة"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:207
 msgid "e.g. New, Coming Soon"
-msgstr ""
+msgstr "مثال: جديد، قريبًا"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:238
 msgid "No Call to Action Cards"
-msgstr ""
+msgstr "لا توجد بطاقات دعوة إلى العمل"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:239
 msgid "No CTA cards have been configured yet."
-msgstr ""
+msgstr "لم يتم إعداد أي بطاقات دعوة إلى العمل بعد."
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:252
 msgid "Priority Areas"
-msgstr ""
+msgstr "المجالات ذات الأولوية"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:255
 msgid "Manage the IHP-IX priority areas displayed on the portal."
-msgstr ""
+msgstr "إدارة المجالات ذات الأولوية للبرنامج المعروضة في البوابة."
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:325
 msgid "Priority area title"
-msgstr ""
+msgstr "عنوان المجال ذي الأولوية"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:331
 msgid "Priority area description..."
-msgstr ""
+msgstr "وصف المجال ذي الأولوية..."
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:334
 msgid "UNESCO document URL"
-msgstr ""
+msgstr "رابط وثيقة اليونسكو"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:345
 msgid "e.g. New, Updated"
-msgstr ""
+msgstr "مثال: جديد، محدَّث"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:377
 msgid "No Priority Areas"
-msgstr ""
+msgstr "لا توجد مجالات ذات أولوية"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:378
 msgid "No priority areas have been configured yet."
-msgstr ""
+msgstr "لم يتم إعداد أي مجالات ذات أولوية بعد."
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:760
 msgid "Image uploaded successfully"
-msgstr ""
+msgstr "تم رفع الصورة بنجاح"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:859
 msgid "Changes saved successfully"
-msgstr ""
+msgstr "تم حفظ التغييرات بنجاح"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_overview.html:3
 msgid "IHP-IX Overview"
@@ -1918,8 +1918,8 @@ msgid ""
 "Aggregate view of reported activities: KPIs, targets, completeness and "
 "breakdowns. Aligned with the IHP-IX reporting guidelines."
 msgstr ""
-"عرض مجمّع للأنشطة المُبلَّغ عنها: KPI، الأهداف، الاكتمال، والتفاصيل. متوافق مع "
-"إرشادات إعداد التقارير الخاصة بـ IHP-IX."
+"عرض مجمّع للأنشطة المُبلَّغ عنها: KPI، الأهداف، الاكتمال، والتفاصيل. متوافق "
+"مع إرشادات إعداد التقارير الخاصة بـ IHP-IX."
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_overview.html:277
 #: ckanext/theme_ejemplo/templates/admin/ihpix_overview.html:286
@@ -2386,8 +2386,8 @@ msgstr ""
 
 #: ckanext/theme_ejemplo/templates/admin/open_learning.html:32
 msgid ""
-"Curate which courses from the UNESCO Open Learning platform are shown on the "
-"site. New courses arrive as pending and are only published once approved."
+"Curate which courses from the UNESCO Open Learning platform are shown on the"
+" site. New courses arrive as pending and are only published once approved."
 msgstr ""
 
 #: ckanext/theme_ejemplo/templates/admin/open_learning.html:34
@@ -2456,7 +2456,7 @@ msgstr "ابدأ:"
 
 #: ckanext/theme_ejemplo/templates/admin/open_learning.html:151
 msgid "Type"
-msgstr ""
+msgstr "النوع"
 
 #: ckanext/theme_ejemplo/templates/admin/open_learning.html:153
 #: ckanext/theme_ejemplo/templates/admin/open_learning.html:482
@@ -2671,7 +2671,7 @@ msgstr ""
 
 #: ckanext/theme_ejemplo/templates/admin/stats.html:102
 msgid "Top contributors"
-msgstr ""
+msgstr "أبرز المساهمين"
 
 #: ckanext/theme_ejemplo/templates/admin/stats.html:116
 #: ckanext/theme_ejemplo/templates/group/snippets/info.html:45
@@ -3094,7 +3094,8 @@ msgid "ticket(s)"
 msgstr ""
 
 #: ckanext/theme_ejemplo/templates/bug_tickets/new.html:25
-msgid "Describe the issue you encountered. Include as much detail as possible."
+msgid ""
+"Describe the issue you encountered. Include as much detail as possible."
 msgstr ""
 
 #: ckanext/theme_ejemplo/templates/bug_tickets/new.html:41
@@ -3217,8 +3218,8 @@ msgstr ""
 #: ckanext/theme_ejemplo/templates/citizen_science_portal/index.html:45
 msgid ""
 "Citizen Science involves public participation in scientific research, "
-"promoting collaboration between scientists and society. In water management, "
-"it empowers communities to collect and analyze hydrological and "
+"promoting collaboration between scientists and society. In water management,"
+" it empowers communities to collect and analyze hydrological and "
 "environmental data, enhancing both scientific understanding and informed "
 "local decision-making."
 msgstr ""
@@ -3269,11 +3270,11 @@ msgstr "الدورات"
 
 #: ckanext/theme_ejemplo/templates/courses/index.html:29
 msgid ""
-"Courses from the <a href=\"https://openlearning.unesco.org/program/"
-"intergovernmental-hydrological-programme-ihp/\" target=\"_blank\" "
-"style=\"color:#fff; font-weight: bold; text-decoration: underline; text-"
-"underline-offset: 2px;\">IHP Open Learning platform</a>, curated by the IHP-"
-"WINS team."
+"Courses from the <a "
+"href=\"https://openlearning.unesco.org/program/intergovernmental-"
+"hydrological-programme-ihp/\" target=\"_blank\" style=\"color:#fff; font-"
+"weight: bold; text-decoration: underline; text-underline-offset: 2px;\">IHP "
+"Open Learning platform</a>, curated by the IHP-WINS team."
 msgstr ""
 
 #: ckanext/theme_ejemplo/templates/courses/index.html:37
@@ -3453,8 +3454,8 @@ msgstr ""
 
 #: ckanext/theme_ejemplo/templates/group/events.html:114
 msgid ""
-"Events can be associated with this initiative when creating or editing water "
-"events."
+"Events can be associated with this initiative when creating or editing water"
+" events."
 msgstr ""
 
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:506
@@ -3478,7 +3479,7 @@ msgstr ""
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:651
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:516
 msgid "Filter Activities"
-msgstr ""
+msgstr "تصفية الأنشطة"
 
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:525
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:525
@@ -3489,7 +3490,7 @@ msgstr ""
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:748
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:587
 msgid "Showing"
-msgstr ""
+msgstr "عرض"
 
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:587
 #: ckanext/theme_ejemplo/templates/group/snippets/info.html:46
@@ -3503,109 +3504,109 @@ msgstr ""
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:790
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:617
 msgid "Export CSV"
-msgstr ""
+msgstr "تصدير CSV"
 
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:732
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:907
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:732
 msgid "Cross-cutting Working Groups"
-msgstr ""
+msgstr "مجموعات العمل الشاملة"
 
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:748
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:923
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:748
 msgid "Products & Training"
-msgstr ""
+msgstr "المنتجات والتدريب"
 
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:758
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:933
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:758
 msgid "Knowledge Product Type (Other)"
-msgstr ""
+msgstr "نوع المنتج المعرفي (آخر)"
 
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:764
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:939
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:764
 msgid "# Knowledge Products"
-msgstr ""
+msgstr "عدد المنتجات المعرفية"
 
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:776
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:951
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:776
 msgid "# Scientific Products"
-msgstr ""
+msgstr "عدد المنتجات العلمية"
 
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:788
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:963
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:788
 msgid "# Training Materials"
-msgstr ""
+msgstr "عدد المواد التدريبية"
 
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:794
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:969
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:794
 msgid "# Curricula"
-msgstr ""
+msgstr "عدد المناهج"
 
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:800
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:975
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:800
 msgid "# Transboundary Member States"
-msgstr ""
+msgstr "عدد الدول الأعضاء العابرة للحدود"
 
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:812
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:987
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:812
 msgid "Knowledge Activity Type (Other)"
-msgstr ""
+msgstr "نوع النشاط المعرفي (آخر)"
 
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:822
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:997
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:822
 msgid "Stakeholder Engagement"
-msgstr ""
+msgstr "إشراك أصحاب المصلحة"
 
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:827
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:1002
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:827
 msgid "Knowledge"
-msgstr ""
+msgstr "المعرفة"
 
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:833
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:1008
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:833
 msgid "Knowledge (Female)"
-msgstr ""
+msgstr "المعرفة (إناث)"
 
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:839
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:1014
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:839
 msgid "Knowledge (Youth)"
-msgstr ""
+msgstr "المعرفة (شباب)"
 
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:845
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:1020
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:845
 msgid "Awareness"
-msgstr ""
+msgstr "التوعية"
 
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:851
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:1026
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:851
 msgid "Awareness (Female)"
-msgstr ""
+msgstr "التوعية (إناث)"
 
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:857
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:1032
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:857
 msgid "Awareness (Youth)"
-msgstr ""
+msgstr "التوعية (شباب)"
 
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:863
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:1038
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:863
 msgid "Stakeholder Groups"
-msgstr ""
+msgstr "مجموعات أصحاب المصلحة"
 
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:883
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:956
@@ -3614,25 +3615,25 @@ msgstr ""
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:883
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:956
 msgid "View Details"
-msgstr ""
+msgstr "عرض التفاصيل"
 
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:899
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:1077
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:899
 msgid "Page navigation"
-msgstr ""
+msgstr "التنقل بين الصفحات"
 
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:901
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:1079
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:901
 msgid "Previous"
-msgstr ""
+msgstr "السابق"
 
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:915
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:1093
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:915
 msgid "Next"
-msgstr ""
+msgstr "التالي"
 
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:926
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:926
@@ -3640,26 +3641,27 @@ msgid "No IHP-IX activities found"
 msgstr ""
 
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:927
-msgid "No reported activities match the current filters for this member state."
+msgid ""
+"No reported activities match the current filters for this member state."
 msgstr ""
 
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:930
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:1108
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:930
 msgid "Clear All Filters"
-msgstr ""
+msgstr "مسح جميع عوامل التصفية"
 
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:953
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:1132
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:953
 msgid "Hide Details"
-msgstr ""
+msgstr "إخفاء التفاصيل"
 
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:988
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:1171
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:988
 msgid "No activities to export."
-msgstr ""
+msgstr "لا توجد أنشطة للتصدير."
 
 #: ckanext/theme_ejemplo/templates/group/index.html:13
 msgid "Search groups..."
@@ -3834,8 +3836,8 @@ msgstr "مرحبًا"
 #: ckanext/theme_ejemplo/templates/home/snippets/about_text.html:1
 msgid ""
 "<h1>The IHP Water Information Network System (IHP-WINS)</h1> <p>The "
-"<strong>Intergovernmental Hydrological Programme's Water Information Network "
-"System (IHP-WINS)</strong> is designed to promote the <em>sharing and "
+"<strong>Intergovernmental Hydrological Programme's Water Information Network"
+" System (IHP-WINS)</strong> is designed to promote the <em>sharing and "
 "dissemination of water-related data and information</em> among countries, "
 "organizations, and stakeholders involved in water resources management, as "
 "part of the UNESCO IHP mandate.</p> <p>The main objective of IHP-WINS is "
@@ -3847,27 +3849,28 @@ msgid ""
 "scales.</p> <p>IHP-WINS provides a platform for integrating and harmonizing "
 "water-related data and information from diverse sources, such as monitoring "
 "networks, research institutions, government agencies, and international "
-"organizations. It promotes the use of standardized data formats and metadata "
-"to ensure compatibility and interoperability of information across different "
-"systems and platforms.</p> <h2>Key features of IHP-WINS include:</h2> <ul> "
-"<li><strong>Data Sharing:</strong> IHP-WINS facilitates the sharing of water-"
-"related data, including hydrological data, water quality data, and climate "
-"data. It provides a secure and centralized repository for storing and "
-"accessing these datasets, allowing users to contribute their data and access "
-"data shared by others.</li> <li><strong>Information Exchange:</strong> The "
-"platform promotes collaboration and knowledge exchange among water "
-"professionals, researchers, policymakers, and other stakeholders. It enables "
-"the sharing of research findings, reports, publications, and other relevant "
-"information related to water resources management.</li> <li><strong>Decision "
-"Support:</strong> IHP-WINS supports decision-making processes by providing "
-"tools and services for data visualization, analysis, and modeling. It helps "
-"stakeholders assess water availability, water quality, and water-related "
-"risks, contributing to informed decision-making for sustainable water "
-"management.</li> <li><strong>Capacity Building:</strong> The platform serves "
-"as a resource hub for capacity-building materials, training modules, and "
-"educational resources related to water resources management. It facilitates "
-"the dissemination of knowledge and best practices, fostering the development "
-"of technical skills and expertise in water-related disciplines.</li> "
+"organizations. It promotes the use of standardized data formats and metadata"
+" to ensure compatibility and interoperability of information across "
+"different systems and platforms.</p> <h2>Key features of IHP-WINS "
+"include:</h2> <ul> <li><strong>Data Sharing:</strong> IHP-WINS facilitates "
+"the sharing of water-related data, including hydrological data, water "
+"quality data, and climate data. It provides a secure and centralized "
+"repository for storing and accessing these datasets, allowing users to "
+"contribute their data and access data shared by others.</li> "
+"<li><strong>Information Exchange:</strong> The platform promotes "
+"collaboration and knowledge exchange among water professionals, researchers,"
+" policymakers, and other stakeholders. It enables the sharing of research "
+"findings, reports, publications, and other relevant information related to "
+"water resources management.</li> <li><strong>Decision Support:</strong> IHP-"
+"WINS supports decision-making processes by providing tools and services for "
+"data visualization, analysis, and modeling. It helps stakeholders assess "
+"water availability, water quality, and water-related risks, contributing to "
+"informed decision-making for sustainable water management.</li> "
+"<li><strong>Capacity Building:</strong> The platform serves as a resource "
+"hub for capacity-building materials, training modules, and educational "
+"resources related to water resources management. It facilitates the "
+"dissemination of knowledge and best practices, fostering the development of "
+"technical skills and expertise in water-related disciplines.</li> "
 "<li><strong>Collaboration and Networking:</strong> IHP-WINS promotes "
 "collaboration and networking among water professionals and organizations "
 "through its community-based approach. It facilitates the establishment of "
@@ -3888,8 +3891,8 @@ msgstr ""
 "(IHP-WINS)</strong> لتعزيز <em>مشاركة ونشر البيانات والمعلومات المتعلقة "
 "بالمياه</em> بين الدول والمنظمات وأصحاب المصلحة المشاركين في إدارة الموارد "
 "المائية، كجزء من تفويض برنامج الهيدرولوجيا الدولي لليونسكو.</p> <p>الهدف "
-"الرئيسي من IHP-WINS هو <strong>تعزيز توفر وإمكانية الوصول واستخدام المعلومات "
-"المتعلقة بالمياه، مع التركيز على دعم اتخاذ القرارات المستندة إلى الأدلة "
+"الرئيسي من IHP-WINS هو <strong>تعزيز توفر وإمكانية الوصول واستخدام المعلومات"
+" المتعلقة بالمياه، مع التركيز على دعم اتخاذ القرارات المستندة إلى الأدلة "
 "والإدارة المستدامة للموارد المائية</strong>. يهدف إلى تسهيل تبادل البيانات "
 "والمعرفة وأفضل الممارسات بين أصحاب المصلحة على مختلف المستويات، بما في ذلك "
 "المستويات الوطنية والإقليمية والعالمية.</p> <p>يوفر IHP-WINS منصة لتكامل "
@@ -3897,32 +3900,33 @@ msgstr ""
 "المراقبة، والمؤسسات البحثية، والوكالات الحكومية، والمنظمات الدولية. يعزز "
 "استخدام تنسيقات البيانات الموحدة والبيانات الوصفية لضمان التوافق والتشغيل "
 "البيني للمعلومات عبر الأنظمة والمنصات المختلفة.</p> <h2>تشمل الميزات "
-"الرئيسية لـ IHP-WINS ما يلي:</h2> <ul> <li><strong>مشاركة البيانات:</strong> "
-"يسهل IHP-WINS مشاركة البيانات المتعلقة بالمياه، بما في ذلك البيانات "
-"الهيدرولوجية، وبيانات جودة المياه، وبيانات المناخ. يوفر مستودعًا آمنًا ومركزيًا "
-"لتخزين والوصول إلى هذه المجموعات، مما يتيح للمستخدمين المساهمة ببياناتهم "
-"والوصول إلى البيانات المشتركة من قبل الآخرين.</li> <li><strong>تبادل "
-"المعلومات:</strong> يعزز النظام الأساسي التعاون وتبادل المعرفة بين المهنيين "
-"في مجال المياه، والباحثين، وصناع السياسات، وأصحاب المصلحة الآخرين. يتيح "
-"مشاركة النتائج البحثية، والتقارير، والإصدارات، والمعلومات ذات الصلة بإدارة "
-"الموارد المائية.</li> <li><strong>دعم القرار:</strong> يدعم IHP-WINS عمليات "
-"اتخاذ القرار من خلال توفير أدوات وخدمات لتحليل البيانات، والتصور، والنمذجة. "
-"يساعد أصحاب المصلحة على تقييم توفر المياه، وجودة المياه، والمخاطر المتعلقة "
-"بالمياه، مما يسهم في اتخاذ القرارات المستنيرة للإدارة المستدامة للمياه.</li> "
-"<li><strong>بناء القدرات:</strong> يعمل النظام الأساسي كمركز لمواد بناء "
-"القدرات، والوحدات التدريبية، والموارد التعليمية المتعلقة بإدارة الموارد "
-"المائية. يسهل نشر المعرفة وأفضل الممارسات، مما يعزز تطوير المهارات والخبرات "
-"الفنية في المجالات المتعلقة بالمياه.</li> <li><strong>التعاون والشبكات:</"
-"strong> يعزز IHP-WINS التعاون والشبكات بين المهنيين في مجال المياه والمنظمات "
-"من خلال نهجه القائم على المجتمع. يسهل إنشاء الشراكات، وتبادل الخبرات، وإنشاء "
-"مجتمعات الممارسة التي تركز على مواضيع إدارة المياه المحددة.</li> </ul> <p>من "
-"خلال IHP-WINS، يهدف برنامج الهيدرولوجيا الدولي لليونسكو إلى تعزيز التعاون "
-"الدولي، وتحسين توفر البيانات، وتعزيز فهم وإدارة الموارد المائية في جميع "
-"أنحاء العالم. تسهم المبادرة في تحقيق أهداف التنمية المستدامة المتعلقة "
-"بالمياه وتدعم الدول في جهودها لمواجهة التحديات المتعلقة بالمياه وتعزيز "
-"الإدارة المتكاملة للموارد المائية.</p> <p>بشكل عام، يلعب IHP-WINS دورًا حيويًا "
-"في تعزيز حوكمة المياه، ودعم اتخاذ القرارات المستندة إلى الأدلة، وتعزيز "
-"التعاون الدولي من أجل إدارة مستدامة للموارد المائية.</p>"
+"الرئيسية لـ IHP-WINS ما يلي:</h2> <ul> <li><strong>مشاركة البيانات:</strong>"
+" يسهل IHP-WINS مشاركة البيانات المتعلقة بالمياه، بما في ذلك البيانات "
+"الهيدرولوجية، وبيانات جودة المياه، وبيانات المناخ. يوفر مستودعًا آمنًا "
+"ومركزيًا لتخزين والوصول إلى هذه المجموعات، مما يتيح للمستخدمين المساهمة "
+"ببياناتهم والوصول إلى البيانات المشتركة من قبل الآخرين.</li> "
+"<li><strong>تبادل المعلومات:</strong> يعزز النظام الأساسي التعاون وتبادل "
+"المعرفة بين المهنيين في مجال المياه، والباحثين، وصناع السياسات، وأصحاب "
+"المصلحة الآخرين. يتيح مشاركة النتائج البحثية، والتقارير، والإصدارات، "
+"والمعلومات ذات الصلة بإدارة الموارد المائية.</li> <li><strong>دعم "
+"القرار:</strong> يدعم IHP-WINS عمليات اتخاذ القرار من خلال توفير أدوات "
+"وخدمات لتحليل البيانات، والتصور، والنمذجة. يساعد أصحاب المصلحة على تقييم "
+"توفر المياه، وجودة المياه، والمخاطر المتعلقة بالمياه، مما يسهم في اتخاذ "
+"القرارات المستنيرة للإدارة المستدامة للمياه.</li> <li><strong>بناء "
+"القدرات:</strong> يعمل النظام الأساسي كمركز لمواد بناء القدرات، والوحدات "
+"التدريبية، والموارد التعليمية المتعلقة بإدارة الموارد المائية. يسهل نشر "
+"المعرفة وأفضل الممارسات، مما يعزز تطوير المهارات والخبرات الفنية في المجالات"
+" المتعلقة بالمياه.</li> <li><strong>التعاون والشبكات:</strong> يعزز IHP-WINS"
+" التعاون والشبكات بين المهنيين في مجال المياه والمنظمات من خلال نهجه القائم "
+"على المجتمع. يسهل إنشاء الشراكات، وتبادل الخبرات، وإنشاء مجتمعات الممارسة "
+"التي تركز على مواضيع إدارة المياه المحددة.</li> </ul> <p>من خلال IHP-WINS، "
+"يهدف برنامج الهيدرولوجيا الدولي لليونسكو إلى تعزيز التعاون الدولي، وتحسين "
+"توفر البيانات، وتعزيز فهم وإدارة الموارد المائية في جميع أنحاء العالم. تسهم "
+"المبادرة في تحقيق أهداف التنمية المستدامة المتعلقة بالمياه وتدعم الدول في "
+"جهودها لمواجهة التحديات المتعلقة بالمياه وتعزيز الإدارة المتكاملة للموارد "
+"المائية.</p> <p>بشكل عام، يلعب IHP-WINS دورًا حيويًا في تعزيز حوكمة المياه، "
+"ودعم اتخاذ القرارات المستندة إلى الأدلة، وتعزيز التعاون الدولي من أجل إدارة "
+"مستدامة للموارد المائية.</p>"
 
 #: ckanext/theme_ejemplo/templates/home/snippets/community_grid.html:13
 msgid "Community and Knowledge"
@@ -4339,16 +4343,17 @@ msgstr "بوابة إنترنت الأشياء"
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:3
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:733
 msgid "IHP-IX Dashboard"
-msgstr ""
+msgstr "لوحة معلومات البرنامج الهيدرولوجي الدولي"
 
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:735
-msgid "Overview of IHP-IX activities, priority areas and country participation"
-msgstr ""
+msgid ""
+"Overview of IHP-IX activities, priority areas and country participation"
+msgstr "نظرة عامة على أنشطة البرنامج والمجالات ذات الأولوية ومشاركة البلدان"
 
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:740
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:663
 msgid "Explore Activities"
-msgstr ""
+msgstr "استكشاف الأنشطة"
 
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:743
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:1018
@@ -4360,132 +4365,132 @@ msgstr "إرسال التقرير"
 
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:752
 msgid "Filters"
-msgstr ""
+msgstr "عوامل التصفية"
 
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:779
 msgid "All Bienniums"
-msgstr ""
+msgstr "جميع فترات السنتين"
 
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:790
 msgid "Search country…"
-msgstr ""
+msgstr "ابحث عن بلد…"
 
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:796
 msgid "Reset all filters"
-msgstr ""
+msgstr "إعادة تعيين جميع عوامل التصفية"
 
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:828
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:1560
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:652
 msgid "Countries"
-msgstr ""
+msgstr "البلدان"
 
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:841
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:1561
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:656
 msgid "Institutions"
-msgstr ""
+msgstr "المؤسسات"
 
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:855
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:1562
 msgid "Pending Reports"
-msgstr ""
+msgstr "التقارير المعلقة"
 
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:869
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:1574
 msgid "Stakeholders Knowledge"
-msgstr ""
+msgstr "أصحاب المصلحة المدرَّبون"
 
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:877
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:1575
 msgid "Stakeholders Awareness"
-msgstr ""
+msgstr "أصحاب المصلحة الذين تمت توعيتهم"
 
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:893
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:1577
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:781
 msgid "Scientific Products"
-msgstr ""
+msgstr "المنتجات العلمية"
 
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:901
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:1578
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:790
 msgid "Training Materials"
-msgstr ""
+msgstr "المواد التدريبية"
 
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:912
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:678
 msgid "Global Activity Distribution"
-msgstr ""
+msgstr "التوزيع العالمي للأنشطة"
 
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:919
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:689
 msgid "Africa"
-msgstr ""
+msgstr "أفريقيا"
 
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:922
 msgid "Asia and the Pacific"
-msgstr ""
+msgstr "آسيا والمحيط الهادئ"
 
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:925
 msgid "Europe and North America"
-msgstr ""
+msgstr "أوروبا وأمريكا الشمالية"
 
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:928
 msgid "Latin America and the Caribbean"
-msgstr ""
+msgstr "أمريكا اللاتينية ومنطقة البحر الكاريبي"
 
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:931
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:701
 msgid "Arab States"
-msgstr ""
+msgstr "الدول العربية"
 
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:944
 msgid "Activities by Priority Area"
-msgstr ""
+msgstr "الأنشطة حسب المجال ذي الأولوية"
 
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:950
 msgid "No priority area data available"
-msgstr ""
+msgstr "لا تتوفر بيانات للمجالات ذات الأولوية"
 
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:959
 msgid "Activities by Biennium"
-msgstr ""
+msgstr "الأنشطة حسب فترة السنتين"
 
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:965
 msgid "No biennium data available"
-msgstr ""
+msgstr "لا تتوفر بيانات لفترة السنتين"
 
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:978
 msgid "Top Outputs"
-msgstr ""
+msgstr "أبرز المخرجات"
 
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:984
 msgid "No output data available"
-msgstr ""
+msgstr "لا تتوفر بيانات للمخرجات"
 
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:993
 msgid "Region Distribution"
-msgstr ""
+msgstr "التوزيع حسب المنطقة"
 
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:999
 msgid "No region data available"
-msgstr ""
+msgstr "لا تتوفر بيانات للمناطق"
 
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:1009
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:902
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:7
 msgid "Activities Explorer"
-msgstr ""
+msgstr "مستكشف الأنشطة"
 
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:1014
 msgid "Review Reports"
-msgstr ""
+msgstr "مراجعة التقارير"
 
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:3
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:640
 msgid "IHP-IX Strategic Plan"
-msgstr ""
+msgstr "الخطة الاستراتيجية للبرنامج الهيدرولوجي الدولي"
 
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:6
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:6
@@ -4499,26 +4504,29 @@ msgid ""
 "— UNESCO's strategic framework for addressing global water challenges "
 "through science, innovation, and cooperation."
 msgstr ""
+"المرحلة التاسعة من البرنامج الهيدرولوجي الدولي (2022–2029): الإطار "
+"الاستراتيجي لليونسكو لمواجهة تحديات المياه العالمية من خلال العلم والابتكار "
+"والتعاون."
 
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:684
 msgid "Loading map data…"
-msgstr ""
+msgstr "جارٍ تحميل بيانات الخريطة…"
 
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:692
 msgid "Asia & Pacific"
-msgstr ""
+msgstr "آسيا والمحيط الهادئ"
 
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:695
 msgid "Europe & N. America"
-msgstr ""
+msgstr "أوروبا وأمريكا الشمالية"
 
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:698
 msgid "Latin America & Caribbean"
-msgstr ""
+msgstr "أمريكا اللاتينية ومنطقة البحر الكاريبي"
 
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:712
 msgid "Five Priority Areas"
-msgstr ""
+msgstr "خمسة مجالات ذات أولوية"
 
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:731
 #: ckanext/theme_ejemplo/templates/package/snippets/resource_item.html:92
@@ -4527,106 +4535,117 @@ msgstr ""
 
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:744
 msgid "Programme Impact"
-msgstr ""
+msgstr "أثر البرنامج"
 
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:754
 msgid "(Knowledge)"
-msgstr ""
+msgstr "(المعرفة)"
 
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:763
 msgid "(Awareness)"
-msgstr ""
+msgstr "(التوعية)"
 
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:800
 msgid "Get Involved"
-msgstr ""
+msgstr "شارك"
 
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:825
 msgid "Learn more"
-msgstr ""
+msgstr "اعرف المزيد"
 
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:839
 msgid "Report Activity"
-msgstr ""
+msgstr "الإبلاغ عن نشاط"
 
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:840
 msgid ""
 "Submit your IHP-IX activity report and contribute to global water science "
 "monitoring."
-msgstr ""
+msgstr "قدّم تقرير نشاطك في البرنامج وساهم في الرصد العالمي لعلوم المياه."
 
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:853
 msgid "Explore Dashboard"
-msgstr ""
+msgstr "استكشاف لوحة المعلومات"
 
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:854
 msgid ""
-"Visualize IHP-IX programme data with interactive charts, maps, and analytics."
-msgstr ""
+"Visualize IHP-IX programme data with interactive charts, maps, and "
+"analytics."
+msgstr "اعرض بيانات البرنامج برسوم بيانية تفاعلية وخرائط وتحليلات."
 
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:856
 msgid "Open Dashboard"
-msgstr ""
+msgstr "فتح لوحة المعلومات"
 
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:867
 msgid "View Outputs"
-msgstr ""
+msgstr "عرض المخرجات"
 
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:868
 msgid ""
 "Browse all IHP-IX outputs and activities organized by priority area and "
 "region."
 msgstr ""
+"تصفح جميع مخرجات وأنشطة البرنامج الهيدرولوجي الدولي مرتبة حسب المجال ذي "
+"الأولوية والمنطقة."
 
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:870
 msgid "Browse Outputs"
-msgstr ""
+msgstr "تصفح المخرجات"
 
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:885
 msgid "Admin: Manage IHP-IX Content"
-msgstr ""
+msgstr "المسؤول: إدارة محتوى البرنامج الهيدرولوجي الدولي"
 
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:887
 msgid "Manage"
-msgstr ""
+msgstr "إدارة"
 
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:972
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:1035
 msgid "activity"
-msgstr ""
+msgid_plural "activities"
+msgstr[0] "نشاط"
+msgstr[1] "نشاط واحد"
+msgstr[2] "نشاطان"
+msgstr[3] "أنشطة"
+msgstr[4] "نشاطًا"
+msgstr[5] "نشاط"
 
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:1033
 msgid "Unknown"
-msgstr ""
+msgstr "غير معروف"
 
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:1055
 msgid "Could not load map data"
-msgstr ""
+msgstr "تعذر تحميل بيانات الخريطة"
 
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:3
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:631
 msgid "IHP-IX Activities Explorer"
-msgstr ""
+msgstr "مستكشف أنشطة البرنامج الهيدرولوجي الدولي"
 
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:632
-msgid "Browse and filter reported activities across priority areas and outputs"
+msgid ""
+"Browse and filter reported activities across priority areas and outputs"
 msgstr ""
+"تصفح الأنشطة المبلَّغ عنها وصفِّها حسب المجالات ذات الأولوية والمخرجات"
 
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:660
 msgid "Search by title, country, institution…"
-msgstr ""
+msgstr "ابحث حسب العنوان أو البلد أو المؤسسة…"
 
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:725
 msgid "e.g. France"
-msgstr ""
+msgstr "مثال: فرنسا"
 
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:1104
 msgid "No activities found"
-msgstr ""
+msgstr "لم يتم العثور على أنشطة"
 
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:1105
 msgid "Try adjusting your filters or search terms to find activities."
-msgstr ""
+msgstr "جرّب تعديل عوامل التصفية أو مصطلحات البحث للعثور على أنشطة."
 
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:3
 msgid "Submit IHP-IX Report"
@@ -4641,18 +4660,20 @@ msgid ""
 "Report activities implemented under IHP-IX (2022–2029). The form covers 6 "
 "sections aligned with the official UNESCO reporting guidelines."
 msgstr ""
+"أبلغ عن الأنشطة المنفَّذة في إطار البرنامج (2022–2029). يتضمن النموذج 6 "
+"أقسام متوافقة مع المبادئ التوجيهية الرسمية لليونسكو للإبلاغ."
 
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:914
 msgid "About 10 minutes to complete"
-msgstr ""
+msgstr "حوالي 10 دقائق لإكماله"
 
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:915
 msgid "Your progress is saved automatically in this browser"
-msgstr ""
+msgstr "يُحفظ تقدمك تلقائيًا في هذا المتصفح"
 
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:916
 msgid "Fields marked with * are required"
-msgstr ""
+msgstr "الحقول المميزة بعلامة * إلزامية"
 
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:923
 msgid "Authentication Required"
@@ -4683,11 +4704,11 @@ msgstr "إرسال تقرير آخر"
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:946
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:2218
 msgid "We restored your unsaved answers from a previous session."
-msgstr ""
+msgstr "استعدنا إجاباتك غير المحفوظة من جلسة سابقة."
 
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:947
 msgid "Discard and start over"
-msgstr ""
+msgstr "تجاهل والبدء من جديد"
 
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:952
 msgid "Form sections"
@@ -4707,16 +4728,16 @@ msgstr "KPIs"
 
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:965
 msgid "Form completion"
-msgstr ""
+msgstr "اكتمال النموذج"
 
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:968
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:2032
 msgid "required fields completed"
-msgstr ""
+msgstr "حقول إلزامية مكتملة"
 
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:978
 msgid "Please review the following before submitting:"
-msgstr ""
+msgstr "يرجى مراجعة ما يلي قبل الإرسال:"
 
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:987
 msgid "General Information"
@@ -4728,8 +4749,8 @@ msgid ""
 "activity, including title, description, key objectives, key outcomes, and "
 "entities involved."
 msgstr ""
-"قدّم معلومات عامة وتفاصيل شاملة عن النشاط المنفّذ، بما في ذلك العنوان والوصف "
-"والأهداف الرئيسية والنتائج الرئيسية والجهات المشاركة."
+"قدّم معلومات عامة وتفاصيل شاملة عن النشاط المنفّذ، بما في ذلك العنوان والوصف"
+" والأهداف الرئيسية والنتائج الرئيسية والجهات المشاركة."
 
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:997
 msgid "Focal point"
@@ -4764,7 +4785,8 @@ msgid ""
 "Select the category that best represents the Lead Implementing Institution "
 "(one choice only)."
 msgstr ""
-"اختر الفئة التي تمثّل المؤسسة المنفّذة الرئيسية على أفضل وجه (خيار واحد فقط)."
+"اختر الفئة التي تمثّل المؤسسة المنفّذة الرئيسية على أفضل وجه (خيار واحد "
+"فقط)."
 
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:1023
 msgid "Select a category"
@@ -4787,8 +4809,8 @@ msgid ""
 "If there were other partners besides the Lead Implementing Institution, "
 "please provide their name(s)."
 msgstr ""
-"إذا كان هناك شركاء آخرون إلى جانب المؤسسة المنفّذة الرئيسية، يُرجى تقديم اسمهم/"
-"أسمائهم."
+"إذا كان هناك شركاء آخرون إلى جانب المؤسسة المنفّذة الرئيسية، يُرجى تقديم "
+"اسمهم/أسمائهم."
 
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:1045
 msgid "Partner 1, Partner 2, …"
@@ -4993,8 +5015,8 @@ msgstr "المساهمة في مجموعات العمل المتعدية"
 
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:1255
 msgid ""
-"Highlight linkages with Cross-cutting Working Groups or synergies with other "
-"related Priority Areas."
+"Highlight linkages with Cross-cutting Working Groups or synergies with other"
+" related Priority Areas."
 msgstr ""
 "أبرز الروابط مع مجموعات العمل المتعدية أو أوجه التآزر مع مجالات الأولوية "
 "الأخرى ذات الصلة."
@@ -5031,8 +5053,10 @@ msgstr "منطقة التنفيذ"
 
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:1296
 msgid ""
-"Indicate the Region(s) and Member State(s) that benefitted from the activity."
-msgstr "حدّد المنطقة (المناطق) والدولة (الدول) الأعضاء التي استفادت من النشاط."
+"Indicate the Region(s) and Member State(s) that benefitted from the "
+"activity."
+msgstr ""
+"حدّد المنطقة (المناطق) والدولة (الدول) الأعضاء التي استفادت من النشاط."
 
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:1301
 msgid "Did your activity benefit any Member States or specific Regions?"
@@ -5055,30 +5079,32 @@ msgstr "أي دولة (دول) عضو استفادت من النشاط؟"
 
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:1320
 msgid ""
-"Search and tick every Member State that benefited. Selected states appear as "
-"removable tags below."
+"Search and tick every Member State that benefited. Selected states appear as"
+" removable tags below."
 msgstr ""
+"ابحث عن كل دولة عضو مستفيدة وحددها. تظهر الدول المحددة أدناه كوسوم قابلة "
+"للإزالة."
 
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:1325
 msgid "Search a Member State…"
-msgstr ""
+msgstr "ابحث عن دولة عضو…"
 
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:1326
 msgid "Search Member States"
-msgstr ""
+msgstr "البحث عن الدول الأعضاء"
 
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:1337
 msgid "No Member States match your search."
-msgstr ""
+msgstr "لا توجد دول أعضاء مطابقة لبحثك."
 
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:1340
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:1978
 msgid "selected"
-msgstr ""
+msgstr "محدد"
 
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:1341
 msgid "Clear all"
-msgstr ""
+msgstr "مسح الكل"
 
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:1357
 msgid "Contribution to IHP-IX Key Performance Indicators and Targets"
@@ -5098,7 +5124,8 @@ msgstr "توليد المعرفة"
 
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:1370
 msgid ""
-"Did the activity generate (or improve) and/or disseminate knowledge products?"
+"Did the activity generate (or improve) and/or disseminate knowledge "
+"products?"
 msgstr "هل أنتج النشاط (أو حسّن) و/أو نشر منتجات معرفية؟"
 
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:1377
@@ -5119,8 +5146,8 @@ msgstr "تحسين المعرفة (المنتجات العلمية)"
 
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:1401
 msgid ""
-"Did the activity generate scientific products (articles, patents, conference "
-"proceedings)?"
+"Did the activity generate scientific products (articles, patents, conference"
+" proceedings)?"
 msgstr "هل أنتج النشاط منتجات علمية (مقالات، براءات اختراع، وقائع مؤتمرات)؟"
 
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:1408
@@ -5171,8 +5198,8 @@ msgstr "المناهج الدراسية – مواد ودورات التدريب
 
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:1469
 msgid ""
-"Did the activity produce any training materials or training course (physical/"
-"online)?"
+"Did the activity produce any training materials or training course "
+"(physical/online)?"
 msgstr "هل أنتج النشاط أي مواد تدريب أو دورة تدريبية (حضورية/عبر الإنترنت)؟"
 
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:1476
@@ -5220,8 +5247,8 @@ msgid ""
 "Did the activity support Member States in improving their transboundary "
 "water systems (surface water and groundwater)?"
 msgstr ""
-"هل دعم النشاط الدول الأعضاء في تحسين نظم المياه العابرة للحدود لديها (المياه "
-"السطحية والجوفية)؟"
+"هل دعم النشاط الدول الأعضاء في تحسين نظم المياه العابرة للحدود لديها (المياه"
+" السطحية والجوفية)؟"
 
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:1551
 msgid "Target 6: How many Member States were supported?"
@@ -5236,8 +5263,8 @@ msgid ""
 "Did the activity strengthen the capacity of certain Stakeholder Groups "
 "(river basin groups, communities, sectors)?"
 msgstr ""
-"هل عزّز النشاط قدرة مجموعات معيّنة من الجهات المعنية (مجموعات أحواض الأنهار، "
-"المجتمعات، القطاعات)؟"
+"هل عزّز النشاط قدرة مجموعات معيّنة من الجهات المعنية (مجموعات أحواض الأنهار،"
+" المجتمعات، القطاعات)؟"
 
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:1570
 msgid "Type of Stakeholder Groups targeted"
@@ -5282,11 +5309,11 @@ msgstr "إرسال للمراجعة"
 
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:1639
 msgid "Back to top"
-msgstr ""
+msgstr "العودة إلى الأعلى"
 
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:1671
 msgid "Dismiss notification"
-msgstr ""
+msgstr "إغلاق الإشعار"
 
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:1876
 msgid "Please fix the highlighted fields."
@@ -5302,19 +5329,19 @@ msgstr "خطأ في الشبكة. يُرجى التحقق من اتصالك وا
 
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:2033
 msgid "All required fields completed"
-msgstr ""
+msgstr "اكتملت جميع الحقول الإلزامية"
 
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:2120
 msgid "Saving…"
-msgstr ""
+msgstr "جارٍ الحفظ…"
 
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:2122
 msgid "Saved in this browser"
-msgstr ""
+msgstr "محفوظ في هذا المتصفح"
 
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:2240
 msgid "Draft discarded. You can start a fresh report."
-msgstr ""
+msgstr "تم تجاهل المسودة. يمكنك بدء تقرير جديد."
 
 #: ckanext/theme_ejemplo/templates/ihpix/snippets/helper.html:4
 msgid "What is IHP IX?"
@@ -5342,7 +5369,8 @@ msgstr ""
 
 #: ckanext/theme_ejemplo/templates/ihpix/snippets/helper.html:14
 msgid ""
-"Supports water governance for resilient societies and sustainable development"
+"Supports water governance for resilient societies and sustainable "
+"development"
 msgstr ""
 
 #: ckanext/theme_ejemplo/templates/initiatives/index.html:6
@@ -5494,10 +5522,10 @@ msgstr ""
 
 #: ckanext/theme_ejemplo/templates/iot_portal/index.html:46
 msgid ""
-"IoT systems use connected sensors to automatically collect real-time data on "
-"water and climate conditions. These systems transmit data wirelessly to "
-"central platforms, supporting faster response and better decisions for flood "
-"and drought management."
+"IoT systems use connected sensors to automatically collect real-time data on"
+" water and climate conditions. These systems transmit data wirelessly to "
+"central platforms, supporting faster response and better decisions for flood"
+" and drought management."
 msgstr ""
 
 #: ckanext/theme_ejemplo/templates/iot_portal/index.html:48
@@ -5607,7 +5635,8 @@ msgid ""
 msgstr ""
 
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:927
-msgid "No reported activities match the current filters for this organization."
+msgid ""
+"No reported activities match the current filters for this organization."
 msgstr ""
 
 #: ckanext/theme_ejemplo/templates/organization/index.html:13
@@ -5862,8 +5891,8 @@ msgstr ""
 #: ckanext/theme_ejemplo/templates/package/snippets/resources_list.html:80
 #, python-format
 msgid ""
-"<p class=\"empty\">This dataset has no data, <a href=\"%(url)s\">why not add "
-"some?</a></p>"
+"<p class=\"empty\">This dataset has no data, <a href=\"%(url)s\">why not add"
+" some?</a></p>"
 msgstr ""
 
 #: ckanext/theme_ejemplo/templates/package/snippets/resources_list.html:84
@@ -5890,8 +5919,8 @@ msgstr ""
 
 #: ckanext/theme_ejemplo/templates/people/index.html:32
 msgid ""
-"Browse profiles of people involved in UNESCO water data initiatives. Connect "
-"with experts by country, organization, or area of expertise."
+"Browse profiles of people involved in UNESCO water data initiatives. Connect"
+" with experts by country, organization, or area of expertise."
 msgstr ""
 
 #: ckanext/theme_ejemplo/templates/people/index.html:44
@@ -6395,9 +6424,10 @@ msgid ""
 "organization. With this user account, you will <strong>not</strong> be able "
 "to create datasets, groups, or other items.\""
 msgstr ""
-"يجب عليك استخدام هذا النموذج فقط إذا كان <strong>لديك منظمة مسجلة بالفعل</"
-"strong> وترغب في أن تصبح عضوًا في تلك المنظمة. مع حساب المستخدم هذا، لن تكون "
-"<strong>قادرًا</strong> على إنشاء مجموعات بيانات أو مجموعات أو عناصر أخرى."
+"يجب عليك استخدام هذا النموذج فقط إذا كان <strong>لديك منظمة مسجلة "
+"بالفعل</strong> وترغب في أن تصبح عضوًا في تلك المنظمة. مع حساب المستخدم هذا،"
+" لن تكون <strong>قادرًا</strong> على إنشاء مجموعات بيانات أو مجموعات أو "
+"عناصر أخرى."
 
 #: ckanext/theme_ejemplo/templates/user/news.html:8
 msgid "Create News"
@@ -6443,7 +6473,7 @@ msgstr ""
 
 #: ckanext/theme_ejemplo/templates/user/read_base.html:160
 msgid "Links"
-msgstr ""
+msgstr "الروابط"
 
 #: ckanext/theme_ejemplo/templates/user/read_base.html:203
 #: ckanext/theme_ejemplo/templates/user/read_base.html:206
@@ -6470,6 +6500,768 @@ msgstr ""
 msgid "Login"
 msgstr ""
 
+#: ckanext/theme_ejemplo/templates/overrides/snippets/changes/license.html
+msgid "Unknown license"
+msgstr "ترخيص غير معروف"
+
+#: ckanext/theme_ejemplo/templates/base.html
+msgid "See all results for"
+msgstr "عرض جميع النتائج لـ"
+
+#: ckanext/theme_ejemplo/templates/base.html
+msgid "No suggestions found"
+msgstr "لم يتم العثور على اقتراحات"
+
+#: ckanext/theme_ejemplo/templates/base.html
+msgid "Search suggestions"
+msgstr "اقتراحات البحث"
+
+#. IHP-IX (2026-09)
+msgid "Activities and outputs"
+msgstr "الأنشطة والمخرجات"
+
+#. IHP-IX (2026-09)
+msgid "Activities by Output and Biennium"
+msgstr "الأنشطة حسب المخرج وفترة السنتين"
+
+#. IHP-IX (2026-09)
+msgid "Activities over time"
+msgstr "الأنشطة عبر الزمن"
+
+#. IHP-IX (2026-09)
+msgid ""
+"Activities reported under this output of the IHP-IX Strategic Plan "
+"(2022–2029), the people who contributed them and the publications, events "
+"and data they produced."
+msgstr ""
+"الأنشطة المبلَّغ عنها في إطار هذا المخرج من الخطة الاستراتيجية للبرنامج "
+"الهيدرولوجي الدولي (2022–2029)، والأشخاص الذين ساهموا بها، والمنشورات "
+"والفعاليات والبيانات الناتجة عنها."
+
+#. IHP-IX (2026-09)
+msgid ""
+"Activities, outputs and contributors reported under this Priority Area of "
+"the IHP-IX Strategic Plan (2022–2029)."
+msgstr ""
+"الأنشطة والمخرجات والمساهمون المبلَّغ عنهم في إطار هذا المجال ذي الأولوية من"
+" الخطة الاستراتيجية للبرنامج الهيدرولوجي الدولي (2022–2029)."
+
+#. IHP-IX (2026-09)
+msgid ""
+"Activity reports submitted under IHP-IX (2022–2029). Drafts and returned "
+"reports can be edited and resubmitted; published reports appear in the IHP-"
+"IX portal."
+msgstr ""
+"تقارير الأنشطة المقدَّمة في إطار البرنامج الهيدرولوجي الدولي (2022–2029). "
+"يمكن تعديل المسودات والتقارير المعادة وإعادة تقديمها؛ وتظهر التقارير "
+"المنشورة في بوابة البرنامج."
+
+#. IHP-IX (2026-09)
+msgid "Add an external link manually"
+msgstr "إضافة رابط خارجي يدويًا"
+
+#. IHP-IX (2026-09)
+msgid "Add an item"
+msgstr "إضافة عنصر"
+
+#. IHP-IX (2026-09)
+msgid "Add link"
+msgstr "إضافة الرابط"
+
+#. IHP-IX (2026-09)
+msgid "All contributors"
+msgstr "جميع المساهمين"
+
+#. IHP-IX (2026-09)
+msgid "All contributors to this output"
+msgstr "جميع المساهمين في هذا المخرج"
+
+#. IHP-IX (2026-09)
+msgid "Assessment"
+msgstr "تقييم"
+
+#. IHP-IX (2026-09)
+msgid ""
+"Attach the outputs of this activity: publications, webinars, events and "
+"datasets already in IHP-WINS, or external links. They will be shown with the"
+" activity once it is published."
+msgstr ""
+"أرفق مخرجات هذا النشاط: المنشورات والندوات الإلكترونية والفعاليات ومجموعات "
+"البيانات الموجودة في IHP-WINS، أو روابط خارجية. ستُعرض مع النشاط بعد نشره."
+
+#. IHP-IX (2026-09)
+msgid "Back to my reports"
+msgstr "العودة إلى تقاريري"
+
+#. IHP-IX (2026-09)
+msgid "Be the first to report one."
+msgstr "كن أول من يبلغ عن نشاط."
+
+#. IHP-IX (2026-09)
+msgid "Book"
+msgstr "كتاب"
+
+#. IHP-IX (2026-09)
+msgid "Bridging the Data-Knowledge Gap"
+msgstr "سد الفجوة بين البيانات والمعرفة"
+
+#. IHP-IX (2026-09)
+msgid "Changes are saved on the server when you click \"Save as draft\""
+msgstr "تُحفظ التغييرات على الخادم عند النقر على \"حفظ كمسودة\""
+
+#. IHP-IX (2026-09)
+msgid "Community Groups"
+msgstr "المجموعات المجتمعية"
+
+#. IHP-IX (2026-09)
+msgid "Conference session or roundtable discussion"
+msgstr "جلسة مؤتمر أو مائدة مستديرة"
+
+#. IHP-IX (2026-09)
+msgid "Contributors"
+msgstr "المساهمون"
+
+#. IHP-IX (2026-09)
+msgid "Could not recompute the country summary."
+msgstr "تعذر إعادة حساب ملخص البلدان."
+
+#. IHP-IX (2026-09)
+msgid "Country summary recomputed for %(n)d countries."
+msgstr "أُعيد حساب ملخص البلدان لـ %(n)d بلدًا."
+
+#. IHP-IX (2026-09)
+msgid "Create a publication"
+msgstr "إنشاء منشور"
+
+#. IHP-IX (2026-09)
+msgid "Create an event"
+msgstr "إنشاء فعالية"
+
+#. IHP-IX (2026-09)
+msgid "Dataset"
+msgstr "مجموعة بيانات"
+
+#. IHP-IX (2026-09)
+msgid "Date"
+msgstr "التاريخ"
+
+#. IHP-IX (2026-09)
+msgid "Delete this report? This cannot be undone."
+msgstr "هل تريد حذف هذا التقرير؟ لا يمكن التراجع عن ذلك."
+
+#. IHP-IX (2026-09)
+msgid "Drafts"
+msgstr "المسودات"
+
+#. IHP-IX (2026-09)
+msgid "Eastern Europe"
+msgstr "أوروبا الشرقية"
+
+#. IHP-IX (2026-09)
+msgid "Ecohydrology and Water Quality"
+msgstr "الهيدرولوجيا الإيكولوجية وجودة المياه"
+
+#. IHP-IX (2026-09)
+msgid "Edit IHP-IX Activity Report"
+msgstr "تعديل تقرير نشاط البرنامج الهيدرولوجي الدولي"
+
+#. IHP-IX (2026-09)
+msgid "Event"
+msgstr "فعالية"
+
+#. IHP-IX (2026-09)
+msgid "Export full dataset (CSV)"
+msgstr "تصدير مجموعة البيانات الكاملة (CSV)"
+
+#. IHP-IX (2026-09)
+msgid "Global"
+msgstr "عالمي"
+
+#. IHP-IX (2026-09)
+msgid "Government Agencies"
+msgstr "الهيئات الحكومية"
+
+#. IHP-IX (2026-09)
+msgid "Governmental Organization"
+msgstr "منظمة حكومية"
+
+#. IHP-IX (2026-09)
+msgid "Groundwater and Human Settlements"
+msgstr "المياه الجوفية والمستوطنات البشرية"
+
+#. IHP-IX (2026-09)
+msgid "Hydrological Systems, Rivers, Climate Risk and Water-Food-Energy Nexus"
+msgstr ""
+"النظم الهيدرولوجية والأنهار والمخاطر المناخية والترابط بين المياه والغذاء "
+"والطاقة"
+
+#. IHP-IX (2026-09)
+msgid "IHP National Committee"
+msgstr "اللجنة الوطنية للبرنامج الهيدرولوجي الدولي"
+
+#. IHP-IX (2026-09)
+msgid "IHP-IX Contributors"
+msgstr "المساهمون في البرنامج الهيدرولوجي الدولي"
+
+#. IHP-IX (2026-09)
+msgid "IHP-IX Output"
+msgstr "مخرج البرنامج الهيدرولوجي الدولي"
+
+#. IHP-IX (2026-09)
+msgid "IHP-IX reports"
+msgstr "تقارير البرنامج الهيدرولوجي الدولي"
+
+#. IHP-IX (2026-09)
+msgid "If applicable, the date when the activity started."
+msgstr "إن وُجد، تاريخ بدء النشاط."
+
+#. IHP-IX (2026-09)
+msgid ""
+"Integrated Water Resources Management under Conditions of Global Change"
+msgstr "الإدارة المتكاملة للموارد المائية في ظل التغير العالمي"
+
+#. IHP-IX (2026-09)
+msgid "International Conference"
+msgstr "مؤتمر دولي"
+
+#. IHP-IX (2026-09)
+msgid "International Organizations"
+msgstr "المنظمات الدولية"
+
+#. IHP-IX (2026-09)
+msgid "Last report"
+msgstr "آخر تقرير"
+
+#. IHP-IX (2026-09)
+msgid "Last saved"
+msgstr "آخر حفظ"
+
+#. IHP-IX (2026-09)
+msgid "Lead institutions"
+msgstr "المؤسسات الرائدة"
+
+#. IHP-IX (2026-09)
+msgid "Linked Datasets"
+msgstr "مجموعات البيانات المرتبطة"
+
+#. IHP-IX (2026-09)
+msgid "Linked Events & Webinars"
+msgstr "الفعاليات والندوات الإلكترونية المرتبطة"
+
+#. IHP-IX (2026-09)
+msgid "Linked Publications"
+msgstr "المنشورات المرتبطة"
+
+#. IHP-IX (2026-09)
+msgid "Linked publications, events & data"
+msgstr "المنشورات والفعاليات والبيانات المرتبطة"
+
+#. IHP-IX (2026-09)
+msgid "Log in to explore and report"
+msgstr "سجّل الدخول للاستكشاف والإبلاغ"
+
+#. IHP-IX (2026-09)
+msgid "Matching your filters"
+msgstr "المطابقة لعوامل التصفية"
+
+#. IHP-IX (2026-09)
+msgid "Member State support"
+msgstr "دعم من دولة عضو"
+
+#. IHP-IX (2026-09)
+msgid "Methodology"
+msgstr "منهجية"
+
+#. IHP-IX (2026-09)
+msgid "Monthly count of activities"
+msgstr "العدد الشهري للأنشطة"
+
+#. IHP-IX (2026-09)
+msgid "Move down"
+msgstr "نقل لأسفل"
+
+#. IHP-IX (2026-09)
+msgid "Move up"
+msgstr "نقل لأعلى"
+
+#. IHP-IX (2026-09)
+msgid "My IHP-IX reports"
+msgstr "تقاريري في البرنامج الهيدرولوجي الدولي"
+
+#. IHP-IX (2026-09)
+msgid "My reports"
+msgstr "تقاريري"
+
+#. IHP-IX (2026-09)
+msgid "Needs changes"
+msgstr "يحتاج إلى تعديلات"
+
+#. IHP-IX (2026-09)
+msgid "New IHP-IX report"
+msgstr "تقرير جديد للبرنامج الهيدرولوجي الدولي"
+
+#. IHP-IX (2026-09)
+msgid "No contributors match these filters."
+msgstr "لا يوجد مساهمون مطابقون لهذه العوامل."
+
+#. IHP-IX (2026-09)
+msgid "No contributors yet."
+msgstr "لا يوجد مساهمون بعد."
+
+#. IHP-IX (2026-09)
+msgid "No institution data available"
+msgstr "لا تتوفر بيانات عن المؤسسات"
+
+#. IHP-IX (2026-09)
+msgid "No publications, events or data attached yet."
+msgstr "لم تُرفق أي منشورات أو فعاليات أو بيانات بعد."
+
+#. IHP-IX (2026-09)
+msgid "No published activities for this Priority Area yet."
+msgstr "لا توجد أنشطة منشورة لهذا المجال ذي الأولوية بعد."
+
+#. IHP-IX (2026-09)
+msgid "No published activities for this output yet."
+msgstr "لا توجد أنشطة منشورة لهذا المخرج بعد."
+
+#. IHP-IX (2026-09)
+msgid "No results. You can add it manually below."
+msgstr "لا توجد نتائج. يمكنك إضافته يدويًا أدناه."
+
+#. IHP-IX (2026-09)
+msgid "Non-Governmental Organization"
+msgstr "منظمة غير حكومية"
+
+#. IHP-IX (2026-09)
+msgid "Non-Governmental Organizations (NGOs)"
+msgstr "المنظمات غير الحكومية"
+
+#. IHP-IX (2026-09)
+msgid "Not in IHP-WINS yet?"
+msgstr "ليس موجودًا في IHP-WINS بعد؟"
+
+#. IHP-IX (2026-09)
+msgid "Official document"
+msgstr "الوثيقة الرسمية"
+
+#. IHP-IX (2026-09)
+msgid "Online training course"
+msgstr "دورة تدريبية عبر الإنترنت"
+
+#. IHP-IX (2026-09)
+msgid "Open full report"
+msgstr "فتح التقرير الكامل"
+
+#. IHP-IX (2026-09)
+msgid "Open in explorer"
+msgstr "فتح في المستكشف"
+
+#. IHP-IX (2026-09)
+msgid "Other"
+msgstr "آخر"
+
+#. IHP-IX (2026-09)
+msgid "Other link"
+msgstr "رابط آخر"
+
+#. IHP-IX (2026-09)
+msgid "Other links"
+msgstr "روابط أخرى"
+
+#. IHP-IX (2026-09)
+msgid "Other outputs of"
+msgstr "مخرجات أخرى لـ"
+
+#. IHP-IX (2026-09)
+msgid "Output data"
+msgstr "بيانات المخرج"
+
+#. IHP-IX (2026-09)
+msgid "Output not found"
+msgstr "المخرج غير موجود"
+
+#. IHP-IX (2026-09)
+msgid "Output page"
+msgstr "صفحة المخرج"
+
+#. IHP-IX (2026-09)
+msgid "Outputs"
+msgstr "المخرجات"
+
+#. IHP-IX (2026-09)
+msgid "PAs"
+msgstr "مجالات"
+
+#. IHP-IX (2026-09)
+msgid "Patents"
+msgstr "براءات الاختراع"
+
+#. IHP-IX (2026-09)
+msgid "Peer-reviewed articles"
+msgstr "مقالات محكَّمة"
+
+#. IHP-IX (2026-09)
+msgid "Pending review"
+msgstr "في انتظار المراجعة"
+
+#. IHP-IX (2026-09)
+msgid "People directory"
+msgstr "دليل الأشخاص"
+
+#. IHP-IX (2026-09)
+msgid ""
+"People who have reported published IHP-IX activities in IHP-WINS. Filter by "
+"Priority Area, Output or biennium to find who is working on what."
+msgstr ""
+"الأشخاص الذين أبلغوا عن أنشطة منشورة للبرنامج في IHP-WINS. صفِّ حسب المجال "
+"ذي الأولوية أو المخرج أو فترة السنتين لمعرفة من يعمل على ماذا."
+
+#. IHP-IX (2026-09)
+msgid "Physical training course"
+msgstr "دورة تدريبية حضورية"
+
+#. IHP-IX (2026-09)
+msgid "Physical training material (hard copy)"
+msgstr "مادة تدريبية مادية (نسخة ورقية)"
+
+#. IHP-IX (2026-09)
+msgid "Physical training material (soft copy)"
+msgstr "مادة تدريبية مادية (نسخة إلكترونية)"
+
+#. IHP-IX (2026-09)
+msgid "Priority Area / Output"
+msgstr "المجال ذو الأولوية / المخرج"
+
+#. IHP-IX (2026-09)
+msgid "Priority Area not found"
+msgstr "المجال ذو الأولوية غير موجود"
+
+#. IHP-IX (2026-09)
+msgid "Priority Area page"
+msgstr "صفحة المجال ذي الأولوية"
+
+#. IHP-IX (2026-09)
+msgid "Private Partner"
+msgstr "شريك من القطاع الخاص"
+
+#. IHP-IX (2026-09)
+msgid "Private Sector"
+msgstr "القطاع الخاص"
+
+#. IHP-IX (2026-09)
+msgid "Publication"
+msgstr "منشور"
+
+#. IHP-IX (2026-09)
+msgid "Publications, events & data"
+msgstr "المنشورات والفعاليات والبيانات"
+
+#. IHP-IX (2026-09)
+msgid "Published activities"
+msgstr "الأنشطة المنشورة"
+
+#. IHP-IX (2026-09)
+msgid "Recent activities"
+msgstr "الأنشطة الأخيرة"
+
+#. IHP-IX (2026-09)
+msgid "Recompute map counts"
+msgstr "إعادة حساب أعداد الخريطة"
+
+#. IHP-IX (2026-09)
+msgid "Recompute the country summary (map counts) from published activities?"
+msgstr "هل تريد إعادة حساب ملخص البلدان (أعداد الخريطة) من الأنشطة المنشورة؟"
+
+#. IHP-IX (2026-09)
+msgid "Report an activity"
+msgstr "الإبلاغ عن نشاط"
+
+#. IHP-IX (2026-09)
+msgid "Report an activity for this output"
+msgstr "الإبلاغ عن نشاط لهذا المخرج"
+
+#. IHP-IX (2026-09)
+msgid "Report deleted."
+msgstr "تم حذف التقرير."
+
+#. IHP-IX (2026-09)
+msgid "Report not found"
+msgstr "التقرير غير موجود"
+
+#. IHP-IX (2026-09)
+msgid "Research Institution"
+msgstr "مؤسسة بحثية"
+
+#. IHP-IX (2026-09)
+msgid "Research and Academic Institutions"
+msgstr "المؤسسات البحثية والأكاديمية"
+
+#. IHP-IX (2026-09)
+msgid "River Basin Organizations or Regional Water Management Bodies"
+msgstr "منظمات أحواض الأنهار أو هيئات إدارة المياه الإقليمية"
+
+#. IHP-IX (2026-09)
+msgid "Saved on the server"
+msgstr "محفوظ على الخادم"
+
+#. IHP-IX (2026-09)
+msgid "Scientific Research and Innovation"
+msgstr "البحث العلمي والابتكار"
+
+#. IHP-IX (2026-09)
+msgid "Scientific conference proceedings"
+msgstr "وقائع المؤتمرات العلمية"
+
+#. IHP-IX (2026-09)
+msgid "Scientific journal editions"
+msgstr "أعداد المجلات العلمية"
+
+#. IHP-IX (2026-09)
+msgid "Search by name…"
+msgstr "ابحث بالاسم…"
+
+#. IHP-IX (2026-09)
+msgid "Search by title…"
+msgstr "ابحث حسب العنوان…"
+
+#. IHP-IX (2026-09)
+msgid "Search in IHP-WINS"
+msgstr "البحث في IHP-WINS"
+
+#. IHP-IX (2026-09)
+msgid ""
+"Search is not available for this type here. Add the link manually below."
+msgstr "البحث غير متاح لهذا النوع هنا. أضف الرابط يدويًا أدناه."
+
+#. IHP-IX (2026-09)
+msgid "Searching…"
+msgstr "جارٍ البحث…"
+
+#. IHP-IX (2026-09)
+msgid "See all activities of"
+msgstr "عرض جميع أنشطة"
+
+#. IHP-IX (2026-09)
+msgid "Seminar or online webinar"
+msgstr "ندوة أو ندوة إلكترونية"
+
+#. IHP-IX (2026-09)
+msgid "Short description"
+msgstr "وصف قصير"
+
+#. IHP-IX (2026-09)
+msgid "Start date"
+msgstr "تاريخ البدء"
+
+#. IHP-IX (2026-09)
+msgid "Statistic"
+msgstr "إحصاء"
+
+#. IHP-IX (2026-09)
+msgid "The URL must start with http:// or https://"
+msgstr "يجب أن يبدأ الرابط بـ http:// أو https://"
+
+#. IHP-IX (2026-09)
+msgid "The reviewer returned this report. Update it and submit it again."
+msgstr "أعاد المراجع هذا التقرير. حدّثه وأعد تقديمه."
+
+#. IHP-IX (2026-09)
+msgid "There are no draft reports."
+msgstr "لا توجد تقارير مسودة."
+
+#. IHP-IX (2026-09)
+msgid "There are no published reports."
+msgstr "لا توجد تقارير منشورة."
+
+#. IHP-IX (2026-09)
+msgid "This is a draft. Only you can see it until you submit it for review."
+msgstr "هذه مسودة. لا يمكن لأحد غيرك رؤيتها حتى تقدمها للمراجعة."
+
+#. IHP-IX (2026-09)
+msgid "This item is already attached."
+msgstr "هذا العنصر مرفق بالفعل."
+
+#. IHP-IX (2026-09)
+msgid "This report is awaiting review and can no longer be edited."
+msgstr "هذا التقرير في انتظار المراجعة ولم يعد بالإمكان تعديله."
+
+#. IHP-IX (2026-09)
+msgid "This report is awaiting review."
+msgstr "هذا التقرير في انتظار المراجعة."
+
+#. IHP-IX (2026-09)
+msgid "This report is published and can no longer be edited."
+msgstr "هذا التقرير منشور ولم يعد بالإمكان تعديله."
+
+#. IHP-IX (2026-09)
+msgid ""
+"This report is published. Changes are applied directly without a new review."
+msgstr "هذا التقرير منشور. تُطبَّق التغييرات مباشرة دون مراجعة جديدة."
+
+#. IHP-IX (2026-09)
+msgid "This user hasn't published any IHP-IX reports."
+msgstr "لم ينشر هذا المستخدم أي تقارير للبرنامج."
+
+#. IHP-IX (2026-09)
+msgid "Title and URL are required."
+msgstr "العنوان والرابط إلزاميان."
+
+#. IHP-IX (2026-09)
+msgid "Tool"
+msgstr "أداة"
+
+#. IHP-IX (2026-09)
+msgid "Top Lead Institutions"
+msgstr "أبرز المؤسسات الرائدة"
+
+#. IHP-IX (2026-09)
+msgid "Type at least 2 characters and pick a result to attach it."
+msgstr "اكتب حرفين على الأقل واختر نتيجة لإرفاقها."
+
+#. IHP-IX (2026-09)
+msgid "UNESCO Category I Center"
+msgstr "مركز من الفئة الأولى تابع لليونسكو"
+
+#. IHP-IX (2026-09)
+msgid "UNESCO Category II Center"
+msgstr "مركز من الفئة الثانية تابع لليونسكو"
+
+#. IHP-IX (2026-09)
+msgid "UNESCO Chair or UNITWIN"
+msgstr "كرسي اليونسكو أو UNITWIN"
+
+#. IHP-IX (2026-09)
+msgid "UNESCO Field Office"
+msgstr "مكتب ميداني لليونسكو"
+
+#. IHP-IX (2026-09)
+msgid "UNESCO IHP Secretariat"
+msgstr "أمانة البرنامج الهيدرولوجي الدولي باليونسكو"
+
+#. IHP-IX (2026-09)
+msgid "UNESCO Secretariat"
+msgstr "أمانة اليونسكو"
+
+#. IHP-IX (2026-09)
+msgid "UNESCO Secretariat participation"
+msgstr "مشاركة أمانة اليونسكو"
+
+#. IHP-IX (2026-09)
+msgid "University"
+msgstr "جامعة"
+
+#. IHP-IX (2026-09)
+msgid "Updated"
+msgstr "تاريخ التحديث"
+
+#. IHP-IX (2026-09)
+msgid ""
+"Water Education in the Fourth Industrial Revolution including Sustainability"
+msgstr "التعليم المائي في الثورة الصناعية الرابعة بما في ذلك الاستدامة"
+
+#. IHP-IX (2026-09)
+msgid ""
+"Water Governance based on Science for Mitigation, Adaptation, and Resilience"
+msgstr "حوكمة المياه القائمة على العلم من أجل التخفيف والتكيف والصمود"
+
+#. IHP-IX (2026-09)
+msgid "Water Utilities"
+msgstr "مرافق المياه"
+
+#. IHP-IX (2026-09)
+msgid "Webinar"
+msgstr "ندوة إلكترونية"
+
+#. IHP-IX (2026-09)
+msgid "Webinars"
+msgstr "الندوات الإلكترونية"
+
+#. IHP-IX (2026-09)
+msgid "Workshop or physical/online training course"
+msgstr "ورشة عمل أو دورة تدريبية حضورية/عبر الإنترنت"
+
+#. IHP-IX (2026-09)
+msgid "Yes/No answers of the report; crossed-out items were answered No"
+msgstr "إجابات نعم/لا في التقرير؛ العناصر المشطوبة أُجيب عنها بـ لا"
+
+#. IHP-IX (2026-09)
+msgid "You haven't submitted any IHP-IX reports yet."
+msgstr "لم تقدّم أي تقارير للبرنامج بعد."
+
+#. IHP-IX (2026-09)
+msgid "You must be logged in"
+msgstr "يجب تسجيل الدخول"
+
+#. IHP-IX (2026-09)
+msgid "Your IHP-IX report \"{title}\" has been published"
+msgstr "تم نشر تقريرك \"{title}\" في البرنامج الهيدرولوجي الدولي"
+
+#. IHP-IX (2026-09)
+msgid "Your IHP-IX report \"{title}\" needs changes"
+msgstr "تقريرك \"{title}\" في البرنامج الهيدرولوجي الدولي يحتاج إلى تعديلات"
+
+#. IHP-IX (2026-09)
+msgid ""
+"Your report \"%(title)s\" was submitted and will be reviewed by an "
+"administrator."
+msgstr "تم إرسال تقريرك \"%(title)s\" وسيراجعه مسؤول."
+
+#. IHP-IX (2026-09)
+msgid "outputs"
+msgstr "مخرجات"
+
+#. IHP-IX (2026-09)
+msgid "when you are done, come back to this tab and search for it."
+msgstr "عند الانتهاء، عد إلى هذا التبويب وابحث عنه."
+
+#. IHP-IX (2026-09)
+msgid ""
+"Dear {name},\n"
+"\n"
+"Your IHP-IX activity report \"{title}\" has been reviewed and published on {site}.\n"
+"\n"
+"You can see all your reports here: {url}\n"
+"\n"
+"Thank you for contributing to IHP-IX.\n"
+msgstr ""
+"عزيزي/عزيزتي {name}،\n"
+"\n"
+"تمت مراجعة تقرير نشاطك \"{title}\" في البرنامج الهيدرولوجي الدولي ونشره على {site}.\n"
+"\n"
+"يمكنك الاطلاع على جميع تقاريرك هنا: {url}\n"
+"\n"
+"شكرًا لمساهمتك في البرنامج.\n"
+
+#. IHP-IX (2026-09)
+msgid ""
+"Dear {name},\n"
+"\n"
+"Your IHP-IX activity report \"{title}\" was reviewed on {site} and could not be published as submitted.\n"
+"\n"
+"Reviewer notes:\n"
+"{notes}\n"
+"\n"
+"You can edit and resubmit it here: {url}\n"
+msgstr ""
+"عزيزي/عزيزتي {name}،\n"
+"\n"
+"تمت مراجعة تقرير نشاطك \"{title}\" في البرنامج الهيدرولوجي الدولي على {site} ولم يتسنَّ نشره بصيغته المقدَّمة.\n"
+"\n"
+"ملاحظات المراجع:\n"
+"{notes}\n"
+"\n"
+"يمكنك تعديله وإعادة تقديمه هنا: {url}\n"
+
+#. IHP-IX (2026-09)
+msgid "%(n)d activity"
+msgid_plural "%(n)d activities"
+msgstr[0] "%(n)d نشاط"
+msgstr[1] "نشاط واحد"
+msgstr[2] "نشاطان"
+msgstr[3] "%(n)d أنشطة"
+msgstr[4] "%(n)d نشاطًا"
+msgstr[5] "%(n)d نشاط"
+
 #, python-format
 #~ msgid "Dashboard (%(num)d new item)"
 #~ msgid_plural "Dashboard (%(num)d new items)"
@@ -6484,18 +7276,18 @@ msgstr ""
 #~ msgstr "سجل كمساهم بيانات لمنظمتك"
 
 #~ msgid ""
-#~ "Delve into our featured UNESDOC and Water Family publications for "
-#~ "invaluable insights into water-related topics. These latest publications "
-#~ "cover a wide range of subjects, from water governance to climate change "
-#~ "adaptation, providing essential knowledge for researchers, policymakers, "
-#~ "and practitioners alike. Explore these resources to stay informed and "
-#~ "empowered in the realm of water management and conservation."
+#~ "Delve into our featured UNESDOC and Water Family publications for invaluable"
+#~ " insights into water-related topics. These latest publications cover a wide "
+#~ "range of subjects, from water governance to climate change adaptation, "
+#~ "providing essential knowledge for researchers, policymakers, and "
+#~ "practitioners alike. Explore these resources to stay informed and empowered "
+#~ "in the realm of water management and conservation."
 #~ msgstr ""
 #~ "اغمر في إصدارات UNESDOC وWater Family المميزة للحصول على رؤى لا تقدر بثمن "
-#~ "حول الموضوعات المتعلقة بالمياه. تغطي هذه الإصدارات الأخيرة مجموعة واسعة "
-#~ "من المواضيع، من حوكمة المياه إلى التكيف مع تغير المناخ، مما يوفر معرفة "
-#~ "أساسية للباحثين وصناع السياسات والممارسين على حد سواء. استكشف هذه الموارد "
-#~ "للبقاء على اطلاع وقوة في مجال إدارة المياه والحفاظ عليها."
+#~ "حول الموضوعات المتعلقة بالمياه. تغطي هذه الإصدارات الأخيرة مجموعة واسعة من "
+#~ "المواضيع، من حوكمة المياه إلى التكيف مع تغير المناخ، مما يوفر معرفة أساسية "
+#~ "للباحثين وصناع السياسات والممارسين على حد سواء. استكشف هذه الموارد للبقاء "
+#~ "على اطلاع وقوة في مجال إدارة المياه والحفاظ عليها."
 
 #~ msgid "IHP Education"
 #~ msgstr "تعليم برنامج المياه الدولي"
@@ -6503,9 +7295,9 @@ msgstr ""
 #~ msgid ""
 #~ "Our dedication to continuous learning is embodied in the IHP-WINS Open "
 #~ "Learning Environment. This initiative serves as a hub for educational "
-#~ "resources, fostering capacity building and research among stakeholders "
-#~ "and researchers alike. It hosts water-related courses for and by "
-#~ "researchers, policy-makers and scientist from around the globe."
+#~ "resources, fostering capacity building and research among stakeholders and "
+#~ "researchers alike. It hosts water-related courses for and by researchers, "
+#~ "policy-makers and scientist from around the globe."
 #~ msgstr ""
 #~ "تتجسد التزامنا بالتعلم المستمر في بيئة التعلم المفتوحة IHP-WINS. تعمل هذه "
 #~ "المبادرة كمركز للموارد التعليمية، مما يعزز بناء القدرات والبحث بين أصحاب "
@@ -6522,8 +7314,8 @@ msgstr ""
 #~ "worldwide."
 #~ msgstr ""
 #~ "استكشف أحدث دورات التعلم المفتوحة وعزز خبرتك في مختلف الموضوعات المتعلقة "
-#~ "بالمياه. انضم إلينا في هذه الرحلة من التعلم والاكتشاف بينما نسعى نحو "
-#~ "ممارسات إدارة المياه المستدامة في جميع أنحاء العالم."
+#~ "بالمياه. انضم إلينا في هذه الرحلة من التعلم والاكتشاف بينما نسعى نحو ممارسات"
+#~ " إدارة المياه المستدامة في جميع أنحاء العالم."
 
 #~ msgid "IHP Events"
 #~ msgstr "فعاليات برنامج المياه الدولي"
@@ -6532,20 +7324,18 @@ msgstr ""
 #~ msgstr "عارضو برنامج المياه الدولي"
 
 #~ msgid ""
-#~ "<p> <strong>The Geospatial Catalogue Viewer</strong> within IHP-WINS "
-#~ "serves as a powerful tool, enabling users to transform data from the "
-#~ "catalogue into actionable insights, supporting the closing of the data-"
-#~ "knowledge gap. </p> <p> <strong>The Thematic Viewers</strong> complement "
-#~ "the multitude of visualization options available for our water-related "
-#~ "data, offering a diverse array of tools tailored to the need of the "
-#~ "specific theme. </p>"
+#~ "<p> <strong>The Geospatial Catalogue Viewer</strong> within IHP-WINS serves "
+#~ "as a powerful tool, enabling users to transform data from the catalogue into"
+#~ " actionable insights, supporting the closing of the data-knowledge gap. </p>"
+#~ " <p> <strong>The Thematic Viewers</strong> complement the multitude of "
+#~ "visualization options available for our water-related data, offering a "
+#~ "diverse array of tools tailored to the need of the specific theme. </p>"
 #~ msgstr ""
-#~ "<p> <strong>عارض الفهرس الجغرافي</strong> داخل IHP-WINS يعمل كأداة قوية، "
-#~ "مما يتيح للمستخدمين تحويل البيانات من الفهرس إلى رؤى قابلة للتنفيذ، مما "
-#~ "يدعم سد الفجوة بين البيانات والمعرفة. </p> <p> <strong>عارضو الموضوعات</"
-#~ "strong> يكملون العديد من خيارات التصور المتاحة لبياناتنا المتعلقة "
-#~ "بالمياه، ويقدمون مجموعة متنوعة من الأدوات المصممة لتلبية احتياجات الموضوع "
-#~ "المحدد. </p>"
+#~ "<p> <strong>عارض الفهرس الجغرافي</strong> داخل IHP-WINS يعمل كأداة قوية، مما"
+#~ " يتيح للمستخدمين تحويل البيانات من الفهرس إلى رؤى قابلة للتنفيذ، مما يدعم سد"
+#~ " الفجوة بين البيانات والمعرفة. </p> <p> <strong>عارضو الموضوعات</strong> "
+#~ "يكملون العديد من خيارات التصور المتاحة لبياناتنا المتعلقة بالمياه، ويقدمون "
+#~ "مجموعة متنوعة من الأدوات المصممة لتلبية احتياجات الموضوع المحدد. </p>"
 
 #~ msgid "The Geospatial Catalogue Viewer"
 #~ msgstr "عارض الفهرس الجغرافي"
@@ -6557,9 +7347,9 @@ msgstr ""
 #~ "overarching global trends and finer-grained local patterns."
 #~ msgstr ""
 #~ "من خلال تراكب مجموعات البيانات، يحصل أصحاب المصلحة على رؤى حول الأنماط "
-#~ "والاتجاهات المتعلقة بالمياه، مما يسهل اتخاذ القرارات المستنيرة والمزيد. "
-#~ "تتيح مجموعة متنوعة من مجموعات البيانات والمقاييس كشف رؤى حول الاتجاهات "
-#~ "العالمية الشاملة والأنماط المحلية الدقيقة."
+#~ "والاتجاهات المتعلقة بالمياه، مما يسهل اتخاذ القرارات المستنيرة والمزيد. تتيح"
+#~ " مجموعة متنوعة من مجموعات البيانات والمقاييس كشف رؤى حول الاتجاهات العالمية "
+#~ "الشاملة والأنماط المحلية الدقيقة."
 
 #~ msgid ""
 #~ "<strong>The Thematic Viewers</strong> complement the multitude of "
@@ -6567,36 +7357,35 @@ msgstr ""
 #~ "diverse array of tools tailored to the need of the specific theme."
 #~ msgstr ""
 #~ "<strong>عارضو الموضوعات</strong> يكملون العديد من خيارات التصور المتاحة "
-#~ "لبياناتنا المتعلقة بالمياه، ويقدمون مجموعة متنوعة من الأدوات المصممة "
-#~ "لتلبية احتياجات الموضوع المحدد."
+#~ "لبياناتنا المتعلقة بالمياه، ويقدمون مجموعة متنوعة من الأدوات المصممة لتلبية "
+#~ "احتياجات الموضوع المحدد."
 
 #~ msgid ""
-#~ "At UNESCO, we believe in the power of open collaboration and the "
-#~ "principles of Open Science, leveraging open-source technology to provide "
-#~ "a seamless experience for users. The platform's <strong> Data Catalogue "
-#~ "and Management System </strong>stand as a testament to this commitment, "
-#~ "offering a robust repository for all IHP-relevant datasets. UNESCO’s "
-#~ "Water Family can contribute and access information in various formats, "
-#~ "enabling a diverse and inclusive data-sharing environment. UNESCO "
-#~ "believes in harnessing the power of data to advance global goals for a "
-#~ "sustainable future."
+#~ "At UNESCO, we believe in the power of open collaboration and the principles "
+#~ "of Open Science, leveraging open-source technology to provide a seamless "
+#~ "experience for users. The platform's <strong> Data Catalogue and Management "
+#~ "System </strong>stand as a testament to this commitment, offering a robust "
+#~ "repository for all IHP-relevant datasets. UNESCO’s Water Family can "
+#~ "contribute and access information in various formats, enabling a diverse and"
+#~ " inclusive data-sharing environment. UNESCO believes in harnessing the power"
+#~ " of data to advance global goals for a sustainable future."
 #~ msgstr ""
 #~ "في اليونسكو، نؤمن بقوة التعاون المفتوح ومبادئ العلم المفتوح، مستفيدين من "
 #~ "تكنولوجيا المصدر المفتوح لتوفير تجربة سلسة للمستخدمين. يعد <strong>نظام "
 #~ "فهرسة وإدارة البيانات</strong> الخاص بالمنصة شاهدًا على هذا الالتزام، حيث "
 #~ "يقدم مستودعًا قويًا لجميع مجموعات البيانات ذات الصلة ببرنامج الهيدرولوجيا "
-#~ "الدولي. يمكن لعائلة المياه التابعة لليونسكو المساهمة والوصول إلى "
-#~ "المعلومات بتنسيقات متنوعة، مما يتيح بيئة مشاركة بيانات متنوعة وشاملة. "
-#~ "تؤمن اليونسكو بتسخير قوة البيانات لتحقيق الأهداف العالمية لمستقبل مستدام."
+#~ "الدولي. يمكن لعائلة المياه التابعة لليونسكو المساهمة والوصول إلى المعلومات "
+#~ "بتنسيقات متنوعة، مما يتيح بيئة مشاركة بيانات متنوعة وشاملة. تؤمن اليونسكو "
+#~ "بتسخير قوة البيانات لتحقيق الأهداف العالمية لمستقبل مستدام."
 
 #~ msgid ""
 #~ "Offers a robust repository for all IHP-relevant datasets. Users can "
-#~ "contribute and access information in various formats, enabling a diverse "
-#~ "and inclusive data-sharing environment."
+#~ "contribute and access information in various formats, enabling a diverse and"
+#~ " inclusive data-sharing environment."
 #~ msgstr ""
 #~ "يقدم مستودعًا قويًا لجميع مجموعات البيانات ذات الصلة ببرنامج الهيدرولوجيا "
-#~ "الدولي. يمكن للمستخدمين المساهمة والوصول إلى المعلومات بتنسيقات متنوعة، "
-#~ "مما يتيح بيئة مشاركة بيانات متنوعة وشاملة."
+#~ "الدولي. يمكن للمستخدمين المساهمة والوصول إلى المعلومات بتنسيقات متنوعة، مما "
+#~ "يتيح بيئة مشاركة بيانات متنوعة وشاملة."
 
 #~ msgid "Discover Datasets"
 #~ msgstr "اكتشف مجموعات البيانات"
@@ -6608,8 +7397,8 @@ msgstr ""
 #~ "hydrological science."
 #~ msgstr ""
 #~ "تم تحميل مجموعات البيانات المميزة المعروضة مؤخرًا بواسطة عائلة المياه "
-#~ "التابعة لليونسكو. توفر هذه المجموعات رؤى حول مختلف جوانب الموارد المائية، "
-#~ "من مجموعات البيانات التاريخية إلى أحدث التطورات في علم الهيدرولوجيا."
+#~ "التابعة لليونسكو. توفر هذه المجموعات رؤى حول مختلف جوانب الموارد المائية، من"
+#~ " مجموعات البيانات التاريخية إلى أحدث التطورات في علم الهيدرولوجيا."
 
 #~ msgid "Language"
 #~ msgstr "اللغة"
@@ -6618,54 +7407,52 @@ msgstr ""
 #~ msgstr "اذهب"
 
 #~ msgid ""
-#~ "<p>The <strong>Intergovernmental Hydrological Programme's Water "
-#~ "Information Network System (IHP-WINS)</strong> is designed to promote the "
-#~ "<i>sharing and dissemination of water-related data and information</i> "
-#~ "among countries, organizations, and stakeholders involved in water "
-#~ "resources management, as part of the UNESCO IHP mandate.</p> <p>The main "
-#~ "objective of IHP-WINS is <strong>to enhance the availability, "
-#~ "accessibility, and usability of water-related information, with a focus "
-#~ "on supporting evidence-based decision-making and sustainable water "
-#~ "resources management</strong>. It aims to facilitate the exchange of "
-#~ "data, knowledge, and best practices among stakeholders at various levels, "
-#~ "including national, regional, and global scales.</p> <p>IHP-WINS provides "
-#~ "a platform for integrating and harmonizing water-related data and "
-#~ "information from diverse sources, such as monitoring networks, research "
-#~ "institutions, government agencies, and international organizations. It "
-#~ "promotes the use of standardized data formats and metadata to ensure "
-#~ "compatibility and interoperability of information across different "
-#~ "systems and platforms.</p> <p>Through IHP-WINS, UNESCO's "
+#~ "<p>The <strong>Intergovernmental Hydrological Programme's Water Information "
+#~ "Network System (IHP-WINS)</strong> is designed to promote the <i>sharing and"
+#~ " dissemination of water-related data and information</i> among countries, "
+#~ "organizations, and stakeholders involved in water resources management, as "
+#~ "part of the UNESCO IHP mandate.</p> <p>The main objective of IHP-WINS is "
+#~ "<strong>to enhance the availability, accessibility, and usability of water-"
+#~ "related information, with a focus on supporting evidence-based decision-"
+#~ "making and sustainable water resources management</strong>. It aims to "
+#~ "facilitate the exchange of data, knowledge, and best practices among "
+#~ "stakeholders at various levels, including national, regional, and global "
+#~ "scales.</p> <p>IHP-WINS provides a platform for integrating and harmonizing "
+#~ "water-related data and information from diverse sources, such as monitoring "
+#~ "networks, research institutions, government agencies, and international "
+#~ "organizations. It promotes the use of standardized data formats and metadata"
+#~ " to ensure compatibility and interoperability of information across "
+#~ "different systems and platforms.</p> <p>Through IHP-WINS, UNESCO's "
 #~ "Intergovernmental Hydrological Programme aims to strengthen international "
 #~ "cooperation, improve data availability, and enhance the understanding and "
-#~ "management of water resources worldwide. The initiative contributes to "
-#~ "the achievement of sustainable development goals related to water and "
-#~ "supports countries in their efforts to address water-related challenges "
-#~ "and promote integrated water resources management.</p> <p>Overall, IHP-"
-#~ "WINS plays a vital role in advancing water governance, supporting "
-#~ "evidence-based decision-making, and fostering international cooperation "
-#~ "for sustainable water resources management.</p>"
+#~ "management of water resources worldwide. The initiative contributes to the "
+#~ "achievement of sustainable development goals related to water and supports "
+#~ "countries in their efforts to address water-related challenges and promote "
+#~ "integrated water resources management.</p> <p>Overall, IHP-WINS plays a "
+#~ "vital role in advancing water governance, supporting evidence-based "
+#~ "decision-making, and fostering international cooperation for sustainable "
+#~ "water resources management.</p>"
 #~ msgstr ""
 #~ "<p>تم تصميم <strong>نظام شبكة معلومات المياه لبرنامج الهيدرولوجيا الدولي "
 #~ "(IHP-WINS)</strong> لتعزيز <i>مشاركة ونشر البيانات والمعلومات المتعلقة "
 #~ "بالمياه</i> بين الدول والمنظمات وأصحاب المصلحة المشاركين في إدارة الموارد "
 #~ "المائية، كجزء من تفويض برنامج الهيدرولوجيا الدولي لليونسكو.</p> <p>الهدف "
-#~ "الرئيسي من IHP-WINS هو <strong>تعزيز توفر وإمكانية الوصول واستخدام "
-#~ "المعلومات المتعلقة بالمياه، مع التركيز على دعم اتخاذ القرارات المستندة "
-#~ "إلى الأدلة والإدارة المستدامة للموارد المائية</strong>. يهدف إلى تسهيل "
-#~ "تبادل البيانات والمعرفة وأفضل الممارسات بين أصحاب المصلحة على مختلف "
-#~ "المستويات، بما في ذلك المستويات الوطنية والإقليمية والعالمية.</p> <p>يوفر "
-#~ "IHP-WINS منصة لتكامل وتنسيق البيانات والمعلومات المتعلقة بالمياه من مصادر "
-#~ "متنوعة، مثل شبكات المراقبة، والمؤسسات البحثية، والوكالات الحكومية، "
-#~ "والمنظمات الدولية. يعزز استخدام تنسيقات البيانات الموحدة والبيانات "
-#~ "الوصفية لضمان التوافق والتشغيل البيني للمعلومات عبر الأنظمة والمنصات "
-#~ "المختلفة.</p> <p>من خلال IHP-WINS، يهدف برنامج الهيدرولوجيا الدولي "
-#~ "لليونسكو إلى تعزيز التعاون الدولي، وتحسين توفر البيانات، وتعزيز فهم "
-#~ "وإدارة الموارد المائية في جميع أنحاء العالم. تسهم المبادرة في تحقيق أهداف "
-#~ "التنمية المستدامة المتعلقة بالمياه وتدعم الدول في جهودها لمواجهة التحديات "
-#~ "المتعلقة بالمياه وتعزيز الإدارة المتكاملة للموارد المائية.</p> <p>بشكل "
-#~ "عام، يلعب IHP-WINS دورًا حيويًا في تعزيز حوكمة المياه، ودعم اتخاذ القرارات "
-#~ "المستندة إلى الأدلة، وتعزيز التعاون الدولي من أجل إدارة مستدامة للموارد "
-#~ "المائية.</p>"
+#~ "الرئيسي من IHP-WINS هو <strong>تعزيز توفر وإمكانية الوصول واستخدام المعلومات"
+#~ " المتعلقة بالمياه، مع التركيز على دعم اتخاذ القرارات المستندة إلى الأدلة "
+#~ "والإدارة المستدامة للموارد المائية</strong>. يهدف إلى تسهيل تبادل البيانات "
+#~ "والمعرفة وأفضل الممارسات بين أصحاب المصلحة على مختلف المستويات، بما في ذلك "
+#~ "المستويات الوطنية والإقليمية والعالمية.</p> <p>يوفر IHP-WINS منصة لتكامل "
+#~ "وتنسيق البيانات والمعلومات المتعلقة بالمياه من مصادر متنوعة، مثل شبكات "
+#~ "المراقبة، والمؤسسات البحثية، والوكالات الحكومية، والمنظمات الدولية. يعزز "
+#~ "استخدام تنسيقات البيانات الموحدة والبيانات الوصفية لضمان التوافق والتشغيل "
+#~ "البيني للمعلومات عبر الأنظمة والمنصات المختلفة.</p> <p>من خلال IHP-WINS، "
+#~ "يهدف برنامج الهيدرولوجيا الدولي لليونسكو إلى تعزيز التعاون الدولي، وتحسين "
+#~ "توفر البيانات، وتعزيز فهم وإدارة الموارد المائية في جميع أنحاء العالم. تسهم "
+#~ "المبادرة في تحقيق أهداف التنمية المستدامة المتعلقة بالمياه وتدعم الدول في "
+#~ "جهودها لمواجهة التحديات المتعلقة بالمياه وتعزيز الإدارة المتكاملة للموارد "
+#~ "المائية.</p> <p>بشكل عام، يلعب IHP-WINS دورًا حيويًا في تعزيز حوكمة المياه، "
+#~ "ودعم اتخاذ القرارات المستندة إلى الأدلة، وتعزيز التعاون الدولي من أجل إدارة "
+#~ "مستدامة للموارد المائية.</p>"
 
 #~ msgid "Remove dataset from this group"
 #~ msgstr "إزالة مجموعة البيانات من هذه المجموعة"
@@ -6718,8 +7505,8 @@ msgstr ""
 #~ msgstr "مجال الأولوية 3: ردم الفجوة بين البيانات والمعرفة"
 
 #~ msgid ""
-#~ "Priority Area 4: Integrated Water Resources Management under Conditions "
-#~ "of Global Change"
+#~ "Priority Area 4: Integrated Water Resources Management under Conditions of "
+#~ "Global Change"
 #~ msgstr ""
 #~ "مجال الأولوية 4: الإدارة المتكاملة للموارد المائية في ظل التغير العالمي"
 
@@ -6731,24 +7518,24 @@ msgstr ""
 #~ "والقدرة على الصمود"
 
 #~ msgid "Featured publications from UNESCO IHP and the Water Family"
-#~ msgstr ""
-#~ "منشورات مختارة من البرنامج الهيدرولوجي الدولي لليونسكو وعائلة المياه"
+#~ msgstr "منشورات مختارة من البرنامج الهيدرولوجي الدولي لليونسكو وعائلة المياه"
 
 #~ msgid "IHP Open Learning"
 #~ msgstr "التعلم المفتوح للبرنامج الهيدرولوجي الدولي"
 
 #~ msgid ""
-#~ "Explore the <a href=\"https://openlearning.unesco.org/program/"
-#~ "intergovernmental-hydrological-programme-ihp/\" target=\"_blank\" "
-#~ "style=\"color:#fff; font-weight: bold; text-decoration: underline; text-"
-#~ "underline-offset: 2px;\" >IHP Open Learning platform</a> or participate "
-#~ "in one of the latest open learning courses."
+#~ "Explore the <a "
+#~ "href=\"https://openlearning.unesco.org/program/intergovernmental-"
+#~ "hydrological-programme-ihp/\" target=\"_blank\" style=\"color:#fff; font-"
+#~ "weight: bold; text-decoration: underline; text-underline-offset: 2px;\" >IHP"
+#~ " Open Learning platform</a> or participate in one of the latest open "
+#~ "learning courses."
 #~ msgstr ""
-#~ "استكشف <a href=\"https://openlearning.unesco.org/program/"
-#~ "intergovernmental-hydrological-programme-ihp/\" target=\"_blank\" "
-#~ "style=\"color:#fff; font-weight: bold; text-decoration: underline; text-"
-#~ "underline-offset: 2px;\" >منصة التعلم المفتوح للبرنامج الهيدرولوجي "
-#~ "الدولي</a> أو شارك في أحد أحدث دورات التعلم المفتوح."
+#~ "استكشف <a href=\"https://openlearning.unesco.org/program/intergovernmental-"
+#~ "hydrological-programme-ihp/\" target=\"_blank\" style=\"color:#fff; font-"
+#~ "weight: bold; text-decoration: underline; text-underline-offset: 2px;\" "
+#~ ">منصة التعلم المفتوح للبرنامج الهيدرولوجي الدولي</a> أو شارك في أحد أحدث "
+#~ "دورات التعلم المفتوح."
 
 #~ msgid "Stay updated with the latest activities and announcements"
 #~ msgstr "ابق على اطلاع بأحدث الأنشطة والإعلانات"
@@ -6761,12 +7548,12 @@ msgstr ""
 
 #~ msgid ""
 #~ "The Operational Implementation Plan of the Intergovernmental Hydrological "
-#~ "Programme is based on the Strategic Plan of IHP-IX. This Strategy has "
-#~ "five interrelated and intertwined priority areas and 34 Outputs."
+#~ "Programme is based on the Strategic Plan of IHP-IX. This Strategy has five "
+#~ "interrelated and intertwined priority areas and 34 Outputs."
 #~ msgstr ""
 #~ "تستند خطة التنفيذ التشغيلي للبرنامج الهيدرولوجي الدولي الحكومي إلى الخطة "
-#~ "الاستراتيجية للبرنامج الهيدرولوجي الدولي الحكومي IX. وتضم هذه "
-#~ "الاستراتيجية خمسة مجالات أولوية مترابطة و34 ناتجاً."
+#~ "الاستراتيجية للبرنامج الهيدرولوجي الدولي الحكومي IX. وتضم هذه الاستراتيجية "
+#~ "خمسة مجالات أولوية مترابطة و34 ناتجاً."
 
 #~ msgid "Transform data into actionable insights"
 #~ msgstr "حوّل البيانات إلى رؤى قابلة للتنفيذ"
@@ -6787,32 +7574,32 @@ msgstr ""
 #~ msgstr "آخر أخبار مجتمع عائلة المياه التابعة لليونسكو"
 
 #~ msgid ""
-#~ "Explore a curated database of artificial intelligence tools and "
-#~ "applications designed for water resource management. Discover AI "
-#~ "solutions transforming how we manage water worldwide."
+#~ "Explore a curated database of artificial intelligence tools and applications"
+#~ " designed for water resource management. Discover AI solutions transforming "
+#~ "how we manage water worldwide."
 #~ msgstr ""
-#~ "استكشف قاعدة بيانات منتقاة من أدوات وتطبيقات الذكاء الاصطناعي المصممة "
-#~ "لإدارة الموارد المائية. اكتشف حلول الذكاء الاصطناعي التي تُحدث تحولاً في "
-#~ "طريقة إدارة المياه حول العالم."
+#~ "استكشف قاعدة بيانات منتقاة من أدوات وتطبيقات الذكاء الاصطناعي المصممة لإدارة"
+#~ " الموارد المائية. اكتشف حلول الذكاء الاصطناعي التي تُحدث تحولاً في طريقة "
+#~ "إدارة المياه حول العالم."
 
 #~ msgid "A data platform to aid in informed decision-making"
 #~ msgstr "منصة بيانات لدعم اتخاذ القرارات المستنيرة"
 
 #~ msgid ""
-#~ "At UNESCO, we believe in the power of open collaboration and the "
-#~ "principles of Open Science, leveraging open-source technology to provide "
-#~ "a seamless experience for users. The platform's Data Catalogue and "
-#~ "Management System stand as a testament to this commitment, offering a "
-#~ "robust repository for all IHP-relevant datasets. UNESCO's Water Family "
-#~ "can contribute and access information in various formats, enabling a "
-#~ "diverse and inclusive data-sharing environment."
+#~ "At UNESCO, we believe in the power of open collaboration and the principles "
+#~ "of Open Science, leveraging open-source technology to provide a seamless "
+#~ "experience for users. The platform's Data Catalogue and Management System "
+#~ "stand as a testament to this commitment, offering a robust repository for "
+#~ "all IHP-relevant datasets. UNESCO's Water Family can contribute and access "
+#~ "information in various formats, enabling a diverse and inclusive data-"
+#~ "sharing environment."
 #~ msgstr ""
-#~ "في اليونسكو، نؤمن بقوة التعاون المفتوح ومبادئ العلم المفتوح، مع الاستفادة "
-#~ "من تقنية المصدر المفتوح لتقديم تجربة سلسة للمستخدمين. يُجسّد كتالوج "
-#~ "البيانات ونظام الإدارة في المنصة هذا الالتزام، إذ يوفر مستودعاً قوياً لجميع "
-#~ "مجموعات البيانات ذات الصلة بالبرنامج الهيدرولوجي الدولي. تستطيع عائلة "
-#~ "المياه التابعة لليونسكو المساهمة بالمعلومات والوصول إليها بصيغ متعددة، "
-#~ "مما يتيح بيئة متنوعة وشاملة لتبادل البيانات."
+#~ "في اليونسكو، نؤمن بقوة التعاون المفتوح ومبادئ العلم المفتوح، مع الاستفادة من"
+#~ " تقنية المصدر المفتوح لتقديم تجربة سلسة للمستخدمين. يُجسّد كتالوج البيانات "
+#~ "ونظام الإدارة في المنصة هذا الالتزام، إذ يوفر مستودعاً قوياً لجميع مجموعات "
+#~ "البيانات ذات الصلة بالبرنامج الهيدرولوجي الدولي. تستطيع عائلة المياه التابعة"
+#~ " لليونسكو المساهمة بالمعلومات والوصول إليها بصيغ متعددة، مما يتيح بيئة "
+#~ "متنوعة وشاملة لتبادل البيانات."
 
 #~ msgid ""
 #~ "Explore community-driven open source tools for water data management, "
@@ -6832,30 +7619,13 @@ msgstr ""
 
 #~ msgid ""
 #~ "Report activities implemented under IHP-IX (2022–2029). The form covers 6 "
-#~ "sections aligned with the official UNESCO reporting guidelines. Approx. "
-#~ "10 minutes to complete."
+#~ "sections aligned with the official UNESCO reporting guidelines. Approx. 10 "
+#~ "minutes to complete."
 #~ msgstr ""
 #~ "أبلغ عن الأنشطة المنفّذة في إطار IHP-IX (2022–2029). يغطي النموذج 6 أقسام "
-#~ "متوافقة مع إرشادات إعداد التقارير الرسمية لـ UNESCO. حوالي 10 دقائق "
-#~ "للإكمال."
+#~ "متوافقة مع إرشادات إعداد التقارير الرسمية لـ UNESCO. حوالي 10 دقائق للإكمال."
 
 #~ msgid ""
 #~ "A growing global hub for water knowledge — real-time figures from our "
 #~ "network."
 #~ msgstr "مركز عالمي متنامٍ للمعرفة المائية — أرقام فورية من شبكتنا."
-
-#: ckanext/theme_ejemplo/templates/overrides/snippets/changes/license.html
-msgid "Unknown license"
-msgstr "ترخيص غير معروف"
-
-#: ckanext/theme_ejemplo/templates/base.html
-msgid "See all results for"
-msgstr "عرض جميع النتائج لـ"
-
-#: ckanext/theme_ejemplo/templates/base.html
-msgid "No suggestions found"
-msgstr "لم يتم العثور على اقتراحات"
-
-#: ckanext/theme_ejemplo/templates/base.html
-msgid "Search suggestions"
-msgstr "اقتراحات البحث"

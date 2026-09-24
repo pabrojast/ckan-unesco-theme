@@ -975,7 +975,7 @@ msgstr "Destacados actualmente"
 #: ckanext/theme_ejemplo/templates/admin/featured_datasets.html:112
 #: ckanext/theme_ejemplo/templates/admin/featured_datasets.html:660
 msgid "View"
-msgstr ""
+msgstr "Ver"
 
 #: ckanext/theme_ejemplo/templates/admin/featured_datasets.html:117
 #: ckanext/theme_ejemplo/templates/admin/featured_datasets.html:661
@@ -1035,7 +1035,7 @@ msgstr ""
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:73
 #: ckanext/theme_ejemplo/templates/admin/portal_cards.html:59
 msgid "Drag & drop an image here"
-msgstr ""
+msgstr "Arrastra y suelta una imagen aquí"
 
 #: ckanext/theme_ejemplo/templates/admin/featured_publications.html:53
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:74
@@ -1048,7 +1048,7 @@ msgstr "o haz clic para examinar"
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:81
 #: ckanext/theme_ejemplo/templates/admin/portal_cards.html:67
 msgid "or paste image URL"
-msgstr ""
+msgstr "o pega la URL de una imagen"
 
 #: ckanext/theme_ejemplo/templates/admin/featured_publications.html:67
 #: ckanext/theme_ejemplo/templates/admin/featured_publications.html:227
@@ -1196,7 +1196,7 @@ msgstr "URL de la imagen"
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:162
 #: ckanext/theme_ejemplo/templates/admin/portal_cards.html:245
 msgid "Or upload new image"
-msgstr ""
+msgstr "O sube una imagen nueva"
 
 #: ckanext/theme_ejemplo/templates/admin/featured_publications.html:251
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:843
@@ -1224,14 +1224,14 @@ msgstr "Cancelar"
 #: ckanext/theme_ejemplo/templates/admin/portal_cards.html:262
 #: ckanext/theme_ejemplo/templates/admin/portal_cards.html:806
 msgid "Save Changes"
-msgstr ""
+msgstr "Guardar cambios"
 
 #: ckanext/theme_ejemplo/templates/admin/featured_publications.html:650
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:1561
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:750
 #: ckanext/theme_ejemplo/templates/admin/portal_cards.html:618
 msgid "Please upload an image file"
-msgstr ""
+msgstr "Sube un archivo de imagen"
 
 #: ckanext/theme_ejemplo/templates/admin/featured_publications.html:686
 #: ckanext/theme_ejemplo/templates/admin/portal_cards.html:645
@@ -1242,7 +1242,7 @@ msgstr ""
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:1636
 #: ckanext/theme_ejemplo/templates/admin/portal_cards.html:649
 msgid "Adding..."
-msgstr ""
+msgstr "Añadiendo..."
 
 #: ckanext/theme_ejemplo/templates/admin/featured_publications.html:934
 #: ckanext/theme_ejemplo/templates/admin/featured_viewers.html:403
@@ -1334,19 +1334,19 @@ msgstr "No se han encontrado visores publicados."
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:4
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:616
 msgid "IHP-IX Activities Management"
-msgstr ""
+msgstr "Gestión de actividades del PHI-IX"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:63
 msgid "Basic Information"
-msgstr ""
+msgstr "Información básica"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:95
 msgid "Activity title"
-msgstr ""
+msgstr "Título de la actividad"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:100
 msgid "Brief description of the activity..."
-msgstr ""
+msgstr "Breve descripción de la actividad..."
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:105
 #: ckanext/theme_ejemplo/templates/admin/ihpix_overview.html:275
@@ -1361,7 +1361,7 @@ msgstr "Área prioritaria"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:107
 msgid "Select priority area"
-msgstr ""
+msgstr "Selecciona un área prioritaria"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:118
 #: ckanext/theme_ejemplo/templates/admin/ihpix_reports.html:165
@@ -1376,7 +1376,7 @@ msgstr "Producto"
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:120
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:1336
 msgid "Select output"
-msgstr ""
+msgstr "Selecciona un output"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:126
 #: ckanext/theme_ejemplo/templates/admin/ihpix_overview.html:284
@@ -1389,7 +1389,7 @@ msgstr "Bienio"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:128
 msgid "Select biennium"
-msgstr ""
+msgstr "Selecciona un bienio"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:139
 #: ckanext/theme_ejemplo/templates/admin/ihpix_overview.html:320
@@ -1413,7 +1413,7 @@ msgstr "Borrador"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:174
 msgid "Organization & Geography"
-msgstr ""
+msgstr "Organización y geografía"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:181
 #: ckanext/theme_ejemplo/templates/admin/ihpix_reports.html:171
@@ -1423,11 +1423,11 @@ msgstr "Institución"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:183
 msgid "Search institutions..."
-msgstr ""
+msgstr "Buscar instituciones..."
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:193
 msgid "Institution Type"
-msgstr ""
+msgstr "Tipo de institución"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:195
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:386
@@ -1436,7 +1436,7 @@ msgstr ""
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:464
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:565
 msgid "Select type"
-msgstr ""
+msgstr "Selecciona un tipo"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:206
 #: ckanext/theme_ejemplo/templates/admin/ihpix_reports.html:140
@@ -1447,18 +1447,18 @@ msgstr "País"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:208
 msgid "Country name"
-msgstr ""
+msgstr "Nombre del país"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:213
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:715
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:890
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:715
 msgid "Supporting Member State"
-msgstr ""
+msgstr "Estado Miembro que apoya"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:215
 msgid "Supporting member state"
-msgstr ""
+msgstr "Estado Miembro que apoya"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:226
 #: ckanext/theme_ejemplo/templates/user/edit_user_form.html:304
@@ -1470,11 +1470,11 @@ msgstr "Buscar Estados Miembros..."
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:905
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:730
 msgid "Regions"
-msgstr ""
+msgstr "Regiones"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:256
 msgid "Activity Details"
-msgstr ""
+msgstr "Detalles de la actividad"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:261
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:691
@@ -1486,78 +1486,78 @@ msgstr "Actividad clave"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:263
 msgid "Describe the key activity..."
-msgstr ""
+msgstr "Describe la actividad clave..."
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:266
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:697
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:872
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:697
 msgid "Outcomes"
-msgstr ""
+msgstr "Resultados"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:268
 msgid "Expected or achieved outcomes..."
-msgstr ""
+msgstr "Resultados esperados o logrados..."
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:273
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:703
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:878
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:703
 msgid "Partners"
-msgstr ""
+msgstr "Socios"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:275
 msgid "Partner organizations"
-msgstr ""
+msgstr "Organizaciones asociadas"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:280
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:709
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:884
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:709
 msgid "UNESCO Participation"
-msgstr ""
+msgstr "Participación de la UNESCO"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:282
 msgid "UNESCO participation details"
-msgstr ""
+msgstr "Detalles de la participación de la UNESCO"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:287
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:729
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:904
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:729
 msgid "Flagships"
-msgstr ""
+msgstr "Iniciativas emblemáticas"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:299
 msgid "Cross-Cutting Working Groups"
-msgstr ""
+msgstr "Grupos de trabajo transversales"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:311
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:721
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:896
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:721
 msgid "Synergies"
-msgstr ""
+msgstr "Sinergias"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:313
 msgid "Synergies with other programmes..."
-msgstr ""
+msgstr "Sinergias con otros programas..."
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:318
 msgid "Start Date"
-msgstr ""
+msgstr "Fecha de inicio"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:324
 msgid "End Date"
-msgstr ""
+msgstr "Fecha de fin"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:335
 msgid "Contact & Reporting"
-msgstr ""
+msgstr "Contacto y reporte"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:342
 msgid "Contact Name"
-msgstr ""
+msgstr "Nombre de contacto"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:344
 #: ckanext/theme_ejemplo/templates/user/edit_user_form.html:13
@@ -1566,129 +1566,129 @@ msgstr "Nombre completo"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:349
 msgid "Contact Email"
-msgstr ""
+msgstr "Correo de contacto"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:358
 msgid "Reported By"
-msgstr ""
+msgstr "Reportado por"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:360
 msgid "Person who reported"
-msgstr ""
+msgstr "Persona que reportó"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:365
 msgid "Reported Date"
-msgstr ""
+msgstr "Fecha de reporte"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:376
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:885
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:1576
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:772
 msgid "Knowledge Products"
-msgstr ""
+msgstr "Productos de conocimiento"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:383
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:752
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:927
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:752
 msgid "Knowledge Product Type"
-msgstr ""
+msgstr "Tipo de producto de conocimiento"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:395
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:443
 msgid "Other (specify)"
-msgstr ""
+msgstr "Otro (especificar)"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:397
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:445
 msgid "Specify type"
-msgstr ""
+msgstr "Especifica el tipo"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:402
 msgid "Number of Knowledge Products"
-msgstr ""
+msgstr "Número de productos de conocimiento"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:411
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:770
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:945
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:770
 msgid "Scientific Product Type"
-msgstr ""
+msgstr "Tipo de producto científico"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:422
 msgid "Number of Scientific Products"
-msgstr ""
+msgstr "Número de productos científicos"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:431
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:806
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:981
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:806
 msgid "Knowledge Activity Type"
-msgstr ""
+msgstr "Tipo de actividad de conocimiento"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:455
 msgid "Training & Capacity Building"
-msgstr ""
+msgstr "Formación y desarrollo de capacidades"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:462
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:782
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:957
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:782
 msgid "Training Type"
-msgstr ""
+msgstr "Tipo de formación"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:473
 msgid "Number of Training Materials"
-msgstr ""
+msgstr "Número de materiales de formación"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:482
 msgid "Number of Curricula"
-msgstr ""
+msgstr "Número de currículos"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:489
 msgid "Number of Transboundary Member States"
-msgstr ""
+msgstr "Número de Estados Miembros transfronterizos"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:501
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:754
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:763
 msgid "Stakeholders"
-msgstr ""
+msgstr "Partes interesadas"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:505
 msgid "Knowledge Stakeholders"
-msgstr ""
+msgstr "Partes interesadas formadas"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:509
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:533
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:1291
 msgid "Total"
-msgstr ""
+msgstr "Total"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:516
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:540
 msgid "Female"
-msgstr ""
+msgstr "Mujeres"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:523
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:547
 msgid "Youth"
-msgstr ""
+msgstr "Jóvenes"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:529
 msgid "Awareness Stakeholders"
-msgstr ""
+msgstr "Partes interesadas sensibilizadas"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:556
 msgid "Number of Stakeholder Groups"
-msgstr ""
+msgstr "Número de grupos de partes interesadas"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:563
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:869
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:1044
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:869
 msgid "Stakeholder Group Type"
-msgstr ""
+msgstr "Tipo de grupo de partes interesadas"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:579
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:584
@@ -1701,11 +1701,13 @@ msgstr "Notas"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:586
 msgid "Additional notes..."
-msgstr ""
+msgstr "Notas adicionales..."
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:617
 msgid "Manage IHP-IX activities reported by member states and institutions."
 msgstr ""
+"Gestiona las actividades del PHI-IX reportadas por Estados Miembros e "
+"instituciones."
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:626
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:39
@@ -1726,125 +1728,131 @@ msgstr "Actividades"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:637
 msgid "Add New Activity"
-msgstr ""
+msgstr "Añadir nueva actividad"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:642
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:1653
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:1659
 msgid "Add Activity"
-msgstr ""
+msgstr "Añadir actividad"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:662
 msgid "All Priority Areas"
-msgstr ""
+msgstr "Todas las áreas prioritarias"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:731
 msgid "member states"
-msgstr ""
+msgstr "Estados Miembros"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:774
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:1777
 msgid "No Activities Yet"
-msgstr ""
+msgstr "Aún no hay actividades"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:775
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:1778
 msgid "Use the form above to add IHP-IX activities."
-msgstr ""
+msgstr "Usa el formulario de arriba para añadir actividades del PHI-IX."
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:810
 #, python-format
 msgid "Showing %(start)s to %(end)s of %(total)s activities"
-msgstr ""
+msgstr "Mostrando %(start)s a %(end)s de %(total)s actividades"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:829
 msgid "Edit Activity"
-msgstr ""
+msgstr "Editar actividad"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:836
 msgid "Loading activity data..."
-msgstr ""
+msgstr "Cargando datos de la actividad..."
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:1580
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:1582
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:762
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:766
 msgid "Upload error"
-msgstr ""
+msgstr "Error al subir"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:1631
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:1743
 msgid "Title and Priority Area are required"
-msgstr ""
+msgstr "El título y el área prioritaria son obligatorios"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:1651
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:887
 msgid "Unknown error"
-msgstr ""
+msgstr "Error desconocido"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:1720
 msgid "Error loading activity"
-msgstr ""
+msgstr "Error al cargar la actividad"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:4
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:30
 msgid "IHP-IX Content Management"
-msgstr ""
+msgstr "Gestión de contenido del PHI-IX"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:31
 msgid "Manage the content displayed on the IHP-IX portal page."
-msgstr ""
+msgstr "Gestiona el contenido mostrado en la página del portal del PHI-IX."
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:56
 msgid "Hero Section"
-msgstr ""
+msgstr "Sección de cabecera"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:58
 msgid "Main banner at the top of the IHP-IX page (title and subtitle)."
 msgstr ""
+"Banner principal en la parte superior de la página del PHI-IX (título y "
+"subtítulo)."
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:66
 msgid "Hero"
-msgstr ""
+msgstr "Cabecera"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:74
 msgid "Main page title"
-msgstr ""
+msgstr "Título principal de la página"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:77
 msgid "Subtitle"
-msgstr ""
+msgstr "Subtítulo"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:80
 msgid "Hero subtitle text..."
-msgstr ""
+msgstr "Subtítulo de la cabecera..."
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:84
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:121
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:223
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:361
 msgid "Save"
-msgstr ""
+msgstr "Guardar"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:97
 msgid "Section Titles"
-msgstr ""
+msgstr "Títulos de sección"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:100
 msgid "Edit the heading text for each section of the IHP-IX landing page."
 msgstr ""
+"Edita el texto del encabezado de cada sección de la página de inicio del "
+"PHI-IX."
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:117
 msgid "Section heading"
-msgstr ""
+msgstr "Encabezado de sección"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:136
 msgid "Call to Action Cards"
-msgstr ""
+msgstr "Tarjetas de llamada a la acción"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:139
 msgid "Manage the call-to-action cards displayed on the IHP-IX landing page."
 msgstr ""
+"Gestiona las tarjetas de llamada a la acción de la página de inicio del PHI-"
+"IX."
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:151
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:216
@@ -1854,95 +1862,95 @@ msgstr ""
 #: ckanext/theme_ejemplo/templates/admin/users.html:55
 #: ckanext/theme_ejemplo/templates/admin/users.html:121
 msgid "Active"
-msgstr ""
+msgstr "Activo"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:151
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:282
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:873
 msgid "Inactive"
-msgstr ""
+msgstr "Inactivo"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:163
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:301
 msgid "No image"
-msgstr ""
+msgstr "Sin imagen"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:172
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:308
 msgid "Drop image or click"
-msgstr ""
+msgstr "Suelta una imagen o haz clic"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:179
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:315
 msgid "Or paste image URL..."
-msgstr ""
+msgstr "O pega la URL de una imagen..."
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:187
 #: ckanext/theme_ejemplo/templates/admin/portal_cards.html:76
 msgid "Card title"
-msgstr ""
+msgstr "Título de la tarjeta"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:193
 #: ckanext/theme_ejemplo/templates/admin/portal_cards.html:86
 msgid "Brief description..."
-msgstr ""
+msgstr "Breve descripción..."
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:203
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:341
 msgid "Badge Text"
-msgstr ""
+msgstr "Texto de la etiqueta"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:207
 msgid "e.g. New, Coming Soon"
-msgstr ""
+msgstr "p. ej. Nuevo, Próximamente"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:238
 msgid "No Call to Action Cards"
-msgstr ""
+msgstr "Sin tarjetas de llamada a la acción"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:239
 msgid "No CTA cards have been configured yet."
-msgstr ""
+msgstr "Aún no se han configurado tarjetas de llamada a la acción."
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:252
 msgid "Priority Areas"
-msgstr ""
+msgstr "Áreas prioritarias"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:255
 msgid "Manage the IHP-IX priority areas displayed on the portal."
-msgstr ""
+msgstr "Gestiona las áreas prioritarias del PHI-IX mostradas en el portal."
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:325
 msgid "Priority area title"
-msgstr ""
+msgstr "Título del área prioritaria"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:331
 msgid "Priority area description..."
-msgstr ""
+msgstr "Descripción del área prioritaria..."
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:334
 msgid "UNESCO document URL"
-msgstr ""
+msgstr "URL del documento de la UNESCO"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:345
 msgid "e.g. New, Updated"
-msgstr ""
+msgstr "p. ej. Nuevo, Actualizado"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:377
 msgid "No Priority Areas"
-msgstr ""
+msgstr "Sin áreas prioritarias"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:378
 msgid "No priority areas have been configured yet."
-msgstr ""
+msgstr "Aún no se han configurado áreas prioritarias."
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:760
 msgid "Image uploaded successfully"
-msgstr ""
+msgstr "Imagen subida correctamente"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_content.html:859
 msgid "Changes saved successfully"
-msgstr ""
+msgstr "Cambios guardados correctamente"
 
 #: ckanext/theme_ejemplo/templates/admin/ihpix_overview.html:3
 msgid "IHP-IX Overview"
@@ -2499,7 +2507,7 @@ msgstr "Inicio:"
 
 #: ckanext/theme_ejemplo/templates/admin/open_learning.html:151
 msgid "Type"
-msgstr ""
+msgstr "Tipo"
 
 #: ckanext/theme_ejemplo/templates/admin/open_learning.html:153
 #: ckanext/theme_ejemplo/templates/admin/open_learning.html:482
@@ -2714,7 +2722,7 @@ msgstr ""
 
 #: ckanext/theme_ejemplo/templates/admin/stats.html:102
 msgid "Top contributors"
-msgstr ""
+msgstr "Principales contribuidores"
 
 #: ckanext/theme_ejemplo/templates/admin/stats.html:116
 #: ckanext/theme_ejemplo/templates/group/snippets/info.html:45
@@ -3549,7 +3557,7 @@ msgstr "Explorador completo"
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:651
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:516
 msgid "Filter Activities"
-msgstr ""
+msgstr "Filtrar actividades"
 
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:525
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:525
@@ -3560,7 +3568,7 @@ msgstr "Buscar por título, institución…"
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:748
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:587
 msgid "Showing"
-msgstr ""
+msgstr "Mostrando"
 
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:587
 #: ckanext/theme_ejemplo/templates/group/snippets/info.html:46
@@ -3574,109 +3582,109 @@ msgstr "de"
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:790
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:617
 msgid "Export CSV"
-msgstr ""
+msgstr "Exportar CSV"
 
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:732
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:907
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:732
 msgid "Cross-cutting Working Groups"
-msgstr ""
+msgstr "Grupos de trabajo transversales"
 
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:748
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:923
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:748
 msgid "Products & Training"
-msgstr ""
+msgstr "Productos y formación"
 
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:758
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:933
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:758
 msgid "Knowledge Product Type (Other)"
-msgstr ""
+msgstr "Tipo de producto de conocimiento (otro)"
 
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:764
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:939
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:764
 msgid "# Knowledge Products"
-msgstr ""
+msgstr "N.º de productos de conocimiento"
 
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:776
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:951
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:776
 msgid "# Scientific Products"
-msgstr ""
+msgstr "N.º de productos científicos"
 
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:788
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:963
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:788
 msgid "# Training Materials"
-msgstr ""
+msgstr "N.º de materiales de formación"
 
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:794
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:969
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:794
 msgid "# Curricula"
-msgstr ""
+msgstr "N.º de currículos"
 
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:800
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:975
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:800
 msgid "# Transboundary Member States"
-msgstr ""
+msgstr "N.º de Estados Miembros transfronterizos"
 
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:812
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:987
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:812
 msgid "Knowledge Activity Type (Other)"
-msgstr ""
+msgstr "Tipo de actividad de conocimiento (otro)"
 
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:822
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:997
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:822
 msgid "Stakeholder Engagement"
-msgstr ""
+msgstr "Participación de partes interesadas"
 
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:827
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:1002
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:827
 msgid "Knowledge"
-msgstr ""
+msgstr "Conocimiento"
 
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:833
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:1008
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:833
 msgid "Knowledge (Female)"
-msgstr ""
+msgstr "Conocimiento (mujeres)"
 
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:839
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:1014
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:839
 msgid "Knowledge (Youth)"
-msgstr ""
+msgstr "Conocimiento (jóvenes)"
 
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:845
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:1020
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:845
 msgid "Awareness"
-msgstr ""
+msgstr "Sensibilización"
 
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:851
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:1026
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:851
 msgid "Awareness (Female)"
-msgstr ""
+msgstr "Sensibilización (mujeres)"
 
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:857
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:1032
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:857
 msgid "Awareness (Youth)"
-msgstr ""
+msgstr "Sensibilización (jóvenes)"
 
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:863
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:1038
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:863
 msgid "Stakeholder Groups"
-msgstr ""
+msgstr "Grupos de partes interesadas"
 
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:883
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:956
@@ -3685,25 +3693,25 @@ msgstr ""
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:883
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:956
 msgid "View Details"
-msgstr ""
+msgstr "Ver detalles"
 
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:899
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:1077
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:899
 msgid "Page navigation"
-msgstr ""
+msgstr "Navegación de páginas"
 
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:901
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:1079
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:901
 msgid "Previous"
-msgstr ""
+msgstr "Anterior"
 
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:915
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:1093
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:915
 msgid "Next"
-msgstr ""
+msgstr "Siguiente"
 
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:926
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:926
@@ -3721,19 +3729,19 @@ msgstr ""
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:1108
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:930
 msgid "Clear All Filters"
-msgstr ""
+msgstr "Limpiar todos los filtros"
 
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:953
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:1132
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:953
 msgid "Hide Details"
-msgstr ""
+msgstr "Ocultar detalles"
 
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:988
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:1171
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:988
 msgid "No activities to export."
-msgstr ""
+msgstr "No hay actividades para exportar."
 
 #: ckanext/theme_ejemplo/templates/group/index.html:13
 msgid "Search groups..."
@@ -4441,17 +4449,19 @@ msgstr "Portal de Internet de las cosas"
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:3
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:733
 msgid "IHP-IX Dashboard"
-msgstr ""
+msgstr "Dashboard del PHI-IX"
 
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:735
 msgid ""
 "Overview of IHP-IX activities, priority areas and country participation"
 msgstr ""
+"Panorama de las actividades del PHI-IX, áreas prioritarias y participación "
+"por país"
 
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:740
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:663
 msgid "Explore Activities"
-msgstr ""
+msgstr "Explorar actividades"
 
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:743
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:1018
@@ -4463,132 +4473,132 @@ msgstr "Enviar reporte"
 
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:752
 msgid "Filters"
-msgstr ""
+msgstr "Filtros"
 
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:779
 msgid "All Bienniums"
-msgstr ""
+msgstr "Todos los bienios"
 
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:790
 msgid "Search country…"
-msgstr ""
+msgstr "Buscar país…"
 
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:796
 msgid "Reset all filters"
-msgstr ""
+msgstr "Restablecer todos los filtros"
 
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:828
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:1560
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:652
 msgid "Countries"
-msgstr ""
+msgstr "Países"
 
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:841
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:1561
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:656
 msgid "Institutions"
-msgstr ""
+msgstr "Instituciones"
 
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:855
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:1562
 msgid "Pending Reports"
-msgstr ""
+msgstr "Reportes pendientes"
 
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:869
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:1574
 msgid "Stakeholders Knowledge"
-msgstr ""
+msgstr "Partes interesadas formadas"
 
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:877
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:1575
 msgid "Stakeholders Awareness"
-msgstr ""
+msgstr "Partes interesadas sensibilizadas"
 
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:893
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:1577
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:781
 msgid "Scientific Products"
-msgstr ""
+msgstr "Productos científicos"
 
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:901
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:1578
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:790
 msgid "Training Materials"
-msgstr ""
+msgstr "Materiales de formación"
 
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:912
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:678
 msgid "Global Activity Distribution"
-msgstr ""
+msgstr "Distribución global de actividades"
 
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:919
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:689
 msgid "Africa"
-msgstr ""
+msgstr "África"
 
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:922
 msgid "Asia and the Pacific"
-msgstr ""
+msgstr "Asia y el Pacífico"
 
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:925
 msgid "Europe and North America"
-msgstr ""
+msgstr "Europa y América del Norte"
 
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:928
 msgid "Latin America and the Caribbean"
-msgstr ""
+msgstr "América Latina y el Caribe"
 
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:931
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:701
 msgid "Arab States"
-msgstr ""
+msgstr "Estados Árabes"
 
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:944
 msgid "Activities by Priority Area"
-msgstr ""
+msgstr "Actividades por área prioritaria"
 
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:950
 msgid "No priority area data available"
-msgstr ""
+msgstr "No hay datos por área prioritaria"
 
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:959
 msgid "Activities by Biennium"
-msgstr ""
+msgstr "Actividades por bienio"
 
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:965
 msgid "No biennium data available"
-msgstr ""
+msgstr "No hay datos por bienio"
 
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:978
 msgid "Top Outputs"
-msgstr ""
+msgstr "Principales outputs"
 
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:984
 msgid "No output data available"
-msgstr ""
+msgstr "No hay datos por output"
 
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:993
 msgid "Region Distribution"
-msgstr ""
+msgstr "Distribución por región"
 
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:999
 msgid "No region data available"
-msgstr ""
+msgstr "No hay datos por región"
 
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:1009
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:902
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:7
 msgid "Activities Explorer"
-msgstr ""
+msgstr "Explorador de actividades"
 
 #: ckanext/theme_ejemplo/templates/ihpix/dashboard.html:1014
 msgid "Review Reports"
-msgstr ""
+msgstr "Revisar reportes"
 
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:3
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:640
 msgid "IHP-IX Strategic Plan"
-msgstr ""
+msgstr "Plan Estratégico del PHI-IX"
 
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:6
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:6
@@ -4602,26 +4612,29 @@ msgid ""
 "— UNESCO's strategic framework for addressing global water challenges "
 "through science, innovation, and cooperation."
 msgstr ""
+"La novena fase del Programa Hidrológico Intergubernamental (2022–2029): el "
+"marco estratégico de la UNESCO para afrontar los retos mundiales del agua "
+"mediante la ciencia, la innovación y la cooperación."
 
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:684
 msgid "Loading map data…"
-msgstr ""
+msgstr "Cargando datos del mapa…"
 
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:692
 msgid "Asia & Pacific"
-msgstr ""
+msgstr "Asia y el Pacífico"
 
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:695
 msgid "Europe & N. America"
-msgstr ""
+msgstr "Europa y América del Norte"
 
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:698
 msgid "Latin America & Caribbean"
-msgstr ""
+msgstr "América Latina y el Caribe"
 
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:712
 msgid "Five Priority Areas"
-msgstr ""
+msgstr "Cinco áreas prioritarias"
 
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:731
 #: ckanext/theme_ejemplo/templates/package/snippets/resource_item.html:92
@@ -4630,108 +4643,118 @@ msgstr "Explorar"
 
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:744
 msgid "Programme Impact"
-msgstr ""
+msgstr "Impacto del programa"
 
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:754
 msgid "(Knowledge)"
-msgstr ""
+msgstr "(Conocimiento)"
 
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:763
 msgid "(Awareness)"
-msgstr ""
+msgstr "(Sensibilización)"
 
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:800
 msgid "Get Involved"
-msgstr ""
+msgstr "Participa"
 
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:825
 msgid "Learn more"
-msgstr ""
+msgstr "Más información"
 
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:839
 msgid "Report Activity"
-msgstr ""
+msgstr "Reportar actividad"
 
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:840
 msgid ""
 "Submit your IHP-IX activity report and contribute to global water science "
 "monitoring."
 msgstr ""
+"Envía tu reporte de actividad del PHI-IX y contribuye al seguimiento mundial"
+" de las ciencias del agua."
 
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:853
 msgid "Explore Dashboard"
-msgstr ""
+msgstr "Explorar el dashboard"
 
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:854
 msgid ""
 "Visualize IHP-IX programme data with interactive charts, maps, and "
 "analytics."
 msgstr ""
+"Visualiza los datos del programa PHI-IX con gráficos interactivos, mapas y "
+"analítica."
 
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:856
 msgid "Open Dashboard"
-msgstr ""
+msgstr "Abrir dashboard"
 
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:867
 msgid "View Outputs"
-msgstr ""
+msgstr "Ver outputs"
 
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:868
 msgid ""
 "Browse all IHP-IX outputs and activities organized by priority area and "
 "region."
 msgstr ""
+"Explora todos los outputs y actividades del PHI-IX organizados por área "
+"prioritaria y región."
 
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:870
 msgid "Browse Outputs"
-msgstr ""
+msgstr "Explorar outputs"
 
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:885
 msgid "Admin: Manage IHP-IX Content"
-msgstr ""
+msgstr "Admin: gestionar contenido del PHI-IX"
 
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:887
 msgid "Manage"
-msgstr ""
+msgstr "Gestionar"
 
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:972
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:1035
 msgid "activity"
-msgstr ""
+msgid_plural "activities"
+msgstr[0] "actividad"
+msgstr[1] "actividades"
 
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:1033
 msgid "Unknown"
-msgstr ""
+msgstr "Desconocido"
 
 #: ckanext/theme_ejemplo/templates/ihpix/index.html:1055
 msgid "Could not load map data"
-msgstr ""
+msgstr "No se pudieron cargar los datos del mapa"
 
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:3
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:631
 msgid "IHP-IX Activities Explorer"
-msgstr ""
+msgstr "Explorador de actividades del PHI-IX"
 
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:632
 msgid ""
 "Browse and filter reported activities across priority areas and outputs"
 msgstr ""
+"Explora y filtra las actividades reportadas por áreas prioritarias y outputs"
 
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:660
 msgid "Search by title, country, institution…"
-msgstr ""
+msgstr "Buscar por título, país, institución…"
 
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:725
 msgid "e.g. France"
-msgstr ""
+msgstr "p. ej. Francia"
 
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:1104
 msgid "No activities found"
-msgstr ""
+msgstr "No se encontraron actividades"
 
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:1105
 msgid "Try adjusting your filters or search terms to find activities."
 msgstr ""
+"Ajusta los filtros o los términos de búsqueda para encontrar actividades."
 
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:3
 msgid "Submit IHP-IX Report"
@@ -4746,18 +4769,21 @@ msgid ""
 "Report activities implemented under IHP-IX (2022–2029). The form covers 6 "
 "sections aligned with the official UNESCO reporting guidelines."
 msgstr ""
+"Reporta actividades implementadas bajo el PHI-IX (2022–2029). El formulario "
+"tiene 6 secciones alineadas con las directrices oficiales de reporte de la "
+"UNESCO."
 
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:914
 msgid "About 10 minutes to complete"
-msgstr ""
+msgstr "Unos 10 minutos para completarlo"
 
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:915
 msgid "Your progress is saved automatically in this browser"
-msgstr ""
+msgstr "Tu progreso se guarda automáticamente en este navegador"
 
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:916
 msgid "Fields marked with * are required"
-msgstr ""
+msgstr "Los campos marcados con * son obligatorios"
 
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:923
 msgid "Authentication Required"
@@ -4790,11 +4816,11 @@ msgstr "Enviar otro reporte"
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:946
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:2218
 msgid "We restored your unsaved answers from a previous session."
-msgstr ""
+msgstr "Restauramos tus respuestas sin guardar de una sesión anterior."
 
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:947
 msgid "Discard and start over"
-msgstr ""
+msgstr "Descartar y empezar de nuevo"
 
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:952
 msgid "Form sections"
@@ -4814,16 +4840,16 @@ msgstr "KPIs"
 
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:965
 msgid "Form completion"
-msgstr ""
+msgstr "Progreso del formulario"
 
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:968
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:2032
 msgid "required fields completed"
-msgstr ""
+msgstr "campos obligatorios completados"
 
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:978
 msgid "Please review the following before submitting:"
-msgstr ""
+msgstr "Revisa lo siguiente antes de enviar:"
 
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:987
 msgid "General Information"
@@ -5185,27 +5211,29 @@ msgid ""
 "Search and tick every Member State that benefited. Selected states appear as"
 " removable tags below."
 msgstr ""
+"Busca y marca cada Estado Miembro beneficiado. Los seleccionados aparecen "
+"abajo como etiquetas que se pueden quitar."
 
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:1325
 msgid "Search a Member State…"
-msgstr ""
+msgstr "Buscar un Estado Miembro…"
 
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:1326
 msgid "Search Member States"
-msgstr ""
+msgstr "Buscar Estados Miembros"
 
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:1337
 msgid "No Member States match your search."
-msgstr ""
+msgstr "Ningún Estado Miembro coincide con tu búsqueda."
 
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:1340
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:1978
 msgid "selected"
-msgstr ""
+msgstr "seleccionados"
 
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:1341
 msgid "Clear all"
-msgstr ""
+msgstr "Limpiar todo"
 
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:1357
 msgid "Contribution to IHP-IX Key Performance Indicators and Targets"
@@ -5424,11 +5452,11 @@ msgstr "Enviar para revisión"
 
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:1639
 msgid "Back to top"
-msgstr ""
+msgstr "Volver arriba"
 
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:1671
 msgid "Dismiss notification"
-msgstr ""
+msgstr "Cerrar notificación"
 
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:1876
 msgid "Please fix the highlighted fields."
@@ -5444,19 +5472,19 @@ msgstr "Error de red. Por favor revisa tu conexión e inténtalo de nuevo."
 
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:2033
 msgid "All required fields completed"
-msgstr ""
+msgstr "Todos los campos obligatorios completados"
 
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:2120
 msgid "Saving…"
-msgstr ""
+msgstr "Guardando…"
 
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:2122
 msgid "Saved in this browser"
-msgstr ""
+msgstr "Guardado en este navegador"
 
 #: ckanext/theme_ejemplo/templates/ihpix/report.html:2240
 msgid "Draft discarded. You can start a fresh report."
-msgstr ""
+msgstr "Borrador descartado. Puedes empezar un reporte nuevo."
 
 #: ckanext/theme_ejemplo/templates/ihpix/snippets/helper.html:4
 msgid "What is IHP IX?"
@@ -6671,6 +6699,778 @@ msgstr "Recordarme"
 msgid "Login"
 msgstr "Iniciar sesión"
 
+#: ckanext/theme_ejemplo/templates/overrides/snippets/changes/license.html
+msgid "Unknown license"
+msgstr "Licencia desconocida"
+
+#: ckanext/theme_ejemplo/templates/base.html
+msgid "See all results for"
+msgstr "Ver todos los resultados para"
+
+#: ckanext/theme_ejemplo/templates/base.html
+msgid "No suggestions found"
+msgstr "No se encontraron sugerencias"
+
+#: ckanext/theme_ejemplo/templates/base.html
+msgid "Search suggestions"
+msgstr "Sugerencias de búsqueda"
+
+#. IHP-IX (2026-09)
+msgid "Activities and outputs"
+msgstr "Actividades y outputs"
+
+#. IHP-IX (2026-09)
+msgid "Activities by Output and Biennium"
+msgstr "Actividades por output y bienio"
+
+#. IHP-IX (2026-09)
+msgid "Activities over time"
+msgstr "Actividades en el tiempo"
+
+#. IHP-IX (2026-09)
+msgid ""
+"Activities reported under this output of the IHP-IX Strategic Plan "
+"(2022–2029), the people who contributed them and the publications, events "
+"and data they produced."
+msgstr ""
+"Actividades reportadas bajo este output del Plan Estratégico del PHI-IX "
+"(2022–2029), las personas que las aportaron y las publicaciones, eventos y "
+"datos que produjeron."
+
+#. IHP-IX (2026-09)
+msgid ""
+"Activities, outputs and contributors reported under this Priority Area of "
+"the IHP-IX Strategic Plan (2022–2029)."
+msgstr ""
+"Actividades, outputs y contribuidores reportados bajo esta área prioritaria "
+"del Plan Estratégico del PHI-IX (2022–2029)."
+
+#. IHP-IX (2026-09)
+msgid ""
+"Activity reports submitted under IHP-IX (2022–2029). Drafts and returned "
+"reports can be edited and resubmitted; published reports appear in the IHP-"
+"IX portal."
+msgstr ""
+"Reportes de actividad enviados bajo el PHI-IX (2022–2029). Los borradores y "
+"los reportes devueltos pueden editarse y reenviarse; los publicados aparecen"
+" en el portal del PHI-IX."
+
+#. IHP-IX (2026-09)
+msgid "Add an external link manually"
+msgstr "Añadir un enlace externo a mano"
+
+#. IHP-IX (2026-09)
+msgid "Add an item"
+msgstr "Añadir un elemento"
+
+#. IHP-IX (2026-09)
+msgid "Add link"
+msgstr "Añadir enlace"
+
+#. IHP-IX (2026-09)
+msgid "All contributors"
+msgstr "Todos los contribuidores"
+
+#. IHP-IX (2026-09)
+msgid "All contributors to this output"
+msgstr "Todos los contribuidores de este output"
+
+#. IHP-IX (2026-09)
+msgid "Assessment"
+msgstr "Evaluación"
+
+#. IHP-IX (2026-09)
+msgid ""
+"Attach the outputs of this activity: publications, webinars, events and "
+"datasets already in IHP-WINS, or external links. They will be shown with the"
+" activity once it is published."
+msgstr ""
+"Adjunta los productos de esta actividad: publicaciones, webinars, eventos y "
+"datasets que ya están en IHP-WINS, o enlaces externos. Se mostrarán junto a "
+"la actividad cuando se publique."
+
+#. IHP-IX (2026-09)
+msgid "Back to my reports"
+msgstr "Volver a mis reportes"
+
+#. IHP-IX (2026-09)
+msgid "Be the first to report one."
+msgstr "Sé la primera persona en reportar una."
+
+#. IHP-IX (2026-09)
+msgid "Book"
+msgstr "Libro"
+
+#. IHP-IX (2026-09)
+msgid "Bridging the Data-Knowledge Gap"
+msgstr "Cerrar la brecha entre datos y conocimiento"
+
+#. IHP-IX (2026-09)
+msgid "Changes are saved on the server when you click \"Save as draft\""
+msgstr "Los cambios se guardan en el servidor al pulsar \"Guardar como borrador\""
+
+#. IHP-IX (2026-09)
+msgid "Community Groups"
+msgstr "Grupos comunitarios"
+
+#. IHP-IX (2026-09)
+msgid "Conference session or roundtable discussion"
+msgstr "Sesión de conferencia o mesa redonda"
+
+#. IHP-IX (2026-09)
+msgid "Contributors"
+msgstr "Contribuidores"
+
+#. IHP-IX (2026-09)
+msgid "Could not recompute the country summary."
+msgstr "No se pudo recalcular el resumen por país."
+
+#. IHP-IX (2026-09)
+msgid "Country summary recomputed for %(n)d countries."
+msgstr "Resumen por país recalculado para %(n)d países."
+
+#. IHP-IX (2026-09)
+msgid "Create a publication"
+msgstr "Crear una publicación"
+
+#. IHP-IX (2026-09)
+msgid "Create an event"
+msgstr "Crear un evento"
+
+#. IHP-IX (2026-09)
+msgid "Dataset"
+msgstr "Dataset"
+
+#. IHP-IX (2026-09)
+msgid "Date"
+msgstr "Fecha"
+
+#. IHP-IX (2026-09)
+msgid "Delete this report? This cannot be undone."
+msgstr "¿Eliminar este reporte? No se puede deshacer."
+
+#. IHP-IX (2026-09)
+msgid "Drafts"
+msgstr "Borradores"
+
+#. IHP-IX (2026-09)
+msgid "Eastern Europe"
+msgstr "Europa Oriental"
+
+#. IHP-IX (2026-09)
+msgid "Ecohydrology and Water Quality"
+msgstr "Ecohidrología y calidad del agua"
+
+#. IHP-IX (2026-09)
+msgid "Edit IHP-IX Activity Report"
+msgstr "Editar reporte de actividad del PHI-IX"
+
+#. IHP-IX (2026-09)
+msgid "Event"
+msgstr "Evento"
+
+#. IHP-IX (2026-09)
+msgid "Export full dataset (CSV)"
+msgstr "Exportar todo el conjunto (CSV)"
+
+#. IHP-IX (2026-09)
+msgid "Global"
+msgstr "Global"
+
+#. IHP-IX (2026-09)
+msgid "Government Agencies"
+msgstr "Organismos gubernamentales"
+
+#. IHP-IX (2026-09)
+msgid "Governmental Organization"
+msgstr "Organización gubernamental"
+
+#. IHP-IX (2026-09)
+msgid "Groundwater and Human Settlements"
+msgstr "Aguas subterráneas y asentamientos humanos"
+
+#. IHP-IX (2026-09)
+msgid "Hydrological Systems, Rivers, Climate Risk and Water-Food-Energy Nexus"
+msgstr ""
+"Sistemas hidrológicos, ríos, riesgo climático y nexo agua-alimentos-energía"
+
+#. IHP-IX (2026-09)
+msgid "IHP National Committee"
+msgstr "Comité Nacional del PHI"
+
+#. IHP-IX (2026-09)
+msgid "IHP-IX Contributors"
+msgstr "Contribuidores del PHI-IX"
+
+#. IHP-IX (2026-09)
+msgid "IHP-IX Output"
+msgstr "Output del PHI-IX"
+
+#. IHP-IX (2026-09)
+msgid "IHP-IX reports"
+msgstr "Reportes del PHI-IX"
+
+#. IHP-IX (2026-09)
+msgid "If applicable, the date when the activity started."
+msgstr "Si aplica, la fecha en que comenzó la actividad."
+
+#. IHP-IX (2026-09)
+msgid ""
+"Integrated Water Resources Management under Conditions of Global Change"
+msgstr ""
+"Gestión integrada de los recursos hídricos en condiciones de cambio global"
+
+#. IHP-IX (2026-09)
+msgid "International Conference"
+msgstr "Conferencia internacional"
+
+#. IHP-IX (2026-09)
+msgid "International Organizations"
+msgstr "Organizaciones internacionales"
+
+#. IHP-IX (2026-09)
+msgid "Last report"
+msgstr "Último reporte"
+
+#. IHP-IX (2026-09)
+msgid "Last saved"
+msgstr "Último guardado"
+
+#. IHP-IX (2026-09)
+msgid "Lead institutions"
+msgstr "Instituciones líderes"
+
+#. IHP-IX (2026-09)
+msgid "Linked Datasets"
+msgstr "Datasets vinculados"
+
+#. IHP-IX (2026-09)
+msgid "Linked Events & Webinars"
+msgstr "Eventos y webinars vinculados"
+
+#. IHP-IX (2026-09)
+msgid "Linked Publications"
+msgstr "Publicaciones vinculadas"
+
+#. IHP-IX (2026-09)
+msgid "Linked publications, events & data"
+msgstr "Publicaciones, eventos y datos vinculados"
+
+#. IHP-IX (2026-09)
+msgid "Log in to explore and report"
+msgstr "Inicia sesión para explorar y reportar"
+
+#. IHP-IX (2026-09)
+msgid "Matching your filters"
+msgstr "Coinciden con tus filtros"
+
+#. IHP-IX (2026-09)
+msgid "Member State support"
+msgstr "Apoyo de un Estado Miembro"
+
+#. IHP-IX (2026-09)
+msgid "Methodology"
+msgstr "Metodología"
+
+#. IHP-IX (2026-09)
+msgid "Monthly count of activities"
+msgstr "Recuento mensual de actividades"
+
+#. IHP-IX (2026-09)
+msgid "Move down"
+msgstr "Bajar"
+
+#. IHP-IX (2026-09)
+msgid "Move up"
+msgstr "Subir"
+
+#. IHP-IX (2026-09)
+msgid "My IHP-IX reports"
+msgstr "Mis reportes del PHI-IX"
+
+#. IHP-IX (2026-09)
+msgid "My reports"
+msgstr "Mis reportes"
+
+#. IHP-IX (2026-09)
+msgid "Needs changes"
+msgstr "Requiere cambios"
+
+#. IHP-IX (2026-09)
+msgid "New IHP-IX report"
+msgstr "Nuevo reporte del PHI-IX"
+
+#. IHP-IX (2026-09)
+msgid "No contributors match these filters."
+msgstr "Ningún contribuidor coincide con estos filtros."
+
+#. IHP-IX (2026-09)
+msgid "No contributors yet."
+msgstr "Aún no hay contribuidores."
+
+#. IHP-IX (2026-09)
+msgid "No institution data available"
+msgstr "No hay datos de instituciones"
+
+#. IHP-IX (2026-09)
+msgid "No publications, events or data attached yet."
+msgstr "Aún no hay publicaciones, eventos ni datos adjuntos."
+
+#. IHP-IX (2026-09)
+msgid "No published activities for this Priority Area yet."
+msgstr "Aún no hay actividades publicadas para esta área prioritaria."
+
+#. IHP-IX (2026-09)
+msgid "No published activities for this output yet."
+msgstr "Aún no hay actividades publicadas para este output."
+
+#. IHP-IX (2026-09)
+msgid "No results. You can add it manually below."
+msgstr "Sin resultados. Puedes añadirlo manualmente abajo."
+
+#. IHP-IX (2026-09)
+msgid "Non-Governmental Organization"
+msgstr "Organización no gubernamental"
+
+#. IHP-IX (2026-09)
+msgid "Non-Governmental Organizations (NGOs)"
+msgstr "Organizaciones no gubernamentales (ONG)"
+
+#. IHP-IX (2026-09)
+msgid "Not in IHP-WINS yet?"
+msgstr "¿Aún no está en IHP-WINS?"
+
+#. IHP-IX (2026-09)
+msgid "Official document"
+msgstr "Documento oficial"
+
+#. IHP-IX (2026-09)
+msgid "Online training course"
+msgstr "Curso de formación en línea"
+
+#. IHP-IX (2026-09)
+msgid "Open full report"
+msgstr "Abrir reporte completo"
+
+#. IHP-IX (2026-09)
+msgid "Open in explorer"
+msgstr "Abrir en el explorador"
+
+#. IHP-IX (2026-09)
+msgid "Other"
+msgstr "Otro"
+
+#. IHP-IX (2026-09)
+msgid "Other link"
+msgstr "Otro enlace"
+
+#. IHP-IX (2026-09)
+msgid "Other links"
+msgstr "Otros enlaces"
+
+#. IHP-IX (2026-09)
+msgid "Other outputs of"
+msgstr "Otros outputs de"
+
+#. IHP-IX (2026-09)
+msgid "Output data"
+msgstr "Datos del output"
+
+#. IHP-IX (2026-09)
+msgid "Output not found"
+msgstr "Output no encontrado"
+
+#. IHP-IX (2026-09)
+msgid "Output page"
+msgstr "Página del output"
+
+#. IHP-IX (2026-09)
+msgid "Outputs"
+msgstr "Outputs"
+
+#. IHP-IX (2026-09)
+msgid "PAs"
+msgstr "AP"
+
+#. IHP-IX (2026-09)
+msgid "Patents"
+msgstr "Patentes"
+
+#. IHP-IX (2026-09)
+msgid "Peer-reviewed articles"
+msgstr "Artículos revisados por pares"
+
+#. IHP-IX (2026-09)
+msgid "Pending review"
+msgstr "Pendiente de revisión"
+
+#. IHP-IX (2026-09)
+msgid "People directory"
+msgstr "Directorio de personas"
+
+#. IHP-IX (2026-09)
+msgid ""
+"People who have reported published IHP-IX activities in IHP-WINS. Filter by "
+"Priority Area, Output or biennium to find who is working on what."
+msgstr ""
+"Personas que han reportado actividades publicadas del PHI-IX en IHP-WINS. "
+"Filtra por área prioritaria, output o bienio para ver quién trabaja en qué."
+
+#. IHP-IX (2026-09)
+msgid "Physical training course"
+msgstr "Curso de formación presencial"
+
+#. IHP-IX (2026-09)
+msgid "Physical training material (hard copy)"
+msgstr "Material de formación físico (impreso)"
+
+#. IHP-IX (2026-09)
+msgid "Physical training material (soft copy)"
+msgstr "Material de formación físico (digital)"
+
+#. IHP-IX (2026-09)
+msgid "Priority Area / Output"
+msgstr "Área prioritaria / Output"
+
+#. IHP-IX (2026-09)
+msgid "Priority Area not found"
+msgstr "Área prioritaria no encontrada"
+
+#. IHP-IX (2026-09)
+msgid "Priority Area page"
+msgstr "Página del área prioritaria"
+
+#. IHP-IX (2026-09)
+msgid "Private Partner"
+msgstr "Socio privado"
+
+#. IHP-IX (2026-09)
+msgid "Private Sector"
+msgstr "Sector privado"
+
+#. IHP-IX (2026-09)
+msgid "Publication"
+msgstr "Publicación"
+
+#. IHP-IX (2026-09)
+msgid "Publications, events & data"
+msgstr "Publicaciones, eventos y datos"
+
+#. IHP-IX (2026-09)
+msgid "Published activities"
+msgstr "Actividades publicadas"
+
+#. IHP-IX (2026-09)
+msgid "Recent activities"
+msgstr "Actividades recientes"
+
+#. IHP-IX (2026-09)
+msgid "Recompute map counts"
+msgstr "Recalcular conteos del mapa"
+
+#. IHP-IX (2026-09)
+msgid "Recompute the country summary (map counts) from published activities?"
+msgstr ""
+"¿Recalcular el resumen por país (conteos del mapa) a partir de las "
+"actividades publicadas?"
+
+#. IHP-IX (2026-09)
+msgid "Report an activity"
+msgstr "Reportar una actividad"
+
+#. IHP-IX (2026-09)
+msgid "Report an activity for this output"
+msgstr "Reportar una actividad para este output"
+
+#. IHP-IX (2026-09)
+msgid "Report deleted."
+msgstr "Reporte eliminado."
+
+#. IHP-IX (2026-09)
+msgid "Report not found"
+msgstr "Reporte no encontrado"
+
+#. IHP-IX (2026-09)
+msgid "Research Institution"
+msgstr "Institución de investigación"
+
+#. IHP-IX (2026-09)
+msgid "Research and Academic Institutions"
+msgstr "Instituciones académicas y de investigación"
+
+#. IHP-IX (2026-09)
+msgid "River Basin Organizations or Regional Water Management Bodies"
+msgstr "Organizaciones de cuenca u organismos regionales de gestión del agua"
+
+#. IHP-IX (2026-09)
+msgid "Saved on the server"
+msgstr "Guardado en el servidor"
+
+#. IHP-IX (2026-09)
+msgid "Scientific Research and Innovation"
+msgstr "Investigación científica e innovación"
+
+#. IHP-IX (2026-09)
+msgid "Scientific conference proceedings"
+msgstr "Actas de conferencias científicas"
+
+#. IHP-IX (2026-09)
+msgid "Scientific journal editions"
+msgstr "Ediciones de revistas científicas"
+
+#. IHP-IX (2026-09)
+msgid "Search by name…"
+msgstr "Buscar por nombre…"
+
+#. IHP-IX (2026-09)
+msgid "Search by title…"
+msgstr "Buscar por título…"
+
+#. IHP-IX (2026-09)
+msgid "Search in IHP-WINS"
+msgstr "Buscar en IHP-WINS"
+
+#. IHP-IX (2026-09)
+msgid ""
+"Search is not available for this type here. Add the link manually below."
+msgstr ""
+"La búsqueda no está disponible para este tipo aquí. Añade el enlace "
+"manualmente abajo."
+
+#. IHP-IX (2026-09)
+msgid "Searching…"
+msgstr "Buscando…"
+
+#. IHP-IX (2026-09)
+msgid "See all activities of"
+msgstr "Ver todas las actividades de"
+
+#. IHP-IX (2026-09)
+msgid "Seminar or online webinar"
+msgstr "Seminario o webinar en línea"
+
+#. IHP-IX (2026-09)
+msgid "Short description"
+msgstr "Descripción corta"
+
+#. IHP-IX (2026-09)
+msgid "Start date"
+msgstr "Fecha de inicio"
+
+#. IHP-IX (2026-09)
+msgid "Statistic"
+msgstr "Estadística"
+
+#. IHP-IX (2026-09)
+msgid "The URL must start with http:// or https://"
+msgstr "La URL debe empezar por http:// o https://"
+
+#. IHP-IX (2026-09)
+msgid "The reviewer returned this report. Update it and submit it again."
+msgstr "El revisor devolvió este reporte. Actualízalo y envíalo de nuevo."
+
+#. IHP-IX (2026-09)
+msgid "There are no draft reports."
+msgstr "No hay reportes en borrador."
+
+#. IHP-IX (2026-09)
+msgid "There are no published reports."
+msgstr "No hay reportes publicados."
+
+#. IHP-IX (2026-09)
+msgid "This is a draft. Only you can see it until you submit it for review."
+msgstr ""
+"Esto es un borrador. Solo tú puedes verlo hasta que lo envíes a revisión."
+
+#. IHP-IX (2026-09)
+msgid "This item is already attached."
+msgstr "Este elemento ya está adjunto."
+
+#. IHP-IX (2026-09)
+msgid "This report is awaiting review and can no longer be edited."
+msgstr "Este reporte está pendiente de revisión y ya no se puede editar."
+
+#. IHP-IX (2026-09)
+msgid "This report is awaiting review."
+msgstr "Este reporte está pendiente de revisión."
+
+#. IHP-IX (2026-09)
+msgid "This report is published and can no longer be edited."
+msgstr "Este reporte está publicado y ya no se puede editar."
+
+#. IHP-IX (2026-09)
+msgid ""
+"This report is published. Changes are applied directly without a new review."
+msgstr ""
+"Este reporte está publicado. Los cambios se aplican directamente sin nueva "
+"revisión."
+
+#. IHP-IX (2026-09)
+msgid "This user hasn't published any IHP-IX reports."
+msgstr "Este usuario no ha publicado reportes del PHI-IX."
+
+#. IHP-IX (2026-09)
+msgid "Title and URL are required."
+msgstr "El título y la URL son obligatorios."
+
+#. IHP-IX (2026-09)
+msgid "Tool"
+msgstr "Herramienta"
+
+#. IHP-IX (2026-09)
+msgid "Top Lead Institutions"
+msgstr "Principales instituciones líderes"
+
+#. IHP-IX (2026-09)
+msgid "Type at least 2 characters and pick a result to attach it."
+msgstr "Escribe al menos 2 caracteres y elige un resultado para adjuntarlo."
+
+#. IHP-IX (2026-09)
+msgid "UNESCO Category I Center"
+msgstr "Centro de categoría 1 de la UNESCO"
+
+#. IHP-IX (2026-09)
+msgid "UNESCO Category II Center"
+msgstr "Centro de categoría 2 de la UNESCO"
+
+#. IHP-IX (2026-09)
+msgid "UNESCO Chair or UNITWIN"
+msgstr "Cátedra UNESCO o UNITWIN"
+
+#. IHP-IX (2026-09)
+msgid "UNESCO Field Office"
+msgstr "Oficina de la UNESCO fuera de la Sede"
+
+#. IHP-IX (2026-09)
+msgid "UNESCO IHP Secretariat"
+msgstr "Secretaría del PHI de la UNESCO"
+
+#. IHP-IX (2026-09)
+msgid "UNESCO Secretariat"
+msgstr "Secretaría de la UNESCO"
+
+#. IHP-IX (2026-09)
+msgid "UNESCO Secretariat participation"
+msgstr "Participación de la Secretaría de la UNESCO"
+
+#. IHP-IX (2026-09)
+msgid "University"
+msgstr "Universidad"
+
+#. IHP-IX (2026-09)
+msgid "Updated"
+msgstr "Actualizado"
+
+#. IHP-IX (2026-09)
+msgid ""
+"Water Education in the Fourth Industrial Revolution including Sustainability"
+msgstr ""
+"Educación sobre el agua en la Cuarta Revolución Industrial, incluida la "
+"sostenibilidad"
+
+#. IHP-IX (2026-09)
+msgid ""
+"Water Governance based on Science for Mitigation, Adaptation, and Resilience"
+msgstr ""
+"Gobernanza del agua basada en la ciencia para la mitigación, la adaptación y"
+" la resiliencia"
+
+#. IHP-IX (2026-09)
+msgid "Water Utilities"
+msgstr "Empresas de servicios de agua"
+
+#. IHP-IX (2026-09)
+msgid "Webinar"
+msgstr "Webinar"
+
+#. IHP-IX (2026-09)
+msgid "Webinars"
+msgstr "Webinars"
+
+#. IHP-IX (2026-09)
+msgid "Workshop or physical/online training course"
+msgstr "Taller o curso de formación presencial/en línea"
+
+#. IHP-IX (2026-09)
+msgid "Yes/No answers of the report; crossed-out items were answered No"
+msgstr ""
+"Respuestas Sí/No del reporte; los elementos tachados se respondieron con No"
+
+#. IHP-IX (2026-09)
+msgid "You haven't submitted any IHP-IX reports yet."
+msgstr "Aún no has enviado reportes del PHI-IX."
+
+#. IHP-IX (2026-09)
+msgid "You must be logged in"
+msgstr "Debes iniciar sesión"
+
+#. IHP-IX (2026-09)
+msgid "Your IHP-IX report \"{title}\" has been published"
+msgstr "Tu reporte del PHI-IX \"{title}\" ha sido publicado"
+
+#. IHP-IX (2026-09)
+msgid "Your IHP-IX report \"{title}\" needs changes"
+msgstr "Tu reporte del PHI-IX \"{title}\" requiere cambios"
+
+#. IHP-IX (2026-09)
+msgid ""
+"Your report \"%(title)s\" was submitted and will be reviewed by an "
+"administrator."
+msgstr ""
+"Tu reporte \"%(title)s\" fue enviado y será revisado por un administrador."
+
+#. IHP-IX (2026-09)
+msgid "outputs"
+msgstr "outputs"
+
+#. IHP-IX (2026-09)
+msgid "when you are done, come back to this tab and search for it."
+msgstr "cuando termines, vuelve a esta pestaña y búscalo."
+
+#. IHP-IX (2026-09)
+msgid ""
+"Dear {name},\n"
+"\n"
+"Your IHP-IX activity report \"{title}\" has been reviewed and published on {site}.\n"
+"\n"
+"You can see all your reports here: {url}\n"
+"\n"
+"Thank you for contributing to IHP-IX.\n"
+msgstr ""
+"Estimado/a {name}:\n"
+"\n"
+"Tu reporte de actividad del PHI-IX \"{title}\" ha sido revisado y publicado en {site}.\n"
+"\n"
+"Puedes ver todos tus reportes aquí: {url}\n"
+"\n"
+"Gracias por contribuir al PHI-IX.\n"
+
+#. IHP-IX (2026-09)
+msgid ""
+"Dear {name},\n"
+"\n"
+"Your IHP-IX activity report \"{title}\" was reviewed on {site} and could not be published as submitted.\n"
+"\n"
+"Reviewer notes:\n"
+"{notes}\n"
+"\n"
+"You can edit and resubmit it here: {url}\n"
+msgstr ""
+"Estimado/a {name}:\n"
+"\n"
+"Tu reporte de actividad del PHI-IX \"{title}\" fue revisado en {site} y no pudo publicarse tal como se envió.\n"
+"\n"
+"Notas del revisor:\n"
+"{notes}\n"
+"\n"
+"Puedes editarlo y reenviarlo aquí: {url}\n"
+
+#. IHP-IX (2026-09)
+msgid "%(n)d activity"
+msgid_plural "%(n)d activities"
+msgstr[0] "%(n)d actividad"
+msgstr[1] "%(n)d actividades"
+
 #, python-format
 #~ msgid "Dashboard (%(num)d new item)"
 #~ msgid_plural "Dashboard (%(num)d new items)"
@@ -7070,19 +7870,3 @@ msgstr "Iniciar sesión"
 #~ msgstr ""
 #~ "Un núcleo global creciente de conocimiento sobre el agua: cifras en tiempo "
 #~ "real desde nuestra red."
-
-#: ckanext/theme_ejemplo/templates/overrides/snippets/changes/license.html
-msgid "Unknown license"
-msgstr "Licencia desconocida"
-
-#: ckanext/theme_ejemplo/templates/base.html
-msgid "See all results for"
-msgstr "Ver todos los resultados para"
-
-#: ckanext/theme_ejemplo/templates/base.html
-msgid "No suggestions found"
-msgstr "No se encontraron sugerencias"
-
-#: ckanext/theme_ejemplo/templates/base.html
-msgid "Search suggestions"
-msgstr "Sugerencias de búsqueda"
