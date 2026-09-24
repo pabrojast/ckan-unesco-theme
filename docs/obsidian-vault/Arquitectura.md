@@ -230,3 +230,11 @@ plugin.py ─── registra ──→ controller.py (vistas)
 - [[Flujos Importantes]] — Flujos de negocio clave
 - [[Variables de Entorno]] — Configuración completa
 - [[Estructura del Repo]] — Organización de archivos
+
+## Catálogo de formación
+
+El plugin separado `learning` es propietario del tipo CKAN `learning`, esquema,
+revisión, conectores y relaciones. El tema conserva adaptadores de compatibilidad
+con Open Learning y sus vistas usan los paquetes publicados. La tabla antigua
+permanece intacta. El catálogo dataset y las pestañas de organizaciones/grupos
+excluyen documentos y formación según su contexto. Ver [[Open Learning]].

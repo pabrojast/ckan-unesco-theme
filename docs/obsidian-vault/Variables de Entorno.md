@@ -165,3 +165,14 @@ ckanext.theme_ejemplo.anon_cache_exclude_paths = /api,/ckan-admin,/user,/dashboa
 - [[Setup Local]] — Cómo configurar el entorno
 - [[Deployment]] — Pipeline de CI/CD
 - [[Arquitectura#Estrategia de caching]] — Detalles de caching
+
+## Plugin learning (opcional)
+
+Añadir `learning` a `ckan.plugins` después de los plugins del portal,
+`ckanext.learning:schema.json` a `scheming.dataset_schemas` y
+`ckanext.scheming:presets.json` al final de los presets existentes.
+`ckanext.learning.ihp_owner_org` selecciona la organización de importación inicial
+(default `intergovernmental-hydrological-programme`). Tras inicializar, las fuentes
+se editan en el administrador. Los secretos de socios se referencian mediante
+`CKAN_LEARNING_TOKEN_<PARTNER>`, nunca por valores dentro del mapeo JSON.
+Con learning activo las opciones de TTL lazy del tema dejan de disparar imports.

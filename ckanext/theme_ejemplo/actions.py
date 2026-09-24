@@ -2849,6 +2849,10 @@ def open_learning_course_list(context, data_dict):
     Filtros opcionales: status, course_type, is_available.
     """
     toolkit.check_access('open_learning_course_list', context, data_dict)
+    from ckan import plugins as p
+    if p.plugin_loaded('learning'):
+        from ckanext.learning import compat
+        return compat.course_list(context, data_dict)
     init_open_learning_courses_db()
 
     courses = OpenLearningCourse.get_all()
@@ -2877,6 +2881,10 @@ def open_learning_course_list(context, data_dict):
 def open_learning_course_set_status(context, data_dict):
     """Cambia el status de curación de un curso. Solo sysadmin."""
     toolkit.check_access('open_learning_course_set_status', context, data_dict)
+    from ckan import plugins as p
+    if p.plugin_loaded('learning'):
+        from ckanext.learning import compat
+        return compat.set_status(context, data_dict)
     init_open_learning_courses_db()
 
     course_id = toolkit.get_or_bust(data_dict, 'id')
@@ -2902,6 +2910,10 @@ def open_learning_course_set_type(context, data_dict):
     reset_override=True vuelve a la auto-detección.
     """
     toolkit.check_access('open_learning_course_set_type', context, data_dict)
+    from ckan import plugins as p
+    if p.plugin_loaded('learning'):
+        from ckanext.learning import compat
+        return compat.set_type(context, data_dict)
     init_open_learning_courses_db()
 
     course_id = toolkit.get_or_bust(data_dict, 'id')
@@ -2937,6 +2949,10 @@ def open_learning_course_set_type(context, data_dict):
 def open_learning_sync(context, data_dict):
     """Fuerza una sincronización con la API de Open Learning. Solo sysadmin."""
     toolkit.check_access('open_learning_sync', context, data_dict)
+    from ckan import plugins as p
+    if p.plugin_loaded('learning'):
+        from ckanext.learning import compat
+        return compat.sync(context, data_dict)
     from ckanext.theme_ejemplo import openlearning
     return openlearning.sync_courses(force=True)
 
@@ -2949,6 +2965,10 @@ def open_learning_course_search(context, data_dict):
     ya están en la BD para que el admin decida cuáles agregar.
     """
     toolkit.check_access('open_learning_course_search', context, data_dict)
+    from ckan import plugins as p
+    if p.plugin_loaded('learning'):
+        from ckanext.learning import compat
+        return compat.search(context, data_dict)
     init_open_learning_courses_db()
 
     query = data_dict.get('query', u'').strip()
@@ -2984,6 +3004,10 @@ def open_learning_course_add(context, data_dict):
     existentes preservan status/course_type_override/display_order.
     """
     toolkit.check_access('open_learning_course_add', context, data_dict)
+    from ckan import plugins as p
+    if p.plugin_loaded('learning'):
+        from ckanext.learning import compat
+        return compat.add(context, data_dict)
     init_open_learning_courses_db()
 
     course_id = toolkit.get_or_bust(data_dict, 'course_id')

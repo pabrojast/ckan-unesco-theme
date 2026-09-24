@@ -171,3 +171,15 @@ git push --tags
 - [[Setup Local]] — Instalación completa del entorno
 - [[Testing]] — Estrategia y detalles de testing
 - [[Deployment]] — Proceso completo de release
+
+## Recursos de formación
+
+```bash
+ckan -c /app/production.ini learning init
+ckan -c /app/production.ini learning migrate-openlearning  # informe sin cambios
+ckan -c /app/production.ini learning migrate-openlearning --apply
+ckan -c /app/production.ini learning sync --due
+```
+
+El comando anterior `openlearning sync --force` sigue funcionando cuando
+el plugin está habilitado y delega a su fuente IHP.

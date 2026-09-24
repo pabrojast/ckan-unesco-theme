@@ -467,3 +467,15 @@ Se ejecuta por CronJob de Kubernetes cada ~5 min (ver `deploy/cronjob-pageviews-
 - [[Arquitectura]] — Diseño general y relaciones
 - [[Flujos Importantes]] — Flujos de negocio
 - [[Estructura del Repo]] — Organización de archivos
+
+## Integración con learning
+
+- `actions.py`: las acciones `open_learning_*` delegan en `ckanext.learning.compat` si el plugin está activo.
+- `plugin.py`: cursos de la home desde el catálogo aprobado; exclusión de learning de conteos/pestañas dataset.
+- `controller.py`: alias `/courses`, redirección del admin y sugerencias de búsqueda del tipo `learning`.
+- `cache.py`: home, cursos y formación omiten caché de HTML para reflejar retiros tras edición.
+- `cli.py`: el comando legado de sincronización delega al nuevo conector.
+- `header.html`: navegación al catálogo cuando está instalado.
+
+El esquema, modelos auxiliares, API, CLI y pantallas de aprendizaje pertenecen
+a `ckanext-learning`, alojado inicialmente en el repositorio Docker.

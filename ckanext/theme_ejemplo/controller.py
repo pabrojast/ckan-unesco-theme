@@ -383,7 +383,8 @@ def _ranked_entity_index(entity_type, list_action, ckan_type, template):
 # Qué fuentes consulta cada scope del endpoint de sugerencias, en el orden en
 # que se muestran.
 SUGGEST_SCOPES = {
-    'all': ('dataset', 'organization', 'initiative', 'memberstate'),
+    'all': ('dataset', 'learning', 'organization', 'initiative', 'memberstate'),
+    'learning': ('learning',),
     'dataset': ('dataset',),
     'organization': ('organization',),
     'initiative': ('initiative',),
@@ -398,6 +399,7 @@ SUGGEST_DATASET_QF = 'title_ngram^3 name_ngram title^4 tags^2 text^0.5'
 def _suggest_label(kind):
     return {
         'dataset': _('Datasets'),
+        'learning': _('Learning resources'),
         'organization': _('Organizations'),
         'initiative': _('Initiatives'),
         'memberstate': _('Member States'),
@@ -406,6 +408,14 @@ def _suggest_label(kind):
 
 def _suggest_items(kind, q):
     """Items {title, url, subtitle} de una fuente de sugerencias."""
+    if kind == 'learning':
+        import ckan.plugins as p
+        if not p.plugin_loaded('learning'):
+            return []
+        result = toolkit.get_action('package_search')({'user': ''}, {
+            'q': theme_search.escape_solr(q), 'fq': 'type:learning', 'rows': SUGGEST_LIMIT})
+        return [{'title': pkg['title'], 'url': h.url_for('learning.read', id=pkg['name']),
+                 'subtitle': pkg.get('learning_provider', '')} for pkg in result['results']]
     if kind == 'dataset':
         solr_q = theme_search.escape_solr(q)
         if not solr_q:
@@ -414,6 +424,7 @@ def _suggest_items(kind, q):
         result = toolkit.get_action('package_search')(context, {
             'q': solr_q,
             'qf': SUGGEST_DATASET_QF,
+            'fq': '-type:learning',
             'mm': '100%',
             'rows': SUGGEST_LIMIT,
             'fl': 'name,title,type,organization',
@@ -769,7 +780,7 @@ class MyLogica():
             response = jsonify({'query': q, 'scope': scope, 'groups': groups})
             if not c.user:
                 # Sólo anónimos: con sesión los resultados incluyen privados.
-                response.headers['Cache-Control'] = 'public, max-age=60'
+                response.headers['Cache-Control'] = 'no-store' if 'learning' in SUGGEST_SCOPES[scope] else 'public, max-age=60'
             return response
 
         def thematicbuilder():
@@ -4069,6 +4080,9 @@ class MyLogica():
         @staticmethod
         def open_learning_admin():
             """Panel admin de curación de cursos Open Learning. Solo sysadmin."""
+            from ckan import plugins as p
+            if p.plugin_loaded('learning'):
+                return toolkit.redirect_to('learning_admin.admin')
             context = {
                 'user': c.user,
                 'auth_user_obj': c.userobj,
@@ -4236,6 +4250,9 @@ class MyLogica():
         @staticmethod
         def courses():
             """Página pública de cursos Open Learning, separados por tipo."""
+            from ckan import plugins as p
+            if p.plugin_loaded('learning'):
+                return toolkit.redirect_to('learning.search', vocab_learning_type='course')
             from ckanext.theme_ejemplo import openlearning
             from ckanext.theme_ejemplo.model import OpenLearningCourse
 

@@ -164,7 +164,7 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 endpoint = flask_request.endpoint or ''
                 if endpoint in ('group.read', 'organization.read'):
                     fq = search_params.get('fq', '')
-                    search_params['fq'] = fq + ' -type:documents'
+                    search_params['fq'] = fq + ' -type:documents -type:learning'
                 # schemingdcat reemplaza /dataset con su blueprint
                 # dataset_rate_limit (views.py), asi que el endpoint real
                 # en produccion es dataset_rate_limit.search.
@@ -1429,6 +1429,9 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
             disponibles) con un micro-caché en memoria para no consultar
             en cada request de la home.
             """
+            if plugins.plugin_loaded('learning'):
+                from ckanext.learning.helpers import latest_courses
+                return latest_courses()
             cache_ttl = _get_cache_ttl('ckanext.theme_ejemplo.courses_cache_ttl', 600)
             now = time.time()
             if cache_ttl > 0 and _courses_cache['data'] is not None and now < _courses_cache['expires']:
@@ -1542,7 +1545,7 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
             # Conteo de datasets sin incluir documentos (publicaciones)
             try:
                 stats['dataset_only_count'] = toolkit.get_action('package_search')(
-                    {}, {'fq': '-type:documents', 'rows': 0}
+                    {}, {'fq': '-type:documents -type:learning', 'rows': 0}
                 ).get('count', 0)
             except Exception as e:
                 log.warning(f"Error counting dataset-only items: {e}")
