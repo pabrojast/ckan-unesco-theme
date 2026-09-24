@@ -222,7 +222,7 @@ Patrón LRU con buster:
 
 ## 7. Portal IHP-IX
 
-**Rutas**: `/ihpix` (pública), `/ihpix/outputs`, `/ihpix/outputs/<code>`, `/ihpix/priority-area/<pa>`, `/ihpix/contributors`, `/ihpix/report`, `/ihpix/report/<id>/edit`, `/ihpix/my-reports`, `/user/<id>/ihpix`, `/ihpix/dashboard` (todas las demás: **usuarios logueados**), `/ckan-admin/ihpix/overview`
+**Rutas**: `/ihpix` (pública), `/ihpix/outputs`, `/ihpix/outputs/<code>`, `/ihpix/priority-area/<pa>`, `/ihpix/contributors`, `/ihpix/workspaces`, `/ihpix/workspaces/<code>` (+ `/join`, `/leave`, `/members`, `/members/process`), `/ihpix/report`, `/ihpix/report/<id>/edit`, `/ihpix/my-reports`, `/user/<id>/ihpix`, `/ihpix/dashboard` (todas las demás: **usuarios logueados**), `/ckan-admin/ihpix/overview`, `/ckan-admin/ihpix/workspaces`
 
 **Taxonomías oficiales**: ver [[Modulos]] → `ihpix_constants.py` (5 Priority Areas, 34 Outputs, 15 Flagships, 7 Regions, 3 CTWGs, 12 Institution Types, 8 KPIs, 195 Member States, 4 Biennia 2022-2029).
 
@@ -412,6 +412,56 @@ draft ──submit──▶ pending ──approve──▶ published
 > Excel guarda el **nombre**. `ihpix_country_name` normaliza slug → título,
 > pero si el título del grupo no coincide exactamente con el nombre del seed
 > ("Republic of Korea" vs "Korea, Republic of") se crean dos filas. Ver DOC-021.
+
+### 7.4 Working groups (workspaces por Output)
+
+**Módulos**: `ihpix_workspaces.py` (reglas), `model.py` (`IhpixWorkingGroup`,
+`IhpixWorkingGroupMember`, `IhpixContribution`), `actions.py`, templates
+`ihpix/workspaces.html`, `ihpix/workspace_detail.html`,
+`ihpix/workspace_members.html`, `admin/ihpix_workspaces.html`.
+
+```
+1. Arranque: init_ihpix_working_groups_db() crea las 3 tablas y siembra un
+   workspace por Output (34) con título "Output N.M – Título" (sin lead).
+2. Sysadmin asigna lead en /ckan-admin/ihpix/workspaces (username):
+   → ihpix_working_group_update(lead_user_id) crea/activa su membresía lead.
+3. Un usuario logueado abre /ihpix/workspaces/<code> y pide unirse (nota
+   opcional) → ihpix_working_group_join:
+   → status pending (default) o active si ihpix_wg_open_join=true
+   → email a los leads; contador en la campana (cola ihpix_wg_members,
+     scope user: pendientes de los workspaces que el usuario lidera)
+4. El lead gestiona en /ihpix/workspaces/<code>/members:
+   → approve / reject / remove / set_role / reinstate
+     (ihpix_working_group_member_process; reglas en
+     ihpix_workspaces.validate_member_action; un lead no se quita a sí mismo)
+   → email al afectado
+5. Ledger de participación (ihpix_contribution), escrito por las acciones
+   de las fases i/ii (misma transacción que el reporte):
+   → report_submitted  al enviar/reenviar a revisión
+   → report_published  al aprobar; además, si ihpix_wg_auto_contributor
+     (default true) el reportante pasa a contributor activo del workspace
+     del Output (member_joined con meta.auto=true) — una membresía removed
+     no se reactiva sola
+   → link_added        por cada adjunto nuevo (_sync_activity_links)
+   → member_joined     al aprobar/ingresar
+   → comment           reservado (sin UI en el piloto)
+6. Lectura:
+   → /ihpix/workspaces: grid por PA con miembros, publicados, último
+     movimiento y "My working groups"
+   → /ihpix/workspaces/<code>: stats, actividades publicadas del Output +
+     "tus reportes en curso", miembros activos, adjuntos agrupados, feed
+     (ihpix_contribution_list), botones Join/Leave/Report/Manage
+   → /user/<id>/ihpix y la tarjeta del perfil: h.get_user_ihpix_summary
+     (reportes publicados, workspaces, contribuciones) + feed personal
+   → /people?ihpix_workspace=<code>: directorio filtrado por miembros
+   → /ihpix/outputs/<code>: enlace "Working group"
+```
+
+> [!note] Alcance del piloto
+> Sin comentarios ni notificaciones in-app (solo email y feed). El lead se
+> asigna manualmente (sysadmin); no hay auto-asignación al primer reportante.
+> Pendiente por confirmar con UNESCO si los observers deben ver los borradores
+> ajenos (hoy solo cada autor ve sus reportes en curso).
 
 ---
 

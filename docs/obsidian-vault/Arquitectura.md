@@ -112,6 +112,9 @@ El [[Modulos#pageview_tracking.py|conteo liviano de vistas]] registra cada vista
 | `IhpixContent` | ihpix_content | Contenido editable de IHP-IX |
 | `IhpixActivity` | ihpix_activity | Actividades / reportes del programa IHP-IX (~70 columnas: biennium, flagships, regions, member_states, métricas de stakeholders, gates Y/N del PDF 2026, `submitted_at`; `reported_by` = id de usuario). Índices en status, PA, output, biennium y reported_by |
 | `IhpixActivityLink` | ihpix_activity_link | Adjuntos de una actividad: publicación / webinar / evento / dataset / output_data / other, apuntando a un package CKAN, una página `water-events` o una URL |
+| `IhpixWorkingGroup` | ihpix_working_group | Workspace colaborativo por Output (34, sembrados desde `ihpix_constants.OUTPUTS`); lead, estado active/archived |
+| `IhpixWorkingGroupMember` | ihpix_working_group_member | Membresía usuario ↔ workspace: rol lead/contributor/observer, estado pending/active/removed (único por par) |
+| `IhpixContribution` | ihpix_contribution | Ledger de participación: report_submitted / report_published / link_added / member_joined por usuario y workspace |
 | `IhpixCountrySummary` | ihpix_country_summary | Datos geográficos agregados por país (lat/lng, region, conteos por PA, datos transboundary, flagship_data JSON) |
 
 Las tablas se crean automáticamente con `init_db()` idempotente y soporte de migraciones (e.g., `_migrate_ihpix_activities()` para columnas nuevas).
@@ -151,6 +154,7 @@ Todos bajo `/ckan-admin/*`, requieren rol sysadmin. Ver rutas completas en [[Flu
 | Actividades IHP-IX | `/ckan-admin/ihpix/activities` | CRUD actividades |
 | Reportes IHP-IX | `/ckan-admin/ihpix/reports` | Cola de revisión (pending / rejected / published / draft), approve/reject con email al reportante, enlace al formulario completo |
 | Overview IHP-IX | `/ckan-admin/ihpix/overview` | KPIs, distribuciones, geografía, completeness, adjuntos; export CSV completo (`?export=csv`) y botón "Recompute map counts" |
+| Working groups IHP-IX | `/ckan-admin/ihpix/workspaces` | Título, descripción, lead (username) y estado de los 34 workspaces; acceso a la gestión de miembros |
 
 > [!warning] Visores destacados: los datos NO son de este repo
 > El modelo `featured_viewers`, su workflow y sus acciones viven en

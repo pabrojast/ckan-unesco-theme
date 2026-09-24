@@ -100,6 +100,9 @@ cd ckanext/theme_ejemplo && python scripts/generate_seed.py
 ckan ihpix recompute-summary            # todos los países, conserva coordenadas
 ckan ihpix recompute-summary --dry-run  # solo imprime los conteos
 ckan ihpix recompute-summary --country france
+
+# Crear los workspaces (working groups) que falten, uno por Output
+ckan ihpix seed-workspaces
 ```
 
 > [!warning] Sin `--append`, el comando elimina actividades con `original_id` y todos los country summaries antes de cargar.

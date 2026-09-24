@@ -16,6 +16,7 @@
 | `test_ihpix_forms.py` | 17 | `ihpix_forms.py` — validación del reporte IHP-IX (módulo puro, corre sin CKAN) |
 | `test_ihpix_links.py` | 12 | `ihpix_links.py` — validación de adjuntos del reporte (módulo puro) |
 | `test_ihpix_constants.py` | 5 | `ihpix_constants.py` (títulos de Output desde JSON, PA por Output) e `ihpix_i18n_strings.py` (cobertura de taxonomías) |
+| `test_ihpix_workspaces.py` | 10 | `ihpix_workspaces.py` — reglas de membresía y permisos de los working groups (módulo puro) |
 
 ### Módulos sin tests
 - `actions.py` (45 acciones)

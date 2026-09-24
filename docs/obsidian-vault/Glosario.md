@@ -38,6 +38,9 @@
 | **Contribuidor** | Usuario de IHP-WINS con reportes IHP-IX publicados (`reported_by`). Directorio en `/ihpix/contributors` |
 | **Adjunto (link)** | Publicación, webinar, evento, dataset o enlace asociado a un reporte (`ihpix_activity_link`). Referencia un package CKAN, una página `water-events` o una URL |
 | **Webinar** | Tipo de adjunto: no existe como entidad propia; se registra como enlace o página `water-events` |
+| **Working group / Workspace** | Espacio colaborativo por Output IHP-IX (`ihpix_working_group`, uno por código). Página en `/ihpix/workspaces/<code>`; piloto de "Collaborative IHP-IX working groups" |
+| **Lead** | Miembro que gestiona un workspace (aprueba solicitudes, cambia roles). Lo asigna un sysadmin; también `lead_user_id` del workspace |
+| **Contribución (ledger)** | Fila de `ihpix_contribution`: reporte enviado/publicado, adjunto añadido o ingreso a un workspace, por usuario |
 | **Member State** | País miembro de UNESCO. En el portal, representado como un group de CKAN |
 | **Initiative** | Programa o proyecto hídrico de UNESCO. Representado como group |
 | **Center** | Centro de categoría 2 de UNESCO (institutos asociados) |

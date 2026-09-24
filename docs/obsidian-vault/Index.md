@@ -22,6 +22,7 @@ Bienvenido a la documentación interna de **ckanext-theme-ejemplo**, la extensi�
 - [[Solicitudes de Iniciativas]] — Flujo de solicitud + aprobación sysadmin
 - [[Open Learning]] — Caché curada de cursos UNESCO Open Learning
 - [[Busqueda]] — Motores de búsqueda por superficie y sugerencias mientras se escribe
+- [[IHP-IX]] — Reporting IHP-IX: formulario, adjuntos, páginas navegables y working groups
 
 ### Operación
 - [[Testing]] — Estrategia y ejecución de tests

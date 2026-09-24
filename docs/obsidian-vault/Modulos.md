@@ -166,6 +166,16 @@ Helpers: `is_valid_*`, `normalize_bool`, `filter_valid`.
 - `ihpix_country_summary_recompute` — recalcula `ihpix_country_summary` desde actividades publicadas (`country` opcional). Sysadmin. También corre solo para el país afectado al aprobar un reporte (`ihpix_recompute_on_approve`).
 - `ihpix_dashboard_stats` devuelve además `contributors_total`, `top_institutions`, `output_biennium_matrix` y `links_by_type`; acepta `flagship`.
 
+**IHP-IX working groups — piloto** (8, 2026-09) — ver [[Flujos Importantes#7.4 Working groups (workspaces por Output)]]:
+- `ihpix_working_group_list` / `ihpix_working_group_show` — workspaces (uno por Output) con conteos de miembros, actividades publicadas, último movimiento, `my_membership` y `can_manage`. Autenticado.
+- `ihpix_working_group_update` — título/descripción/settings (lead o sysadmin); `lead_user_id` (id o username; se le crea membresía lead) y `status` (`active|archived`) solo sysadmin.
+- `ihpix_working_group_join` — solicita ingreso (`pending`, o `active` si `ihpix_wg_open_join`); reactiva una membresía `removed`; email a los leads.
+- `ihpix_working_group_leave` — abandona (un lead activo no puede: debe reasignarlo un sysadmin).
+- `ihpix_working_group_member_process` — `approve|reject|remove|set_role|reinstate` sobre `membership_id` (lead o sysadmin). Reglas en `ihpix_workspaces.validate_member_action`; email al afectado.
+- `ihpix_working_group_member_list` — miembros; los `pending`/`removed` solo para quien gestiona.
+- `ihpix_contribution_list` — feed del ledger por workspace (`working_group_id`, id o código) o por usuario (`user_id`), con actividad y workspace resueltos.
+- `people_list` acepta `ihpix_workspace` (código o id) para filtrar el directorio por miembros activos.
+
 **IHP-IX GeoJSON y datos geográficos** (3):
 - `ihpix_geojson` — GeoJSON FeatureCollection de países con coordenadas y datos por PA. Filtro `region` sobre el snapshot; con `priority_area`, `biennium`, `output` o `flagship` los conteos se calculan **en vivo** (`IhpixActivity.get_country_counts`) sobre las coordenadas del snapshot
 - `ihpix_activity_geojson` — GeoJSON de actividades geolocalizadas via coordenadas de país. Filtros: `priority_area`, `output`, `biennium`, `country`, `flagship`, `region`. Sin el tope de 20 de antes: máximo `ckanext.theme_ejemplo.ihpix_geojson_max` (5000)
@@ -200,6 +210,18 @@ Helpers: `is_valid_*`, `normalize_bool`, `filter_valid`.
 
 > [!note] Sin creación inline
 > No se crean packages ni páginas desde el reporte: solo se referencian existentes o se guarda un enlace. Los atajos "Create a publication / event" abren los formularios propios en otra pestaña.
+
+---
+
+## ihpix_workspaces.py
+
+**Rol**: Reglas del piloto de working groups. Módulo **puro** (`tests/test_ihpix_workspaces.py`).
+
+- Constantes: `ROLES` (lead / contributor / observer), `MEMBER_STATUSES` (pending / active / removed), `WG_STATUSES` (active / archived), `CONTRIBUTION_KINDS` (report_submitted, report_published, link_added, member_joined, comment — este último sin UI), `MEMBER_ACTIONS` (acción → estados de origen y destino).
+- `can_manage(wg, user_id, membership, is_sysadmin)` — sysadmin, `lead_user_id` o miembro lead activo.
+- `validate_member_action(membership, action, actor_user_id, actor_can_manage, role)` → `(new_status, new_role)`; un lead no puede quitarse ni degradarse a sí mismo.
+- `validate_join(wg, membership)` — workspace activo y sin membresía pendiente/activa; devuelve `True` si hay que reactivar una `removed`.
+- `resolve_join_status(open_join)`, etiquetas (`role_label`, `contribution_label`, `member_status_label`), `workspace_title(code, title)`.
 
 ---
 
@@ -238,6 +260,9 @@ Helpers: `is_valid_*`, `normalize_bool`, `filter_valid`.
 
 **Solicitudes de iniciativas** (2):
 `get_pending_initiative_requests_count()` (sysadmin badge), `get_my_pending_initiative_request()` (CTA en `/initiatives`)
+
+**IHP-IX working groups** (5):
+`get_pending_ihpix_wg_members_count()` (cola `ihpix_wg_members` de la campana: pendientes de los workspaces que el usuario lidera; sysadmin todos), `get_user_ihpix_summary(user_id)` (reportes por estado, workspaces activos, contribuciones por tipo; caché 60 s; alimenta el perfil y `/user/<id>/ihpix`), `ihpix_wg_role_label()`, `ihpix_member_status_label()`, `ihpix_contribution_label()`
 
 **IHP-IX** (9):
 `get_pending_ihpix_reports_count()` (cola `ihpix_reports` de la campana, sysadmin), `get_ihpix_reporter(reported_by)` → `{id, name, display_name, url}` resolviendo id o username (caché 5 min; texto libre del seed → solo `display_name`), `ihpix_link_url(link)` y `ihpix_link_type_label(link_type)` (adjuntos; usados por el macro `ihpix/snippets/activity_links.html`), `get_ihpix_taxonomies()` (todas las listas de `ihpix_constants` para los `<select>` de los templates: **única fuente**, sustituye las listas hardcodeadas que se habían desincronizado), `ihpix_output_title()`, `ihpix_output_label()`, `ihpix_priority_area_for_output()`, `ihpix_t(valor)` (traducción runtime de valores de taxonomía)
@@ -315,6 +340,20 @@ Helpers: `is_valid_*`, `normalize_bool`, `filter_valid`.
 - Métodos: `get()`, `get_by_activity()`, `get_for_activities(ids)` (una query para listados), `count_by_type(filters, status)` (join con actividades publicadas; alimenta `get_stats()['links_by_type']`), `delete_for_activity()`, `as_dict()` (incluye `public_url`)
 - Init: `init_ihpix_activity_links_db()` (tupla `_IHPIX_LINK_ADDED_COLUMNS` vacía + `CREATE INDEX IF NOT EXISTS`)
 
+**IhpixWorkingGroup**: Workspace colaborativo por Output IHP-IX (tabla `ihpix_working_group`, 2026-09)
+- Campos: id, output_code (**unique**), priority_area, title, description, lead_user_id, status (active/archived), settings (JSON), created_at, updated_at
+- Métodos: `get()`, `get_by_output()`, `get_by_id_or_output()`, `get_all(status, priority_area)` (orden natural de códigos), `member_counts(ids)`, `as_dict()`
+- Seed: `_seed_ihpix_working_groups()` crea los que falten desde `ihpix_constants.OUTPUTS` (34) en cada arranque, sin tocar los existentes
+
+**IhpixWorkingGroupMember**: Membresía usuario ↔ workspace (tabla `ihpix_working_group_member`)
+- Campos: id, working_group_id, user_id, role (lead/contributor/observer), status (pending/active/removed), joined_at, invited_by, note, created_at, updated_at. Índice único `(working_group_id, user_id)`
+- Métodos: `get_membership()`, `get_for_group(status)`, `get_for_user(status)`, `count_pending_for_groups(ids)`, `lead_group_ids_for_user()`
+
+**IhpixContribution**: Ledger de participación (tabla `ihpix_contribution`)
+- Campos: id, user_id, kind, working_group_id (puede ser ''), activity_id, link_id, meta (JSON), created_at
+- Métodos: `get_for_group()`, `get_for_user()`, `counts_for_user()`, `counts_for_group()`, `last_activity_for_groups()`, `exists()` (dedupe)
+- Init común: `init_ihpix_working_groups_db()` (3 tablas, índices con `IF NOT EXISTS`, tuplas `_IHPIX_WG_ADDED_COLUMNS` para futuras columnas, seed)
+
 **IhpixCountrySummary**: Datos geográficos agregados por país para GeoJSON y dashboard IHP-IX
 - Campos: id, country, latitude, longitude, region, total_activities, pa1_count–pa5_count, transboundary_all, transboundary_pa1–pa5, supporting_all, supporting_pa1–pa5, flagship_data (JSON), pa_output_data (JSON), created_at, updated_at
 - Métodos: `get()`, `get_by_country()`, `get_all(region)`, `get_as_geojson(region)`, `delete_all()`, `recompute_from_activities(country=None, resolve_name=None)` (recalcula conteos desde actividades publicadas conservando lat/lng/region; `flagship_data` pasa a `{flagship: n}` y `pa_output_data` a `{'paN_outputs': {code: n}}`), `as_dict()`
@@ -349,6 +388,8 @@ Cada modelo tiene `init_*_db()` y `define_*_table()`. Son idempotentes (verifica
 | **Autenticado** | membership_request_create, membership_request_count, initiative_request_create, initiative_request_count, bug_ticket_create/list/show/update, ihpix_report_submit, ihpix_my_reports_list, ihpix_link_search, ihpix_contributor_list, **ihpix_activity_list, ihpix_activity_show, ihpix_dashboard_stats, ihpix_geojson, ihpix_activity_geojson, ihpix_country_summary_list** (eran públicas hasta 2026-09; la landing `/ihpix` obtiene sus stats en servidor con `ignore_auth`) |
 | **Propietario del reporte o sysadmin** | ihpix_report_show, ihpix_report_update, ihpix_report_delete, ihpix_activity_link_create, ihpix_activity_link_delete (`_ihpix_report_owner_or_sysadmin`: compara `reported_by` con id y username; si el reporte no existe autoriza para que la acción devuelva 404) |
 | **Publicada, o propietario/sysadmin** | ihpix_activity_link_list |
+| **Lead del workspace o sysadmin** | ihpix_working_group_update, ihpix_working_group_member_process (`_ihpix_wg_manager_or_sysadmin`) |
+| **Autenticado (working groups)** | ihpix_working_group_list/show/join/leave/member_list, ihpix_contribution_list |
 | **Admin de org o sysadmin** | membership_request_list, membership_request_process |
 | **Sysadmin only (iniciativas)** | initiative_request_list, initiative_request_process |
 | **Público** | _(ninguna acción IHP-IX desde 2026-09)_ |
@@ -450,6 +491,7 @@ Cada modelo tiene `init_*_db()` y `define_*_table()`. Son idempotentes (verifica
 | `ckan ihpix seed-data` (sin args) | Busca `data/ihpix_seed_data.json` por defecto |
 | `--append` | Flag para agregar sin borrar datos existentes |
 | `ckan ihpix recompute-summary [--country X] [--dry-run]` | Recalcula `ihpix_country_summary` desde las actividades publicadas (conserva coordenadas). `--dry-run` imprime los conteos por país sin escribir |
+| `ckan ihpix seed-workspaces` | Crea los workspaces que falten (uno por Output). Lo mismo ocurre en cada arranque vía `init_ihpix_working_groups_db()` |
 
 ### Grupo `openlearning`
 
