@@ -155,6 +155,28 @@
   </div>
   {% endif %}
 
+  {# IHP-IX participation (solo visible con sesión) #}
+  {% if c.userobj %}
+    {% set ihpix_summary = h.get_user_ihpix_summary(user.id) %}
+    {% if ihpix_summary and (ihpix_summary.reports_published or ihpix_summary.workspaces) %}
+    <div class="user-profile-section">
+      <h3 class="user-profile-section-title"><i class="fa fa-university"></i> {{ _('IHP-IX') }}</h3>
+      <dl class="user-profile-dl">
+        <dt>{{ _('Published reports') }}</dt>
+        <dd><a href="{{ h.url_for('theme_ejemplo.user_ihpix', id=user.name) }}">{{ ihpix_summary.reports_published }}</a></dd>
+        {% if ihpix_summary.workspaces %}
+        <dt>{{ _('Working groups') }}</dt>
+        <dd>
+          {% for ws in ihpix_summary.workspaces %}
+            <a href="{{ ws.url }}" title="{{ ws.title }}">{{ ws.output_code }}</a>{% if not loop.last %}, {% endif %}
+          {% endfor %}
+        </dd>
+        {% endif %}
+      </dl>
+    </div>
+    {% endif %}
+  {% endif %}
+
   {# Social links #}
   {% if social and (social.get('linkedin') or social.get('twitter') or social.get('researchgate') or social.get('github')) %}
   <div class="user-profile-section">

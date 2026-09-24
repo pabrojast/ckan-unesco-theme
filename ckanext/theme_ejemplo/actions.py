@@ -428,6 +428,16 @@ def people_list(context, data_dict):
         model.User.name != 'harvest',
     )
 
+    # Filtro por workspace IHP-IX (miembros activos del working group)
+    ihpix_workspace = (data_dict.get('ihpix_workspace') or '').strip()
+    ihpix_workspace_user_ids = None
+    if ihpix_workspace:
+        init_ihpix_working_groups_db()
+        wg = IhpixWorkingGroup.get_by_id_or_output(ihpix_workspace)
+        ihpix_workspace_user_ids = set(
+            m.user_id for m in IhpixWorkingGroupMember.get_for_group(
+                wg.id, status=W.MEMBER_ACTIVE)) if wg else set()
+
     if q:
         # Por tokens, en cualquier orden: "perez juan" encuentra "Juan Perez".
         query = theme_search.filter_by_tokens(
@@ -476,6 +486,9 @@ def people_list(context, data_dict):
                 org_names.append(g.name)
             if organization not in org_names and organization not in org_ids:
                 continue
+
+        if ihpix_workspace_user_ids is not None and user_obj.id not in ihpix_workspace_user_ids:
+            continue
 
         # Parse JSON fields
         expertise_areas = profile.get('expertise_areas', '[]')
@@ -1726,8 +1739,11 @@ from ckanext.theme_ejemplo.model import (
 )
 from ckanext.theme_ejemplo.model import (
     IhpixActivityLink, init_ihpix_activity_links_db,
+    IhpixWorkingGroup, IhpixWorkingGroupMember, IhpixContribution,
+    init_ihpix_working_groups_db,
 )
 from ckanext.theme_ejemplo import ihpix_constants as C
+from ckanext.theme_ejemplo import ihpix_workspaces as W
 from ckanext.theme_ejemplo import ihpix_forms
 from ckanext.theme_ejemplo import ihpix_links
 import datetime as _dt
@@ -2142,7 +2158,193 @@ def _sync_activity_links(activity, links_payload, user_obj):
     for link_id, link in existing.items():
         if link_id not in keep:
             model.Session.delete(link)
+    if created and user_obj:
+        try:
+            wg = _ihpix_wg_for_activity(activity)
+            for link in created:
+                _ihpix_record_contribution(
+                    user_obj.id, 'link_added',
+                    working_group_id=wg.id if wg else u'',
+                    activity_id=activity.id, link_id=link.id)
+        except Exception as e:
+            log.warning('IHP-IX ledger (links): %s', e)
     return created
+
+
+# ── Ledger de participación (working groups) ───────────────────────────────
+
+def _ihpix_wg_config_bool(key, default):
+    return toolkit.asbool(toolkit.config.get('ckanext.theme_ejemplo.' + key, default))
+
+
+def _ihpix_record_contribution(user_id, kind, working_group_id=u'',
+                               activity_id=u'', link_id=u'', meta=None,
+                               dedupe=True):
+    """Añade una fila al ledger `ihpix_contribution` (sin commit).
+
+    Con `dedupe` no repite la misma (user, kind, activity/link), p. ej. un
+    reporte reenviado varias veces cuenta una sola vez como 'submitted'.
+    """
+    if not user_id or kind not in W.CONTRIBUTION_KINDS:
+        return None
+    init_ihpix_working_groups_db()
+    if dedupe and (activity_id or link_id) and IhpixContribution.exists(
+            user_id, kind, activity_id, link_id):
+        return None
+    row = IhpixContribution(
+        user_id=user_id, kind=kind, working_group_id=working_group_id or u'',
+        activity_id=activity_id or u'', link_id=link_id or u'',
+        meta_json=json.dumps(meta or {}))
+    model.Session.add(row)
+    return row
+
+
+def _ihpix_wg_for_activity(activity):
+    """Workspace (working group) del Output de la actividad, o None."""
+    if not activity or not (activity.output or u'').strip():
+        return None
+    init_ihpix_working_groups_db()
+    return IhpixWorkingGroup.get_by_output(activity.output.strip())
+
+
+def _ihpix_ensure_contributor(wg, user_id, invited_by=u'system'):
+    """Crea o activa la membresía `contributor` (sin commit).
+
+    Respeta la decisión del lead: una membresía `removed` no se reactiva
+    automáticamente. Devuelve (membership, activada_ahora).
+    """
+    membership = IhpixWorkingGroupMember.get_membership(wg.id, user_id)
+    now = _dt.datetime.utcnow()
+    if membership is None:
+        membership = IhpixWorkingGroupMember(
+            wg.id, user_id, role=W.ROLE_CONTRIBUTOR, status=W.MEMBER_ACTIVE,
+            invited_by=invited_by)
+        model.Session.add(membership)
+        return membership, True
+    if membership.status == W.MEMBER_PENDING:
+        membership.status = W.MEMBER_ACTIVE
+        membership.joined_at = now
+        membership.updated_at = now
+        return membership, True
+    return membership, False
+
+
+def _ihpix_ledger_on_submit(activity):
+    """Reporte enviado a revisión → 'report_submitted' en su workspace."""
+    try:
+        wg = _ihpix_wg_for_activity(activity)
+        _ihpix_record_contribution(
+            activity.reported_by, 'report_submitted',
+            working_group_id=wg.id if wg else u'', activity_id=activity.id)
+    except Exception as e:
+        log.warning('IHP-IX ledger (submit): %s', e)
+
+
+def _ihpix_ledger_on_publish(activity):
+    """Reporte publicado → 'report_published' y, si la config lo permite,
+    el reportante pasa a ser contributor activo del workspace del Output."""
+    try:
+        wg = _ihpix_wg_for_activity(activity)
+        _ihpix_record_contribution(
+            activity.reported_by, 'report_published',
+            working_group_id=wg.id if wg else u'', activity_id=activity.id)
+        if wg and activity.reported_by and _ihpix_wg_config_bool(
+                'ihpix_wg_auto_contributor', True):
+            if model.User.get(activity.reported_by) is None:
+                return  # filas del seed sin usuario real
+            membership, activated = _ihpix_ensure_contributor(
+                wg, activity.reported_by, invited_by=u'system')
+            if activated:
+                _ihpix_record_contribution(
+                    activity.reported_by, 'member_joined',
+                    working_group_id=wg.id, meta={'auto': True}, dedupe=False)
+                _ihpix_notify_wg_member(membership, wg, 'auto_joined')
+    except Exception as e:
+        log.warning('IHP-IX ledger (publish): %s', e)
+
+
+def _ihpix_wg_leads(wg):
+    """Usuarios que gestionan el workspace (lead_user_id + miembros lead activos)."""
+    ids = set()
+    if wg.lead_user_id:
+        ids.add(wg.lead_user_id)
+    for m in IhpixWorkingGroupMember.get_for_group(wg.id, status=W.MEMBER_ACTIVE):
+        if m.role == W.ROLE_LEAD:
+            ids.add(m.user_id)
+    users = []
+    for user_id in ids:
+        user = model.User.get(user_id)
+        if user and user.email:
+            users.append(user)
+    return users
+
+
+def _ihpix_wg_url(wg, suffix=u''):
+    try:
+        return toolkit.url_for('theme_ejemplo.ihpix_workspace_detail',
+                               code=wg.output_code, qualified=True) + suffix
+    except Exception:
+        return toolkit.config.get('ckan.site_url', '') + '/ihpix/workspaces/' + wg.output_code + suffix
+
+
+def _ihpix_notify_wg_leads(wg, requester):
+    """Email a los leads cuando alguien pide unirse (best effort)."""
+    try:
+        import ckan.lib.mailer as mailer
+        _ = toolkit._
+        for lead in _ihpix_wg_leads(wg):
+            subject = _('New request to join the IHP-IX working group "{title}"').format(
+                title=wg.title)
+            body = _(
+                'Dear {name},\n\n'
+                '{requester} has requested to join the working group "{title}".\n\n'
+                'Review the request here: {url}\n'
+            ).format(name=lead.display_name or lead.name,
+                     requester=requester.display_name or requester.name,
+                     title=wg.title, url=_ihpix_wg_url(wg, u'/members'))
+            mailer.mail_user(lead, subject, body)
+    except Exception as e:
+        log.warning('IHP-IX: no se pudo avisar a los leads del workspace: %s', e)
+
+
+def _ihpix_notify_wg_member(membership, wg, action):
+    """Email al usuario afectado por una decisión sobre su membresía."""
+    try:
+        user = model.User.get(membership.user_id)
+        if not user or not user.email:
+            return
+        import ckan.lib.mailer as mailer
+        _ = toolkit._
+        url = _ihpix_wg_url(wg)
+        name = user.display_name or user.name
+        if action == 'approve':
+            subject = _('You have joined the IHP-IX working group "{title}"').format(title=wg.title)
+            body = _('Dear {name},\n\nYour request to join the working group "{title}" was approved.\n\nOpen the workspace: {url}\n').format(name=name, title=wg.title, url=url)
+        elif action == 'auto_joined':
+            subject = _('You are now a contributor of the IHP-IX working group "{title}"').format(title=wg.title)
+            body = _('Dear {name},\n\nYour published IHP-IX report added you as a contributor of the working group "{title}".\n\nOpen the workspace: {url}\n').format(name=name, title=wg.title, url=url)
+        elif action == 'reject':
+            subject = _('Your request to join the IHP-IX working group "{title}" was not accepted').format(title=wg.title)
+            body = _('Dear {name},\n\nYour request to join the working group "{title}" was not accepted by its lead.\n\nWorkspace: {url}\n').format(name=name, title=wg.title, url=url)
+        elif action == 'remove':
+            subject = _('You were removed from the IHP-IX working group "{title}"').format(title=wg.title)
+            body = _('Dear {name},\n\nYou are no longer a member of the working group "{title}".\n\nWorkspace: {url}\n').format(name=name, title=wg.title, url=url)
+        else:
+            return
+        mailer.mail_user(user, subject, body)
+    except Exception as e:
+        log.warning('IHP-IX: no se pudo avisar al miembro del workspace: %s', e)
+
+
+def _ihpix_invalidate_wg_approvals(wg):
+    """Refresca la campana de los leads del workspace y de los sysadmins."""
+    try:
+        from ckanext.theme_ejemplo import approvals
+        approvals.invalidate()
+        for lead in _ihpix_wg_leads(wg):
+            approvals.invalidate(lead.id)
+    except Exception:
+        pass
 
 
 def _ihpix_notify_reporter(activity, action):
@@ -2221,6 +2423,8 @@ def ihpix_report_submit(context, data_dict):
     model.Session.add(activity)
     if 'links_json' in data_dict:
         _sync_activity_links(activity, data_dict.get('links_json'), user_obj)
+    if not is_draft:
+        _ihpix_ledger_on_submit(activity)
     model.Session.commit()
     if not is_draft:
         _invalidate_approvals_cache()
@@ -2262,6 +2466,8 @@ def ihpix_report_update(context, data_dict):
 
     if 'links_json' in data_dict:
         _sync_activity_links(activity, data_dict.get('links_json'), user_obj)
+    if activity.status == IhpixActivity.STATUS_PENDING:
+        _ihpix_ledger_on_submit(activity)
     model.Session.commit()
     if activity.status == IhpixActivity.STATUS_PENDING:
         _invalidate_approvals_cache()
@@ -2498,6 +2704,306 @@ def ihpix_link_search(context, data_dict):
         {'kind': 'Must be one of: publication, dataset, output_data, event, webinar'})
 
 
+# ── Working groups (workspaces por Output) ─────────────────────────────────
+
+def _ihpix_wg_or_404(data_dict, key='id'):
+    init_ihpix_working_groups_db()
+    value = ((data_dict.get(key) or data_dict.get('output_code') or u'')).strip()
+    wg = IhpixWorkingGroup.get_by_id_or_output(value) if value else None
+    if not wg:
+        raise toolkit.ObjectNotFound('IHP-IX working group not found')
+    return wg
+
+
+def _ihpix_wg_actor(context, wg):
+    """(user_obj, membership, can_manage) del usuario del contexto."""
+    user_obj = _ihpix_user_obj(context)
+    membership = None
+    if user_obj:
+        membership = IhpixWorkingGroupMember.get_membership(wg.id, user_obj.id)
+    can_manage = W.can_manage(
+        wg, user_obj.id if user_obj else None,
+        membership.as_dict() if membership else None,
+        bool(user_obj and user_obj.sysadmin))
+    return user_obj, membership, can_manage
+
+
+def _ihpix_wg_dict(wg, counts=None, last_activity=None):
+    from ckanext.theme_ejemplo.helpers import get_ihpix_reporter
+    d = wg.as_dict()
+    d['output_title'] = C.output_title(wg.output_code)
+    d['priority_area_title'] = C.PRIORITY_AREAS.get(wg.priority_area, u'')
+    c = (counts or {}).get(wg.id, {})
+    d['members_active'] = c.get('active', 0)
+    d['members_pending'] = c.get('pending', 0)
+    d['last_activity_at'] = last_activity.isoformat() if last_activity else None
+    d['lead'] = get_ihpix_reporter(wg.lead_user_id) if wg.lead_user_id else None
+    return d
+
+
+@toolkit.side_effect_free
+def ihpix_working_group_list(context, data_dict):
+    """Workspaces (uno por Output) con conteos y la membresía del usuario."""
+    toolkit.check_access('ihpix_working_group_list', context, data_dict)
+    init_ihpix_working_groups_db()
+    init_ihpix_activities_db()
+    status = (data_dict.get('status') or u'').strip() or None
+    pa = (data_dict.get('priority_area') or u'').strip() or None
+    groups = IhpixWorkingGroup.get_all(status=status, priority_area=pa)
+    ids = [g.id for g in groups]
+    counts = IhpixWorkingGroup.member_counts(ids)
+    last = IhpixContribution.last_activity_for_groups(ids)
+    facet_items = IhpixActivity.get_facets().get('ihpix_output', {}).get('items', [])
+    published = {item['name']: item['count'] for item in facet_items}
+    user_obj = _ihpix_user_obj(context)
+    mine = {}
+    if user_obj:
+        mine = {m.working_group_id: m for m in IhpixWorkingGroupMember.get_for_user(user_obj.id)}
+    results = []
+    for g in groups:
+        d = _ihpix_wg_dict(g, counts, last.get(g.id))
+        d['published_activities'] = published.get(g.output_code, 0)
+        m = mine.get(g.id)
+        d['my_membership'] = m.as_dict() if m else None
+        results.append(d)
+    return {'results': results, 'count': len(results)}
+
+
+@toolkit.side_effect_free
+def ihpix_working_group_show(context, data_dict):
+    """Un workspace (por id o código de Output) con stats y permisos del usuario."""
+    toolkit.check_access('ihpix_working_group_show', context, data_dict)
+    wg = _ihpix_wg_or_404(data_dict)
+    init_ihpix_activities_db()
+    user_obj, membership, can_manage = _ihpix_wg_actor(context, wg)
+    counts = IhpixWorkingGroup.member_counts([wg.id])
+    last = IhpixContribution.last_activity_for_groups([wg.id])
+    d = _ihpix_wg_dict(wg, counts, last.get(wg.id))
+    d['my_membership'] = membership.as_dict() if membership else None
+    d['can_manage'] = can_manage
+    d['stats'] = IhpixActivity.get_stats({'output': wg.output_code})
+    d['contribution_counts'] = IhpixContribution.counts_for_group(wg.id)
+    return d
+
+
+def ihpix_working_group_update(context, data_dict):
+    """Edita un workspace: título/descripción/settings (lead o sysadmin);
+    lead_user_id y status solo sysadmin."""
+    toolkit.check_access('ihpix_working_group_update', context, data_dict)
+    wg = _ihpix_wg_or_404(data_dict)
+    user_obj = _ihpix_user_obj(context)
+    is_sysadmin = bool(user_obj and user_obj.sysadmin)
+    now = _dt.datetime.utcnow()
+
+    if 'title' in data_dict:
+        title = (data_dict.get('title') or u'').strip()
+        if not title:
+            raise toolkit.ValidationError({'title': 'Title is required'})
+        wg.title = title
+    if 'description' in data_dict:
+        wg.description = (data_dict.get('description') or u'').strip()
+    if 'settings' in data_dict:
+        raw = data_dict.get('settings')
+        if isinstance(raw, dict):
+            wg.settings = json.dumps(raw)
+        else:
+            try:
+                parsed = json.loads(raw or u'{}')
+                if not isinstance(parsed, dict):
+                    raise ValueError
+                wg.settings = json.dumps(parsed)
+            except (ValueError, TypeError):
+                raise toolkit.ValidationError({'settings': 'Must be a JSON object'})
+    if 'lead_user_id' in data_dict:
+        if not is_sysadmin:
+            raise toolkit.NotAuthorized('Only sysadmins can assign the lead')
+        value = (data_dict.get('lead_user_id') or u'').strip()
+        if value:
+            lead = model.User.get(value)
+            if not lead:
+                raise toolkit.ValidationError({'lead_user_id': 'User not found'})
+            wg.lead_user_id = lead.id
+            membership, _activated = _ihpix_ensure_contributor(wg, lead.id, invited_by=user_obj.id)
+            membership.role = W.ROLE_LEAD
+            membership.updated_at = now
+        else:
+            wg.lead_user_id = u''
+    if 'status' in data_dict:
+        if not is_sysadmin:
+            raise toolkit.NotAuthorized('Only sysadmins can archive a working group')
+        status = (data_dict.get('status') or u'').strip()
+        if status not in W.WG_STATUSES:
+            raise toolkit.ValidationError({'status': 'Must be one of: {}'.format(', '.join(W.WG_STATUSES))})
+        wg.status = status
+    wg.updated_at = now
+    model.Session.commit()
+    return ihpix_working_group_show(context, {'id': wg.id})
+
+
+def ihpix_working_group_join(context, data_dict):
+    """Solicita unirse (o se une, si `ihpix_wg_open_join`) a un workspace."""
+    toolkit.check_access('ihpix_working_group_join', context, data_dict)
+    wg = _ihpix_wg_or_404(data_dict)
+    user_obj = _ihpix_user_obj(context)
+    membership = IhpixWorkingGroupMember.get_membership(wg.id, user_obj.id)
+    try:
+        reactivate = W.validate_join(wg.as_dict(), membership.as_dict() if membership else None)
+    except W.WorkspaceRuleError as e:
+        raise toolkit.ValidationError(e.errors)
+    status = W.resolve_join_status(_ihpix_wg_config_bool('ihpix_wg_open_join', False))
+    note = (data_dict.get('note') or u'').strip()[:500]
+    now = _dt.datetime.utcnow()
+    if reactivate:
+        membership.status = status
+        membership.role = W.ROLE_CONTRIBUTOR
+        membership.note = note
+        membership.joined_at = now if status == W.MEMBER_ACTIVE else None
+        membership.updated_at = now
+    else:
+        membership = IhpixWorkingGroupMember(
+            wg.id, user_obj.id, role=W.ROLE_CONTRIBUTOR, status=status, note=note)
+        model.Session.add(membership)
+    if status == W.MEMBER_ACTIVE:
+        _ihpix_record_contribution(user_obj.id, 'member_joined', working_group_id=wg.id, dedupe=False)
+    model.Session.commit()
+    _ihpix_invalidate_wg_approvals(wg)
+    if status == W.MEMBER_PENDING:
+        _ihpix_notify_wg_leads(wg, user_obj)
+    result = membership.as_dict()
+    result['workspace'] = _ihpix_wg_dict(wg)
+    return result
+
+
+def ihpix_working_group_leave(context, data_dict):
+    """Abandona un workspace (los leads deben pedirlo a un sysadmin)."""
+    toolkit.check_access('ihpix_working_group_leave', context, data_dict)
+    wg = _ihpix_wg_or_404(data_dict)
+    user_obj = _ihpix_user_obj(context)
+    membership = IhpixWorkingGroupMember.get_membership(wg.id, user_obj.id)
+    if not membership or membership.status == W.MEMBER_REMOVED:
+        raise toolkit.ValidationError({'id': 'You are not a member of this working group'})
+    if membership.role == W.ROLE_LEAD and membership.status == W.MEMBER_ACTIVE:
+        raise toolkit.ValidationError({'id': 'A lead cannot leave; ask a sysadmin to reassign the lead first'})
+    membership.status = W.MEMBER_REMOVED
+    membership.updated_at = _dt.datetime.utcnow()
+    model.Session.commit()
+    _ihpix_invalidate_wg_approvals(wg)
+    return membership.as_dict()
+
+
+def ihpix_working_group_member_process(context, data_dict):
+    """approve / reject / remove / set_role / reinstate sobre una membresía
+    (lead del workspace o sysadmin)."""
+    toolkit.check_access('ihpix_working_group_member_process', context, data_dict)
+    init_ihpix_working_groups_db()
+    membership_id = toolkit.get_or_bust(data_dict, 'membership_id')
+    membership = IhpixWorkingGroupMember.get(membership_id)
+    if not membership:
+        raise toolkit.ObjectNotFound('Membership not found')
+    wg = IhpixWorkingGroup.get(membership.working_group_id)
+    if not wg:
+        raise toolkit.ObjectNotFound('IHP-IX working group not found')
+    user_obj, _actor_membership, can_manage = _ihpix_wg_actor(context, wg)
+    action = (data_dict.get('action') or u'').strip().lower()
+    role = (data_dict.get('role') or u'').strip().lower() or None
+    try:
+        new_status, new_role = W.validate_member_action(
+            membership.as_dict(), action, user_obj.id if user_obj else None,
+            can_manage, role)
+    except W.WorkspaceRuleError as e:
+        raise toolkit.ValidationError(e.errors)
+
+    now = _dt.datetime.utcnow()
+    was_active = membership.status == W.MEMBER_ACTIVE
+    membership.status = new_status
+    membership.role = new_role
+    membership.updated_at = now
+    if new_status == W.MEMBER_ACTIVE and not was_active:
+        membership.joined_at = now
+        _ihpix_record_contribution(membership.user_id, 'member_joined',
+                                   working_group_id=wg.id, dedupe=False)
+    model.Session.commit()
+    _ihpix_invalidate_wg_approvals(wg)
+    if action in ('approve', 'reject', 'remove'):
+        _ihpix_notify_wg_member(membership, wg, action)
+    result = membership.as_dict()
+    from ckanext.theme_ejemplo.helpers import get_ihpix_reporter
+    result['user'] = get_ihpix_reporter(membership.user_id)
+    return result
+
+
+@toolkit.side_effect_free
+def ihpix_working_group_member_list(context, data_dict):
+    """Miembros de un workspace. Los pendientes solo para quien gestiona."""
+    toolkit.check_access('ihpix_working_group_member_list', context, data_dict)
+    wg = _ihpix_wg_or_404(data_dict)
+    user_obj, _membership, can_manage = _ihpix_wg_actor(context, wg)
+    status = (data_dict.get('status') or u'').strip() or None
+    if status and status not in W.MEMBER_STATUSES:
+        raise toolkit.ValidationError({'status': 'Must be one of: {}'.format(', '.join(W.MEMBER_STATUSES))})
+    if status and status != W.MEMBER_ACTIVE and not can_manage:
+        raise toolkit.NotAuthorized('Only the working group lead can see pending or removed members')
+    rows = IhpixWorkingGroupMember.get_for_group(wg.id, status=status)
+    if not can_manage:
+        rows = [m for m in rows if m.status == W.MEMBER_ACTIVE]
+    from ckanext.theme_ejemplo.helpers import get_ihpix_reporter
+    results = []
+    for m in rows:
+        d = m.as_dict()
+        d['user'] = get_ihpix_reporter(m.user_id)
+        d['is_lead'] = (m.role == W.ROLE_LEAD and m.status == W.MEMBER_ACTIVE) or m.user_id == wg.lead_user_id
+        results.append(d)
+    return {'results': results, 'count': len(results), 'can_manage': can_manage}
+
+
+@toolkit.side_effect_free
+def ihpix_contribution_list(context, data_dict):
+    """Feed del ledger por workspace (`working_group_id` / código) o por
+    usuario (`user_id`, id o nombre; por defecto el usuario actual)."""
+    toolkit.check_access('ihpix_contribution_list', context, data_dict)
+    init_ihpix_working_groups_db()
+    init_ihpix_activities_db()
+    from ckanext.theme_ejemplo.helpers import get_ihpix_reporter
+    kind = (data_dict.get('kind') or u'').strip() or None
+    if kind and kind not in W.CONTRIBUTION_KINDS:
+        raise toolkit.ValidationError({'kind': 'Must be one of: {}'.format(', '.join(W.CONTRIBUTION_KINDS))})
+    limit = min(_parse_int_field(data_dict, 'limit', 30), 100)
+    offset = max(_parse_int_field(data_dict, 'offset', 0), 0)
+
+    wg_value = (data_dict.get('working_group_id') or u'').strip()
+    if wg_value:
+        wg = IhpixWorkingGroup.get_by_id_or_output(wg_value)
+        if not wg:
+            raise toolkit.ObjectNotFound('IHP-IX working group not found')
+        rows, total = IhpixContribution.get_for_group(wg.id, kind=kind, limit=limit, offset=offset)
+    else:
+        user_value = (data_dict.get('user_id') or u'').strip()
+        user = model.User.get(user_value) if user_value else _ihpix_user_obj(context)
+        if not user:
+            raise toolkit.ObjectNotFound('User not found')
+        rows, total = IhpixContribution.get_for_user(user.id, kind=kind, limit=limit, offset=offset)
+
+    activity_ids = {r.activity_id for r in rows if r.activity_id}
+    wg_ids = {r.working_group_id for r in rows if r.working_group_id}
+    activities = {}
+    if activity_ids:
+        for a in model.Session.query(IhpixActivity).filter(IhpixActivity.id.in_(list(activity_ids))).all():
+            activities[a.id] = {'id': a.id, 'title': a.title, 'status': a.status, 'output': a.output}
+    workspaces = {}
+    if wg_ids:
+        for g in model.Session.query(IhpixWorkingGroup).filter(IhpixWorkingGroup.id.in_(list(wg_ids))).all():
+            workspaces[g.id] = {'id': g.id, 'output_code': g.output_code, 'title': g.title}
+    results = []
+    for r in rows:
+        d = r.as_dict()
+        d['label'] = W.contribution_label(r.kind)
+        d['user'] = get_ihpix_reporter(r.user_id)
+        d['activity'] = activities.get(r.activity_id)
+        d['workspace'] = workspaces.get(r.working_group_id)
+        results.append(d)
+    return {'results': results, 'count': total}
+
+
 # Transiciones válidas de la revisión: acción → estados de origen permitidos.
 # `rejected → published` cubre el botón "Re-approve" del panel admin.
 _IHPIX_REVIEW_TRANSITIONS = {
@@ -2540,6 +3046,8 @@ def ihpix_report_review(context, data_dict):
     activity.reviewed_at = now
     activity.updated_at = now
 
+    if action == 'approve':
+        _ihpix_ledger_on_publish(activity)
     model.Session.commit()
     _invalidate_approvals_cache()
     _ihpix_notify_reporter(activity, action)

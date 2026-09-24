@@ -238,6 +238,17 @@ def recompute_summary(country, dry_run):
         raise SystemExit(1)
 
 
+@ihpix.command(name='seed-workspaces')
+def seed_workspaces():
+    """Crear los workspaces (working groups) que falten, uno por Output."""
+    from ckanext.theme_ejemplo.model import (
+        IhpixWorkingGroup, init_ihpix_working_groups_db,
+    )
+    init_ihpix_working_groups_db()  # crea tablas y siembra los que faltan
+    total = len(IhpixWorkingGroup.get_all())
+    click.echo('Workspaces IHP-IX existentes: {}'.format(total))
+
+
 @click.group()
 def openlearning():
     """Comandos de sincronización de cursos UNESCO Open Learning."""

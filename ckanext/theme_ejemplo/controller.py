@@ -956,6 +956,237 @@ class MyLogica():
                                        page=page,
                                        items_per_page=items_per_page)
 
+        # ── IHP-IX: working groups / workspaces (fase iv) ─────────────────
+
+        @staticmethod
+        def _ihpix_ctx():
+            return {'user': c.user, 'model': model, 'auth_user_obj': c.userobj}
+
+        @staticmethod
+        def _ihpix_workspace_or_404(code):
+            try:
+                return toolkit.get_action('ihpix_working_group_show')(
+                    MyLogica._ihpix_ctx(), {'id': code})
+            except toolkit.ObjectNotFound:
+                return abort(404, _('Working group not found'))
+
+        @staticmethod
+        def ihpix_workspaces():
+            """Listado de workspaces (uno por Output) agrupados por PA."""
+            redirect = _require_login()
+            if redirect:
+                return redirect
+            from ckanext.theme_ejemplo import ihpix_constants as C
+            from collections import OrderedDict
+            pa_filter = request.args.get('pa', '').strip()
+            try:
+                data = toolkit.get_action('ihpix_working_group_list')(
+                    MyLogica._ihpix_ctx(),
+                    {'priority_area': pa_filter if pa_filter in C.PRIORITY_AREAS else ''})
+                workspaces = data.get('results', [])
+            except Exception as e:
+                log.error('IHP-IX workspaces: %s', e)
+                workspaces = []
+            by_pa = OrderedDict((pa, []) for pa in C.PRIORITY_AREAS)
+            for ws in workspaces:
+                by_pa.setdefault(ws['priority_area'], []).append(ws)
+            mine = [ws for ws in workspaces
+                    if ws.get('my_membership') and ws['my_membership']['status'] != 'removed']
+            return render_template(
+                'ihpix/workspaces.html',
+                workspaces=workspaces,
+                workspaces_by_pa=by_pa,
+                mine=mine,
+                pa_filter=pa_filter,
+                priority_areas=C.PRIORITY_AREAS,
+                pending_requests=h.get_pending_ihpix_wg_members_count(),
+            )
+
+        @staticmethod
+        def ihpix_workspace_detail(code):
+            """Página de un workspace: overview, actividades, miembros, adjuntos, feed."""
+            redirect = _require_login()
+            if redirect:
+                return redirect
+            from ckanext.theme_ejemplo.model import IhpixActivity
+            ws = MyLogica._ihpix_workspace_or_404(code)
+            ctx = MyLogica._ihpix_ctx()
+            output = ws['output_code']
+
+            page = h.get_page_number(request.args) or 1
+            items_per_page = 10
+            try:
+                results, total = IhpixActivity.get_published(
+                    output=output, limit=items_per_page,
+                    offset=items_per_page * (page - 1))
+                activities = [a.as_dict() for a in results]
+                # Reportes propios aún no publicados para este Output
+                own_rows, _n = IhpixActivity.get_filtered(
+                    status=None, output=output,
+                    reported_by=[c.userobj.id, c.userobj.name], limit=50)
+                own_in_progress = [a.as_dict() for a in own_rows
+                                   if a.status != IhpixActivity.STATUS_PUBLISHED]
+            except Exception as e:
+                log.error('IHP-IX workspace %s activities: %s', code, e)
+                activities, total, own_in_progress = [], 0, []
+
+            try:
+                members = toolkit.get_action('ihpix_working_group_member_list')(
+                    ctx, {'id': ws['id'], 'status': 'active'}).get('results', [])
+            except Exception as e:
+                log.error('IHP-IX workspace %s members: %s', code, e)
+                members = []
+            try:
+                feed = toolkit.get_action('ihpix_contribution_list')(
+                    ctx, {'working_group_id': ws['id'], 'limit': 30}).get('results', [])
+            except Exception as e:
+                log.error('IHP-IX workspace %s feed: %s', code, e)
+                feed = []
+
+            links_by_activity = _ihpix_links_map(activities + own_in_progress)
+            links_grouped = {}
+            for act in activities:
+                for link in links_by_activity.get(act['id'], []):
+                    links_grouped.setdefault(link.get('link_type', 'other'), []).append(link)
+
+            return render_template(
+                'ihpix/workspace_detail.html',
+                ws=ws,
+                activities=activities,
+                total=total,
+                page=MyLogica._ihpix_pager(total, page, items_per_page, activities),
+                own_in_progress=own_in_progress,
+                members=members,
+                feed=feed,
+                links_by_activity=links_by_activity,
+                links_grouped=links_grouped,
+                pending_count=ws.get('members_pending', 0) if ws.get('can_manage') else 0,
+            )
+
+        @staticmethod
+        def ihpix_workspace_join(code):
+            redirect = _require_login()
+            if redirect:
+                return redirect
+            ws = MyLogica._ihpix_workspace_or_404(code)
+            try:
+                result = toolkit.get_action('ihpix_working_group_join')(
+                    MyLogica._ihpix_ctx(),
+                    {'id': ws['id'], 'note': request.form.get('note', '')})
+                if result.get('status') == 'active':
+                    h.flash_success(_('You have joined the working group.'))
+                else:
+                    h.flash_success(_('Your request was sent to the working group lead.'))
+            except toolkit.ValidationError as e:
+                h.flash_error(_format_error_dict(e.error_dict))
+            except toolkit.NotAuthorized:
+                return abort(403, _('Not authorized'))
+            return h.redirect_to('theme_ejemplo.ihpix_workspace_detail', code=ws['output_code'])
+
+        @staticmethod
+        def ihpix_workspace_leave(code):
+            redirect = _require_login()
+            if redirect:
+                return redirect
+            ws = MyLogica._ihpix_workspace_or_404(code)
+            try:
+                toolkit.get_action('ihpix_working_group_leave')(
+                    MyLogica._ihpix_ctx(), {'id': ws['id']})
+                h.flash_success(_('You have left the working group.'))
+            except toolkit.ValidationError as e:
+                h.flash_error(_format_error_dict(e.error_dict))
+            except toolkit.NotAuthorized:
+                return abort(403, _('Not authorized'))
+            return h.redirect_to('theme_ejemplo.ihpix_workspace_detail', code=ws['output_code'])
+
+        @staticmethod
+        def ihpix_workspace_members(code):
+            """Gestión de miembros (lead o sysadmin)."""
+            redirect = _require_login()
+            if redirect:
+                return redirect
+            ws = MyLogica._ihpix_workspace_or_404(code)
+            if not ws.get('can_manage'):
+                return abort(403, _('Only the working group lead can manage members'))
+            ctx = MyLogica._ihpix_ctx()
+            try:
+                members = toolkit.get_action('ihpix_working_group_member_list')(
+                    ctx, {'id': ws['id']}).get('results', [])
+            except Exception as e:
+                log.error('IHP-IX workspace %s member management: %s', code, e)
+                members = []
+            for m in members:
+                user = m.get('user') or {}
+                m['profile'] = h.get_user_profile(user['name']) if user.get('name') else None
+            return render_template(
+                'ihpix/workspace_members.html',
+                ws=ws,
+                pending=[m for m in members if m['status'] == 'pending'],
+                active=[m for m in members if m['status'] == 'active'],
+                removed=[m for m in members if m['status'] == 'removed'],
+            )
+
+        @staticmethod
+        def ihpix_workspace_member_process_view(code):
+            redirect = _require_login()
+            if redirect:
+                return redirect
+            ws = MyLogica._ihpix_workspace_or_404(code)
+            try:
+                toolkit.get_action('ihpix_working_group_member_process')(
+                    MyLogica._ihpix_ctx(), {
+                        'membership_id': request.form.get('membership_id', ''),
+                        'action': request.form.get('action', ''),
+                        'role': request.form.get('role', ''),
+                    })
+                h.flash_success(_('Membership updated.'))
+            except toolkit.ValidationError as e:
+                h.flash_error(_format_error_dict(e.error_dict))
+            except toolkit.NotAuthorized:
+                return abort(403, _('Not authorized'))
+            except toolkit.ObjectNotFound:
+                return abort(404, _('Membership not found'))
+            return h.redirect_to('theme_ejemplo.ihpix_workspace_members', code=ws['output_code'])
+
+        @staticmethod
+        def ihpix_workspaces_admin():
+            """Panel sysadmin: título, descripción, lead y estado de cada workspace."""
+            if not (c.userobj and c.userobj.sysadmin):
+                return abort(403, _('Not authorized'))
+            from ckanext.theme_ejemplo import ihpix_constants as C
+            try:
+                workspaces = toolkit.get_action('ihpix_working_group_list')(
+                    MyLogica._ihpix_ctx(), {}).get('results', [])
+            except Exception as e:
+                log.error('IHP-IX workspaces admin: %s', e)
+                workspaces = []
+            return render_template(
+                'admin/ihpix_workspaces.html',
+                workspaces=workspaces,
+                priority_areas=C.PRIORITY_AREAS,
+                pending_requests=h.get_pending_ihpix_wg_members_count(),
+            )
+
+        @staticmethod
+        def ihpix_workspaces_admin_update():
+            if not (c.userobj and c.userobj.sysadmin):
+                return abort(403, _('Not authorized'))
+            data = {
+                'id': request.form.get('id', ''),
+                'title': request.form.get('title', ''),
+                'description': request.form.get('description', ''),
+                'lead_user_id': request.form.get('lead_user', '').strip(),
+                'status': request.form.get('status', 'active'),
+            }
+            try:
+                toolkit.get_action('ihpix_working_group_update')(MyLogica._ihpix_ctx(), data)
+                h.flash_success(_('Working group updated.'))
+            except toolkit.ValidationError as e:
+                h.flash_error(_format_error_dict(e.error_dict))
+            except toolkit.ObjectNotFound:
+                return abort(404, _('Working group not found'))
+            return h.redirect_to('theme_ejemplo.ihpix_workspaces_admin')
+
         # ── IHP-IX: páginas navegables (fase iii) ─────────────────────────
 
         @staticmethod
@@ -1192,6 +1423,7 @@ class MyLogica():
             country = request.args.get('country', '')
             organization = request.args.get('organization', '')
             expertise = request.args.get('expertise', '')
+            ihpix_workspace = request.args.get('ihpix_workspace', '').strip()
             page = h.get_page_number(request.args) or 1
             items_per_page = 21
 
@@ -1203,6 +1435,7 @@ class MyLogica():
                         'country': country,
                         'organization': organization,
                         'expertise': expertise,
+                        'ihpix_workspace': ihpix_workspace,
                         'limit': items_per_page,
                         'offset': items_per_page * (page - 1),
                     }
@@ -4258,6 +4491,16 @@ class MyLogica():
             )
             pager.items = reports
 
+            summary, feed = None, []
+            if c.userobj:
+                summary = h.get_user_ihpix_summary(user_dict['id'])
+                try:
+                    feed = toolkit.get_action('ihpix_contribution_list')(
+                        {'user': c.user, 'model': model, 'auth_user_obj': c.userobj},
+                        {'user_id': user_dict['id'], 'limit': 20}).get('results', [])
+                except Exception as e:
+                    log.warning('IHP-IX feed de usuario %s: %s', id, e)
+
             return render_template(
                 'user/ihpix.html',
                 user_dict=user_dict,
@@ -4270,6 +4513,8 @@ class MyLogica():
                 can_see_all=can_see_all,
                 is_myself=is_myself,
                 is_sysadmin=is_sysadmin,
+                summary=summary,
+                feed=feed,
             )
 
         # ── IHP-IX Dashboard ──────────────────────────────────────────────

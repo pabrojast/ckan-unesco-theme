@@ -37,6 +37,14 @@
       <section class="people-filters-module">
         <div class="people-filters-inner">
           <form method="GET" action="{{ h.url_for('theme_ejemplo.people_index') }}">
+            {% if request.args.get('ihpix_workspace') %}
+              <input type="hidden" name="ihpix_workspace" value="{{ request.args.get('ihpix_workspace') }}">
+              <p style="margin:0 0 .6rem;font-size:.88rem;">
+                <span class="label label-info"><i class="fa fa-university"></i> {{ _('IHP-IX working group') }}: {{ _('Output') }} {{ request.args.get('ihpix_workspace') }}</span>
+                <a href="{{ h.url_for('theme_ejemplo.ihpix_workspace_detail', code=request.args.get('ihpix_workspace')) }}" style="margin-left:.4rem;">{{ _('Open workspace') }}</a>
+                &middot; <a href="{{ h.url_for('theme_ejemplo.people_index') }}">{{ _('Clear') }}</a>
+              </p>
+            {% endif %}
             <div class="row">
               <div class="col-md-4">
                 <div class="people-filter-group">

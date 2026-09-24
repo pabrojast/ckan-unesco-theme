@@ -975,6 +975,112 @@ def ihpix_t(value):
         return value
 
 
+def get_pending_ihpix_wg_members_count():
+    """Solicitudes de ingreso pendientes en los workspaces que el usuario
+    lidera (sysadmin: todos). Cola `ihpix_wg_members` de la campana."""
+    try:
+        from ckan.common import current_user
+        if not current_user or not current_user.is_authenticated:
+            return 0
+        from ckanext.theme_ejemplo.model import (
+            IhpixWorkingGroup, IhpixWorkingGroupMember, init_ihpix_working_groups_db,
+        )
+        init_ihpix_working_groups_db()
+        if current_user.sysadmin:
+            ids = [g.id for g in IhpixWorkingGroup.get_all()]
+        else:
+            ids = IhpixWorkingGroupMember.lead_group_ids_for_user(current_user.id)
+        return IhpixWorkingGroupMember.count_pending_for_groups(ids)
+    except Exception as e:
+        _rollback_session_after_helper_error()
+        log.error(f'Error getting pending IHP-IX working group requests: {e}')
+        return 0
+
+
+_ihpix_summary_cache = {}
+_IHPIX_SUMMARY_TTL = 60
+
+
+def get_user_ihpix_summary(user_id):
+    """Participación IHP-IX de un usuario para su perfil.
+
+    {reports: {status: n}, workspaces: [{output_code, title, role, status}],
+     contributions: {kind: n}, last_contribution_at}. Caché 60 s.
+    """
+    if not user_id:
+        return None
+    now = time.time()
+    cached = _ihpix_summary_cache.get(user_id)
+    if cached and cached[0] > now:
+        return cached[1]
+    summary = None
+    try:
+        from ckanext.theme_ejemplo.model import (
+            IhpixActivity, init_ihpix_activities_db,
+            IhpixWorkingGroup, IhpixWorkingGroupMember, IhpixContribution,
+            init_ihpix_working_groups_db,
+        )
+        from ckanext.theme_ejemplo import ihpix_workspaces as W
+        init_ihpix_activities_db()
+        init_ihpix_working_groups_db()
+        user = model.User.get(user_id)
+        if user is None:
+            return None
+        reports = IhpixActivity.count_by_status_for_reporter(user)
+        workspaces = []
+        for m in IhpixWorkingGroupMember.get_for_user(user.id, status=W.MEMBER_ACTIVE):
+            wg = IhpixWorkingGroup.get(m.working_group_id)
+            if wg is None:
+                continue
+            workspaces.append({
+                'output_code': wg.output_code, 'title': wg.title,
+                'role': m.role, 'status': wg.status,
+                'url': core_helpers.url_for('theme_ejemplo.ihpix_workspace_detail',
+                                            code=wg.output_code),
+            })
+        contributions = IhpixContribution.counts_for_user(user.id)
+        rows, _total = IhpixContribution.get_for_user(user.id, limit=1)
+        summary = {
+            'reports': reports,
+            'reports_published': reports.get('published', 0),
+            'reports_pending': reports.get('pending', 0),
+            'workspaces': workspaces,
+            'contributions': contributions,
+            'contributions_total': sum(contributions.values()),
+            'last_contribution_at': rows[0].created_at.isoformat() if rows else None,
+        }
+    except Exception as e:
+        _warn_and_rollback_helper_error('Error building IHP-IX user summary', e)
+        summary = None
+    if len(_ihpix_summary_cache) > 2000:
+        _ihpix_summary_cache.clear()
+    _ihpix_summary_cache[user_id] = (now + _IHPIX_SUMMARY_TTL, summary)
+    return summary
+
+
+def ihpix_wg_role_label(role):
+    _ = toolkit._
+    return {'lead': _('Lead'), 'contributor': _('Contributor'),
+            'observer': _('Observer')}.get(role, role or '')
+
+
+def ihpix_member_status_label(status):
+    _ = toolkit._
+    return {'pending': _('Pending approval'), 'active': _('Active'),
+            'removed': _('Removed')}.get(status, status or '')
+
+
+def ihpix_contribution_label(kind):
+    _ = toolkit._
+    return {
+        'report_submitted': _('Report submitted for review'),
+        'report_published': _('Report published'),
+        'link_added': _('Publication, event or data attached'),
+        'member_joined': _('Joined the working group'),
+        'comment': _('Comment'),
+    }.get(kind, kind or '')
+
+
 def ihpix_link_url(link):
     """URL navegable de un adjunto IHP-IX (dict de `IhpixActivityLink.as_dict`)."""
     from ckanext.theme_ejemplo import ihpix_links

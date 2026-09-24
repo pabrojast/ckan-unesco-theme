@@ -1,0 +1,89 @@
+{% extends "page.html" %}
+
+{% block title %}{{ _('IHP-IX Working Groups') }} - {{ super() }}{% endblock %}
+
+{% block breadcrumb_content %}
+  <li><a href="/ckan-admin">{{ _('Administration') }}</a></li>
+  <li><a href="/ckan-admin/ihpix">{{ _('IHP-IX') }}</a></li>
+  <li class="active"><a href="{{ h.url_for('theme_ejemplo.ihpix_workspaces_admin') }}">{{ _('Working groups') }}</a></li>
+{% endblock %}
+
+{% block content %}
+<div class="main">
+  <div class="container">
+    <style>
+      .ihpwg-table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+      .ihpwg-table th { text-align: left; font-size: .72rem; text-transform: uppercase; letter-spacing: .04em; color: #64748B; padding: .5rem .4rem; border-bottom: 2px solid #E2E8F0; }
+      .ihpwg-table td { padding: .5rem .4rem; border-bottom: 1px solid #F1F5F9; vertical-align: top; }
+      .ihpwg-table input[type=text], .ihpwg-table select { width: 100%; min-height: 32px; border: 1px solid #E2E8F0; border-radius: 6px; padding: .2rem .4rem; font-size: .85rem; }
+      .ihpwg-code { font-weight: 800; color: #004E8C; white-space: nowrap; }
+      .ihpwg-pa { font-size: .72rem; color: #64748B; }
+      .ihpwg-nums { white-space: nowrap; font-size: .82rem; color: #475569; }
+      .ihpwg-nums strong { color: #0F172A; }
+      .ihpwg-intro { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 10px; padding: .9rem 1.1rem; margin-bottom: 1rem; font-size: .9rem; }
+    </style>
+
+    <ul class="nav nav-tabs" style="margin-bottom:1rem;">
+      <li><a href="/ckan-admin/ihpix">{{ _('Page Content') }}</a></li>
+      <li><a href="/ckan-admin/ihpix/activities">{{ _('Activities') }}</a></li>
+      <li><a href="/ckan-admin/ihpix/reports?status=pending">{{ _('Reports') }}</a></li>
+      <li><a href="{{ h.url_for('theme_ejemplo.ihpix_admin_overview') }}">{{ _('Overview') }}</a></li>
+      <li class="active"><a href="{{ h.url_for('theme_ejemplo.ihpix_workspaces_admin') }}">{{ _('Working groups') }}</a></li>
+    </ul>
+
+    <h1 style="font-size:1.5rem;"><i class="fa fa-users"></i> {{ _('IHP-IX Working Groups') }} <small>({{ workspaces|length }})</small></h1>
+    <div class="ihpwg-intro">
+      {{ _('One workspace per IHP-IX Output, created automatically from the official list of Outputs. Assign a lead (by username) so they can approve membership requests; archive a workspace to hide it from new members.') }}
+      {% if pending_requests %}<br><strong><i class="fa fa-bell"></i> {{ pending_requests }} {{ _('pending membership requests across all working groups.') }}</strong>{% endif %}
+    </div>
+
+    <table class="ihpwg-table">
+      <thead>
+        <tr>
+          <th>{{ _('Output') }}</th>
+          <th>{{ _('Title') }}</th>
+          <th>{{ _('Description') }}</th>
+          <th>{{ _('Lead (username)') }}</th>
+          <th>{{ _('Status') }}</th>
+          <th>{{ _('Members') }}</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for ws in workspaces %}
+          <tr>
+            <form method="post" action="{{ h.url_for('theme_ejemplo.ihpix_workspaces_admin_update') }}">
+              {{ h.csrf_input() }}
+              <input type="hidden" name="id" value="{{ ws.id }}">
+              <td>
+                <a class="ihpwg-code" href="{{ h.url_for('theme_ejemplo.ihpix_workspace_detail', code=ws.output_code) }}">{{ ws.output_code }}</a>
+                <div class="ihpwg-pa">{{ ws.priority_area }}</div>
+              </td>
+              <td><input type="text" name="title" value="{{ ws.title }}" required></td>
+              <td><input type="text" name="description" value="{{ ws.description }}" placeholder="{{ _('Short description') }}"></td>
+              <td><input type="text" name="lead_user" value="{{ ws.lead.name if ws.lead else '' }}" placeholder="{{ _('username') }}" title="{{ ws.lead.display_name if ws.lead else '' }}"></td>
+              <td>
+                <select name="status">
+                  <option value="active" {% if ws.status == 'active' %}selected{% endif %}>{{ _('Active') }}</option>
+                  <option value="archived" {% if ws.status == 'archived' %}selected{% endif %}>{{ _('Archived') }}</option>
+                </select>
+              </td>
+              <td class="ihpwg-nums">
+                <strong>{{ ws.members_active }}</strong> {{ _('active') }}
+                {% if ws.members_pending %}<br><span style="color:#b45309;"><strong>{{ ws.members_pending }}</strong> {{ _('pending') }}</span>{% endif %}
+                <br><strong>{{ ws.published_activities }}</strong> {{ _('published') }}
+              </td>
+              <td style="white-space:nowrap;">
+                <button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-save"></i> {{ _('Save') }}</button>
+                <a class="btn btn-sm btn-default" href="{{ h.url_for('theme_ejemplo.ihpix_workspace_members', code=ws.output_code) }}" title="{{ _('Manage members') }}"><i class="fa fa-users"></i></a>
+              </td>
+            </form>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</div>
+{% endblock %}
+
+{% block secondary %}{% endblock %}

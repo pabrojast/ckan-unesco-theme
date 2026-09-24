@@ -668,8 +668,8 @@
         <a href="{{ h.url_for('/ihpix/dashboard') }}" class="ihpix-btn ihpix-btn-ghost">
           <i class="fa fa-bar-chart"></i> {{ _('Dashboard') }}
         </a>
-        <a href="{{ h.url_for('theme_ejemplo.ihpix_contributors') }}" class="ihpix-btn ihpix-btn-ghost">
-          <i class="fa fa-users"></i> {{ _('Contributors') }}
+        <a href="{{ h.url_for('theme_ejemplo.ihpix_workspaces') }}" class="ihpix-btn ihpix-btn-ghost">
+          <i class="fa fa-users"></i> {{ _('Working groups') }}
         </a>
         {% else %}
         <a href="{{ h.url_for('user.login', came_from='/ihpix/outputs') }}" class="ihpix-btn ihpix-btn-white">

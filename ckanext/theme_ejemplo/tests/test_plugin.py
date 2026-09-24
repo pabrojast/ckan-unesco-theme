@@ -209,3 +209,29 @@ def test_ihpix_landing_is_public(app):
     resp = app.get('/ihpix')
     assert resp.status_code == 200
     assert b'ihpix-stats-initial' in resp.data
+
+
+# ── IHP-IX working groups (fase iv) ────────────────────────────────────────
+
+def test_ihpix_workspace_routes_are_registered(app):
+    adapter = app.flask_app.url_map.bind('test.ckan.net')
+    for path, method, expected in (
+            ('/ihpix/workspaces', 'GET', 'ihpix_workspaces'),
+            ('/ihpix/workspaces/1.1', 'GET', 'ihpix_workspace_detail'),
+            ('/ihpix/workspaces/1.1/join', 'POST', 'ihpix_workspace_join'),
+            ('/ihpix/workspaces/1.1/leave', 'POST', 'ihpix_workspace_leave'),
+            ('/ihpix/workspaces/1.1/members', 'GET', 'ihpix_workspace_members'),
+            ('/ihpix/workspaces/1.1/members/process', 'POST', 'ihpix_workspace_member_process_view'),
+            ('/ckan-admin/ihpix/workspaces', 'GET', 'ihpix_workspaces_admin'),
+            ('/ckan-admin/ihpix/workspaces/update', 'POST', 'ihpix_workspaces_admin_update'),
+    ):
+        endpoint, _args = adapter.match(path, method=method)
+        assert endpoint == 'theme_ejemplo.' + expected, path
+
+
+def test_ihpix_workspaces_require_login(app):
+    for path in ('/ihpix/workspaces', '/ihpix/workspaces/1.1', '/ihpix/workspaces/1.1/members'):
+        resp = app.get(path, follow_redirects=False)
+        assert resp.status_code in (302, 403), path
+    resp = app.get('/ckan-admin/ihpix/workspaces', follow_redirects=False)
+    assert resp.status_code in (302, 403)

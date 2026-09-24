@@ -1,0 +1,113 @@
+{% extends "page.html" %}
+{% import 'ihpix/snippets/page_styles.html' as ui %}
+
+{% block title %}{{ _('IHP-IX Working Groups') }} - {{ super() }}{% endblock %}
+
+{% block breadcrumb_content %}
+  <li><a href="{{ h.url_for('/ihpix') }}">{% trans %}IHP IX{% endtrans %}</a></li>
+  <li class="active"><a href="{{ h.url_for('theme_ejemplo.ihpix_workspaces') }}">{{ _('Working groups') }}</a></li>
+{% endblock %}
+
+{% block page_header %}{% endblock %}
+
+{% block content %}
+<div class="main">
+<div class="container ixp">
+  {{ ui.page_styles() }}
+  <style>
+    .ixw-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 14px; }
+    .ixw-card { display: block; background: #fff; border: 1px solid var(--ix-border); border-radius: var(--ix-radius); padding: 16px 18px; box-shadow: var(--ix-shadow); text-decoration: none; color: var(--ix-text); position: relative; transition: transform .12s ease, box-shadow .12s ease; }
+    .ixw-card:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0,0,0,0.08); text-decoration: none; color: var(--ix-text); }
+    .ixw-card.is-archived { opacity: .6; }
+    .ixw-code { font-weight: 800; font-size: 1.15rem; color: var(--ix-primary-dark); }
+    .ixw-title { font-size: 0.92rem; color: var(--ix-text-sec); margin: .2rem 0 .6rem; min-height: 2.4em; }
+    .ixw-meta { display: flex; flex-wrap: wrap; gap: .4rem .9rem; font-size: .78rem; color: var(--ix-text-sec); }
+    .ixw-meta strong { color: var(--ix-text); }
+    .ixw-badge { position: absolute; top: 12px; right: 12px; font-size: .68rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; padding: .15rem .5rem; border-radius: 999px; background: #dcfce7; color: #166534; }
+    .ixw-badge.is-pending { background: #fef3c7; color: #92400e; }
+    .ixw-badge.is-lead { background: #e0f2fe; color: #075985; }
+    .ixw-pa { margin: 28px 0 10px; display: flex; align-items: center; gap: .6rem; }
+    .ixw-pa h2 { margin: 0; font-size: 1.1rem; }
+    .ixw-pills { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: 1rem; }
+    .ixw-pill { padding: .35rem .8rem; border-radius: 999px; border: 1px solid var(--ix-border); background: #fff; font-size: .82rem; font-weight: 600; color: var(--ix-text-sec); text-decoration: none; }
+    .ixw-pill.is-active, .ixw-pill:hover { background: var(--ix-primary); color: #fff; border-color: var(--ix-primary); text-decoration: none; }
+  </style>
+
+  <div class="ixp-header">
+    <span class="ixp-kicker">{{ _('Pilot') }}</span>
+    <h1>{{ _('Collaborative IHP-IX Working Groups') }}</h1>
+    <p>{{ _('One workspace per IHP-IX Output. Join the working groups you contribute to, follow what others report, and attach the publications, events and data produced under each output.') }}</p>
+    <div class="ixp-header-actions">
+      <a class="ixp-btn ixp-btn-white" href="{{ h.url_for('theme_ejemplo.ihpix_report') }}"><i class="fa fa-paper-plane"></i> {{ _('Report an activity') }}</a>
+      <a class="ixp-btn ixp-btn-ghost" href="{{ h.url_for('theme_ejemplo.ihpix_contributors') }}"><i class="fa fa-users"></i> {{ _('Contributors') }}</a>
+      {% if c.userobj.sysadmin %}
+      <a class="ixp-btn ixp-btn-ghost" href="{{ h.url_for('theme_ejemplo.ihpix_workspaces_admin') }}"><i class="fa fa-cog"></i> {{ _('Manage working groups') }}</a>
+      {% endif %}
+    </div>
+  </div>
+
+  {% if pending_requests %}
+  <div class="alert alert-warning" style="border-radius:10px;">
+    <i class="fa fa-bell"></i>
+    {{ ngettext('%(n)d membership request is waiting for your review in the working groups you lead.', '%(n)d membership requests are waiting for your review in the working groups you lead.', pending_requests, n=pending_requests) }}
+  </div>
+  {% endif %}
+
+  {% if mine %}
+  <div class="ixp-card">
+    <h2><i class="fa fa-star"></i> {{ _('My working groups') }} <span class="ixp-count">{{ mine|length }}</span></h2>
+    <div class="ixw-grid">
+      {% for ws in mine %}
+        <a class="ixw-card" href="{{ h.url_for('theme_ejemplo.ihpix_workspace_detail', code=ws.output_code) }}">
+          {% set m = ws.my_membership %}
+          <span class="ixw-badge {% if m.status == 'pending' %}is-pending{% elif m.role == 'lead' %}is-lead{% endif %}">{{ h.ihpix_member_status_label(m.status) if m.status != 'active' else h.ihpix_wg_role_label(m.role) }}</span>
+          <div class="ixw-code">{{ ws.output_code }}</div>
+          <div class="ixw-title">{{ ws.title }}</div>
+          <div class="ixw-meta">
+            <span><strong>{{ ws.members_active }}</strong> {{ _('members') }}</span>
+            <span><strong>{{ ws.published_activities }}</strong> {{ _('published') }}</span>
+          </div>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+  {% endif %}
+
+  <div class="ixw-pills">
+    <a class="ixw-pill {% if not pa_filter %}is-active{% endif %}" href="{{ h.url_for('theme_ejemplo.ihpix_workspaces') }}">{{ _('All') }}</a>
+    {% for code, name in priority_areas.items() %}
+      <a class="ixw-pill {% if pa_filter == code %}is-active{% endif %}" href="{{ h.url_for('theme_ejemplo.ihpix_workspaces', pa=code) }}" title="{{ h.ihpix_t(name) }}">{{ code }}</a>
+    {% endfor %}
+  </div>
+
+  {% for pa, items in workspaces_by_pa.items() if items %}
+    <div class="ixw-pa">
+      <a class="ixp-tag ixp-tag--pa" data-pa="{{ pa }}" href="{{ h.url_for('theme_ejemplo.ihpix_priority_area', pa=pa) }}">{{ pa }}</a>
+      <h2>{{ h.ihpix_t(priority_areas.get(pa, pa)) }}</h2>
+    </div>
+    <div class="ixw-grid">
+      {% for ws in items %}
+        <a class="ixw-card {% if ws.status == 'archived' %}is-archived{% endif %}" href="{{ h.url_for('theme_ejemplo.ihpix_workspace_detail', code=ws.output_code) }}">
+          {% set m = ws.my_membership %}
+          {% if m and m.status != 'removed' %}
+            <span class="ixw-badge {% if m.status == 'pending' %}is-pending{% elif m.role == 'lead' %}is-lead{% endif %}">{{ h.ihpix_member_status_label(m.status) if m.status != 'active' else h.ihpix_wg_role_label(m.role) }}</span>
+          {% elif ws.status == 'archived' %}
+            <span class="ixw-badge" style="background:#e2e8f0;color:#475569;">{{ _('Archived') }}</span>
+          {% endif %}
+          <div class="ixw-code">{{ _('Output') }} {{ ws.output_code }}</div>
+          <div class="ixw-title">{{ ws.output_title or ws.title }}</div>
+          <div class="ixw-meta">
+            <span><i class="fa fa-users"></i> <strong>{{ ws.members_active }}</strong> {{ _('members') }}</span>
+            <span><i class="fa fa-flag"></i> <strong>{{ ws.published_activities }}</strong> {{ _('published') }}</span>
+            {% if ws.lead %}<span><i class="fa fa-user-circle"></i> {{ ws.lead.display_name }}</span>{% endif %}
+            {% if ws.last_activity_at %}<span><i class="fa fa-clock-o"></i> {{ h.time_ago_from_timestamp(ws.last_activity_at) }}</span>{% endif %}
+          </div>
+        </a>
+      {% endfor %}
+    </div>
+  {% endfor %}
+</div>
+</div>
+{% endblock %}
+
+{% block secondary %}{% endblock %}

@@ -36,6 +36,9 @@
       <a class="ixp-btn ixp-btn-ghost" href="{{ h.url_for('/ihpix/dashboard', output=code) }}">
         <i class="fa fa-bar-chart"></i> {{ _('Dashboard') }}
       </a>
+      <a class="ixp-btn ixp-btn-ghost" href="{{ h.url_for('theme_ejemplo.ihpix_workspace_detail', code=code) }}">
+        <i class="fa fa-users"></i> {{ _('Working group') }}
+      </a>
     </div>
   </div>
 

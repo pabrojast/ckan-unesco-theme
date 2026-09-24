@@ -326,6 +326,70 @@ def ihpix_link_search(context, data_dict):
     return _logged_in_only(context, data_dict)
 
 
+# ── IHP-IX Working groups (workspaces) ──────────────────────────────────────
+
+def _ihpix_wg_manager_or_sysadmin(context, data_dict, wg=None):
+    """Lead del workspace (lead_user_id o miembro lead activo) o sysadmin.
+    Si el workspace no existe se autoriza para que la acción devuelva 404."""
+    user_obj = context.get('auth_user_obj')
+    if not user_obj and context.get('user'):
+        user_obj = model.User.get(context['user'])
+    if not user_obj:
+        return {'success': False, 'msg': toolkit._('Must be logged in')}
+    if user_obj.sysadmin:
+        return {'success': True}
+    from ckanext.theme_ejemplo.model import IhpixWorkingGroup, IhpixWorkingGroupMember
+    from ckanext.theme_ejemplo import ihpix_workspaces as W
+    if wg is None:
+        value = (data_dict or {}).get('id') or (data_dict or {}).get('output_code')
+        wg = IhpixWorkingGroup.get_by_id_or_output(value) if value else None
+    if wg is None:
+        return {'success': True}
+    membership = IhpixWorkingGroupMember.get_membership(wg.id, user_obj.id)
+    if W.can_manage(wg, user_obj.id, membership, False):
+        return {'success': True}
+    return {'success': False,
+            'msg': toolkit._('Only the working group lead can do this')}
+
+
+def ihpix_working_group_list(context, data_dict):
+    return _logged_in_only(context, data_dict)
+
+
+def ihpix_working_group_show(context, data_dict):
+    return _logged_in_only(context, data_dict)
+
+
+def ihpix_working_group_update(context, data_dict):
+    return _ihpix_wg_manager_or_sysadmin(context, data_dict)
+
+
+def ihpix_working_group_join(context, data_dict):
+    return _logged_in_only(context, data_dict)
+
+
+def ihpix_working_group_leave(context, data_dict):
+    return _logged_in_only(context, data_dict)
+
+
+def ihpix_working_group_member_process(context, data_dict):
+    from ckanext.theme_ejemplo.model import IhpixWorkingGroupMember, IhpixWorkingGroup
+    membership_id = (data_dict or {}).get('membership_id')
+    membership = IhpixWorkingGroupMember.get(membership_id) if membership_id else None
+    if membership is None:
+        return _logged_in_only(context, data_dict)
+    wg = IhpixWorkingGroup.get(membership.working_group_id)
+    return _ihpix_wg_manager_or_sysadmin(context, {'id': membership.working_group_id}, wg=wg)
+
+
+def ihpix_working_group_member_list(context, data_dict):
+    return _logged_in_only(context, data_dict)
+
+
+def ihpix_contribution_list(context, data_dict):
+    return _logged_in_only(context, data_dict)
+
+
 def ihpix_report_review(context, data_dict):
     return _sysadmin_only(context, data_dict)
 

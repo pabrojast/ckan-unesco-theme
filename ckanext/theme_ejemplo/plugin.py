@@ -462,6 +462,8 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
             membership_model.init_ihpix_activities_db()
             # Create ihpix_activity_link table (adjuntos) if needed
             membership_model.init_ihpix_activity_links_db()
+            # Working groups (workspaces por Output) + ledger de contribuciones
+            membership_model.init_ihpix_working_groups_db()
             # Create ihpix_country_summary table if needed
             membership_model.init_ihpix_country_summary_db()
             # Create initiative_request table if needed
@@ -551,6 +553,56 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 u'ihpix_contributors',
                 MyLogica.ihpix_contributors,
                 methods=['GET']
+            )
+
+            # Working groups (fase iv)
+            blueprint.add_url_rule(
+                u'/ihpix/workspaces',
+                u'ihpix_workspaces',
+                MyLogica.ihpix_workspaces,
+                methods=['GET']
+            )
+            blueprint.add_url_rule(
+                u'/ihpix/workspaces/<code>',
+                u'ihpix_workspace_detail',
+                MyLogica.ihpix_workspace_detail,
+                methods=['GET']
+            )
+            blueprint.add_url_rule(
+                u'/ihpix/workspaces/<code>/join',
+                u'ihpix_workspace_join',
+                MyLogica.ihpix_workspace_join,
+                methods=['POST']
+            )
+            blueprint.add_url_rule(
+                u'/ihpix/workspaces/<code>/leave',
+                u'ihpix_workspace_leave',
+                MyLogica.ihpix_workspace_leave,
+                methods=['POST']
+            )
+            blueprint.add_url_rule(
+                u'/ihpix/workspaces/<code>/members',
+                u'ihpix_workspace_members',
+                MyLogica.ihpix_workspace_members,
+                methods=['GET']
+            )
+            blueprint.add_url_rule(
+                u'/ihpix/workspaces/<code>/members/process',
+                u'ihpix_workspace_member_process_view',
+                MyLogica.ihpix_workspace_member_process_view,
+                methods=['POST']
+            )
+            blueprint.add_url_rule(
+                u'/ckan-admin/ihpix/workspaces',
+                u'ihpix_workspaces_admin',
+                MyLogica.ihpix_workspaces_admin,
+                methods=['GET']
+            )
+            blueprint.add_url_rule(
+                u'/ckan-admin/ihpix/workspaces/update',
+                u'ihpix_workspaces_admin_update',
+                MyLogica.ihpix_workspaces_admin_update,
+                methods=['POST']
             )
 
             blueprint.add_url_rule(
@@ -1254,6 +1306,11 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                  'ihpix_output_label': helpers.ihpix_output_label,
                  'ihpix_priority_area_for_output': helpers.ihpix_priority_area_for_output,
                  'ihpix_t': helpers.ihpix_t,
+                 'get_pending_ihpix_wg_members_count': helpers.get_pending_ihpix_wg_members_count,
+                 'get_user_ihpix_summary': helpers.get_user_ihpix_summary,
+                 'ihpix_wg_role_label': helpers.ihpix_wg_role_label,
+                 'ihpix_member_status_label': helpers.ihpix_member_status_label,
+                 'ihpix_contribution_label': helpers.ihpix_contribution_label,
                  'get_my_pending_initiative_request': helpers.get_my_pending_initiative_request,
                  'theme_ejemplo_tracking_enabled': helpers.tracking_enabled,
                  'get_dataset_tracking': helpers.get_dataset_tracking,
@@ -1328,6 +1385,15 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 # IHP-IX descubribilidad / analítica
                 'ihpix_contributor_list': custom_actions.ihpix_contributor_list,
                 'ihpix_country_summary_recompute': custom_actions.ihpix_country_summary_recompute,
+                # IHP-IX working groups (piloto)
+                'ihpix_working_group_list': custom_actions.ihpix_working_group_list,
+                'ihpix_working_group_show': custom_actions.ihpix_working_group_show,
+                'ihpix_working_group_update': custom_actions.ihpix_working_group_update,
+                'ihpix_working_group_join': custom_actions.ihpix_working_group_join,
+                'ihpix_working_group_leave': custom_actions.ihpix_working_group_leave,
+                'ihpix_working_group_member_process': custom_actions.ihpix_working_group_member_process,
+                'ihpix_working_group_member_list': custom_actions.ihpix_working_group_member_list,
+                'ihpix_contribution_list': custom_actions.ihpix_contribution_list,
                 'ihpix_dashboard_stats': custom_actions.ihpix_dashboard_stats,
                 'ihpix_admin_overview_stats': custom_actions.ihpix_admin_overview_stats,
                 # IHP-IX GeoJSON & country summary
@@ -1405,6 +1471,15 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 'ihpix_link_search': custom_auth.ihpix_link_search,
                 'ihpix_contributor_list': custom_auth.ihpix_contributor_list,
                 'ihpix_country_summary_recompute': custom_auth.ihpix_country_summary_recompute,
+                # IHP-IX working groups (piloto)
+                'ihpix_working_group_list': custom_auth.ihpix_working_group_list,
+                'ihpix_working_group_show': custom_auth.ihpix_working_group_show,
+                'ihpix_working_group_update': custom_auth.ihpix_working_group_update,
+                'ihpix_working_group_join': custom_auth.ihpix_working_group_join,
+                'ihpix_working_group_leave': custom_auth.ihpix_working_group_leave,
+                'ihpix_working_group_member_process': custom_auth.ihpix_working_group_member_process,
+                'ihpix_working_group_member_list': custom_auth.ihpix_working_group_member_list,
+                'ihpix_contribution_list': custom_auth.ihpix_contribution_list,
                 'ihpix_dashboard_stats': custom_auth.ihpix_dashboard_stats,
                 # IHP-IX GeoJSON & country summary
                 'ihpix_geojson': custom_auth.ihpix_geojson,

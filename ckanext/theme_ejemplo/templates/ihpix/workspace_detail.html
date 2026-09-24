@@ -1,0 +1,196 @@
+{% extends "page.html" %}
+{% import 'ihpix/snippets/activity_links.html' as links_ui %}
+{% import 'ihpix/snippets/page_styles.html' as ui %}
+
+{% block title %}{{ ws.title }} - {{ _('IHP-IX Working Groups') }} - {{ super() }}{% endblock %}
+
+{% block breadcrumb_content %}
+  <li><a href="{{ h.url_for('/ihpix') }}">{% trans %}IHP IX{% endtrans %}</a></li>
+  <li><a href="{{ h.url_for('theme_ejemplo.ihpix_workspaces') }}">{{ _('Working groups') }}</a></li>
+  <li class="active"><a href="{{ h.url_for('theme_ejemplo.ihpix_workspace_detail', code=ws.output_code) }}">{{ ws.output_code }}</a></li>
+{% endblock %}
+
+{% block page_header %}{% endblock %}
+
+{% block content %}
+{% set m = ws.my_membership %}
+{% set is_member = m and m.status == 'active' %}
+{% set is_pending = m and m.status == 'pending' %}
+<div class="main">
+<div class="container ixp">
+  {{ ui.page_styles() }}
+  {{ links_ui.links_styles() }}
+  <style>
+    .ixw-nav { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: 20px; }
+    .ixw-nav a { padding: .4rem .85rem; border-radius: 999px; border: 1px solid var(--ix-border); background: #fff; font-size: .84rem; font-weight: 600; color: var(--ix-text-sec); text-decoration: none; }
+    .ixw-nav a:hover { background: var(--ix-primary-light); color: var(--ix-primary-dark); text-decoration: none; }
+    .ixw-feed { list-style: none; margin: 0; padding: 0; }
+    .ixw-feed li { display: flex; gap: .7rem; padding: .55rem 0; border-bottom: 1px solid #F1F5F9; font-size: .88rem; }
+    .ixw-feed li:last-child { border-bottom: 0; }
+    .ixw-feed i { color: var(--ix-primary); margin-top: .2rem; width: 1rem; text-align: center; }
+    .ixw-feed time { display: block; font-size: .74rem; color: var(--ix-text-muted); }
+    .ixw-own { background: #fffbeb; border: 1px dashed #fcd34d; border-radius: 10px; padding: .7rem .9rem; margin-bottom: 1rem; }
+    .ixw-own ul { margin: .4rem 0 0; padding-left: 1.1rem; font-size: .88rem; }
+    .ixw-inline-form { display: inline-block; }
+    .ixw-note { width: 100%; min-height: 60px; border: 1px solid var(--ix-border); border-radius: 8px; padding: .5rem; font-size: .9rem; margin-bottom: .5rem; }
+  </style>
+
+  <div class="ixp-header" data-pa="{{ ws.priority_area }}">
+    <div class="ixp-breadcrumb">
+      <a href="{{ h.url_for('theme_ejemplo.ihpix_workspaces') }}">{{ _('Working groups') }}</a> &rsaquo;
+      <a href="{{ h.url_for('theme_ejemplo.ihpix_priority_area', pa=ws.priority_area) }}">{{ ws.priority_area }}</a>
+    </div>
+    <span class="ixp-kicker">{{ _('IHP-IX Working Group') }}{% if ws.status == 'archived' %} &middot; {{ _('Archived') }}{% endif %}</span>
+    <h1>{{ ws.title }}</h1>
+    <p>{{ ws.description or _('Collaborative workspace for the activities, publications, events and data reported under this IHP-IX Output.') }}</p>
+    {% if ws.lead %}<p style="margin-top:.5rem;font-size:.88rem;"><i class="fa fa-user-circle"></i> {{ _('Lead') }}: <a style="color:#fff;font-weight:600;" href="{{ h.url_for('theme_ejemplo.user_ihpix', id=ws.lead.name) }}">{{ ws.lead.display_name }}</a></p>{% endif %}
+    <div class="ixp-header-actions">
+      <a class="ixp-btn ixp-btn-white" href="{{ h.url_for('theme_ejemplo.ihpix_report', pa=ws.priority_area, output=ws.output_code) }}">
+        <i class="fa fa-paper-plane"></i> {{ _('Report an activity for this output') }}
+      </a>
+      {% if ws.status == 'active' %}
+        {% if is_member %}
+          {% if m.role != 'lead' %}
+          <form method="post" action="{{ h.url_for('theme_ejemplo.ihpix_workspace_leave', code=ws.output_code) }}" class="ixw-inline-form"
+                onsubmit="return confirm({{ _('Leave this working group?')|tojson }});">
+            {{ h.csrf_input() }}
+            <button type="submit" class="ixp-btn ixp-btn-ghost"><i class="fa fa-sign-out"></i> {{ _('Leave') }}</button>
+          </form>
+          {% endif %}
+        {% elif is_pending %}
+          <span class="ixp-btn ixp-btn-ghost"><i class="fa fa-clock-o"></i> {{ _('Membership request pending') }}</span>
+        {% else %}
+          <a class="ixp-btn ixp-btn-ghost" href="#join"><i class="fa fa-user-plus"></i> {{ _('Join this working group') }}</a>
+        {% endif %}
+      {% endif %}
+      {% if ws.can_manage %}
+      <a class="ixp-btn ixp-btn-ghost" href="{{ h.url_for('theme_ejemplo.ihpix_workspace_members', code=ws.output_code) }}">
+        <i class="fa fa-cog"></i> {{ _('Manage members') }}{% if pending_count %} <span class="badge" style="background:#f59e0b;">{{ pending_count }}</span>{% endif %}
+      </a>
+      {% endif %}
+      <a class="ixp-btn ixp-btn-ghost" href="{{ h.url_for('theme_ejemplo.ihpix_output_detail', code=ws.output_code) }}"><i class="fa fa-sitemap"></i> {{ _('Output page') }}</a>
+    </div>
+  </div>
+
+  <div class="ixp-stats">
+    <div class="ixp-stat"><div class="ixp-stat-n">{{ ws.members_active }}</div><div class="ixp-stat-l">{{ _('Active members') }}</div></div>
+    <div class="ixp-stat"><div class="ixp-stat-n">{{ ws.stats.total_activities | default(0) }}</div><div class="ixp-stat-l">{{ _('Published activities') }}</div></div>
+    <div class="ixp-stat"><div class="ixp-stat-n">{{ ws.stats.total_countries | default(0) }}</div><div class="ixp-stat-l">{{ _('Countries') }}</div></div>
+    <div class="ixp-stat"><div class="ixp-stat-n">{{ (ws.stats.links_by_type or {}).total | default(0) }}</div><div class="ixp-stat-l">{{ _('Publications, events & data') }}</div></div>
+    <div class="ixp-stat"><div class="ixp-stat-n">{{ ws.contribution_counts.values()|sum }}</div><div class="ixp-stat-l">{{ _('Contributions') }}</div></div>
+  </div>
+
+  <nav class="ixw-nav" aria-label="{{ _('Workspace sections') }}">
+    <a href="#activities">{{ _('Activities') }}</a>
+    <a href="#members">{{ _('Members') }}</a>
+    <a href="#attachments">{{ _('Publications, events & data') }}</a>
+    <a href="#feed">{{ _('Recent contributions') }}</a>
+  </nav>
+
+  {% if not is_member and not is_pending and ws.status == 'active' %}
+  <div class="ixp-card" id="join">
+    <h2><i class="fa fa-user-plus"></i> {{ _('Join this working group') }}</h2>
+    <form method="post" action="{{ h.url_for('theme_ejemplo.ihpix_workspace_join', code=ws.output_code) }}">
+      {{ h.csrf_input() }}
+      <label for="ixw-note" style="font-size:.85rem;color:var(--ix-text-sec);">{{ _('Tell the lead how you contribute to this output (optional)') }}</label>
+      <textarea id="ixw-note" name="note" class="ixw-note" maxlength="500"></textarea>
+      <button type="submit" class="btn btn-primary"><i class="fa fa-user-plus"></i> {{ _('Request to join') }}</button>
+    </form>
+  </div>
+  {% endif %}
+
+  <div class="ixp-grid">
+    <div>
+      <div class="ixp-card" id="activities">
+        <h2><i class="fa fa-flag"></i> {{ _('Published activities') }} <span class="ixp-count">{{ total }}</span></h2>
+        {% if own_in_progress %}
+        <div class="ixw-own">
+          <strong><i class="fa fa-pencil"></i> {{ _('Your reports in progress for this output') }}</strong>
+          <ul>
+            {% for a in own_in_progress %}
+              <li><a href="{{ h.url_for('theme_ejemplo.ihpix_report_edit', id=a.id) }}">{{ a.title }}</a> <small class="text-muted">({{ a.status }})</small></li>
+            {% endfor %}
+          </ul>
+        </div>
+        {% endif %}
+        {% if activities %}
+          <ul class="ixp-list">
+            {% for activity in activities %}
+              {{ ui.activity_row(activity, links_ui, (links_by_activity or {}).get(activity.id, [])) }}
+            {% endfor %}
+          </ul>
+          <div class="ixp-pager">{{ page.pager() }}</div>
+        {% else %}
+          <p class="ixp-empty">{{ _('No published activities for this output yet.') }}</p>
+        {% endif %}
+      </div>
+
+      <div class="ixp-card" id="attachments">
+        <h2><i class="fa fa-paperclip"></i> {{ _('Publications, events & data') }}</h2>
+        {% if links_grouped %}
+          {% for link_type in ['publication', 'webinar', 'event', 'dataset', 'output_data', 'other'] %}
+            {% if links_grouped.get(link_type) %}
+              <h3 style="font-size:0.85rem;text-transform:uppercase;letter-spacing:.05em;color:#64748B;margin:0.8rem 0 0.4rem;">{{ h.ihpix_link_type_label(link_type) }} ({{ links_grouped[link_type]|length }})</h3>
+              {{ links_ui.render_links(links_grouped[link_type], compact=True, heading=False) }}
+            {% endif %}
+          {% endfor %}
+        {% else %}
+          <p class="ixp-empty">{{ _('Nothing attached yet. Attach publications, events and data from the activity report form (Section VII).') }}</p>
+        {% endif %}
+      </div>
+    </div>
+
+    <aside>
+      <div class="ixp-card" id="members">
+        <h2><i class="fa fa-users"></i> {{ _('Members') }} <span class="ixp-count">{{ members|length }}</span></h2>
+        {% if members %}
+          <div class="ixp-people">
+            {% for mem in members %}
+              {% set u = mem.user %}
+              <div class="ixp-person">
+                {{ ui.avatar(u) }}
+                <div class="ixp-person-body">
+                  {% if u and u.name %}
+                    <a class="ixp-person-name" href="{{ h.url_for('theme_ejemplo.user_ihpix', id=u.name) }}">{{ u.display_name }}</a>
+                  {% else %}
+                    <span class="ixp-person-name">{{ mem.user_id }}</span>
+                  {% endif %}
+                  <span class="ixp-person-meta">{{ h.ihpix_wg_role_label(mem.role) }}{% if mem.joined_at %} &middot; {{ h.render_datetime(mem.joined_at) }}{% endif %}</span>
+                </div>
+              </div>
+            {% endfor %}
+          </div>
+          <p style="margin:.8rem 0 0;"><a href="{{ h.url_for('theme_ejemplo.people_index', ihpix_workspace=ws.output_code) }}">{{ _('See members in the people directory') }} &rarr;</a></p>
+        {% else %}
+          <p class="ixp-empty">{{ _('No members yet. Be the first to join.') }}</p>
+        {% endif %}
+      </div>
+
+      <div class="ixp-card" id="feed">
+        <h2><i class="fa fa-history"></i> {{ _('Recent contributions') }}</h2>
+        {% if feed %}
+          <ul class="ixw-feed">
+            {% for item in feed %}
+              {% set icon = {'report_submitted': 'fa-paper-plane', 'report_published': 'fa-check-circle', 'link_added': 'fa-paperclip', 'member_joined': 'fa-user-plus', 'comment': 'fa-comment'}.get(item.kind, 'fa-circle') %}
+              <li>
+                <i class="fa {{ icon }}" aria-hidden="true"></i>
+                <div>
+                  {% if item.user and item.user.url %}<a href="{{ h.url_for('theme_ejemplo.user_ihpix', id=item.user.name) }}">{{ item.user.display_name }}</a>{% else %}{{ (item.user.display_name if item.user else item.user_id) }}{% endif %}
+                  &middot; {{ h.ihpix_contribution_label(item.kind) }}
+                  {% if item.activity %}: <em>{{ item.activity.title }}</em>{% endif %}
+                  <time>{{ h.time_ago_from_timestamp(item.created_at) }}</time>
+                </div>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="ixp-empty">{{ _('No contributions recorded yet.') }}</p>
+        {% endif %}
+      </div>
+    </aside>
+  </div>
+</div>
+</div>
+{% endblock %}
+
+{% block secondary %}{% endblock %}

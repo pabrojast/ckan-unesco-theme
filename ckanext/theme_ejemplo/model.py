@@ -2127,6 +2127,391 @@ def init_ihpix_activity_links_db():
         log.warning(u'ihpix_activity_link: no se pudo migrar el esquema: %s', e)
 
 
+# ── IHP-IX Working Groups (workspaces por Output, piloto) ───────────────────
+
+ihpix_working_group_table = None
+ihpix_working_group_member_table = None
+ihpix_contribution_table = None
+
+
+class IhpixWorkingGroup(model.DomainObject):
+    """Workspace colaborativo de un Output IHP-IX (uno por código de Output)."""
+
+    def __init__(self, output_code, priority_area, title, description=u'',
+                 lead_user_id=u'', status=u'active', settings=u'{}'):
+        self.id = str(uuid.uuid4())
+        self.output_code = output_code
+        self.priority_area = priority_area
+        self.title = title
+        self.description = description or u''
+        self.lead_user_id = lead_user_id or u''
+        self.status = status or u'active'
+        self.settings = settings or u'{}'
+        self.created_at = datetime.datetime.utcnow()
+        self.updated_at = datetime.datetime.utcnow()
+
+    @classmethod
+    def get(cls, id):
+        return meta.Session.query(cls).get(id)
+
+    @classmethod
+    def get_by_output(cls, output_code):
+        return meta.Session.query(cls).filter(
+            cls.output_code == output_code).first()
+
+    @classmethod
+    def get_by_id_or_output(cls, value):
+        """Acepta el id del workspace o el código de Output."""
+        if not value:
+            return None
+        wg = cls.get(value)
+        if wg is None:
+            wg = cls.get_by_output(value)
+        return wg
+
+    @classmethod
+    def get_all(cls, status=None, priority_area=None):
+        q = meta.Session.query(cls)
+        if status:
+            q = q.filter(cls.status == status)
+        if priority_area:
+            q = q.filter(cls.priority_area == priority_area)
+        rows = q.all()
+
+        def _key(wg):
+            try:
+                return tuple(int(p) for p in wg.output_code.split('.'))
+            except ValueError:
+                return (99, 0)
+        return sorted(rows, key=_key)
+
+    @classmethod
+    def member_counts(cls, wg_ids=None):
+        """{wg_id: {'active': n, 'pending': n}} en una query."""
+        from sqlalchemy import func
+        q = meta.Session.query(
+            IhpixWorkingGroupMember.working_group_id,
+            IhpixWorkingGroupMember.status,
+            func.count(IhpixWorkingGroupMember.id),
+        )
+        if wg_ids:
+            q = q.filter(IhpixWorkingGroupMember.working_group_id.in_(list(wg_ids)))
+        q = q.group_by(IhpixWorkingGroupMember.working_group_id,
+                       IhpixWorkingGroupMember.status)
+        out = {}
+        for wg_id, status, n in q.all():
+            out.setdefault(wg_id, {'active': 0, 'pending': 0, 'removed': 0})
+            out[wg_id][status] = n
+        return out
+
+    def as_dict(self):
+        return {
+            'id': self.id,
+            'output_code': self.output_code,
+            'priority_area': self.priority_area,
+            'title': self.title,
+            'description': self.description or u'',
+            'lead_user_id': self.lead_user_id or u'',
+            'status': self.status,
+            'settings': self.settings or u'{}',
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'updated_at': self.updated_at.isoformat() if self.updated_at else None,
+        }
+
+
+class IhpixWorkingGroupMember(model.DomainObject):
+    """Membresía de un usuario en un workspace (lead / contributor / observer)."""
+
+    def __init__(self, working_group_id, user_id, role=u'contributor',
+                 status=u'pending', invited_by=u'', note=u''):
+        self.id = str(uuid.uuid4())
+        self.working_group_id = working_group_id
+        self.user_id = user_id
+        self.role = role or u'contributor'
+        self.status = status or u'pending'
+        self.joined_at = datetime.datetime.utcnow() if status == u'active' else None
+        self.invited_by = invited_by or u''
+        self.note = note or u''
+        self.created_at = datetime.datetime.utcnow()
+        self.updated_at = datetime.datetime.utcnow()
+
+    @classmethod
+    def get(cls, id):
+        return meta.Session.query(cls).get(id)
+
+    @classmethod
+    def get_membership(cls, working_group_id, user_id):
+        return meta.Session.query(cls).filter(
+            cls.working_group_id == working_group_id,
+            cls.user_id == user_id).first()
+
+    @classmethod
+    def get_for_group(cls, working_group_id, status=None):
+        q = meta.Session.query(cls).filter(cls.working_group_id == working_group_id)
+        if status:
+            q = q.filter(cls.status == status)
+        return q.order_by(cls.role, cls.created_at).all()
+
+    @classmethod
+    def get_for_user(cls, user_id, status=None):
+        q = meta.Session.query(cls).filter(cls.user_id == user_id)
+        if status:
+            q = q.filter(cls.status == status)
+        return q.order_by(cls.created_at.desc()).all()
+
+    @classmethod
+    def count_pending_for_groups(cls, wg_ids):
+        from sqlalchemy import func
+        ids = list(wg_ids or [])
+        if not ids:
+            return 0
+        return meta.Session.query(func.count(cls.id)).filter(
+            cls.working_group_id.in_(ids), cls.status == u'pending').scalar() or 0
+
+    @classmethod
+    def lead_group_ids_for_user(cls, user_id):
+        """Workspaces donde el usuario es lead activo o `lead_user_id`."""
+        ids = set(r.working_group_id for r in meta.Session.query(cls).filter(
+            cls.user_id == user_id, cls.role == u'lead', cls.status == u'active').all())
+        ids.update(r.id for r in meta.Session.query(IhpixWorkingGroup).filter(
+            IhpixWorkingGroup.lead_user_id == user_id).all())
+        return ids
+
+    def as_dict(self):
+        return {
+            'id': self.id,
+            'working_group_id': self.working_group_id,
+            'user_id': self.user_id,
+            'role': self.role,
+            'status': self.status,
+            'joined_at': self.joined_at.isoformat() if self.joined_at else None,
+            'invited_by': self.invited_by or u'',
+            'note': self.note or u'',
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+            'updated_at': self.updated_at.isoformat() if self.updated_at else None,
+        }
+
+
+class IhpixContribution(model.DomainObject):
+    """Ledger de participación: qué hizo cada usuario en cada workspace."""
+
+    def __init__(self, user_id, kind, working_group_id=u'', activity_id=u'',
+                 link_id=u'', meta_json=u'{}'):
+        self.id = str(uuid.uuid4())
+        self.user_id = user_id
+        self.kind = kind
+        self.working_group_id = working_group_id or u''
+        self.activity_id = activity_id or u''
+        self.link_id = link_id or u''
+        self.meta = meta_json or u'{}'
+        self.created_at = datetime.datetime.utcnow()
+
+    @classmethod
+    def get_for_group(cls, working_group_id, kind=None, limit=50, offset=0):
+        q = meta.Session.query(cls).filter(cls.working_group_id == working_group_id)
+        if kind:
+            q = q.filter(cls.kind == kind)
+        total = q.count()
+        rows = q.order_by(cls.created_at.desc()).offset(offset).limit(limit).all()
+        return rows, total
+
+    @classmethod
+    def get_for_user(cls, user_id, kind=None, limit=50, offset=0):
+        q = meta.Session.query(cls).filter(cls.user_id == user_id)
+        if kind:
+            q = q.filter(cls.kind == kind)
+        total = q.count()
+        rows = q.order_by(cls.created_at.desc()).offset(offset).limit(limit).all()
+        return rows, total
+
+    @classmethod
+    def counts_for_user(cls, user_id):
+        from sqlalchemy import func
+        rows = meta.Session.query(cls.kind, func.count(cls.id)).filter(
+            cls.user_id == user_id).group_by(cls.kind).all()
+        return {kind: n for kind, n in rows}
+
+    @classmethod
+    def counts_for_group(cls, working_group_id):
+        from sqlalchemy import func
+        rows = meta.Session.query(cls.kind, func.count(cls.id)).filter(
+            cls.working_group_id == working_group_id).group_by(cls.kind).all()
+        return {kind: n for kind, n in rows}
+
+    @classmethod
+    def last_activity_for_groups(cls, wg_ids=None):
+        """{wg_id: última fecha de contribución} en una query."""
+        from sqlalchemy import func
+        q = meta.Session.query(cls.working_group_id, func.max(cls.created_at))
+        if wg_ids:
+            q = q.filter(cls.working_group_id.in_(list(wg_ids)))
+        q = q.filter(cls.working_group_id != u'').group_by(cls.working_group_id)
+        return {wg_id: ts for wg_id, ts in q.all()}
+
+    @classmethod
+    def exists(cls, user_id, kind, activity_id=u'', link_id=u''):
+        q = meta.Session.query(cls).filter(cls.user_id == user_id, cls.kind == kind)
+        if activity_id:
+            q = q.filter(cls.activity_id == activity_id)
+        if link_id:
+            q = q.filter(cls.link_id == link_id)
+        return q.first() is not None
+
+    def as_dict(self):
+        return {
+            'id': self.id,
+            'user_id': self.user_id,
+            'kind': self.kind,
+            'working_group_id': self.working_group_id or u'',
+            'activity_id': self.activity_id or u'',
+            'link_id': self.link_id or u'',
+            'meta': self.meta or u'{}',
+            'created_at': self.created_at.isoformat() if self.created_at else None,
+        }
+
+
+_IHPIX_WG_INDEXES = (
+    ('ihpix_working_group', 'idx_ihpix_wg_pa', 'priority_area', False),
+    ('ihpix_working_group_member', 'uq_ihpix_wg_member', 'working_group_id, user_id', True),
+    ('ihpix_working_group_member', 'idx_ihpix_wg_member_user', 'user_id', False),
+    ('ihpix_working_group_member', 'idx_ihpix_wg_member_status', 'status', False),
+    ('ihpix_contribution', 'idx_ihpix_contrib_wg', 'working_group_id, created_at', False),
+    ('ihpix_contribution', 'idx_ihpix_contrib_user', 'user_id, created_at', False),
+)
+
+# Columnas añadidas tras la creación (vacío por ahora; patrón de migración listo)
+_IHPIX_WG_ADDED_COLUMNS = {
+    'ihpix_working_group': (),
+    'ihpix_working_group_member': (),
+    'ihpix_contribution': (),
+}
+
+
+def define_ihpix_working_group_tables():
+    global ihpix_working_group_table, ihpix_working_group_member_table
+    global ihpix_contribution_table
+
+    ihpix_working_group_table = Table(
+        'ihpix_working_group',
+        meta.metadata,
+        Column('id', UnicodeText, primary_key=True,
+               default=lambda: str(uuid.uuid4())),
+        Column('output_code', UnicodeText, nullable=False, unique=True),
+        Column('priority_area', UnicodeText, nullable=False),
+        Column('title', UnicodeText, nullable=False),
+        Column('description', UnicodeText, default=u''),
+        Column('lead_user_id', UnicodeText, default=u''),
+        Column('status', UnicodeText, default=u'active'),
+        Column('settings', UnicodeText, default=u'{}'),
+        Column('created_at', DateTime, default=datetime.datetime.utcnow),
+        Column('updated_at', DateTime, default=datetime.datetime.utcnow),
+        Index('idx_ihpix_wg_pa', 'priority_area'),
+    )
+    ihpix_working_group_member_table = Table(
+        'ihpix_working_group_member',
+        meta.metadata,
+        Column('id', UnicodeText, primary_key=True,
+               default=lambda: str(uuid.uuid4())),
+        Column('working_group_id', UnicodeText, nullable=False),
+        Column('user_id', UnicodeText, nullable=False),
+        Column('role', UnicodeText, default=u'contributor'),
+        Column('status', UnicodeText, default=u'pending'),
+        Column('joined_at', DateTime, nullable=True),
+        Column('invited_by', UnicodeText, default=u''),
+        Column('note', UnicodeText, default=u''),
+        Column('created_at', DateTime, default=datetime.datetime.utcnow),
+        Column('updated_at', DateTime, default=datetime.datetime.utcnow),
+        Index('uq_ihpix_wg_member', 'working_group_id', 'user_id', unique=True),
+        Index('idx_ihpix_wg_member_user', 'user_id'),
+        Index('idx_ihpix_wg_member_status', 'status'),
+    )
+    ihpix_contribution_table = Table(
+        'ihpix_contribution',
+        meta.metadata,
+        Column('id', UnicodeText, primary_key=True,
+               default=lambda: str(uuid.uuid4())),
+        Column('user_id', UnicodeText, nullable=False),
+        Column('kind', UnicodeText, nullable=False),
+        Column('working_group_id', UnicodeText, default=u''),
+        Column('activity_id', UnicodeText, default=u''),
+        Column('link_id', UnicodeText, default=u''),
+        Column('meta', UnicodeText, default=u'{}'),
+        Column('created_at', DateTime, default=datetime.datetime.utcnow),
+        Index('idx_ihpix_contrib_wg', 'working_group_id', 'created_at'),
+        Index('idx_ihpix_contrib_user', 'user_id', 'created_at'),
+    )
+
+    for cls_, table in ((IhpixWorkingGroup, ihpix_working_group_table),
+                        (IhpixWorkingGroupMember, ihpix_working_group_member_table),
+                        (IhpixContribution, ihpix_contribution_table)):
+        try:
+            meta.registry.map_imperatively(cls_, table)
+        except AttributeError:
+            meta.mapper(cls_, table)
+
+
+def init_ihpix_working_groups_db():
+    """Crea/migra las 3 tablas del piloto y siembra un workspace por Output."""
+    if ihpix_working_group_table is None:
+        define_ihpix_working_group_tables()
+
+    from sqlalchemy import inspect as sa_inspect, text as sa_text
+    inspector = sa_inspect(meta.engine)
+    existing_tables = set(inspector.get_table_names())
+    created = False
+    for table in (ihpix_working_group_table, ihpix_working_group_member_table,
+                  ihpix_contribution_table):
+        if table.name not in existing_tables:
+            table.create(meta.engine)
+            log.info(u'%s table created', table.name)
+            created = True
+
+    if not created:
+        try:
+            with meta.engine.begin() as conn:
+                for table_name, cols in _IHPIX_WG_ADDED_COLUMNS.items():
+                    present = {c['name'] for c in inspector.get_columns(table_name)}
+                    for name, ddl in cols:
+                        if name not in present:
+                            conn.execute(sa_text(
+                                'ALTER TABLE %s ADD COLUMN IF NOT EXISTS %s %s'
+                                % (table_name, name, ddl)))
+                for table_name, idx_name, cols, unique in _IHPIX_WG_INDEXES:
+                    conn.execute(sa_text(
+                        'CREATE %sINDEX IF NOT EXISTS %s ON %s (%s)'
+                        % ('UNIQUE ' if unique else '', idx_name, table_name, cols)))
+        except Exception as e:
+            log.warning(u'ihpix_working_group: no se pudo migrar el esquema: %s', e)
+
+    _seed_ihpix_working_groups()
+
+
+def _seed_ihpix_working_groups():
+    """Un workspace por código de Output (idempotente; no toca los existentes)."""
+    from ckanext.theme_ejemplo import ihpix_constants as C
+    from ckanext.theme_ejemplo import ihpix_workspaces as W
+    try:
+        existing = {wg.output_code for wg in meta.Session.query(IhpixWorkingGroup).all()}
+        added = 0
+        for pa, pairs in C.OUTPUTS.items():
+            for code, _title in pairs:
+                if code in existing:
+                    continue
+                meta.Session.add(IhpixWorkingGroup(
+                    output_code=code,
+                    priority_area=pa,
+                    title=W.workspace_title(code, C.output_title(code)),
+                    status=W.WG_ACTIVE,
+                ))
+                added += 1
+        if added:
+            meta.Session.commit()
+            log.info(u'ihpix_working_group: %d workspaces sembrados', added)
+    except Exception as e:
+        meta.Session.rollback()
+        log.warning(u'ihpix_working_group: no se pudieron sembrar los workspaces: %s', e)
+
+
 # ── IHP-IX Country Summary Model ────────────────────────────────────────────
 
 ihpix_country_summary_table = None

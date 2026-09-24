@@ -1,0 +1,133 @@
+{% extends "page.html" %}
+{% import 'ihpix/snippets/page_styles.html' as ui %}
+
+{% block title %}{{ _('Members') }} - {{ ws.title }} - {{ super() }}{% endblock %}
+
+{% block breadcrumb_content %}
+  <li><a href="{{ h.url_for('/ihpix') }}">{% trans %}IHP IX{% endtrans %}</a></li>
+  <li><a href="{{ h.url_for('theme_ejemplo.ihpix_workspaces') }}">{{ _('Working groups') }}</a></li>
+  <li><a href="{{ h.url_for('theme_ejemplo.ihpix_workspace_detail', code=ws.output_code) }}">{{ ws.output_code }}</a></li>
+  <li class="active"><a href="{{ h.url_for('theme_ejemplo.ihpix_workspace_members', code=ws.output_code) }}">{{ _('Members') }}</a></li>
+{% endblock %}
+
+{% block page_header %}{% endblock %}
+
+{% macro member_cell(mem) %}
+  {% set u = mem.user %}
+  {% set profile = (mem.profile or {}).get('profile', {}) if mem.profile else {} %}
+  <div class="ixp-person">
+    {{ ui.avatar(u) }}
+    <div class="ixp-person-body">
+      {% if u and u.name %}
+        <a class="ixp-person-name" href="{{ h.url_for('theme_ejemplo.user_ihpix', id=u.name) }}">{{ u.display_name }}</a>
+      {% else %}
+        <span class="ixp-person-name">{{ mem.user_id }}</span>
+      {% endif %}
+      <span class="ixp-person-meta">
+        {% if profile.get('job_title') %}{{ profile.job_title }}{% endif %}
+        {% if profile.get('institution') %}{% if profile.get('job_title') %} &middot; {% endif %}{{ profile.institution }}{% endif %}
+      </span>
+      {% if mem.note %}<div class="ixp-person-meta" style="margin-top:.2rem;font-style:italic;">&ldquo;{{ mem.note }}&rdquo;</div>{% endif %}
+    </div>
+  </div>
+{% endmacro %}
+
+{% macro action_form(mem, action, label, cls='btn-default', icon='fa-check', confirm_msg=None, extra=None) %}
+  <form method="post" action="{{ h.url_for('theme_ejemplo.ihpix_workspace_member_process_view', code=ws.output_code) }}" style="display:inline-block;margin:0 .15rem .3rem 0;"
+        {% if confirm_msg %}onsubmit="return confirm({{ confirm_msg|tojson }});"{% endif %}>
+    {{ h.csrf_input() }}
+    <input type="hidden" name="membership_id" value="{{ mem.id }}">
+    <input type="hidden" name="action" value="{{ action }}">
+    {{ extra if extra else '' }}
+    <button type="submit" class="btn btn-sm {{ cls }}"><i class="fa {{ icon }}"></i> {{ label }}</button>
+  </form>
+{% endmacro %}
+
+{% block content %}
+<div class="main">
+<div class="container ixp">
+  {{ ui.page_styles() }}
+  <style>
+    .ixm-table { width: 100%; border-collapse: collapse; }
+    .ixm-table td { padding: .7rem .4rem; border-bottom: 1px solid #F1F5F9; vertical-align: top; }
+    .ixm-table td.actions { text-align: right; white-space: nowrap; }
+    .ixm-role { display: inline-block; font-size: .72rem; font-weight: 700; text-transform: uppercase; letter-spacing: .04em; padding: .1rem .5rem; border-radius: 999px; background: #F1F5F9; color: #475569; }
+    .ixm-role.is-lead { background: #e0f2fe; color: #075985; }
+    .ixm-role-form { display: inline-flex; gap: .3rem; align-items: center; }
+    .ixm-role-form select { min-height: 30px; border: 1px solid var(--ix-border); border-radius: 6px; font-size: .82rem; }
+  </style>
+
+  <div class="ixp-header" data-pa="{{ ws.priority_area }}">
+    <div class="ixp-breadcrumb"><a href="{{ h.url_for('theme_ejemplo.ihpix_workspace_detail', code=ws.output_code) }}">&lsaquo; {{ ws.title }}</a></div>
+    <span class="ixp-kicker">{{ _('Member management') }}</span>
+    <h1>{{ _('Members of') }} {{ _('Output') }} {{ ws.output_code }}</h1>
+    <p>{{ _('Approve or decline membership requests, change roles and remove members. Leads manage the working group; contributors report activities; observers follow the work.') }}</p>
+  </div>
+
+  <div class="ixp-card">
+    <h2><i class="fa fa-inbox"></i> {{ _('Pending requests') }} <span class="ixp-count">{{ pending|length }}</span></h2>
+    {% if pending %}
+      <table class="ixm-table">
+        {% for mem in pending %}
+          <tr>
+            <td>{{ member_cell(mem) }}<div class="ixp-person-meta">{{ _('Requested') }} {{ h.render_datetime(mem.created_at, with_hours=True) }}</div></td>
+            <td class="actions">
+              {{ action_form(mem, 'approve', _('Approve'), 'btn-success', 'fa-check') }}
+              {{ action_form(mem, 'reject', _('Decline'), 'btn-default', 'fa-times', _('Decline this request?')) }}
+            </td>
+          </tr>
+        {% endfor %}
+      </table>
+    {% else %}
+      <p class="ixp-empty">{{ _('No pending requests.') }}</p>
+    {% endif %}
+  </div>
+
+  <div class="ixp-card">
+    <h2><i class="fa fa-users"></i> {{ _('Active members') }} <span class="ixp-count">{{ active|length }}</span></h2>
+    {% if active %}
+      <table class="ixm-table">
+        {% for mem in active %}
+          <tr>
+            <td>{{ member_cell(mem) }}</td>
+            <td><span class="ixm-role {% if mem.role == 'lead' %}is-lead{% endif %}">{{ h.ihpix_wg_role_label(mem.role) }}</span></td>
+            <td class="actions">
+              <form method="post" action="{{ h.url_for('theme_ejemplo.ihpix_workspace_member_process_view', code=ws.output_code) }}" class="ixm-role-form">
+                {{ h.csrf_input() }}
+                <input type="hidden" name="membership_id" value="{{ mem.id }}">
+                <input type="hidden" name="action" value="set_role">
+                <select name="role" aria-label="{{ _('Role') }}">
+                  {% for r in ['lead', 'contributor', 'observer'] %}
+                    <option value="{{ r }}" {% if mem.role == r %}selected{% endif %}>{{ h.ihpix_wg_role_label(r) }}</option>
+                  {% endfor %}
+                </select>
+                <button type="submit" class="btn btn-sm btn-default">{{ _('Set role') }}</button>
+              </form>
+              {{ action_form(mem, 'remove', _('Remove'), 'btn-danger', 'fa-user-times', _('Remove this member from the working group?')) }}
+            </td>
+          </tr>
+        {% endfor %}
+      </table>
+    {% else %}
+      <p class="ixp-empty">{{ _('No active members yet.') }}</p>
+    {% endif %}
+  </div>
+
+  {% if removed %}
+  <div class="ixp-card">
+    <h2><i class="fa fa-user-times"></i> {{ _('Removed or declined') }} <span class="ixp-count">{{ removed|length }}</span></h2>
+    <table class="ixm-table">
+      {% for mem in removed %}
+        <tr>
+          <td>{{ member_cell(mem) }}</td>
+          <td class="actions">{{ action_form(mem, 'reinstate', _('Reinstate'), 'btn-default', 'fa-undo') }}</td>
+        </tr>
+      {% endfor %}
+    </table>
+  </div>
+  {% endif %}
+</div>
+</div>
+{% endblock %}
+
+{% block secondary %}{% endblock %}

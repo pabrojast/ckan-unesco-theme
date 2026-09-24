@@ -37,6 +37,42 @@
 
   <h2 class="hide-heading">{{ _('IHP-IX Reports') }}</h2>
 
+  {% if summary %}
+  <style>
+    .ihpix-part { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 1rem; }
+    .ihpix-part-stat { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 10px; padding: .7rem .9rem; }
+    .ihpix-part-n { font-size: 1.4rem; font-weight: 800; color: #004E8C; line-height: 1.1; }
+    .ihpix-part-l { font-size: .72rem; text-transform: uppercase; letter-spacing: .05em; color: #64748B; margin-top: .2rem; }
+    .ihpix-part-ws { display: flex; flex-wrap: wrap; gap: .4rem; margin: .4rem 0 1rem; }
+    .ihpix-part-ws a { display: inline-block; padding: .2rem .6rem; border-radius: 999px; background: #E8F4FD; color: #004E8C; font-size: .8rem; font-weight: 600; text-decoration: none; }
+    .ihpix-part-feed { list-style: none; margin: 0 0 1.2rem; padding: 0; font-size: .86rem; }
+    .ihpix-part-feed li { padding: .35rem 0; border-bottom: 1px solid #F1F5F9; }
+    .ihpix-part-feed time { color: #94A3B8; font-size: .75rem; margin-left: .4rem; }
+  </style>
+  <div class="ihpix-part">
+    <div class="ihpix-part-stat"><div class="ihpix-part-n">{{ summary.reports_published }}</div><div class="ihpix-part-l">{{ _('Published reports') }}</div></div>
+    <div class="ihpix-part-stat"><div class="ihpix-part-n">{{ summary.workspaces|length }}</div><div class="ihpix-part-l">{{ _('Working groups') }}</div></div>
+    <div class="ihpix-part-stat"><div class="ihpix-part-n">{{ summary.contributions.get('link_added', 0) }}</div><div class="ihpix-part-l">{{ _('Attachments added') }}</div></div>
+    <div class="ihpix-part-stat"><div class="ihpix-part-n">{{ summary.contributions_total }}</div><div class="ihpix-part-l">{{ _('Contributions') }}</div></div>
+  </div>
+  {% if summary.workspaces %}
+    <div class="ihpix-part-ws">
+      {% for ws in summary.workspaces %}
+        <a href="{{ ws.url }}" title="{{ ws.title }}">{{ _('Output') }} {{ ws.output_code }} &middot; {{ h.ihpix_wg_role_label(ws.role) }}</a>
+      {% endfor %}
+    </div>
+  {% elif is_myself %}
+    <p class="text-muted" style="font-size:.88rem;">{{ _('You are not a member of any IHP-IX working group yet.') }} <a href="{{ h.url_for('theme_ejemplo.ihpix_workspaces') }}">{{ _('Browse working groups') }}</a></p>
+  {% endif %}
+  {% if feed %}
+    <ul class="ihpix-part-feed">
+      {% for item in feed[:8] %}
+        <li>{{ h.ihpix_contribution_label(item.kind) }}{% if item.activity %}: <em>{{ item.activity.title }}</em>{% endif %}{% if item.workspace %} <small class="text-muted">({{ _('Output') }} {{ item.workspace.output_code }})</small>{% endif %}<time>{{ h.time_ago_from_timestamp(item.created_at) }}</time></li>
+      {% endfor %}
+    </ul>
+  {% endif %}
+  {% endif %}
+
   {% if can_see_all %}
     <p class="ihpix-my-intro">
       {{ _('Activity reports submitted under IHP-IX (2022–2029). Drafts and returned reports can be edited and resubmitted; published reports appear in the IHP-IX portal.') }}

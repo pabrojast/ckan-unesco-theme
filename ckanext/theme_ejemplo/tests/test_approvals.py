@@ -53,6 +53,10 @@ def test_queue_defs_have_required_fields():
 def test_ihpix_reports_queue_is_registered():
     ids = [q['id'] for q in approvals.QUEUE_DEFS]
     assert 'ihpix_reports' in ids
+    assert 'ihpix_wg_members' in ids
+    wg_queue = next(q for q in approvals.QUEUE_DEFS if q['id'] == 'ihpix_wg_members')
+    assert wg_queue['scope'] == 'user'
+    assert wg_queue['helper'] == 'get_pending_ihpix_wg_members_count'
     queue = next(q for q in approvals.QUEUE_DEFS if q['id'] == 'ihpix_reports')
     assert queue['scope'] == 'sysadmin'
     assert queue['helper'] == 'get_pending_ihpix_reports_count'
