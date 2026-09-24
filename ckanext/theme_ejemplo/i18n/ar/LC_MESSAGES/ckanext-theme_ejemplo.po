@@ -2577,7 +2577,7 @@ msgstr ""
 
 #: ckanext/theme_ejemplo/templates/admin/portal_cards.html:145
 msgid "Archived"
-msgstr ""
+msgstr "مؤرشف"
 
 #: ckanext/theme_ejemplo/templates/admin/portal_cards.html:148
 #: ckanext/theme_ejemplo/templates/citizen_science_portal/index.html:88
@@ -7261,6 +7261,422 @@ msgstr[2] "نشاطان"
 msgstr[3] "%(n)d أنشطة"
 msgstr[4] "%(n)d نشاطًا"
 msgstr[5] "%(n)d نشاط"
+
+#. IHP-IX (2026-09)
+msgid "Active members"
+msgstr "الأعضاء النشطون"
+
+#. IHP-IX (2026-09)
+msgid ""
+"Approve or decline membership requests, change roles and remove members. "
+"Leads manage the working group; contributors report activities; observers "
+"follow the work."
+msgstr ""
+"اعتمد طلبات العضوية أو ارفضها، وغيّر الأدوار، وأزل الأعضاء. يدير القادة "
+"مجموعة العمل؛ ويبلّغ المساهمون عن الأنشطة؛ ويتابع المراقبون العمل."
+
+#. IHP-IX (2026-09)
+msgid "Attachments added"
+msgstr "المرفقات المضافة"
+
+#. IHP-IX (2026-09)
+msgid "Browse working groups"
+msgstr "تصفح مجموعات العمل"
+
+#. IHP-IX (2026-09)
+msgid "Collaborative IHP-IX Working Groups"
+msgstr "مجموعات العمل التعاونية للبرنامج الهيدرولوجي الدولي"
+
+#. IHP-IX (2026-09)
+msgid ""
+"Collaborative workspace for the activities, publications, events and data "
+"reported under this IHP-IX Output."
+msgstr ""
+"مساحة عمل تعاونية للأنشطة والمنشورات والفعاليات والبيانات المبلَّغ عنها في "
+"إطار هذا المخرج."
+
+#. IHP-IX (2026-09)
+msgid "Comment"
+msgstr "تعليق"
+
+#. IHP-IX (2026-09)
+msgid "Contributions"
+msgstr "المساهمات"
+
+#. IHP-IX (2026-09)
+msgid "Contributor"
+msgstr "مساهم"
+
+#. IHP-IX (2026-09)
+msgid "Decline"
+msgstr "رفض"
+
+#. IHP-IX (2026-09)
+msgid "Decline this request?"
+msgstr "هل تريد رفض هذا الطلب؟"
+
+#. IHP-IX (2026-09)
+msgid "IHP-IX Working Group"
+msgstr "مجموعة عمل البرنامج الهيدرولوجي الدولي"
+
+#. IHP-IX (2026-09)
+msgid "IHP-IX Working Groups"
+msgstr "مجموعات عمل البرنامج الهيدرولوجي الدولي"
+
+#. IHP-IX (2026-09)
+msgid "IHP-IX working group"
+msgstr "مجموعة عمل البرنامج الهيدرولوجي الدولي"
+
+#. IHP-IX (2026-09)
+msgid "IHP-IX working group requests"
+msgstr "طلبات مجموعات عمل البرنامج الهيدرولوجي الدولي"
+
+#. IHP-IX (2026-09)
+msgid "Join this working group"
+msgstr "الانضمام إلى مجموعة العمل هذه"
+
+#. IHP-IX (2026-09)
+msgid "Joined the working group"
+msgstr "انضم إلى مجموعة العمل"
+
+#. IHP-IX (2026-09)
+msgid "Lead"
+msgstr "قائد"
+
+#. IHP-IX (2026-09)
+msgid "Lead (username)"
+msgstr "القائد (اسم المستخدم)"
+
+#. IHP-IX (2026-09)
+msgid "Leave"
+msgstr "مغادرة"
+
+#. IHP-IX (2026-09)
+msgid "Leave this working group?"
+msgstr "هل تريد مغادرة مجموعة العمل هذه؟"
+
+#. IHP-IX (2026-09)
+msgid "Manage members"
+msgstr "إدارة الأعضاء"
+
+#. IHP-IX (2026-09)
+msgid "Manage working groups"
+msgstr "إدارة مجموعات العمل"
+
+#. IHP-IX (2026-09)
+msgid "Member management"
+msgstr "إدارة الأعضاء"
+
+#. IHP-IX (2026-09)
+msgid "Members of"
+msgstr "أعضاء"
+
+#. IHP-IX (2026-09)
+msgid "Membership not found"
+msgstr "العضوية غير موجودة"
+
+#. IHP-IX (2026-09)
+msgid "Membership request pending"
+msgstr "طلب العضوية معلق"
+
+#. IHP-IX (2026-09)
+msgid "Membership updated."
+msgstr "تم تحديث العضوية."
+
+#. IHP-IX (2026-09)
+msgid "My working groups"
+msgstr "مجموعات عملي"
+
+#. IHP-IX (2026-09)
+msgid "New request to join the IHP-IX working group \"{title}\""
+msgstr "طلب جديد للانضمام إلى مجموعة عمل البرنامج \"{title}\""
+
+#. IHP-IX (2026-09)
+msgid "No active members yet."
+msgstr "لا يوجد أعضاء نشطون بعد."
+
+#. IHP-IX (2026-09)
+msgid "No contributions recorded yet."
+msgstr "لم تُسجَّل أي مساهمات بعد."
+
+#. IHP-IX (2026-09)
+msgid "No members yet. Be the first to join."
+msgstr "لا يوجد أعضاء بعد. كن أول من ينضم."
+
+#. IHP-IX (2026-09)
+msgid "No pending requests."
+msgstr "لا توجد طلبات معلقة."
+
+#. IHP-IX (2026-09)
+msgid ""
+"Nothing attached yet. Attach publications, events and data from the activity"
+" report form (Section VII)."
+msgstr ""
+"لا توجد مرفقات بعد. أرفق المنشورات والفعاليات والبيانات من نموذج تقرير "
+"النشاط (القسم السابع)."
+
+#. IHP-IX (2026-09)
+msgid "Observer"
+msgstr "مراقب"
+
+#. IHP-IX (2026-09)
+msgid ""
+"One workspace per IHP-IX Output, created automatically from the official "
+"list of Outputs. Assign a lead (by username) so they can approve membership "
+"requests; archive a workspace to hide it from new members."
+msgstr ""
+"مساحة عمل واحدة لكل مخرج، تُنشأ تلقائيًا من القائمة الرسمية للمخرجات. عيّن "
+"قائدًا (باسم المستخدم) ليعتمد طلبات العضوية؛ وأرشف المساحة لإخفائها عن "
+"الأعضاء الجدد."
+
+#. IHP-IX (2026-09)
+msgid ""
+"One workspace per IHP-IX Output. Join the working groups you contribute to, "
+"follow what others report, and attach the publications, events and data "
+"produced under each output."
+msgstr ""
+"مساحة عمل واحدة لكل مخرج. انضم إلى مجموعات العمل التي تساهم فيها، وتابع ما "
+"يبلّغ عنه الآخرون، وأرفق المنشورات والفعاليات والبيانات الناتجة عن كل مخرج."
+
+#. IHP-IX (2026-09)
+msgid "Only the working group lead can manage members"
+msgstr "لا يمكن إدارة الأعضاء إلا لقائد مجموعة العمل"
+
+#. IHP-IX (2026-09)
+msgid "Open workspace"
+msgstr "فتح مساحة العمل"
+
+#. IHP-IX (2026-09)
+msgid "Overview"
+msgstr "نظرة عامة"
+
+#. IHP-IX (2026-09)
+msgid "Pending approval"
+msgstr "في انتظار الاعتماد"
+
+#. IHP-IX (2026-09)
+msgid "Pending requests"
+msgstr "الطلبات المعلقة"
+
+#. IHP-IX (2026-09)
+msgid "Pilot"
+msgstr "تجريبي"
+
+#. IHP-IX (2026-09)
+msgid "Publication, event or data attached"
+msgstr "تم إرفاق منشور أو فعالية أو بيانات"
+
+#. IHP-IX (2026-09)
+msgid "Published reports"
+msgstr "التقارير المنشورة"
+
+#. IHP-IX (2026-09)
+msgid "Recent contributions"
+msgstr "المساهمات الأخيرة"
+
+#. IHP-IX (2026-09)
+msgid "Reinstate"
+msgstr "إعادة"
+
+#. IHP-IX (2026-09)
+msgid "Remove this member from the working group?"
+msgstr "هل تريد إزالة هذا العضو من مجموعة العمل؟"
+
+#. IHP-IX (2026-09)
+msgid "Removed"
+msgstr "مُزال"
+
+#. IHP-IX (2026-09)
+msgid "Removed or declined"
+msgstr "المُزالون أو المرفوضون"
+
+#. IHP-IX (2026-09)
+msgid "Report published"
+msgstr "تم نشر التقرير"
+
+#. IHP-IX (2026-09)
+msgid "Report submitted for review"
+msgstr "تم تقديم التقرير للمراجعة"
+
+#. IHP-IX (2026-09)
+msgid "Request to join"
+msgstr "طلب الانضمام"
+
+#. IHP-IX (2026-09)
+msgid "Requested"
+msgstr "تاريخ الطلب"
+
+#. IHP-IX (2026-09)
+msgid "See members in the people directory"
+msgstr "عرض الأعضاء في دليل الأشخاص"
+
+#. IHP-IX (2026-09)
+msgid "Set role"
+msgstr "تعيين الدور"
+
+#. IHP-IX (2026-09)
+msgid "Tell the lead how you contribute to this output (optional)"
+msgstr "أخبر القائد كيف تساهم في هذا المخرج (اختياري)"
+
+#. IHP-IX (2026-09)
+msgid "Working group"
+msgstr "مجموعة العمل"
+
+#. IHP-IX (2026-09)
+msgid "Working group not found"
+msgstr "مجموعة العمل غير موجودة"
+
+#. IHP-IX (2026-09)
+msgid "Working group updated."
+msgstr "تم تحديث مجموعة العمل."
+
+#. IHP-IX (2026-09)
+msgid "Working groups"
+msgstr "مجموعات العمل"
+
+#. IHP-IX (2026-09)
+msgid "Workspace sections"
+msgstr "أقسام مساحة العمل"
+
+#. IHP-IX (2026-09)
+msgid "You are not a member of any IHP-IX working group yet."
+msgstr "لست عضوًا في أي مجموعة عمل للبرنامج بعد."
+
+#. IHP-IX (2026-09)
+msgid "You are now a contributor of the IHP-IX working group \"{title}\""
+msgstr "أصبحت الآن مساهمًا في مجموعة عمل البرنامج \"{title}\""
+
+#. IHP-IX (2026-09)
+msgid "You have joined the IHP-IX working group \"{title}\""
+msgstr "انضممت إلى مجموعة عمل البرنامج \"{title}\""
+
+#. IHP-IX (2026-09)
+msgid "You have joined the working group."
+msgstr "انضممت إلى مجموعة العمل."
+
+#. IHP-IX (2026-09)
+msgid "You have left the working group."
+msgstr "غادرت مجموعة العمل."
+
+#. IHP-IX (2026-09)
+msgid "You were removed from the IHP-IX working group \"{title}\""
+msgstr "تمت إزالتك من مجموعة عمل البرنامج \"{title}\""
+
+#. IHP-IX (2026-09)
+msgid "Your reports in progress for this output"
+msgstr "تقاريرك الجارية لهذا المخرج"
+
+#. IHP-IX (2026-09)
+msgid "Your request to join the IHP-IX working group \"{title}\" was not accepted"
+msgstr "لم يُقبل طلبك للانضمام إلى مجموعة عمل البرنامج \"{title}\""
+
+#. IHP-IX (2026-09)
+msgid "Your request was sent to the working group lead."
+msgstr "أُرسل طلبك إلى قائد مجموعة العمل."
+
+#. IHP-IX (2026-09)
+msgid "active"
+msgstr "نشط"
+
+#. IHP-IX (2026-09)
+msgid "members"
+msgstr "أعضاء"
+
+#. IHP-IX (2026-09)
+msgid "pending membership requests across all working groups."
+msgstr "طلبات عضوية معلقة في جميع مجموعات العمل."
+
+#. IHP-IX (2026-09)
+msgid "published"
+msgstr "منشورة"
+
+#. IHP-IX (2026-09)
+msgid "username"
+msgstr "اسم المستخدم"
+
+#. IHP-IX (2026-09)
+msgid ""
+"Dear {name},\n"
+"\n"
+"{requester} has requested to join the working group \"{title}\".\n"
+"\n"
+"Review the request here: {url}\n"
+msgstr ""
+"عزيزي/عزيزتي {name}،\n"
+"\n"
+"طلب {requester} الانضمام إلى مجموعة العمل \"{title}\".\n"
+"\n"
+"راجع الطلب هنا: {url}\n"
+
+#. IHP-IX (2026-09)
+msgid ""
+"Dear {name},\n"
+"\n"
+"Your request to join the working group \"{title}\" was approved.\n"
+"\n"
+"Open the workspace: {url}\n"
+msgstr ""
+"عزيزي/عزيزتي {name}،\n"
+"\n"
+"تم اعتماد طلبك للانضمام إلى مجموعة العمل \"{title}\".\n"
+"\n"
+"افتح مساحة العمل: {url}\n"
+
+#. IHP-IX (2026-09)
+msgid ""
+"Dear {name},\n"
+"\n"
+"Your published IHP-IX report added you as a contributor of the working group \"{title}\".\n"
+"\n"
+"Open the workspace: {url}\n"
+msgstr ""
+"عزيزي/عزيزتي {name}،\n"
+"\n"
+"أضافك تقريرك المنشور كمساهم في مجموعة العمل \"{title}\".\n"
+"\n"
+"افتح مساحة العمل: {url}\n"
+
+#. IHP-IX (2026-09)
+msgid ""
+"Dear {name},\n"
+"\n"
+"Your request to join the working group \"{title}\" was not accepted by its lead.\n"
+"\n"
+"Workspace: {url}\n"
+msgstr ""
+"عزيزي/عزيزتي {name}،\n"
+"\n"
+"لم يقبل قائد مجموعة العمل \"{title}\" طلبك للانضمام.\n"
+"\n"
+"مساحة العمل: {url}\n"
+
+#. IHP-IX (2026-09)
+msgid ""
+"Dear {name},\n"
+"\n"
+"You are no longer a member of the working group \"{title}\".\n"
+"\n"
+"Workspace: {url}\n"
+msgstr ""
+"عزيزي/عزيزتي {name}،\n"
+"\n"
+"لم تعد عضوًا في مجموعة العمل \"{title}\".\n"
+"\n"
+"مساحة العمل: {url}\n"
+
+#. IHP-IX (2026-09)
+msgid ""
+"%(n)d membership request is waiting for your review in the working groups "
+"you lead."
+msgid_plural ""
+"%(n)d membership requests are waiting for your review in the working groups "
+"you lead."
+msgstr[0] "لا توجد طلبات عضوية تنتظر مراجعتك في مجموعات العمل التي تقودها."
+msgstr[1] "طلب عضوية واحد ينتظر مراجعتك في مجموعات العمل التي تقودها."
+msgstr[2] "طلبا عضوية ينتظران مراجعتك في مجموعات العمل التي تقودها."
+msgstr[3] "%(n)d طلبات عضوية تنتظر مراجعتك في مجموعات العمل التي تقودها."
+msgstr[4] "%(n)d طلب عضوية ينتظر مراجعتك في مجموعات العمل التي تقودها."
+msgstr[5] "%(n)d طلب عضوية ينتظر مراجعتك في مجموعات العمل التي تقودها."
 
 #, python-format
 #~ msgid "Dashboard (%(num)d new item)"

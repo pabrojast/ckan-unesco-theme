@@ -2628,7 +2628,7 @@ msgstr ""
 
 #: ckanext/theme_ejemplo/templates/admin/portal_cards.html:145
 msgid "Archived"
-msgstr ""
+msgstr "Archivado"
 
 #: ckanext/theme_ejemplo/templates/admin/portal_cards.html:148
 #: ckanext/theme_ejemplo/templates/citizen_science_portal/index.html:88
@@ -7470,6 +7470,426 @@ msgid "%(n)d activity"
 msgid_plural "%(n)d activities"
 msgstr[0] "%(n)d actividad"
 msgstr[1] "%(n)d actividades"
+
+#. IHP-IX (2026-09)
+msgid "Active members"
+msgstr "Miembros activos"
+
+#. IHP-IX (2026-09)
+msgid ""
+"Approve or decline membership requests, change roles and remove members. "
+"Leads manage the working group; contributors report activities; observers "
+"follow the work."
+msgstr ""
+"Aprueba o rechaza solicitudes de ingreso, cambia roles y quita miembros. Los"
+" leads gestionan el grupo; los contribuidores reportan actividades; los "
+"observadores siguen el trabajo."
+
+#. IHP-IX (2026-09)
+msgid "Attachments added"
+msgstr "Adjuntos añadidos"
+
+#. IHP-IX (2026-09)
+msgid "Browse working groups"
+msgstr "Explorar los grupos de trabajo"
+
+#. IHP-IX (2026-09)
+msgid "Collaborative IHP-IX Working Groups"
+msgstr "Grupos de trabajo colaborativos del PHI-IX"
+
+#. IHP-IX (2026-09)
+msgid ""
+"Collaborative workspace for the activities, publications, events and data "
+"reported under this IHP-IX Output."
+msgstr ""
+"Espacio colaborativo para las actividades, publicaciones, eventos y datos "
+"reportados bajo este output del PHI-IX."
+
+#. IHP-IX (2026-09)
+msgid "Comment"
+msgstr "Comentario"
+
+#. IHP-IX (2026-09)
+msgid "Contributions"
+msgstr "Contribuciones"
+
+#. IHP-IX (2026-09)
+msgid "Contributor"
+msgstr "Contribuidor"
+
+#. IHP-IX (2026-09)
+msgid "Decline"
+msgstr "Rechazar"
+
+#. IHP-IX (2026-09)
+msgid "Decline this request?"
+msgstr "¿Rechazar esta solicitud?"
+
+#. IHP-IX (2026-09)
+msgid "IHP-IX Working Group"
+msgstr "Grupo de trabajo del PHI-IX"
+
+#. IHP-IX (2026-09)
+msgid "IHP-IX Working Groups"
+msgstr "Grupos de trabajo del PHI-IX"
+
+#. IHP-IX (2026-09)
+msgid "IHP-IX working group"
+msgstr "Grupo de trabajo del PHI-IX"
+
+#. IHP-IX (2026-09)
+msgid "IHP-IX working group requests"
+msgstr "Solicitudes de grupos de trabajo del PHI-IX"
+
+#. IHP-IX (2026-09)
+msgid "Join this working group"
+msgstr "Unirse a este grupo de trabajo"
+
+#. IHP-IX (2026-09)
+msgid "Joined the working group"
+msgstr "Se unió al grupo de trabajo"
+
+#. IHP-IX (2026-09)
+msgid "Lead"
+msgstr "Lead"
+
+#. IHP-IX (2026-09)
+msgid "Lead (username)"
+msgstr "Lead (nombre de usuario)"
+
+#. IHP-IX (2026-09)
+msgid "Leave"
+msgstr "Abandonar"
+
+#. IHP-IX (2026-09)
+msgid "Leave this working group?"
+msgstr "¿Abandonar este grupo de trabajo?"
+
+#. IHP-IX (2026-09)
+msgid "Manage members"
+msgstr "Gestionar miembros"
+
+#. IHP-IX (2026-09)
+msgid "Manage working groups"
+msgstr "Gestionar grupos de trabajo"
+
+#. IHP-IX (2026-09)
+msgid "Member management"
+msgstr "Gestión de miembros"
+
+#. IHP-IX (2026-09)
+msgid "Members of"
+msgstr "Miembros de"
+
+#. IHP-IX (2026-09)
+msgid "Membership not found"
+msgstr "Membresía no encontrada"
+
+#. IHP-IX (2026-09)
+msgid "Membership request pending"
+msgstr "Solicitud de ingreso pendiente"
+
+#. IHP-IX (2026-09)
+msgid "Membership updated."
+msgstr "Membresía actualizada."
+
+#. IHP-IX (2026-09)
+msgid "My working groups"
+msgstr "Mis grupos de trabajo"
+
+#. IHP-IX (2026-09)
+msgid "New request to join the IHP-IX working group \"{title}\""
+msgstr "Nueva solicitud para unirse al grupo de trabajo del PHI-IX \"{title}\""
+
+#. IHP-IX (2026-09)
+msgid "No active members yet."
+msgstr "Aún no hay miembros activos."
+
+#. IHP-IX (2026-09)
+msgid "No contributions recorded yet."
+msgstr "Aún no hay contribuciones registradas."
+
+#. IHP-IX (2026-09)
+msgid "No members yet. Be the first to join."
+msgstr "Aún no hay miembros. Sé la primera persona en unirte."
+
+#. IHP-IX (2026-09)
+msgid "No pending requests."
+msgstr "No hay solicitudes pendientes."
+
+#. IHP-IX (2026-09)
+msgid ""
+"Nothing attached yet. Attach publications, events and data from the activity"
+" report form (Section VII)."
+msgstr ""
+"Aún no hay adjuntos. Adjunta publicaciones, eventos y datos desde el "
+"formulario de reporte (Sección VII)."
+
+#. IHP-IX (2026-09)
+msgid "Observer"
+msgstr "Observador"
+
+#. IHP-IX (2026-09)
+msgid ""
+"One workspace per IHP-IX Output, created automatically from the official "
+"list of Outputs. Assign a lead (by username) so they can approve membership "
+"requests; archive a workspace to hide it from new members."
+msgstr ""
+"Un espacio por output del PHI-IX, creado automáticamente desde la lista "
+"oficial de outputs. Asigna un lead (por nombre de usuario) para que apruebe "
+"solicitudes; archiva un espacio para ocultarlo a nuevos miembros."
+
+#. IHP-IX (2026-09)
+msgid ""
+"One workspace per IHP-IX Output. Join the working groups you contribute to, "
+"follow what others report, and attach the publications, events and data "
+"produced under each output."
+msgstr ""
+"Un espacio por output del PHI-IX. Únete a los grupos a los que contribuyes, "
+"sigue lo que reportan otros y adjunta las publicaciones, eventos y datos "
+"producidos bajo cada output."
+
+#. IHP-IX (2026-09)
+msgid "Only the working group lead can manage members"
+msgstr "Solo el lead del grupo de trabajo puede gestionar miembros"
+
+#. IHP-IX (2026-09)
+msgid "Open workspace"
+msgstr "Abrir espacio de trabajo"
+
+#. IHP-IX (2026-09)
+msgid "Overview"
+msgstr "Resumen"
+
+#. IHP-IX (2026-09)
+msgid "Pending approval"
+msgstr "Pendiente de aprobación"
+
+#. IHP-IX (2026-09)
+msgid "Pending requests"
+msgstr "Solicitudes pendientes"
+
+#. IHP-IX (2026-09)
+msgid "Pilot"
+msgstr "Piloto"
+
+#. IHP-IX (2026-09)
+msgid "Publication, event or data attached"
+msgstr "Publicación, evento o datos adjuntados"
+
+#. IHP-IX (2026-09)
+msgid "Published reports"
+msgstr "Reportes publicados"
+
+#. IHP-IX (2026-09)
+msgid "Recent contributions"
+msgstr "Contribuciones recientes"
+
+#. IHP-IX (2026-09)
+msgid "Reinstate"
+msgstr "Reincorporar"
+
+#. IHP-IX (2026-09)
+msgid "Remove this member from the working group?"
+msgstr "¿Quitar a este miembro del grupo de trabajo?"
+
+#. IHP-IX (2026-09)
+msgid "Removed"
+msgstr "Retirado"
+
+#. IHP-IX (2026-09)
+msgid "Removed or declined"
+msgstr "Retirados o rechazados"
+
+#. IHP-IX (2026-09)
+msgid "Report published"
+msgstr "Reporte publicado"
+
+#. IHP-IX (2026-09)
+msgid "Report submitted for review"
+msgstr "Reporte enviado a revisión"
+
+#. IHP-IX (2026-09)
+msgid "Request to join"
+msgstr "Solicitar ingreso"
+
+#. IHP-IX (2026-09)
+msgid "Requested"
+msgstr "Solicitado"
+
+#. IHP-IX (2026-09)
+msgid "See members in the people directory"
+msgstr "Ver los miembros en el directorio de personas"
+
+#. IHP-IX (2026-09)
+msgid "Set role"
+msgstr "Asignar rol"
+
+#. IHP-IX (2026-09)
+msgid "Tell the lead how you contribute to this output (optional)"
+msgstr "Cuéntale al lead cómo contribuyes a este output (opcional)"
+
+#. IHP-IX (2026-09)
+msgid "Working group"
+msgstr "Grupo de trabajo"
+
+#. IHP-IX (2026-09)
+msgid "Working group not found"
+msgstr "Grupo de trabajo no encontrado"
+
+#. IHP-IX (2026-09)
+msgid "Working group updated."
+msgstr "Grupo de trabajo actualizado."
+
+#. IHP-IX (2026-09)
+msgid "Working groups"
+msgstr "Grupos de trabajo"
+
+#. IHP-IX (2026-09)
+msgid "Workspace sections"
+msgstr "Secciones del espacio de trabajo"
+
+#. IHP-IX (2026-09)
+msgid "You are not a member of any IHP-IX working group yet."
+msgstr "Aún no eres miembro de ningún grupo de trabajo del PHI-IX."
+
+#. IHP-IX (2026-09)
+msgid "You are now a contributor of the IHP-IX working group \"{title}\""
+msgstr "Ahora eres contribuidor del grupo de trabajo del PHI-IX \"{title}\""
+
+#. IHP-IX (2026-09)
+msgid "You have joined the IHP-IX working group \"{title}\""
+msgstr "Te has unido al grupo de trabajo del PHI-IX \"{title}\""
+
+#. IHP-IX (2026-09)
+msgid "You have joined the working group."
+msgstr "Te has unido al grupo de trabajo."
+
+#. IHP-IX (2026-09)
+msgid "You have left the working group."
+msgstr "Has abandonado el grupo de trabajo."
+
+#. IHP-IX (2026-09)
+msgid "You were removed from the IHP-IX working group \"{title}\""
+msgstr "Has sido retirado del grupo de trabajo del PHI-IX \"{title}\""
+
+#. IHP-IX (2026-09)
+msgid "Your reports in progress for this output"
+msgstr "Tus reportes en curso para este output"
+
+#. IHP-IX (2026-09)
+msgid "Your request to join the IHP-IX working group \"{title}\" was not accepted"
+msgstr ""
+"Tu solicitud para unirte al grupo de trabajo del PHI-IX \"{title}\" no fue "
+"aceptada"
+
+#. IHP-IX (2026-09)
+msgid "Your request was sent to the working group lead."
+msgstr "Tu solicitud fue enviada al lead del grupo de trabajo."
+
+#. IHP-IX (2026-09)
+msgid "active"
+msgstr "activos"
+
+#. IHP-IX (2026-09)
+msgid "members"
+msgstr "miembros"
+
+#. IHP-IX (2026-09)
+msgid "pending membership requests across all working groups."
+msgstr "solicitudes de ingreso pendientes en todos los grupos de trabajo."
+
+#. IHP-IX (2026-09)
+msgid "published"
+msgstr "publicadas"
+
+#. IHP-IX (2026-09)
+msgid "username"
+msgstr "nombre de usuario"
+
+#. IHP-IX (2026-09)
+msgid ""
+"Dear {name},\n"
+"\n"
+"{requester} has requested to join the working group \"{title}\".\n"
+"\n"
+"Review the request here: {url}\n"
+msgstr ""
+"Estimado/a {name}:\n"
+"\n"
+"{requester} ha solicitado unirse al grupo de trabajo \"{title}\".\n"
+"\n"
+"Revisa la solicitud aquí: {url}\n"
+
+#. IHP-IX (2026-09)
+msgid ""
+"Dear {name},\n"
+"\n"
+"Your request to join the working group \"{title}\" was approved.\n"
+"\n"
+"Open the workspace: {url}\n"
+msgstr ""
+"Estimado/a {name}:\n"
+"\n"
+"Tu solicitud para unirte al grupo de trabajo \"{title}\" fue aprobada.\n"
+"\n"
+"Abre el espacio de trabajo: {url}\n"
+
+#. IHP-IX (2026-09)
+msgid ""
+"Dear {name},\n"
+"\n"
+"Your published IHP-IX report added you as a contributor of the working group \"{title}\".\n"
+"\n"
+"Open the workspace: {url}\n"
+msgstr ""
+"Estimado/a {name}:\n"
+"\n"
+"Tu reporte publicado del PHI-IX te ha añadido como contribuidor del grupo de trabajo \"{title}\".\n"
+"\n"
+"Abre el espacio de trabajo: {url}\n"
+
+#. IHP-IX (2026-09)
+msgid ""
+"Dear {name},\n"
+"\n"
+"Your request to join the working group \"{title}\" was not accepted by its lead.\n"
+"\n"
+"Workspace: {url}\n"
+msgstr ""
+"Estimado/a {name}:\n"
+"\n"
+"Tu solicitud para unirte al grupo de trabajo \"{title}\" no fue aceptada por su lead.\n"
+"\n"
+"Espacio de trabajo: {url}\n"
+
+#. IHP-IX (2026-09)
+msgid ""
+"Dear {name},\n"
+"\n"
+"You are no longer a member of the working group \"{title}\".\n"
+"\n"
+"Workspace: {url}\n"
+msgstr ""
+"Estimado/a {name}:\n"
+"\n"
+"Ya no eres miembro del grupo de trabajo \"{title}\".\n"
+"\n"
+"Espacio de trabajo: {url}\n"
+
+#. IHP-IX (2026-09)
+msgid ""
+"%(n)d membership request is waiting for your review in the working groups "
+"you lead."
+msgid_plural ""
+"%(n)d membership requests are waiting for your review in the working groups "
+"you lead."
+msgstr[0] ""
+"%(n)d solicitud de ingreso espera tu revisión en los grupos de trabajo que "
+"lideras."
+msgstr[1] ""
+"%(n)d solicitudes de ingreso esperan tu revisión en los grupos de trabajo "
+"que lideras."
 
 #, python-format
 #~ msgid "Dashboard (%(num)d new item)"
