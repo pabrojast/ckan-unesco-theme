@@ -41,9 +41,11 @@ renderizan como sysadmin; `ihpix_publication_create` creó de verdad un dataset
 `documents` público (tags `ihp-ix`/`ihp-ix-output-1.3`, grupo del Member State,
 `document_type`, idioma, identificador, recurso PDF subido y variante por URL),
 registró `publication_created` en el ledger y los datos de prueba se purgaron.
-Traducciones es/fr/ar y RTL comprobadas. Pendiente: prueba en navegador real
-(la extensión de Chrome no estaba conectada) y con un usuario **editor** no
-sysadmin (DOC-028). Ver [[Deployment#Despliegue a desarrollo (data.dev-wins.com)]].
+Traducciones es/fr/ar y RTL comprobadas. También verificado con un **editor
+no sysadmin** (crea en su organización, otra se rechaza). Pendiente: prueba en
+navegador real (la extensión de Chrome no estaba conectada) y la adaptación de
+cursos al plugin `learning` (DOC-030). Ver
+[[Deployment#Despliegue a desarrollo (data.dev-wins.com)]].
 
 ## Pendientes conocidos
 

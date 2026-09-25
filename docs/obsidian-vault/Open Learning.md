@@ -32,6 +32,9 @@ API Open Learning ──sync──► tabla open_learning_course ──get_publi
 - **Tipo de curso**: auto-detectado del campo `pacing` de Open edX (`self` → `permanent`, `instructor` → `scheduled`; fallback por `start_type`/`end`). El admin puede corregirlo manualmente, lo que activa `course_type_override` y el sync deja de recalcularlo.
 - **Propuestas de usuarios (2026-09-24)**: cualquier usuario logueado puede proponer un curso pegando su URL (formulario en `/courses` y tipo "Course" de la Sección VII del reporte IHP-IX). La acción `ihpix_course_propose` reutiliza `fetch_and_upsert_course`: el curso entra `pending` con `proposed_by`, `proposed_at` y `proposal_note` (columnas nuevas, añadidas de forma idempotente), avisa por email a los sysadmins y suma a la cola `open_learning` de la campana de aprobaciones. El panel admin muestra "Proposed by" y la nota. Config: `ihpix_course_proposals_enabled`, `ihpix_course_proposals_per_day`. Los cursos aprobados pueden adjuntarse a los reportes IHP-IX (tipo `course`, ver [[IHP-IX]]).
 
+> [!note] Con el plugin `learning` cargado (dev desde 2026-09-24)
+> El catálogo nativo de `ckanext-learning` (`feat/learning-catalog`, fusionado en `dev210`) manda: `/courses` y `/ckan-admin/open-learning` redirigen a él y los cursos son packages `type:learning`. El tema lo detecta (`actions._ihpix_learning_loaded`) y entonces la búsqueda de cursos para adjuntar usa `package_search`, la propuesta pasa por `learning.compat.add` (cola `/ckan-admin/learning`) y la campana cuenta los pendientes del catálogo. La tabla legacy sólo se usa si el plugin no está. Ver DOC-030 en [[Backlog Documentacion]].
+
 ## Disparadores del sync
 
 | Disparador | Mecanismo |
