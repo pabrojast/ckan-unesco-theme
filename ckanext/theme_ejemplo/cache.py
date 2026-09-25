@@ -196,6 +196,10 @@ def _should_skip_request():
         return True
 
     norm_path = _strip_locale(request.path)
+    # La portada y el catalogo reflejan inmediatamente el retiro editorial.
+    import ckan.plugins as p
+    if p.plugin_loaded('learning') and (norm_path == '/' or _matches_prefix(norm_path, ('/learning', '/courses'))):
+        return True
     excludes = _cfg_list(
         'ckanext.theme_ejemplo.anon_cache_exclude_paths',
         _DEFAULT_EXCLUDE_PREFIXES,

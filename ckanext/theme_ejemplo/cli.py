@@ -260,6 +260,12 @@ def openlearning():
               help='Ignorar el TTL y sincronizar siempre')
 def openlearning_sync(force):
     """Sincronizar la caché curada de cursos con la API de Open Learning."""
+    import ckan.plugins as p
+    if p.plugin_loaded('learning'):
+        import json
+        from ckanext.learning.compat import sync
+        click.echo(json.dumps(sync({}, {})))
+        return
     from ckanext.theme_ejemplo.model import init_open_learning_courses_db
     from ckanext.theme_ejemplo import openlearning as ol
 

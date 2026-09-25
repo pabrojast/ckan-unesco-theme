@@ -725,3 +725,12 @@ Umbrales de categoría configurables: `ckanext.theme_ejemplo.completeness_full_t
 - [[Modulos]] — Detalle por módulo
 - [[Open Learning]] — Caché curada de cursos
 - [[Variables de Entorno]] — Configuración de TTL de caches
+
+## Catálogo de recursos de formación
+
+`/learning` → filtros/búsqueda → ficha → acceso en el proveedor o materiales.
+Editor de organización → alta/edición/archivos/relaciones → pendiente y privado.
+Sysadmin → `/ckan-admin/learning` → aprobar/ocultar → publicación según disponibilidad.
+Sync → upsert por fuente + ID externo → nuevos pendientes; existentes conservan curación.
+Las relaciones resuelven permisos de datasets, publicaciones, herramientas e iniciativas
+en cada lectura. `/courses` conserva acceso al subconjunto de cursos. Ver [[Open Learning]].

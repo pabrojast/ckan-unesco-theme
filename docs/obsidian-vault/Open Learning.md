@@ -85,3 +85,27 @@ Ver [[Variables de Entorno#Open Learning (cursos curados)]]: `openlearning_searc
 - [[Modulos#openlearning.py]] — detalle del módulo de sync
 - [[Flujos Importantes#11. Curación de cursos Open Learning]] — flujo paso a paso
 - [[Variables de Entorno]] — claves de configuración
+
+## Catálogo Learning (2026-09)
+
+Con el plugin `learning` habilitado, el catálogo pasa a paquetes CKAN de tipo
+`learning`, con fichas, archivos, filtros Solr y revisión en
+`/ckan-admin/learning`. `/courses` redirige a `/learning/?vocab_learning_type=course`.
+La home lee solo paquetes aprobados y disponibles. Las acciones `open_learning_*`
+y el CLI anterior delegan al nuevo plugin; no se ejecuta sync lazy en peticiones públicas.
+
+La migración `ckan learning migrate-openlearning` es dry-run por defecto; `--apply`
+conserva IDs antiguos, estados, disponibilidad, modalidad y orden. No modifica
+`open_learning_course`, que queda como respaldo para rollback. Las descripciones
+de diseño, rutas y sync lazy de arriba siguen aplicando cuando `learning` está deshabilitado.
+
+Editores de organizaciones crean y modifican; solo sysadmin aprueba. Una edición
+manual, de archivos o relaciones vuelve a pendiente y retira la publicación.
+El refresco automático preserva curación y campos editados manualmente.
+Los conectores soportan Open edX, JSON paginado con mapeo y JSON-LD educativo.
+Los socios externos requieren una fuente configurada; los cursos se acceden
+en la plataforma del proveedor. La sincronización periódica utiliza un CronJob
+de desarrollo cada seis horas y la manual utiliza el worker CKAN `default`.
+
+Implementación y guía operativa: `ckan-unesco-docker/extensions/ckanext-learning/README.md`
+y `ckan-unesco-docker/docs/learning-development.md`.

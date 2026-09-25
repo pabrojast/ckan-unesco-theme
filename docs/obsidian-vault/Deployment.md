@@ -144,3 +144,13 @@ ckanext/theme_ejemplo/migration/** # Migraciones (si existen)
 - [[Testing]] — Ejecución de tests
 - [[Comandos Utiles#Packaging y distribución]] — Comandos de packaging
 - [[Variables de Entorno]] — Configuración completa
+
+## Learning en desarrollo
+
+El catálogo se empaqueta mediante `deploy/docker/Dockerfile.learning-dev` en el
+repositorio Docker, con commits fijos del tema y SchemingDCAT sobre la imagen
+de desarrollo existente. El destino autorizado es `default/ckan`
+(`https://data.dev-wins.com`). La imagen y configuración de producción no forman
+parte de este despliegue. Respaldar DB, almacenamiento local y configuración
+antes de migrar; conservar la tabla legado y el digest anterior. Ver la guía
+`docs/learning-development.md` del repositorio Docker para rollback y verificaciones.

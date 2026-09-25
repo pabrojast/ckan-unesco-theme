@@ -154,3 +154,13 @@ Resumen del job de tests en CI:
 - [[Comandos Utiles#Testing]] — Comandos de testing
 - [[Deployment]] — CI/CD completo
 - [[Backlog Documentacion]] — Tests pendientes de crear
+
+## Catálogo learning
+
+La suite del nuevo plugin prueba contra CKAN/PostgreSQL/Solr/Redis aislados:
+permisos, aprobación, re-revisión, archivos, facetas multivalor, relaciones,
+idempotencia, curación, disponibilidad parcial, migración y formularios con CSRF.
+No ejecutarla contra desarrollo o producción. Las regresiones del tema incluyen
+`test_openlearning.py` y `test_search.py`; SchemingDCAT incluye el aislamiento
+de auditoría de permisos cuando se consulta un nombre aún no creado.
+La validación en navegador cubre catálogo, edición, relaciones y tamaño móvil.
