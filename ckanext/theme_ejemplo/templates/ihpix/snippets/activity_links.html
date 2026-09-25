@@ -3,7 +3,7 @@
 
   Uso:
     {% import 'ihpix/snippets/activity_links.html' as links_ui %}
-    {{ links_ui.links_styles() }}                     {# una vez por página #}
+    {{ links_ui.links_styles() }}                     -- una vez por página --
     {{ links_ui.render_links(links_by_activity.get(activity.id, [])) }}
 
   `links` es la lista de dicts de `IhpixActivityLink.as_dict()` (con `public_url`).

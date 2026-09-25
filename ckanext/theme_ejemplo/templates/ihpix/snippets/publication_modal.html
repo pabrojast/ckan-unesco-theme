@@ -1,10 +1,10 @@
 {#
   Modal "Upload a publication" (IHP-IX → documentos de IHP-WINS).
 
-  Uso:
-    {% import 'ihpix/snippets/publication_modal.html' as pub_ui %}
-    {{ pub_ui.publication_modal(publication_ctx, mode='report') }}   {# dentro del reporte #}
-    {{ pub_ui.publication_modal(publication_ctx, mode='page') }}     {# workspace / Output #}
+  Uso (sin las llaves de Jinja, para no romper este comentario):
+    import 'ihpix/snippets/publication_modal.html' as pub_ui
+    pub_ui.publication_modal(publication_ctx, mode='report')   -> dentro del reporte
+    pub_ui.publication_modal(publication_ctx, mode='page')     -> workspace / Output
 
   Abrir: cualquier botón con data-ihpix-publication-open (opcional
   data-document-type="educational_material"). Requiere el kit de formularios

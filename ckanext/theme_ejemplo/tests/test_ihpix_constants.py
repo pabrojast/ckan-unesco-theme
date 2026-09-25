@@ -54,3 +54,29 @@ def test_i18n_strings_cover_validation_messages():
     literals = set(S.VALIDATION_MESSAGES)
     assert set(F.MESSAGES.values()) <= literals
     assert set(L.MESSAGES.values()) <= literals
+
+
+def test_ihpix_snippet_modules_have_no_live_top_level_code():
+    """Los snippets de macros no deben ejecutar nada al importarse (un `{# #}`
+    anidado en un comentario dejó código vivo y rompió /ihpix/report en dev)."""
+    import os
+    from jinja2 import Environment, FileSystemLoader, nodes
+    from jinja2.ext import Extension
+
+    class CkanTags(Extension):
+        tags = {'ckan_extends', 'snippet', 'resource', 'asset', 'url_for', 'link_for', 'image_for'}
+
+        def parse(self, parser):
+            tok = next(parser.stream)
+            while parser.stream.current.type != 'block_end':
+                next(parser.stream)
+            return nodes.Output([nodes.Const('')]).set_lineno(tok.lineno)
+
+    base = os.path.join(os.path.dirname(__file__), '..', 'templates')
+    env = Environment(loader=FileSystemLoader(base),
+                      extensions=['jinja2.ext.i18n', 'jinja2.ext.do', CkanTags])
+    env.install_null_translations()
+    for name in ('ihpix/snippets/publication_modal.html', 'ihpix/snippets/forms_assets.html',
+                 'ihpix/snippets/activity_links.html', 'ihpix/snippets/page_styles.html'):
+        module = env.get_template(name).module  # evalúa el nivel superior
+        assert any(not n.startswith('_') for n in dir(module)), name
