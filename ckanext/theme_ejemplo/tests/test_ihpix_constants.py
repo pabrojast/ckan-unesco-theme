@@ -80,3 +80,44 @@ def test_ihpix_snippet_modules_have_no_live_top_level_code():
                  'ihpix/snippets/activity_links.html', 'ihpix/snippets/page_styles.html'):
         module = env.get_template(name).module  # evalúa el nivel superior
         assert any(not n.startswith('_') for n in dir(module)), name
+
+
+def test_templates_do_not_call_gettext_with_printf_placeholders_and_no_kwargs():
+    """El gettext "newstyle" de CKAN hace `texto % kwargs`: `_('… %(code)s …')`
+    sin argumentos lanza KeyError al renderizar (500 en dev, 2026-09-24)."""
+    import glob
+    import io
+    import os
+    import re
+    pat = re.compile(r"""(?<![\w.])_\(\s*(['"])(?P<s>(?:(?!\1).)*%\((?:[a-z_]+)\)[sdr](?:(?!\1).)*)\1\s*\)""")
+    base = os.path.join(os.path.dirname(__file__), '..', 'templates')
+    offenders = []
+    for path in glob.glob(os.path.join(base, '**', '*.html'), recursive=True):
+        source = io.open(path, encoding='utf-8').read()
+        for m in pat.finditer(source):
+            offenders.append((os.path.relpath(path, base), m.group('s')[:60]))
+    assert offenders == []
+
+
+def test_templates_do_not_nest_jinja_comments():
+    """Un `{# … #}` dentro de otro cierra el comentario antes de tiempo y deja
+    código de ejemplo vivo (UndefinedError en dev, 2026-09-24)."""
+    import glob
+    import io
+    import os
+    base = os.path.join(os.path.dirname(__file__), '..', 'templates')
+    offenders = []
+    for path in glob.glob(os.path.join(base, '**', '*.html'), recursive=True):
+        source = io.open(path, encoding='utf-8').read()
+        i = 0
+        while True:
+            a = source.find('{#', i)
+            if a < 0:
+                break
+            b = source.find('#}', a + 2)
+            if b < 0:
+                break
+            if '{#' in source[a + 2:b]:
+                offenders.append((os.path.relpath(path, base), source[:a].count('\n') + 1))
+            i = b + 2
+    assert offenders == []
