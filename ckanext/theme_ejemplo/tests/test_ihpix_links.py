@@ -101,3 +101,13 @@ def test_search_kind_covers_all_types():
     assert set(L.SEARCH_KIND_FOR_TYPE) == set(L.LINK_TYPES)
     assert set(L.ALLOWED_KINDS) == set(L.LINK_TYPES)
     assert set(L.TYPE_LABELS) == set(L.LINK_TYPES)
+
+
+def test_link_errors_carry_translatable_details():
+    with pytest.raises(L.LinkValidationError) as exc:
+        L.validate_link({'link_type': 'other', 'url': 'ftp://x', 'title': 't' * 301})
+    err = exc.value
+    assert set(err.errors) == set(err.details)
+    for field, (key, params) in err.details.items():
+        assert key in L.MESSAGES
+        assert err.errors[field] == L.MESSAGES[key].format(**params)

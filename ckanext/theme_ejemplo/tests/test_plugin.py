@@ -255,3 +255,20 @@ def test_ihpix_report_form_loads_forms_kit(app):
     assert resp.status_code == 200
     assert b'ihpix-forms-i18n' in resp.data
     assert b'/css/ihpix-forms.css' in resp.data
+
+
+def test_ihpix_report_form_uses_kit_components(app):
+    resp = app.get('/ihpix/report')
+    assert resp.status_code == 200
+    body = resp.data
+    # Selectores de país con buscador y picker de Member States del kit
+    assert body.count(b'data-ihpix-combobox') >= 2
+    assert b'data-ihpix-multipicker' in body
+    # Textos largos con editor Markdown y contador
+    assert body.count(b'data-ihpix-markdown') >= 3
+    assert b'id="ihpix-field-partners" name="partners"' in body
+    # Grupos Sí/No accesibles y ayuda enlazada
+    assert b'<fieldset class="ixf-fieldset' in body
+    assert b'aria-describedby="ihpix-field-institution-help"' in body
+    # Ya no queda el picker a mano
+    assert b'ihpix-ms-search-input' not in body

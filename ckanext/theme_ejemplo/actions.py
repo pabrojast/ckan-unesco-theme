@@ -2073,12 +2073,34 @@ def _ihpix_get_report_or_404(data_dict):
     return activity
 
 
+def _ihpix_translate_errors(exc):
+    """{campo: mensaje traducido} a partir de `.details` (clave + params) de
+    `ReportValidationError` / `LinkValidationError`; si no hay detalle se
+    devuelve el mensaje en inglés del módulo puro."""
+    _ = toolkit._
+    out = {}
+    details = getattr(exc, 'details', None) or {}
+    for field, msg in exc.errors.items():
+        key_params = details.get(field)
+        template = None
+        if key_params:
+            key, params = key_params
+            template = ihpix_forms.MESSAGES.get(key) or ihpix_links.MESSAGES.get(key)
+            try:
+                out[field] = _(template).format(**params) if template else msg
+                continue
+            except (KeyError, IndexError, ValueError):
+                pass
+        out[field] = msg
+    return out
+
+
 def _ihpix_validate(data_dict, is_draft):
     """Traduce `ReportValidationError` (módulo puro) a `toolkit.ValidationError`."""
     try:
         return ihpix_forms.validate_report_payload(data_dict, is_draft)
     except ihpix_forms.ReportValidationError as e:
-        raise toolkit.ValidationError(e.errors)
+        raise toolkit.ValidationError(_ihpix_translate_errors(e))
 
 
 def _apply_report_values(activity, values):
@@ -2118,7 +2140,7 @@ def _sync_activity_links(activity, links_payload, user_obj):
     try:
         items = ihpix_links.parse_links_json(links_payload)
     except ihpix_links.LinkValidationError as e:
-        raise toolkit.ValidationError(e.errors)
+        raise toolkit.ValidationError(_ihpix_translate_errors(e))
 
     validated = []
     errors = {}
@@ -2126,7 +2148,7 @@ def _sync_activity_links(activity, links_payload, user_obj):
         try:
             validated.append(ihpix_links.validate_link(item))
         except ihpix_links.LinkValidationError as e:
-            for key, msg in e.errors.items():
+            for key, msg in _ihpix_translate_errors(e).items():
                 errors['links[{}].{}'.format(idx, key)] = msg
     if errors:
         raise toolkit.ValidationError(errors)
@@ -2567,7 +2589,7 @@ def ihpix_activity_link_create(context, data_dict):
     try:
         values = ihpix_links.validate_link(data_dict)
     except ihpix_links.LinkValidationError as e:
-        raise toolkit.ValidationError(e.errors)
+        raise toolkit.ValidationError(_ihpix_translate_errors(e))
 
     existing = [l.as_dict() for l in IhpixActivityLink.get_by_activity(activity.id)]
     key = ihpix_links.dedupe_key(values)

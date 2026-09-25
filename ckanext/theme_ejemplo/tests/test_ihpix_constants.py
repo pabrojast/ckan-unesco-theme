@@ -46,3 +46,11 @@ def test_i18n_strings_cover_taxonomies():
     assert set(C.KNOWLEDGE_PRODUCT_TYPES) - {'Other'} == set(S.KNOWLEDGE_PRODUCT_TYPES)
     assert set(C.KNOWLEDGE_ACTIVITY_TYPES) - {'Other'} == set(S.KNOWLEDGE_ACTIVITY_TYPES)
     assert set(C.STAKEHOLDER_GROUP_TYPE_VALUES) - {'Other'} == set(S.STAKEHOLDER_GROUP_TYPES)
+
+
+def test_i18n_strings_cover_validation_messages():
+    from ckanext.theme_ejemplo import ihpix_forms as F
+    from ckanext.theme_ejemplo import ihpix_links as L
+    literals = set(S.VALIDATION_MESSAGES)
+    assert set(F.MESSAGES.values()) <= literals
+    assert set(L.MESSAGES.values()) <= literals

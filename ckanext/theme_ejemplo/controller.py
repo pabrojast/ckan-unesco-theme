@@ -79,6 +79,48 @@ def get_member_states_groups():
         return ['member-states']
 
 
+_INSTITUTION_SUGGESTIONS_CACHE = {'at': 0.0, 'value': []}
+_INSTITUTION_SUGGESTIONS_TTL = 600  # 10 minutos
+_INSTITUTION_SUGGESTIONS_MAX = 300
+
+
+def _ihpix_institution_suggestions():
+    """Nombres de institución distintos de las actividades publicadas, para
+    el `<datalist>` del reporte (autocompletar sin imponer un vocabulario).
+
+    Caché en proceso de 10 minutos; máximo 300 nombres ordenados
+    alfabéticamente. Sólo lee actividades `published` para no filtrar datos
+    de borradores ajenos.
+    """
+    import time
+    now = time.time()
+    cache = _INSTITUTION_SUGGESTIONS_CACHE
+    if cache['value'] and now - cache['at'] < _INSTITUTION_SUGGESTIONS_TTL:
+        return cache['value']
+    from ckanext.theme_ejemplo.model import IhpixActivity, init_ihpix_activities_db
+    from sqlalchemy import func
+    init_ihpix_activities_db()  # idempotente: asegura el mapeo de la clase
+    rows = (model.Session.query(IhpixActivity.institution)
+            .filter(IhpixActivity.institution != None)  # noqa: E711
+            .filter(func.length(func.trim(IhpixActivity.institution)) > 0)
+            .filter(IhpixActivity.status == 'published')
+            .distinct()
+            .order_by(IhpixActivity.institution)
+            .limit(_INSTITUTION_SUGGESTIONS_MAX)
+            .all())
+    seen = set()
+    names = []
+    for (name,) in rows:
+        clean = (name or '').strip()
+        key = clean.lower()
+        if clean and key not in seen:
+            seen.add(key)
+            names.append(clean)
+    cache['at'] = now
+    cache['value'] = names
+    return names
+
+
 @timed_lru_cache(seconds=300, maxsize=20)
 def get_member_states_for_select():
     """Devuelve los grupos hijos de `member-states` como [(name, title), ...]
@@ -4275,6 +4317,11 @@ class MyLogica():
         def _ihpix_report_form_context():
             """Vocabularios controlados que consume `ihpix/report.html`."""
             from ckanext.theme_ejemplo import ihpix_constants as C
+            try:
+                institution_suggestions = _ihpix_institution_suggestions()
+            except Exception as e:  # nunca romper el formulario por el datalist
+                log.warning('No se pudieron cargar las instituciones sugeridas: %s', e)
+                institution_suggestions = []
             # Member states desde los grupos CKAN (hijos de `member-states`);
             # fallback a la lista ISO-2 si el portal aún no los tiene.
             ms_groups = get_member_states_for_select() or list(C.MEMBER_STATES)
@@ -4287,6 +4334,7 @@ class MyLogica():
                 cross_cutting_wgs=C.CROSS_CUTTING_WGS,
                 regions=C.REGIONS,
                 member_states=ms_groups,
+                institution_suggestions=institution_suggestions,
                 knowledge_product_types=C.KNOWLEDGE_PRODUCT_TYPES,
                 scientific_product_types=C.SCIENTIFIC_PRODUCT_TYPES,
                 knowledge_activity_types=C.KNOWLEDGE_ACTIVITY_TYPES,

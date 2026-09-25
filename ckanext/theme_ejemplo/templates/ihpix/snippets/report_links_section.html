@@ -139,6 +139,9 @@
           &middot;
           <a href="{{ h.ihpix_pages_url('pages.water_events_new', '/water-events_edit') }}" target="_blank" rel="noopener">{{ _('Create an event') }}</a>
           &mdash; {{ _('when you are done, come back to this tab and search for it.') }}
+          <button type="button" class="ihpix-report-btn is-secondary" id="ihpix-lw-refresh" style="margin-inline-start:.5rem;padding:.3rem .7rem;min-height:32px;font-size:.8rem;">
+            <i class="fa fa-refresh" aria-hidden="true"></i> {{ _('Refresh search') }}
+          </button>
         </p>
       </div>
     </div>
@@ -183,6 +186,7 @@
   var MSG = {
     empty: {{ _('No publications, events or data attached yet.')|tojson }},
     remove: {{ _('Remove')|tojson }},
+    removeConfirm: {{ _('Remove this item from the report?')|tojson }},
     up: {{ _('Move up')|tojson }},
     down: {{ _('Move down')|tojson }},
     noResults: {{ _('No results. You can add it manually below.')|tojson }},
@@ -253,7 +257,15 @@
       down.disabled = (i === links.length - 1);
       down.addEventListener('click', function() { move(i, 1); });
       var rm = el('button', 'is-danger'); rm.type = 'button'; rm.title = MSG.remove; rm.innerHTML = '<i class="fa fa-trash" aria-hidden="true"></i>';
-      rm.addEventListener('click', function() { links.splice(i, 1); save(); render(); });
+      rm.addEventListener('click', function() {
+        var doRemove = function() { links.splice(i, 1); save(); render(); };
+        if (window.IhpixForms && window.IhpixForms.confirm) {
+          window.IhpixForms.confirm({ message: MSG.removeConfirm, danger: true, confirmLabel: MSG.remove })
+            .then(function(yes) { if (yes) doRemove(); });
+        } else if (window.confirm(MSG.removeConfirm)) {
+          doRemove();
+        }
+      });
       actions.appendChild(up); actions.appendChild(down); actions.appendChild(rm);
       item.appendChild(actions);
       listEl.appendChild(item);
@@ -335,7 +347,27 @@
     if (timer) clearTimeout(timer);
     timer = setTimeout(runSearch, 300);
   });
-  searchInput.addEventListener('keydown', function(e) { if (e.key === 'Escape') hideResults(); });
+  searchInput.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape') { hideResults(); return; }
+    if (e.key === 'ArrowDown') {
+      var first = resultsEl.querySelector('button.ihpix-lw-result');
+      if (first) { e.preventDefault(); first.focus(); }
+    }
+  });
+  // Navegación con teclado dentro de los resultados
+  resultsEl.addEventListener('keydown', function(e) {
+    var items = Array.prototype.slice.call(resultsEl.querySelectorAll('button.ihpix-lw-result'));
+    var i = items.indexOf(document.activeElement);
+    if (e.key === 'ArrowDown') { e.preventDefault(); (items[i + 1] || items[0] || searchInput).focus(); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); if (i <= 0) searchInput.focus(); else items[i - 1].focus(); }
+    else if (e.key === 'Escape') { e.preventDefault(); hideResults(); searchInput.focus(); }
+  });
+  var refreshBtn = document.getElementById('ihpix-lw-refresh');
+  if (refreshBtn) {
+    refreshBtn.addEventListener('click', function() {
+      if (searchInput.value.trim().length >= 2) { runSearch(); } else { searchInput.focus(); }
+    });
+  }
   document.addEventListener('click', function(e) {
     if (!resultsEl.contains(e.target) && e.target !== searchInput) hideResults();
   });
@@ -354,7 +386,11 @@
   });
 
   /* API para el formulario principal (restaura desde el hidden input) */
-  window.ihpixLinks = { reload: function() { load(); render(); } };
+  window.ihpixLinks = {
+    reload: function() { load(); render(); },
+    add: add,
+    getLinks: function() { return links.slice(); }
+  };
 
   /* ── Arranque: hidden vacío → adjuntos del servidor (edición) ── */
   load();

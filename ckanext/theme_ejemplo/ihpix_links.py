@@ -58,14 +58,37 @@ TITLE_MAX = 300
 DESCRIPTION_MAX = 500
 URL_MAX = 2000
 
+# Mensajes (inglés); se traducen en actions con `toolkit._()` vía `.details`
+MESSAGES = OrderedDict([
+    ('links_invalid_json', 'Invalid JSON'),
+    ('links_not_list', 'Expected a list of links'),
+    ('choice_invalid', 'Must be one of: {choices}'),
+    ('kind_not_allowed', '{link_type} cannot point to a {target_kind}'),
+    ('title_required', 'Title is required'),
+    ('max_length', '{field} must be {max} characters or fewer'),
+    ('url_required', 'URL is required'),
+    ('url_invalid', 'URL must start with http:// or https://'),
+    ('url_relative_invalid', 'URL must be absolute (http/https) or site-relative'),
+    ('url_too_long', 'URL is too long'),
+    ('target_required', 'target_id is required for a {target_kind}'),
+    ('date_invalid', 'Invalid date format. Use YYYY-MM-DD'),
+])
+
 
 class LinkValidationError(Exception):
-    u"""Errores de validación de un adjunto: `.errors` es {campo: mensaje}."""
+    u"""Errores de validación de un adjunto: `.errors` es {campo: mensaje}
+    y `.details` {campo: (clave de MESSAGES, params)}."""
 
-    def __init__(self, errors):
+    def __init__(self, errors, details=None):
         self.errors = dict(errors)
+        self.details = dict(details or {})
         super(LinkValidationError, self).__init__(
             json.dumps(self.errors, sort_keys=True))
+
+
+def _err(errors, details, fname, key, **params):
+    errors[fname] = MESSAGES[key].format(**params)
+    details[fname] = (key, params)
 
 
 def _text(d, key):
@@ -94,9 +117,11 @@ def parse_links_json(raw):
         try:
             items = json.loads(s)
         except (ValueError, TypeError):
-            raise LinkValidationError({'links_json': 'Invalid JSON'})
+            raise LinkValidationError({'links_json': MESSAGES['links_invalid_json']},
+                                      {'links_json': ('links_invalid_json', {})})
     if not isinstance(items, list):
-        raise LinkValidationError({'links_json': 'Expected a list of links'})
+        raise LinkValidationError({'links_json': MESSAGES['links_not_list']},
+                                  {'links_json': ('links_not_list', {})})
     return [item for item in items if isinstance(item, dict)]
 
 
@@ -104,6 +129,7 @@ def validate_link(d):
     u"""Valida y normaliza un adjunto. Devuelve dict con las columnas de
     `IhpixActivityLink` (más `id`, vacío si es nuevo)."""
     errors = OrderedDict()
+    details = OrderedDict()
     link_type = _text(d, 'link_type').lower()
     target_kind = (_text(d, 'target_kind') or 'url').lower()
     target_id = _text(d, 'target_id')
@@ -112,35 +138,32 @@ def validate_link(d):
     description = _text(d, 'description')
 
     if link_type not in LINK_TYPES:
-        errors['link_type'] = 'Must be one of: {}'.format(', '.join(LINK_TYPES))
+        _err(errors, details, 'link_type', 'choice_invalid', choices=', '.join(LINK_TYPES))
     if target_kind not in TARGET_KINDS:
-        errors['target_kind'] = 'Must be one of: {}'.format(
-            ', '.join(TARGET_KINDS))
+        _err(errors, details, 'target_kind', 'choice_invalid', choices=', '.join(TARGET_KINDS))
     elif link_type in ALLOWED_KINDS and target_kind not in ALLOWED_KINDS[link_type]:
-        errors['target_kind'] = '{} cannot point to a {}'.format(
-            link_type, target_kind)
+        _err(errors, details, 'target_kind', 'kind_not_allowed',
+             link_type=link_type, target_kind=target_kind)
 
     if not title:
-        errors['title'] = 'Title is required'
+        _err(errors, details, 'title', 'title_required')
     elif len(title) > TITLE_MAX:
-        errors['title'] = 'Title must be {} characters or fewer'.format(TITLE_MAX)
+        _err(errors, details, 'title', 'max_length', field='Title', max=TITLE_MAX)
 
     if target_kind == 'url':
         if not url:
-            errors['url'] = 'URL is required'
+            _err(errors, details, 'url', 'url_required')
         elif not is_http_url(url):
-            errors['url'] = 'URL must start with http:// or https://'
+            _err(errors, details, 'url', 'url_invalid')
     else:
         if not target_id:
-            errors['target_id'] = 'target_id is required for a {}'.format(
-                target_kind)
+            _err(errors, details, 'target_id', 'target_required', target_kind=target_kind)
         if url and not is_http_url(url) and not url.startswith('/'):
-            errors['url'] = 'URL must be absolute (http/https) or site-relative'
+            _err(errors, details, 'url', 'url_relative_invalid')
     if len(url) > URL_MAX:
-        errors['url'] = 'URL is too long'
+        _err(errors, details, 'url', 'url_too_long')
     if len(description) > DESCRIPTION_MAX:
-        errors['description'] = 'Description must be {} characters or fewer'.format(
-            DESCRIPTION_MAX)
+        _err(errors, details, 'description', 'max_length', field='Description', max=DESCRIPTION_MAX)
 
     event_date = None
     raw_date = _text(d, 'event_date')
@@ -148,7 +171,7 @@ def validate_link(d):
         try:
             event_date = datetime.datetime.strptime(raw_date, '%Y-%m-%d').date()
         except ValueError:
-            errors['event_date'] = 'Invalid date format. Use YYYY-MM-DD'
+            _err(errors, details, 'event_date', 'date_invalid')
 
     try:
         display_order = max(0, int(d.get('display_order') or 0))
@@ -156,7 +179,7 @@ def validate_link(d):
         display_order = 0
 
     if errors:
-        raise LinkValidationError(errors)
+        raise LinkValidationError(errors, details)
 
     return {
         'id': _text(d, 'id'),

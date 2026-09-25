@@ -101,3 +101,30 @@ LINK_TYPE_LABELS = [
 REPORT_STATUS_LABELS = [
     _('Draft'), _('Pending review'), _('Published'), _('Needs changes'),
 ]
+
+# Mensajes de validación de ihpix_forms.MESSAGES e ihpix_links.MESSAGES
+VALIDATION_MESSAGES = [
+    _('Title is required'),
+    _('Focal point name is required'),
+    _('Focal point email is required'),
+    _('Lead Implementing Institution category is required'),
+    _('Institution name is required'),
+    _('Biennium is required'),
+    _('{field} must be {max} characters or fewer'),
+    _('Must be one of: {choices}'),
+    _('Invalid institution type'),
+    _('Output {output} does not belong to {pa}'),
+    _('Invalid email address'),
+    _('Link must be a full URL starting with http:// or https://'),
+    _('Invalid date format. Use YYYY-MM-DD'),
+    _('The completion date cannot be earlier than the start date'),
+    _('Cannot exceed the total number of stakeholders'),
+    _('Invalid JSON'),
+    _('Expected a list of links'),
+    _('{link_type} cannot point to a {target_kind}'),
+    _('URL is required'),
+    _('URL must start with http:// or https://'),
+    _('URL must be absolute (http/https) or site-relative'),
+    _('URL is too long'),
+    _('target_id is required for a {target_kind}'),
+]

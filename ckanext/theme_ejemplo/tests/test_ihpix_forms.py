@@ -187,3 +187,63 @@ def test_form_field_lists_cover_model_columns():
 
 def test_all_output_codes_are_34():
     assert len(C.all_output_codes()) == 34
+
+
+# ── Fase B: límites, URL, fechas, ratios y mensajes traducibles ─────────────
+
+def test_long_text_limits_enforced():
+    with pytest.raises(F.ReportValidationError) as exc:
+        F.validate_report_payload(
+            _full_payload(partners='p' * 501, additional_notes='n' * 3001,
+                          key_activity='k' * 1001, synergies='s' * 1501),
+            is_draft=False)
+    assert set(exc.value.errors) >= {'partners', 'additional_notes', 'key_activity', 'synergies'}
+    key, params = exc.value.details['partners']
+    assert key == 'max_length' and params['max'] == 500
+
+
+def test_link_must_be_http_url():
+    with pytest.raises(F.ReportValidationError) as exc:
+        F.validate_report_payload(_full_payload(link='www.example.org'), is_draft=True)
+    assert exc.value.details['link'][0] == 'url_invalid'
+    values = F.validate_report_payload(_full_payload(link='https://example.org/x'), is_draft=True)
+    assert values['link'] == 'https://example.org/x'
+
+
+def test_end_date_cannot_precede_start_date():
+    with pytest.raises(F.ReportValidationError) as exc:
+        F.validate_report_payload(
+            _full_payload(start_date='2025-06-01', end_date='2025-01-01'), is_draft=False)
+    assert exc.value.details['end_date'][0] == 'end_before_start'
+
+
+def test_youth_and_female_cannot_exceed_total_when_gate_active():
+    with pytest.raises(F.ReportValidationError) as exc:
+        F.validate_report_payload(
+            _full_payload(kpi_2_active='yes', stakeholders_knowledge='5',
+                          stakeholders_knowledge_youth='6',
+                          stakeholders_knowledge_female='2'),
+            is_draft=False)
+    assert 'stakeholders_knowledge_youth' in exc.value.errors
+    assert 'stakeholders_knowledge_female' not in exc.value.errors
+    # Con el gate en "no" no se comprueba (los hijos se resetean)
+    values = F.validate_report_payload(
+        _full_payload(kpi_2_active='no', stakeholders_knowledge='5',
+                      stakeholders_knowledge_youth='6'), is_draft=False)
+    assert values['stakeholders_knowledge_youth'] == 0
+
+
+def test_email_regex_on_submission():
+    with pytest.raises(F.ReportValidationError) as exc:
+        F.validate_report_payload(_full_payload(contact_email='ada@nodomain'), is_draft=False)
+    assert exc.value.details['contact_email'][0] == 'email_invalid'
+
+
+def test_errors_and_details_are_consistent():
+    with pytest.raises(F.ReportValidationError) as exc:
+        F.validate_report_payload({'title': ''}, is_draft=False)
+    err = exc.value
+    assert set(err.errors) == set(err.details)
+    for field, (key, params) in err.details.items():
+        assert key in F.MESSAGES
+        assert err.errors[field] == F.MESSAGES[key].format(**params)
