@@ -59,10 +59,11 @@ respuestas 4xx/5xx.
 
 ```bash
 # tokens: api_token_create desde el pod para un editor no sysadmin y un sysadmin
-cd /ruta/privada && npm i playwright
-IHPIX_PW_TOKENS=/ruta/privada/tokens.json node scripts/playwright/ihpix_dev.js
+(cd /ruta/privada && npm i playwright)   # el repo no lleva node_modules
+export NODE_PATH=/ruta/privada/node_modules IHPIX_PW_TOKENS=/ruta/privada/tokens.json
+node scripts/playwright/ihpix_dev.js
 # validar un cambio del kit sin reconstruir la imagen:
-LOCAL_KIT=ckanext/theme_ejemplo/public/js/ihpix-forms.js IHPIX_PW_TOKENS=… node scripts/playwright/ihpix_dev.js
+LOCAL_KIT=ckanext/theme_ejemplo/public/js/ihpix-forms.js node scripts/playwright/ihpix_dev.js
 ```
 
 Crea un borrador "Playwright IHP-IX draft (delete me)" y una publicación

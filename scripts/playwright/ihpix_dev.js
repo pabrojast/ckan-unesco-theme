@@ -2,8 +2,9 @@
 // (por defecto dev). La sesión se consigue con tokens de API en la cabecera
 // Authorization, sólo hacia el sitio: no se teclean contraseñas.
 //
-//   npm i playwright            # una vez (usa ~/.cache/ms-playwright)
-//   IHPIX_PW_TOKENS=/ruta/privada/tokens.json node scripts/playwright/ihpix_dev.js
+//   (cd /ruta/privada && npm i playwright)     # una vez; el repo no lleva node_modules
+//   NODE_PATH=/ruta/privada/node_modules IHPIX_PW_TOKENS=/ruta/privada/tokens.json \
+//     node scripts/playwright/ihpix_dev.js
 //
 // tokens.json = {"editor": "<token de un editor no sysadmin>", "sysadmin": "<token>"}
 // (api_token_create desde el pod; revocar al terminar). Variables opcionales:
