@@ -4,7 +4,7 @@
 
 {% block page_primary_action %}
   {% if is_myself %}
-    <a class="btn btn-primary" href="/water-news/new">
+    <a class="btn btn-primary" href="{{ h.ihpix_pages_url('pages.water_news_new', '/water-news_edit') }}">
       <i class="fa fa-plus-square"></i> {{ _('Create News') }}
     </a>
   {% endif %}

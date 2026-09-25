@@ -137,7 +137,7 @@
           {{ _('Not in IHP-WINS yet?') }}
           <a href="{{ h.url_for('/documents/new') }}" target="_blank" rel="noopener">{{ _('Create a publication') }}</a>
           &middot;
-          <a href="/water-events/new" target="_blank" rel="noopener">{{ _('Create an event') }}</a>
+          <a href="{{ h.ihpix_pages_url('pages.water_events_new', '/water-events_edit') }}" target="_blank" rel="noopener">{{ _('Create an event') }}</a>
           &mdash; {{ _('when you are done, come back to this tab and search for it.') }}
         </p>
       </div>

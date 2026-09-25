@@ -2625,6 +2625,17 @@ def _search_water_events(q, limit):
         query = model.Session.query(Page).filter(Page.page_type == 'water-events')
         if q:
             query = query.filter(Page.title.ilike(u'%' + q + u'%'))
+        # En el fork (RapidResponseAndRecovery) `private` y `submission_status`
+        # son columnas reales; filtrar en SQL. Si no existen, se cae al
+        # filtrado por `extras` de más abajo.
+        has_status_col = hasattr(Page, 'submission_status')
+        if hasattr(Page, 'private'):
+            query = query.filter(Page.private == False)  # noqa: E712
+        if has_status_col:
+            from sqlalchemy import or_
+            query = query.filter(or_(
+                Page.submission_status == None,  # noqa: E711
+                Page.submission_status.notin_(['pending', 'rejected'])))
         query = query.order_by(Page.created.desc()).limit(limit * 3)
         results = []
         for pg in query.all():
@@ -2636,7 +2647,7 @@ def _search_water_events(q, limit):
                     extras = json.loads(pg.extras)
                 except (ValueError, TypeError):
                     extras = {}
-            if extras.get('submission_status') in ('pending', 'rejected'):
+            if not has_status_col and extras.get('submission_status') in ('pending', 'rejected'):
                 continue
             publish_date = getattr(pg, 'publish_date', None)
             results.append({
