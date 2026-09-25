@@ -203,26 +203,11 @@ function enhanceForms() {
             });
         });
         
-        // Validación mejorada
-        document.querySelectorAll('form').forEach(form => {
-            form.addEventListener('submit', function(e) {
-                const requiredFields = this.querySelectorAll('[required]');
-                let isValid = true;
-                
-                requiredFields.forEach(field => {
-                    if (!field.value.trim()) {
-                        field.classList.add('error');
-                        isValid = false;
-                    } else {
-                        field.classList.remove('error');
-                    }
-                });
-                
-                if (!isValid) {
-                    e.preventDefault();
-                }
-            });
-        });
+        // Nota (2026-09): se retiró el bloqueo global de submit que había aquí.
+        // Cancelaba el envío de CUALQUIER form con un [required] vacío añadiendo
+        // una clase .error sin CSS ni mensaje (bloqueo silencioso, también en
+        // forms con novalidate o enviados por fetch). La validación nativa de
+        // `required` ya impide el envío mostrando el mensaje del navegador.
         
     } catch (error) {
         console.error('Error al mejorar formularios:', error);
