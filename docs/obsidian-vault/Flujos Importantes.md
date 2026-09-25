@@ -383,7 +383,15 @@ draft ──submit──▶ pending ──approve──▶ published
   `_logged_in_only`.
 - `cache.py` excluye `/ihpix/report`, `/ihpix/outputs`, `/ihpix/dashboard`,
   `/ihpix/priority-area`, `/ihpix/contributors`, `/ihpix/workspaces`,
-  `/ihpix/my-reports` de la caché anónima (la landing sí se cachea).
+  `/ihpix/my-reports`, `/ihpix/markdown-preview`, `/ihpix/publications` de la
+  caché anónima (la landing sí se cachea).
+- `POST /ihpix/markdown-preview` (login): `{text}` → `{html}` con
+  `h.render_markdown` (CKAN 2.10 no expone `/api/util/markdown`). Lo usa el
+  editor Markdown del kit de formularios ([[Modulos#Kit de formularios IHP-IX]]).
+- Eventos: los enlaces "Create an event/news" usan `h.ihpix_pages_url` →
+  `pages.water_events_new` (`/water-events_edit`); antes apuntaban a
+  `/water-events/new`, inexistente en el fork. `_search_water_events` filtra
+  por las columnas `private` y `submission_status` del fork.
 
 ### 7.3 Recompute del resumen por país
 

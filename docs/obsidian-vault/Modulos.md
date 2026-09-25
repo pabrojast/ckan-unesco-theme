@@ -225,6 +225,28 @@ Helpers: `is_valid_*`, `normalize_bool`, `filter_valid`.
 
 ---
 
+## Kit de formularios IHP-IX (`public/js/ihpix-forms.js` + `public/css/ihpix-forms.css`)
+
+**Rol**: componentes de UI reutilizables en vanilla JS (sin jQuery ni dependencias nuevas), opt-in por atributos `data-ihpix-*`. Se cargan con las macros de `templates/ihpix/snippets/forms_assets.html` (`forms_styles()` + `forms_scripts()`, que inyecta cadenas traducidas y la URL del preview en `#ihpix-forms-i18n`). Bundle webassets `theme/ihpix-forms-js`.
+
+| Componente | Opt-in | Notas |
+|---|---|---|
+| `MarkdownEditor` | `textarea[data-ihpix-markdown]` | barra (negrita, cursiva, título, listas, enlace; Ctrl+B/I/K), pestañas Write/Preview (`POST /ihpix/markdown-preview`), inserta con `setRangeText` y dispara `input` |
+| `Combobox` | `select[data-ihpix-combobox]` · `input[data-ihpix-combobox=remote][data-source-url]` | patrón WAI-ARIA combobox; búsqueda sin diacríticos sobre label + `data-search`; ≤60 filas |
+| `MultiPicker` | `[data-ihpix-multipicker][data-value-mode=checkboxes|json]` | buscador + chips + contador sobre checkboxes nativos |
+| `CharCounter` | `textarea[maxlength][data-ihpix-counter]` | `n / max`, `aria-describedby`, avisa al 80/95/100 % |
+| `Toast` | `window.ihpixToast(msg, type)` | `#ixf-toasts` `role=status`; errores `role=alert` |
+| `ConfirmDialog` | `[data-ihpix-confirm="…"]` en form/botón | retira el `onsubmit="return confirm()"` inline (fallback sin JS) |
+| `FileUpload` | `[data-ihpix-upload][data-max-mb][data-accept]` | zona botón + drag&drop, `role=progressbar`, validación tamaño/tipo; `IhpixForms.upload()` (XHR con progreso) |
+| `Modal` | `.ixf-modal[role=dialog]` + `[data-ihpix-modal-open="#id"]` | focus trap, Esc, backdrop, devuelve el foco |
+
+Principio: **nunca se elimina el control nativo**; se oculta (`.ixf-visually-hidden`) y se sincroniza, de modo que `collectFormData/restoreFormData/highlightServerErrors` del reporte siguen funcionando. `IhpixForms.refresh(root)` relee los valores tras una restauración (lo llama `refreshDerivedUI()` del reporte). Helpers: `csrfToken()`, `postForm()`, `applyFieldErrors()`, `markInvalid()`.
+
+> [!note] Bug global corregido (2026-09)
+> `public/theme_ejemplo_enhanced.js` `enhanceForms()` bloqueaba el submit de **cualquier** form con un `[required]` vacío añadiendo `.error` (sin CSS ni mensaje). Se retiró ese bloqueo; la validación nativa de `required` ya lo cubre.
+
+---
+
 ## ihpix_i18n_strings.py
 
 **Rol**: Lista de literales de las taxonomías (`ihpix_constants`) envueltos en un `_()` no-op para que Babel los extraiga al `.pot`. Los templates traducen los valores en runtime con `h.ihpix_t(valor)`. No se importa desde producción; `tests/test_ihpix_constants.py` comprueba que cubre las constantes.
@@ -263,6 +285,9 @@ Helpers: `is_valid_*`, `normalize_bool`, `filter_valid`.
 
 **IHP-IX working groups** (5):
 `get_pending_ihpix_wg_members_count()` (cola `ihpix_wg_members` de la campana: pendientes de los workspaces que el usuario lidera; sysadmin todos), `get_user_ihpix_summary(user_id)` (reportes por estado, workspaces activos, contribuciones por tipo; caché 60 s; alimenta el perfil y `/user/<id>/ihpix`), `ihpix_wg_role_label()`, `ihpix_member_status_label()`, `ihpix_contribution_label()`
+
+**IHP-IX UI** (2):
+`ihpix_pages_url(endpoint, fallback)` (URL de endpoints de otras extensiones con fallback si el blueprint no está: `pages.water_events_new` → `/water-events_edit`), `ihpix_markdown(text)` (Markdown → HTML saneado con `render_markdown`, envuelto en `.ixf-md-body`)
 
 **IHP-IX** (9):
 `get_pending_ihpix_reports_count()` (cola `ihpix_reports` de la campana, sysadmin), `get_ihpix_reporter(reported_by)` → `{id, name, display_name, url}` resolviendo id o username (caché 5 min; texto libre del seed → solo `display_name`), `ihpix_link_url(link)` y `ihpix_link_type_label(link_type)` (adjuntos; usados por el macro `ihpix/snippets/activity_links.html`), `get_ihpix_taxonomies()` (todas las listas de `ihpix_constants` para los `<select>` de los templates: **única fuente**, sustituye las listas hardcodeadas que se habían desincronizado), `ihpix_output_title()`, `ihpix_output_label()`, `ihpix_priority_area_for_output()`, `ihpix_t(valor)` (traducción runtime de valores de taxonomía)

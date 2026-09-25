@@ -79,6 +79,7 @@ Ver [[Open Learning]] para el flujo completo de sincronización y curación.
 | `ckanext.theme_ejemplo.ihpix_basemap_url` | Esri World Light Gray Canvas (`server.arcgisonline.com/.../World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}`) | Plantilla de teselas Leaflet de los mapas IHP-IX (landing y dashboard). Se cambió desde CARTO porque `basemaps.cartocdn.com` exige API key y mostraba "API key required" |
 | `ckanext.theme_ejemplo.ihpix_basemap_attribution` | `Tiles © Esri — Esri, HERE, Garmin, FAO, NOAA, USGS` | Atribución HTML del basemap |
 | `ckanext.theme_ejemplo.ihpix_basemap_max_zoom` | `16` | Zoom máximo del basemap |
+| `ckanext.theme_ejemplo.ihpix_markdown_preview_max_chars` | `20000` | Tamaño máximo del texto aceptado por `POST /ihpix/markdown-preview` (editor Markdown del kit de formularios) |
 
 ### Claves de otras extensiones que este tema lee
 
