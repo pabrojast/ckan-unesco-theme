@@ -54,10 +54,7 @@
     {% endif %}
     <ul class="ihpix-links-list">
       {% for l in links %}
-        {% set icon = {
-          'publication': 'fa-book', 'webinar': 'fa-video-camera', 'event': 'fa-calendar',
-          'dataset': 'fa-database', 'output_data': 'fa-table', 'other': 'fa-link',
-        }.get(l.link_type, 'fa-link') %}
+        {% set icon = h.ihpix_link_type_icon(l.link_type) %}
         {% set url = l.public_url or h.ihpix_link_url(l) %}
         <li class="ihpix-link-item is-{{ l.link_type }}">
           <i class="fa {{ icon }}" aria-hidden="true"></i>

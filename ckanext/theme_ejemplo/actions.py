@@ -2733,8 +2733,382 @@ def ihpix_link_search(context, data_dict):
         return {'results': results, 'count': len(results), 'kind': kind,
                 'search_available': True}
 
+    if kind == 'course':
+        # Cursos aprobados de la caché curada de Open Learning
+        from ckanext.theme_ejemplo.model import (
+            OpenLearningCourse, init_open_learning_courses_db,
+        )
+        init_open_learning_courses_db()
+        results = []
+        try:
+            for course in OpenLearningCourse.search_public(q, limit=limit):
+                results.append({
+                    'target_kind': 'course',
+                    'target_id': course.course_id,
+                    'name': course.course_id,
+                    'title': course.name,
+                    'organization': course.org or '',
+                    'year': (course.start_display or ''),
+                    'url': ihpix_links.course_url(course.course_id),
+                })
+        except Exception as e:
+            model.Session.rollback()
+            log.warning('IHP-IX: no se pudieron buscar cursos: %s', e)
+        return {'results': results, 'count': len(results), 'kind': kind,
+                'search_available': True,
+                'can_propose': _ihpix_config_bool('ihpix_course_proposals_enabled', True)}
+
     raise toolkit.ValidationError(
-        {'kind': 'Must be one of: publication, dataset, output_data, event, webinar'})
+        {'kind': 'Must be one of: publication, dataset, output_data, event, webinar, course'})
+
+
+# ── Puentes al ecosistema: publicaciones inline y propuestas de cursos ─────
+
+def _ihpix_config_bool(key, default):
+    return toolkit.asbool(toolkit.config.get('ckanext.theme_ejemplo.' + key, default))
+
+
+def _ihpix_config_int(key, default):
+    try:
+        return int(toolkit.config.get('ckanext.theme_ejemplo.' + key, default))
+    except (TypeError, ValueError):
+        return default
+
+
+def ihpix_publication_orgs(context):
+    """Organizaciones donde el usuario del contexto puede crear datasets
+    (editor/admin). Lista de dicts `organization_list_for_user`."""
+    user_obj = _ihpix_user_obj(context)
+    if not user_obj:
+        return []
+    try:
+        return toolkit.get_action('organization_list_for_user')(
+            {'ignore_auth': True, 'user': user_obj.name},
+            {'id': user_obj.id, 'permission': 'create_dataset'}) or []
+    except Exception as e:
+        log.warning('IHP-IX: organization_list_for_user falló: %s', e)
+        return []
+
+
+def ihpix_documents_schema_fields(context):
+    """(campos del dataset, campos del recurso) del esquema `documents`
+    instalado, vía `scheming_dataset_schema_show`. Si scheming no está o el
+    esquema no existe se devuelve el listado completo de dev210 para no
+    bloquear la subida."""
+    from ckanext.theme_ejemplo import ihpix_publications as P
+    fallback = (
+        ['title_translated', 'notes_translated', 'document_type', 'tag_string',
+         'publication_year', 'authors_json', 'owner_org', 'access_level',
+         'groups__0__id', 'groups__1__id', 'language', 'license_id',
+         'identifier', 'name', 'contact_name', 'contact_email', 'document_doi'],
+        ['url', 'name', 'description', 'format'])
+    try:
+        schema = toolkit.get_action('scheming_dataset_schema_show')(
+            {'ignore_auth': True}, {'type': P.DATASET_TYPE})
+    except Exception as e:
+        log.warning('IHP-IX: no se pudo leer el esquema %s: %s', P.DATASET_TYPE, e)
+        return fallback
+    ds = [f.get('field_name') for f in schema.get('dataset_fields', []) if f.get('field_name')]
+    rs = [f.get('field_name') for f in schema.get('resource_fields', []) if f.get('field_name')]
+    return (ds or fallback[0], rs or fallback[1])
+
+
+def ihpix_publication_create(context, data_dict):
+    """Crea una publicación (dataset `documents` + recurso) desde IHP-IX y,
+    si viene `activity_id`, la adjunta al reporte.
+
+    data_dict: campos del modal (ver `ihpix_publications.validate_publication_input`)
+    + `upload` (FileStorage) opcional. Devuelve
+    {'package': {...}, 'link': {...}, 'attached': bool, 'warnings': [...]}.
+    """
+    from ckanext.theme_ejemplo import ihpix_publications as P
+    toolkit.check_access('ihpix_publication_create', context, data_dict)
+    user_obj = _ihpix_user_obj(context)
+    _ = toolkit._
+
+    orgs = ihpix_publication_orgs(context)
+    allowed = set()
+    for o in orgs:
+        allowed.add(o.get('id'))
+        allowed.add(o.get('name'))
+    if not allowed:
+        raise toolkit.NotAuthorized(
+            _('You need to be an editor or admin of an organization to upload publications'))
+
+    upload = data_dict.get('upload')
+    upload_filename = getattr(upload, 'filename', '') if upload is not None else ''
+    upload_size = None
+    if upload is not None:
+        try:
+            stream = getattr(upload, 'stream', None) or upload
+            pos = stream.tell()
+            stream.seek(0, 2)
+            upload_size = stream.tell()
+            stream.seek(pos)
+        except Exception:
+            upload_size = None
+    max_mb = _ihpix_config_int('ihpix_upload_max_mb', 50)
+    try:
+        clean = P.validate_publication_input(
+            data_dict, allowed_org_ids=allowed, max_upload_mb=max_mb,
+            upload_filename=upload_filename, upload_size=upload_size)
+    except P.PublicationValidationError as e:
+        raise toolkit.ValidationError(_ihpix_translate_errors(e))
+
+    # Resolver el `id` de la organización (el modal puede mandar el name)
+    owner = next((o for o in orgs if o.get('id') == clean['organization']
+                  or o.get('name') == clean['organization']), None)
+    clean['organization'] = owner['id'] if owner else clean['organization']
+
+    activity = None
+    if clean.get('activity_id'):
+        init_ihpix_activities_db()
+        activity = IhpixActivity.get(clean['activity_id'])
+        if activity is None:
+            raise toolkit.ObjectNotFound('IHP-IX activity not found')
+        toolkit.check_access('ihpix_activity_link_create', context,
+                             {'activity_id': activity.id})
+        if not clean.get('output_code'):
+            clean['output_code'] = (activity.output or u'').strip()
+
+    ds_fields, res_fields = ihpix_documents_schema_fields(context)
+    defaults = {
+        'language': toolkit.config.get(
+            'ckanext.theme_ejemplo.ihpix_publication_default_language', P.DEFAULT_LANGUAGE),
+        'license_id': toolkit.config.get(
+            'ckanext.theme_ejemplo.ihpix_publication_default_license', P.DEFAULT_LICENSE),
+        'contact_email': (user_obj.email if user_obj and user_obj.email else '') or
+                         toolkit.config.get('email_to', ''),
+        'contact_name': (user_obj.display_name or user_obj.name) if user_obj else '',
+        'tags': [t.strip() for t in toolkit.config.get(
+            'ckanext.theme_ejemplo.ihpix_publication_tags', 'ihp-ix').split(',') if t.strip()],
+    }
+
+    create_ctx = {'user': user_obj.name, 'auth_user_obj': user_obj,
+                  'model': model, 'session': model.Session}
+    warnings = []
+    pkg = None
+    last_error = None
+    taken = set()
+    for attempt in range(4):
+        name = P.slugify_title(clean['title'], taken=taken)
+        pkg_dict = P.build_package_dict(clean, ds_fields, defaults=defaults, name=name)
+        try:
+            pkg = toolkit.get_action('package_create')(dict(create_ctx), pkg_dict)
+            break
+        except toolkit.ValidationError as e:
+            errors = e.error_dict or {}
+            if 'name' in errors and attempt < 3:
+                taken.add(name)  # colisión de slug: reintentar con sufijo
+                continue
+            if 'groups' in errors and pkg_dict.get('groups'):
+                clean['member_state'] = ''
+                clean['initiative'] = ''
+                warnings.append(_('The publication could not be linked to the Member State group; you can add it later from the dataset page.'))
+                continue
+            last_error = e
+            break
+        except toolkit.NotAuthorized as e:
+            if pkg_dict.get('groups'):
+                # `package_create` exige permisos sobre los grupos → sin grupos
+                clean['member_state'] = ''
+                clean['initiative'] = ''
+                warnings.append(_('The publication could not be linked to the Member State group; you can add it later from the dataset page.'))
+                continue
+            raise
+    if pkg is None:
+        if last_error is not None:
+            raise toolkit.ValidationError(P.map_schema_errors(last_error.error_dict))
+        raise toolkit.ValidationError({'__all__': _('The publication could not be created')})
+
+    res_dict = P.build_resource_dict(clean, res_fields, package_id=pkg['id'])
+    if clean['source_kind'] == P.SOURCE_FILE:
+        res_dict['upload'] = upload
+    try:
+        toolkit.get_action('resource_create')(dict(create_ctx), res_dict)
+    except Exception as e:
+        # Rollback best effort: no dejar un documento sin fichero
+        try:
+            toolkit.get_action('package_delete')(dict(create_ctx), {'id': pkg['id']})
+        except Exception as e2:
+            log.warning('IHP-IX: no se pudo borrar el package %s tras fallar el recurso: %s', pkg['id'], e2)
+        log.warning('IHP-IX: resource_create falló para %s: %s', pkg['id'], e)
+        if isinstance(e, toolkit.ValidationError):
+            raise toolkit.ValidationError({'source': P.map_schema_errors(e.error_dict).get(
+                'source') or _('The file could not be uploaded')})
+        raise toolkit.ValidationError({'source': _('The file could not be uploaded')})
+
+    try:
+        pkg = toolkit.get_action('package_show')(dict(create_ctx), {'id': pkg['id']})
+    except Exception:
+        pass
+    link_item = P.link_item_for_package(pkg)
+    link_item['description'] = link_item.get('description') or ''
+
+    attached = None
+    if activity is not None:
+        try:
+            attached = toolkit.get_action('ihpix_activity_link_create')(
+                dict(context), dict(link_item, activity_id=activity.id))
+        except toolkit.ValidationError as e:
+            warnings.append(_format_validation_error_text(e))
+
+    # Ledger del workspace del Output (con o sin reporte adjunto)
+    try:
+        wg = None
+        if clean.get('output_code'):
+            init_ihpix_working_groups_db()
+            wg = IhpixWorkingGroup.get_by_output(clean['output_code'])
+        _ihpix_record_contribution(
+            user_obj.id, 'publication_created',
+            working_group_id=wg.id if wg else u'',
+            activity_id=activity.id if activity else u'',
+            meta={'package_id': pkg['id'], 'name': pkg.get('name'), 'title': pkg.get('title'),
+                  'document_type': clean.get('document_type')},
+            dedupe=False)
+        model.Session.commit()
+    except Exception as e:
+        model.Session.rollback()
+        log.warning('IHP-IX ledger (publication): %s', e)
+
+    return {
+        'package': {'id': pkg['id'], 'name': pkg.get('name'), 'title': pkg.get('title'),
+                    'url': link_item['url']},
+        'link': attached or link_item,
+        'attached': attached is not None,
+        'warnings': warnings,
+    }
+
+
+def _format_validation_error_text(exc):
+    parts = []
+    for key, msgs in (getattr(exc, 'error_dict', None) or {}).items():
+        if isinstance(msgs, (list, tuple)):
+            msgs = ', '.join(str(m) for m in msgs)
+        parts.append(u'{}: {}'.format(key, msgs))
+    return u'; '.join(parts) or str(exc)
+
+
+def ihpix_course_propose(context, data_dict):
+    """Propone un curso de UNESCO Open Learning para el catálogo de IHP-WINS.
+
+    data_dict: `course_url` o `course_id`, `note` opcional, `output_code`
+    opcional (ledger). Un curso nuevo queda `pending` hasta que un sysadmin
+    lo apruebe; si ya está aprobado devuelve el adjunto listo para usar.
+    """
+    toolkit.check_access('ihpix_course_propose', context, data_dict)
+    _ = toolkit._
+    if not _ihpix_config_bool('ihpix_course_proposals_enabled', True):
+        raise toolkit.NotAuthorized(_('Course proposals are disabled'))
+    from ckanext.theme_ejemplo.model import (
+        OpenLearningCourse, init_open_learning_courses_db,
+    )
+    from ckanext.theme_ejemplo import openlearning
+    init_open_learning_courses_db()
+    user_obj = _ihpix_user_obj(context)
+
+    raw = (data_dict.get('course_url') or data_dict.get('course_id') or u'').strip()
+    course_id = ihpix_links.parse_course_id(raw)
+    if not course_id:
+        raise toolkit.ValidationError({'course_url': _(
+            'Paste the address of a course on openlearning.unesco.org (…/courses/course-v1:…/about)')})
+    note = (data_dict.get('note') or u'').strip()[:500]
+
+    # Rate limit por usuario y día
+    per_day = _ihpix_config_int('ihpix_course_proposals_per_day', 10)
+    since = _dt.datetime.utcnow() - _dt.timedelta(days=1)
+    try:
+        proposed_today = OpenLearningCourse.count_proposed_since(user_obj.id, since) if per_day else 0
+    except Exception as e:  # columnas nuevas aún sin migrar: no bloquear
+        model.Session.rollback()
+        log.warning('IHP-IX: no se pudo comprobar el límite de propuestas: %s', e)
+        proposed_today = 0
+    if per_day and proposed_today >= per_day:
+        raise toolkit.ValidationError({'course_url': _(
+            'You have reached the daily limit of course proposals. Please try again tomorrow.')})
+
+    existing = OpenLearningCourse.get_by_course_id(course_id)
+    if existing is not None and existing.status == OpenLearningCourse.STATUS_HIDDEN:
+        raise toolkit.ValidationError({'course_url': _(
+            'This course is not available in the IHP-WINS catalogue.')})
+    if existing is not None and existing.status == OpenLearningCourse.STATUS_APPROVED:
+        return {'status': 'approved', 'created': False, 'course': existing.as_dict(),
+                'link': _ihpix_course_link_item(existing)}
+
+    try:
+        course, action = openlearning.fetch_and_upsert_course(course_id)
+    except toolkit.ObjectNotFound:
+        raise toolkit.ValidationError({'course_url': _(
+            'No course with that address was found on Open Learning.')})
+    except RuntimeError:
+        raise toolkit.ValidationError({'course_url': _(
+            'Open Learning is not reachable right now. Please try again later.')})
+
+    now = _dt.datetime.utcnow()
+    if action == 'created' or not (getattr(course, 'proposed_by', None) or u''):
+        course.proposed_by = user_obj.id
+        course.proposed_at = now
+        course.proposal_note = note
+        course.updated_at = now
+    try:
+        wg = None
+        output_code = (data_dict.get('output_code') or u'').strip()
+        if output_code:
+            init_ihpix_working_groups_db()
+            wg = IhpixWorkingGroup.get_by_output(output_code)
+        _ihpix_record_contribution(
+            user_obj.id, 'course_proposed', working_group_id=wg.id if wg else u'',
+            meta={'course_id': course_id, 'name': course.name}, dedupe=False)
+    except Exception as e:
+        log.warning('IHP-IX ledger (course): %s', e)
+    model.Session.commit()
+
+    if action == 'created':
+        _ihpix_notify_course_proposal(course, user_obj, note)
+        try:
+            from ckanext.theme_ejemplo import approvals
+            approvals.invalidate()
+        except Exception:
+            pass
+    return {'status': course.status, 'created': action == 'created',
+            'course': course.as_dict(),
+            'link': _ihpix_course_link_item(course) if course.status == 'approved' else None}
+
+
+def _ihpix_course_link_item(course):
+    return {
+        'link_type': 'course', 'target_kind': 'course', 'target_id': course.course_id,
+        'title': course.name, 'url': ihpix_links.course_url(course.course_id),
+        'event_date': '', 'description': course.org or u'',
+    }
+
+
+def _ihpix_notify_course_proposal(course, proposer, note):
+    """Email a los sysadmins con la propuesta (best effort)."""
+    try:
+        import ckan.lib.mailer as mailer
+        _ = toolkit._
+        site_url = toolkit.config.get('ckan.site_url', '').rstrip('/')
+        admin_url = site_url + toolkit.url_for('theme_ejemplo.open_learning_admin')
+        subject = _('New IHP Open Learning course proposed: {name}').format(name=course.name)
+        body = _(
+            'Dear {name},\n\n'
+            '{proposer} proposed the course "{course}" for the IHP-WINS catalogue.\n\n'
+            'Course: {url}\n'
+            'Note: {note}\n\n'
+            'Review it here: {admin_url}\n'
+        )
+        for admin in model.Session.query(model.User).filter(
+                model.User.sysadmin == True, model.User.state == 'active').all():  # noqa: E712
+            if not admin.email:
+                continue
+            mailer.mail_user(admin, subject, body.format(
+                name=admin.display_name or admin.name,
+                proposer=proposer.display_name or proposer.name,
+                course=course.name, url=ihpix_links.course_url(course.course_id),
+                note=note or '-', admin_url=admin_url))
+    except Exception as e:
+        log.warning('IHP-IX: no se pudo avisar de la propuesta de curso: %s', e)
 
 
 # ── Working groups (workspaces por Output) ─────────────────────────────────
@@ -3029,6 +3403,11 @@ def ihpix_contribution_list(context, data_dict):
     results = []
     for r in rows:
         d = r.as_dict()
+        # `meta` viaja como JSON en BD; los templates lo leen como dict
+        try:
+            d['meta'] = json.loads(d.get('meta') or u'{}') or {}
+        except (TypeError, ValueError):
+            d['meta'] = {}
         d['label'] = W.contribution_label(r.kind)
         d['user'] = get_ihpix_reporter(r.user_id)
         d['activity'] = activities.get(r.activity_id)

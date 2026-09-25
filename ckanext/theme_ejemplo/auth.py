@@ -326,6 +326,16 @@ def ihpix_link_search(context, data_dict):
     return _logged_in_only(context, data_dict)
 
 
+def ihpix_publication_create(context, data_dict):
+    """Cualquier usuario logueado; la acción comprueba además que sea
+    editor/admin de la organización elegida."""
+    return _logged_in_only(context, data_dict)
+
+
+def ihpix_course_propose(context, data_dict):
+    return _logged_in_only(context, data_dict)
+
+
 # ── IHP-IX Working groups (workspaces) ──────────────────────────────────────
 
 def _ihpix_wg_manager_or_sysadmin(context, data_dict, wg=None):

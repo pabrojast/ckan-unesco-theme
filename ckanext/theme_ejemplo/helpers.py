@@ -1155,9 +1155,48 @@ def ihpix_link_type_label(link_type):
         'event': _('Event'),
         'dataset': _('Dataset'),
         'output_data': _('Output data'),
+        'course': _('Course'),
         'other': _('Other link'),
     }
     return labels.get(link_type, link_type or '')
+
+
+def ihpix_link_type_icon(link_type):
+    """Icono Font Awesome del tipo de adjunto (ihpix_links.TYPE_ICONS)."""
+    from ckanext.theme_ejemplo import ihpix_links
+    return ihpix_links.TYPE_ICONS.get(link_type, 'fa-link')
+
+
+def ihpix_link_types():
+    """[(valor, etiqueta traducida, icono)] para selects y listados."""
+    from ckanext.theme_ejemplo import ihpix_links
+    return [(t, ihpix_link_type_label(t), ihpix_links.TYPE_ICONS.get(t, 'fa-link'))
+            for t in ihpix_links.LINK_TYPES]
+
+
+def ihpix_contribution_icon(kind):
+    from ckanext.theme_ejemplo import ihpix_workspaces as W
+    return W.CONTRIBUTION_ICONS.get(kind, 'fa-circle')
+
+
+def get_pending_open_learning_count():
+    """Cursos Open Learning pendientes de curación (solo sysadmins).
+    Cola `open_learning` de la campana de aprobaciones."""
+    try:
+        from ckan.common import current_user
+        if not current_user or not current_user.is_authenticated:
+            return 0
+        if not current_user.sysadmin:
+            return 0
+        from ckanext.theme_ejemplo.model import (
+            OpenLearningCourse, init_open_learning_courses_db,
+        )
+        init_open_learning_courses_db()
+        return OpenLearningCourse.count_pending()
+    except Exception as e:
+        _rollback_session_after_helper_error()
+        log.error(f'Error getting pending Open Learning courses count: {e}')
+        return 0
 
 
 def get_my_pending_initiative_request():

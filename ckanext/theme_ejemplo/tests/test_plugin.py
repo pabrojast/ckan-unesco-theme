@@ -272,3 +272,21 @@ def test_ihpix_report_form_uses_kit_components(app):
     assert b'aria-describedby="ihpix-field-institution-help"' in body
     # Ya no queda el picker a mano
     assert b'ihpix-ms-search-input' not in body
+
+
+def test_ihpix_publication_create_requires_login(app):
+    resp = app.post('/ihpix/publications', data={'title': 'x'})
+    assert resp.status_code in (302, 403)
+
+
+def test_ihpix_course_propose_requires_login(app):
+    resp = app.post('/ihpix/courses/propose', data={'course_url': 'https://openlearning.unesco.org/courses/course-v1:A+B+C/about'})
+    assert resp.status_code in (302, 403)
+
+
+def test_ihpix_report_form_has_publication_modal_and_course_type(app):
+    resp = app.get('/ihpix/report')
+    assert resp.status_code == 200
+    assert b'id="ihpix-publication-modal"' in resp.data
+    assert b'data-ihpix-publication-open' in resp.data
+    assert b'<option value="course">' in resp.data

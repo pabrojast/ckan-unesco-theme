@@ -2,6 +2,7 @@
 {% import 'ihpix/snippets/activity_links.html' as links_ui %}
 {% import 'ihpix/snippets/page_styles.html' as ui %}
 {% import 'ihpix/snippets/forms_assets.html' as forms_ui %}
+{% import 'ihpix/snippets/publication_modal.html' as pub_ui %}
 
 {% block title %}{{ ws.title }} - {{ _('IHP-IX Working Groups') }} - {{ super() }}{% endblock %}
 
@@ -55,6 +56,15 @@
       <a class="ixp-btn ixp-btn-white" href="{{ h.url_for('theme_ejemplo.ihpix_report', pa=ws.priority_area, output=ws.output_code) }}">
         <i class="fa fa-paper-plane"></i> {{ _('Report an activity for this output') }}
       </a>
+      {% if publication_ctx and publication_ctx.logged_in %}
+        <button type="button" class="ixp-btn ixp-btn-ghost" data-ihpix-publication-open>
+          <i class="fa fa-cloud-upload"></i> {{ _('Upload a publication') }}
+        </button>
+        <a class="ixp-btn ixp-btn-ghost" target="_blank" rel="noopener"
+           href="{{ publication_ctx.dataset_new_url }}?tag_string=ihp-ix,ihp-ix-output-{{ ws.output_code }}{% if publication_ctx.orgs|length == 1 %}&owner_org={{ publication_ctx.orgs[0].id }}{% endif %}">
+          <i class="fa fa-database"></i> {{ _('Add a dataset') }}
+        </a>
+      {% endif %}
       {% if ws.status == 'active' %}
         {% if is_member %}
           {% if m.role != 'lead' %}
@@ -135,7 +145,7 @@
       <div class="ixp-card" id="attachments">
         <h2><i class="fa fa-paperclip"></i> {{ _('Publications, events & data') }}</h2>
         {% if links_grouped %}
-          {% for link_type in ['publication', 'webinar', 'event', 'dataset', 'output_data', 'other'] %}
+          {% for link_type in ['publication', 'webinar', 'event', 'dataset', 'output_data', 'course', 'other'] %}
             {% if links_grouped.get(link_type) %}
               <h3 style="font-size:0.85rem;text-transform:uppercase;letter-spacing:.05em;color:#64748B;margin:0.8rem 0 0.4rem;">{{ h.ihpix_link_type_label(link_type) }} ({{ links_grouped[link_type]|length }})</h3>
               {{ links_ui.render_links(links_grouped[link_type], compact=True, heading=False) }}
@@ -178,13 +188,15 @@
         {% if feed %}
           <ul class="ixw-feed">
             {% for item in feed %}
-              {% set icon = {'report_submitted': 'fa-paper-plane', 'report_published': 'fa-check-circle', 'link_added': 'fa-paperclip', 'member_joined': 'fa-user-plus', 'comment': 'fa-comment'}.get(item.kind, 'fa-circle') %}
+              {% set icon = h.ihpix_contribution_icon(item.kind) %}
               <li>
                 <i class="fa {{ icon }}" aria-hidden="true"></i>
                 <div>
                   {% if item.user and item.user.url %}<a href="{{ h.url_for('theme_ejemplo.user_ihpix', id=item.user.name) }}">{{ item.user.display_name }}</a>{% else %}{{ (item.user.display_name if item.user else item.user_id) }}{% endif %}
                   &middot; {{ h.ihpix_contribution_label(item.kind) }}
-                  {% if item.activity %}: <em>{{ item.activity.title }}</em>{% endif %}
+                  {% if item.activity %}: <em>{{ item.activity.title }}</em>
+                  {% elif item.meta and item.meta.title %}: <em>{% if item.meta.name %}<a href="{{ h.url_for('/documents/' ~ item.meta.name) }}">{{ item.meta.title }}</a>{% else %}{{ item.meta.title }}{% endif %}</em>
+                  {% elif item.meta and item.meta.name and item.kind == 'course_proposed' %}: <em>{{ item.meta.name }}</em>{% endif %}
                   <time>{{ h.time_ago_from_timestamp(item.created_at) }}</time>
                 </div>
               </li>
@@ -198,6 +210,10 @@
   </div>
 </div>
 </div>
+{% if publication_ctx %}
+  {{ forms_ui.forms_scripts() }}
+  {{ pub_ui.publication_modal(publication_ctx, mode='page') }}
+{% endif %}
 {% endblock %}
 
 {% block secondary %}{% endblock %}

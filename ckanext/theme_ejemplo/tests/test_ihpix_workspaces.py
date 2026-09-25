@@ -98,3 +98,10 @@ def test_labels_and_title():
     assert W.contribution_label('report_published') == 'Report published'
     assert W.role_label('lead') == 'Lead'
     assert set(W.MEMBER_ACTIONS) == {'approve', 'reject', 'remove', 'set_role', 'reinstate'}
+
+
+def test_new_contribution_kinds_have_labels_and_icons():
+    for kind in ('publication_created', 'course_proposed'):
+        assert kind in W.CONTRIBUTION_KINDS
+        assert W.contribution_label(kind) != kind
+    assert set(W.CONTRIBUTION_ICONS) == set(W.CONTRIBUTION_KINDS)

@@ -32,8 +32,21 @@ CONTRIBUTION_KINDS = OrderedDict([
     ('report_submitted', 'Report submitted for review'),
     ('report_published', 'Report published'),
     ('link_added', 'Publication, event or data attached'),
+    ('publication_created', 'Publication uploaded to IHP-WINS'),
+    ('course_proposed', 'Course proposed for the catalogue'),
     ('member_joined', 'Joined the working group'),
     ('comment', 'Comment'),  # reservado: sin UI en el piloto
+])
+
+# Iconos Font Awesome del feed (workspace_detail / perfil)
+CONTRIBUTION_ICONS = OrderedDict([
+    ('report_submitted', 'fa-paper-plane'),
+    ('report_published', 'fa-check-circle'),
+    ('link_added', 'fa-paperclip'),
+    ('publication_created', 'fa-cloud-upload'),
+    ('course_proposed', 'fa-graduation-cap'),
+    ('member_joined', 'fa-user-plus'),
+    ('comment', 'fa-comment'),
 ])
 
 ROLE_LABELS = OrderedDict([

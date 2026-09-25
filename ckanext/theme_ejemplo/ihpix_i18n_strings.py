@@ -127,4 +127,23 @@ VALIDATION_MESSAGES = [
     _('URL must be absolute (http/https) or site-relative'),
     _('URL is too long'),
     _('target_id is required for a {target_kind}'),
+    # ihpix_publications.MESSAGES (modal "Upload a publication")
+    _('Choose the organization that will own the publication'),
+    _('You cannot create publications in this organization'),
+    _('Invalid document type'),
+    _('Publication year must be between {min} and {max}'),
+    _('Enter a valid DOI (e.g. 10.1000/xyz123)'),
+    _('Upload a file or enter the URL of the publication'),
+    _('The URL must start with http:// or https://'),
+    _('This file type is not allowed ({ext})'),
+    _('The file is too large (max. {max} MB)'),
+    _('At most {max} authors'),
+    _('At most {max} keywords'),
+]
+
+# ihpix_links.TYPE_LABELS / ihpix_workspaces.CONTRIBUTION_KINDS nuevos
+LINK_AND_LEDGER_LABELS = [
+    _('Course'),
+    _('Publication uploaded to IHP-WINS'),
+    _('Course proposed for the catalogue'),
 ]

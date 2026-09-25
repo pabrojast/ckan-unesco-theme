@@ -181,6 +181,14 @@ def _collect_report_form(form):
     return data
 
 
+def _ihpix_safe_url(endpoint, fallback):
+    """url_for con fallback (el blueprint puede no existir en tests)."""
+    try:
+        return h.url_for(endpoint)
+    except Exception:
+        return fallback
+
+
 def _ihpix_links_map(activities):
     """{activity_id: [adjuntos]} para una lista de dicts de actividades."""
     try:
@@ -1103,6 +1111,7 @@ class MyLogica():
                 links_by_activity=links_by_activity,
                 links_grouped=links_grouped,
                 pending_count=ws.get('members_pending', 0) if ws.get('can_manage') else 0,
+                publication_ctx=MyLogica._ihpix_publication_context(output),
             )
 
         @staticmethod
@@ -1307,6 +1316,7 @@ class MyLogica():
                 timeline=timeline,
                 links_by_activity=links_by_activity,
                 links_grouped=links_grouped,
+                publication_ctx=MyLogica._ihpix_publication_context(code),
             )
 
         @staticmethod
@@ -4426,6 +4436,8 @@ class MyLogica():
                 can_edit=True,
                 form_initial=form_initial,
                 form_action_url=h.url_for('theme_ejemplo.ihpix_report'),
+                publication_ctx=MyLogica._ihpix_publication_context(
+                    form_initial.get('output', '')),
                 **MyLogica._ihpix_report_form_context()
             )
 
@@ -4461,6 +4473,8 @@ class MyLogica():
                 form_initial=activity.get('form', {}),
                 form_action_url=h.url_for('theme_ejemplo.ihpix_report_edit',
                                           id=id),
+                publication_ctx=MyLogica._ihpix_publication_context(
+                    (activity.get('output') or ''), activity=activity),
                 **MyLogica._ihpix_report_form_context()
             )
 
@@ -4505,6 +4519,143 @@ class MyLogica():
                                 'error': _('Text is too long to preview.')}), 413
             return jsonify({'success': True,
                             'html': str(h.render_markdown(text)) if text.strip() else ''})
+
+        @staticmethod
+        def _ihpix_publication_context(output_code='', activity=None):
+            """Contexto del modal "Upload a publication" (reporte, workspace,
+            página de Output): organizaciones donde el usuario puede crear
+            datasets, listas de grupos, campos disponibles del esquema
+            `documents`, reportes propios del Output y límites."""
+            from ckanext.theme_ejemplo import ihpix_publications as P
+            from ckanext.theme_ejemplo import actions as theme_actions
+            ctx = MyLogica._ihpix_ctx()
+            logged_in = bool(c.userobj)
+            orgs, ds_fields, res_fields, own_reports = [], [], [], []
+            if logged_in:
+                try:
+                    orgs = theme_actions.ihpix_publication_orgs(ctx)
+                except Exception as e:
+                    log.warning('IHP-IX: orgs del modal de publicación: %s', e)
+                try:
+                    ds_fields, res_fields = theme_actions.ihpix_documents_schema_fields(ctx)
+                except Exception as e:
+                    log.warning('IHP-IX: esquema documents: %s', e)
+                if output_code and activity is None:
+                    try:
+                        from ckanext.theme_ejemplo.model import IhpixActivity
+                        rows, _n = IhpixActivity.get_filtered(
+                            status=None, output=output_code,
+                            reported_by=[c.userobj.id, c.userobj.name], limit=50)
+                        own_reports = [{'id': a.id, 'title': a.title, 'status': a.status}
+                                       for a in rows]
+                    except Exception as e:
+                        log.warning('IHP-IX: reportes propios del Output %s: %s', output_code, e)
+            try:
+                initiatives = toolkit.h.get_initiatives_groups_list() or []
+            except Exception:
+                initiatives = []
+            try:
+                upload_max_mb = int(config.get('ckanext.theme_ejemplo.ihpix_upload_max_mb', 50))
+            except (TypeError, ValueError):
+                upload_max_mb = 50
+            return {
+                'logged_in': logged_in,
+                'orgs': [{'id': o.get('id'), 'name': o.get('name'),
+                          'title': o.get('title') or o.get('display_name') or o.get('name')}
+                         for o in orgs],
+                'member_states': get_member_states_for_select(),
+                'initiatives': [(n, t) for n, t in initiatives],
+                'schema_fields': ds_fields,
+                'document_types': list(P.DOCUMENT_TYPES),
+                'default_document_type': P.DEFAULT_DOCUMENT_TYPE,
+                'educational_type': P.EDUCATIONAL_DOCUMENT_TYPE,
+                'own_reports': own_reports,
+                'output_code': output_code or '',
+                'activity_id': activity.get('id') if isinstance(activity, dict) and activity.get('id') else '',
+                'upload_max_mb': upload_max_mb,
+                'accept': ','.join('.' + e for e in P.ALLOWED_EXTENSIONS),
+                'can_propose_courses': toolkit.asbool(config.get(
+                    'ckanext.theme_ejemplo.ihpix_course_proposals_enabled', True)),
+                'post_url': h.url_for('theme_ejemplo.ihpix_publication_create'),
+                'propose_url': h.url_for('theme_ejemplo.ihpix_course_propose'),
+                'dataset_new_url': _ihpix_safe_url('dataset.new', '/dataset/new'),
+                'organizations_url': h.url_for('/organization'),
+            }
+
+        @staticmethod
+        def _ihpix_error_response(e, status=400):
+            """ValidationError → JSON {'success': False, 'errors': {...}}."""
+            errors = {}
+            for key, msgs in (getattr(e, 'error_dict', None) or {}).items():
+                if isinstance(msgs, (list, tuple)):
+                    msgs = ', '.join(str(m) for m in msgs)
+                errors[key] = str(msgs)
+            if not errors:
+                errors['__all__'] = str(e)
+            return jsonify({'success': False, 'errors': errors}), status
+
+        @staticmethod
+        def ihpix_publication_create_view():
+            """POST multipart /ihpix/publications → crea el dataset `documents`
+            (+ recurso) y, si viene `activity_id`, lo adjunta al reporte."""
+            if not c.userobj:
+                return jsonify({'success': False, 'reason': 'login',
+                                'error': _('You must be logged in')}), 403
+            data = {k: v for k, v in request.form.items()}
+            upload = request.files.get('file') or request.files.get('upload')
+            if upload is not None and not getattr(upload, 'filename', ''):
+                upload = None
+            if upload is not None:
+                data['upload'] = upload
+            try:
+                result = toolkit.get_action('ihpix_publication_create')(
+                    MyLogica._ihpix_ctx(), data)
+            except toolkit.ValidationError as e:
+                return MyLogica._ihpix_error_response(e, 400)
+            except toolkit.NotAuthorized as e:
+                return jsonify({'success': False, 'reason': 'no_org', 'error': str(e),
+                                'organizations_url': h.url_for('/organization')}), 403
+            except toolkit.ObjectNotFound as e:
+                return jsonify({'success': False, 'error': str(e)}), 404
+            except Exception as e:
+                log.error('IHP-IX: error creando publicación: %s', e, exc_info=True)
+                return jsonify({'success': False,
+                                'error': _('The publication could not be created')}), 500
+            result['success'] = True
+            return jsonify(result)
+
+        @staticmethod
+        def ihpix_course_propose_view():
+            """POST /ihpix/courses/propose (XHR → JSON; form → redirect+flash)."""
+            wants_json = (request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+                          or 'application/json' in (request.headers.get('Accept') or ''))
+            if not c.userobj:
+                if wants_json:
+                    return jsonify({'success': False, 'reason': 'login',
+                                    'error': _('You must be logged in')}), 403
+                return _require_login()
+            data = {k: v for k, v in request.form.items()}
+            back = data.get('came_from') or h.url_for('theme_ejemplo.courses')
+            try:
+                result = toolkit.get_action('ihpix_course_propose')(MyLogica._ihpix_ctx(), data)
+            except toolkit.ValidationError as e:
+                if wants_json:
+                    return MyLogica._ihpix_error_response(e, 400)
+                h.flash_error(_format_error_dict(e.error_dict))
+                return redirect(back)
+            except toolkit.NotAuthorized as e:
+                if wants_json:
+                    return jsonify({'success': False, 'error': str(e)}), 403
+                h.flash_error(str(e))
+                return redirect(back)
+            if wants_json:
+                result['success'] = True
+                return jsonify(result)
+            if result.get('status') == 'approved':
+                h.flash_success(_('This course is already in the IHP-WINS catalogue.'))
+            else:
+                h.flash_success(_('Thank you! The course was proposed and will appear once the IHP-WINS team approves it.'))
+            return redirect(back)
 
         @staticmethod
         def ihpix_my_reports():

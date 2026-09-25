@@ -1,0 +1,384 @@
+{#
+  Modal "Upload a publication" (IHP-IX → documentos de IHP-WINS).
+
+  Uso:
+    {% import 'ihpix/snippets/publication_modal.html' as pub_ui %}
+    {{ pub_ui.publication_modal(publication_ctx, mode='report') }}   {# dentro del reporte #}
+    {{ pub_ui.publication_modal(publication_ctx, mode='page') }}     {# workspace / Output #}
+
+  Abrir: cualquier botón con data-ihpix-publication-open (opcional
+  data-document-type="educational_material"). Requiere el kit de formularios
+  (forms_assets.forms_styles/forms_scripts) en la página.
+
+  - mode='report': al crear, llama a window.ihpixLinks.add(link) → el adjunto
+    entra en la Sección VII y se guarda con el reporte (no hay activity_id
+    hasta guardar). En edición sí viaja activity_id y el servidor lo adjunta.
+  - mode='page': el usuario elige a qué reporte propio adjuntar (o ninguno);
+    al terminar se muestra el enlace y un botón para recargar.
+
+  `ctx` = controller._ihpix_publication_context(...)
+#}
+{% macro publication_modal(ctx, mode='page') %}
+{% set fields = ctx.schema_fields or [] %}
+{% set show_type = (not fields) or ('document_type' in fields) %}
+{% set show_authors = (not fields) or ('authors_json' in fields) %}
+{% set show_doi = (not fields) or ('document_doi' in fields) %}
+{% set show_ms = (not fields) or ('groups__0__id' in fields) %}
+{% set show_initiative = ((not fields) or ('groups__1__id' in fields)) and ctx.initiatives %}
+{% set doc_type_labels = {
+  'scientific_paper': _('Scientific paper'), 'technical_report': _('Technical report'),
+  'policy_brief': _('Policy brief'), 'dataset_documentation': _('Dataset documentation'),
+  'book': _('Book'), 'book_chapter': _('Book chapter'), 'conference_paper': _('Conference paper'),
+  'thesis': _('Thesis'), 'preprint': _('Preprint'), 'working_paper': _('Working paper'),
+  'manual': _('Manual'), 'educational_material': _('Educational / training material'), 'other': _('Other'),
+} %}
+
+<div class="ixf-modal" id="ihpix-publication-modal" hidden role="dialog" aria-modal="true"
+     aria-labelledby="ihpix-pub-title" data-mode="{{ mode }}"
+     data-post-url="{{ ctx.post_url }}" data-output-code="{{ ctx.output_code }}"
+     data-activity-id="{{ ctx.activity_id }}">
+  <div class="ixf-modal-dialog is-wide">
+    <div class="ixf-modal-header">
+      <h2 class="ixf-modal-title" id="ihpix-pub-title"><i class="fa fa-cloud-upload" aria-hidden="true"></i> {{ _('Upload a publication to IHP-WINS') }}</h2>
+      <button type="button" class="ixf-modal-close" data-ihpix-modal-close aria-label="{{ _('Close') }}">&times;</button>
+    </div>
+
+    {% if not ctx.logged_in %}
+      <div class="ixf-modal-body">
+        <p>{{ _('Please log in to upload publications.') }}</p>
+      </div>
+      <div class="ixf-modal-footer">
+        <a class="ihpix-report-btn is-primary" href="{{ h.url_for('user.login') }}">{{ _('Log in') }}</a>
+      </div>
+    {% elif not ctx.orgs %}
+      <div class="ixf-modal-body ixf-empty-state">
+        <p><strong>{{ _('You are not an editor of any organization yet.') }}</strong></p>
+        <p>{{ _('Publications in IHP-WINS belong to an organization (a UNESCO Category 2 Centre, Chair, National Committee or partner). Ask an organization administrator to add you as an editor, or request membership from the organization page.') }}</p>
+      </div>
+      <div class="ixf-modal-footer">
+        <a class="ihpix-report-btn is-secondary" href="{{ ctx.organizations_url }}" target="_blank" rel="noopener"><i class="fa fa-building-o" aria-hidden="true"></i> {{ _('Browse organizations') }}</a>
+        <button type="button" class="ihpix-report-btn is-primary" data-ihpix-modal-close>{{ _('Close') }}</button>
+      </div>
+    {% else %}
+      <form id="ihpix-publication-form" class="ixf-form" novalidate enctype="multipart/form-data" method="post" action="{{ ctx.post_url }}">
+        {{ h.csrf_input() }}
+        <input type="hidden" name="output_code" value="{{ ctx.output_code }}">
+        {% if mode == 'report' %}<input type="hidden" name="activity_id" value="{{ ctx.activity_id }}">{% endif %}
+        <div class="ixf-modal-body">
+          <div class="ixf-alert is-error" id="ihpix-pub-error" role="alert" hidden></div>
+
+          <div class="ihpix-report-row">
+            <div class="ihpix-report-field" style="flex: 2 1 320px;">
+              <label class="ihpix-report-label" for="ihpix-pub-field-title">{{ _('Title') }} <span class="ihpix-report-required">*</span></label>
+              <input type="text" id="ihpix-pub-field-title" name="title" class="ihpix-report-input" maxlength="300" required data-autofocus>
+              <div class="ihpix-report-error-text" role="alert" data-error-for="title"></div>
+            </div>
+            {% if show_type %}
+            <div class="ihpix-report-field" style="flex: 1 1 220px;">
+              <label class="ihpix-report-label" for="ihpix-pub-field-type">{{ _('Type of document') }}</label>
+              <select id="ihpix-pub-field-type" name="document_type" class="ihpix-report-select">
+                {% for t in ctx.document_types %}
+                  <option value="{{ t }}"{% if t == ctx.default_document_type %} selected{% endif %}>{{ doc_type_labels.get(t, t) }}</option>
+                {% endfor %}
+              </select>
+              <div class="ihpix-report-error-text" role="alert" data-error-for="document_type"></div>
+            </div>
+            {% endif %}
+          </div>
+
+          <div class="ihpix-report-row">
+            <div class="ihpix-report-field" style="flex: 2 1 320px;">
+              <label class="ihpix-report-label" for="ihpix-pub-field-org">{{ _('Organization') }} <span class="ihpix-report-required">*</span></label>
+              <span class="ihpix-report-help" id="ihpix-pub-field-org-help">{{ _('The organization that will own the publication in IHP-WINS. Only organizations where you are an editor are listed.') }}</span>
+              <select id="ihpix-pub-field-org" name="organization" class="ihpix-report-select" required aria-describedby="ihpix-pub-field-org-help"{% if ctx.orgs|length > 6 %} data-ihpix-combobox{% endif %}>
+                {% for o in ctx.orgs %}
+                  <option value="{{ o.id }}"{% if ctx.orgs|length == 1 %} selected{% endif %}>{{ o.title }}</option>
+                {% endfor %}
+              </select>
+              <div class="ihpix-report-error-text" role="alert" data-error-for="organization"></div>
+            </div>
+            <div class="ihpix-report-field" style="flex: 1 1 160px;">
+              <label class="ihpix-report-label" for="ihpix-pub-field-year">{{ _('Publication year') }}</label>
+              <input type="number" id="ihpix-pub-field-year" name="publication_year" class="ihpix-report-input" min="1900" max="2100" step="1" inputmode="numeric">
+              <div class="ihpix-report-error-text" role="alert" data-error-for="publication_year"></div>
+            </div>
+          </div>
+
+          {% if show_authors %}
+          <div class="ihpix-report-field">
+            <label class="ihpix-report-label" for="ihpix-pub-field-authors">{{ _('Authors') }}</label>
+            <span class="ihpix-report-help" id="ihpix-pub-field-authors-help">{{ _('One author per line. Optionally add the affiliation after a semicolon: “Ada Lovelace; UNESCO”.') }}</span>
+            <textarea id="ihpix-pub-field-authors" name="authors" class="ihpix-report-textarea" rows="2" maxlength="2000" aria-describedby="ihpix-pub-field-authors-help"></textarea>
+            <div class="ihpix-report-error-text" role="alert" data-error-for="authors"></div>
+          </div>
+          {% endif %}
+
+          <div class="ihpix-report-field">
+            <label class="ihpix-report-label" for="ihpix-pub-field-abstract">{{ _('Abstract') }}</label>
+            <textarea id="ihpix-pub-field-abstract" name="abstract" class="ihpix-report-textarea" rows="4" maxlength="2000" data-ihpix-markdown data-ihpix-counter></textarea>
+            <div class="ihpix-report-error-text" role="alert" data-error-for="abstract"></div>
+          </div>
+
+          <fieldset class="ixf-fieldset">
+            <legend class="ihpix-report-label">{{ _('Document') }} <span class="ihpix-report-required">*</span></legend>
+            <div class="ixf-segmented" role="radiogroup" aria-label="{{ _('Source') }}">
+              <label><input type="radio" name="source_kind" value="file" checked> <span>{{ _('Upload a file') }}</span></label>
+              <label><input type="radio" name="source_kind" value="url"> <span>{{ _('Link to a URL') }}</span></label>
+            </div>
+            <div data-source-panel="file">
+              <div data-ihpix-upload data-max-mb="{{ ctx.upload_max_mb }}" data-accept="{{ ctx.accept }}">
+                <input type="file" name="file" id="ihpix-pub-field-file" accept="{{ ctx.accept }}">
+              </div>
+            </div>
+            <div data-source-panel="url" hidden>
+              <input type="url" name="source_url" id="ihpix-pub-field-url" class="ihpix-report-input" placeholder="https://" inputmode="url" aria-label="{{ _('URL of the publication') }}">
+            </div>
+            <div class="ihpix-report-error-text" role="alert" data-error-for="source"></div>
+          </fieldset>
+
+          <details class="ixf-details">
+            <summary>{{ _('More details (DOI, Member State, keywords)') }}</summary>
+            <div class="ihpix-report-row">
+              {% if show_doi %}
+              <div class="ihpix-report-field" style="flex: 1 1 220px;">
+                <label class="ihpix-report-label" for="ihpix-pub-field-doi">{{ _('DOI') }}</label>
+                <input type="text" id="ihpix-pub-field-doi" name="doi" class="ihpix-report-input" placeholder="10.1000/xyz123">
+                <div class="ihpix-report-error-text" role="alert" data-error-for="doi"></div>
+              </div>
+              {% endif %}
+              {% if show_ms and ctx.member_states %}
+              <div class="ihpix-report-field" style="flex: 1 1 220px;">
+                <label class="ihpix-report-label" for="ihpix-pub-field-ms">{{ _('Member State') }}</label>
+                <select id="ihpix-pub-field-ms" name="member_state" class="ihpix-report-select" data-ihpix-combobox>
+                  <option value="">{{ _('— None —') }}</option>
+                  {% for code, name in ctx.member_states %}
+                    <option value="{{ code }}" data-search="{{ code }}">{{ _(name) }}</option>
+                  {% endfor %}
+                </select>
+                <div class="ihpix-report-error-text" role="alert" data-error-for="member_state"></div>
+              </div>
+              {% endif %}
+              {% if show_initiative %}
+              <div class="ihpix-report-field" style="flex: 1 1 220px;">
+                <label class="ihpix-report-label" for="ihpix-pub-field-initiative">{{ _('Initiative') }}</label>
+                <select id="ihpix-pub-field-initiative" name="initiative" class="ihpix-report-select" data-ihpix-combobox>
+                  <option value="">{{ _('— None —') }}</option>
+                  {% for code, name in ctx.initiatives %}
+                    <option value="{{ code }}">{{ name }}</option>
+                  {% endfor %}
+                </select>
+                <div class="ihpix-report-error-text" role="alert" data-error-for="initiative"></div>
+              </div>
+              {% endif %}
+            </div>
+            <div class="ihpix-report-field">
+              <label class="ihpix-report-label" for="ihpix-pub-field-keywords">{{ _('Keywords') }}</label>
+              <span class="ihpix-report-help" id="ihpix-pub-field-keywords-help">{{ _('Separated by commas. The tags “ihp-ix” and the Output code are added automatically.') }}</span>
+              <input type="text" id="ihpix-pub-field-keywords" name="keywords" class="ihpix-report-input" maxlength="500" aria-describedby="ihpix-pub-field-keywords-help">
+              <div class="ihpix-report-error-text" role="alert" data-error-for="keywords"></div>
+            </div>
+          </details>
+
+          {% if mode == 'page' %}
+          <div class="ihpix-report-field" id="ihpix-pub-attach-field">
+            <label class="ihpix-report-label" for="ihpix-pub-field-attach">{{ _('Attach to my report') }}</label>
+            {% if ctx.own_reports %}
+              <select id="ihpix-pub-field-attach" name="activity_id" class="ihpix-report-select">
+                {% if ctx.own_reports|length > 1 %}<option value="">{{ _('— Do not attach —') }}</option>{% endif %}
+                {% for r in ctx.own_reports %}
+                  <option value="{{ r.id }}">{{ r.title }} ({{ h.ihpix_t(r.status) }})</option>
+                {% endfor %}
+              </select>
+            {% else %}
+              <span class="ihpix-report-help">{{ _('You have no report for this output yet. The publication will still be searchable in Section VII of any report.') }}
+                <a href="{{ h.url_for('theme_ejemplo.ihpix_report', output=ctx.output_code) }}">{{ _('Start a report for this output') }} &rarr;</a></span>
+            {% endif %}
+          </div>
+          {% endif %}
+
+          <div class="ixf-alert is-success" id="ihpix-pub-success" hidden></div>
+        </div>
+        <div class="ixf-modal-footer">
+          <span class="ixf-muted" style="flex:1;">{{ _('The publication is created as a public document dataset in IHP-WINS.') }}</span>
+          <button type="button" class="ihpix-report-btn is-secondary" data-ihpix-modal-close>{{ _('Cancel') }}</button>
+          <button type="submit" class="ihpix-report-btn is-primary" id="ihpix-pub-submit">
+            <i class="fa fa-cloud-upload" aria-hidden="true"></i> {{ _('Upload and attach') }}
+          </button>
+        </div>
+      </form>
+    {% endif %}
+  </div>
+</div>
+
+<style>
+  .ixf-segmented { display: inline-flex; border: 1px solid var(--ixf-border, #cbd5e1); border-radius: 8px; overflow: hidden; margin-block-end: 0.6rem; }
+  .ixf-segmented label { display: inline-flex; align-items: center; gap: 0.35rem; padding: 0.35rem 0.8rem; cursor: pointer; font-size: 0.85rem; margin: 0; }
+  .ixf-segmented label + label { border-inline-start: 1px solid var(--ixf-border, #cbd5e1); }
+  .ixf-segmented input { margin: 0; }
+  .ixf-segmented label:has(input:checked) { background: var(--ixf-primary-soft, #e6f0f8); font-weight: 600; }
+  .ixf-details summary { cursor: pointer; font-weight: 600; color: var(--ixf-primary-dark, #0f3d6b); margin: 0.6rem 0; }
+  .ixf-alert { border-radius: 8px; padding: 0.6rem 0.9rem; margin-block-end: 0.75rem; font-size: 0.9rem; }
+  .ixf-alert.is-error { background: #fef2f2; color: #991b1b; border: 1px solid #fecaca; }
+  .ixf-alert.is-success { background: #f0fdf4; color: #166534; border: 1px solid #bbf7d0; }
+  .ixf-alert[hidden] { display: none; }
+  .ixf-empty-state p { margin: 0 0 0.6rem; }
+  .ixf-muted { color: var(--ixf-text-muted, #64748b); font-size: 0.8rem; }
+  #ihpix-publication-modal .ihpix-report-error-text:empty { display: none; }
+</style>
+
+<script>
+(function() {
+  'use strict';
+  var modal = document.getElementById('ihpix-publication-modal');
+  if (!modal) return;
+  var form = document.getElementById('ihpix-publication-form');
+  var MSG = {
+    uploading: {{ _('Uploading…')|tojson }},
+    created: {{ _('Publication created in IHP-WINS.')|tojson }},
+    attached: {{ _('Publication created and attached to the report.')|tojson }},
+    viewDoc: {{ _('View document')|tojson }},
+    reload: {{ _('Reload page')|tojson }},
+    fixErrors: {{ _('Please review the highlighted fields.')|tojson }},
+    network: {{ _('Network error. Please try again.')|tojson }},
+    uploadAndAttach: {{ _('Upload and attach')|tojson }}
+  };
+  var mode = modal.getAttribute('data-mode');
+
+  function openWith(opts) {
+    opts = opts || {};
+    if (form) {
+      var typeSel = form.querySelector('[name="document_type"]');
+      if (typeSel && opts.documentType) {
+        for (var i = 0; i < typeSel.options.length; i++) {
+          if (typeSel.options[i].value === opts.documentType) { typeSel.value = opts.documentType; break; }
+        }
+      }
+      var success = document.getElementById('ihpix-pub-success');
+      if (success) { success.hidden = true; success.innerHTML = ''; }
+      var err = document.getElementById('ihpix-pub-error');
+      if (err) { err.hidden = true; err.textContent = ''; }
+    }
+    if (window.IhpixForms && window.IhpixForms.Modal) { window.IhpixForms.Modal.open(modal); }
+    else { modal.hidden = false; }
+  }
+  // Botones de apertura: [data-ihpix-publication-open][data-document-type]
+  document.addEventListener('click', function(e) {
+    var btn = e.target.closest ? e.target.closest('[data-ihpix-publication-open]') : null;
+    if (!btn) return;
+    e.preventDefault();
+    openWith({ documentType: btn.getAttribute('data-document-type') || '' });
+  });
+  window.ihpixPublicationModal = { open: openWith };
+
+  if (!form) return;
+
+  // Fuente: fichero | URL
+  form.querySelectorAll('[name="source_kind"]').forEach(function(r) {
+    r.addEventListener('change', function() {
+      form.querySelectorAll('[data-source-panel]').forEach(function(p) {
+        p.hidden = p.getAttribute('data-source-panel') !== r.value;
+      });
+    });
+  });
+
+  function setErrors(errors) {
+    form.querySelectorAll('[data-error-for]').forEach(function(n) { n.textContent = ''; });
+    form.querySelectorAll('[aria-invalid]').forEach(function(n) { n.removeAttribute('aria-invalid'); });
+    var general = [];
+    Object.keys(errors || {}).forEach(function(k) {
+      var box = form.querySelector('[data-error-for="' + k + '"]');
+      var msg = Array.isArray(errors[k]) ? errors[k].join(', ') : errors[k];
+      if (box) {
+        box.textContent = msg;
+        var ctl = form.querySelector('[name="' + k + '"]') || form.querySelector('[name="' + (k === 'source' ? 'file' : k) + '"]');
+        if (ctl) ctl.setAttribute('aria-invalid', 'true');
+      } else {
+        general.push(msg);
+      }
+    });
+    var err = document.getElementById('ihpix-pub-error');
+    if (err) {
+      err.hidden = !general.length && !Object.keys(errors || {}).length;
+      err.textContent = general.length ? general.join(' ') : MSG.fixErrors;
+    }
+    var first = form.querySelector('[aria-invalid="true"]');
+    if (first && first.focus) first.focus();
+  }
+
+  function onSuccess(data) {
+    var success = document.getElementById('ihpix-pub-success');
+    var link = data.link || {};
+    var pkg = data.package || {};
+    var attachedText = data.attached ? MSG.attached : MSG.created;
+    if (mode === 'report' && window.ihpixLinks && link.target_id) {
+      window.ihpixLinks.add({
+        link_type: link.link_type || 'publication', target_kind: 'package', target_id: link.target_id,
+        title: link.title || pkg.title, url: link.url || pkg.url || '', event_date: '', description: link.description || ''
+      });
+      attachedText = MSG.attached;
+    }
+    if (window.ihpixToast) window.ihpixToast(attachedText, 'success');
+    (data.warnings || []).forEach(function(w) { if (window.ihpixToast) window.ihpixToast(w, 'warning'); });
+    if (success) {
+      success.innerHTML = '';
+      success.appendChild(document.createTextNode(attachedText + ' '));
+      if (pkg.url) {
+        var a = document.createElement('a'); a.href = pkg.url; a.target = '_blank'; a.rel = 'noopener'; a.textContent = MSG.viewDoc;
+        success.appendChild(a);
+      }
+      if (mode === 'page') {
+        var rb = document.createElement('button'); rb.type = 'button'; rb.className = 'ihpix-report-btn is-secondary'; rb.style.marginInlineStart = '.6rem';
+        rb.textContent = MSG.reload; rb.addEventListener('click', function() { window.location.reload(); });
+        success.appendChild(rb);
+      }
+      success.hidden = false;
+    }
+    if (mode === 'report') {
+      setTimeout(function() {
+        if (window.IhpixForms && window.IhpixForms.Modal) window.IhpixForms.Modal.close(modal, 'done');
+        form.reset();
+        form.querySelectorAll('[data-source-panel]').forEach(function(p) { p.hidden = p.getAttribute('data-source-panel') !== 'file'; });
+        if (window.IhpixForms) window.IhpixForms.refresh(form);
+      }, 900);
+    }
+  }
+
+  form.addEventListener('submit', function(e) {
+    e.preventDefault();
+    var submit = document.getElementById('ihpix-pub-submit');
+    var fd = new FormData(form);
+    var kind = (form.querySelector('[name="source_kind"]:checked') || {}).value;
+    if (kind !== 'file') { fd.delete('file'); }
+    setErrors({});
+    submit.disabled = true;
+    var original = submit.innerHTML;
+    submit.innerHTML = '<i class="fa fa-spinner fa-spin" aria-hidden="true"></i> ' + MSG.uploading;
+    var uploadBox = form.querySelector('.ixf-upload');
+    var progress = form.querySelector('.ixf-progress');
+    var bar = form.querySelector('.ixf-progress-bar');
+    var send = (window.IhpixForms && window.IhpixForms.upload)
+      ? window.IhpixForms.upload(modal.getAttribute('data-post-url'), fd, {
+          onProgress: function(pct) {
+            if (uploadBox && kind === 'file') uploadBox.classList.add('is-uploading');
+            if (progress) progress.setAttribute('aria-valuenow', String(pct));
+            if (bar) bar.style.width = pct + '%';
+          }
+        })
+      : fetch(modal.getAttribute('data-post-url'), { method: 'POST', body: fd, credentials: 'same-origin',
+          headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' } })
+          .then(function(r) { return r.json().then(function(d) { return { ok: r.ok, status: r.status, data: d }; }); });
+    send.then(function(res) {
+      submit.disabled = false; submit.innerHTML = original;
+      if (uploadBox) uploadBox.classList.remove('is-uploading');
+      var data = res.data || {};
+      if (res.ok && data.success) { onSuccess(data); return; }
+      if (data.errors) { setErrors(data.errors); return; }
+      setErrors({ __all__: data.error || MSG.network });
+    }).catch(function() {
+      submit.disabled = false; submit.innerHTML = original;
+      setErrors({ __all__: MSG.network });
+    });
+  });
+})();
+</script>
+{% endmacro %}

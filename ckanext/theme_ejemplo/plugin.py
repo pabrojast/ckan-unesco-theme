@@ -543,6 +543,19 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 MyLogica.ihpix_markdown_preview,
                 methods=['POST']
             )
+            # Puentes al ecosistema: publicación inline y propuesta de cursos
+            blueprint.add_url_rule(
+                u'/ihpix/publications',
+                u'ihpix_publication_create',
+                MyLogica.ihpix_publication_create_view,
+                methods=['POST']
+            )
+            blueprint.add_url_rule(
+                u'/ihpix/courses/propose',
+                u'ihpix_course_propose',
+                MyLogica.ihpix_course_propose_view,
+                methods=['POST']
+            )
 
             # Páginas navegables (fase iii): por Output, por PA, contribuidores
             blueprint.add_url_rule(
@@ -1318,6 +1331,10 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                  'ihpix_basemap': helpers.ihpix_basemap,
                  'ihpix_pages_url': helpers.ihpix_pages_url,
                  'ihpix_markdown': helpers.ihpix_markdown,
+                 'ihpix_link_type_icon': helpers.ihpix_link_type_icon,
+                 'ihpix_link_types': helpers.ihpix_link_types,
+                 'ihpix_contribution_icon': helpers.ihpix_contribution_icon,
+                 'get_pending_open_learning_count': helpers.get_pending_open_learning_count,
                  'get_pending_ihpix_wg_members_count': helpers.get_pending_ihpix_wg_members_count,
                  'get_user_ihpix_summary': helpers.get_user_ihpix_summary,
                  'ihpix_wg_role_label': helpers.ihpix_wg_role_label,
@@ -1394,6 +1411,8 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 'ihpix_activity_link_create': custom_actions.ihpix_activity_link_create,
                 'ihpix_activity_link_delete': custom_actions.ihpix_activity_link_delete,
                 'ihpix_link_search': custom_actions.ihpix_link_search,
+                'ihpix_publication_create': custom_actions.ihpix_publication_create,
+                'ihpix_course_propose': custom_actions.ihpix_course_propose,
                 # IHP-IX descubribilidad / analítica
                 'ihpix_contributor_list': custom_actions.ihpix_contributor_list,
                 'ihpix_country_summary_recompute': custom_actions.ihpix_country_summary_recompute,
@@ -1481,6 +1500,8 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 'ihpix_activity_link_create': custom_auth.ihpix_activity_link_create,
                 'ihpix_activity_link_delete': custom_auth.ihpix_activity_link_delete,
                 'ihpix_link_search': custom_auth.ihpix_link_search,
+                'ihpix_publication_create': custom_auth.ihpix_publication_create,
+                'ihpix_course_propose': custom_auth.ihpix_course_propose,
                 'ihpix_contributor_list': custom_auth.ihpix_contributor_list,
                 'ihpix_country_summary_recompute': custom_auth.ihpix_country_summary_recompute,
                 # IHP-IX working groups (piloto)

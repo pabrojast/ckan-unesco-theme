@@ -1,6 +1,8 @@
 {% extends "page.html" %}
 {% import 'ihpix/snippets/activity_links.html' as links_ui %}
 {% import 'ihpix/snippets/page_styles.html' as ui %}
+{% import 'ihpix/snippets/forms_assets.html' as forms_ui %}
+{% import 'ihpix/snippets/publication_modal.html' as pub_ui %}
 
 {% block title %}{{ _('Output') }} {{ code }} - {{ _('IHP-IX') }} - {{ super() }}{% endblock %}
 
@@ -17,6 +19,7 @@
 <div class="container ixp">
   {{ ui.page_styles() }}
   {{ links_ui.links_styles() }}
+  {{ forms_ui.forms_styles() }}
 
   <div class="ixp-header" data-pa="{{ pa }}">
     <div class="ixp-breadcrumb">
@@ -30,6 +33,15 @@
       <a class="ixp-btn ixp-btn-white" href="{{ h.url_for('theme_ejemplo.ihpix_report', pa=pa, output=code) }}">
         <i class="fa fa-paper-plane"></i> {{ _('Report an activity for this output') }}
       </a>
+      {% if publication_ctx and publication_ctx.logged_in %}
+        <button type="button" class="ixp-btn ixp-btn-ghost" data-ihpix-publication-open>
+          <i class="fa fa-cloud-upload"></i> {{ _('Upload a publication') }}
+        </button>
+        <a class="ixp-btn ixp-btn-ghost" target="_blank" rel="noopener"
+           href="{{ publication_ctx.dataset_new_url }}?tag_string=ihp-ix,ihp-ix-output-{{ code }}{% if publication_ctx.orgs|length == 1 %}&owner_org={{ publication_ctx.orgs[0].id }}{% endif %}">
+          <i class="fa fa-database"></i> {{ _('Add a dataset') }}
+        </a>
+      {% endif %}
       <a class="ixp-btn ixp-btn-ghost" href="{{ h.url_for('/ihpix/outputs', output=code) }}">
         <i class="fa fa-list-alt"></i> {{ _('Open in explorer') }}
       </a>
@@ -71,7 +83,7 @@
       {% if links_grouped %}
       <div class="ixp-card">
         <h2><i class="fa fa-paperclip"></i> {{ _('Publications, events & data') }}</h2>
-        {% for link_type in ['publication', 'webinar', 'event', 'dataset', 'output_data', 'other'] %}
+        {% for link_type in ['publication', 'webinar', 'event', 'dataset', 'output_data', 'course', 'other'] %}
           {% if links_grouped.get(link_type) %}
             <h3 style="font-size:0.85rem;text-transform:uppercase;letter-spacing:.05em;color:#64748B;margin:0.8rem 0 0.4rem;">{{ h.ihpix_link_type_label(link_type) }} ({{ links_grouped[link_type]|length }})</h3>
             {{ links_ui.render_links(links_grouped[link_type], compact=True, heading=False) }}
@@ -147,6 +159,10 @@
   </div>
 </div>
 </div>
+{% if publication_ctx %}
+  {{ forms_ui.forms_scripts() }}
+  {{ pub_ui.publication_modal(publication_ctx, mode='page') }}
+{% endif %}
 {% endblock %}
 
 {% block secondary %}{% endblock %}
