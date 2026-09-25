@@ -1,5 +1,6 @@
 {% extends "organization/read_base.html" %}
 {% import 'ihpix/snippets/activity_links.html' as links_ui %}
+{% import 'ihpix/snippets/forms_assets.html' as forms_ui %}
 
 {% block subtitle %}{{ _('IHP-IX Activities') }} {{ g.template_title_delimiter }} {{ group_dict.display_name }}{% endblock %}
 
@@ -622,6 +623,7 @@
   {# ── Activity cards ────────────────────────────────────── #}
   {% if activities %}
     {{ links_ui.links_styles() }}
+    {{ forms_ui.forms_styles() }}
     {% for activity in activities %}
       {% set pa = activity.priority_area or '' %}
       <div class="gix-card">
@@ -691,7 +693,7 @@
               {% if activity.key_activity %}
                 <div class="gix-detail-item">
                   <div class="gix-detail-label">{{ _('Key Activity') }}</div>
-                  <div class="gix-detail-value">{{ activity.key_activity }}</div>
+                  <div class="gix-detail-value">{{ h.ihpix_markdown(activity.key_activity) }}</div>
                 </div>
               {% endif %}
               {% if activity.outcomes %}
@@ -721,7 +723,7 @@
               {% if activity.synergies %}
                 <div class="gix-detail-item">
                   <div class="gix-detail-label">{{ _('Synergies') }}</div>
-                  <div class="gix-detail-value">{{ activity.synergies }}</div>
+                  <div class="gix-detail-value">{{ h.ihpix_markdown(activity.synergies) }}</div>
                 </div>
               {% endif %}
             </div>

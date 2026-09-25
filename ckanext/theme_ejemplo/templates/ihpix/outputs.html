@@ -1,5 +1,6 @@
 {% extends "page.html" %}
 {% import 'ihpix/snippets/activity_links.html' as links_ui %}
+{% import 'ihpix/snippets/forms_assets.html' as forms_ui %}
 
 {% block title %}{{ _('IHP-IX Activities Explorer') }} - {{ super() }}{% endblock %}
 
@@ -12,6 +13,7 @@
 
 {% block content %}
 {% set tax = h.get_ihpix_taxonomies() %}
+{{ forms_ui.forms_styles() }}
 <div class="main">
 <div class="container">
 <style>
@@ -861,7 +863,7 @@
               {% if activity.key_activity %}
                 <div class="ox-detail-item">
                   <div class="ox-detail-label">{{ _('Key Activity') }}</div>
-                  <div class="ox-detail-value">{{ activity.key_activity }}</div>
+                  <div class="ox-detail-value">{{ h.ihpix_markdown(activity.key_activity) }}</div>
                 </div>
               {% endif %}
               {% if activity.outcomes %}
@@ -896,7 +898,7 @@
               {% if activity.synergies %}
                 <div class="ox-detail-item">
                   <div class="ox-detail-label">{{ _('Synergies') }}</div>
-                  <div class="ox-detail-value">{{ activity.synergies }}</div>
+                  <div class="ox-detail-value">{{ h.ihpix_markdown(activity.synergies) }}</div>
                 </div>
               {% endif %}
             </div>
@@ -1056,7 +1058,7 @@
             {% endif %}
             {% if activity.additional_notes %}
               <div class="ox-section-title"><i class="fa fa-sticky-note-o"></i> {{ _('Additional notes') }}</div>
-              <div class="ox-detail-value" style="white-space: pre-line;">{{ activity.additional_notes }}</div>
+              <div class="ox-detail-value">{{ h.ihpix_markdown(activity.additional_notes) }}</div>
             {% endif %}
 
             {# Adjuntos: publicaciones, eventos, datos #}

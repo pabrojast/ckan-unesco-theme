@@ -1,6 +1,7 @@
 {% extends "page.html" %}
 {% import 'ihpix/snippets/activity_links.html' as links_ui %}
 {% import 'ihpix/snippets/page_styles.html' as ui %}
+{% import 'ihpix/snippets/forms_assets.html' as forms_ui %}
 
 {% block title %}{{ ws.title }} - {{ _('IHP-IX Working Groups') }} - {{ super() }}{% endblock %}
 
@@ -20,7 +21,9 @@
 <div class="container ixp">
   {{ ui.page_styles() }}
   {{ links_ui.links_styles() }}
+  {{ forms_ui.forms_styles() }}
   <style>
+    .ixp-header .ixf-md-body, .ixp-header .ixf-md-body a { color: rgba(255,255,255,0.92); }
     .ixw-nav { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: 20px; }
     .ixw-nav a { padding: .4rem .85rem; border-radius: 999px; border: 1px solid var(--ix-border); background: #fff; font-size: .84rem; font-weight: 600; color: var(--ix-text-sec); text-decoration: none; }
     .ixw-nav a:hover { background: var(--ix-primary-light); color: var(--ix-primary-dark); text-decoration: none; }
@@ -42,7 +45,11 @@
     </div>
     <span class="ixp-kicker">{{ _('IHP-IX Working Group') }}{% if ws.status == 'archived' %} &middot; {{ _('Archived') }}{% endif %}</span>
     <h1>{{ ws.title }}</h1>
-    <p>{{ ws.description or _('Collaborative workspace for the activities, publications, events and data reported under this IHP-IX Output.') }}</p>
+    {% if ws.description %}
+      {{ h.ihpix_markdown(ws.description) }}
+    {% else %}
+      <p>{{ _('Collaborative workspace for the activities, publications, events and data reported under this IHP-IX Output.') }}</p>
+    {% endif %}
     {% if ws.lead %}<p style="margin-top:.5rem;font-size:.88rem;"><i class="fa fa-user-circle"></i> {{ _('Lead') }}: <a style="color:#fff;font-weight:600;" href="{{ h.url_for('theme_ejemplo.user_ihpix', id=ws.lead.name) }}">{{ ws.lead.display_name }}</a></p>{% endif %}
     <div class="ixp-header-actions">
       <a class="ixp-btn ixp-btn-white" href="{{ h.url_for('theme_ejemplo.ihpix_report', pa=ws.priority_area, output=ws.output_code) }}">
