@@ -1,4 +1,5 @@
 {% extends "page.html" %}
+{% import 'ihpix/snippets/forms_assets.html' as forms_ui %}
 
 {% block title %}{{ _('IHP-IX Working Groups') }} - {{ super() }}{% endblock %}
 
@@ -11,9 +12,11 @@
 {% block content %}
 <div class="main">
   <div class="container">
+    {{ forms_ui.forms_styles() }}
+    {{ forms_ui.forms_scripts() }}
     <style>
       .ihpwg-table { width: 100%; border-collapse: collapse; font-size: .9rem; }
-      .ihpwg-table th { text-align: left; font-size: .72rem; text-transform: uppercase; letter-spacing: .04em; color: #64748B; padding: .5rem .4rem; border-bottom: 2px solid #E2E8F0; }
+      .ihpwg-table th { text-align: start; font-size: .72rem; text-transform: uppercase; letter-spacing: .04em; color: #64748B; padding: .5rem .4rem; border-bottom: 2px solid #E2E8F0; }
       .ihpwg-table td { padding: .5rem .4rem; border-bottom: 1px solid #F1F5F9; vertical-align: top; }
       .ihpwg-table input[type=text], .ihpwg-table select { width: 100%; min-height: 32px; border: 1px solid #E2E8F0; border-radius: 6px; padding: .2rem .4rem; font-size: .85rem; }
       .ihpwg-code { font-weight: 800; color: #004E8C; white-space: nowrap; }
@@ -21,6 +24,19 @@
       .ihpwg-nums { white-space: nowrap; font-size: .82rem; color: #475569; }
       .ihpwg-nums strong { color: #0F172A; }
       .ihpwg-intro { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 10px; padding: .9rem 1.1rem; margin-bottom: 1rem; font-size: .9rem; }
+      .ihpwg-desc-excerpt { font-size: .82rem; color: #475569; max-width: 26ch; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+      .ihpwg-desc-excerpt.is-empty { color: #94a3b8; font-style: italic; }
+      .ihpwg-desc-btn { margin-top: .25rem; font-size: .78rem; padding: .15rem .5rem; }
+      .ihpwg-actions { white-space: nowrap; }
+      .ihpwg-lead-wrap .ixf-combobox { min-width: 12rem; }
+      .ihpwg-modal-desc textarea { min-height: 9rem; }
+      @media (max-width: 900px) {
+        .ihpwg-table thead { display: none; }
+        .ihpwg-table tr { display: grid; grid-template-columns: 1fr 1fr; gap: .4rem .8rem; padding: .7rem 0; border-bottom: 1px solid #E2E8F0; }
+        .ihpwg-table td { border: 0; padding: 0; }
+        .ihpwg-table td[data-label]::before { content: attr(data-label); display: block; font-size: .7rem; text-transform: uppercase; color: #64748B; letter-spacing: .04em; margin-bottom: .15rem; }
+        .ihpwg-desc-excerpt { max-width: none; white-space: normal; }
+      }
     </style>
 
     <ul class="nav nav-tabs" style="margin-bottom:1rem;">
@@ -31,59 +47,139 @@
       <li class="active"><a href="{{ h.url_for('theme_ejemplo.ihpix_workspaces_admin') }}">{{ _('Working groups') }}</a></li>
     </ul>
 
-    <h1 style="font-size:1.5rem;"><i class="fa fa-users"></i> {{ _('IHP-IX Working Groups') }} <small>({{ workspaces|length }})</small></h1>
+    <h1 style="font-size:1.5rem;"><i class="fa fa-users" aria-hidden="true"></i> {{ _('IHP-IX Working Groups') }} <small>({{ workspaces|length }})</small></h1>
     <div class="ihpwg-intro">
-      {{ _('One workspace per IHP-IX Output, created automatically from the official list of Outputs. Assign a lead (by username) so they can approve membership requests; archive a workspace to hide it from new members.') }}
-      {% if pending_requests %}<br><strong><i class="fa fa-bell"></i> {{ pending_requests }} {{ _('pending membership requests across all working groups.') }}</strong>{% endif %}
+      {{ _('One workspace per IHP-IX Output, created automatically from the official list of Outputs. Assign a lead so they can approve membership requests; archive a workspace to hide it from new members.') }}
+      {% if pending_requests %}<br><strong><i class="fa fa-bell" aria-hidden="true"></i> {{ pending_requests }} {{ _('pending membership requests across all working groups.') }}</strong>{% endif %}
     </div>
+
+    {# Un <form> por workspace, fuera de la tabla (HTML válido); los controles
+       de la fila se asocian con el atributo form="ws-form-<id>". #}
+    {% for ws in workspaces %}
+      <form method="post" action="{{ h.url_for('theme_ejemplo.ihpix_workspaces_admin_update') }}" id="ws-form-{{ ws.id }}"
+            class="ihpwg-form" data-status="{{ ws.status }}" data-code="{{ ws.output_code }}">
+        {{ h.csrf_input() }}
+        <input type="hidden" name="id" value="{{ ws.id }}">
+      </form>
+    {% endfor %}
 
     <table class="ihpwg-table">
       <thead>
         <tr>
-          <th>{{ _('Output') }}</th>
-          <th>{{ _('Title') }}</th>
-          <th>{{ _('Description') }}</th>
-          <th>{{ _('Lead (username)') }}</th>
-          <th>{{ _('Status') }}</th>
-          <th>{{ _('Members') }}</th>
-          <th></th>
+          <th scope="col">{{ _('Output') }}</th>
+          <th scope="col">{{ _('Title') }}</th>
+          <th scope="col">{{ _('Description') }}</th>
+          <th scope="col">{{ _('Lead') }}</th>
+          <th scope="col">{{ _('Status') }}</th>
+          <th scope="col">{{ _('Members') }}</th>
+          <th scope="col"><span class="sr-only">{{ _('Actions') }}</span></th>
         </tr>
       </thead>
       <tbody>
         {% for ws in workspaces %}
+          {% set fid = 'ws-form-' ~ ws.id %}
           <tr>
-            <form method="post" action="{{ h.url_for('theme_ejemplo.ihpix_workspaces_admin_update') }}">
-              {{ h.csrf_input() }}
-              <input type="hidden" name="id" value="{{ ws.id }}">
-              <td>
-                <a class="ihpwg-code" href="{{ h.url_for('theme_ejemplo.ihpix_workspace_detail', code=ws.output_code) }}">{{ ws.output_code }}</a>
-                <div class="ihpwg-pa">{{ ws.priority_area }}</div>
-              </td>
-              <td><input type="text" name="title" value="{{ ws.title }}" required></td>
-              <td><input type="text" name="description" value="{{ ws.description }}" placeholder="{{ _('Short description') }}"></td>
-              <td><input type="text" name="lead_user" value="{{ ws.lead.name if ws.lead else '' }}" placeholder="{{ _('username') }}" title="{{ ws.lead.display_name if ws.lead else '' }}"></td>
-              <td>
-                <select name="status">
-                  <option value="active" {% if ws.status == 'active' %}selected{% endif %}>{{ _('Active') }}</option>
-                  <option value="archived" {% if ws.status == 'archived' %}selected{% endif %}>{{ _('Archived') }}</option>
-                </select>
-              </td>
-              <td class="ihpwg-nums">
-                <strong>{{ ws.members_active }}</strong> {{ _('active') }}
-                {% if ws.members_pending %}<br><span style="color:#b45309;"><strong>{{ ws.members_pending }}</strong> {{ _('pending') }}</span>{% endif %}
-                <br><strong>{{ ws.published_activities }}</strong> {{ _('published') }}
-              </td>
-              <td style="white-space:nowrap;">
-                <button type="submit" class="btn btn-sm btn-primary"><i class="fa fa-save"></i> {{ _('Save') }}</button>
-                <a class="btn btn-sm btn-default" href="{{ h.url_for('theme_ejemplo.ihpix_workspace_members', code=ws.output_code) }}" title="{{ _('Manage members') }}"><i class="fa fa-users"></i></a>
-              </td>
-            </form>
+            <td data-label="{{ _('Output') }}">
+              <a class="ihpwg-code" href="{{ h.url_for('theme_ejemplo.ihpix_workspace_detail', code=ws.output_code) }}">{{ ws.output_code }}</a>
+              <div class="ihpwg-pa">{{ ws.priority_area }}</div>
+            </td>
+            <td data-label="{{ _('Title') }}">
+              <label class="sr-only" for="ws-title-{{ ws.id }}">{{ _('Title') }} {{ ws.output_code }}</label>
+              <input type="text" id="ws-title-{{ ws.id }}" name="title" form="{{ fid }}" value="{{ ws.title }}" required maxlength="200">
+            </td>
+            <td data-label="{{ _('Description') }}">
+              <div class="ihpwg-desc-excerpt{% if not ws.description %} is-empty{% endif %}" id="ws-desc-excerpt-{{ ws.id }}" title="{{ ws.description or '' }}">
+                {{ ws.description or _('No description yet') }}
+              </div>
+              <button type="button" class="btn btn-xs btn-default ihpwg-desc-btn" data-ihpix-modal-open="#ws-desc-modal-{{ ws.id }}">
+                <i class="fa fa-pencil" aria-hidden="true"></i> {{ _('Edit description') }}
+              </button>
+            </td>
+            <td data-label="{{ _('Lead') }}" class="ihpwg-lead-wrap">
+              <label class="sr-only" for="ws-lead-{{ ws.id }}">{{ _('Lead (username)') }}</label>
+              <input type="text" id="ws-lead-{{ ws.id }}" name="lead_user" form="{{ fid }}" autocomplete="off"
+                     value="{{ ws.lead.name if ws.lead else '' }}" placeholder="{{ _('username') }}"
+                     data-ihpix-combobox="remote" data-source-url="/api/2/util/user/autocomplete?limit=10&q="
+                     data-value-key="name" data-label-keys="fullname,name" data-min-chars="2">
+              {% if ws.lead %}<div class="ihpwg-pa">{{ ws.lead.display_name }}</div>{% endif %}
+            </td>
+            <td data-label="{{ _('Status') }}">
+              <label class="sr-only" for="ws-status-{{ ws.id }}">{{ _('Status') }}</label>
+              <select name="status" id="ws-status-{{ ws.id }}" form="{{ fid }}">
+                <option value="active" {% if ws.status == 'active' %}selected{% endif %}>{{ _('Active') }}</option>
+                <option value="archived" {% if ws.status == 'archived' %}selected{% endif %}>{{ _('Archived') }}</option>
+              </select>
+            </td>
+            <td class="ihpwg-nums" data-label="{{ _('Members') }}">
+              <strong>{{ ws.members_active }}</strong> {{ _('active') }}
+              {% if ws.members_pending %}<br><span style="color:#b45309;"><strong>{{ ws.members_pending }}</strong> {{ _('pending') }}</span>{% endif %}
+              <br><strong>{{ ws.published_activities }}</strong> {{ _('published') }}
+            </td>
+            <td class="ihpwg-actions">
+              <button type="submit" form="{{ fid }}" class="btn btn-sm btn-primary"><i class="fa fa-save" aria-hidden="true"></i> {{ _('Save') }}</button>
+              <a class="btn btn-sm btn-default" href="{{ h.url_for('theme_ejemplo.ihpix_workspace_members', code=ws.output_code) }}" title="{{ _('Manage members') }}" aria-label="{{ _('Manage members') }} {{ ws.output_code }}"><i class="fa fa-users" aria-hidden="true"></i></a>
+            </td>
           </tr>
         {% endfor %}
       </tbody>
     </table>
+
+    {# Modales de descripción (Markdown), uno por workspace; el textarea pertenece al form de la fila #}
+    {% for ws in workspaces %}
+      <div class="ixf-modal" id="ws-desc-modal-{{ ws.id }}" hidden role="dialog" aria-modal="true" aria-labelledby="ws-desc-title-{{ ws.id }}">
+        <div class="ixf-modal-dialog">
+          <div class="ixf-modal-header">
+            <h2 class="ixf-modal-title" id="ws-desc-title-{{ ws.id }}">{{ _('Description') }} &mdash; {{ ws.output_code }}</h2>
+            <button type="button" class="ixf-modal-close" data-ihpix-modal-close aria-label="{{ _('Close') }}">&times;</button>
+          </div>
+          <div class="ixf-modal-body ihpwg-modal-desc">
+            <label class="ihpix-report-label" for="ws-desc-{{ ws.id }}" style="font-weight:600;display:block;margin-bottom:.3rem;">{{ _('What this working group does, who should join and how to contribute. Markdown is supported.') }}</label>
+            <textarea id="ws-desc-{{ ws.id }}" name="description" form="ws-form-{{ ws.id }}" maxlength="3000" rows="7"
+                      class="form-control" data-ihpix-markdown data-ihpix-counter>{{ ws.description or '' }}</textarea>
+          </div>
+          <div class="ixf-modal-footer">
+            <button type="button" class="btn btn-default" data-ihpix-modal-close>{{ _('Done editing') }}</button>
+            <button type="submit" form="ws-form-{{ ws.id }}" class="btn btn-primary"><i class="fa fa-save" aria-hidden="true"></i> {{ _('Save') }}</button>
+          </div>
+        </div>
+      </div>
+    {% endfor %}
   </div>
 </div>
+
+<script>
+(function() {
+  'use strict';
+  var MSG_ARCHIVE = {{ _('Archive the working group %(code)s? It will be hidden from new members (existing members keep access).')|tojson }};
+  // Confirmar al archivar un workspace activo
+  document.querySelectorAll('.ihpwg-form').forEach(function(form) {
+    form.addEventListener('submit', function(e) {
+      if (form.__confirmed) { form.__confirmed = false; return; }
+      var status = document.querySelector('select[name="status"][form="' + form.id + '"]');
+      if (!status || status.value !== 'archived' || form.getAttribute('data-status') === 'archived') return;
+      e.preventDefault();
+      var msg = MSG_ARCHIVE.replace('%(code)s', form.getAttribute('data-code') || '');
+      var go = function() { form.__confirmed = true; if (form.requestSubmit) form.requestSubmit(); else form.submit(); };
+      if (window.IhpixForms && window.IhpixForms.confirm) {
+        window.IhpixForms.confirm({ message: msg, danger: true, confirmLabel: {{ _('Archive')|tojson }} }).then(function(yes) { if (yes) go(); });
+      } else if (window.confirm(msg)) { go(); }
+    });
+  });
+  // El extracto de la tabla refleja lo escrito en el modal
+  document.querySelectorAll('textarea[name="description"]').forEach(function(ta) {
+    var id = (ta.getAttribute('form') || '').replace('ws-form-', '');
+    var excerpt = document.getElementById('ws-desc-excerpt-' + id);
+    if (!excerpt) return;
+    var empty = excerpt.textContent.trim();
+    ta.addEventListener('input', function() {
+      var v = ta.value.trim();
+      excerpt.textContent = v || {{ _('No description yet')|tojson }};
+      excerpt.title = v;
+      excerpt.classList.toggle('is-empty', !v);
+    });
+  });
+})();
+</script>
 {% endblock %}
 
 {% block secondary %}{% endblock %}
