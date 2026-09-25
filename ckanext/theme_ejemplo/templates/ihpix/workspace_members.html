@@ -139,7 +139,7 @@
 (function() {
   'use strict';
   // "Set role": desactivado hasta que cambie el valor; confirmar al degradar a un lead
-  var MSG_DEMOTE = {{ _('%(name)s is a lead of this working group. Change their role anyway?')|tojson }};
+  var MSG_DEMOTE = {{ _('%(name)s is a lead of this working group. Change their role anyway?', name='%(name)s')|tojson }};
   document.querySelectorAll('.ixm-role-form').forEach(function(form) {
     var select = form.querySelector('select[name="role"]');
     var btn = form.querySelector('button[type="submit"]');

@@ -150,7 +150,7 @@
 <script>
 (function() {
   'use strict';
-  var MSG_ARCHIVE = {{ _('Archive the working group %(code)s? It will be hidden from new members (existing members keep access).')|tojson }};
+  var MSG_ARCHIVE = {{ _('Archive the working group %(code)s? It will be hidden from new members (existing members keep access).', code='%(code)s')|tojson }};
   // Confirmar al archivar un workspace activo
   document.querySelectorAll('.ihpwg-form').forEach(function(form) {
     form.addEventListener('submit', function(e) {

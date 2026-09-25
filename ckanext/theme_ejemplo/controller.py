@@ -1060,7 +1060,7 @@ class MyLogica():
                 mine=mine,
                 pa_filter=pa_filter,
                 priority_areas=C.PRIORITY_AREAS,
-                pending_requests=h.get_pending_ihpix_wg_members_count(),
+                pending_requests=toolkit.h.get_pending_ihpix_wg_members_count(),
             )
 
         @staticmethod
@@ -1226,7 +1226,7 @@ class MyLogica():
                 'admin/ihpix_workspaces.html',
                 workspaces=workspaces,
                 priority_areas=C.PRIORITY_AREAS,
-                pending_requests=h.get_pending_ihpix_wg_members_count(),
+                pending_requests=toolkit.h.get_pending_ihpix_wg_members_count(),
             )
 
         @staticmethod
@@ -1253,10 +1253,19 @@ class MyLogica():
 
         @staticmethod
         def _ihpix_pager(total, page, items_per_page, items):
+            # h.pager_url sólo pasa `page`; las rutas por Output/workspace
+            # necesitan también sus view_args (`code`, `pa`, `id`).
+            def _url(**kwargs):
+                params = dict(request.view_args or {})
+                for key, value in request.args.items():
+                    if key != 'page':
+                        params[key] = value
+                params.update(kwargs)
+                return h.url_for(request.endpoint, **params)
             pager = h.Page(
                 collection=range(total),
                 page=page,
-                url=h.pager_url,
+                url=_url,
                 items_per_page=items_per_page,
             )
             pager.items = items
@@ -1445,7 +1454,7 @@ class MyLogica():
                 pa_filter=pa_filter,
                 output_filter=output_filter,
                 biennium_filter=biennium_filter,
-                taxonomies=h.get_ihpix_taxonomies(),
+                taxonomies=toolkit.h.get_ihpix_taxonomies(),
             )
 
         def iot_portal():
@@ -1527,7 +1536,7 @@ class MyLogica():
 
                 # Member states list for filter dropdown
                 try:
-                    ms_list = h.get_member_states_groups_list()
+                    ms_list = toolkit.h.get_member_states_groups_list()
                 except Exception:
                     ms_list = []
 
@@ -4728,7 +4737,7 @@ class MyLogica():
 
             summary, feed = None, []
             if c.userobj:
-                summary = h.get_user_ihpix_summary(user_dict['id'])
+                summary = toolkit.h.get_user_ihpix_summary(user_dict['id'])
                 try:
                     feed = toolkit.get_action('ihpix_contribution_list')(
                         {'user': c.user, 'model': model, 'auth_user_obj': c.userobj},
