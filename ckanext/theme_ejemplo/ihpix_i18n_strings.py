@@ -137,6 +137,7 @@ VALIDATION_MESSAGES = [
     _('The URL must start with http:// or https://'),
     _('This file type is not allowed ({ext})'),
     _('The file is too large (max. {max} MB)'),
+    _('A contact email is required (your account has no email)'),
     _('At most {max} authors'),
     _('At most {max} keywords'),
 ]

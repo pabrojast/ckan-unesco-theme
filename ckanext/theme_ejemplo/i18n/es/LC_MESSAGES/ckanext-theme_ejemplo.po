@@ -8738,6 +8738,30 @@ msgstr ""
 "p. ej. Coordino la red nacional de monitoreo de aguas subterráneas y puedo "
 "compartir nuestros resultados de 2025."
 
+#. IHP-IX (2026-09)
+msgid "A contact email is required (your account has no email)"
+msgstr "Hace falta un correo de contacto (tu cuenta no tiene email)"
+
+#. IHP-IX (2026-09)
+msgid "Contact email"
+msgstr "Correo de contacto"
+
+#. IHP-IX (2026-09)
+msgid ""
+"Shown on the document page as the contact point. Prefilled with your account"
+" email."
+msgstr ""
+"Se muestra en la página del documento como punto de contacto. Prellenado con"
+" el correo de tu cuenta."
+
+#. IHP-IX (2026-09)
+msgid ""
+"One author per line. Optionally add the affiliation and ORCID after "
+"semicolons: “Ada Lovelace; UNESCO; 0000-0002-1825-0097”."
+msgstr ""
+"Un autor por línea. Opcionalmente añade la afiliación y el ORCID tras puntos"
+" y coma: “Ada Lovelace; UNESCO; 0000-0002-1825-0097”."
+
 #, python-format
 #~ msgid "Dashboard (%(num)d new item)"
 #~ msgid_plural "Dashboard (%(num)d new items)"

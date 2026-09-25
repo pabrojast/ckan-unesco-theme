@@ -8,7 +8,8 @@ que se abre en el reporte, en los workspaces y en las páginas por Output:
 - `build_package_dict(clean, schema_field_names, defaults)` → payload de
   `package_create` filtrado por los campos que **existen** en el esquema
   `documents` instalado (la rama `production` del fork schemingdcat tiene
-  13 campos; `dev210` tiene 29).
+  13 campos; `dev210` tiene 29). `authors_json` es un `repeating_subfields`
+  (name / orcid / affiliation): se envía como lista de dicts, no como JSON.
 - `build_resource_dict(clean, resource_field_names)` → payload de
   `resource_create` (fichero subido o URL).
 - `map_schema_errors(error_dict)` → errores del esquema traducidos a los
@@ -62,6 +63,7 @@ ALLOWED_EXTENSIONS = ('pdf', 'doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx',
                       'odt', 'odp', 'ods', 'zip', 'csv', 'txt', 'md', 'epub')
 
 DOI_RE = re.compile(r'^10\.\d{4,9}/\S+$', re.I)
+ORCID_RE = re.compile(r'^\d{4}-\d{4}-\d{4}-\d{3}[\dX]$')
 URL_RE = re.compile(r'^https?://\S+$', re.I)
 EMAIL_RE = re.compile(r'^[^@\s]+@[^@\s]+\.[^@\s]+$')
 YEAR_MIN, YEAR_MAX = 1900, 2100
@@ -79,6 +81,7 @@ MESSAGES = OrderedDict([
     ('file_extension_invalid', 'This file type is not allowed ({ext})'),
     ('file_too_large', 'The file is too large (max. {max} MB)'),
     ('email_invalid', 'Invalid email address'),
+    ('contact_email_required', 'A contact email is required (your account has no email)'),
     ('too_many_authors', 'At most {max} authors'),
     ('too_many_keywords', 'At most {max} keywords'),
 ])
@@ -128,6 +131,8 @@ def parse_authors(raw):
         author = {'name': name}
         if len(parts) > 1 and parts[1]:
             author['affiliation'] = parts[1]
+        if len(parts) > 2 and ORCID_RE.match(parts[2]):
+            author['orcid'] = parts[2]
         authors.append(author)
     return authors
 
@@ -197,7 +202,8 @@ def format_for(filename_or_url):
 
 
 def validate_publication_input(form, allowed_org_ids=None, max_upload_mb=None,
-                               upload_filename='', upload_size=None):
+                               upload_filename='', upload_size=None,
+                               require_contact_email=False):
     u"""Valida el formulario del modal.
 
     `form` es un dict plano (request.form). `allowed_org_ids` = orgs donde
@@ -263,6 +269,10 @@ def validate_publication_input(form, allowed_org_ids=None, max_upload_mb=None,
     contact_email = _text(form, 'contact_email')
     if contact_email and not EMAIL_RE.match(contact_email):
         add('contact_email', 'email_invalid')
+    elif not contact_email and require_contact_email:
+        # El esquema `documents` lo exige (not_empty); sin email en la cuenta
+        # el modal debe pedirlo explícitamente
+        add('contact_email', 'contact_email_required')
 
     source_kind = (_text(form, 'source_kind') or '').lower()
     source_url = _text(form, 'source_url') or _text(form, 'url')
@@ -347,8 +357,7 @@ def build_package_dict(clean, schema_field_names, defaults=None, name=None,
         ('notes_translated', {'en': abstract}),
         ('document_type', clean.get('document_type') or DEFAULT_DOCUMENT_TYPE),
         ('publication_year', clean.get('publication_year')),
-        ('authors_json', json.dumps(clean.get('authors') or [], ensure_ascii=False)
-            if clean.get('authors') else None),
+        ('authors_json', [dict(a) for a in clean.get('authors') or []] or None),
         ('document_doi', clean.get('doi') or None),
         ('access_level', defaults.get('access_level') or DEFAULT_ACCESS_LEVEL),
         ('language', language),

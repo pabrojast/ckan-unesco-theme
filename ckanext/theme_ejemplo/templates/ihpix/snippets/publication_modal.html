@@ -104,10 +104,20 @@
             </div>
           </div>
 
+          <div class="ihpix-report-row">
+            <div class="ihpix-report-field" style="flex: 1 1 260px;">
+              <label class="ihpix-report-label" for="ihpix-pub-field-contact-email">{{ _('Contact email') }} <span class="ihpix-report-required">*</span></label>
+              <span class="ihpix-report-help" id="ihpix-pub-field-contact-email-help">{{ _('Shown on the document page as the contact point. Prefilled with your account email.') }}</span>
+              <input type="email" id="ihpix-pub-field-contact-email" name="contact_email" class="ihpix-report-input" required
+                     value="{{ ctx.user_email or '' }}" aria-describedby="ihpix-pub-field-contact-email-help" autocomplete="email">
+              <div class="ihpix-report-error-text" role="alert" data-error-for="contact_email"></div>
+            </div>
+          </div>
+
           {% if show_authors %}
           <div class="ihpix-report-field">
             <label class="ihpix-report-label" for="ihpix-pub-field-authors">{{ _('Authors') }}</label>
-            <span class="ihpix-report-help" id="ihpix-pub-field-authors-help">{{ _('One author per line. Optionally add the affiliation after a semicolon: “Ada Lovelace; UNESCO”.') }}</span>
+            <span class="ihpix-report-help" id="ihpix-pub-field-authors-help">{{ _('One author per line. Optionally add the affiliation and ORCID after semicolons: “Ada Lovelace; UNESCO; 0000-0002-1825-0097”.') }}</span>
             <textarea id="ihpix-pub-field-authors" name="authors" class="ihpix-report-textarea" rows="2" maxlength="2000" aria-describedby="ihpix-pub-field-authors-help"></textarea>
             <div class="ihpix-report-error-text" role="alert" data-error-for="authors"></div>
           </div>

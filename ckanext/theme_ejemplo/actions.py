@@ -2848,10 +2848,15 @@ def ihpix_publication_create(context, data_dict):
         except Exception:
             upload_size = None
     max_mb = _ihpix_config_int('ihpix_upload_max_mb', 50)
+    # contact_email: el esquema `documents` lo exige; por defecto el del usuario
+    if not (data_dict.get('contact_email') or u'').strip():
+        data_dict = dict(data_dict)
+        data_dict['contact_email'] = (user_obj.email or u'') if user_obj else u''
     try:
         clean = P.validate_publication_input(
             data_dict, allowed_org_ids=allowed, max_upload_mb=max_mb,
-            upload_filename=upload_filename, upload_size=upload_size)
+            upload_filename=upload_filename, upload_size=upload_size,
+            require_contact_email=True)
     except P.PublicationValidationError as e:
         raise toolkit.ValidationError(_ihpix_translate_errors(e))
 

@@ -102,7 +102,8 @@ def test_build_package_dict_dev210_schema():
     assert pkg['notes_translated'] == {'en': 'An **atlas**.'}
     assert pkg['document_type'] == 'technical_report'
     assert pkg['publication_year'] == 2025
-    assert json.loads(pkg['authors_json'])[0]['name'] == 'Ada Lovelace'
+    assert pkg['authors_json'] == [{'name': 'Ada Lovelace', 'affiliation': 'UNESCO'},
+                                   {'name': 'Alan Turing', 'affiliation': 'Univ. Manchester'}]
     assert pkg['access_level'] == 'public'
     assert pkg['language'] == P.DEFAULT_LANGUAGE
     assert pkg['identifier'] == 'fixed-id'
@@ -189,3 +190,17 @@ def test_prefilled_dataset_url():
 def test_i18n_messages_covered():
     from ckanext.theme_ejemplo import ihpix_i18n_strings as S
     assert set(P.MESSAGES.values()) <= set(S.VALIDATION_MESSAGES)
+
+
+def test_contact_email_required_when_asked():
+    with pytest.raises(P.PublicationValidationError) as exc:
+        P.validate_publication_input(_form(), require_contact_email=True)
+    assert exc.value.details['contact_email'][0] == 'contact_email_required'
+    clean = P.validate_publication_input(_form(contact_email='me@x.org'), require_contact_email=True)
+    assert clean['contact_email'] == 'me@x.org'
+
+
+def test_parse_authors_with_orcid():
+    assert P.parse_authors('Ada Lovelace; UNESCO; 0000-0002-1825-0097') == [
+        {'name': 'Ada Lovelace', 'affiliation': 'UNESCO', 'orcid': '0000-0002-1825-0097'}]
+    assert P.parse_authors('Ada; UNESCO; not-an-orcid') == [{'name': 'Ada', 'affiliation': 'UNESCO'}]

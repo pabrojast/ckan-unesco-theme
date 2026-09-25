@@ -4592,6 +4592,7 @@ class MyLogica():
                 'default_document_type': P.DEFAULT_DOCUMENT_TYPE,
                 'educational_type': P.EDUCATIONAL_DOCUMENT_TYPE,
                 'own_reports': own_reports,
+                'user_email': (c.userobj.email or '') if logged_in else '',
                 'output_code': output_code or '',
                 'activity_id': activity.get('id') if isinstance(activity, dict) and activity.get('id') else '',
                 'upload_max_mb': upload_max_mb,
