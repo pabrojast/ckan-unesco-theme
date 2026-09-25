@@ -2,7 +2,7 @@
   Adjuntos de una actividad IHP-IX (publicaciones, webinars, eventos, datos).
 
   Uso:
-    {% import 'ihpix/snippets/activity_links.html' as links_ui %}
+    {% import 'ihpix/snippets/activity_links.html' as links_ui with context %}
     {{ links_ui.links_styles() }}                     -- una vez por página --
     {{ links_ui.render_links(links_by_activity.get(activity.id, [])) }}
 

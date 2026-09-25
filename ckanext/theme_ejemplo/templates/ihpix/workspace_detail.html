@@ -1,8 +1,8 @@
 {% extends "page.html" %}
-{% import 'ihpix/snippets/activity_links.html' as links_ui %}
-{% import 'ihpix/snippets/page_styles.html' as ui %}
-{% import 'ihpix/snippets/forms_assets.html' as forms_ui %}
-{% import 'ihpix/snippets/publication_modal.html' as pub_ui %}
+{% import 'ihpix/snippets/activity_links.html' as links_ui with context %}
+{% import 'ihpix/snippets/page_styles.html' as ui with context %}
+{% import 'ihpix/snippets/forms_assets.html' as forms_ui with context %}
+{% import 'ihpix/snippets/publication_modal.html' as pub_ui with context %}
 
 {% block title %}{{ ws.title }} - {{ _('IHP-IX Working Groups') }} - {{ super() }}{% endblock %}
 

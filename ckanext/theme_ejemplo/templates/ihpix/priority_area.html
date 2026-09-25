@@ -1,6 +1,6 @@
 {% extends "page.html" %}
-{% import 'ihpix/snippets/activity_links.html' as links_ui %}
-{% import 'ihpix/snippets/page_styles.html' as ui %}
+{% import 'ihpix/snippets/activity_links.html' as links_ui with context %}
+{% import 'ihpix/snippets/page_styles.html' as ui with context %}
 
 {% block title %}{{ pa }} - {{ h.ihpix_t(pa_title) }} - {{ super() }}{% endblock %}
 

@@ -1,6 +1,6 @@
 {% extends "organization/read_base.html" %}
-{% import 'ihpix/snippets/activity_links.html' as links_ui %}
-{% import 'ihpix/snippets/forms_assets.html' as forms_ui %}
+{% import 'ihpix/snippets/activity_links.html' as links_ui with context %}
+{% import 'ihpix/snippets/forms_assets.html' as forms_ui with context %}
 
 {% block subtitle %}{{ _('IHP-IX Activities') }} {{ g.template_title_delimiter }} {{ group_dict.display_name }}{% endblock %}
 

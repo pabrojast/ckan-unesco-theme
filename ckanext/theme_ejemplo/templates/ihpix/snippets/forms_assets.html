@@ -2,7 +2,7 @@
   Carga del kit de formularios IHP-IX (public/css/ihpix-forms.css + js/ihpix-forms.js).
 
   Uso (dentro de cualquier bloque del template):
-    {% import 'ihpix/snippets/forms_assets.html' as forms_ui %}
+    {% import 'ihpix/snippets/forms_assets.html' as forms_ui with context %}
     {{ forms_ui.forms_styles() }}
     {{ forms_ui.forms_scripts() }}
 

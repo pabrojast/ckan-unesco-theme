@@ -8,8 +8,8 @@
 {% endblock %}
 
 {% block primary_content_inner %}
-{% import 'ihpix/snippets/forms_assets.html' as forms_ui %}
-{% import 'ihpix/snippets/publication_modal.html' as pub_ui %}
+{% import 'ihpix/snippets/forms_assets.html' as forms_ui with context %}
+{% import 'ihpix/snippets/publication_modal.html' as pub_ui with context %}
 {{ forms_ui.forms_styles() }}
 {{ forms_ui.forms_scripts() }}
 <style>
