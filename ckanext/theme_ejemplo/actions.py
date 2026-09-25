@@ -2080,12 +2080,15 @@ def _ihpix_translate_errors(exc):
     _ = toolkit._
     out = {}
     details = getattr(exc, 'details', None) or {}
+    # La tabla de mensajes del módulo que lanzó la excepción tiene prioridad
+    # (las claves se repiten entre módulos, p. ej. contact_email_required)
+    own = getattr(exc, 'messages', None) or {}
     for field, msg in exc.errors.items():
         key_params = details.get(field)
         template = None
         if key_params:
             key, params = key_params
-            template = ihpix_forms.MESSAGES.get(key) or ihpix_links.MESSAGES.get(key)
+            template = own.get(key) or ihpix_forms.MESSAGES.get(key) or ihpix_links.MESSAGES.get(key)
             try:
                 out[field] = _(template).format(**params) if template else msg
                 continue

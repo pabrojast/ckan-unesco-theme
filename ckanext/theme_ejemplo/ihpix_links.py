@@ -118,6 +118,8 @@ class LinkValidationError(Exception):
     u"""Errores de validación de un adjunto: `.errors` es {campo: mensaje}
     y `.details` {campo: (clave de MESSAGES, params)}."""
 
+    messages = MESSAGES
+
     def __init__(self, errors, details=None):
         self.errors = dict(errors)
         self.details = dict(details or {})

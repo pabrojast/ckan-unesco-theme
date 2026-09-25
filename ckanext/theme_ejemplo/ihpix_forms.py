@@ -175,6 +175,8 @@ class ReportValidationError(Exception):
     es {campo: (clave de MESSAGES, params)} para traducir en la acción.
     """
 
+    messages = MESSAGES
+
     def __init__(self, errors, details=None):
         self.errors = dict(errors)
         self.details = dict(details or {})

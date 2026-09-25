@@ -204,3 +204,12 @@ def test_parse_authors_with_orcid():
     assert P.parse_authors('Ada Lovelace; UNESCO; 0000-0002-1825-0097') == [
         {'name': 'Ada Lovelace', 'affiliation': 'UNESCO', 'orcid': '0000-0002-1825-0097'}]
     assert P.parse_authors('Ada; UNESCO; not-an-orcid') == [{'name': 'Ada', 'affiliation': 'UNESCO'}]
+
+
+def test_error_classes_expose_their_own_message_table():
+    from ckanext.theme_ejemplo import ihpix_forms as F, ihpix_links as L
+    assert P.PublicationValidationError.messages is P.MESSAGES
+    assert F.ReportValidationError.messages is F.MESSAGES
+    assert L.LinkValidationError.messages is L.MESSAGES
+    # misma clave, textos distintos: cada módulo debe resolver el suyo
+    assert P.MESSAGES['contact_email_required'] != F.MESSAGES['contact_email_required']

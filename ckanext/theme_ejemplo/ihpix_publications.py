@@ -90,6 +90,8 @@ MESSAGES = OrderedDict([
 class PublicationValidationError(Exception):
     u"""`.errors` {campo: mensaje} y `.details` {campo: (clave, params)}."""
 
+    messages = MESSAGES
+
     def __init__(self, errors, details=None):
         self.errors = dict(errors)
         self.details = dict(details or {})
