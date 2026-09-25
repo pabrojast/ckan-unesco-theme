@@ -1161,6 +1161,29 @@ def ihpix_link_type_label(link_type):
     return labels.get(link_type, link_type or '')
 
 
+def ihpix_list_display(value, separator=u', '):
+    """Presenta un campo multi-valor de IhpixActivity (lista JSON o texto
+    suelto legacy) como texto legible y traducido: '["Report","Other"]' →
+    'Report, Other'. Valores vacíos → ''."""
+    if value is None:
+        return u''
+    items = value
+    if isinstance(value, str):
+        s = value.strip()
+        if not s:
+            return u''
+        if s.startswith('['):
+            try:
+                items = json.loads(s)
+            except (TypeError, ValueError):
+                items = [s]
+        else:
+            items = [s]
+    if not isinstance(items, (list, tuple)):
+        items = [items]
+    return separator.join(ihpix_t(str(i)) for i in items if str(i).strip())
+
+
 def ihpix_link_type_icon(link_type):
     """Icono Font Awesome del tipo de adjunto (ihpix_links.TYPE_ICONS)."""
     from ckanext.theme_ejemplo import ihpix_links

@@ -929,7 +929,7 @@
                 {% if activity.knowledge_product_type %}
                   <div class="ox-detail-item">
                     <div class="ox-detail-label">{{ _('Knowledge Product Type') }}</div>
-                    <div class="ox-detail-value">{{ activity.knowledge_product_type }}</div>
+                    <div class="ox-detail-value">{{ h.ihpix_list_display(activity.knowledge_product_type) }}</div>
                   </div>
                 {% endif %}
                 {% if activity.knowledge_product_type_other %}
@@ -947,7 +947,7 @@
                 {% if activity.scientific_product_type %}
                   <div class="ox-detail-item">
                     <div class="ox-detail-label">{{ _('Scientific Product Type') }}</div>
-                    <div class="ox-detail-value">{{ activity.scientific_product_type }}</div>
+                    <div class="ox-detail-value">{{ h.ihpix_list_display(activity.scientific_product_type) }}</div>
                   </div>
                 {% endif %}
                 {% if activity.num_scientific_products %}
@@ -959,7 +959,7 @@
                 {% if activity.training_type %}
                   <div class="ox-detail-item">
                     <div class="ox-detail-label">{{ _('Training Type') }}</div>
-                    <div class="ox-detail-value">{{ activity.training_type }}</div>
+                    <div class="ox-detail-value">{{ h.ihpix_list_display(activity.training_type) }}</div>
                   </div>
                 {% endif %}
                 {% if activity.num_training_materials %}
@@ -983,7 +983,7 @@
                 {% if activity.knowledge_activity_type %}
                   <div class="ox-detail-item">
                     <div class="ox-detail-label">{{ _('Knowledge Activity Type') }}</div>
-                    <div class="ox-detail-value">{{ activity.knowledge_activity_type }}</div>
+                    <div class="ox-detail-value">{{ h.ihpix_list_display(activity.knowledge_activity_type) }}</div>
                   </div>
                 {% endif %}
                 {% if activity.knowledge_activity_type_other %}
@@ -1046,7 +1046,7 @@
               {% if activity.stakeholder_group_type %}
                 <div style="margin-top: 8px;">
                   <div class="ox-detail-label">{{ _('Stakeholder Group Type') }}</div>
-                  <div class="ox-detail-value">{{ activity.stakeholder_group_type }}</div>
+                  <div class="ox-detail-value">{{ h.ihpix_list_display(activity.stakeholder_group_type) }}</div>
                 </div>
               {% endif %}
             {% endif %}

@@ -1332,6 +1332,7 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                  'ihpix_pages_url': helpers.ihpix_pages_url,
                  'ihpix_markdown': helpers.ihpix_markdown,
                  'ihpix_link_type_icon': helpers.ihpix_link_type_icon,
+                 'ihpix_list_display': helpers.ihpix_list_display,
                  'ihpix_link_types': helpers.ihpix_link_types,
                  'ihpix_contribution_icon': helpers.ihpix_contribution_icon,
                  'get_pending_open_learning_count': helpers.get_pending_open_learning_count,
