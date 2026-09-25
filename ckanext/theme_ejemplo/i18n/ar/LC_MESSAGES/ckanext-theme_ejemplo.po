@@ -8388,6 +8388,121 @@ msgstr ""
 msgid "The file is too large (max. {max} MB)"
 msgstr "الملف كبير جدًا (الحد الأقصى {max} ميغابايت)"
 
+#. IHP-IX (2026-09)
+msgid "%(name)s is a lead of this working group. Change their role anyway?"
+msgstr "%(name)s قائد في مجموعة العمل هذه. هل تريد تغيير دوره على أي حال؟"
+
+#. IHP-IX (2026-09)
+msgid "Activity created."
+msgstr "تم إنشاء النشاط."
+
+#. IHP-IX (2026-09)
+msgid "Activity deleted."
+msgstr "تم حذف النشاط."
+
+#. IHP-IX (2026-09)
+msgid "Activity saved."
+msgstr "تم حفظ النشاط."
+
+#. IHP-IX (2026-09)
+msgid ""
+"Archive the working group %(code)s? It will be hidden from new members "
+"(existing members keep access)."
+msgstr ""
+"هل تريد أرشفة مجموعة العمل %(code)s؟ ستُخفى عن الأعضاء الجدد (يحتفظ الأعضاء "
+"الحاليون بإمكانية الوصول)."
+
+#. IHP-IX (2026-09)
+msgid "Delete this activity?"
+msgstr "هل تريد حذف هذا النشاط؟"
+
+#. IHP-IX (2026-09)
+msgid "Did the UNESCO Secretariat participate?"
+msgstr "هل شاركت أمانة اليونسكو؟"
+
+#. IHP-IX (2026-09)
+msgid "Done editing"
+msgstr "إنهاء التحرير"
+
+#. IHP-IX (2026-09)
+msgid "Edit description"
+msgstr "تحرير الوصف"
+
+#. IHP-IX (2026-09)
+msgid ""
+"Free text kept for rows imported from the Excel seed; not shown publicly."
+msgstr "نص حر محفوظ للصفوف المستوردة من ملف Excel؛ لا يُعرض للعموم."
+
+#. IHP-IX (2026-09)
+msgid "Internal notes (legacy)"
+msgstr "ملاحظات داخلية (قديمة)"
+
+#. IHP-IX (2026-09)
+msgid "No description yet"
+msgstr "لا يوجد وصف حتى الآن"
+
+#. IHP-IX (2026-09)
+msgid ""
+"One workspace per IHP-IX Output, created automatically from the official "
+"list of Outputs. Assign a lead so they can approve membership requests; "
+"archive a workspace to hide it from new members."
+msgstr ""
+"مساحة عمل واحدة لكل مخرج من مخرجات البرنامج الهيدرولوجي الدولي التاسع، تُنشأ"
+" تلقائيًا من القائمة الرسمية للمخرجات. عيّن قائدًا ليعتمد طلبات العضوية؛ "
+"وأرشف مساحة العمل لإخفائها عن الأعضاء الجدد."
+
+#. IHP-IX (2026-09)
+msgid "Participation details (legacy, optional)"
+msgstr "تفاصيل المشاركة (قديم، اختياري)"
+
+#. IHP-IX (2026-09)
+msgid ""
+"Pick a Member State from the list (stored as its group slug, like the public"
+" form) or type a free name for legacy rows."
+msgstr ""
+"اختر دولة عضوًا من القائمة (تُحفظ بمعرّف مجموعتها كما في النموذج العام) أو "
+"اكتب اسمًا حرًا للصفوف القديمة."
+
+#. IHP-IX (2026-09)
+msgid "Please explain why the report is being rejected."
+msgstr "يرجى توضيح سبب رفض التقرير."
+
+#. IHP-IX (2026-09)
+msgid "Shown with the activity. Markdown is supported (bold, lists, links)."
+msgstr "يُعرض مع النشاط. يدعم تنسيق Markdown (غامق، قوائم، روابط)."
+
+#. IHP-IX (2026-09)
+msgid "Start typing a Member State…"
+msgstr "ابدأ بكتابة اسم دولة عضو…"
+
+#. IHP-IX (2026-09)
+msgid ""
+"The reporter receives these notes by email and can edit and resubmit the "
+"report."
+msgstr ""
+"يتلقى المُبلِّغ هذه الملاحظات بالبريد الإلكتروني ويمكنه تعديل التقرير وإعادة"
+" إرساله."
+
+#. IHP-IX (2026-09)
+msgid "Upload an image"
+msgstr "رفع صورة"
+
+#. IHP-IX (2026-09)
+msgid ""
+"What this working group does, who should join and how to contribute. "
+"Markdown is supported."
+msgstr ""
+"ما تقوم به مجموعة العمل هذه، ومن ينبغي أن ينضم إليها، وكيفية المساهمة. يدعم "
+"تنسيق Markdown."
+
+#. IHP-IX (2026-09)
+msgid ""
+"e.g. I coordinate the national groundwater monitoring network and can share "
+"our 2025 results."
+msgstr ""
+"مثلًا: أنسّق الشبكة الوطنية لمراقبة المياه الجوفية ويمكنني مشاركة نتائجنا "
+"لعام 2025."
+
 #, python-format
 #~ msgid "Dashboard (%(num)d new item)"
 #~ msgid_plural "Dashboard (%(num)d new items)"
