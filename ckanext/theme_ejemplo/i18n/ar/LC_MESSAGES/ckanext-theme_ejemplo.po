@@ -8525,6 +8525,26 @@ msgstr ""
 "مؤلف واحد في كل سطر. يمكنك إضافة الانتماء المؤسسي ومعرّف ORCID بعد فواصل "
 "منقوطة: «Ada Lovelace; UNESCO; 0000-0002-1825-0097»."
 
+#. IHP-IX (2026-09)
+msgid "Only the working group lead can do this"
+msgstr "قائد مجموعة العمل فقط يمكنه القيام بذلك"
+
+#. IHP-IX (2026-09)
+msgid "Report id is required"
+msgstr "معرّف التقرير مطلوب"
+
+#. IHP-IX (2026-09)
+msgid "You can only manage your own IHP-IX reports"
+msgstr "يمكنك إدارة تقاريرك الخاصة بالبرنامج الهيدرولوجي الدولي فقط"
+
+#. IHP-IX (2026-09)
+msgid "Learning"
+msgstr "التعلّم"
+
+#. IHP-IX (2026-09)
+msgid "Learning resources"
+msgstr "موارد التعلّم"
+
 #, python-format
 #~ msgid "Dashboard (%(num)d new item)"
 #~ msgid_plural "Dashboard (%(num)d new items)"

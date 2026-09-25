@@ -8793,6 +8793,26 @@ msgstr ""
 "Un auteur par ligne. Ajoutez éventuellement l’affiliation et l’ORCID après "
 "des points-virgules : « Ada Lovelace; UNESCO; 0000-0002-1825-0097 »."
 
+#. IHP-IX (2026-09)
+msgid "Only the working group lead can do this"
+msgstr "Seul le lead du groupe de travail peut faire cela"
+
+#. IHP-IX (2026-09)
+msgid "Report id is required"
+msgstr "L’identifiant du rapport est requis"
+
+#. IHP-IX (2026-09)
+msgid "You can only manage your own IHP-IX reports"
+msgstr "Vous ne pouvez gérer que vos propres rapports du PHI-IX"
+
+#. IHP-IX (2026-09)
+msgid "Learning"
+msgstr "Apprentissage"
+
+#. IHP-IX (2026-09)
+msgid "Learning resources"
+msgstr "Ressources d’apprentissage"
+
 #, python-format
 #~ msgid "Dashboard (%(num)d new item)"
 #~ msgid_plural "Dashboard (%(num)d new items)"
