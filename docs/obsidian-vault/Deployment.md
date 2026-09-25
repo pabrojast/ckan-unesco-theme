@@ -126,6 +126,43 @@ ckanext/theme_ejemplo/migration/** # Migraciones (si existen)
 
 ---
 
+## Despliegue a desarrollo (data.dev-wins.com)
+
+Dev (contexto kubectl `default`, ns `ckan`) corre imágenes construidas a mano
+sobre el digest que ya está desplegado, fijadas por digest con `kubectl set
+image` sólo en el contenedor `ckan`. La receta para el tema está en el repo de
+despliegue: `deploy/docker/Dockerfile.ihpix-dev` + `deploy/docker/ihpix-dev.md`
+(rama `feat/ihpix-forms-dev-20260925`). Resumen:
+
+```bash
+BASE=$(kubectl --context default -n ckan get deploy ckan -o jsonpath='{.spec.template.spec.containers[?(@.name=="ckan")].image}')
+docker build -f deploy/docker/Dockerfile.ihpix-dev --build-arg BASE_IMAGE="$BASE" --build-arg THEME_REF="$(git rev-parse HEAD)" -t pabrojast/ckan-base210:ihpix-forms-dev-<sha7>-<fecha> .
+docker push … && DIGEST=$(docker buildx imagetools inspect … --format '{{.Manifest.Digest}}')
+kubectl --context default -n ckan set image deployment/ckan ckan=pabrojast/ckan-base210@$DIGEST
+kubectl --context default -n ckan rollout status deployment/ckan --timeout=15m
+```
+
+> [!warning] Otras líneas de trabajo comparten dev
+> El Dockerfile principal instala `ckan-unesco-theme@dev210`, pero dev puede
+> llevar el tema en otra rama (el 24/09/2026 corría `feat/learning-catalog`).
+> Antes de construir, comprobar el commit del tema en el pod
+> (`git -c safe.directory=… -C /app/src/ckanext-theme-ejemplo log -1`) y fusionar
+> esa rama en `dev210` si hace falta; nunca retirar trabajo ajeno de dev.
+
+**Validar antes de reconstruir**: `kubectl cp` de los ficheros cambiados al pod y
+`kubectl exec -i $POD -c ckan -- python3 - < scripts/ihpix_dev_smoke.py`. El
+script arranca un proceso nuevo (el uwsgi en marcha no se entera) y renderiza
+las páginas IHP-IX como sysadmin con el cliente de pruebas de Flask. Ver
+[[Testing#Humo en dev]].
+
+> [!note] Fallos que sólo aparecen con CKAN real (2026-09-25)
+> El parseo local de Jinja no detecta: comentarios `{# #}` anidados (dejan
+> código vivo), macros importados sin `with context` (`h` indefinido),
+> `_('… %(x)s …')` sin kwargs (gettext newstyle hace `texto % kwargs`),
+> helpers del tema llamados como `h.x()` en el controller (son `toolkit.h.x()`)
+> y `h.pager_url` en rutas con parámetros. Hay tests puros que cubren los tres
+> primeros.
+
 ## Entorno de producción
 
 > [!note] Pendiente por confirmar

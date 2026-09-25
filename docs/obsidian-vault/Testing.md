@@ -15,8 +15,8 @@
 | `test_utils.py` | ~14 | `utils.py` — validación de imágenes de usuario |
 | `test_ihpix_forms.py` | 23 | `ihpix_forms.py` — validación del reporte IHP-IX (módulo puro, corre sin CKAN); incluye límites largos, URL, fechas, ratios y `MESSAGES/details` |
 | `test_ihpix_links.py` | 15 | `ihpix_links.py` — validación de adjuntos del reporte (módulo puro), tipo `course` y `parse_course_id` |
-| `test_ihpix_publications.py` | 15 | `ihpix_publications.py` — modal "Upload a publication": filtrado por esquema (13 vs 29 campos), slugs, autores, errores del esquema (módulo puro) |
-| `test_ihpix_constants.py` | 6 | `ihpix_constants.py` (títulos de Output desde JSON, PA por Output) e `ihpix_i18n_strings.py` (cobertura de taxonomías y mensajes de validación) |
+| `test_ihpix_publications.py` | 18 | `ihpix_publications.py` — modal "Upload a publication": filtrado por esquema (13 vs 29 campos), slugs, autores (subcampos name/orcid/affiliation), contact_email obligatorio, errores del esquema (módulo puro) |
+| `test_ihpix_constants.py` | 9 | `ihpix_constants.py` (títulos de Output desde JSON, PA por Output), `ihpix_i18n_strings.py` (cobertura de taxonomías y mensajes de validación) y guardas de plantillas: snippets importables como módulo, sin `{# #}` anidados, sin `_('%(x)s')` sin kwargs |
 | `test_ihpix_workspaces.py` | 11 | `ihpix_workspaces.py` — reglas de membresía y permisos de los working groups (módulo puro) |
 
 ### Módulos sin tests
@@ -28,6 +28,21 @@
 - `validators.py` (3 validadores)
 
 ---
+
+## Humo en dev
+
+`scripts/ihpix_dev_smoke.py` se ejecuta **dentro del pod** de dev y renderiza
+las páginas IHP-IX (públicas, logueadas y admin) como el primer sysadmin activo,
+con un token de API temporal que revoca al final. Falla si alguna devuelve 5xx
+o si el formulario de reporte no trae los marcadores del kit.
+
+```bash
+POD=$(kubectl --context default -n ckan get pods -o name | grep pod/ckan- | grep -v datapusher | head -1)
+kubectl --context default -n ckan exec -i $POD -c ckan -- python3 - < scripts/ihpix_dev_smoke.py 2>/dev/null
+```
+
+Para validar cambios sin reconstruir la imagen: `kubectl cp` de los ficheros al
+pod y volver a lanzar el script (el proceso es nuevo y lee el disco).
 
 ## Cómo ejecutar tests
 

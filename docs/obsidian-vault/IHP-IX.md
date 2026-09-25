@@ -33,6 +33,18 @@ Hub de la implementación del **reporting y gestión del conocimiento IHP-IX** e
 - `ckan ihpix seed-data`, `ckan ihpix recompute-summary`, `ckan ihpix seed-workspaces` → [[Comandos Utiles#IHP-IX: Ingesta de datos]].
 - Tests puros: `PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python3 -m pytest -q ckanext/theme_ejemplo/tests/test_ihpix_*.py` → [[Testing]].
 
+## Estado en dev (2026-09-25)
+
+Desplegado en `data.dev-wins.com` (tema `dev210`, que fusionó
+`feat/learning-catalog`). Verificado desde el pod: las 22 páginas IHP-IX
+renderizan como sysadmin; `ihpix_publication_create` creó de verdad un dataset
+`documents` público (tags `ihp-ix`/`ihp-ix-output-1.3`, grupo del Member State,
+`document_type`, idioma, identificador, recurso PDF subido y variante por URL),
+registró `publication_created` en el ledger y los datos de prueba se purgaron.
+Traducciones es/fr/ar y RTL comprobadas. Pendiente: prueba en navegador real
+(la extensión de Chrome no estaba conectada) y con un usuario **editor** no
+sysadmin (DOC-028). Ver [[Deployment#Despliegue a desarrollo (data.dev-wins.com)]].
+
 ## Pendientes conocidos
 
 Ver DOC-008 (títulos oficiales de Outputs), DOC-018/021 (autor y país de las filas del seed), DOC-019 (datasets/eventos sin `came_from`), DOC-022/023 (alcance del piloto y leads iniciales), DOC-028 (rol editor para subir publicaciones; verificación en dev del modal) en [[Backlog Documentacion]].
