@@ -111,3 +111,29 @@ def test_link_errors_carry_translatable_details():
     for field, (key, params) in err.details.items():
         assert key in L.MESSAGES
         assert err.errors[field] == L.MESSAGES[key].format(**params)
+
+
+def test_course_link_type_and_url():
+    values = L.validate_link({'link_type': 'course', 'target_kind': 'course',
+                              'target_id': 'course-v1:UNESCO+IHP01+2025',
+                              'title': 'Groundwater basics'})
+    assert values['target_kind'] == 'course'
+    assert L.link_public_url(values) == \
+        'https://openlearning.unesco.org/courses/course-v1:UNESCO+IHP01+2025/about'
+    # una URL guardada explícitamente manda
+    values['url'] = 'https://example.org/mirror'
+    assert L.link_public_url(values) == 'https://example.org/mirror'
+    # un curso no puede apuntar a un package
+    with pytest.raises(L.LinkValidationError):
+        L.validate_link({'link_type': 'course', 'target_kind': 'package',
+                         'target_id': 'x', 'title': 't'})
+    assert L.SEARCH_KIND_FOR_TYPE['course'] == 'course'
+    assert set(L.TYPE_ICONS) == set(L.LINK_TYPES) == set(L.TYPE_LABELS)
+
+
+def test_parse_course_id():
+    assert L.parse_course_id('https://openlearning.unesco.org/courses/course-v1:UNESCO+IHP01+2025/about') == \
+        'course-v1:UNESCO+IHP01+2025'
+    assert L.parse_course_id('course-v1:UNESCO+IHP01+2025/') == 'course-v1:UNESCO+IHP01+2025'
+    assert L.parse_course_id('https://openlearning.unesco.org/program/ihp') == ''
+    assert L.parse_course_id('') == ''

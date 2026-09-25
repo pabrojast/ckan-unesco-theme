@@ -54,6 +54,11 @@ def test_ihpix_reports_queue_is_registered():
     ids = [q['id'] for q in approvals.QUEUE_DEFS]
     assert 'ihpix_reports' in ids
     assert 'ihpix_wg_members' in ids
+    assert 'open_learning' in ids
+    ol_queue = next(q for q in approvals.QUEUE_DEFS if q['id'] == 'open_learning')
+    assert ol_queue['scope'] == 'sysadmin'
+    assert ol_queue['helper'] == 'get_pending_open_learning_count'
+    assert ol_queue['route'] == 'theme_ejemplo.open_learning_admin'
     wg_queue = next(q for q in approvals.QUEUE_DEFS if q['id'] == 'ihpix_wg_members')
     assert wg_queue['scope'] == 'user'
     assert wg_queue['helper'] == 'get_pending_ihpix_wg_members_count'

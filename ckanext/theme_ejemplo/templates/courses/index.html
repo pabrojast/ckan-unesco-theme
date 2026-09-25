@@ -73,6 +73,26 @@
             </section>
             {% endif %}
 
+            {% if c.userobj %}
+            <section class="module module-narrow module-shallow courses-propose">
+              <div class="module-content">
+                <h2 class="courses-section-title"><i class="fa fa-paper-plane text-unesco-blue"></i> {% trans %}Know an IHP course that is missing?{% endtrans %}</h2>
+                <p class="text-muted">{% trans %}Paste the address of a course on openlearning.unesco.org. The IHP-WINS team reviews proposals before they appear here, and approved courses can be attached to IHP-IX reports.{% endtrans %}</p>
+                <form method="post" action="{{ h.url_for('theme_ejemplo.ihpix_course_propose') }}" class="form-inline courses-propose-form">
+                  {{ h.csrf_input() }}
+                  <input type="hidden" name="came_from" value="{{ h.url_for('theme_ejemplo.courses') }}">
+                  <label class="sr-only" for="courses-propose-url">{{ _('Course address') }}</label>
+                  <input type="url" class="form-control" id="courses-propose-url" name="course_url" required
+                         placeholder="https://openlearning.unesco.org/courses/course-v1:…/about" style="min-width: 320px; max-width: 100%;">
+                  <label class="sr-only" for="courses-propose-note">{{ _('Note (optional)') }}</label>
+                  <input type="text" class="form-control" id="courses-propose-note" name="note" maxlength="500"
+                         placeholder="{{ _('Why is it relevant? (optional)') }}" style="min-width: 260px; max-width: 100%;">
+                  <button type="submit" class="btn btn-primary"><i class="fa fa-paper-plane"></i> {{ _('Propose course') }}</button>
+                </form>
+              </div>
+            </section>
+            {% endif %}
+
             {% if not permanent_courses and not scheduled_courses %}
             <section class="module module-narrow module-shallow">
               <div class="module-content text-center" style="padding: 4rem 2.5rem;">
@@ -92,6 +112,8 @@
 </div>
 
 <style>
+.courses-propose .module-content { padding: 1.5rem 2rem; }
+.courses-propose-form { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; }
 .courses-section-title {
   font-size: 1.5rem;
   font-weight: 700;

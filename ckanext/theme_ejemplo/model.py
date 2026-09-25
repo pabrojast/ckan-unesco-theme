@@ -2998,6 +2998,33 @@ class OpenLearningCourse(model.DomainObject):
         return q.all()
 
     @classmethod
+    def search_public(cls, q=u'', limit=10):
+        """Cursos aprobados y disponibles cuyo nombre u organización
+        contiene `q` (para adjuntar a un reporte IHP-IX)."""
+        from sqlalchemy import or_
+        query = meta.Session.query(cls).filter(
+            cls.status == cls.STATUS_APPROVED,
+            cls.is_available == True,  # noqa: E712
+        )
+        q = (q or u'').strip()
+        if q:
+            like = u'%' + q + u'%'
+            query = query.filter(or_(cls.name.ilike(like), cls.org.ilike(like),
+                                     cls.course_id.ilike(like)))
+        return query.order_by(cls.display_order.asc(), cls.name.asc()).limit(limit).all()
+
+    @classmethod
+    def count_pending(cls):
+        return meta.Session.query(cls).filter(cls.status == cls.STATUS_PENDING).count()
+
+    @classmethod
+    def count_proposed_since(cls, user_id, since):
+        """Propuestas de un usuario desde `since` (rate limit)."""
+        return meta.Session.query(cls).filter(
+            cls.proposed_by == user_id, cls.proposed_at != None,  # noqa: E711
+            cls.proposed_at >= since).count()
+
+    @classmethod
     def get_not_in(cls, course_ids):
         """Cursos de la BD cuyo course_id no está en ``course_ids``."""
         return meta.Session.query(cls).filter(
@@ -3038,6 +3065,10 @@ class OpenLearningCourse(model.DomainObject):
             'is_available': bool(self.is_available),
             'display_order': self.display_order or 0,
             'course_url': OPENLEARNING_COURSE_URL.format(course_id=self.course_id),
+            'proposed_by': getattr(self, 'proposed_by', None) or u'',
+            'proposed_at': (self.proposed_at.isoformat()
+                            if getattr(self, 'proposed_at', None) else None),
+            'proposal_note': getattr(self, 'proposal_note', None) or u'',
             'first_seen_at': self.first_seen_at.isoformat() if self.first_seen_at else None,
             'last_seen_at': self.last_seen_at.isoformat() if self.last_seen_at else None,
             'updated_at': self.updated_at.isoformat() if self.updated_at else None,
@@ -3056,6 +3087,34 @@ def init_open_learning_courses_db():
         log.info(u'open_learning_course table created')
     else:
         log.debug(u'open_learning_course table already exists')
+        _add_open_learning_course_columns(inspector)
+
+
+# Columnas añadidas después del primer despliegue (propuestas de cursos desde
+# IHP-IX, 2026-09). Igual patrón idempotente que `_IHPIX_ACTIVITY_ADDED_COLUMNS`.
+_OPEN_LEARNING_ADDED_COLUMNS = (
+    ('proposed_by', "TEXT DEFAULT ''"),
+    ('proposed_at', 'TIMESTAMP'),
+    ('proposal_note', "TEXT DEFAULT ''"),
+)
+
+
+def _add_open_learning_course_columns(inspector):
+    from sqlalchemy import text as sa_text
+    try:
+        existing = {col['name'] for col in inspector.get_columns('open_learning_course')}
+        missing = [(name, ddl) for name, ddl in _OPEN_LEARNING_ADDED_COLUMNS
+                   if name not in existing]
+        if not missing:
+            return
+        with meta.engine.begin() as conn:
+            for name, ddl in missing:
+                conn.execute(sa_text(
+                    'ALTER TABLE open_learning_course '
+                    'ADD COLUMN IF NOT EXISTS %s %s' % (name, ddl)))
+                log.info(u'open_learning_course: columna %s añadida', name)
+    except Exception as e:
+        log.warning(u'open_learning_course: no se pudo migrar el esquema: %s', e)
 
 
 def define_open_learning_course_table():
@@ -3081,6 +3140,11 @@ def define_open_learning_course_table():
         Column('status', UnicodeText, nullable=False, default=u'pending'),
         Column('is_available', Boolean, default=True),
         Column('display_order', Integer, default=0),
+        # Propuesto desde IHP-IX (usuario, fecha y nota); vacío si lo añadió
+        # un sysadmin o el sync automático
+        Column('proposed_by', UnicodeText, default=u''),
+        Column('proposed_at', DateTime, nullable=True),
+        Column('proposal_note', UnicodeText, default=u''),
         Column('first_seen_at', DateTime, default=datetime.datetime.utcnow),
         Column('last_seen_at', DateTime, default=datetime.datetime.utcnow),
         Column('created_at', DateTime, default=datetime.datetime.utcnow),

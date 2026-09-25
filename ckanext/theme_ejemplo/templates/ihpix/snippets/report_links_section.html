@@ -11,14 +11,9 @@
   Contexto esperado: `activity` (None en reporte nuevo; su `links` prellena).
 #}
 {% set initial_links = (activity.links if activity and activity.links else []) %}
-{% set link_types = [
-  ('publication', _('Publication'), 'fa-book'),
-  ('webinar', _('Webinar'), 'fa-video-camera'),
-  ('event', _('Event'), 'fa-calendar'),
-  ('dataset', _('Dataset'), 'fa-database'),
-  ('output_data', _('Output data'), 'fa-table'),
-  ('other', _('Other link'), 'fa-link'),
-] %}
+{# (valor, etiqueta, icono) desde ihpix_links.LINK_TYPES — incluye Course #}
+{% set link_types = h.ihpix_link_types() %}
+{% set pub = publication_ctx or {} %}
 
 <style>
   .ihpix-links-widget { display: grid; gap: 1rem; }
@@ -65,6 +60,13 @@
   .ihpix-lw-manual .ihpix-report-btn { margin-top: 0.5rem; }
   .ihpix-lw-create { font-size: 0.85rem; color: #475569; margin: 0.75rem 0 0; }
   .ihpix-lw-create a { font-weight: 600; }
+  .ihpix-lw-bridges { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin: 0 0 0.9rem; }
+  .ihpix-lw-bridges .ihpix-report-btn { padding: 0.45rem 0.85rem; min-height: 36px; font-size: 0.85rem; }
+  .ihpix-lw-bridges-help { flex-basis: 100%; font-size: 0.8rem; color: #64748b; margin: 0; }
+  .ihpix-lw-course { border: 1px dashed #cbd5e1; border-radius: 8px; padding: 0.75rem 0.9rem; margin-top: 0.75rem; background: #f8fafc; }
+  .ihpix-lw-course[hidden] { display: none; }
+  .ihpix-lw-course p { margin: 0 0 0.5rem; font-size: 0.85rem; color: #475569; }
+  .ihpix-lw-course .ihpix-report-row { align-items: flex-end; }
 </style>
 
 <div class="ihpix-report-section" id="section-7">
@@ -86,6 +88,23 @@
 
       <div class="ihpix-lw-add">
         <h4><i class="fa fa-plus-circle" aria-hidden="true"></i> {{ _('Add an item') }}</h4>
+
+        {# Puentes al ecosistema: crear el contenido en IHP-WINS desde aquí #}
+        <div class="ihpix-lw-bridges">
+          <button type="button" class="ihpix-report-btn is-primary" data-ihpix-publication-open>
+            <i class="fa fa-cloud-upload" aria-hidden="true"></i> {{ _('Upload a publication') }}
+          </button>
+          <a class="ihpix-report-btn is-secondary" id="ihpix-lw-dataset-link" target="_blank" rel="noopener"
+             href="{{ pub.dataset_new_url or '/dataset/new' }}?tag_string=ihp-ix{% if pub.output_code %},ihp-ix-output-{{ pub.output_code }}{% endif %}{% if pub.orgs and pub.orgs|length == 1 %}&owner_org={{ pub.orgs[0].id }}{% endif %}"
+             data-base-url="{{ pub.dataset_new_url or '/dataset/new' }}"{% if pub.orgs and pub.orgs|length == 1 %} data-owner-org="{{ pub.orgs[0].id }}"{% endif %}>
+            <i class="fa fa-database" aria-hidden="true"></i> {{ _('Add a dataset') }}
+          </a>
+          <a class="ihpix-report-btn is-secondary" href="{{ h.ihpix_pages_url('pages.water_events_new', '/water-events_edit') }}" target="_blank" rel="noopener">
+            <i class="fa fa-calendar-plus-o" aria-hidden="true"></i> {{ _('Create an event') }}
+          </a>
+          <p class="ihpix-lw-bridges-help">{{ _('Publications are created right here and attached at once. Datasets and events open their own form in a new tab; when you are done, come back and use “Refresh search”.') }}</p>
+        </div>
+
         <div class="ihpix-report-row">
           <div class="ihpix-report-field" style="flex: 0 1 220px;">
             <label class="ihpix-report-label" for="ihpix-lw-type">{{ _('Type') }}</label>
@@ -133,12 +152,29 @@
           </button>
         </details>
 
+        {# Cursos Open Learning: proponer uno que aún no está en el catálogo #}
+        <div class="ihpix-lw-course" id="ihpix-lw-course" hidden>
+          <p><i class="fa fa-graduation-cap" aria-hidden="true"></i>
+            {{ _('Courses come from the IHP Open Learning catalogue curated by IHP-WINS. Training materials (PDFs, slides) go under “Upload a publication” → Educational material.') }}</p>
+          {% if pub.can_propose_courses %}
+          <div class="ihpix-report-row">
+            <div class="ihpix-report-field">
+              <label class="ihpix-report-label" for="ihpix-lw-course-url">{{ _('Course not listed? Paste its Open Learning address to propose it') }}</label>
+              <input type="url" id="ihpix-lw-course-url" class="ihpix-report-input" inputmode="url"
+                     placeholder="https://openlearning.unesco.org/courses/course-v1:…/about">
+            </div>
+            <div class="ihpix-report-field" style="flex: 0 0 auto;">
+              <button type="button" class="ihpix-report-btn is-secondary" id="ihpix-lw-course-propose">
+                <i class="fa fa-paper-plane" aria-hidden="true"></i> {{ _('Propose this course') }}
+              </button>
+            </div>
+          </div>
+          <div class="ihpix-report-error-text" role="alert" id="ihpix-lw-course-error"></div>
+          {% endif %}
+        </div>
+
         <p class="ihpix-lw-create">
-          {{ _('Not in IHP-WINS yet?') }}
-          <a href="{{ h.url_for('/documents/new') }}" target="_blank" rel="noopener">{{ _('Create a publication') }}</a>
-          &middot;
-          <a href="{{ h.ihpix_pages_url('pages.water_events_new', '/water-events_edit') }}" target="_blank" rel="noopener">{{ _('Create an event') }}</a>
-          &mdash; {{ _('when you are done, come back to this tab and search for it.') }}
+          {{ _('Created something in another tab?') }}
           <button type="button" class="ihpix-report-btn is-secondary" id="ihpix-lw-refresh" style="margin-inline-start:.5rem;padding:.3rem .7rem;min-height:32px;font-size:.8rem;">
             <i class="fa fa-refresh" aria-hidden="true"></i> {{ _('Refresh search') }}
           </button>
@@ -182,7 +218,10 @@
   };
   /* Qué busca cada tipo (igual que ihpix_links.SEARCH_KIND_FOR_TYPE) */
   var SEARCH_KIND = { publication: 'publication', dataset: 'dataset', output_data: 'dataset',
-                      event: 'event', webinar: 'event', other: null };
+                      event: 'event', webinar: 'event', course: 'course', other: null };
+  var COURSE_URL = 'https://openlearning.unesco.org/courses/{id}/about';
+  var PROPOSE_URL = {{ (pub.propose_url or '/ihpix/courses/propose')|tojson }};
+  var OUTPUT_CODE = {{ (pub.output_code or '')|tojson }};
   var MSG = {
     empty: {{ _('No publications, events or data attached yet.')|tojson }},
     remove: {{ _('Remove')|tojson }},
@@ -195,7 +234,11 @@
     duplicate: {{ _('This item is already attached.')|tojson }},
     needTitle: {{ _('Title and URL are required.')|tojson }},
     badUrl: {{ _('The URL must start with http:// or https://')|tojson }},
-    error: {{ _('Search failed. Please try again.')|tojson }}
+    error: {{ _('Search failed. Please try again.')|tojson }},
+    courseProposed: {{ _('Thank you! The course was proposed and will be attachable once the IHP-WINS team approves it.')|tojson }},
+    courseApproved: {{ _('This course is already in the catalogue — it has been attached.')|tojson }},
+    courseNeedUrl: {{ _('Paste the address of a course on openlearning.unesco.org')|tojson }},
+    proposing: {{ _('Sending…')|tojson }}
   };
 
   var links = [];
@@ -224,6 +267,7 @@
       return (l.link_type === 'publication' ? '/documents/' : '/dataset/') + l.target_id;
     }
     if (l.target_kind === 'page' && l.target_id) return '/water-events/' + l.target_id;
+    if (l.target_kind === 'course' && l.target_id) return l.url || COURSE_URL.replace('{id}', l.target_id);
     return l.url || '';
   }
   function render() {
@@ -291,10 +335,12 @@
   /* ── Búsqueda en IHP-WINS ─────────────────────────────────── */
   var timer = null, lastQ = '';
   function currentKind() { return SEARCH_KIND[typeSel.value] || null; }
+  var courseBox = document.getElementById('ihpix-lw-course');
   function syncTypeUI() {
     var kind = currentKind();
     searchField.style.display = kind ? '' : 'none';
     if (!kind && manual) manual.open = true;
+    if (courseBox) courseBox.hidden = (typeSel.value !== 'course');
     hideResults();
   }
   function hideResults() { resultsEl.hidden = true; resultsEl.innerHTML = ''; }
@@ -372,6 +418,61 @@
     if (!resultsEl.contains(e.target) && e.target !== searchInput) hideResults();
   });
   typeSel.addEventListener('change', syncTypeUI);
+
+  /* ── Proponer un curso Open Learning ───────────────────────── */
+  var courseUrlIn = document.getElementById('ihpix-lw-course-url');
+  var courseBtn = document.getElementById('ihpix-lw-course-propose');
+  var courseErr = document.getElementById('ihpix-lw-course-error');
+  if (courseBtn && courseUrlIn) {
+    courseBtn.addEventListener('click', function() {
+      var url = courseUrlIn.value.trim();
+      if (courseErr) { courseErr.textContent = ''; courseErr.style.display = 'none'; }
+      if (!url) { if (courseErr) { courseErr.textContent = MSG.courseNeedUrl; courseErr.style.display = 'block'; } courseUrlIn.focus(); return; }
+      var fd = new FormData();
+      fd.append('course_url', url);
+      if (OUTPUT_CODE) fd.append('output_code', OUTPUT_CODE);
+      courseBtn.disabled = true;
+      var original = courseBtn.innerHTML;
+      courseBtn.innerHTML = '<i class="fa fa-spinner fa-spin" aria-hidden="true"></i> ' + MSG.proposing;
+      var send = (window.IhpixForms && window.IhpixForms.postForm)
+        ? window.IhpixForms.postForm(PROPOSE_URL, fd)
+        : fetch(PROPOSE_URL, { method: 'POST', body: fd, credentials: 'same-origin',
+            headers: { 'X-Requested-With': 'XMLHttpRequest', 'Accept': 'application/json' } })
+            .then(function(r) { return r.json().then(function(d) { return { ok: r.ok, status: r.status, data: d }; }); });
+      send.then(function(res) {
+        courseBtn.disabled = false; courseBtn.innerHTML = original;
+        var data = res.data || {};
+        if (res.ok && data.success) {
+          if (data.link) { add(data.link); notify(MSG.courseApproved, 'success'); }
+          else { notify(MSG.courseProposed, 'success'); }
+          courseUrlIn.value = '';
+          return;
+        }
+        var msg = (data.errors && (data.errors.course_url || data.errors.__all__)) || data.error || MSG.error;
+        if (courseErr) { courseErr.textContent = msg; courseErr.style.display = 'block'; }
+      }).catch(function() {
+        courseBtn.disabled = false; courseBtn.innerHTML = original;
+        if (courseErr) { courseErr.textContent = MSG.error; courseErr.style.display = 'block'; }
+      });
+    });
+  }
+
+  /* ── "Add a dataset": prellenar owner_org/tag del Output actual ── */
+  var datasetLink = document.getElementById('ihpix-lw-dataset-link');
+  var outputSel = document.getElementById('ihpix-field-output');
+  function syncDatasetLink() {
+    if (!datasetLink) return;
+    var base = datasetLink.getAttribute('data-base-url') || '/dataset/new';
+    var code = (outputSel && outputSel.value) || OUTPUT_CODE;
+    var params = ['tag_string=' + encodeURIComponent('ihp-ix' + (code ? ',ihp-ix-output-' + code : ''))];
+    var org = datasetLink.getAttribute('data-owner-org');
+    if (org) params.unshift('owner_org=' + encodeURIComponent(org));
+    var titleIn2 = document.getElementById('ihpix-field-title');
+    if (titleIn2 && titleIn2.value.trim()) params.push('title=' + encodeURIComponent(titleIn2.value.trim() + ' — data'));
+    datasetLink.href = base + '?' + params.join('&');
+  }
+  if (outputSel) outputSel.addEventListener('change', syncDatasetLink);
+  if (datasetLink) { datasetLink.addEventListener('focus', syncDatasetLink); datasetLink.addEventListener('mouseenter', syncDatasetLink); syncDatasetLink(); }
 
   /* ── Alta manual ──────────────────────────────────────────── */
   addBtn.addEventListener('click', function() {

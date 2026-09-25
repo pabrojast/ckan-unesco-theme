@@ -135,6 +135,12 @@
                               {% if not course.is_available %}
                               <span class="label label-danger">{{ _('No longer in API') }}</span>
                               {% endif %}
+                              {% if course.proposed_by %}
+                              {% set proposer = h.get_ihpix_reporter(course.proposed_by) %}
+                              <span class="label label-primary" title="{{ course.proposed_at or '' }}">
+                                <i class="fa fa-user"></i> {{ _('Proposed by') }} {{ proposer.display_name if proposer else course.proposed_by }}
+                              </span>
+                              {% endif %}
                               {% if course.start_display %}
                               <span class="text-muted small" style="margin-left: 8px;">
                                 <i class="fa fa-calendar"></i> {{ _('Start:') }} {{ course.start_display }}
@@ -143,6 +149,9 @@
                             </p>
                             {% if course.short_description %}
                             <p class="olc-card-desc">{{ course.short_description[:160] }}{% if course.short_description|length > 160 %}...{% endif %}</p>
+                            {% endif %}
+                            {% if course.proposal_note %}
+                            <p class="olc-card-desc"><i class="fa fa-comment-o"></i> <em>{{ course.proposal_note }}</em></p>
                             {% endif %}
                           </div>
                           <div class="col-md-4 col-sm-4">

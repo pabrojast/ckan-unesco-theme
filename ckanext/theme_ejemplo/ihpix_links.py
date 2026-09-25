@@ -9,20 +9,25 @@ tipo de adjunto (`link_type`) y a qué apunta (`target_kind`):
   dataset/datos del output = `type:dataset`). `target_id` = id del package.
 - `page`: una página de ckanext-pages `water-events` (evento o webinar).
   `target_id` = `name` de la página.
+- `course`: un curso de UNESCO Open Learning de la caché curada
+  (`OpenLearningCourse`, sólo `approved`). `target_id` = `course_id` de
+  Open edX (p. ej. `course-v1:UNESCO+IHP01+2025`).
 - `url`: cualquier enlace externo registrado a mano (título + URL).
 
-No se crean objetos CKAN desde aquí: sólo se referencian los existentes o
-se guarda un enlace plano.
+Este módulo no crea objetos CKAN: sólo referencia los existentes o guarda
+un enlace plano. La creación inline de publicaciones vive en
+`ihpix_publications.py` + `actions.ihpix_publication_create`.
 """
 from __future__ import unicode_literals
 
 import datetime
 import json
+import re
 from collections import OrderedDict
 
 LINK_TYPES = ('publication', 'webinar', 'event', 'dataset', 'output_data',
-              'other')
-TARGET_KINDS = ('package', 'page', 'url')
+              'course', 'other')
+TARGET_KINDS = ('package', 'page', 'course', 'url')
 
 # Tipo de adjunto → target_kind admitidos
 ALLOWED_KINDS = OrderedDict([
@@ -31,6 +36,7 @@ ALLOWED_KINDS = OrderedDict([
     ('output_data', ('package', 'url')),
     ('event', ('page', 'url')),
     ('webinar', ('page', 'url')),
+    ('course', ('course', 'url')),
     ('other', ('url',)),
 ])
 
@@ -41,6 +47,7 @@ SEARCH_KIND_FOR_TYPE = OrderedDict([
     ('output_data', 'dataset'),
     ('event', 'event'),
     ('webinar', 'event'),
+    ('course', 'course'),
     ('other', None),
 ])
 
@@ -51,8 +58,40 @@ TYPE_LABELS = OrderedDict([
     ('event', 'Event'),
     ('dataset', 'Dataset'),
     ('output_data', 'Output data'),
+    ('course', 'Course'),
     ('other', 'Other link'),
 ])
+
+# Iconos Font Awesome por tipo (templates y widget)
+TYPE_ICONS = OrderedDict([
+    ('publication', 'fa-book'),
+    ('webinar', 'fa-video-camera'),
+    ('event', 'fa-calendar'),
+    ('dataset', 'fa-database'),
+    ('output_data', 'fa-table'),
+    ('course', 'fa-graduation-cap'),
+    ('other', 'fa-link'),
+])
+
+# Misma plantilla que `model.OPENLEARNING_COURSE_URL`
+COURSE_URL_TEMPLATE = 'https://openlearning.unesco.org/courses/{course_id}/about'
+_COURSE_ID_RE = re.compile(r'/courses/(course-v1:[^/?#\s]+)', re.I)
+
+
+def course_url(course_id):
+    return COURSE_URL_TEMPLATE.format(course_id=course_id)
+
+
+def parse_course_id(value):
+    u"""`course_id` de Open edX a partir de una URL de Open Learning o del
+    propio id ('course-v1:ORG+CODE+RUN'). '' si no se reconoce."""
+    s = (value or '').strip()
+    if not s:
+        return ''
+    if s.lower().startswith('course-v1:'):
+        return s.split('?')[0].split('#')[0].rstrip('/')
+    m = _COURSE_ID_RE.search(s)
+    return m.group(1) if m else ''
 
 TITLE_MAX = 300
 DESCRIPTION_MAX = 500
@@ -210,6 +249,8 @@ def link_public_url(link):
         return '/dataset/' + target_id
     if kind == 'page' and target_id:
         return '/water-events/' + target_id
+    if kind == 'course' and target_id:
+        return url or course_url(target_id)
     return url
 
 
