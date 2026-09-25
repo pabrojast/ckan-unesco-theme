@@ -2963,7 +2963,7 @@ msgstr ""
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:472
 msgid "Confirm"
-msgstr ""
+msgstr "تأكيد"
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:755
 msgid "Please fill in all required fields."
@@ -7677,6 +7677,283 @@ msgstr[2] "طلبا عضوية ينتظران مراجعتك في مجموعات
 msgstr[3] "%(n)d طلبات عضوية تنتظر مراجعتك في مجموعات العمل التي تقودها."
 msgstr[4] "%(n)d طلب عضوية ينتظر مراجعتك في مجموعات العمل التي تقودها."
 msgstr[5] "%(n)d طلب عضوية ينتظر مراجعتك في مجموعات العمل التي تقودها."
+
+#. IHP-IX (2026-09)
+msgid "Administration"
+msgstr "الإدارة"
+
+#. IHP-IX (2026-09)
+msgid ""
+"Anything else the reviewers should know. Markdown is supported (bold, lists,"
+" links)."
+msgstr ""
+"أي معلومات أخرى ينبغي أن يعرفها المراجعون. يدعم النص تنسيق Markdown (غامق، "
+"قوائم، روابط)."
+
+#. IHP-IX (2026-09)
+msgid "Biennium is required"
+msgstr "فترة السنتين مطلوبة"
+
+#. IHP-IX (2026-09)
+msgid "Bold"
+msgstr "غامق"
+
+#. IHP-IX (2026-09)
+msgid "Bullet list"
+msgstr "قائمة نقطية"
+
+#. IHP-IX (2026-09)
+msgid "Cannot exceed the total number of stakeholders"
+msgstr "لا يمكن أن يتجاوز العدد الإجمالي لأصحاب المصلحة"
+
+#. IHP-IX (2026-09)
+msgid "Cannot exceed the total number of stakeholders."
+msgstr "لا يمكن أن يتجاوز العدد الإجمالي لأصحاب المصلحة."
+
+#. IHP-IX (2026-09)
+msgid "Clear all selected items?"
+msgstr "هل تريد إزالة جميع العناصر المحددة؟"
+
+#. IHP-IX (2026-09)
+msgid "Clear selection"
+msgstr "مسح التحديد"
+
+#. IHP-IX (2026-09)
+msgid "Drag a file here or"
+msgstr "اسحب ملفًا هنا أو"
+
+#. IHP-IX (2026-09)
+msgid "Expected a list of links"
+msgstr "كان من المتوقع قائمة روابط"
+
+#. IHP-IX (2026-09)
+msgid "Focal point email is required"
+msgstr "البريد الإلكتروني لجهة الاتصال مطلوب"
+
+#. IHP-IX (2026-09)
+msgid "Focal point name is required"
+msgstr "اسم جهة الاتصال مطلوب"
+
+#. IHP-IX (2026-09)
+msgid "Heading"
+msgstr "عنوان"
+
+#. IHP-IX (2026-09)
+msgid "Institution name is required"
+msgstr "اسم المؤسسة مطلوب"
+
+#. IHP-IX (2026-09)
+msgid "Invalid JSON"
+msgstr "JSON غير صالح"
+
+#. IHP-IX (2026-09)
+msgid "Invalid date format. Use YYYY-MM-DD"
+msgstr "تنسيق التاريخ غير صالح. استخدم YYYY-MM-DD"
+
+#. IHP-IX (2026-09)
+msgid "Invalid email address"
+msgstr "عنوان البريد الإلكتروني غير صالح"
+
+#. IHP-IX (2026-09)
+msgid "Invalid institution type"
+msgstr "نوع المؤسسة غير صالح"
+
+#. IHP-IX (2026-09)
+msgid "Italic"
+msgstr "مائل"
+
+#. IHP-IX (2026-09)
+msgid "Lead Implementing Institution category is required"
+msgstr "فئة المؤسسة المنفذة الرئيسية مطلوبة"
+
+#. IHP-IX (2026-09)
+msgid "Link must be a full URL starting with http:// or https://"
+msgstr "يجب أن يكون الرابط عنوان URL كاملًا يبدأ بـ http:// أو https://"
+
+#. IHP-IX (2026-09)
+msgid "Markdown supported: **bold**, _italic_, - lists, [link](https://…)"
+msgstr "يدعم Markdown: **غامق**، _مائل_، - قوائم، [رابط](https://…)"
+
+#. IHP-IX (2026-09)
+msgid "Must be one of: {choices}"
+msgstr "يجب أن يكون واحدًا من: {choices}"
+
+#. IHP-IX (2026-09)
+msgid "No matches for your search."
+msgstr "لا توجد نتائج مطابقة لبحثك."
+
+#. IHP-IX (2026-09)
+msgid "No results"
+msgstr "لا توجد نتائج"
+
+#. IHP-IX (2026-09)
+msgid "Nothing to preview yet."
+msgstr "لا يوجد شيء للمعاينة حتى الآن."
+
+#. IHP-IX (2026-09)
+msgid "Numbered list"
+msgstr "قائمة مرقمة"
+
+#. IHP-IX (2026-09)
+msgid "One partner per line, or separated by commas"
+msgstr "شريك واحد في كل سطر، أو مفصولون بفواصل"
+
+#. IHP-IX (2026-09)
+msgid "Optional section with answers"
+msgstr "قسم اختياري يحتوي على إجابات"
+
+#. IHP-IX (2026-09)
+msgid "Output {output} does not belong to {pa}"
+msgstr "المخرج {output} لا ينتمي إلى {pa}"
+
+#. IHP-IX (2026-09)
+msgid "Please confirm"
+msgstr "يرجى التأكيد"
+
+#. IHP-IX (2026-09)
+msgid "Please enter a full URL starting with http:// or https://"
+msgstr "يرجى إدخال عنوان URL كامل يبدأ بـ http:// أو https://"
+
+#. IHP-IX (2026-09)
+msgid "Refresh search"
+msgstr "تحديث البحث"
+
+#. IHP-IX (2026-09)
+msgid ""
+"Relevant Key Activity of the Operational Implementation Plan to which the "
+"activity contributes (e.g., 3.3.1) and how. Markdown is supported."
+msgstr ""
+"النشاط الرئيسي في خطة التنفيذ التشغيلية الذي يسهم فيه النشاط (مثلًا 3.3.1) "
+"وكيفية ذلك. يدعم تنسيق Markdown."
+
+#. IHP-IX (2026-09)
+msgid "Remove file"
+msgstr "إزالة الملف"
+
+#. IHP-IX (2026-09)
+msgid "Remove this item from the report?"
+msgstr "هل تريد إزالة هذا العنصر من التقرير؟"
+
+#. IHP-IX (2026-09)
+msgid ""
+"Report activities implemented under IHP-IX (2022–2029). The form covers 7 "
+"sections aligned with the official UNESCO reporting guidelines."
+msgstr ""
+"أبلغ عن الأنشطة المنفذة في إطار البرنامج الهيدرولوجي الدولي التاسع "
+"(2022–2029). يتضمن النموذج 7 أقسام متوافقة مع المبادئ التوجيهية الرسمية "
+"لليونسكو."
+
+#. IHP-IX (2026-09)
+msgid "Search…"
+msgstr "بحث…"
+
+#. IHP-IX (2026-09)
+msgid "Show options"
+msgstr "عرض الخيارات"
+
+#. IHP-IX (2026-09)
+msgid "Text formatting"
+msgstr "تنسيق النص"
+
+#. IHP-IX (2026-09)
+msgid "Text is too long to preview."
+msgstr "النص طويل جدًا للمعاينة."
+
+#. IHP-IX (2026-09)
+msgid "The completion date cannot be earlier than the start date"
+msgstr "لا يمكن أن يكون تاريخ الانتهاء قبل تاريخ البدء"
+
+#. IHP-IX (2026-09)
+msgid "The completion date cannot be earlier than the start date."
+msgstr "لا يمكن أن يكون تاريخ الانتهاء قبل تاريخ البدء."
+
+#. IHP-IX (2026-09)
+msgid "The file is too large (max. {max} MB)."
+msgstr "الملف كبير جدًا (الحد الأقصى {max} ميغابايت)."
+
+#. IHP-IX (2026-09)
+msgid "This file type is not allowed."
+msgstr "نوع الملف هذا غير مسموح به."
+
+#. IHP-IX (2026-09)
+msgid "Type to search…"
+msgstr "اكتب للبحث…"
+
+#. IHP-IX (2026-09)
+msgid "URL is required"
+msgstr "عنوان URL مطلوب"
+
+#. IHP-IX (2026-09)
+msgid "URL is too long"
+msgstr "عنوان URL طويل جدًا"
+
+#. IHP-IX (2026-09)
+msgid "URL must be absolute (http/https) or site-relative"
+msgstr "يجب أن يكون عنوان URL مطلقًا (http/https) أو نسبيًا للموقع"
+
+#. IHP-IX (2026-09)
+msgid "URL must start with http:// or https://"
+msgstr "يجب أن يبدأ عنوان URL بـ http:// أو https://"
+
+#. IHP-IX (2026-09)
+msgid "Uploading…"
+msgstr "جارٍ الرفع…"
+
+#. IHP-IX (2026-09)
+msgid "Write"
+msgstr "كتابة"
+
+#. IHP-IX (2026-09)
+msgid "bold text"
+msgstr "نص غامق"
+
+#. IHP-IX (2026-09)
+msgid "choose a file"
+msgstr "اختر ملفًا"
+
+#. IHP-IX (2026-09)
+msgid "e.g., 3.3.1 — Strengthened the regional network of…"
+msgstr "مثلًا 3.3.1 — تعزيز الشبكة الإقليمية لـ…"
+
+#. IHP-IX (2026-09)
+msgid "italic text"
+msgstr "نص مائل"
+
+#. IHP-IX (2026-09)
+msgid "link text"
+msgstr "نص الرابط"
+
+#. IHP-IX (2026-09)
+msgid "max. {max} MB"
+msgstr "الحد الأقصى {max} ميغابايت"
+
+#. IHP-IX (2026-09)
+msgid "target_id is required for a {target_kind}"
+msgstr "target_id مطلوب لـ {target_kind}"
+
+#. IHP-IX (2026-09)
+msgid "{field} must be {max} characters or fewer"
+msgstr "يجب أن يكون {field} بطول {max} حرفًا أو أقل"
+
+#. IHP-IX (2026-09)
+msgid "{link_type} cannot point to a {target_kind}"
+msgstr "لا يمكن أن يشير {link_type} إلى {target_kind}"
+
+#. IHP-IX (2026-09)
+msgid "{n} / {max}"
+msgstr "{n} / {max}"
+
+#. IHP-IX (2026-09)
+msgid "{n} more, keep typing to narrow down"
+msgstr "{n} أخرى، تابع الكتابة لتضييق النتائج"
+
+#. IHP-IX (2026-09)
+msgid "{n} results"
+msgstr "{n} نتيجة"
+
+#. IHP-IX (2026-09)
+msgid "{n} selected"
+msgstr "{n} محدد"
 
 #, python-format
 #~ msgid "Dashboard (%(num)d new item)"

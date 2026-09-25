@@ -3014,7 +3014,7 @@ msgstr ""
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:472
 msgid "Confirm"
-msgstr ""
+msgstr "Confirmar"
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:755
 msgid "Please fill in all required fields."
@@ -7890,6 +7890,286 @@ msgstr[0] ""
 msgstr[1] ""
 "%(n)d solicitudes de ingreso esperan tu revisión en los grupos de trabajo "
 "que lideras."
+
+#. IHP-IX (2026-09)
+msgid "Administration"
+msgstr "Administración"
+
+#. IHP-IX (2026-09)
+msgid ""
+"Anything else the reviewers should know. Markdown is supported (bold, lists,"
+" links)."
+msgstr ""
+"Cualquier otra información útil para los revisores. Se admite Markdown "
+"(negrita, listas, enlaces)."
+
+#. IHP-IX (2026-09)
+msgid "Biennium is required"
+msgstr "El bienio es obligatorio"
+
+#. IHP-IX (2026-09)
+msgid "Bold"
+msgstr "Negrita"
+
+#. IHP-IX (2026-09)
+msgid "Bullet list"
+msgstr "Lista con viñetas"
+
+#. IHP-IX (2026-09)
+msgid "Cannot exceed the total number of stakeholders"
+msgstr "No puede superar el número total de partes interesadas"
+
+#. IHP-IX (2026-09)
+msgid "Cannot exceed the total number of stakeholders."
+msgstr "No puede superar el número total de partes interesadas."
+
+#. IHP-IX (2026-09)
+msgid "Clear all selected items?"
+msgstr "¿Quitar todos los elementos seleccionados?"
+
+#. IHP-IX (2026-09)
+msgid "Clear selection"
+msgstr "Borrar selección"
+
+#. IHP-IX (2026-09)
+msgid "Drag a file here or"
+msgstr "Arrastra un archivo aquí o"
+
+#. IHP-IX (2026-09)
+msgid "Expected a list of links"
+msgstr "Se esperaba una lista de enlaces"
+
+#. IHP-IX (2026-09)
+msgid "Focal point email is required"
+msgstr "El correo del punto focal es obligatorio"
+
+#. IHP-IX (2026-09)
+msgid "Focal point name is required"
+msgstr "El nombre del punto focal es obligatorio"
+
+#. IHP-IX (2026-09)
+msgid "Heading"
+msgstr "Título"
+
+#. IHP-IX (2026-09)
+msgid "Institution name is required"
+msgstr "El nombre de la institución es obligatorio"
+
+#. IHP-IX (2026-09)
+msgid "Invalid JSON"
+msgstr "JSON no válido"
+
+#. IHP-IX (2026-09)
+msgid "Invalid date format. Use YYYY-MM-DD"
+msgstr "Formato de fecha no válido. Usa AAAA-MM-DD"
+
+#. IHP-IX (2026-09)
+msgid "Invalid email address"
+msgstr "Dirección de correo no válida"
+
+#. IHP-IX (2026-09)
+msgid "Invalid institution type"
+msgstr "Tipo de institución no válido"
+
+#. IHP-IX (2026-09)
+msgid "Italic"
+msgstr "Cursiva"
+
+#. IHP-IX (2026-09)
+msgid "Lead Implementing Institution category is required"
+msgstr ""
+"La categoría de la institución implementadora principal es obligatoria"
+
+#. IHP-IX (2026-09)
+msgid "Link must be a full URL starting with http:// or https://"
+msgstr ""
+"El enlace debe ser una URL completa que empiece por http:// o https://"
+
+#. IHP-IX (2026-09)
+msgid "Markdown supported: **bold**, _italic_, - lists, [link](https://…)"
+msgstr ""
+"Se admite Markdown: **negrita**, _cursiva_, - listas, [enlace](https://…)"
+
+#. IHP-IX (2026-09)
+msgid "Must be one of: {choices}"
+msgstr "Debe ser uno de: {choices}"
+
+#. IHP-IX (2026-09)
+msgid "No matches for your search."
+msgstr "No hay coincidencias con tu búsqueda."
+
+#. IHP-IX (2026-09)
+msgid "No results"
+msgstr "Sin resultados"
+
+#. IHP-IX (2026-09)
+msgid "Nothing to preview yet."
+msgstr "Todavía no hay nada que previsualizar."
+
+#. IHP-IX (2026-09)
+msgid "Numbered list"
+msgstr "Lista numerada"
+
+#. IHP-IX (2026-09)
+msgid "One partner per line, or separated by commas"
+msgstr "Un socio por línea, o separados por comas"
+
+#. IHP-IX (2026-09)
+msgid "Optional section with answers"
+msgstr "Sección opcional con respuestas"
+
+#. IHP-IX (2026-09)
+msgid "Output {output} does not belong to {pa}"
+msgstr "El output {output} no pertenece a {pa}"
+
+#. IHP-IX (2026-09)
+msgid "Please confirm"
+msgstr "Por favor, confirma"
+
+#. IHP-IX (2026-09)
+msgid "Please enter a full URL starting with http:// or https://"
+msgstr "Introduce una URL completa que empiece por http:// o https://"
+
+#. IHP-IX (2026-09)
+msgid "Refresh search"
+msgstr "Actualizar búsqueda"
+
+#. IHP-IX (2026-09)
+msgid ""
+"Relevant Key Activity of the Operational Implementation Plan to which the "
+"activity contributes (e.g., 3.3.1) and how. Markdown is supported."
+msgstr ""
+"Actividad clave del Plan de Implementación Operativa a la que contribuye la "
+"actividad (p. ej., 3.3.1) y cómo. Se admite Markdown."
+
+#. IHP-IX (2026-09)
+msgid "Remove file"
+msgstr "Quitar archivo"
+
+#. IHP-IX (2026-09)
+msgid "Remove this item from the report?"
+msgstr "¿Quitar este elemento del reporte?"
+
+#. IHP-IX (2026-09)
+msgid ""
+"Report activities implemented under IHP-IX (2022–2029). The form covers 7 "
+"sections aligned with the official UNESCO reporting guidelines."
+msgstr ""
+"Reporta actividades implementadas en el marco del PHI-IX (2022–2029). El "
+"formulario tiene 7 secciones alineadas con las directrices oficiales de "
+"reporte de la UNESCO."
+
+#. IHP-IX (2026-09)
+msgid "Search…"
+msgstr "Buscar…"
+
+#. IHP-IX (2026-09)
+msgid "Show options"
+msgstr "Mostrar opciones"
+
+#. IHP-IX (2026-09)
+msgid "Text formatting"
+msgstr "Formato del texto"
+
+#. IHP-IX (2026-09)
+msgid "Text is too long to preview."
+msgstr "El texto es demasiado largo para previsualizarlo."
+
+#. IHP-IX (2026-09)
+msgid "The completion date cannot be earlier than the start date"
+msgstr "La fecha de finalización no puede ser anterior a la de inicio"
+
+#. IHP-IX (2026-09)
+msgid "The completion date cannot be earlier than the start date."
+msgstr "La fecha de finalización no puede ser anterior a la de inicio."
+
+#. IHP-IX (2026-09)
+msgid "The file is too large (max. {max} MB)."
+msgstr "El archivo es demasiado grande (máx. {max} MB)."
+
+#. IHP-IX (2026-09)
+msgid "This file type is not allowed."
+msgstr "Este tipo de archivo no está permitido."
+
+#. IHP-IX (2026-09)
+msgid "Type to search…"
+msgstr "Escribe para buscar…"
+
+#. IHP-IX (2026-09)
+msgid "URL is required"
+msgstr "La URL es obligatoria"
+
+#. IHP-IX (2026-09)
+msgid "URL is too long"
+msgstr "La URL es demasiado larga"
+
+#. IHP-IX (2026-09)
+msgid "URL must be absolute (http/https) or site-relative"
+msgstr "La URL debe ser absoluta (http/https) o relativa al sitio"
+
+#. IHP-IX (2026-09)
+msgid "URL must start with http:// or https://"
+msgstr "La URL debe empezar por http:// o https://"
+
+#. IHP-IX (2026-09)
+msgid "Uploading…"
+msgstr "Subiendo…"
+
+#. IHP-IX (2026-09)
+msgid "Write"
+msgstr "Escribir"
+
+#. IHP-IX (2026-09)
+msgid "bold text"
+msgstr "texto en negrita"
+
+#. IHP-IX (2026-09)
+msgid "choose a file"
+msgstr "elige un archivo"
+
+#. IHP-IX (2026-09)
+msgid "e.g., 3.3.1 — Strengthened the regional network of…"
+msgstr "p. ej., 3.3.1 — Fortalecimiento de la red regional de…"
+
+#. IHP-IX (2026-09)
+msgid "italic text"
+msgstr "texto en cursiva"
+
+#. IHP-IX (2026-09)
+msgid "link text"
+msgstr "texto del enlace"
+
+#. IHP-IX (2026-09)
+msgid "max. {max} MB"
+msgstr "máx. {max} MB"
+
+#. IHP-IX (2026-09)
+msgid "target_id is required for a {target_kind}"
+msgstr "target_id es obligatorio para un {target_kind}"
+
+#. IHP-IX (2026-09)
+msgid "{field} must be {max} characters or fewer"
+msgstr "{field} debe tener {max} caracteres o menos"
+
+#. IHP-IX (2026-09)
+msgid "{link_type} cannot point to a {target_kind}"
+msgstr "{link_type} no puede apuntar a un {target_kind}"
+
+#. IHP-IX (2026-09)
+msgid "{n} / {max}"
+msgstr "{n} / {max}"
+
+#. IHP-IX (2026-09)
+msgid "{n} more, keep typing to narrow down"
+msgstr "{n} más, sigue escribiendo para acotar"
+
+#. IHP-IX (2026-09)
+msgid "{n} results"
+msgstr "{n} resultados"
+
+#. IHP-IX (2026-09)
+msgid "{n} selected"
+msgstr "{n} seleccionados"
 
 #, python-format
 #~ msgid "Dashboard (%(num)d new item)"
