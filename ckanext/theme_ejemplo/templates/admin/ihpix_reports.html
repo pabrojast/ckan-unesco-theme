@@ -123,6 +123,7 @@
               {% if reports %}
                 {{ links_ui.links_styles() }}
                 {{ forms_ui.forms_styles() }}
+                {{ forms_ui.forms_scripts() }}
                 {% for report in reports %}
                 <div class="ihpix-rev-card" id="ihpix-rev-card-{{ report.id }}" data-id="{{ report.id }}">
                   <section class="module module-narrow">
@@ -297,9 +298,10 @@
                       {# Inline Reject Form (hidden by default) #}
                       <div class="ihpix-rev-reject-form" id="ihpix-rev-reject-form-{{ report.id }}" style="display:none;">
                         <div class="form-group">
-                          <label>{{ _('Review Notes') }} <span class="text-danger">*</span></label>
-                          <textarea class="form-control ihpix-rev-input" rows="3"
-                                    id="ihpix-rev-notes-{{ report.id }}"
+                          <label for="ihpix-rev-notes-{{ report.id }}">{{ _('Review Notes') }} <span class="text-danger">*</span></label>
+                          <span class="ihpix-report-help" id="ihpix-rev-notes-{{ report.id }}-help" style="display:block;font-size:.8rem;color:#64748b;margin-bottom:.3rem;">{{ _('The reporter receives these notes by email and can edit and resubmit the report.') }}</span>
+                          <textarea class="form-control ihpix-rev-input" rows="3" maxlength="2000" data-ihpix-counter
+                                    id="ihpix-rev-notes-{{ report.id }}" required aria-describedby="ihpix-rev-notes-{{ report.id }}-help"
                                     placeholder="{{ _('Explain why this report is being rejected...') }}"></textarea>
                         </div>
                         <div class="ihpix-rev-reject-form-actions">
@@ -888,8 +890,9 @@
 
   var REVIEW_URL = '/ckan-admin/ihpix/reports/review';
 
-  // ── Toast ──
+  // ── Toast (kit compartido si está cargado) ──
   function showToast(message, type) {
+    if (window.ihpixToast) { window.ihpixToast(message, type); return; }
     var container = document.getElementById('ihpix-rev-toast-container');
     var toast = document.createElement('div');
     toast.className = 'ihpix-rev-toast ' + (type || 'success');
@@ -935,8 +938,10 @@
     formData.append('action', action);
     if (notes) { formData.append('review_notes', notes); }
 
-    fetch(REVIEW_URL, { method: 'POST', body: formData })
-      .then(function(r) { return r.json(); })
+    var send = (window.IhpixForms && window.IhpixForms.postForm)
+      ? window.IhpixForms.postForm(REVIEW_URL, formData).then(function(res) { return res.data || {}; })
+      : fetch(REVIEW_URL, { method: 'POST', body: formData }).then(function(r) { return r.json(); });
+    send
       .then(function(data) {
         if (data.success) {
           var label = action === 'approve' ? '{{ _("approved") }}' : '{{ _("rejected") }}';
@@ -964,11 +969,20 @@
     if (target.classList.contains('ihpix-rev-btn-approve')) {
       var id = target.getAttribute('data-id');
       var title = target.getAttribute('data-title');
-      if (!confirm('{{ _("Approve this report?") }}\n\n' + title)) return;
-      var origHtml = target.innerHTML;
-      target.disabled = true;
-      target.innerHTML = '<i class="fa fa-spinner fa-spin"></i> {{ _("Approving...") }}';
-      postReview(id, 'approve', null, target, origHtml);
+      var doApprove = function() {
+        var origHtml = target.innerHTML;
+        target.disabled = true;
+        target.innerHTML = '<i class="fa fa-spinner fa-spin"></i> {{ _("Approving...") }}';
+        postReview(id, 'approve', null, target, origHtml);
+      };
+      if (window.IhpixForms && window.IhpixForms.confirm) {
+        window.IhpixForms.confirm({
+          title: {{ _("Approve this report?")|tojson }}, message: title,
+          confirmLabel: {{ _("Approve")|tojson }}
+        }).then(function(yes) { if (yes) doApprove(); });
+      } else if (confirm({{ _("Approve this report?")|tojson }} + '\n\n' + title)) {
+        doApprove();
+      }
     }
 
     // Show Reject Form
@@ -1003,9 +1017,13 @@
       var notesValue = notes ? notes.value.trim() : '';
       if (!notesValue) {
         notes.style.borderColor = '#dc3545';
+        notes.setAttribute('aria-invalid', 'true');
+        showToast({{ _("Please explain why the report is being rejected.")|tojson }}, 'error');
         notes.focus();
         return;
       }
+      notes.style.borderColor = '';
+      notes.removeAttribute('aria-invalid');
       var origHtml = target.innerHTML;
       target.disabled = true;
       target.innerHTML = '<i class="fa fa-spinner fa-spin"></i> {{ _("Rejecting...") }}';

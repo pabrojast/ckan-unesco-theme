@@ -69,7 +69,8 @@
         {% if is_member %}
           {% if m.role != 'lead' %}
           <form method="post" action="{{ h.url_for('theme_ejemplo.ihpix_workspace_leave', code=ws.output_code) }}" class="ixw-inline-form"
-                onsubmit="return confirm({{ _('Leave this working group?')|tojson }});">
+                onsubmit="return confirm({{ _('Leave this working group?')|tojson }});"
+                data-ihpix-confirm="{{ _('Leave this working group?') }}" data-ihpix-confirm-label="{{ _('Leave') }}" data-ihpix-confirm-danger>
             {{ h.csrf_input() }}
             <button type="submit" class="ixp-btn ixp-btn-ghost"><i class="fa fa-sign-out"></i> {{ _('Leave') }}</button>
           </form>
@@ -110,7 +111,8 @@
     <form method="post" action="{{ h.url_for('theme_ejemplo.ihpix_workspace_join', code=ws.output_code) }}">
       {{ h.csrf_input() }}
       <label for="ixw-note" style="font-size:.85rem;color:var(--ix-text-sec);">{{ _('Tell the lead how you contribute to this output (optional)') }}</label>
-      <textarea id="ixw-note" name="note" class="ixw-note" maxlength="500"></textarea>
+      <textarea id="ixw-note" name="note" class="ixw-note" maxlength="500" data-ihpix-counter rows="3"
+                placeholder="{{ _('e.g. I coordinate the national groundwater monitoring network and can share our 2025 results.') }}"></textarea>
       <button type="submit" class="btn btn-primary"><i class="fa fa-user-plus"></i> {{ _('Request to join') }}</button>
     </form>
   </div>
@@ -210,8 +212,8 @@
   </div>
 </div>
 </div>
+{{ forms_ui.forms_scripts() }}
 {% if publication_ctx %}
-  {{ forms_ui.forms_scripts() }}
   {{ pub_ui.publication_modal(publication_ctx, mode='page') }}
 {% endif %}
 {% endblock %}

@@ -1,10 +1,13 @@
 {% extends "page.html" %}
+{% import 'ihpix/snippets/forms_assets.html' as forms_ui %}
 
 {% block title %}
 {{ _('IHP-IX Content Management') }} - {{ super() }}
 {% endblock %}
 
 {% block content %}
+{{ forms_ui.forms_styles() }}
+{{ forms_ui.forms_scripts() }}
 <div class="homepage layout-1">
     <div id="content" class="container">
       {{ self.flash() }}
@@ -67,15 +70,15 @@
                       <span class="ihpix-card-key text-muted">{{ item.section_key }}</span>
                     </div>
                     <div class="form-group">
-                      <label>{{ _('Title') }}</label>
-                      <input type="text" class="form-control ihpix-input ihpix-field-title"
+                      <label for="ihpix-title-{{ item.id }}">{{ _('Title') }}</label>
+                      <input type="text" id="ihpix-title-{{ item.id }}" class="form-control ihpix-input ihpix-field-title"
                              data-id="{{ item.id }}"
                              value="{{ item.title }}"
                              placeholder="{{ _('Main page title') }}" />
                     </div>
                     <div class="form-group">
-                      <label>{{ _('Subtitle') }}</label>
-                      <textarea class="form-control ihpix-input ihpix-field-description"
+                      <label for="ihpix-description-{{ item.id }}">{{ _('Subtitle') }}</label>
+                      <textarea id="ihpix-description-{{ item.id }}" class="form-control ihpix-input ihpix-field-description"
                                 data-id="{{ item.id }}" rows="3"
                                 placeholder="{{ _('Hero subtitle text...') }}">{{ item.description or '' }}</textarea>
                     </div>
@@ -110,8 +113,8 @@
                           <span class="label label-default">{{ item.section_key }}</span>
                         </div>
                         <div class="form-group">
-                          <label>{{ _('Title') }}</label>
-                          <input type="text" class="form-control ihpix-input ihpix-field-title"
+                          <label for="ihpix-title-{{ item.id }}">{{ _('Title') }}</label>
+                          <input type="text" id="ihpix-title-{{ item.id }}" class="form-control ihpix-input ihpix-field-title"
                                  data-id="{{ item.id }}"
                                  value="{{ item.title }}"
                                  placeholder="{{ _('Section heading') }}" />
@@ -166,7 +169,7 @@
                         </div>
 
                         <!-- Image Upload Zone -->
-                        <div class="ihpix-drop-zone" data-target="{{ card.id }}">
+                        <div class="ihpix-drop-zone" data-target="{{ card.id }}" role="button" tabindex="0" aria-label="{{ _('Upload an image') }}">
                           <div class="ihpix-drop-content">
                             <i class="fa fa-cloud-upload"></i>
                             <span>{{ _('Drop image or click') }}</span>
@@ -180,28 +183,28 @@
 
                         <!-- Editable Fields -->
                         <div class="form-group">
-                          <label>{{ _('Title') }}</label>
-                          <input type="text" class="form-control ihpix-input ihpix-field-title"
+                          <label for="ihpix-title-{{ card.id }}">{{ _('Title') }}</label>
+                          <input type="text" id="ihpix-title-{{ card.id }}" class="form-control ihpix-input ihpix-field-title"
                                  data-id="{{ card.id }}"
                                  value="{{ card.title }}"
                                  placeholder="{{ _('Card title') }}" />
                         </div>
                         <div class="form-group">
-                          <label>{{ _('Description') }}</label>
-                          <textarea class="form-control ihpix-input ihpix-field-description"
+                          <label for="ihpix-description-{{ card.id }}">{{ _('Description') }}</label>
+                          <textarea id="ihpix-description-{{ card.id }}" class="form-control ihpix-input ihpix-field-description"
                                     data-id="{{ card.id }}" rows="3"
                                     placeholder="{{ _('Brief description...') }}">{{ card.description or '' }}</textarea>
                         </div>
                         <div class="form-group">
-                          <label>{{ _('Link') }}</label>
-                          <input type="url" class="form-control ihpix-input ihpix-field-link"
+                          <label for="ihpix-link-{{ card.id }}">{{ _('Link') }}</label>
+                          <input type="url" id="ihpix-link-{{ card.id }}" class="form-control ihpix-input ihpix-field-link"
                                  data-id="{{ card.id }}"
                                  value="{{ card.link or '' }}"
                                  placeholder="https://..." />
                         </div>
                         <div class="form-group">
-                          <label>{{ _('Badge Text') }}</label>
-                          <input type="text" class="form-control ihpix-input ihpix-field-badge"
+                          <label for="ihpix-badge-{{ card.id }}">{{ _('Badge Text') }}</label>
+                          <input type="text" id="ihpix-badge-{{ card.id }}" class="form-control ihpix-input ihpix-field-badge"
                                  data-id="{{ card.id }}"
                                  value="{{ card.badge_text or '' }}"
                                  placeholder="{{ _('e.g. New, Coming Soon') }}" />
@@ -302,7 +305,7 @@
                               </div>
                               {% endif %}
                             </div>
-                            <div class="ihpix-drop-zone" data-target="{{ pa.id }}">
+                            <div class="ihpix-drop-zone" data-target="{{ pa.id }}" role="button" tabindex="0" aria-label="{{ _('Upload an image') }}">
                               <div class="ihpix-drop-content">
                                 <i class="fa fa-cloud-upload"></i>
                                 <span>{{ _('Drop image or click') }}</span>
@@ -318,28 +321,28 @@
                           <!-- Fields Column -->
                           <div class="col-md-8">
                             <div class="form-group">
-                              <label>{{ _('Title') }}</label>
-                              <input type="text" class="form-control ihpix-input ihpix-field-title"
+                              <label for="ihpix-title-{{ pa.id }}">{{ _('Title') }}</label>
+                              <input type="text" id="ihpix-title-{{ pa.id }}" class="form-control ihpix-input ihpix-field-title"
                                      data-id="{{ pa.id }}"
                                      value="{{ pa.title }}"
                                      placeholder="{{ _('Priority area title') }}" />
                             </div>
                             <div class="form-group">
-                              <label>{{ _('Description') }}</label>
-                              <textarea class="form-control ihpix-input ihpix-field-description"
+                              <label for="ihpix-description-{{ pa.id }}">{{ _('Description') }}</label>
+                              <textarea id="ihpix-description-{{ pa.id }}" class="form-control ihpix-input ihpix-field-description"
                                         data-id="{{ pa.id }}" rows="4"
                                         placeholder="{{ _('Priority area description...') }}">{{ pa.description or '' }}</textarea>
                             </div>
                             <div class="form-group">
-                              <label>{{ _('Link') }} <small class="text-muted">({{ _('UNESCO document URL') }})</small></label>
-                              <input type="url" class="form-control ihpix-input ihpix-field-link"
+                              <label for="ihpix-link-{{ pa.id }}">{{ _('Link') }} <small class="text-muted">({{ _('UNESCO document URL') }})</small></label>
+                              <input type="url" id="ihpix-link-{{ pa.id }}" class="form-control ihpix-input ihpix-field-link"
                                      data-id="{{ pa.id }}"
                                      value="{{ pa.link or '' }}"
                                      placeholder="https://unesdoc.unesco.org/..." />
                             </div>
                             <div class="form-group">
-                              <label>{{ _('Badge Text') }}</label>
-                              <input type="text" class="form-control ihpix-input ihpix-field-badge"
+                              <label for="ihpix-badge-{{ pa.id }}">{{ _('Badge Text') }}</label>
+                              <input type="text" id="ihpix-badge-{{ pa.id }}" class="form-control ihpix-input ihpix-field-badge"
                                      data-id="{{ pa.id }}"
                                      value="{{ pa.badge_text or '' }}"
                                      placeholder="{{ _('e.g. New, Updated') }}" />
@@ -730,8 +733,9 @@
     upload: '/ckan-admin/ihpix/content/upload-image'
   };
 
-  // ── Toast Notifications ──
+  // ── Toast Notifications (kit compartido si está cargado) ──
   function showToast(message, type) {
+    if (window.ihpixToast) { window.ihpixToast(message, type); return; }
     var container = document.getElementById('ihpix-toast-container');
     var toast = document.createElement('div');
     toast.className = 'ihpix-toast ' + (type || 'success');
@@ -744,6 +748,14 @@
     }, 3500);
   }
 
+  // POST con token CSRF (IhpixForms.postForm) o fetch plano como fallback
+  function postForm(url, formData) {
+    if (window.IhpixForms && window.IhpixForms.postForm) {
+      return window.IhpixForms.postForm(url, formData).then(function(res) { return res.data || {}; });
+    }
+    return fetch(url, { method: 'POST', body: formData, credentials: 'same-origin' }).then(function(r) { return r.json(); });
+  }
+
   // ── Image Upload Helper ──
   function uploadImage(file, callback) {
     if (!file.type.startsWith('image/')) {
@@ -752,8 +764,7 @@
     }
     var formData = new FormData();
     formData.append('file', file);
-    fetch(URLS.upload, { method: 'POST', body: formData })
-      .then(function(r) { return r.json(); })
+    postForm(URLS.upload, formData)
       .then(function(data) {
         if (data.success) {
           callback(data.image_url);
@@ -774,6 +785,9 @@
 
     zone.addEventListener('click', function(e) {
       if (e.target !== fileInput) fileInput.click();
+    });
+    zone.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileInput.click(); }
     });
 
     zone.addEventListener('dragover', function(e) {
@@ -852,8 +866,7 @@
       formData.append('badge_text', badgeEl ? badgeEl.value.trim() : '');
       formData.append('is_active', activeEl && activeEl.checked ? 'true' : 'false');
 
-      fetch(URLS.update, { method: 'POST', body: formData })
-        .then(function(r) { return r.json(); })
+      postForm(URLS.update, formData)
         .then(function(data) {
           if (data.success) {
             showToast('{{ _("Changes saved successfully") }}');
@@ -899,19 +912,24 @@
 
   // ── Accordion Toggle ──
   document.querySelectorAll('.ihpix-accordion-header').forEach(function(header) {
-    header.addEventListener('click', function() {
-      var targetId = header.getAttribute('data-target');
-      var body = document.getElementById(targetId);
+    var targetId = header.getAttribute('data-target');
+    var body = document.getElementById(targetId);
+    if (!body) return;
+    // Cabecera operable con teclado
+    if (!header.hasAttribute('tabindex')) header.setAttribute('tabindex', '0');
+    header.setAttribute('role', 'button');
+    header.setAttribute('aria-controls', targetId);
+    header.setAttribute('aria-expanded', body.style.display === 'none' ? 'false' : 'true');
+    function toggle() {
       var item = header.closest('.ihpix-accordion-item');
-      if (!body) return;
-
-      if (body.style.display === 'none') {
-        body.style.display = 'block';
-        item.classList.add('open');
-      } else {
-        body.style.display = 'none';
-        item.classList.remove('open');
-      }
+      var opening = body.style.display === 'none';
+      body.style.display = opening ? 'block' : 'none';
+      if (item) item.classList.toggle('open', opening);
+      header.setAttribute('aria-expanded', opening ? 'true' : 'false');
+    }
+    header.addEventListener('click', toggle);
+    header.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); }
     });
   });
 })();

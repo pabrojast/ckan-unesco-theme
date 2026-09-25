@@ -4191,6 +4191,8 @@ class MyLogica():
             'num_stakeholder_groups', 'stakeholder_group_type',
             'notes', 'cross_cutting_wg', 'synergies',
             'supporting_member_state',
+            # Pase UX admin (2026-09-24): booleano del PDF y notas Markdown
+            'unesco_secretariat_participation', 'additional_notes',
         )
 
         @staticmethod

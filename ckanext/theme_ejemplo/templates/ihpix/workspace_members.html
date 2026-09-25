@@ -1,5 +1,6 @@
 {% extends "page.html" %}
 {% import 'ihpix/snippets/page_styles.html' as ui %}
+{% import 'ihpix/snippets/forms_assets.html' as forms_ui %}
 
 {% block title %}{{ _('Members') }} - {{ ws.title }} - {{ super() }}{% endblock %}
 
@@ -34,7 +35,7 @@
 
 {% macro action_form(mem, action, label, cls='btn-default', icon='fa-check', confirm_msg=None, extra=None) %}
   <form method="post" action="{{ h.url_for('theme_ejemplo.ihpix_workspace_member_process_view', code=ws.output_code) }}" style="display:inline-block;margin:0 .15rem .3rem 0;"
-        {% if confirm_msg %}onsubmit="return confirm({{ confirm_msg|tojson }});"{% endif %}>
+        {% if confirm_msg %}onsubmit="return confirm({{ confirm_msg|tojson }});" data-ihpix-confirm="{{ confirm_msg }}" data-ihpix-confirm-label="{{ label }}"{% if cls == 'btn-danger' %} data-ihpix-confirm-danger{% endif %}{% endif %}>
     {{ h.csrf_input() }}
     <input type="hidden" name="membership_id" value="{{ mem.id }}">
     <input type="hidden" name="action" value="{{ action }}">
@@ -47,6 +48,8 @@
 <div class="main">
 <div class="container ixp">
   {{ ui.page_styles() }}
+  {{ forms_ui.forms_styles() }}
+  {{ forms_ui.forms_scripts() }}
   <style>
     .ixm-table { width: 100%; border-collapse: collapse; }
     .ixm-table td { padding: .7rem .4rem; border-bottom: 1px solid #F1F5F9; vertical-align: top; }
@@ -92,16 +95,18 @@
             <td>{{ member_cell(mem) }}</td>
             <td><span class="ixm-role {% if mem.role == 'lead' %}is-lead{% endif %}">{{ h.ihpix_wg_role_label(mem.role) }}</span></td>
             <td class="actions">
-              <form method="post" action="{{ h.url_for('theme_ejemplo.ihpix_workspace_member_process_view', code=ws.output_code) }}" class="ixm-role-form">
+              <form method="post" action="{{ h.url_for('theme_ejemplo.ihpix_workspace_member_process_view', code=ws.output_code) }}" class="ixm-role-form"
+                    data-current-role="{{ mem.role }}" data-member-name="{{ mem.user.display_name if mem.user else mem.user_id }}">
                 {{ h.csrf_input() }}
                 <input type="hidden" name="membership_id" value="{{ mem.id }}">
                 <input type="hidden" name="action" value="set_role">
-                <select name="role" aria-label="{{ _('Role') }}">
+                <label class="sr-only" for="ixm-role-{{ mem.id }}">{{ _('Role') }}</label>
+                <select name="role" id="ixm-role-{{ mem.id }}">
                   {% for r in ['lead', 'contributor', 'observer'] %}
                     <option value="{{ r }}" {% if mem.role == r %}selected{% endif %}>{{ h.ihpix_wg_role_label(r) }}</option>
                   {% endfor %}
                 </select>
-                <button type="submit" class="btn btn-sm btn-default">{{ _('Set role') }}</button>
+                <button type="submit" class="btn btn-sm btn-default" disabled>{{ _('Set role') }}</button>
               </form>
               {{ action_form(mem, 'remove', _('Remove'), 'btn-danger', 'fa-user-times', _('Remove this member from the working group?')) }}
             </td>
@@ -130,4 +135,28 @@
 </div>
 {% endblock %}
 
-{% block secondary %}{% endblock %}
+{% block secondary %}<script>
+(function() {
+  'use strict';
+  // "Set role": desactivado hasta que cambie el valor; confirmar al degradar a un lead
+  var MSG_DEMOTE = {{ _('%(name)s is a lead of this working group. Change their role anyway?')|tojson }};
+  document.querySelectorAll('.ixm-role-form').forEach(function(form) {
+    var select = form.querySelector('select[name="role"]');
+    var btn = form.querySelector('button[type="submit"]');
+    var current = form.getAttribute('data-current-role');
+    if (!select || !btn) return;
+    select.addEventListener('change', function() { btn.disabled = (select.value === current); });
+    form.addEventListener('submit', function(e) {
+      if (form.__confirmed) { form.__confirmed = false; return; }
+      if (current !== 'lead' || select.value === 'lead') return;
+      e.preventDefault();
+      var msg = MSG_DEMOTE.replace('%(name)s', form.getAttribute('data-member-name') || '');
+      var go = function() { form.__confirmed = true; if (form.requestSubmit) form.requestSubmit(); else form.submit(); };
+      if (window.IhpixForms && window.IhpixForms.confirm) {
+        window.IhpixForms.confirm({ message: msg, danger: true }).then(function(yes) { if (yes) go(); });
+      } else if (window.confirm(msg)) { go(); }
+    });
+  });
+})();
+</script>
+{% endblock %}
