@@ -27,3 +27,9 @@ theme-ejemplo-runtime-js:
   contents:
     - theme_ejemplo_enhanced.js
     - topmenu-responsive.js
+
+ihpix-forms-js:
+  output: theme/ihpix-forms.js
+  filters: rjsmin
+  contents:
+    - js/ihpix-forms.js

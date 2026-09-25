@@ -235,3 +235,23 @@ def test_ihpix_workspaces_require_login(app):
         assert resp.status_code in (302, 403), path
     resp = app.get('/ckan-admin/ihpix/workspaces', follow_redirects=False)
     assert resp.status_code in (302, 403)
+
+
+# ── IHP-IX kit de formularios (fase A) ─────────────────────────────────────
+
+def test_ihpix_markdown_preview_route_is_registered(app):
+    adapter = app.flask_app.url_map.bind('test.ckan.net')
+    endpoint, _args = adapter.match('/ihpix/markdown-preview', method='POST')
+    assert endpoint == 'theme_ejemplo.ihpix_markdown_preview'
+
+
+def test_ihpix_markdown_preview_requires_login(app):
+    resp = app.post('/ihpix/markdown-preview', data={'text': '**bold**'})
+    assert resp.status_code in (302, 403)
+
+
+def test_ihpix_report_form_loads_forms_kit(app):
+    resp = app.get('/ihpix/report')
+    assert resp.status_code == 200
+    assert b'ihpix-forms-i18n' in resp.data
+    assert b'/css/ihpix-forms.css' in resp.data

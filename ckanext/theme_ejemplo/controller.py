@@ -4436,6 +4436,29 @@ class MyLogica():
             return h.redirect_to('theme_ejemplo.user_ihpix', id=c.user)
 
         @staticmethod
+        def ihpix_markdown_preview():
+            """POST {text} → {'html': Markdown renderizado y saneado}.
+
+            Solo usuarios logueados; el tamaño se limita con
+            `ckanext.theme_ejemplo.ihpix_markdown_preview_max_chars`.
+            """
+            if not c.userobj:
+                return jsonify({'success': False,
+                                'error': _('You must be logged in')}), 403
+            payload = request.get_json(silent=True) or {}
+            text = request.form.get('text') or payload.get('text') or ''
+            try:
+                max_chars = int(config.get(
+                    'ckanext.theme_ejemplo.ihpix_markdown_preview_max_chars', 20000))
+            except (TypeError, ValueError):
+                max_chars = 20000
+            if len(text) > max_chars:
+                return jsonify({'success': False,
+                                'error': _('Text is too long to preview.')}), 413
+            return jsonify({'success': True,
+                            'html': str(h.render_markdown(text)) if text.strip() else ''})
+
+        @staticmethod
         def ihpix_my_reports():
             """Atajo /ihpix/my-reports → pestaña IHP-IX del perfil propio."""
             redirect = _require_login()

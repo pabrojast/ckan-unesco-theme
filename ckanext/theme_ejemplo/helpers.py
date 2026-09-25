@@ -1114,6 +1114,32 @@ def ihpix_basemap():
     }
 
 
+def ihpix_pages_url(endpoint, fallback):
+    """URL de un endpoint de otra extensión (p. ej. `pages.water_events_new`)
+    con fallback literal si el blueprint no está cargado (BuildError).
+
+    Evita enlaces rotos como el antiguo `/water-events/new`: en el fork de
+    ckanext-pages la ruta de creación es `/water-events_edit`.
+    """
+    try:
+        return core_helpers.url_for(endpoint)
+    except Exception:
+        return fallback
+
+
+def ihpix_markdown(text):
+    """Markdown → HTML saneado (CKAN `render_markdown`) envuelto en
+    `.ixf-md-body` para los estilos del kit. '' si no hay texto."""
+    if not text or not str(text).strip():
+        return ''
+    try:
+        html = core_helpers.render_markdown(str(text))
+    except Exception as e:
+        log.warning('ihpix_markdown: %s', e)
+        return ''
+    return Markup('<div class="ixf-md-body">') + html + Markup('</div>')
+
+
 def ihpix_link_url(link):
     """URL navegable de un adjunto IHP-IX (dict de `IhpixActivityLink.as_dict`)."""
     from ckanext.theme_ejemplo import ihpix_links

@@ -67,6 +67,8 @@ _DEFAULT_EXCLUDE_PREFIXES = (
     '/ihpix/priority-area',
     '/ihpix/contributors',
     '/ihpix/workspaces',
+    '/ihpix/markdown-preview',
+    '/ihpix/publications',
 )
 
 # Si la lista de inclusión está vacía, se cachea todo lo que no esté excluido.

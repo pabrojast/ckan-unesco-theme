@@ -1,0 +1,67 @@
+{#
+  Carga del kit de formularios IHP-IX (public/css/ihpix-forms.css + js/ihpix-forms.js).
+
+  Uso (dentro de cualquier bloque del template):
+    {% import 'ihpix/snippets/forms_assets.html' as forms_ui %}
+    {{ forms_ui.forms_styles() }}
+    {{ forms_ui.forms_scripts() }}
+
+  `forms_scripts()` inyecta las cadenas traducidas y la URL del preview de
+  Markdown en <script type="application/json" id="ihpix-forms-i18n">. El JS
+  se registra como asset (`theme/ihpix-forms-js`) y CKAN lo emite al final
+  de la página; los componentes se inicializan en DOMContentLoaded.
+#}
+{% macro forms_styles() %}
+<link rel="stylesheet" href="{{ h.url_for_static('/css/ihpix-forms.css') }}">
+{% endmacro %}
+
+{% macro forms_scripts() %}
+{% set ihpix_forms_config = {
+  'previewUrl': h.url_for('theme_ejemplo.ihpix_markdown_preview'),
+  'strings': {
+    'dismiss': _('Dismiss notification'),
+    'close': _('Close'),
+    'confirm': _('Confirm'),
+    'cancel': _('Cancel'),
+    'confirmTitle': _('Please confirm'),
+    'charsOf': _('{n} / {max}'),
+    'formatting': _('Text formatting'),
+    'bold': _('Bold'),
+    'boldText': _('bold text'),
+    'italic': _('Italic'),
+    'italicText': _('italic text'),
+    'heading': _('Heading'),
+    'bulletList': _('Bullet list'),
+    'numberedList': _('Numbered list'),
+    'link': _('Link'),
+    'linkText': _('link text'),
+    'write': _('Write'),
+    'preview': _('Preview'),
+    'previewEmpty': _('Nothing to preview yet.'),
+    'markdownHint': _('Markdown supported: **bold**, _italic_, - lists, [link](https://…)'),
+    'showOptions': _('Show options'),
+    'clearSelection': _('Clear selection'),
+    'typeToSearch': _('Type to search…'),
+    'noResults': _('No results'),
+    'resultsCount': _('{n} results'),
+    'moreResults': _('{n} more, keep typing to narrow down'),
+    'searchList': _('Search…'),
+    'noMatches': _('No matches for your search.'),
+    'clearAll': _('Clear all'),
+    'clearAllConfirm': _('Clear all selected items?'),
+    'remove': _('Remove'),
+    'selectedCount': _('{n} selected'),
+    'dropOr': _('Drag a file here or'),
+    'chooseFile': _('choose a file'),
+    'maxSize': _('max. {max} MB'),
+    'removeFile': _('Remove file'),
+    'fileTooLarge': _('The file is too large (max. {max} MB).'),
+    'fileTypeNotAllowed': _('This file type is not allowed.'),
+    'uploading': _('Uploading…'),
+    'networkError': _('Network error. Please check your connection and try again.'),
+    'genericError': _('An error occurred. Please try again.')
+  }
+} %}
+<script type="application/json" id="ihpix-forms-i18n">{{ ihpix_forms_config|tojson }}</script>
+{% asset 'theme/ihpix-forms-js' %}
+{% endmacro %}

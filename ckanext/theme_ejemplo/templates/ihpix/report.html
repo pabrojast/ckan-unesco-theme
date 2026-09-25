@@ -8,6 +8,9 @@
 {% endblock %}
 
 {% block primary_content_inner %}
+{% import 'ihpix/snippets/forms_assets.html' as forms_ui %}
+{{ forms_ui.forms_styles() }}
+{{ forms_ui.forms_scripts() }}
 <style>
   /* Full-width centered layout — no sidebar on this page */
   .wrapper .primary { width: 100%; float: none; }
@@ -1748,6 +1751,8 @@
 
     /* ── Toasts ─────────────────────────────────────────────────── */
     function showToast(message, type) {
+      // Kit compartido si está cargado; si no, el toast local de siempre
+      if (window.ihpixToast) { window.ihpixToast(message, type); return; }
       var toast = document.createElement('div');
       toast.className = 'ihpix-report-toast ihpix-report-toast-' + type;
       var icon = type === 'success' ? 'fa-check-circle' : 'fa-exclamation-circle';
@@ -2294,6 +2299,9 @@
         ta.dispatchEvent(new Event('input', { bubbles: true }));
       });
       if (memberPicker) memberPicker.refresh();
+      // Componentes del kit (combobox, picker, contadores, markdown) releen
+      // el valor del control nativo tras una restauración
+      if (window.IhpixForms) window.IhpixForms.refresh(form);
       updateProgress();
     }
 

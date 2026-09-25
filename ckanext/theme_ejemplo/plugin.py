@@ -535,6 +535,15 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 methods=['GET']
             )
 
+            # Preview de Markdown para el kit de formularios (CKAN 2.10 no
+            # expone /api/util/markdown)
+            blueprint.add_url_rule(
+                u'/ihpix/markdown-preview',
+                u'ihpix_markdown_preview',
+                MyLogica.ihpix_markdown_preview,
+                methods=['POST']
+            )
+
             # Páginas navegables (fase iii): por Output, por PA, contribuidores
             blueprint.add_url_rule(
                 u'/ihpix/outputs/<code>',
@@ -1307,6 +1316,8 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                  'ihpix_priority_area_for_output': helpers.ihpix_priority_area_for_output,
                  'ihpix_t': helpers.ihpix_t,
                  'ihpix_basemap': helpers.ihpix_basemap,
+                 'ihpix_pages_url': helpers.ihpix_pages_url,
+                 'ihpix_markdown': helpers.ihpix_markdown,
                  'get_pending_ihpix_wg_members_count': helpers.get_pending_ihpix_wg_members_count,
                  'get_user_ihpix_summary': helpers.get_user_ihpix_summary,
                  'ihpix_wg_role_label': helpers.ihpix_wg_role_label,
