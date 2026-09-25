@@ -80,6 +80,12 @@ Ver [[Open Learning]] para el flujo completo de sincronización y curación.
 | `ckanext.theme_ejemplo.ihpix_basemap_attribution` | `Tiles © Esri — Esri, HERE, Garmin, FAO, NOAA, USGS` | Atribución HTML del basemap |
 | `ckanext.theme_ejemplo.ihpix_basemap_max_zoom` | `16` | Zoom máximo del basemap |
 | `ckanext.theme_ejemplo.ihpix_markdown_preview_max_chars` | `20000` | Tamaño máximo del texto aceptado por `POST /ihpix/markdown-preview` (editor Markdown del kit de formularios) |
+| `ckanext.theme_ejemplo.ihpix_upload_max_mb` | `50` | Tamaño máximo del fichero en el modal "Upload a publication" (debe ser ≤ `ckan.max_resource_size`) |
+| `ckanext.theme_ejemplo.ihpix_publication_default_language` | `http://publications.europa.eu/resource/authority/language/ENG` | `language` de las publicaciones creadas desde IHP-IX (URI de la autoridad EU que exige el esquema `documents`) |
+| `ckanext.theme_ejemplo.ihpix_publication_default_license` | `cc-by-sa` | `license_id` de las publicaciones creadas desde IHP-IX |
+| `ckanext.theme_ejemplo.ihpix_publication_tags` | `ihp-ix` | Tags (separados por coma) que llevan siempre esas publicaciones; el código del Output se añade como `ihp-ix-output-<code>` |
+| `ckanext.theme_ejemplo.ihpix_course_proposals_enabled` | `true` | Permite a los usuarios logueados proponer cursos Open Learning (Sección VII y `/courses`) |
+| `ckanext.theme_ejemplo.ihpix_course_proposals_per_day` | `10` | Máximo de propuestas de cursos por usuario y día (`0` = sin límite) |
 
 ### Claves de otras extensiones que este tema lee
 

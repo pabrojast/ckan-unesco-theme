@@ -30,6 +30,7 @@ API Open Learning ──sync──► tabla open_learning_course ──get_publi
 > El listado de la API **ignora** el parámetro `?course_id=` (devuelve la primera página del catálogo completo); para un curso individual hay que usar el endpoint de detalle. Verificado contra la API real el 2026-09-18.
 
 - **Tipo de curso**: auto-detectado del campo `pacing` de Open edX (`self` → `permanent`, `instructor` → `scheduled`; fallback por `start_type`/`end`). El admin puede corregirlo manualmente, lo que activa `course_type_override` y el sync deja de recalcularlo.
+- **Propuestas de usuarios (2026-09-24)**: cualquier usuario logueado puede proponer un curso pegando su URL (formulario en `/courses` y tipo "Course" de la Sección VII del reporte IHP-IX). La acción `ihpix_course_propose` reutiliza `fetch_and_upsert_course`: el curso entra `pending` con `proposed_by`, `proposed_at` y `proposal_note` (columnas nuevas, añadidas de forma idempotente), avisa por email a los sysadmins y suma a la cola `open_learning` de la campana de aprobaciones. El panel admin muestra "Proposed by" y la nota. Config: `ihpix_course_proposals_enabled`, `ihpix_course_proposals_per_day`. Los cursos aprobados pueden adjuntarse a los reportes IHP-IX (tipo `course`, ver [[IHP-IX]]).
 
 ## Disparadores del sync
 
@@ -53,11 +54,12 @@ API Open Learning ──sync──► tabla open_learning_course ──get_publi
 | `POST /ckan-admin/open-learning/sync` | `open_learning_sync_now()` (AJAX) | Sysadmin |
 | `POST /ckan-admin/open-learning/search` | `open_learning_search()` (AJAX) | Sysadmin |
 | `POST /ckan-admin/open-learning/add` | `open_learning_add_course()` (AJAX) | Sysadmin |
+| `POST /ihpix/courses/propose` | `ihpix_course_propose_view()` (form → redirect + flash; XHR → JSON) | Logueado |
 
 ## Templates
 
 - `templates/snippets/course_card.html` — tarjeta reutilizable (home y `/courses`)
-- `templates/courses/index.html` — página pública con secciones "Self-paced courses" y "Scheduled courses"
+- `templates/courses/index.html` — página pública con secciones "Self-paced courses" y "Scheduled courses" + formulario "Know an IHP course that is missing?" (usuarios logueados)
 - `templates/admin/open_learning.html` — panel de curación (filtros por status, badges, select de tipo, sync)
 - `templates/home/snippets/community_grid.html` / `community_mini_card.html` — la home muestra 3 cursos curados (`get_latest_courses()[:3]`) como mini-cards en la columna "Courses" del grid Community + enlace "View all courses"
 

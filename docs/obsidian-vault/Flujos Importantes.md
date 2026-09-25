@@ -367,9 +367,14 @@ draft ──submit──▶ pending ──approve──▶ published
       · publication → datasets type:documents · dataset/output_data →
       type:dataset · event/webinar → páginas water-events (si ckanext-pages
       no está, search_available=false y el widget abre la entrada manual)
+      · course → OpenLearningCourse.search_public (cursos aprobados)
    b. "Add an external link manually" → title + URL http(s) (+ fecha, descr.)
-   c. Atajos "Create a publication / Create an event" abren /documents/new y
-      /water-events/new en otra pestaña (sin came_from: no lo soportan)
+   c. Puentes (2026-09-24): "Upload a publication" abre el modal (7.1.a);
+      "Add a dataset" abre /dataset/new prellenado (tag_string=ihp-ix,
+      ihp-ix-output-<code>, owner_org si el usuario sólo tiene una) y
+      "Create an event" abre /water-events_edit, ambos en otra pestaña
+      (sin came_from) → botón "Refresh search" al volver. Con el tipo
+      Course aparece "Propose this course" (7.1.b).
 3. POST del reporte → actions._sync_activity_links(activity, links_json):
    → valida cada item (ihpix_links.validate_link), upsert por id, crea los
      nuevos, borra los ausentes (full replace), deduplica por objeto/URL
@@ -379,11 +384,60 @@ draft ──submit──▶ pending ──approve──▶ published
    cola admin. Contadores: get_stats()['links_by_type'] (dashboard, overview)
 ```
 
-> [!warning] Solo referencias
-> El reporte nunca crea packages ni páginas. Si el objeto no existe en
-> IHP-WINS, el usuario lo crea con su formulario propio y luego lo busca
-> (botón "Refresh search" en la Sección VII). La fase C del plan 2026-09-24
-> añade la creación inline de publicaciones (modal) y cursos.
+#### 7.1.a Publicaciones inline (modal "Upload a publication")
+
+`templates/ihpix/snippets/publication_modal.html` (macro; se abre con
+`[data-ihpix-publication-open]`, opcional `data-document-type`), contexto
+`controller._ihpix_publication_context(output_code, activity)`.
+
+```
+1. Dónde: Sección VII y KPI 3 del reporte ("Upload training material" →
+   document_type=educational_material), cabecera de /ihpix/workspaces/<code>
+   y /ihpix/outputs/<code> (usuarios logueados).
+2. Requisito: rol editor/admin en ≥1 organización (production.ini:
+   create_unowned_dataset=false). Sin orgs → estado vacío con enlace a
+   /organization (no se puede subir).
+3. Campos: título*, tipo de documento, organización* (preseleccionada si
+   sólo hay una), año, autores, resumen (Markdown), fichero (drag&drop,
+   ≤ ihpix_upload_max_mb, extensiones de ihpix_publications.ALLOWED_EXTENSIONS)
+   o URL, DOI, Member State, Iniciativa, palabras clave. El modal oculta
+   los campos que el esquema `documents` instalado no tenga.
+4. POST multipart /ihpix/publications → actions.ihpix_publication_create
+   → package_create (type=documents, private=false, tags ihp-ix +
+   ihp-ix-output-<code>) + resource_create (upload/URL) → ledger
+   `publication_created` en el workspace del Output.
+   · En el reporte: la respuesta se añade a la Sección VII con
+     ihpixLinks.add() (se guarda con el reporte); en edición además se
+     adjunta en servidor (activity_id).
+   · En workspace/Output: select "Attach to my report" con los reportes
+     propios del Output (0 → sólo se crea; 1 → preseleccionado).
+5. Errores: 400 {errors} mapeados a los campos del modal
+   (map_schema_errors); 403 reason=no_org; si resource_create falla se
+   borra el package (best effort) y se muestra el error en "Document".
+```
+
+#### 7.1.b Cursos Open Learning
+
+- Tipo de adjunto `course`: busca en la caché curada (`approved` +
+  `is_available`); el enlace público es la página del curso en
+  openlearning.unesco.org.
+- "Propose this course" (Sección VII, tipo Course) y el formulario de
+  `/courses` → `POST /ihpix/courses/propose` → `ihpix_course_propose`:
+  el curso entra `pending` con `proposed_by/proposed_at/proposal_note`,
+  email a sysadmins, cola `open_learning` en la campana, ledger
+  `course_proposed`. Si ya estaba aprobado, se adjunta directamente.
+- Materiales de formación (PDF, diapositivas) = publicación con
+  `document_type=educational_material` (atajo en KPI 3).
+
+#### 7.1.c Datasets y eventos
+
+Siguen creándose en su formulario propio (otra pestaña): `/dataset/new`
+prellenado por query string (la `CreateView` de CKAN 2.10 lee
+`request.args`) y `/water-events_edit`. Al volver, "Refresh search".
+
+> [!warning] Sin `came_from`
+> Ni scheming ni ckanext-pages devuelven al reporte tras crear; el borrador
+> sigue en localStorage (autosave por usuario), así que no se pierde nada.
 
 > [!note] Markdown en los textos largos (2026-09-24)
 > `key_activity`, `synergies` y `additional_notes` (reporte) y

@@ -149,7 +149,9 @@ acciones de **ckanext-pages**. Ver la advertencia en
 **IHP-IX adjuntos** (4) — ver [[Flujos Importantes#7.1 Adjuntos (Sección VII)]]:
 - `ihpix_activity_link_list` — adjuntos de una actividad (publicada, o propia / sysadmin).
 - `ihpix_activity_link_create` / `ihpix_activity_link_delete` — alta/baja individual (propietario o sysadmin). El formulario **no** los usa: envía `links_json` y `_sync_activity_links()` hace *full replace* dentro de la misma transacción que el reporte.
-- `ihpix_link_search` — busca objetos existentes para adjuntar: `kind=publication` (datasets `type:documents`), `dataset`/`output_data` (`type:dataset`) vía `package_search`; `event`/`webinar` → páginas `water-events` de ckanext-pages (`_search_water_events`, devuelve `search_available=False` si la extensión no está).
+- `ihpix_link_search` — busca objetos existentes para adjuntar: `kind=publication` (datasets `type:documents`), `dataset`/`output_data` (`type:dataset`) vía `package_search`; `event`/`webinar` → páginas `water-events` de ckanext-pages (`_search_water_events`, devuelve `search_available=False` si la extensión no está); `course` → `OpenLearningCourse.search_public()` (cursos `approved` + disponibles; incluye `can_propose`).
+- `ihpix_publication_create` (2026-09-24) — crea una publicación desde IHP-IX: comprueba que el usuario sea editor/admin de la organización (`ihpix_publication_orgs` → `organization_list_for_user(permission='create_dataset')`), valida con [[Modulos#ihpix_publications.py]], lee los campos disponibles del esquema con `scheming_dataset_schema_show` (`ihpix_documents_schema_fields`, con fallback), llama a `package_create` (reintenta con sufijo si el `name` colisiona y **sin `groups`** si CKAN niega el Member State → `warnings`), luego `resource_create` (fichero `upload` o URL; si falla, `package_delete` best effort). Con `activity_id` adjunta vía `ihpix_activity_link_create`; siempre registra `publication_created` en el ledger del workspace del Output. Vista: `POST /ihpix/publications` (`controller.ihpix_publication_create_view`, multipart → JSON `{package, link, attached, warnings}`; 400 `{errors}` mapeados al modal, 403 `reason=no_org`).
+- `ihpix_course_propose` (2026-09-24) — propone un curso de Open Learning: `course_url`/`course_id` → `ihpix_links.parse_course_id`; rate limit `ihpix_course_proposals_per_day`; `openlearning.fetch_and_upsert_course` (nuevo → `pending`, guarda `proposed_by/proposed_at/proposal_note`); si ya está `approved` devuelve el adjunto listo; `hidden` → error. Email a sysadmins + cola `open_learning` de la campana + ledger `course_proposed`. Vista: `POST /ihpix/courses/propose` (XHR → JSON; form → redirect + flash; la usa `/courses`).
 
 **Taxonomías centralizadas** (nuevo módulo `ihpix_constants.py`, 2026-05):
 `PRIORITY_AREAS` (5), `OUTPUTS` (34, dict por PA), `FLAGSHIPS` (15), `REGIONS` (7),
@@ -206,13 +208,23 @@ Helpers: `is_valid_*`, `normalize_bool`, `filter_valid`.
 
 **Rol**: Adjuntos de un reporte IHP-IX (publicaciones, webinars, eventos, datasets). Módulo **puro**, testeado en `tests/test_ihpix_links.py`.
 
-- `LINK_TYPES` = publication · webinar · event · dataset · output_data · other; `TARGET_KINDS` = package (dataset CKAN, `target_id` = id) · page (página `water-events`, `target_id` = name) · url (enlace plano).
+- `LINK_TYPES` = publication · webinar · event · dataset · output_data · **course** · other; `TARGET_KINDS` = package (dataset CKAN, `target_id` = id) · page (página `water-events`, `target_id` = name) · **course** (`OpenLearningCourse`, `target_id` = `course_id` de Open edX; URL `COURSE_URL_TEMPLATE`) · url (enlace plano). `TYPE_ICONS` centraliza los iconos (helper `h.ihpix_link_type_icon`); `parse_course_id(url)` extrae `course-v1:…` de una URL de Open Learning.
 - `ALLOWED_KINDS` — coherencia tipo↔kind (una publicación no puede apuntar a una page; un evento no a un package). `SEARCH_KIND_FOR_TYPE` — qué busca cada tipo en IHP-WINS.
 - `parse_links_json(raw)` (tolerante con `''`/`[]`), `validate_link(d)` (título ≤300, URL http(s) obligatoria en `url`, `event_date` ISO, descripción ≤500), `link_public_url(link)` (`/documents/<id>`, `/dataset/<id>`, `/water-events/<name>` o la URL), `dedupe_key(link)`.
 - `LinkValidationError(errors, details)` con el mismo esquema `MESSAGES`/`.details` que `ihpix_forms` (se traduce en `actions._ihpix_translate_errors`).
 
-> [!note] Sin creación inline
-> No se crean packages ni páginas desde el reporte: solo se referencian existentes o se guarda un enlace. Los atajos "Create a publication / event" abren los formularios propios en otra pestaña.
+> [!note] Creación inline
+> Este módulo sigue sin crear objetos CKAN; la creación inline de **publicaciones** vive en `ihpix_publications.py` + `actions.ihpix_publication_create` (2026-09-24). Datasets y eventos siguen abriéndose en su formulario propio (otra pestaña, sin `came_from`).
+
+---
+
+## ihpix_publications.py
+
+**Rol**: Reglas del modal "Upload a publication" (reporte, workspaces y páginas por Output). Módulo **puro**, testeado en `tests/test_ihpix_publications.py`.
+
+- `validate_publication_input(form, allowed_org_ids, max_upload_mb, upload_filename, upload_size)` → dict limpio (título ≤300, organización ∈ permitidas, `document_type` ∈ `DOCUMENT_TYPES` (13 valores del esquema `documents`, default `other`, `educational_material` para KPI 3), año 1900–2100, DOI `^10\.\d{4,9}/\S+$` (acepta URL doi.org), resumen ≤2000 Markdown, autores "Nombre; Afiliación" por línea → `authors_json`, palabras clave, fuente `file` (extensiones `ALLOWED_EXTENSIONS`, tamaño ≤ `ihpix_upload_max_mb`) o `url`). `MESSAGES` + `PublicationValidationError(errors, details)` como en `ihpix_forms`.
+- `build_package_dict(clean, schema_field_names, defaults, name, identifier)` — payload de `package_create` **filtrado por los campos que existen en el esquema instalado** (`dev210` = 29 campos, `production` = 13): `type='documents'`, `title_translated={'en'}`, `notes_translated`, `owner_org`, `access_level='public'`, `language` (default ENG), `identifier=uuid4` (el validador `schemingdcat_clean_identifier` **no** lo autogenera), `contact_email` (del usuario), `tag_string`/`tags` (siempre `ihp-ix` + `ihp-ix-output-<code>`), `groups` (Member State / Iniciativa).
+- `build_resource_dict(clean, resource_field_names, package_id)` (`url_type='upload'` + `format` por extensión, o URL), `map_schema_errors(error_dict)` (campo del esquema → campo del modal; el resto a `__all__`), `slugify_title(title, taken)`, `parse_authors`, `parse_keywords`, `link_item_for_package(pkg)` (adjunto listo para la Sección VII), `prefilled_dataset_url(...)` (query string de `/dataset/new`).
 
 ---
 
@@ -220,7 +232,7 @@ Helpers: `is_valid_*`, `normalize_bool`, `filter_valid`.
 
 **Rol**: Reglas del piloto de working groups. Módulo **puro** (`tests/test_ihpix_workspaces.py`).
 
-- Constantes: `ROLES` (lead / contributor / observer), `MEMBER_STATUSES` (pending / active / removed), `WG_STATUSES` (active / archived), `CONTRIBUTION_KINDS` (report_submitted, report_published, link_added, member_joined, comment — este último sin UI), `MEMBER_ACTIONS` (acción → estados de origen y destino).
+- Constantes: `ROLES` (lead / contributor / observer), `MEMBER_STATUSES` (pending / active / removed), `WG_STATUSES` (active / archived), `CONTRIBUTION_KINDS` (report_submitted, report_published, link_added, **publication_created**, **course_proposed**, member_joined, comment — este último sin UI) + `CONTRIBUTION_ICONS` (helper `h.ihpix_contribution_icon`), `MEMBER_ACTIONS` (acción → estados de origen y destino).
 - `can_manage(wg, user_id, membership, is_sysadmin)` — sysadmin, `lead_user_id` o miembro lead activo.
 - `validate_member_action(membership, action, actor_user_id, actor_can_manage, role)` → `(new_status, new_role)`; un lead no puede quitarse ni degradarse a sí mismo.
 - `validate_join(wg, membership)` — workspace activo y sin membresía pendiente/activa; devuelve `True` si hay que reactivar una `removed`.
@@ -292,7 +304,7 @@ Principio: **nunca se elimina el control nativo**; se oculta (`.ixf-visually-hid
 `get_pending_ihpix_wg_members_count()` (cola `ihpix_wg_members` de la campana: pendientes de los workspaces que el usuario lidera; sysadmin todos), `get_user_ihpix_summary(user_id)` (reportes por estado, workspaces activos, contribuciones por tipo; caché 60 s; alimenta el perfil y `/user/<id>/ihpix`), `ihpix_wg_role_label()`, `ihpix_member_status_label()`, `ihpix_contribution_label()`
 
 **IHP-IX UI** (2):
-`ihpix_pages_url(endpoint, fallback)` (URL de endpoints de otras extensiones con fallback si el blueprint no está: `pages.water_events_new` → `/water-events_edit`), `ihpix_markdown(text)` (Markdown → HTML saneado con `render_markdown`, envuelto en `.ixf-md-body`)
+`ihpix_pages_url(endpoint, fallback)` (URL de endpoints de otras extensiones con fallback si el blueprint no está: `pages.water_events_new` → `/water-events_edit`), `ihpix_markdown(text)` (Markdown → HTML saneado con `render_markdown`, envuelto en `.ixf-md-body`), `ihpix_link_type_icon(type)`, `ihpix_link_types()` ([(valor, etiqueta, icono)] para el widget de adjuntos), `ihpix_contribution_icon(kind)`, `get_pending_open_learning_count()` (cola `open_learning` de la campana, solo sysadmin)
 
 **IHP-IX** (9):
 `get_pending_ihpix_reports_count()` (cola `ihpix_reports` de la campana, sysadmin), `get_ihpix_reporter(reported_by)` → `{id, name, display_name, url}` resolviendo id o username (caché 5 min; texto libre del seed → solo `display_name`), `ihpix_link_url(link)` y `ihpix_link_type_label(link_type)` (adjuntos; usados por el macro `ihpix/snippets/activity_links.html`), `get_ihpix_taxonomies()` (todas las listas de `ihpix_constants` para los `<select>` de los templates: **única fuente**, sustituye las listas hardcodeadas que se habían desincronizado), `ihpix_output_title()`, `ihpix_output_label()`, `ihpix_priority_area_for_output()`, `ihpix_t(valor)` (traducción runtime de valores de taxonomía)
@@ -393,7 +405,7 @@ Principio: **nunca se elimina el control nativo**; se oculta (`.ixf-visually-hid
 - Métodos: `get()`, `get_pending()`, `get_all(status)`, `get_pending_for_user()`, `count_pending()`, `as_dict()`
 - Ver flujo en [[Solicitudes de Iniciativas]]
 
-**OpenLearningCourse**: Caché persistente curada de cursos UNESCO Open Learning — ver [[Open Learning]]
+**OpenLearningCourse**: Caché persistente curada de cursos UNESCO Open Learning — ver [[Open Learning]]. Desde 2026-09-24 tiene `proposed_by`, `proposed_at`, `proposal_note` (propuestas desde IHP-IX; columnas añadidas con `ADD COLUMN IF NOT EXISTS` en `init_open_learning_courses_db`) y los métodos `search_public(q, limit)`, `count_pending()`, `count_proposed_since(user_id, since)`.
 - Campos: id, course_id (unique, de la API), name, org, short_description, image_url, start, end, start_display, pacing, raw_json, course_type (permanent/scheduled), course_type_override, status (pending/approved/hidden), is_available, display_order, first_seen_at, last_seen_at, created_at, updated_at
 - Índice compuesto `(status, is_available)` para la query pública
 - Métodos: `get()`, `get_by_course_id()`, `get_all()` (pendientes primero), `get_public(course_type, limit)`, `last_sync_at()`, `counts_by_status()`, `as_dict()` (incluye `course_url` calculada)
