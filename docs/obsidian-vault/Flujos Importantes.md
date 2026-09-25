@@ -439,6 +439,15 @@ prellenado por query string (la `CreateView` de CKAN 2.10 lee
 > Ni scheming ni ckanext-pages devuelven al reporte tras crear; el borrador
 > sigue en localStorage (autosave por usuario), así que no se pierde nada.
 
+#### 7.1.d Formularios admin alineados (fase D)
+
+`/ckan-admin/ihpix/activities` envía ahora los mismos formatos que el
+reporte público: tipos KPI como listas JSON, `member_states` JSON,
+`unesco_secretariat_participation` como booleano y `additional_notes`
+(Markdown). El controller acepta esos dos campos nuevos en
+`_IHPIX_FORM_FIELDS`. Detalle de los cambios de UI en
+[[Modulos#Kit de formularios IHP-IX]] ("Formularios admin").
+
 > [!note] Markdown en los textos largos (2026-09-24)
 > `key_activity`, `synergies` y `additional_notes` (reporte) y
 > `ihpix_working_group.description` se guardan como **Markdown** (texto,
