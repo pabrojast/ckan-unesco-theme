@@ -1211,6 +1211,15 @@ def get_pending_open_learning_count():
             return 0
         if not current_user.sysadmin:
             return 0
+        try:
+            import ckan.plugins as p
+            learning_loaded = p.plugin_loaded('learning')
+        except Exception:
+            learning_loaded = False
+        if learning_loaded:
+            # Catálogo nativo: la cola de revisión vive en /ckan-admin/learning
+            from ckanext.learning import compat
+            return int(compat.course_list({'ignore_auth': True}, {'status': 'pending'}).get('count') or 0)
         from ckanext.theme_ejemplo.model import (
             OpenLearningCourse, init_open_learning_courses_db,
         )

@@ -137,3 +137,16 @@ def test_parse_course_id():
     assert L.parse_course_id('course-v1:UNESCO+IHP01+2025/') == 'course-v1:UNESCO+IHP01+2025'
     assert L.parse_course_id('https://openlearning.unesco.org/program/ihp') == ''
     assert L.parse_course_id('') == ''
+
+
+def test_course_link_from_learning_package():
+    item = L.course_link_from_learning_package(
+        {'name': 'learning-abc', 'title': 'FloodAdapt', 'learning_external_id': 'course-v1:UNESCO+FA+2025',
+         'learning_provider': 'Deltares', 'learning_url': 'https://openlearning.unesco.org/courses/x/about'},
+        '/learning/learning-abc')
+    assert item['target_kind'] == 'course' and item['target_id'] == 'course-v1:UNESCO+FA+2025'
+    assert item['url'] == '/learning/learning-abc' and item['description'] == 'Deltares'
+    assert L.validate_link(item)['link_type'] == 'course'
+    # sin id externo: clave opaca para deduplicar
+    item2 = L.course_link_from_learning_package({'name': 'learning-xyz', 'title': 'T'}, '')
+    assert item2['target_id'] == 'learning:learning-xyz'

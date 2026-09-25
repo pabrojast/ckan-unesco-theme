@@ -2737,7 +2737,13 @@ def ihpix_link_search(context, data_dict):
                 'search_available': True}
 
     if kind == 'course':
-        # Cursos aprobados de la caché curada de Open Learning
+        if _ihpix_learning_loaded():
+            # Catálogo nativo (ckanext-learning): cursos aprobados = públicos
+            results = _ihpix_learning_course_search(q, limit)
+            return {'results': results, 'count': len(results), 'kind': kind,
+                    'search_available': True,
+                    'can_propose': _ihpix_config_bool('ihpix_course_proposals_enabled', True)}
+        # Caché curada legacy de Open Learning
         from ckanext.theme_ejemplo.model import (
             OpenLearningCourse, init_open_learning_courses_db,
         )
@@ -2769,6 +2775,118 @@ def ihpix_link_search(context, data_dict):
 
 def _ihpix_config_bool(key, default):
     return toolkit.asbool(toolkit.config.get('ckanext.theme_ejemplo.' + key, default))
+
+
+def _ihpix_learning_loaded():
+    """¿Está cargado ckanext-learning (catálogo nativo de cursos)? En ese caso
+    los cursos son packages `type:learning` y la tabla legacy
+    `open_learning_course` ya no es la fuente de verdad."""
+    try:
+        import ckan.plugins as p
+        return p.plugin_loaded('learning')
+    except Exception:
+        return False
+
+
+def _ihpix_learning_page_url(name):
+    try:
+        return toolkit.url_for('learning.read', id=name)
+    except Exception:
+        return '/learning/' + name
+
+
+def _ihpix_learning_course_search(q, limit):
+    """Cursos aprobados (públicos) del catálogo nativo → items de adjunto."""
+    try:
+        res = toolkit.get_action('package_search')({'user': ''}, {
+            'q': q or '*:*',
+            'fq': 'type:learning vocab_learning_type:course',
+            'rows': limit,
+        })
+    except Exception as e:
+        log.warning('IHP-IX: búsqueda de cursos learning falló: %s', e)
+        return []
+    items = []
+    for pkg in res.get('results', []):
+        item = ihpix_links.course_link_from_learning_package(
+            pkg, _ihpix_learning_page_url(pkg.get('name', '')))
+        items.append({
+            'target_kind': 'course', 'target_id': item['target_id'],
+            'name': pkg.get('name', ''), 'title': item['title'],
+            'organization': item['description'], 'year': pkg.get('learning_start') or '',
+            'url': item['url'],
+        })
+    return items
+
+
+def _ihpix_learning_find_course(course_id):
+    """Package `learning` (incluidos privados/pendientes) con ese id externo."""
+    try:
+        res = toolkit.get_action('package_search')({'ignore_auth': True}, {
+            'q': 'learning_external_id:"%s"' % course_id.replace('"', ''),
+            'fq': 'type:learning', 'rows': 1, 'include_private': True,
+        })
+        for pkg in res.get('results', []):
+            if (pkg.get('learning_external_id') or '') == course_id:
+                return pkg
+    except Exception as e:
+        log.warning('IHP-IX: búsqueda del curso %s en learning falló: %s', course_id, e)
+    return None
+
+
+def _ihpix_learning_propose(course_id, user_obj, note, output_code):
+    """Propuesta de curso con ckanext-learning: crea el package `learning`
+    en estado pending (cola /ckan-admin/learning) vía su capa compat."""
+    _ = toolkit._
+    from ckanext.learning import compat
+    existing = _ihpix_learning_find_course(course_id)
+    if existing is not None:
+        status = existing.get('learning_status') or 'pending'
+        if status == 'hidden':
+            raise toolkit.ValidationError({'course_url': _(
+                'This course is not available in the IHP-WINS catalogue.')})
+        link = ihpix_links.course_link_from_learning_package(
+            existing, _ihpix_learning_page_url(existing.get('name', '')))
+        return {'status': status, 'created': False,
+                'course': {'course_id': course_id, 'name': existing.get('title'),
+                           'status': status, 'package_id': existing.get('id')},
+                'link': link if status == 'approved' else None}
+    try:
+        result = compat.add({'ignore_auth': True, 'user': None}, {'course_id': course_id})
+    except toolkit.ObjectNotFound:
+        raise toolkit.ValidationError({'course_url': _(
+            'No course with that address was found on Open Learning.')})
+    except toolkit.ValidationError:
+        raise
+    except Exception as e:
+        log.warning('IHP-IX: propuesta de curso vía learning falló: %s', e)
+        raise toolkit.ValidationError({'course_url': _(
+            'Open Learning is not reachable right now. Please try again later.')})
+    course = result.get('course') or {}
+    status = course.get('status') or 'pending'
+    try:
+        wg = None
+        if output_code:
+            init_ihpix_working_groups_db()
+            wg = IhpixWorkingGroup.get_by_output(output_code)
+        _ihpix_record_contribution(
+            user_obj.id, 'course_proposed', working_group_id=wg.id if wg else u'',
+            meta={'course_id': course_id, 'name': course.get('name'), 'note': note,
+                  'package_id': course.get('package_id'), 'catalogue': 'learning'},
+            dedupe=False)
+        model.Session.commit()
+    except Exception as e:
+        model.Session.rollback()
+        log.warning('IHP-IX ledger (course/learning): %s', e)
+    if result.get('action') == 'created':
+        pseudo = type('C', (), {'name': course.get('name') or course_id, 'course_id': course_id})()
+        _ihpix_notify_course_proposal(pseudo, user_obj, note)
+        try:
+            from ckanext.theme_ejemplo import approvals
+            approvals.invalidate()
+        except Exception:
+            pass
+    return {'status': status, 'created': result.get('action') == 'created', 'course': course, 'link': None}
 
 
 def _ihpix_config_int(key, default):
@@ -3034,6 +3152,10 @@ def ihpix_course_propose(context, data_dict):
     if per_day and proposed_today >= per_day:
         raise toolkit.ValidationError({'course_url': _(
             'You have reached the daily limit of course proposals. Please try again tomorrow.')})
+
+    if _ihpix_learning_loaded():
+        return _ihpix_learning_propose(course_id, user_obj, note,
+                                       (data_dict.get('output_code') or u'').strip())
 
     existing = OpenLearningCourse.get_by_course_id(course_id)
     if existing is not None and existing.status == OpenLearningCourse.STATUS_HIDDEN:

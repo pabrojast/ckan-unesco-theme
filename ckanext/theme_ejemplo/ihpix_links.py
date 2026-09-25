@@ -82,6 +82,28 @@ def course_url(course_id):
     return COURSE_URL_TEMPLATE.format(course_id=course_id)
 
 
+LEARNING_TARGET_PREFIX = 'learning:'
+
+
+def course_link_from_learning_package(pkg, page_url):
+    u"""Adjunto tipo `course` para un package `type:learning` de ckanext-learning.
+
+    `target_id` = `learning_external_id` (id de Open edX) si existe; si no,
+    'learning:<name>' para deduplicar. `url` = página del recurso en IHP-WINS.
+    """
+    name = pkg.get('name') or pkg.get('id') or ''
+    external_id = (pkg.get('learning_external_id') or '').strip()
+    return {
+        'link_type': 'course',
+        'target_kind': 'course',
+        'target_id': external_id or (LEARNING_TARGET_PREFIX + name),
+        'title': pkg.get('title') or name,
+        'url': page_url or (pkg.get('learning_url') or ''),
+        'event_date': '',
+        'description': pkg.get('learning_provider') or '',
+    }
+
+
 def parse_course_id(value):
     u"""`course_id` de Open edX a partir de una URL de Open Learning o del
     propio id ('course-v1:ORG+CODE+RUN'). '' si no se reconoce."""
