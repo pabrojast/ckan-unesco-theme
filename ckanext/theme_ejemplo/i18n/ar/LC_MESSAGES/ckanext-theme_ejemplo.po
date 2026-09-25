@@ -2476,7 +2476,7 @@ msgstr ""
 
 #: ckanext/theme_ejemplo/templates/admin/open_learning.html:157
 msgid "Manual"
-msgstr ""
+msgstr "دليل"
 
 #: ckanext/theme_ejemplo/templates/admin/open_learning.html:168
 msgid "Hide"
@@ -7954,6 +7954,439 @@ msgstr "{n} نتيجة"
 #. IHP-IX (2026-09)
 msgid "{n} selected"
 msgstr "{n} محدد"
+
+#. IHP-IX (2026-09)
+msgid "Abstract"
+msgstr "الملخص"
+
+#. IHP-IX (2026-09)
+msgid "Add a dataset"
+msgstr "إضافة مجموعة بيانات"
+
+#. IHP-IX (2026-09)
+msgid "At most {max} authors"
+msgstr "{max} مؤلفين كحد أقصى"
+
+#. IHP-IX (2026-09)
+msgid "At most {max} keywords"
+msgstr "{max} كلمات مفتاحية كحد أقصى"
+
+#. IHP-IX (2026-09)
+msgid "Attach a course"
+msgstr "إرفاق دورة"
+
+#. IHP-IX (2026-09)
+msgid "Attach to my report"
+msgstr "إرفاق بتقريري"
+
+#. IHP-IX (2026-09)
+msgid "Authors"
+msgstr "المؤلفون"
+
+#. IHP-IX (2026-09)
+msgid "Book chapter"
+msgstr "فصل من كتاب"
+
+#. IHP-IX (2026-09)
+msgid "Choose the organization that will own the publication"
+msgstr "اختر المنظمة التي ستملك المنشور"
+
+#. IHP-IX (2026-09)
+msgid "Conference paper"
+msgstr "ورقة مؤتمر"
+
+#. IHP-IX (2026-09)
+msgid "Course"
+msgstr "دورة"
+
+#. IHP-IX (2026-09)
+msgid "Course address"
+msgstr "عنوان الدورة"
+
+#. IHP-IX (2026-09)
+msgid "Course not listed? Paste its Open Learning address to propose it"
+msgstr "الدورة غير مدرجة؟ الصق عنوانها في Open Learning لاقتراحها"
+
+#. IHP-IX (2026-09)
+msgid "Course proposals are disabled"
+msgstr "اقتراحات الدورات معطّلة"
+
+#. IHP-IX (2026-09)
+msgid "Course proposed for the catalogue"
+msgstr "دورة مقترحة للفهرس"
+
+#. IHP-IX (2026-09)
+msgid ""
+"Courses come from the IHP Open Learning catalogue curated by IHP-WINS. "
+"Training materials (PDFs, slides) go under “Upload a publication” → "
+"Educational material."
+msgstr ""
+"تأتي الدورات من فهرس IHP Open Learning الذي تنسقه IHP-WINS. أما مواد التدريب"
+" (ملفات PDF، شرائح) فتُرفع عبر «رفع منشور» → مادة تعليمية."
+
+#. IHP-IX (2026-09)
+msgid "Created something in another tab?"
+msgstr "هل أنشأت شيئًا في علامة تبويب أخرى؟"
+
+#. IHP-IX (2026-09)
+msgid "Dataset documentation"
+msgstr "توثيق مجموعة بيانات"
+
+#. IHP-IX (2026-09)
+msgid "Document"
+msgstr "المستند"
+
+#. IHP-IX (2026-09)
+msgid "Educational / training material"
+msgstr "مادة تعليمية / تدريبية"
+
+#. IHP-IX (2026-09)
+msgid "Enter a valid DOI (e.g. 10.1000/xyz123)"
+msgstr "أدخل معرّف DOI صالحًا (مثلًا 10.1000/xyz123)"
+
+#. IHP-IX (2026-09)
+msgid "Initiative"
+msgstr "مبادرة"
+
+#. IHP-IX (2026-09)
+msgid "Invalid document type"
+msgstr "نوع المستند غير صالح"
+
+#. IHP-IX (2026-09)
+msgid "Keywords"
+msgstr "الكلمات المفتاحية"
+
+#. IHP-IX (2026-09)
+msgid "Know an IHP course that is missing?"
+msgstr "هل تعرف دورة للبرنامج الهيدرولوجي الدولي غير مدرجة؟"
+
+#. IHP-IX (2026-09)
+msgid "Link to a URL"
+msgstr "ربط عنوان URL"
+
+#. IHP-IX (2026-09)
+msgid "More details (DOI, Member State, keywords)"
+msgstr "مزيد من التفاصيل (DOI، الدولة العضو، الكلمات المفتاحية)"
+
+#. IHP-IX (2026-09)
+msgid "New IHP Open Learning course proposed: {name}"
+msgstr "دورة جديدة مقترحة في IHP Open Learning: {name}"
+
+#. IHP-IX (2026-09)
+msgid "No course with that address was found on Open Learning."
+msgstr "لم يتم العثور على دورة بهذا العنوان في Open Learning."
+
+#. IHP-IX (2026-09)
+msgid "Note (optional)"
+msgstr "ملاحظة (اختياري)"
+
+#. IHP-IX (2026-09)
+msgid ""
+"One author per line. Optionally add the affiliation after a semicolon: “Ada "
+"Lovelace; UNESCO”."
+msgstr ""
+"مؤلف واحد في كل سطر. يمكنك إضافة الانتماء المؤسسي بعد فاصلة منقوطة: «Ada "
+"Lovelace; UNESCO»."
+
+#. IHP-IX (2026-09)
+msgid "Open Learning course proposals"
+msgstr "اقتراحات دورات Open Learning"
+
+#. IHP-IX (2026-09)
+msgid "Open Learning is not reachable right now. Please try again later."
+msgstr "لا يمكن الوصول إلى Open Learning حاليًا. يرجى المحاولة لاحقًا."
+
+#. IHP-IX (2026-09)
+msgid "Paste the address of a course on openlearning.unesco.org"
+msgstr "الصق عنوان دورة من openlearning.unesco.org"
+
+#. IHP-IX (2026-09)
+msgid ""
+"Paste the address of a course on openlearning.unesco.org "
+"(…/courses/course-v1:…/about)"
+msgstr ""
+"الصق عنوان دورة من openlearning.unesco.org (…/courses/course-v1:…/about)"
+
+#. IHP-IX (2026-09)
+msgid ""
+"Paste the address of a course on openlearning.unesco.org. The IHP-WINS team "
+"reviews proposals before they appear here, and approved courses can be "
+"attached to IHP-IX reports."
+msgstr ""
+"الصق عنوان دورة من openlearning.unesco.org. يراجع فريق IHP-WINS الاقتراحات "
+"قبل ظهورها هنا، ويمكن إرفاق الدورات المعتمدة بتقارير البرنامج الهيدرولوجي "
+"الدولي التاسع."
+
+#. IHP-IX (2026-09)
+msgid "Please log in to upload publications."
+msgstr "يرجى تسجيل الدخول لرفع المنشورات."
+
+#. IHP-IX (2026-09)
+msgid "Please review the highlighted fields."
+msgstr "يرجى مراجعة الحقول المميزة."
+
+#. IHP-IX (2026-09)
+msgid "Policy brief"
+msgstr "موجز سياسات"
+
+#. IHP-IX (2026-09)
+msgid "Preprint"
+msgstr "مسودة منشور"
+
+#. IHP-IX (2026-09)
+msgid "Propose course"
+msgstr "اقتراح الدورة"
+
+#. IHP-IX (2026-09)
+msgid "Propose this course"
+msgstr "اقتراح هذه الدورة"
+
+#. IHP-IX (2026-09)
+msgid "Proposed by"
+msgstr "اقترحه"
+
+#. IHP-IX (2026-09)
+msgid "Publication created and attached to the report."
+msgstr "تم إنشاء المنشور وإرفاقه بالتقرير."
+
+#. IHP-IX (2026-09)
+msgid "Publication created in IHP-WINS."
+msgstr "تم إنشاء المنشور في IHP-WINS."
+
+#. IHP-IX (2026-09)
+msgid "Publication uploaded to IHP-WINS"
+msgstr "تم رفع منشور إلى IHP-WINS"
+
+#. IHP-IX (2026-09)
+msgid "Publication year"
+msgstr "سنة النشر"
+
+#. IHP-IX (2026-09)
+msgid "Publication year must be between {min} and {max}"
+msgstr "يجب أن تكون سنة النشر بين {min} و{max}"
+
+#. IHP-IX (2026-09)
+msgid ""
+"Publications are created right here and attached at once. Datasets and "
+"events open their own form in a new tab; when you are done, come back and "
+"use “Refresh search”."
+msgstr ""
+"تُنشأ المنشورات هنا مباشرة وتُرفق فورًا. أما مجموعات البيانات والفعاليات "
+"فتفتح نموذجها الخاص في علامة تبويب جديدة؛ عند الانتهاء، عد واستخدم «تحديث "
+"البحث»."
+
+#. IHP-IX (2026-09)
+msgid ""
+"Publications in IHP-WINS belong to an organization (a UNESCO Category 2 "
+"Centre, Chair, National Committee or partner). Ask an organization "
+"administrator to add you as an editor, or request membership from the "
+"organization page."
+msgstr ""
+"تنتمي المنشورات في IHP-WINS إلى منظمة (مركز من الفئة الثانية لليونسكو، أو "
+"كرسي، أو لجنة وطنية، أو شريك). اطلب من مسؤول المنظمة إضافتك كمحرر، أو اطلب "
+"العضوية من صفحة المنظمة."
+
+#. IHP-IX (2026-09)
+msgid "Reload page"
+msgstr "إعادة تحميل الصفحة"
+
+#. IHP-IX (2026-09)
+msgid "Scientific paper"
+msgstr "ورقة علمية"
+
+#. IHP-IX (2026-09)
+msgid "Sending…"
+msgstr "جارٍ الإرسال…"
+
+#. IHP-IX (2026-09)
+msgid ""
+"Separated by commas. The tags “ihp-ix” and the Output code are added "
+"automatically."
+msgstr "مفصولة بفواصل. تُضاف الوسوم «ihp-ix» ورمز المخرج تلقائيًا."
+
+#. IHP-IX (2026-09)
+msgid ""
+"Share the materials themselves: upload them as educational documents (they "
+"are attached in Section VII) or attach an Open Learning course there."
+msgstr ""
+"شارك المواد نفسها: ارفعها كمستندات تعليمية (تُرفق في القسم السابع) أو أرفق "
+"دورة من Open Learning هناك."
+
+#. IHP-IX (2026-09)
+msgid "Source"
+msgstr "المصدر"
+
+#. IHP-IX (2026-09)
+msgid "Start a report for this output"
+msgstr "بدء تقرير لهذا المخرج"
+
+#. IHP-IX (2026-09)
+msgid "Technical report"
+msgstr "تقرير فني"
+
+#. IHP-IX (2026-09)
+msgid ""
+"Thank you! The course was proposed and will appear once the IHP-WINS team "
+"approves it."
+msgstr "شكرًا لك! تم اقتراح الدورة وستظهر بعد أن يعتمدها فريق IHP-WINS."
+
+#. IHP-IX (2026-09)
+msgid ""
+"Thank you! The course was proposed and will be attachable once the IHP-WINS "
+"team approves it."
+msgstr ""
+"شكرًا لك! تم اقتراح الدورة وسيمكن إرفاقها بعد أن يعتمدها فريق IHP-WINS."
+
+#. IHP-IX (2026-09)
+msgid "The file could not be uploaded"
+msgstr "تعذر رفع الملف"
+
+#. IHP-IX (2026-09)
+msgid ""
+"The organization that will own the publication in IHP-WINS. Only "
+"organizations where you are an editor are listed."
+msgstr ""
+"المنظمة التي ستملك المنشور في IHP-WINS. تُدرج فقط المنظمات التي أنت محرر "
+"فيها."
+
+#. IHP-IX (2026-09)
+msgid "The publication could not be created"
+msgstr "تعذر إنشاء المنشور"
+
+#. IHP-IX (2026-09)
+msgid ""
+"The publication could not be linked to the Member State group; you can add "
+"it later from the dataset page."
+msgstr ""
+"تعذر ربط المنشور بمجموعة الدولة العضو؛ يمكنك إضافتها لاحقًا من صفحة مجموعة "
+"البيانات."
+
+#. IHP-IX (2026-09)
+msgid "The publication is created as a public document dataset in IHP-WINS."
+msgstr "يُنشأ المنشور كمجموعة بيانات مستندات عامة في IHP-WINS."
+
+#. IHP-IX (2026-09)
+msgid "Thesis"
+msgstr "أطروحة"
+
+#. IHP-IX (2026-09)
+msgid "This course is already in the IHP-WINS catalogue."
+msgstr "هذه الدورة موجودة بالفعل في فهرس IHP-WINS."
+
+#. IHP-IX (2026-09)
+msgid "This course is already in the catalogue — it has been attached."
+msgstr "هذه الدورة موجودة بالفعل في الفهرس — وقد تم إرفاقها."
+
+#. IHP-IX (2026-09)
+msgid "This course is not available in the IHP-WINS catalogue."
+msgstr "هذه الدورة غير متاحة في فهرس IHP-WINS."
+
+#. IHP-IX (2026-09)
+msgid "This file type is not allowed ({ext})"
+msgstr "نوع الملف هذا غير مسموح به ({ext})"
+
+#. IHP-IX (2026-09)
+msgid "Type of document"
+msgstr "نوع المستند"
+
+#. IHP-IX (2026-09)
+msgid "URL of the publication"
+msgstr "عنوان URL للمنشور"
+
+#. IHP-IX (2026-09)
+msgid "Upload a file"
+msgstr "رفع ملف"
+
+#. IHP-IX (2026-09)
+msgid "Upload a file or enter the URL of the publication"
+msgstr "ارفع ملفًا أو أدخل عنوان URL للمنشور"
+
+#. IHP-IX (2026-09)
+msgid "Upload a publication"
+msgstr "رفع منشور"
+
+#. IHP-IX (2026-09)
+msgid "Upload a publication to IHP-WINS"
+msgstr "رفع منشور إلى IHP-WINS"
+
+#. IHP-IX (2026-09)
+msgid "Upload and attach"
+msgstr "رفع وإرفاق"
+
+#. IHP-IX (2026-09)
+msgid "Upload training material"
+msgstr "رفع مادة تدريبية"
+
+#. IHP-IX (2026-09)
+msgid "View document"
+msgstr "عرض المستند"
+
+#. IHP-IX (2026-09)
+msgid "Why is it relevant? (optional)"
+msgstr "لماذا هي ذات صلة؟ (اختياري)"
+
+#. IHP-IX (2026-09)
+msgid "Working paper"
+msgstr "ورقة عمل"
+
+#. IHP-IX (2026-09)
+msgid "You are not an editor of any organization yet."
+msgstr "لست محررًا في أي منظمة حتى الآن."
+
+#. IHP-IX (2026-09)
+msgid "You cannot create publications in this organization"
+msgstr "لا يمكنك إنشاء منشورات في هذه المنظمة"
+
+#. IHP-IX (2026-09)
+msgid ""
+"You have no report for this output yet. The publication will still be "
+"searchable in Section VII of any report."
+msgstr ""
+"ليس لديك تقرير لهذا المخرج حتى الآن. سيظل بالإمكان البحث عن المنشور في القسم"
+" السابع من أي تقرير."
+
+#. IHP-IX (2026-09)
+msgid ""
+"You have reached the daily limit of course proposals. Please try again "
+"tomorrow."
+msgstr "لقد وصلت إلى الحد اليومي لاقتراحات الدورات. يرجى المحاولة غدًا."
+
+#. IHP-IX (2026-09)
+msgid ""
+"You need to be an editor or admin of an organization to upload publications"
+msgstr "يجب أن تكون محررًا أو مسؤولًا في منظمة لرفع المنشورات"
+
+#. IHP-IX (2026-09)
+msgid "— Do not attach —"
+msgstr "— عدم الإرفاق —"
+
+#. IHP-IX (2026-09)
+msgid "— None —"
+msgstr "— لا شيء —"
+
+#. IHP-IX (2026-09)
+msgid ""
+"Dear {name},\n"
+"\n"
+"{proposer} proposed the course \"{course}\" for the IHP-WINS catalogue.\n"
+"\n"
+"Course: {url}\n"
+"Note: {note}\n"
+"\n"
+"Review it here: {admin_url}\n"
+msgstr ""
+"عزيزي/عزيزتي {name}،\n"
+"\n"
+"اقترح {proposer} الدورة \"{course}\" لفهرس IHP-WINS.\n"
+"\n"
+"الدورة: {url}\n"
+"ملاحظة: {note}\n"
+"\n"
+"راجعها هنا: {admin_url}\n"
+
+#. IHP-IX (2026-09)
+msgid "The file is too large (max. {max} MB)"
+msgstr "الملف كبير جدًا (الحد الأقصى {max} ميغابايت)"
 
 #, python-format
 #~ msgid "Dashboard (%(num)d new item)"

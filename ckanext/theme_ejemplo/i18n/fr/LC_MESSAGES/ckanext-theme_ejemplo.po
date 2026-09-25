@@ -2528,7 +2528,7 @@ msgstr ""
 
 #: ckanext/theme_ejemplo/templates/admin/open_learning.html:157
 msgid "Manual"
-msgstr ""
+msgstr "Manuel"
 
 #: ckanext/theme_ejemplo/templates/admin/open_learning.html:168
 msgid "Hide"
@@ -8197,6 +8197,456 @@ msgstr "{n} résultats"
 #. IHP-IX (2026-09)
 msgid "{n} selected"
 msgstr "{n} sélectionnés"
+
+#. IHP-IX (2026-09)
+msgid "Abstract"
+msgstr "Résumé"
+
+#. IHP-IX (2026-09)
+msgid "Add a dataset"
+msgstr "Ajouter un jeu de données"
+
+#. IHP-IX (2026-09)
+msgid "At most {max} authors"
+msgstr "Au plus {max} auteurs"
+
+#. IHP-IX (2026-09)
+msgid "At most {max} keywords"
+msgstr "Au plus {max} mots-clés"
+
+#. IHP-IX (2026-09)
+msgid "Attach a course"
+msgstr "Joindre un cours"
+
+#. IHP-IX (2026-09)
+msgid "Attach to my report"
+msgstr "Joindre à mon rapport"
+
+#. IHP-IX (2026-09)
+msgid "Authors"
+msgstr "Auteurs"
+
+#. IHP-IX (2026-09)
+msgid "Book chapter"
+msgstr "Chapitre de livre"
+
+#. IHP-IX (2026-09)
+msgid "Choose the organization that will own the publication"
+msgstr "Choisissez l’organisation propriétaire de la publication"
+
+#. IHP-IX (2026-09)
+msgid "Conference paper"
+msgstr "Communication de conférence"
+
+#. IHP-IX (2026-09)
+msgid "Course"
+msgstr "Cours"
+
+#. IHP-IX (2026-09)
+msgid "Course address"
+msgstr "Adresse du cours"
+
+#. IHP-IX (2026-09)
+msgid "Course not listed? Paste its Open Learning address to propose it"
+msgstr ""
+"Le cours n’apparaît pas ? Collez son adresse Open Learning pour le proposer"
+
+#. IHP-IX (2026-09)
+msgid "Course proposals are disabled"
+msgstr "Les propositions de cours sont désactivées"
+
+#. IHP-IX (2026-09)
+msgid "Course proposed for the catalogue"
+msgstr "Cours proposé pour le catalogue"
+
+#. IHP-IX (2026-09)
+msgid ""
+"Courses come from the IHP Open Learning catalogue curated by IHP-WINS. "
+"Training materials (PDFs, slides) go under “Upload a publication” → "
+"Educational material."
+msgstr ""
+"Les cours proviennent du catalogue IHP Open Learning sélectionné par IHP-"
+"WINS. Les supports de formation (PDF, diapositives) passent par « Téléverser"
+" une publication » → Matériel pédagogique."
+
+#. IHP-IX (2026-09)
+msgid "Created something in another tab?"
+msgstr "Vous avez créé quelque chose dans un autre onglet ?"
+
+#. IHP-IX (2026-09)
+msgid "Dataset documentation"
+msgstr "Documentation de jeu de données"
+
+#. IHP-IX (2026-09)
+msgid "Document"
+msgstr "Document"
+
+#. IHP-IX (2026-09)
+msgid "Educational / training material"
+msgstr "Matériel pédagogique / de formation"
+
+#. IHP-IX (2026-09)
+msgid "Enter a valid DOI (e.g. 10.1000/xyz123)"
+msgstr "Saisissez un DOI valide (p. ex. 10.1000/xyz123)"
+
+#. IHP-IX (2026-09)
+msgid "Initiative"
+msgstr "Initiative"
+
+#. IHP-IX (2026-09)
+msgid "Invalid document type"
+msgstr "Type de document invalide"
+
+#. IHP-IX (2026-09)
+msgid "Keywords"
+msgstr "Mots-clés"
+
+#. IHP-IX (2026-09)
+msgid "Know an IHP course that is missing?"
+msgstr "Vous connaissez un cours du PHI qui manque ?"
+
+#. IHP-IX (2026-09)
+msgid "Link to a URL"
+msgstr "Lier une URL"
+
+#. IHP-IX (2026-09)
+msgid "More details (DOI, Member State, keywords)"
+msgstr "Plus de détails (DOI, État membre, mots-clés)"
+
+#. IHP-IX (2026-09)
+msgid "New IHP Open Learning course proposed: {name}"
+msgstr "Nouveau cours IHP Open Learning proposé : {name}"
+
+#. IHP-IX (2026-09)
+msgid "No course with that address was found on Open Learning."
+msgstr "Aucun cours avec cette adresse n’a été trouvé sur Open Learning."
+
+#. IHP-IX (2026-09)
+msgid "Note (optional)"
+msgstr "Note (facultatif)"
+
+#. IHP-IX (2026-09)
+msgid ""
+"One author per line. Optionally add the affiliation after a semicolon: “Ada "
+"Lovelace; UNESCO”."
+msgstr ""
+"Un auteur par ligne. Ajoutez éventuellement l’affiliation après un point-"
+"virgule : « Ada Lovelace; UNESCO »."
+
+#. IHP-IX (2026-09)
+msgid "Open Learning course proposals"
+msgstr "Propositions de cours Open Learning"
+
+#. IHP-IX (2026-09)
+msgid "Open Learning is not reachable right now. Please try again later."
+msgstr "Open Learning est inaccessible pour le moment. Réessayez plus tard."
+
+#. IHP-IX (2026-09)
+msgid "Paste the address of a course on openlearning.unesco.org"
+msgstr "Collez l’adresse d’un cours sur openlearning.unesco.org"
+
+#. IHP-IX (2026-09)
+msgid ""
+"Paste the address of a course on openlearning.unesco.org "
+"(…/courses/course-v1:…/about)"
+msgstr ""
+"Collez l’adresse d’un cours sur openlearning.unesco.org "
+"(…/courses/course-v1:…/about)"
+
+#. IHP-IX (2026-09)
+msgid ""
+"Paste the address of a course on openlearning.unesco.org. The IHP-WINS team "
+"reviews proposals before they appear here, and approved courses can be "
+"attached to IHP-IX reports."
+msgstr ""
+"Collez l’adresse d’un cours sur openlearning.unesco.org. L’équipe IHP-WINS "
+"examine les propositions avant leur publication ici, et les cours approuvés "
+"peuvent être joints aux rapports du PHI-IX."
+
+#. IHP-IX (2026-09)
+msgid "Please log in to upload publications."
+msgstr "Connectez-vous pour téléverser des publications."
+
+#. IHP-IX (2026-09)
+msgid "Please review the highlighted fields."
+msgstr "Veuillez vérifier les champs mis en évidence."
+
+#. IHP-IX (2026-09)
+msgid "Policy brief"
+msgstr "Note de politique"
+
+#. IHP-IX (2026-09)
+msgid "Preprint"
+msgstr "Prépublication"
+
+#. IHP-IX (2026-09)
+msgid "Propose course"
+msgstr "Proposer le cours"
+
+#. IHP-IX (2026-09)
+msgid "Propose this course"
+msgstr "Proposer ce cours"
+
+#. IHP-IX (2026-09)
+msgid "Proposed by"
+msgstr "Proposé par"
+
+#. IHP-IX (2026-09)
+msgid "Publication created and attached to the report."
+msgstr "Publication créée et jointe au rapport."
+
+#. IHP-IX (2026-09)
+msgid "Publication created in IHP-WINS."
+msgstr "Publication créée dans IHP-WINS."
+
+#. IHP-IX (2026-09)
+msgid "Publication uploaded to IHP-WINS"
+msgstr "Publication téléversée dans IHP-WINS"
+
+#. IHP-IX (2026-09)
+msgid "Publication year"
+msgstr "Année de publication"
+
+#. IHP-IX (2026-09)
+msgid "Publication year must be between {min} and {max}"
+msgstr "L’année de publication doit être comprise entre {min} et {max}"
+
+#. IHP-IX (2026-09)
+msgid ""
+"Publications are created right here and attached at once. Datasets and "
+"events open their own form in a new tab; when you are done, come back and "
+"use “Refresh search”."
+msgstr ""
+"Les publications sont créées ici même et jointes immédiatement. Les jeux de "
+"données et les événements ouvrent leur propre formulaire dans un nouvel "
+"onglet ; quand vous avez terminé, revenez et utilisez « Actualiser la "
+"recherche »."
+
+#. IHP-IX (2026-09)
+msgid ""
+"Publications in IHP-WINS belong to an organization (a UNESCO Category 2 "
+"Centre, Chair, National Committee or partner). Ask an organization "
+"administrator to add you as an editor, or request membership from the "
+"organization page."
+msgstr ""
+"Les publications dans IHP-WINS appartiennent à une organisation (un Centre "
+"de catégorie 2 de l’UNESCO, une Chaire, un Comité national ou un "
+"partenaire). Demandez à un administrateur de l’organisation de vous ajouter "
+"comme éditeur, ou demandez l’adhésion depuis la page de l’organisation."
+
+#. IHP-IX (2026-09)
+msgid "Reload page"
+msgstr "Recharger la page"
+
+#. IHP-IX (2026-09)
+msgid "Scientific paper"
+msgstr "Article scientifique"
+
+#. IHP-IX (2026-09)
+msgid "Sending…"
+msgstr "Envoi…"
+
+#. IHP-IX (2026-09)
+msgid ""
+"Separated by commas. The tags “ihp-ix” and the Output code are added "
+"automatically."
+msgstr ""
+"Séparés par des virgules. Les étiquettes « ihp-ix » et le code du produit "
+"sont ajoutés automatiquement."
+
+#. IHP-IX (2026-09)
+msgid ""
+"Share the materials themselves: upload them as educational documents (they "
+"are attached in Section VII) or attach an Open Learning course there."
+msgstr ""
+"Partagez les supports eux-mêmes : téléversez-les comme documents "
+"pédagogiques (ils sont joints à la section VII) ou joignez-y un cours Open "
+"Learning."
+
+#. IHP-IX (2026-09)
+msgid "Source"
+msgstr "Source"
+
+#. IHP-IX (2026-09)
+msgid "Start a report for this output"
+msgstr "Commencer un rapport pour ce produit"
+
+#. IHP-IX (2026-09)
+msgid "Technical report"
+msgstr "Rapport technique"
+
+#. IHP-IX (2026-09)
+msgid ""
+"Thank you! The course was proposed and will appear once the IHP-WINS team "
+"approves it."
+msgstr ""
+"Merci ! Le cours a été proposé et apparaîtra une fois approuvé par l’équipe "
+"IHP-WINS."
+
+#. IHP-IX (2026-09)
+msgid ""
+"Thank you! The course was proposed and will be attachable once the IHP-WINS "
+"team approves it."
+msgstr ""
+"Merci ! Le cours a été proposé et pourra être joint une fois approuvé par "
+"l’équipe IHP-WINS."
+
+#. IHP-IX (2026-09)
+msgid "The file could not be uploaded"
+msgstr "Le fichier n’a pas pu être téléversé"
+
+#. IHP-IX (2026-09)
+msgid ""
+"The organization that will own the publication in IHP-WINS. Only "
+"organizations where you are an editor are listed."
+msgstr ""
+"L’organisation propriétaire de la publication dans IHP-WINS. Seules les "
+"organisations dont vous êtes éditeur sont listées."
+
+#. IHP-IX (2026-09)
+msgid "The publication could not be created"
+msgstr "La publication n’a pas pu être créée"
+
+#. IHP-IX (2026-09)
+msgid ""
+"The publication could not be linked to the Member State group; you can add "
+"it later from the dataset page."
+msgstr ""
+"La publication n’a pas pu être liée au groupe de l’État membre ; vous "
+"pourrez l’ajouter plus tard depuis la page du jeu de données."
+
+#. IHP-IX (2026-09)
+msgid "The publication is created as a public document dataset in IHP-WINS."
+msgstr ""
+"La publication est créée comme jeu de données documentaire public dans IHP-"
+"WINS."
+
+#. IHP-IX (2026-09)
+msgid "Thesis"
+msgstr "Thèse"
+
+#. IHP-IX (2026-09)
+msgid "This course is already in the IHP-WINS catalogue."
+msgstr "Ce cours figure déjà dans le catalogue IHP-WINS."
+
+#. IHP-IX (2026-09)
+msgid "This course is already in the catalogue — it has been attached."
+msgstr "Ce cours figure déjà dans le catalogue : il a été joint."
+
+#. IHP-IX (2026-09)
+msgid "This course is not available in the IHP-WINS catalogue."
+msgstr "Ce cours n’est pas disponible dans le catalogue IHP-WINS."
+
+#. IHP-IX (2026-09)
+msgid "This file type is not allowed ({ext})"
+msgstr "Ce type de fichier n’est pas autorisé ({ext})"
+
+#. IHP-IX (2026-09)
+msgid "Type of document"
+msgstr "Type de document"
+
+#. IHP-IX (2026-09)
+msgid "URL of the publication"
+msgstr "URL de la publication"
+
+#. IHP-IX (2026-09)
+msgid "Upload a file"
+msgstr "Téléverser un fichier"
+
+#. IHP-IX (2026-09)
+msgid "Upload a file or enter the URL of the publication"
+msgstr "Téléversez un fichier ou saisissez l’URL de la publication"
+
+#. IHP-IX (2026-09)
+msgid "Upload a publication"
+msgstr "Téléverser une publication"
+
+#. IHP-IX (2026-09)
+msgid "Upload a publication to IHP-WINS"
+msgstr "Téléverser une publication dans IHP-WINS"
+
+#. IHP-IX (2026-09)
+msgid "Upload and attach"
+msgstr "Téléverser et joindre"
+
+#. IHP-IX (2026-09)
+msgid "Upload training material"
+msgstr "Téléverser du matériel de formation"
+
+#. IHP-IX (2026-09)
+msgid "View document"
+msgstr "Voir le document"
+
+#. IHP-IX (2026-09)
+msgid "Why is it relevant? (optional)"
+msgstr "Pourquoi est-il pertinent ? (facultatif)"
+
+#. IHP-IX (2026-09)
+msgid "Working paper"
+msgstr "Document de travail"
+
+#. IHP-IX (2026-09)
+msgid "You are not an editor of any organization yet."
+msgstr "Vous n’êtes pas encore éditeur d’une organisation."
+
+#. IHP-IX (2026-09)
+msgid "You cannot create publications in this organization"
+msgstr "Vous ne pouvez pas créer de publications dans cette organisation"
+
+#. IHP-IX (2026-09)
+msgid ""
+"You have no report for this output yet. The publication will still be "
+"searchable in Section VII of any report."
+msgstr ""
+"Vous n’avez pas encore de rapport pour ce produit. La publication restera "
+"trouvable dans la section VII de tout rapport."
+
+#. IHP-IX (2026-09)
+msgid ""
+"You have reached the daily limit of course proposals. Please try again "
+"tomorrow."
+msgstr ""
+"Vous avez atteint la limite quotidienne de propositions de cours. Réessayez "
+"demain."
+
+#. IHP-IX (2026-09)
+msgid ""
+"You need to be an editor or admin of an organization to upload publications"
+msgstr ""
+"Vous devez être éditeur ou administrateur d’une organisation pour téléverser"
+" des publications"
+
+#. IHP-IX (2026-09)
+msgid "— Do not attach —"
+msgstr "— Ne pas joindre —"
+
+#. IHP-IX (2026-09)
+msgid "— None —"
+msgstr "— Aucun —"
+
+#. IHP-IX (2026-09)
+msgid ""
+"Dear {name},\n"
+"\n"
+"{proposer} proposed the course \"{course}\" for the IHP-WINS catalogue.\n"
+"\n"
+"Course: {url}\n"
+"Note: {note}\n"
+"\n"
+"Review it here: {admin_url}\n"
+msgstr ""
+"Bonjour {name},\n"
+"\n"
+"{proposer} a proposé le cours « {course} » pour le catalogue IHP-WINS.\n"
+"\n"
+"Cours : {url}\n"
+"Note : {note}\n"
+"\n"
+"Examinez-le ici : {admin_url}\n"
+
+#. IHP-IX (2026-09)
+msgid "The file is too large (max. {max} MB)"
+msgstr "Le fichier est trop volumineux (max. {max} Mo)"
 
 #, python-format
 #~ msgid "Dashboard (%(num)d new item)"
