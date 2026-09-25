@@ -1030,11 +1030,15 @@
   }
 
   /* ── Inicialización ───────────────────────────────────────────────── */
-  function each(root, selector, fn) {
+  // La marca de "ya inicializado" es por componente: un textarea puede llevar
+  // a la vez data-ihpix-markdown y data-ihpix-counter (editor + contador).
+  function each(root, selector, fn, key) {
+    var mark = 'data-ihpix-ready' + (key ? '-' + key : '');
     var nodes = Array.prototype.slice.call(root.querySelectorAll(selector));
     if (root !== document && root.matches && root.matches(selector)) { nodes.unshift(root); }
     nodes.forEach(function (n) {
-      if (n.hasAttribute('data-ihpix-ready')) { return; }
+      if (n.hasAttribute(mark)) { return; }
+      n.setAttribute(mark, '');
       n.setAttribute('data-ihpix-ready', '');
       var inst = fn(n);
       if (inst) { instances.push({ root: n, api: inst }); }
@@ -1044,16 +1048,16 @@
   function init(root) {
     root = root || document;
     loadConfig();
-    each(root, 'textarea[data-ihpix-markdown]', MarkdownEditor);
-    each(root, 'textarea[data-ihpix-counter], input[data-ihpix-counter]', CharCounter);
-    each(root, 'select[data-ihpix-combobox], input[data-ihpix-combobox]', Combobox);
-    each(root, '[data-ihpix-multipicker]', MultiPicker);
-    each(root, '[data-ihpix-upload]', FileUpload);
-    each(root, '[data-ihpix-confirm]', function (n) { bindConfirm(n); return null; });
+    each(root, 'textarea[data-ihpix-markdown]', MarkdownEditor, 'md');
+    each(root, 'textarea[data-ihpix-counter], input[data-ihpix-counter]', CharCounter, 'counter');
+    each(root, 'select[data-ihpix-combobox], input[data-ihpix-combobox]', Combobox, 'combobox');
+    each(root, '[data-ihpix-multipicker]', MultiPicker, 'mp');
+    each(root, '[data-ihpix-upload]', FileUpload, 'upload');
+    each(root, '[data-ihpix-confirm]', function (n) { bindConfirm(n); return null; }, 'confirm');
     each(root, '[data-ihpix-modal-open]', function (n) {
       n.addEventListener('click', function (e) { e.preventDefault(); Modal.open(n.getAttribute('data-ihpix-modal-open')); });
       return null;
-    });
+    }, 'modal');
   }
 
   function refresh(root) {

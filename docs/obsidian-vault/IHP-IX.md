@@ -42,9 +42,10 @@ renderizan como sysadmin; `ihpix_publication_create` creó de verdad un dataset
 `document_type`, idioma, identificador, recurso PDF subido y variante por URL),
 registró `publication_created` en el ledger y los datos de prueba se purgaron.
 Traducciones es/fr/ar y RTL comprobadas. También verificado con un **editor
-no sysadmin** (crea en su organización, otra se rechaza). Pendiente: prueba en
-navegador real (la extensión de Chrome no estaba conectada) y la adaptación de
-cursos al plugin `learning` (DOC-030). Ver
+no sysadmin** (crea en su organización, otra se rechaza) y en **navegador
+real** con Playwright (16 pasos: kit, modal con subida de PDF, autosave,
+móvil, RTL, workspace, admin; ver [[Testing#Navegador real (Playwright) contra dev]]).
+Cursos vía el plugin `learning` cuando está cargado (DOC-030). Ver
 [[Deployment#Despliegue a desarrollo (data.dev-wins.com)]].
 
 ## Pendientes conocidos

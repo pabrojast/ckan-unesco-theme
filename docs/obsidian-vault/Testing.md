@@ -44,6 +44,32 @@ kubectl --context default -n ckan exec -i $POD -c ckan -- python3 - < scripts/ih
 Para validar cambios sin reconstruir la imagen: `kubectl cp` de los ficheros al
 pod y volver a lanzar el script (el proceso es nuevo y lee el disco).
 
+## Navegador real (Playwright) contra dev
+
+`scripts/playwright/ihpix_dev.js` recorre con Chromium headless el flujo
+completo del ecosistema IHP-IX en `data.dev-wins.com` con sesión por **token de
+API** (cabecera `Authorization`, sólo hacia el sitio; no se teclean
+contraseñas): combobox de país por teclado, picker de Member States, editor
+Markdown con preview, curso del catálogo adjuntado, modal "Upload a
+publication" con subida de PDF, autosave por usuario tras recargar, validación
+de fechas, guardado del borrador, viewport móvil 390 px (sin desbordamiento),
+árabe RTL, modal en el workspace y páginas admin (acordeón, MultiPicker,
+descripción Markdown, autocompletado de lead). Registra errores de consola y
+respuestas 4xx/5xx.
+
+```bash
+# tokens: api_token_create desde el pod para un editor no sysadmin y un sysadmin
+cd /ruta/privada && npm i playwright
+IHPIX_PW_TOKENS=/ruta/privada/tokens.json node scripts/playwright/ihpix_dev.js
+# validar un cambio del kit sin reconstruir la imagen:
+LOCAL_KIT=ckanext/theme_ejemplo/public/js/ihpix-forms.js IHPIX_PW_TOKENS=… node scripts/playwright/ihpix_dev.js
+```
+
+Crea un borrador "Playwright IHP-IX draft (delete me)" y una publicación
+"…smoke publication (delete me)" del usuario editor: borrarlos después
+(`ihpix_report_delete` / `dataset_purge`) y revocar los tokens. Ejecutada en
+verde el 2026-09-25 (16 pasos, 0 errores de consola).
+
 ## Cómo ejecutar tests
 
 ### Historial de licencias
