@@ -51,8 +51,9 @@ async function newPage(browser, token, opts = {}) {
   try {
     // ───────────── 1. Formulario de reporte (editor) ─────────────
     let { ctx, page } = await newPage(browser, tokens.editor, { key: 'report' });
-    await page.goto(BASE + '/ihpix/report?output=1.3', { waitUntil: 'networkidle', timeout: 90000 });
-    await page.waitForSelector('#ihpix-report-form', { timeout: 30000 });
+    await page.goto(BASE + '/ihpix/report?output=1.3', { waitUntil: 'domcontentloaded', timeout: 90000 });
+    await page.waitForSelector('#ihpix-report-form', { timeout: 60000 });
+    await page.waitForFunction(() => window.IhpixForms && document.querySelectorAll('.ixf-combobox').length > 0, null, { timeout: 60000 }).catch(() => {});
     step('report: kit cargado (window.IhpixForms)', await page.evaluate(() => !!(window.IhpixForms && window.ihpixToast)));
     const counts = await page.evaluate(() => ({
       combobox: document.querySelectorAll('.ixf-combobox').length,
@@ -140,8 +141,9 @@ async function newPage(browser, token, opts = {}) {
     await page.fill('#ihpix-field-title', 'Playwright IHP-IX draft (delete me)');
     await page.waitForTimeout(2500);
     const saveKey = await page.evaluate(() => Object.keys(localStorage).filter(k => k.startsWith('ihpix-report-draft-v1')));
-    await page.reload({ waitUntil: 'networkidle' });
-    await page.waitForSelector('#ihpix-report-form');
+    await page.reload({ waitUntil: 'domcontentloaded' });
+    await page.waitForSelector('#ihpix-report-form', { timeout: 60000 });
+    await page.waitForFunction(() => window.IhpixForms && document.querySelectorAll('.ixf-combobox').length > 0, null, { timeout: 60000 }).catch(() => {});
     await page.waitForTimeout(1500);
     const restored = await page.evaluate(() => ({ title: document.getElementById('ihpix-field-title').value, links: JSON.parse(document.getElementById('ihpix-links-json').value || '[]').length, country: document.getElementById('ihpix-field-country').value, ms: document.querySelectorAll('#ihpix-ms-picker input:checked').length, chips: document.querySelectorAll('#ihpix-ms-picker .ixf-chip').length }));
     step('report: autosave por usuario restaura tras recargar', restored.title.startsWith('Playwright') && restored.links === 2 && restored.country === 'chile' && restored.ms === 1 && restored.chips === 1, { saveKey, restored });
@@ -173,16 +175,18 @@ async function newPage(browser, token, opts = {}) {
     // ───────────── 2. Móvil y RTL ─────────────
     try {
     ({ ctx, page } = await newPage(browser, tokens.editor, { key: 'mobile', viewport: { width: 390, height: 844 } }));
-    await page.goto(BASE + '/ihpix/report?output=1.3', { waitUntil: 'networkidle', timeout: 90000 });
-    await page.waitForSelector('#ihpix-report-form');
+    await page.goto(BASE + '/ihpix/report?output=1.3', { waitUntil: 'domcontentloaded', timeout: 90000 });
+    await page.waitForSelector('#ihpix-report-form', { timeout: 60000 });
+    await page.waitForFunction(() => window.IhpixForms && document.querySelectorAll('.ixf-combobox').length > 0, null, { timeout: 60000 }).catch(() => {});
     const overflow = await page.evaluate(() => ({ scrollWidth: document.documentElement.scrollWidth, innerWidth: window.innerWidth, navScroll: (() => { const n = document.querySelector('.ihpix-section-nav-inner'); return n ? getComputedStyle(n).overflowX : null; })() }));
     step('móvil 390px: sin desbordamiento horizontal + nav horizontal', overflow.scrollWidth <= overflow.innerWidth + 1 && overflow.navScroll === 'auto', overflow);
     await page.screenshot({ path: OUT + '/report-mobile.png', fullPage: false });
     await ctx.close();
 
     ({ ctx, page } = await newPage(browser, tokens.editor, { key: 'rtl', locale: 'ar' }));
-    await page.goto(BASE + '/ar/ihpix/report?output=1.3', { waitUntil: 'networkidle', timeout: 90000 });
-    await page.waitForSelector('#ihpix-report-form');
+    await page.goto(BASE + '/ar/ihpix/report?output=1.3', { waitUntil: 'domcontentloaded', timeout: 90000 });
+    await page.waitForSelector('#ihpix-report-form', { timeout: 60000 });
+    await page.waitForFunction(() => window.IhpixForms && document.querySelectorAll('.ixf-combobox').length > 0, null, { timeout: 60000 }).catch(() => {});
     const rtl = await page.evaluate(() => ({ dir: document.documentElement.getAttribute('dir'), combobox: document.querySelectorAll('.ixf-combobox').length, chipsDir: getComputedStyle(document.querySelector('#ihpix-ms-picker')).direction, uploadBtn: (document.querySelector('[data-ihpix-publication-open]') || {}).textContent }));
     step('árabe: dir=rtl y kit inicializado', rtl.dir === 'rtl' && rtl.combobox >= 2 && rtl.chipsDir === 'rtl', { dir: rtl.dir, combobox: rtl.combobox, chipsDir: rtl.chipsDir, uploadBtn: (rtl.uploadBtn || '').trim() });
     await page.screenshot({ path: OUT + '/report-ar.png', fullPage: false });
@@ -192,7 +196,8 @@ async function newPage(browser, token, opts = {}) {
     // ───────────── 3. Workspace (editor) ─────────────
     try {
     ({ ctx, page } = await newPage(browser, tokens.editor, { key: 'workspace' }));
-    await page.goto(BASE + '/ihpix/workspaces/1.3', { waitUntil: 'networkidle', timeout: 90000 });
+    await page.goto(BASE + '/ihpix/workspaces/1.3', { waitUntil: 'domcontentloaded', timeout: 90000 });
+    await page.waitForFunction(() => !!window.IhpixForms, null, { timeout: 60000 }).catch(() => {});
     await page.locator('[data-ihpix-publication-open]').first().click();
     await page.waitForSelector('#ihpix-publication-modal:not([hidden])', { timeout: 10000 });
     const wsModal = await page.evaluate(() => ({ attach: !!document.getElementById('ihpix-pub-field-attach'), attachOptions: document.getElementById('ihpix-pub-field-attach') ? document.getElementById('ihpix-pub-field-attach').options.length : 0, note: !!document.querySelector('#ihpix-pub-attach-field .ihpix-report-help') }));
@@ -205,7 +210,8 @@ async function newPage(browser, token, opts = {}) {
     // ───────────── 4. Admin (sysadmin) ─────────────
     try {
     ({ ctx, page } = await newPage(browser, tokens.sysadmin, { key: 'admin' }));
-    await page.goto(BASE + '/ckan-admin/ihpix/activities', { waitUntil: 'networkidle', timeout: 90000 });
+    await page.goto(BASE + '/ckan-admin/ihpix/activities', { waitUntil: 'domcontentloaded', timeout: 90000 });
+    await page.waitForFunction(() => window.IhpixForms && document.querySelectorAll('#ihpact-ms-widget.ixf-mp').length > 0, null, { timeout: 60000 }).catch(() => {});
     const acc = page.locator('#ihpact-accordion [data-ihpact-accordion]').nth(1);
     const before = await acc.getAttribute('aria-expanded');
     await acc.click();
@@ -213,7 +219,8 @@ async function newPage(browser, token, opts = {}) {
     const bodyVisible = await page.locator('#ihpact-section-org').isVisible();
     const adminKit = await page.evaluate(() => ({ mp: document.querySelectorAll('#ihpact-ms-widget.ixf-mp').length, grids: document.querySelectorAll('#ihpact-knowledge-product-type-group input[type=checkbox]').length }));
     step('admin actividades: acordeón accesible + MultiPicker + grids JSON', before === 'false' && after === 'true' && bodyVisible && adminKit.mp === 1 && adminKit.grids > 0, { before, after, bodyVisible, adminKit });
-    await page.goto(BASE + '/ckan-admin/ihpix/workspaces', { waitUntil: 'networkidle', timeout: 90000 });
+    await page.goto(BASE + '/ckan-admin/ihpix/workspaces', { waitUntil: 'domcontentloaded', timeout: 90000 });
+    await page.waitForFunction(() => window.IhpixForms && document.querySelectorAll('.ihpwg-lead-wrap .ixf-combobox-input').length > 0, null, { timeout: 60000 }).catch(() => {});
     await page.locator('.ihpwg-desc-btn').first().click();
     const descModal = await page.locator('.ixf-modal:not([hidden]) textarea[name=description]').count();
     const descMd = await page.locator('.ixf-modal:not([hidden]) .ixf-md-bar').count();
