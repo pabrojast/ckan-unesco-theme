@@ -194,6 +194,8 @@ Helpers: `is_valid_*`, `normalize_bool`, `filter_valid`.
 **Rol**: Validación y normalización del formulario de reporte IHP-IX (PDF 2026). Módulo **puro** (sin imports de CKAN, como `completeness.py`) para testearlo con pytest sin la pila CKAN (`tests/test_ihpix_forms.py`).
 
 - `validate_report_payload(data_dict, is_draft)` → dict `{columna: valor}` listo para `setattr` sobre `IhpixActivity`: listas → JSON, `'yes'/'no'` → bool, fechas → `date`, hijos de un gate en "no" reseteados (`GATE_RESETS`). Lanza `ReportValidationError` con **todos** los errores a la vez. Valida también `output` ∈ PA (`is_valid_output_for_pa`) y el email del focal point al enviar.
+- Reglas añadidas en el pase UX (2026-09-24): `LONG_TEXT_MAX` (title 300, partners 500, key_activity 1000, synergies 1500, additional_notes 3000, `*_other` 150, `stakeholder_group_name` 200), `link` debe ser URL http(s) (`URL_RE`), `end_date ≥ start_date`, jóvenes/mujeres ≤ total en KPI 2 y 5 (`STAKEHOLDER_RATIOS`, solo con el gate activo) y email con `EMAIL_RE`. El formulario pone los mismos `maxlength` y valida en vivo; el servidor es la autoridad.
+- **Mensajes traducibles**: `MESSAGES = {clave: 'Texto inglés {param}'}`; `ReportValidationError(errors, details)` expone `.errors` (inglés, compatibilidad) y `.details = {campo: (clave, params)}`. `actions._ihpix_translate_errors()` hace `toolkit._(MESSAGES[clave]).format(**params)` antes de lanzar `ValidationError`. Los literales están en `ihpix_i18n_strings.VALIDATION_MESSAGES` (test de cobertura en `test_ihpix_constants.py`).
 - `activity_to_form_dict(activity_dict)` → inverso para el modo edición (bool → `'yes'/'no'`, JSON → lista, None → `''`).
 - Listas que comparte con el controller: `SINGLE_FORM_FIELDS`, `MULTI_FORM_FIELDS` (única fuente de nombres de campo del form), `BOOL_FIELDS`, `OWNER_EDITABLE_STATUSES = ('draft', 'rejected')`.
 - Las fechas solo se tocan si vienen en el payload (`reported_date` la fija el servidor al enviar).
@@ -207,6 +209,7 @@ Helpers: `is_valid_*`, `normalize_bool`, `filter_valid`.
 - `LINK_TYPES` = publication · webinar · event · dataset · output_data · other; `TARGET_KINDS` = package (dataset CKAN, `target_id` = id) · page (página `water-events`, `target_id` = name) · url (enlace plano).
 - `ALLOWED_KINDS` — coherencia tipo↔kind (una publicación no puede apuntar a una page; un evento no a un package). `SEARCH_KIND_FOR_TYPE` — qué busca cada tipo en IHP-WINS.
 - `parse_links_json(raw)` (tolerante con `''`/`[]`), `validate_link(d)` (título ≤300, URL http(s) obligatoria en `url`, `event_date` ISO, descripción ≤500), `link_public_url(link)` (`/documents/<id>`, `/dataset/<id>`, `/water-events/<name>` o la URL), `dedupe_key(link)`.
+- `LinkValidationError(errors, details)` con el mismo esquema `MESSAGES`/`.details` que `ihpix_forms` (se traduce en `actions._ihpix_translate_errors`).
 
 > [!note] Sin creación inline
 > No se crean packages ni páginas desde el reporte: solo se referencian existentes o se guarda un enlace. Los atajos "Create a publication / event" abren los formularios propios en otra pestaña.
@@ -241,6 +244,8 @@ Helpers: `is_valid_*`, `normalize_bool`, `filter_valid`.
 | `Modal` | `.ixf-modal[role=dialog]` + `[data-ihpix-modal-open="#id"]` | focus trap, Esc, backdrop, devuelve el foco |
 
 Principio: **nunca se elimina el control nativo**; se oculta (`.ixf-visually-hidden`) y se sincroniza, de modo que `collectFormData/restoreFormData/highlightServerErrors` del reporte siguen funcionando. `IhpixForms.refresh(root)` relee los valores tras una restauración (lo llama `refreshDerivedUI()` del reporte). Helpers: `csrfToken()`, `postForm()`, `applyFieldErrors()`, `markInvalid()`.
+
+**Dónde se usa (2026-09-24)** — `templates/ihpix/report.html`: `country` y `supporting_member_state` son `Combobox` (búsqueda por nombre e ISO-2 vía `data-search`); Member States (Sección IV) es un `MultiPicker` en modo `checkboxes` (reemplaza el picker a mano, `memberPicker` queda a `null`); `key_activity`, `synergies` y `additional_notes` son `MarkdownEditor` + `CharCounter`; `partners` es textarea con contador; `institution` tiene un `<datalist>` con las instituciones de actividades publicadas (`controller._ihpix_institution_suggestions()`, caché en proceso 10 min, ≤300). Los grupos Sí/No y los grids de checkboxes van en `<fieldset><legend>`; cada `.ihpix-report-help` tiene `id` y el control `aria-describedby`. Sección VII: confirmación al quitar (`IhpixForms.confirm`), flechas ↓/↑ en los resultados, botón "Refresh search" y API pública `window.ihpixLinks = {reload, add, getLinks}`. Autosave por usuario: clave `ihpix-report-draft-v1:<user_id>` (migra la clave global antigua). Los textos Markdown se renderizan con `h.ihpix_markdown()` en `ihpix/outputs.html`, `group|organization/ihpix.html`, `admin/ihpix_reports.html` y la descripción de `ihpix/workspace_detail.html`.
 
 > [!note] Bug global corregido (2026-09)
 > `public/theme_ejemplo_enhanced.js` `enhanceForms()` bloqueaba el submit de **cualquier** form con un `[required]` vacío añadiendo `.error` (sin CSS ni mensaje). Se retiró ese bloqueo; la validación nativa de `required` ya lo cubre.

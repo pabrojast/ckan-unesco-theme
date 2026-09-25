@@ -250,13 +250,24 @@ Patrón LRU con buster:
    → /ihpix/contributors: directorio de reportantes (GROUP BY reported_by,
      usuario resuelto + perfil) con filtros nombre / PA / Output / bienio
 3. Reporte (/ihpix/report) — alineado al PDF UNESCO 2026:
-   → 6 secciones (I General, II Priority Areas, III CTWGs, IV Region,
-     V KPIs, VI Notes), ~50 campos con lógica condicional Y/N
-   → Char counters 250 chars (description, outcomes)
-   → Sticky section nav con barra de progreso (7 campos obligatorios)
-     e indicadores de estado por sección
-   → Autoguardado en localStorage (clave `ihpix-report-draft-v1`) solo
-     en reporte nuevo; en modo edición la BD es la única fuente de verdad
+   → 7 secciones (I General, II Priority Areas, III CTWGs, IV Region,
+     V KPIs, VI Notes, VII Attachments), ~50 campos con lógica
+     condicional Y/N
+   → Char counters 250 chars (description, outcomes); límites largos
+     con contador en partners 500 / key_activity 1000 / synergies 1500 /
+     additional_notes 3000 (los tres últimos con editor Markdown + preview)
+   → Selectores de país con buscador (Combobox), Member States con
+     buscador y chips (MultiPicker), datalist de instituciones ya
+     reportadas; grupos Sí/No en fieldset/legend (accesibilidad)
+   → Validación en vivo: URL del enlace, fin ≥ inicio, jóvenes/mujeres ≤
+     total (KPI 2 y 5). El servidor repite las reglas (ihpix_forms.py) y
+     devuelve los mensajes traducidos
+   → Sticky section nav con barra de progreso (7 campos obligatorios),
+     indicadores por sección (✓ completa, ! error, ✓ tenue = opcional con
+     respuestas); en móvil la barra es horizontal con scroll-snap
+   → Autoguardado en localStorage (clave `ihpix-report-draft-v1:<user_id>`,
+     migra la clave global anterior) solo en reporte nuevo; en modo
+     edición la BD es la única fuente de verdad
    → Acepta ?pa=PA1&output=1.1 para prellenar (páginas por Output)
    → CSRF: {{ h.csrf_input() }} dentro del form (viaja en el FormData)
    → Validación inline al salir de cada campo + resumen de errores
@@ -370,7 +381,15 @@ draft ──submit──▶ pending ──approve──▶ published
 
 > [!warning] Solo referencias
 > El reporte nunca crea packages ni páginas. Si el objeto no existe en
-> IHP-WINS, el usuario lo crea con su formulario propio y luego lo busca.
+> IHP-WINS, el usuario lo crea con su formulario propio y luego lo busca
+> (botón "Refresh search" en la Sección VII). La fase C del plan 2026-09-24
+> añade la creación inline de publicaciones (modal) y cursos.
+
+> [!note] Markdown en los textos largos (2026-09-24)
+> `key_activity`, `synergies` y `additional_notes` (reporte) y
+> `ihpix_working_group.description` se guardan como **Markdown** (texto,
+> nunca HTML) y se renderizan con `h.ihpix_markdown()` → `render_markdown`
+> de CKAN (sanitiza). Los emails los envían como texto plano.
 
 ### 7.2 Visibilidad (2026-09)
 

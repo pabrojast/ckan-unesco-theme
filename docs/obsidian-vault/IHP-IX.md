@@ -20,7 +20,7 @@ Hub de la implementación del **reporting y gestión del conocimiento IHP-IX** e
 - `ihpix_constants.py` — taxonomías oficiales (5 PA, 34 Outputs, KPIs…) y títulos de Output desde `data/ihpix_output_titles.json`.
 - `ihpix_forms.py`, `ihpix_links.py`, `ihpix_workspaces.py` — módulos **puros** con la lógica de validación/reglas; testeados sin CKAN.
 - `ihpix_i18n_strings.py` — literales de taxonomías para Babel; los templates traducen valores con `h.ihpix_t`.
-- Kit de formularios `public/js/ihpix-forms.js` + `public/css/ihpix-forms.css` (Combobox, MultiPicker, MarkdownEditor, CharCounter, Toast, Modal, FileUpload; se carga con `ihpix/snippets/forms_assets.html`) → [[Modulos#Kit de formularios IHP-IX]].
+- Kit de formularios `public/js/ihpix-forms.js` + `public/css/ihpix-forms.css` (Combobox, MultiPicker, MarkdownEditor, CharCounter, Toast, Modal, FileUpload; se carga con `ihpix/snippets/forms_assets.html`) → [[Modulos#Kit de formularios IHP-IX]]. El reporte lo usa desde 2026-09-24 (pase UX: ver [[Flujos Importantes#7. Portal IHP-IX]] punto 3).
 - Modelos: `IhpixActivity`, `IhpixActivityLink`, `IhpixWorkingGroup`, `IhpixWorkingGroupMember`, `IhpixContribution`, `IhpixCountrySummary`, `IhpixContent` → [[Modulos#model.py]].
 
 ## Configuración
