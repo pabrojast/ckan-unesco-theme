@@ -1,5 +1,13 @@
 # Flujos Importantes
 
+## Login contextual de Citizen Science
+
+El header usa el helper opcional `csunesco_login_return_url` de `csunesco`
+para conservar la página de CS y su query en `came_from`. El login de CKAN
+valida que el destino sea local. Fuera de CS, sin el plugin o con una sesión
+ya iniciada, la navegación del tema no cambia. El botón de proponer proyecto
+sigue el enlace de la app, que conserva su propio destino durante login/registro.
+
 > Flujos de negocio clave del sistema `ckanext-theme-ejemplo`.
 
 ---
