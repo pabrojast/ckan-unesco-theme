@@ -202,7 +202,10 @@
           {% if c.userobj %}
           <li class="topmenu-login"><a href="{{ h.url_for('user.logout') }}" title="{{ _('Log out') }}"><i class="fa fa-sign-out mobile-icon"></i><span class="login-text">{{ _('Log out') }}</span></a></li> 
           {% else %}
-          <li class="topmenu-login"><a href="{{ h.url_for('user.login') }}" title="{{ _('Log in') }}"><i class="fa fa-sign-in mobile-icon"></i><span class="login-text">{{ _('Log in') }}</span></a></li>
+          {# CS conserva el contexto; sin el plugin o fuera de CS no cambia el login. #}
+          {% set cs_return = h.csunesco_login_return_url() if h.csunesco_login_return_url is defined else none %}
+          {% set login_url = h.url_for('user.login', came_from=cs_return) if cs_return else h.url_for('user.login') %}
+          <li class="topmenu-login"><a href="{{ login_url }}" title="{{ _('Log in') }}"><i class="fa fa-sign-in mobile-icon"></i><span class="login-text">{{ _('Log in') }}</span></a></li>
           {% endif %}
           {% endblock %}
           
