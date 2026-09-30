@@ -742,3 +742,13 @@ Sysadmin → `/ckan-admin/learning` → aprobar/ocultar → publicación según 
 Sync → upsert por fuente + ID externo → nuevos pendientes; existentes conservan curación.
 Las relaciones resuelven permisos de datasets, publicaciones, herramientas e iniciativas
 en cada lectura. `/courses` conserva acceso al subconjunto de cursos. Ver [[Open Learning]].
+
+## Login desde Citizen Science
+
+El header consulta `h.csunesco_login_url()` cuando está disponible. La entrada
+pública del portal CS abre el login de la app con destino `My projects`; una
+página de proyecto conserva el contexto. Inscripción, edición y administración
+mantienen el login CKAN. Fuera de Citizen Science se mantiene el login general.
+El fallback conserva compatibilidad con versiones anteriores de csunesco o
+instancias sin ese plugin. La URL de app procede de la configuración de
+csunesco, sin crear una segunda configuración del tema.
