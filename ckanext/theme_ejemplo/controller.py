@@ -5188,7 +5188,7 @@ class MyLogica():
             """Página pública de cursos Open Learning, separados por tipo."""
             from ckan import plugins as p
             if p.plugin_loaded('learning'):
-                return toolkit.redirect_to('learning.search', vocab_learning_type='course')
+                return toolkit.redirect_to('learning.search', ext_learning_courses='1')
             from ckanext.theme_ejemplo import openlearning
             from ckanext.theme_ejemplo.model import OpenLearningCourse
 

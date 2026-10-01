@@ -2798,9 +2798,10 @@ def _ihpix_learning_page_url(name):
 def _ihpix_learning_course_search(q, limit):
     """Cursos aprobados (públicos) del catálogo nativo → items de adjunto."""
     try:
+        from ckanext.learning.domain import COURSE_FILTER
         res = toolkit.get_action('package_search')({'user': ''}, {
             'q': q or '*:*',
-            'fq': 'type:learning vocab_learning_type:course',
+            'fq': COURSE_FILTER,
             'rows': limit,
         })
     except Exception as e:

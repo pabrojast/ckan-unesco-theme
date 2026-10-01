@@ -35,6 +35,14 @@ API Open Learning ──sync──► tabla open_learning_course ──get_publi
 > [!note] Con el plugin `learning` cargado (dev desde 2026-09-24)
 > El catálogo nativo de `ckanext-learning` (`feat/learning-catalog`, fusionado en `dev210`) manda: `/courses` y `/ckan-admin/open-learning` redirigen a él y los cursos son packages `type:learning`. El tema lo detecta (`actions._ihpix_learning_loaded`) y entonces la búsqueda de cursos para adjuntar usa `package_search`, la propuesta pasa por `learning.compat.add` (cola `/ckan-admin/learning`) y la campana cuenta los pendientes del catálogo. La tabla legacy sólo se usa si el plugin no está. Ver DOC-030 en [[Backlog Documentacion]].
 
+Desde la ampliación de tipos IHP-IX, `/courses` redirige al catálogo con
+`ext_learning_courses=1`: incluye Course, Physical training course y Online
+training course. La portada y la búsqueda de cursos para adjuntar a IHP-IX
+usan la misma selección definida en `ckanext.learning.domain.COURSE_FILTER`.
+Los filtros de una categoría concreta siguen siendo exactos. Los ocho tipos
+de formación y actividades de IHP-IX están disponibles en Learning; los
+registros existentes conservan su clasificación y el flujo de aprobación.
+
 ## Disparadores del sync
 
 | Disparador | Mecanismo |
