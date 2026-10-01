@@ -230,3 +230,7 @@ No ejecutarla contra desarrollo o producción. Las regresiones del tema incluyen
 `test_openlearning.py` y `test_search.py`; SchemingDCAT incluye el aislamiento
 de auditoría de permisos cuando se consulta un nombre aún no creado.
 La validación en navegador cubre catálogo, edición, relaciones y tamaño móvil.
+
+## Encabezado responsive (2026-10-01)
+
+Verificar inicio, catálogo y Rapid Response entre 320 y 1920 px, incluyendo 768/800/820/991/992/1024/1199/1366. En catálogo y Rapid Response, el ancho del documento debe coincidir con el viewport. En inicio, comparar además con la versión previa: la auditoría detectó desbordamiento preexistente fuera del encabezado (480 px de documento a 320 px), idéntico antes y después del parche. Comprobar el menú móvil abierto/cerrado, la navegación que pasa a varias líneas, el foco del buscador y su panel de sugerencias. Repetir con traducciones. La prueba del candidato debe cargar el CSS real del checkout en el orden de producción y repetirse con los assets de la imagen final y las URLs públicas. Ver [[Troubleshooting]].
