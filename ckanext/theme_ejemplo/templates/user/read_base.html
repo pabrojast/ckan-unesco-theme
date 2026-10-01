@@ -5,6 +5,9 @@
   {{ h.build_nav_icon('theme_ejemplo.user_documents', _('Documents'), id=user.name, icon='file-alt') }}
   {{ h.build_nav_icon('theme_ejemplo.user_organizations', _('Organizations'), id=user.name, icon='building') }}
   {{ h.build_nav_icon('theme_ejemplo.user_data_stories', _('Data Stories'), id=user.name, icon='book') }}
+  {% if h.check_access('story_image_list', {'owner_id': user.id}) %}
+    {{ h.build_nav_icon('story_images.library', _('My images'), id=user.name, icon='image') }}
+  {% endif %}
   {{ h.build_nav_icon('theme_ejemplo.user_news', _('News'), id=user.name, icon='newspaper') }}
   {{ h.build_nav_icon('theme_ejemplo.user_events', _('Events'), id=user.name, icon='calendar') }}
   {{ h.build_nav_icon('theme_ejemplo.user_ihpix', _('IHP-IX'), id=user.name, icon='university') }}
