@@ -202,3 +202,9 @@ pip install -r dev-requirements.txt
 - [[Comandos Utiles]] — Referencia de comandos
 - [[Variables de Entorno]] — Configuración
 - [[Testing]] — Ejecución de tests
+
+## Desbordamiento del buscador del encabezado
+
+El menú sin salto de línea y el buscador con ancho rígido pueden superar el viewport entre tablet y escritorio. El ajuste de 2026-10-01 permite repartir navegación y buscador en varias líneas, limita el campo al espacio disponible incluso al enfocarlo y mantiene la ocultación prevista del buscador entre 768 y 991 px con la especificidad correcta. No se oculta el desbordamiento del documento para disimularlo. La URL de `theme_ejemplo.css` incorpora la versión `20261001-header-1`.
+
+Ver [[Testing]]; después del despliegue, comprobar la URL CSS versionada y las páginas sin parámetros de consulta.

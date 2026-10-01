@@ -796,6 +796,52 @@ border-radius: 0 0 3px 3px;
     }
 }
 
+/* Mantener menú y buscador dentro del ancho disponible, también al enfocar. */
+@media (min-width: 768px) {
+    .masthead .masthead-nav {
+        flex-wrap: wrap;
+        gap: 8px 16px;
+    }
+
+    .masthead .masthead-nav .navigation {
+        flex: 1 1 460px;
+        min-width: 0;
+        margin-right: 0;
+    }
+
+    .masthead .masthead-nav .navigation .nav {
+        flex-wrap: wrap;
+        row-gap: 6px;
+        max-width: 100%;
+    }
+
+    .masthead .masthead-nav .site-search {
+        flex: 0 1 240px;
+        width: 240px;
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    .masthead .masthead-nav .site-search .field {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .masthead .masthead-nav .site-search .form-control,
+    .masthead .masthead-nav .site-search .form-control:focus {
+        width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+    }
+}
+
+/* Igualar la especificidad de la regla que fuerza el buscador en escritorio. */
+@media (min-width: 768px) and (max-width: 991px) {
+    .masthead .masthead-nav .site-search {
+        display: none !important;
+    }
+}
+
 /* Ensure mobile menu can close when toggler is pressed again */
 @media (max-width: 768px) {
     body .masthead .masthead-nav:not(.show):not(.in) .navigation {
