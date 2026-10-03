@@ -1,6 +1,67 @@
+import copy
+import json
 import time
 
+import pytest
+
 from ckanext.theme_ejemplo import search
+
+
+@pytest.mark.parametrize('serialized', [False, True])
+def test_abstract_includes_all_languages_without_json_keys(serialized):
+    translated = {'en': 'Groundwater observations', 'es': 'Aguas subterráneas',
+                  'fr': 'Eaux souterraines', 'ar': 'المياه الجوفية'}
+    value = json.dumps(translated) if serialized else translated
+    package = {'type': 'dataset', 'notes_translated': value,
+               'notes': 'Groundwater observations'}
+    original = copy.deepcopy(package)
+    assert search.dataset_abstract_text(package) == '\n'.join(translated.values())
+    assert package == original
+
+
+@pytest.mark.parametrize('field', ['validated_data_dict', 'data_dict'])
+@pytest.mark.parametrize('serialized', [False, True])
+def test_abstract_uses_complete_package_before_flattened_fields(field, serialized):
+    package = {'notes_translated': {'es': 'Aguas subterráneas'},
+               'notes': 'Groundwater observations'}
+    data = {field: json.dumps(package) if serialized else package,
+            'notes_translated': {'fr': 'Stale translation'}}
+    assert search.dataset_abstract_text(data) == (
+        'Aguas subterráneas\nGroundwater observations')
+
+
+def test_abstract_reads_legacy_extras_and_notes():
+    package = {'extras': [{'key': 'notes_translated',
+                          'value': '{"fr": "Eaux souterraines"}'}],
+               'notes': '[Observations](https://example.org) of aquifers'}
+    assert search.dataset_abstract_text(package) == (
+        'Eaux souterraines\n[Observations](https://example.org) of aquifers')
+
+
+def test_abstract_falls_back_when_complete_package_is_invalid():
+    package = {'validated_data_dict': '{broken', 'data_dict': '[]',
+               'notes_translated': '{"en": "Groundwater observations"}'}
+    assert search.dataset_abstract_text(package) == 'Groundwater observations'
+
+
+def test_abstract_does_not_restore_removed_translations():
+    package = {'validated_data_dict': '{"notes": "", "notes_translated": {}}',
+               'notes_translated': {'en': 'Stale groundwater observations'}}
+    assert search.dataset_abstract_text(package) == ''
+
+
+@pytest.mark.parametrize('value', [None, '', {}, [], 123, '{"en": broken',
+                                   '{"en": null, "es": 42}', '["ignore"]'])
+def test_abstract_handles_empty_or_invalid_translations(value):
+    assert search.dataset_abstract_text({'notes_translated': value}) == ''
+    assert search.dataset_abstract_text(
+        {'notes_translated': value, 'notes': 'Legacy abstract'}) == 'Legacy abstract'
+
+
+@pytest.mark.parametrize('kind', ['documents', 'learning'])
+def test_abstract_does_not_expand_other_content_types(kind):
+    assert search.dataset_abstract_text(
+        {'type': kind, 'notes': 'Groundwater observations'}) == ''
 
 
 ORGS = [

@@ -71,7 +71,7 @@ Ver [[Open Learning]] para el flujo completo de sincronización y curación.
 | Clave | Default | Descripción |
 |---|---|---|
 | `ckanext.theme_ejemplo.index_followers` | `false` | Habilitar indexación de seguidores de datasets en Solr |
-| `ckanext.theme_ejemplo.search_partial_match` | `true` | Suma `title_ngram`/`name_ngram` al `qf` de la búsqueda de datasets para encontrar palabras a medio escribir. Ver [[Busqueda#Datasets: coincidencia parcial]] |
+| `ckanext.theme_ejemplo.search_partial_match` | `true` | Suma `title_ngram`/`name_ngram`/`abstract_ngram` al `qf` de la búsqueda de datasets para encontrar palabras a medio escribir. El abstract requiere esquema actualizado y reindexación. No controla el `qf` propio de las sugerencias. Ver [[Busqueda#Datasets: coincidencia parcial]] |
 | `ckanext.theme_ejemplo.ihpix_recompute_on_approve` | `true` | Al aprobar un reporte IHP-IX recalcula `ihpix_country_summary` para el país del reporte (mapa al día). Ver [[Flujos Importantes#7.3 Recompute del resumen por país]] |
 | `ckanext.theme_ejemplo.ihpix_geojson_max` | `5000` | Máximo de features que devuelve `ihpix_activity_geojson` (antes estaba capado a 20 por accidente) |
 | `ckanext.theme_ejemplo.ihpix_wg_open_join` | `false` | Si `true`, unirse a un working group IHP-IX es inmediato (`active`); si no, queda `pending` hasta que el lead lo apruebe. Ver [[Flujos Importantes#7.4 Working groups (workspaces por Output)]] |

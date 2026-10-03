@@ -14,7 +14,7 @@
 - `IConfigurer` — `update_config()`: registra templates, public dir, fanstatic
 - `IBlueprint` — `get_blueprint()`: registra 30+ rutas Flask
 - `ITemplateHelpers` — `get_helpers()`: expone ~30 funciones helper
-- `IPackageController` — `before_dataset_index()`: pipeline espacial + facetas
+- `IPackageController` — `before_dataset_index()`: pipeline espacial, facetas y texto del abstract para búsqueda parcial
 - `ITranslation` — `i18n_directory()`, `i18n_locales()`, `i18n_domain()`: i18n
 - `IActions` — `get_actions()`: registra acciones custom
 - `IAuthFunctions` — `get_auth_functions()`: registra funciones de autorización
@@ -592,6 +592,7 @@ Se ejecuta por CronJob de Kubernetes cada ~5 min (ver `deploy/cronjob-pageviews-
 - `search_entities()` / `search_entity_names()` — búsqueda sobre el índice con filtros `is_organization`, `ckan_type`, `allowed`, `excluded`, `include_description`
 - `filter_by_tokens(sa_query, q, columns)` — AND de `ILIKE '%token%'` para tablas grandes (usuarios); escapa `%` y `_`
 - `escape_solr()` — neutraliza la sintaxis de Solr en el texto de las sugerencias
+- `dataset_abstract_text()` — texto de `notes_translated` y `notes`, con soporte de extras y JSON, sin claves de idioma ni duplicados. Lo usa `before_dataset_index` para `abstract_ngram`; no modifica metadatos ni consulta la BD
 
 ### Notas
 - Portado de `ckanext-colab/lib/org_search.py`; se copia porque colab es opcional

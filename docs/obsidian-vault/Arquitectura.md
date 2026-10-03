@@ -67,6 +67,13 @@ WKT string → campo Solr `spatial_geom`
 
 También sanitiza facetas multilingües para prevenir errores de Solr atomic update.
 
+El mismo hook prepara `abstract_ngram` a partir de `notes_translated` y `notes`
+para los datasets. Es un campo derivado sólo del índice, sin persistencia en
+PostgreSQL: permite buscar fragmentos en todos los idiomas del abstract. El
+esquema de `ckan-unesco-docker` también copia su texto original a `text` para
+búsquedas completas. Requiere actualizar primero el esquema y después reindexar;
+ver [[Busqueda#Activación en una instancia existente]].
+
 > **Nota**: Requiere Shapely < 2 (restricción del CI).
 
 ---

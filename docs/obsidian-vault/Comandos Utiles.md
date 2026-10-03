@@ -41,6 +41,21 @@ pytest --ckan-ini=test.ini --cov=ckanext.theme_ejemplo --disable-warnings ckanex
 
 ---
 
+## Índice de búsqueda
+
+Después de actualizar el esquema Solr y desplegar el tema, regenerar los
+documentos del índice para incluir los abstracts de datasets existentes:
+
+```bash
+ckan -c /ruta/ckan.ini search-index rebuild
+```
+
+Usar la configuración de la instancia elegida y comprobar que el proceso termina
+sin errores. No ejecutar `clear` ni eliminar la colección. El orden completo de
+activación está en [[Busqueda#Activación en una instancia existente]].
+
+---
+
 ## Internacionalización (i18n)
 
 ```bash

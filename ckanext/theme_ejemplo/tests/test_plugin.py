@@ -131,6 +131,7 @@ def test_partial_match_adds_ngram_fields_to_qf():
     params = {'q': 'hidro'}
     plugin.ThemeEjemploPlugin._enable_partial_match(params)
     assert 'title_ngram' in params['qf']
+    assert 'abstract_ngram^0.2' in params['qf']
     # conserva los campos y boosts del core
     assert params['qf'].startswith('name^4 title^4 tags^2 groups^2 text')
 
@@ -144,6 +145,14 @@ def test_partial_match_leaves_explicit_qf_and_field_queries_alone():
         params = {'q': q}
         plugin.ThemeEjemploPlugin._enable_partial_match(params)
         assert 'qf' not in params
+
+
+def test_partial_match_can_be_disabled(monkeypatch):
+    monkeypatch.setitem(plugin.toolkit.config,
+                        'ckanext.theme_ejemplo.search_partial_match', False)
+    params = {'q': 'groundw'}
+    plugin.ThemeEjemploPlugin._enable_partial_match(params)
+    assert 'qf' not in params
 
 
 # ── IHP-IX reporting (fase i) ──────────────────────────────────────────────
