@@ -114,6 +114,14 @@ Verificación local del 2026-10-02: 54 pruebas enfocadas aprobadas (31 de lógic
 pura, 17 de integración y 6 del plugin) con CKAN 2.10.9, Solr 9, PostgreSQL 15
 y Redis 7 en contenedores aislados. No implica despliegue ni reindexación del portal.
 
+Verificación posterior en dev (2026-10-02): workflow Docker
+`37088211301` completado; tema `68393c7`, 655 datasets activos reindexados y
+515 documentos del índice con abstract. La búsqueda pública `groundw` pasó de
+30 a 68 resultados, `hydrogeo` de 2 a 13 y `subterr` de 15 a 33. Excluyendo
+título y nombre, `groundw` pasó de 0 a 38. Playwright confirmó las sugerencias
+por abstract y el envío del formulario, con el catálogo contenido en el viewport
+en escritorio y móvil. Producción no se desplegó; ver [[Deployment]].
+
 ### Prerrequisitos generales
 
 Los tests requieren una instancia CKAN con servicios de infraestructura:

@@ -191,3 +191,25 @@ de desarrollo existente. El destino autorizado es `default/ckan`
 parte de este despliegue. Respaldar DB, almacenamiento local y configuración
 antes de migrar; conservar la tabla legado y el digest anterior. Ver la guía
 `docs/learning-development.md` del repositorio Docker para rollback y verificaciones.
+
+## Búsqueda por abstract en desarrollo (2026-10-02)
+
+En `ckan-unesco-docker`, rama `miserver-2.10`, el workflow `push.yml` admite
+`theme_search_only=true`. Usa una imagen base fijada por digest y el commit del
+tema publicado en `dev210`; prepara `abstract_ngram` y su copia a `text` mediante
+Schema API antes del rollout, conservando los demás campos. Después espera la
+readiness y reindexa los datasets activos en lotes de 100.
+
+```bash
+gh workflow run push.yml --repo pabrojast/ckan-unesco-docker \
+  --ref miserver-2.10 -f theme_search_only=true
+```
+
+El destino está limitado a `default/ckan`, host `data.dev-wins.com`, y se comprueba
+el digest anterior. Solo cambia la imagen web de CKAN, conservando sidecars,
+configuración y volúmenes. La guía y el rollback están en
+`deploy/docker/abstract-search-dev.md` del repositorio Docker.
+
+La rama `production` del repositorio Docker usa ahora `THEME_REF=dev210` para
+futuras construcciones, en lugar del commit fijo `c7a1a54`. Publicar esa referencia
+no despliega producción. Ver [[Busqueda]] y [[Testing#Búsqueda por abstract]].
