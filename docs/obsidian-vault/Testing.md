@@ -90,7 +90,31 @@ Se registra en `extra_template_paths` porque `activity` precede al tema en
 la lista de plugins de dev. Sólo ese directorio tiene prioridad; los overrides
 configurados por el operador conservan su posición.
 
-### Prerrequisitos
+### Búsqueda por abstract
+
+`test_search.py` cubre la extracción de todas las traducciones, notas antiguas,
+extras, JSON inválido y conservación de los metadatos originales. Corre sin CKAN:
+
+```bash
+python3 -m pytest --noconftest ckanext/theme_ejemplo/tests/test_search.py -q
+```
+
+`test_dataset_abstract_search.py` prueba búsquedas y sugerencias reales, palabras
+repartidas entre título/abstract, relevancia, filtros, privacidad, edición/borrado
+del abstract y reindexación de datasets existentes sin cambiar metadatos.
+Requiere CKAN/PostgreSQL/Redis y un Solr **de pruebas**
+con el `schema.xml` actualizado de `ckan-unesco-docker` (`abstract_ngram` de tipo
+`text_ngram` y su copia a `text`). Usa fixtures que limpian la BD y el índice:
+
+```bash
+pytest --ckan-ini=test.ini ckanext/theme_ejemplo/tests/test_dataset_abstract_search.py -q
+```
+
+Verificación local del 2026-10-02: 54 pruebas enfocadas aprobadas (31 de lógica
+pura, 17 de integración y 6 del plugin) con CKAN 2.10.9, Solr 9, PostgreSQL 15
+y Redis 7 en contenedores aislados. No implica despliegue ni reindexación del portal.
+
+### Prerrequisitos generales
 
 Los tests requieren una instancia CKAN con servicios de infraestructura:
 - PostgreSQL

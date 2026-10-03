@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Búsqueda de organizaciones/grupos insensible al orden de las palabras.
+"""Utilidades de búsqueda y preparación del abstract para el índice de datasets.
 
 El core (``_group_or_org_list``) filtra con ``ILIKE '%<frase completa>%'``:
 "water quality" encuentra resultados y "quality water" no. Aquí se tokeniza la
@@ -12,6 +12,7 @@ copia en vez de importarla porque colab es un plugin opcional).
 Las funciones de matching son puras (no importan CKAN) para poder testearlas
 sin entorno; sólo ``get_entity_index`` toca la base de datos.
 """
+import json
 import logging
 import re
 import threading
@@ -30,6 +31,51 @@ _SOLR_SPECIAL_RE = re.compile(r'[+\-!(){}\[\]^"~*?:\\/&|]')
 
 _index_lock = threading.Lock()
 _index_cache = {'expires': 0.0, 'items': []}
+
+
+def dataset_abstract_text(dataset_dict):
+    """Texto del abstract para Solr, sin claves de idioma ni sintaxis JSON.
+
+    Se prefiere el paquete completo que CKAN conserva antes de aplanar sus
+    campos. También admite extras antiguos y campos fluent serializados.
+    No modifica los metadatos originales ni indexa otros tipos de contenido.
+    """
+    if (dataset_dict.get('type') or dataset_dict.get('dataset_type') or
+            'dataset') != 'dataset':
+        return ''
+
+    package = dataset_dict
+    for key in ('validated_data_dict', 'data_dict'):
+        candidate = dataset_dict.get(key)
+        if isinstance(candidate, str):
+            try:
+                candidate = json.loads(candidate)
+            except ValueError:
+                continue
+        if isinstance(candidate, dict):
+            package = candidate
+            break
+
+    extras = {item['key']: item.get('value')
+              for item in package.get('extras', []) or []
+              if isinstance(item, dict) and 'key' in item}
+    texts = []
+    for field in ('notes_translated', 'notes'):
+        value = package.get(field, extras.get(field))
+        if (field == 'notes_translated' and isinstance(value, str)
+                and value.lstrip().startswith(('{', '['))):
+            try:
+                value = json.loads(value)
+            except ValueError:
+                # Un JSON roto no debe convertir sus claves en texto buscable.
+                continue
+        values = value.values() if isinstance(value, dict) else [value]
+        for text in values:
+            if isinstance(text, str) and text.strip():
+                text = text.strip()
+                if text not in texts:
+                    texts.append(text)
+    return '\n'.join(texts)
 
 
 def normalize_text(value):

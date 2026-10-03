@@ -496,7 +496,8 @@ SUGGEST_SCOPES = {
 }
 SUGGEST_LIMIT = 6
 # Los n-gramas van primero: permiten completar una palabra a medio escribir.
-SUGGEST_DATASET_QF = 'title_ngram^3 name_ngram title^4 tags^2 text^0.5'
+SUGGEST_DATASET_QF = ('title_ngram^3 name_ngram title^4 tags^2 text^0.5 '
+                     'abstract_ngram^0.2')
 
 
 def _suggest_label(kind):

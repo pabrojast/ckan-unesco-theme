@@ -22,6 +22,7 @@ from . import completeness
 from . import db_fork_safety
 from . import pageview_tracking
 from . import ranking
+from . import search as theme_search
 from .utils import normalize_user_image_url
 import logging
 from functools import lru_cache
@@ -39,7 +40,7 @@ db_fork_safety.init_postfork()
 DEFAULT_DATASET_SORT = 'metadata_completeness_sort desc, metadata_modified desc'
 # qf del core (ckan.lib.search.query.QUERY_FIELDS) + campos n-grama.
 PARTIAL_MATCH_QF = ('name^4 title^4 tags^2 groups^2 text '
-                    'title_ngram^0.8 name_ngram^0.5')
+                    'title_ngram^0.8 name_ngram^0.5 abstract_ngram^0.2')
 
 # TTL caches para evitar llamadas repetidas en helpers costosos
 _courses_cache = {'data': None, 'expires': 0}
@@ -117,6 +118,13 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 
                 # Procesamiento de facetas optimizado
                 self._process_facets(dataset_dict)
+
+                # Solo texto del abstract: todas las traducciones y notes legacy.
+                abstract = theme_search.dataset_abstract_text(dataset_dict)
+                if abstract:
+                    dataset_dict['abstract_ngram'] = abstract
+                else:
+                    dataset_dict.pop('abstract_ngram', None)
                 
                 # Sanitizar campos para evitar problemas con atomic updates de Solr
                 self._sanitize_solr_fields(dataset_dict)
@@ -180,9 +188,9 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
         @staticmethod
         def _enable_partial_match(search_params):
             """Suma los campos n-grama al ``qf`` para que una palabra a medio
-            escribir ("hidro", "quali") encuentre datasets. title_ngram y
-            name_ngram ya se indexan (schema.xml) pero el qf del core no los
-            consulta. Boost bajo: la palabra completa sigue ganando.
+            escribir ("hidro", "quali") encuentre datasets por título, nombre
+            y abstract. Los campos deben existir en schema.xml; abstract_ngram
+            requiere reindexar. Boost bajo: se favorece el título completo.
 
             No se toca si quien llama trae su propio ``qf`` ni en consultas
             de campo (``campo:valor``), que el core no pasa por dismax.
