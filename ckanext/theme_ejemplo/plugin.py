@@ -1297,7 +1297,7 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
             return blueprint
         
         def get_helpers(self):
-            return {
+            helpers_map = {
                  'get_latest_courses': self.get_latest_courses,
                  'get_featured_datasets': self.get_featured_datasets,
                  'get_organization_image_by_name': self.get_organization_image_by_name,
@@ -1361,6 +1361,15 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                  'get_review_queues': approvals.get_review_queues,
                  'get_review_queues_total': approvals.get_review_queues_total,
                  }
+            # The learning catalogue is optional. Its helper is only defined by
+            # ckanext-learning, and `{% if h.learning_enabled is defined %}`
+            # does not protect a template: the helper registry raises
+            # HelperError on an unknown name before `is defined` is evaluated,
+            # so a site without the extension lost every HTML page (even the
+            # error page) on 2026-10-05. Default to "disabled" instead.
+            if not plugins.plugin_loaded('learning'):
+                helpers_map['learning_enabled'] = lambda: False
+            return helpers_map
 
         # IActions
         def get_actions(self):
