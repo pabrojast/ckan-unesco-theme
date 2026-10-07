@@ -24,3 +24,28 @@
     {% endif %}
   {% endif %}
 {% endblock %}
+
+{# ===== AI for Water Management (added by Jorgen Van Der Biest) =====
+   Only for the groups listed in GROUP_LANDINGS (ckanext/theme_ejemplo/ai_water.py):
+   their tabs are shown inside the group's own header and menu
+   (ai_water_portal/group_frame.html). Every other group renders exactly as
+   before through super(). #}
+{% block styles %}
+  {{ super() }}
+  {% if h.theme_ejemplo_group_landing(group_dict) %}{% include "ai_water_portal/snippets/head.html" %}{% endif %}
+{% endblock %}
+
+{% block content %}
+  {% set landing = h.theme_ejemplo_group_landing(group_dict) %}
+  {% if landing %}
+    {% set aiw_replacement = (landing.get('replace') or {}).get(request.endpoint) %}
+    {% set aiw_flash = self.flash() %}
+    {% set aiw_actions = self.content_action() ~ self.page_primary_action() %}
+    {% set aiw_primary = '' if aiw_replacement else self.primary_content_inner() %}
+    {% set aiw_secondary = self.secondary_content() if request.endpoint == 'group.read' else '' %}
+    {% include "ai_water_portal/group_frame.html" %}
+  {% else %}
+    {{ super() }}
+  {% endif %}
+{% endblock %}
+{# ===== end AI for Water Management ===== #}

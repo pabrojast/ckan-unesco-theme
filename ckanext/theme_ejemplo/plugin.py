@@ -12,6 +12,8 @@ import os
 import ckanext.schemingdcat.utils as utils
 from flask import Blueprint
 from ckanext.theme_ejemplo.controller import MyLogica
+# AI for Water Management (added by Jorgen Van Der Biest): see ai_water.py
+from . import ai_water
 from . import helpers
 from . import actions as custom_actions
 from . import auth as custom_auth
@@ -1309,6 +1311,8 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                  'theme_ejemplo_site_statistics': self.get_site_statistics_cached,
                  'get_member_states_groups_list': self.get_member_states_groups_list,
                  'get_initiatives_groups_list': self.get_initiatives_groups_list,
+                 # AI for Water Management (added by Jorgen Van Der Biest): see ai_water.py
+                 **ai_water.get_helpers(),
                  'get_people_directory': helpers.get_people_directory,
                  'get_user_profile': helpers.get_user_profile,
                  'get_org_members_with_profiles': helpers.get_org_members_with_profiles,

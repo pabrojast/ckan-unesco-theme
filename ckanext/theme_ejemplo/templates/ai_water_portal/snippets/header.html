@@ -1,0 +1,101 @@
+{#
+  Cabecera común de todas las páginas del grupo AI for Water Management:
+  migas, menú principal y, salvo en la portada, el título de sección con la
+  ilustración del capítulo correspondiente y las pestañas de la sección.
+  Recibe group_dict. La sección se deduce del endpoint: las URLs son las
+  estándar del grupo (/group/<name>, /members, /news, /events, ...).
+#}
+{% set gname = group_dict.name %}
+{% set aiw_conf = h.theme_ejemplo_group_landing(group_dict) %}
+{% set ep = request.endpoint %}
+{% if ep == 'group.read' and not (aiw_conf and aiw_conf.has_filters) %}{% set section = 'overview' %}
+{% elif ep == 'theme_ejemplo.group_members' %}{% set section = 'partners' %}
+{% elif ep in ['group.read', 'theme_ejemplo.group_data_stories', 'theme_ejemplo.group_publications'] %}{% set section = 'hub' %}
+{% elif ep in ['theme_ejemplo.group_news', 'theme_ejemplo.group_events'] %}{% set section = 'news' %}
+{% elif ep == 'group.about' %}{% set section = 'about' %}
+{% elif ep == 'theme_ejemplo.group_ihpix' %}{% set section = 'ihpix' %}
+{% else %}{% set section = 'other' %}{% endif %}
+
+{% set url_overview = h.url_for('group.read', id=gname) %}
+{% set url_datasets = url_overview ~ '?q=' %}
+{% set url_partners = h.url_for('theme_ejemplo.group_members', name=gname) %}
+{% set url_news = h.url_for('theme_ejemplo.group_news', name=gname) %}
+{% set url_events = h.url_for('theme_ejemplo.group_events', name=gname) %}
+{% set url_stories = h.url_for('theme_ejemplo.group_data_stories', name=gname) %}
+{% set url_docs = h.url_for('theme_ejemplo.group_publications', name=gname) %}
+{% set url_about = h.url_for('group.about', id=gname) %}
+
+{% set sections = {
+  'partners': {'label': _('Partners & people'), 'eyebrow': _('The Water Family, working together'), 'title': _('Partners and people'), 'img': 'chapter-1',
+               'alt': _('Illustration of a robotic hand and a human hand around a water drop holding the globe'),
+               'text': _('The Strategy is delivered by UNESCO Category 2 Centres, UNESCO Chairs, Member State institutions, research partners and UN initiatives, coordinated by the IHP Secretariat and the AI for Water Task Force.')},
+  'hub': {'label': _('Knowledge hub'), 'eyebrow': _('Knowledge hub'), 'title': _('Data, stories and documents'), 'img': 'chapter-2',
+          'alt': _('Illustration of a head scanned by a magnifying glass, surrounded by documents, data charts and water symbols'),
+          'text': _("Open datasets and tools, case studies from members' work, and the key documents behind IHP's work on AI for water.")},
+  'news': {'label': _('News & events'), 'eyebrow': _('Updates'), 'title': _('News and events'), 'img': 'chapter-3',
+           'alt': _('Illustration of rain, a dam, crops, a water truck and energy, connected by data'),
+           'text': _("Task Force meetings, webinars, course sessions and the latest from IHP's work on AI for water.")},
+  'about': {'label': _('About'), 'eyebrow': _('About'), 'title': _('About the initiative'), 'img': 'chapter-4',
+            'alt': _('Illustration of scales balancing people, data and the globe'), 'text': ''},
+  'ihpix': {'label': _('IHP-IX'), 'eyebrow': _('IHP-IX reporting'), 'title': _('IHP-IX'), 'img': 'chapter-5',
+            'alt': _('Illustration of a satellite above the globe, with sensors, data and people'), 'text': ''},
+  'other': {'label': '', 'eyebrow': '', 'title': group_dict.display_name, 'img': 'chapter-1', 'alt': '', 'text': ''},
+} %}
+{% set meta = sections.get(section) %}
+
+<div class="container">
+  <div class="toolbar" role="navigation" aria-label="{{ _('Breadcrumb') }}">
+    <ol class="breadcrumb">
+      <li class="home"><a href="{{ h.url_for('/') }}" aria-label="{{ _('Home') }}"><i class="fa fa-home"></i><span> {{ _('Home') }}</span></a></li>
+      <li><a href="{{ h.url_for('theme_ejemplo.initiatives') }}">{{ _('Initiatives') }}</a></li>
+      <li{% if section == 'overview' %} class="active"{% endif %}><a href="{{ url_overview }}">{{ group_dict.display_name }}</a></li>
+      {% if section != 'overview' and meta.label %}<li class="active"><a href="{{ request.path }}">{{ meta.label }}</a></li>{% endif %}
+    </ol>
+  </div>
+</div>
+
+<nav class="aiw-subnav" aria-label="{{ group_dict.display_name }}">
+  <div class="aiw-wrap">
+    <ul>
+      <li><a href="{{ url_overview }}" {% if section == 'overview' %}aria-current="page"{% endif %}>{{ _('Overview') }}</a></li>
+      <li><a href="{{ url_partners }}" {% if section == 'partners' %}aria-current="page"{% endif %}>{{ _('Partners & people') }}</a></li>
+      <li><a href="{{ url_datasets }}" {% if section == 'hub' %}aria-current="page"{% endif %}>{{ _('Knowledge hub') }}</a></li>
+      <li><a href="{{ url_news }}" {% if section == 'news' %}aria-current="page"{% endif %}>{{ _('News & events') }}</a></li>
+      <li><a href="{{ url_about }}" {% if section == 'about' %}aria-current="page"{% endif %}>{{ _('About') }}</a></li>
+      {% if c.userobj %}
+      <li><a href="{{ h.url_for('theme_ejemplo.group_ihpix', name=gname) }}" {% if section == 'ihpix' %}aria-current="page"{% endif %}>{{ _('IHP-IX') }}</a></li>
+      {% endif %}
+    </ul>
+  </div>
+</nav>
+
+{% if section != 'overview' %}
+<section class="aiw-opener aiw-opener--compact" aria-labelledby="aiw-section-title">
+  <div class="aiw-opener-art">
+    <img src="/ai_water/{{ meta.img }}.webp" width="900" height="1165" alt="{{ meta.alt }}" />
+  </div>
+  <div class="aiw-opener-text">
+    {% if meta.eyebrow %}<span class="aiw-eyebrow">{{ meta.eyebrow }}</span>{% endif %}
+    <h1 id="aiw-section-title">{{ meta.title }}</h1>
+    <span class="aiw-rule"></span>
+    {% if meta.text %}<p>{{ meta.text }}</p>{% endif %}
+  </div>
+</section>
+{% endif %}
+
+{% if section == 'hub' %}
+<div class="aiw-wrap">
+  <nav class="aiw-tabs" aria-label="{{ _('Knowledge hub') }}">
+    <a href="{{ url_datasets }}" {% if ep == 'group.read' %}aria-current="page"{% endif %}>{{ _('Datasets & tools') }}</a>
+    <a href="{{ url_stories }}" {% if ep == 'theme_ejemplo.group_data_stories' %}aria-current="page"{% endif %}>{{ _('Case studies') }}</a>
+    <a href="{{ url_docs }}" {% if ep == 'theme_ejemplo.group_publications' %}aria-current="page"{% endif %}>{{ _('Documents') }}</a>
+  </nav>
+</div>
+{% elif section == 'news' %}
+<div class="aiw-wrap">
+  <nav class="aiw-tabs" aria-label="{{ _('News & events') }}">
+    <a href="{{ url_news }}" {% if ep == 'theme_ejemplo.group_news' %}aria-current="page"{% endif %}>{{ _('News & events') }}</a>
+    <a href="{{ url_events }}" {% if ep == 'theme_ejemplo.group_events' %}aria-current="page"{% endif %}>{{ _('All events') }}</a>
+  </nav>
+</div>
+{% endif %}
