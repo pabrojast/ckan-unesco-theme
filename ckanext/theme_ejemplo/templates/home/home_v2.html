@@ -1,0 +1,552 @@
+{#
+  IHP-WINS home page v2 (redesign) - added by Jorgen Van Der Biest.
+
+  Shown instead of home/custom_layout.html when
+  ckanext.theme_ejemplo.home_design = v2 (see home_v2.py). The site header
+  (header.html) floats over the hero video, as it floated over the old hero.
+
+  Order follows the platform's areas: hero (video + search), live counters,
+  section bar, About, Datasets, Knowledge, Thematic viewers, Network,
+  Water Family, Learning, Spotlight (the original slide deck). Every link of
+  the current home page is kept.
+
+  All data comes from helpers the current home page already uses, plus
+  h.home_v2_rapid_response() and h.home_v2_data_stories(). Styles are scoped
+  under .hv2 in public/css/home-v2.css; behaviour in public/js/home-v2.js.
+  Note: Pablo's theme_ejemplo.css forces every <p> to dark text with
+  !important, so this page uses <div class="hv2-lead"> for running text.
+#}
+{% set stats = h.theme_ejemplo_site_statistics() %}
+{% set totals = h.get_tracking_totals() %}
+{% set n_datasets = stats.dataset_only_count if stats.dataset_only_count is defined else stats.dataset_count %}
+{% set n_all = stats.dataset_count or 0 %}
+{% set n_docs = stats.document_count if stats.document_count is defined else 0 %}
+{% set n_initiatives = stats.initiative_count if stats.initiative_count is defined else 0 %}
+{% set n_states = stats.member_state_count if stats.member_state_count is defined else 0 %}
+{% set n_orgs = stats.organization_count if stats.organization_count is defined else 0 %}
+{% set n_views = totals.page_views if totals and totals.page_views is defined else 0 %}
+{% set n_downloads = totals.downloads if totals and totals.downloads is defined else 0 %}
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&family=Source+Sans+3:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="{{ h.url_for_static('/css/home-v2.css') }}?v=20261008">
+
+<div class="hv2" id="hv2">
+<a class="hv2-skip" href="#hv2-sections">{{ _('Skip to main content') }}</a>
+
+{# ═════════════ HERO: looping film from the IHP 50th anniversary video ═════════════ #}
+<section class="hv2-hero" id="hv2-top">
+  <video class="hv2-hero-video" id="hv2-video" autoplay muted loop playsinline preload="auto"
+         poster="{{ h.url_for_static('/home_v2/hero-poster.webp') }}" aria-hidden="true">
+    <source src="{{ h.url_for_static('/home_v2/hero-loop-mobile.mp4') }}" type="video/mp4" media="(max-width: 700px)">
+    <source src="{{ h.url_for_static('/home_v2/hero-loop.mp4') }}" type="video/mp4">
+  </video>
+  <div class="hv2-hero-scrim" aria-hidden="true"></div>
+
+  <div class="hv2-wrap hv2-hero-body">
+    <div class="hv2-hero-title">
+      <img class="hv2-hero-logo" src="{{ h.url_for_static('/home_v2/unesco-ihp-logo-white.png') }}" alt="{{ _('UNESCO Intergovernmental Hydrological Programme') }}">
+      <span class="hv2-hero-rule" aria-hidden="true"></span>
+      <h1 class="hv2-h1">
+        <span class="hv2-ln"><span>{{ _('Bridging the water data') }}</span></span>
+        <span class="hv2-ln"><span>{{ _('and knowledge gap') }}</span></span>
+      </h1>
+    </div>
+    <div class="hv2-hero-lead hv2-fade">{{ _('Open water data, maps and knowledge from the UNESCO Water Family, shared on one platform for evidence-based decision making.') }}</div>
+
+    <form class="hv2-search hv2-fade" method="get" action="{{ h.url_for('dataset.search') }}" role="search">
+      <label for="hv2-q">{{ _('Search data') }}</label>
+      <div class="hv2-search-box">
+        <i class="fa fa-search" aria-hidden="true"></i>
+        <input id="hv2-q" type="text" name="q" autocomplete="off" data-suggest-scope="all" placeholder="{{ _('E.g. environment') }}">
+        <button type="submit">{{ _('Search') }}</button>
+      </div>
+    </form>
+
+    <div class="hv2-hero-links hv2-fade">
+      <a href="{{ h.url_for('dataset.search') }}"><strong>{{ h.SI_number_span(n_all) }}</strong> {{ _('dataset') if n_all == 1 else _('datasets') }}</a>
+      <a href="{{ h.url_for('organization.index') }}"><strong>{{ h.SI_number_span(n_orgs) }}</strong> {{ _('organization') if n_orgs == 1 else _('organizations') }}</a>
+      <span class="hv2-sep" aria-hidden="true"></span>
+      <a class="hv2-hero-cta" href="{{ h.url_for('dataset.search') }}">{{ _('Browse the data catalogue') }} &rarr;</a>
+    </div>
+  </div>
+
+  <div class="hv2-wrap hv2-hero-foot">
+    <a class="hv2-explore" href="#IHPWINS">{{ _('Explore') }} <span aria-hidden="true">&darr;</span></a>
+    <button type="button" class="hv2-vbtn" id="hv2-vbtn" aria-label="{{ _('Pause background video') }}"
+            data-label-pause="{{ _('Pause background video') }}" data-label-play="{{ _('Play background video') }}">
+      <i class="fa fa-pause" aria-hidden="true"></i>
+    </button>
+  </div>
+</section>
+
+{# ═════════════ AT A GLANCE ═════════════ #}
+<section class="hv2-band" aria-label="{{ _('IHP-WINS at a glance') }}">
+  <div class="hv2-wrap">
+    <div class="hv2-glance">
+      <a class="hv2-gl" href="{{ h.url_for('organization.index') }}"><span class="hv2-gl-n">{{ h.home_v2_short_number(n_orgs) }}</span><span class="hv2-gl-l">{{ _('Organizations') }}</span></a>
+      <a class="hv2-gl" href="{{ h.url_for('/initiatives') }}"><span class="hv2-gl-n">{{ h.home_v2_short_number(n_initiatives) }}</span><span class="hv2-gl-l">{{ _('Initiatives') }}</span></a>
+      <a class="hv2-gl" href="{{ h.url_for('/memberstates') }}"><span class="hv2-gl-n">{{ h.home_v2_short_number(n_states) }}</span><span class="hv2-gl-l">{{ _('Member States') }}</span></a>
+      <a class="hv2-gl" href="{{ h.url_for('dataset.search') }}"><span class="hv2-gl-n">{{ h.home_v2_short_number(n_datasets) }}</span><span class="hv2-gl-l">{{ _('Datasets') }}</span></a>
+      <a class="hv2-gl" href="{{ h.url_for('/documents') }}"><span class="hv2-gl-n">{{ h.home_v2_short_number(n_docs) }}</span><span class="hv2-gl-l">{{ _('Documents') }}</span></a>
+      {% if n_views and n_views > 0 %}
+      <div class="hv2-gl"><span class="hv2-gl-n">{{ h.home_v2_short_number(n_views) }}</span><span class="hv2-gl-l">{{ _('Page views') }}</span></div>
+      {% elif n_downloads and n_downloads > 0 %}
+      <div class="hv2-gl"><span class="hv2-gl-n">{{ h.home_v2_short_number(n_downloads) }}</span><span class="hv2-gl-l">{{ _('Downloads') }}</span></div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+
+{# ═════════════ SECTION BAR (sticky) ═════════════ #}
+<nav class="hv2-secnav" aria-label="{{ _('On this page') }}">
+  <div class="hv2-wrap hv2-secnav-in">
+    <span class="hv2-secnav-lbl">{{ _('On this page') }}</span>
+    <a class="hv2-snav" href="#IHPWINS">{{ _('About') }}</a>
+    <a class="hv2-snav" href="#datasets">{{ _('Datasets') }}</a>
+    <a class="hv2-snav" href="#knowledge">{{ _('Knowledge') }}</a>
+    <a class="hv2-snav" href="#thematic">{{ _('Thematic viewers') }}</a>
+    <a class="hv2-snav" href="#network">{{ _('Network') }}</a>
+    <a class="hv2-snav" href="#WaterFamilyEvents">{{ _('Water Family') }}</a>
+    <a class="hv2-snav" href="#learning">{{ _('Learning') }}</a>
+    <a class="hv2-snav" href="#spotlight">{{ _('Spotlight') }}</a>
+    <a class="hv2-snav-cta" href="{{ h.url_for('/colab') }}">{{ _('Contribute data') }}</a>
+  </div>
+</nav>
+
+<div id="hv2-sections">
+
+{# ═════════════ ABOUT ═════════════ #}
+<section class="hv2-sec" id="IHPWINS">
+  <div class="hv2-wrap hv2-about">
+    <div class="hv2-stack">
+      <span class="hv2-eyebrow hv2-c-ab">{{ _('About the platform') }}</span>
+      <h2 class="hv2-h2">{{ _('The IHP Water Information Network System') }}</h2>
+      <div class="hv2-lead">{{ _("The Intergovernmental Hydrological Programme's Water Information Network System (IHP-WINS) promotes the sharing of water-related data among countries, organizations and stakeholders as part of the UNESCO IHP mandate.") }}</div>
+      <a class="hv2-btn hv2-btn-dark" href="https://unesdoc.unesco.org/ark:/48223/pf0000393465" target="_blank" rel="noopener">{{ _('Access the brochure') }} <span class="hv2-mono">PDF &nearr;</span></a>
+    </div>
+    <div class="hv2-cards3">
+      <div class="hv2-card hv2-pad">
+        <i class="fa fa-database hv2-ico hv2-c-ds" aria-hidden="true"></i>
+        <h3 class="hv2-h4">{{ _('Data integration') }}</h3>
+        <div class="hv2-muted">{{ _('Integrates water-related data from monitoring networks, research institutions and international organizations using standardized formats.') }}</div>
+      </div>
+      <div class="hv2-card hv2-pad">
+        <i class="fa fa-globe hv2-ico hv2-c-nw" aria-hidden="true"></i>
+        <h3 class="hv2-h4">{{ _('International cooperation') }}</h3>
+        <div class="hv2-muted">{{ _('Strengthens collaboration and knowledge exchange among water professionals at national, regional and global scales.') }}</div>
+      </div>
+      <div class="hv2-card hv2-pad">
+        <i class="fa fa-line-chart hv2-ico hv2-c-th" aria-hidden="true"></i>
+        <h3 class="hv2-h4">{{ _('Evidence-based decisions') }}</h3>
+        <div class="hv2-muted">{{ _('Supports sustainable water management through tools for data visualization, analysis and informed decision-making.') }}</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{# ═════════════ DATASETS ═════════════ #}
+<section class="hv2-sec hv2-grey" id="datasets">
+  <div class="hv2-wrap">
+    <div class="hv2-shead">
+      <div class="hv2-stack">
+        <span class="hv2-eyebrow hv2-c-ds">{{ _('Datasets') }}</span>
+        <h2 class="hv2-h2">{{ _('Data catalogue and geospatial viewer') }}</h2>
+        <div class="hv2-lead">{{ _('Search the catalogue, preview and download open water data, then open any layer on the map.') }}</div>
+      </div>
+      <img class="hv2-shead-img" src="{{ h.url_for_static('/Landing_page/Content/IHPTITLE03GEOSPATIAL.jpg') }}" alt="" loading="lazy">
+    </div>
+
+    <div class="hv2-split">
+      <div class="hv2-tiles">
+        <a class="hv2-tile hv2-lift" href="{{ h.url_for('dataset.search') }}" style="background:#1F6FB8">
+          <img src="{{ h.url_for_static('/home_v2/catalogue.webp') }}" alt="" loading="lazy">
+          <span class="hv2-tile-scrim" style="background:linear-gradient(90deg,rgba(20,86,150,.94) 0%,rgba(20,86,150,.72) 50%,rgba(20,86,150,0) 85%)"></span>
+          <span class="hv2-tile-txt">
+            <span class="hv2-mono">{{ n_datasets }} {{ _('datasets') }} · {{ n_docs }} {{ _('documents') }}</span>
+            <strong>{{ _('Data Catalogue and Management System') }}</strong>
+            <span class="hv2-tile-go">{{ _('Browse the catalogue') }} &rarr;</span>
+          </span>
+        </a>
+        <a class="hv2-tile hv2-lift" href="https://ihp-wins.unesco.org/terria/" target="_blank" rel="noopener" style="background:#050B24">
+          <img src="{{ h.url_for_static('/home_v2/globedrop.webp') }}" alt="" loading="lazy">
+          <span class="hv2-tile-scrim" style="background:linear-gradient(90deg,rgba(5,11,36,.95) 0%,rgba(5,11,36,.7) 50%,rgba(5,11,36,0) 85%)"></span>
+          <span class="hv2-tile-txt">
+            <span class="hv2-mono">{{ _('Maps · layers · data stories') }}</span>
+            <strong>{{ _('Geospatial Catalogue Viewer') }}</strong>
+            <span class="hv2-tile-go">{{ _('Open the viewer') }} &nearr;</span>
+          </span>
+        </a>
+      </div>
+
+      <div class="hv2-card hv2-explore-card" data-hv2-tabs>
+        <div class="hv2-xhead">
+          <img class="hv2-xbanner" data-hv2-panel-img="recent" src="{{ h.url_for_static('/Landing_page/Content/IHPTITLE07RECENT.jpg') }}" alt="" loading="lazy">
+          <img class="hv2-xbanner" data-hv2-panel-img="trending" src="{{ h.url_for_static('/Landing_page/Content/IHPTITLE12TRENDING.jpg') }}" alt="" loading="lazy" hidden>
+          <div class="hv2-xhead-bar">
+            <h3 class="hv2-xtitle" id="hv2-explore-title">{{ _('Explore data') }}</h3>
+            <div class="hv2-etabs" role="tablist" aria-labelledby="hv2-explore-title">
+              <button type="button" class="hv2-etab is-on" role="tab" id="hv2-tab-recent" aria-controls="hv2-panel-recent" aria-selected="true" data-hv2-tab="recent">{{ _('Recently added') }}</button>
+              <button type="button" class="hv2-etab" role="tab" id="hv2-tab-trending" aria-controls="hv2-panel-trending" aria-selected="false" tabindex="-1" data-hv2-tab="trending">{{ _('Trending on IHP-WINS') }}</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="hv2-xbody">
+          {# Recently added #}
+          <div class="hv2-cols2" role="tabpanel" id="hv2-panel-recent" aria-labelledby="hv2-tab-recent" data-hv2-panel="recent">
+            {% set recent_datasets = h.get_recently_added('dataset', 5) %}
+            {% set recent_docs = h.get_recently_added('documents', 5) %}
+            <div class="hv2-list">
+              <h4 class="hv2-h5">{{ _('New datasets') }}</h4>
+              {% for ds in recent_datasets %}
+                <a class="hv2-row" href="{{ h.url_for('dataset.read', id=ds.name) }}" title="{{ ds.title }}"><span>{{ ds.title|truncate(90) }}</span><span class="hv2-date">{{ h.render_datetime(ds.metadata_created, date_format='%d %b %Y') }}</span></a>
+              {% else %}
+                <div class="hv2-empty">{{ _('No datasets available') }}</div>
+              {% endfor %}
+              <a class="hv2-more" href="{{ h.url_for('dataset.search') }}?sort=metadata_created+desc">{{ _('View all datasets') }} &rarr;</a>
+            </div>
+            <div class="hv2-list">
+              <h4 class="hv2-h5">{{ _('New publications') }}</h4>
+              {% for doc in recent_docs %}
+                <a class="hv2-row" href="{{ h.url_for('dataset.read', id=doc.name) }}" title="{{ doc.title }}"><span>{{ doc.title|truncate(90) }}</span><span class="hv2-date">{{ h.render_datetime(doc.metadata_created, date_format='%d %b %Y') }}</span></a>
+              {% else %}
+                <div class="hv2-empty">{{ _('No publications available') }}</div>
+              {% endfor %}
+              <a class="hv2-more" href="{{ h.url_for('dataset.search') }}?type=documents&amp;sort=metadata_created+desc">{{ _('View all publications') }} &rarr;</a>
+            </div>
+          </div>
+
+          {# Trending #}
+          {% set popular = h.get_popular_datasets(5) %}
+          {% set popular_res = h.get_popular_resources(5) %}
+          <div class="hv2-trend" role="tabpanel" id="hv2-panel-trending" aria-labelledby="hv2-tab-trending" data-hv2-panel="trending">
+            {% if n_views and n_views > 0 %}
+            <div class="hv2-muted hv2-totals"><strong class="hv2-mono">{{ h.home_v2_short_number(n_views) }}</strong> {{ _('total page views') }}{% if n_downloads and n_downloads > 0 %} · <strong class="hv2-mono">{{ h.home_v2_short_number(n_downloads) }}</strong> {{ _('file downloads') }}{% endif %}</div>
+            {% endif %}
+            <div class="hv2-cols2">
+              <div class="hv2-list">
+                <h4 class="hv2-h5">{{ _('Most viewed datasets') }}</h4>
+                {% for ds in popular %}
+                  <a class="hv2-rank" href="{{ h.url_for('dataset.read', id=ds.name) }}" title="{{ ds.title }}">
+                    <span class="hv2-mono hv2-c-ds">{{ '%02d' % loop.index }}</span>
+                    <span class="hv2-rank-body"><span>{{ ds.title|truncate(80) }}</span>{% if ds.organization %}<span class="hv2-muted hv2-small">{{ ds.organization.title|default(ds.organization.name, true)|truncate(45) }}</span>{% endif %}</span>
+                    <span class="hv2-mono hv2-muted hv2-small">{{ h.home_v2_short_number(ds.views) }}</span>
+                  </a>
+                {% else %}
+                  <div class="hv2-empty">{{ _('No view statistics yet') }}</div>
+                {% endfor %}
+                <a class="hv2-more" href="{{ h.url_for('dataset.search') }}?sort=views_recent+desc">{{ _('View all datasets') }} &rarr;</a>
+              </div>
+              <div class="hv2-list">
+                <h4 class="hv2-h5">{{ _('Most downloaded resources') }}</h4>
+                {% for res in popular_res %}
+                  <a class="hv2-rank" href="{{ h.url_for('dataset.read', id=res.dataset_name) }}" title="{{ res.resource_name }}">
+                    <span class="hv2-mono hv2-c-ds">{{ '%02d' % loop.index }}</span>
+                    <span class="hv2-rank-body"><span>{{ res.resource_name|truncate(60) }}{% if res.format %} <span class="hv2-badge">{{ res.format }}</span>{% endif %}</span><span class="hv2-muted hv2-small">{{ res.dataset_title|truncate(50) }}</span></span>
+                    <span class="hv2-mono hv2-muted hv2-small">{{ h.home_v2_short_number(res.downloads) }}</span>
+                  </a>
+                {% else %}
+                  <div class="hv2-empty">{{ _('No download statistics yet') }}</div>
+                {% endfor %}
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{# ═════════════ KNOWLEDGE ═════════════ #}
+<section class="hv2-sec" id="knowledge">
+  <div class="hv2-wrap">
+    <div class="hv2-shead hv2-rev">
+      <div class="hv2-stack">
+        <span class="hv2-eyebrow hv2-c-kn">{{ _('Knowledge') }}</span>
+        <h2 class="hv2-h2">{{ _('Featured viewers, map rooms and data stories') }}</h2>
+        <div class="hv2-lead">{{ _("Interactive map viewers curated by UNESCO's Water Family, rapid response pages for water-related disasters, and data-driven narratives.") }}</div>
+      </div>
+      <img class="hv2-shead-img" src="{{ h.url_for_static('/Landing_page/Content/IHPTITLE04VIEWERS.jpg') }}" alt="" loading="lazy">
+    </div>
+
+    {% set viewers = h.theme_ejemplo_get_featured_viewers()[:3] if h.theme_ejemplo_featured_viewers_available() else [] %}
+    <div class="hv2-g4 hv2-mb">
+      {% for viewer in viewers %}
+        {% set raw_thumb = viewer.thumbnail_url or '' %}
+        {% set thumb = raw_thumb if (raw_thumb.startswith('/') or raw_thumb.startswith('https://')) else '' %}
+        <a class="hv2-card hv2-lift hv2-vcard" href="{{ h.url_for('/featured-viewers/' ~ viewer.slug) }}">
+          {% if thumb %}
+            <img class="hv2-vthumb" src="{{ thumb }}" alt="" loading="lazy">
+          {% else %}
+            <span class="hv2-vthumb hv2-topo" aria-hidden="true"></span>
+          {% endif %}
+          <span class="hv2-vbody">
+            <strong class="hv2-vtitle">{{ viewer.title }}</strong>
+            <span class="hv2-muted hv2-grow">{{ h.theme_ejemplo_markdown_excerpt(viewer.description, 150) }}</span>
+            <span class="hv2-go hv2-c-kn">{{ _('Explore viewer') }} &rarr;</span>
+          </span>
+        </a>
+      {% endfor %}
+      <a class="hv2-card hv2-lift hv2-navy hv2-pad hv2-allcard{% if not viewers %} hv2-allcard-wide{% endif %}" href="{{ h.url_for('/featured-viewers/list') }}">
+        <span class="hv2-eyebrow" style="color:#FF9A85">{{ _('All viewers') }}</span>
+        <strong class="hv2-allcard-t">{{ _('Featured viewers and map rooms') }}</strong>
+        <span class="hv2-on-dark">{{ _('Browse every viewer by theme: floods and droughts, water quality, groundwater, climate, urban water, ecohydrology, citizen science and IoT.') }}</span>
+        <span class="hv2-go" style="color:#FFFFFF">{{ _('View all') }} &rarr;</span>
+      </a>
+    </div>
+
+    <div class="hv2-g4">
+      {% set rr = h.home_v2_rapid_response(4) %}
+      <div class="hv2-card hv2-pad hv2-list">
+        <span class="hv2-eyebrow hv2-c-kn">{{ _('Disaster response') }}</span>
+        <h3 class="hv2-h4">{{ _('Rapid Response & Recovery') }}</h3>
+        {% for p in rr %}
+          <a class="hv2-row" href="{{ h.url_for('/rapid-response/' ~ p.name) }}"><span>{{ p.title or p.name }}</span><span aria-hidden="true">&rarr;</span></a>
+        {% else %}
+          <div class="hv2-empty">{{ _('No emergency response events published yet') }}</div>
+        {% endfor %}
+        <a class="hv2-more hv2-c-kn" href="{{ h.url_for('/rapid-response') }}">{{ _('All emergency response events') }} &rarr;</a>
+      </div>
+      {% set stories = h.home_v2_data_stories(3) %}
+      <div class="hv2-card hv2-pad hv2-list">
+        <span class="hv2-eyebrow hv2-c-ab">{{ _('Articles and data stories') }}</span>
+        <h3 class="hv2-h4">{{ _('Data-driven narratives') }}</h3>
+        {% for s in stories %}
+          <a class="hv2-row" href="{{ h.url_for('/data-stories/' ~ s.slug) }}"><span>{{ s.title }}</span><span aria-hidden="true">&rarr;</span></a>
+        {% else %}
+          <div class="hv2-empty">{{ _('No data stories published yet') }}</div>
+        {% endfor %}
+        <a class="hv2-more" href="{{ h.url_for('/data-stories/list') }}">{{ _('All data stories') }} &rarr;</a>
+      </div>
+      <a class="hv2-card hv2-lift hv2-imgcard" href="{{ h.url_for('/ai-water-tools') }}">
+        <img src="{{ h.url_for_static('/Landing_page/Content/IHPTITLE08AITOOLS.jpg') }}" alt="" loading="lazy">
+        <span class="hv2-vbody"><span class="hv2-eyebrow hv2-c-kn">{{ _('Tools') }}</span><strong class="hv2-vtitle">{{ _('AI for Water Management') }}</strong><span class="hv2-muted hv2-grow">{{ _('AI tools and applications for water management.') }}</span><span class="hv2-go hv2-c-kn">{{ _('Explore') }} &rarr;</span></span>
+      </a>
+      <a class="hv2-card hv2-lift hv2-imgcard" href="{{ h.url_for('/open-source-tools') }}">
+        <img src="{{ h.url_for_static('/Landing_page/Content/IHPTITLE09OPENSOURCE.jpg') }}" alt="" loading="lazy">
+        <span class="hv2-vbody"><span class="hv2-eyebrow hv2-c-kn">{{ _('Tools') }}</span><strong class="hv2-vtitle">{{ _('Open Source Tools') }}</strong><span class="hv2-muted hv2-grow">{{ _('Open source software from the water community.') }}</span><span class="hv2-go hv2-c-kn">{{ _('Explore') }} &rarr;</span></span>
+      </a>
+    </div>
+  </div>
+</section>
+
+{# ═════════════ THEMATIC VIEWERS ═════════════ #}
+{% set portals = [
+  {'href': h.url_for('/flood-drought-portal'), 'img': '/Landing_page/Content/flood_and_drought_monitoring_button_image.jpg', 'tag': _('Early warning'), 'title': _('Flood and Drought Monitoring and Early Warning Systems'), 'sub': '', 'ext': False},
+  {'href': h.url_for('/citizen-science-portal'), 'img': '/Landing_page/Content/citizen_science_portal_button_image.png', 'tag': _('IHP portal'), 'title': _('Citizen Science Portal'), 'sub': _('Community-driven water monitoring and data collection'), 'ext': False},
+  {'href': h.url_for('/iot-portal'), 'img': '/Landing_page/Content/internet_of_things_button_image.PNG', 'tag': _('IHP portal'), 'title': _('Internet of Things Portal'), 'sub': _('Real-time water monitoring through connected sensors'), 'ext': False},
+  {'href': 'https://en.unesco.org/waterqualitymonitor', 'img': '/Landing_page/Content/water_quality_portal_button_image.png', 'tag': _('External'), 'title': _('Water Quality Monitoring Portal'), 'sub': '', 'ext': True},
+  {'href': 'http://www.ecohydrology-ihp.org/demosites/', 'img': '/Landing_page/Content/ecohydrology_web_platform_button_image.png', 'tag': _('External'), 'title': _('Ecohydrology Demonstration Sites'), 'sub': '', 'ext': True},
+  {'href': 'https://ecociv.my.site.com/W12Blueprint/s/', 'img': '/Landing_page/Content/urban_water_solutions_database_button_image.jpg', 'tag': _('External'), 'title': _('Urban Water Solutions Database'), 'sub': '', 'ext': True},
+] %}
+<section class="hv2-sec hv2-dark" id="thematic">
+  <div class="hv2-wrap">
+    <div class="hv2-shead">
+      <div class="hv2-stack">
+        <span class="hv2-eyebrow" style="color:#8FE3D2">{{ _('Thematic viewers') }}</span>
+        <h2 class="hv2-h2">{{ _('Monitoring portals for floods, droughts, water quality and more') }}</h2>
+        <div class="hv2-lead">{{ _('Early warning systems, citizen science, real-time sensors and partner databases, each in a dedicated viewer.') }}</div>
+      </div>
+      <img class="hv2-shead-img" src="{{ h.url_for_static('/Landing_page/Content/IHPTITLE01MANAGEMENT.jpg') }}" alt="" loading="lazy">
+    </div>
+    <div class="hv2-g6">
+      {% for p in portals %}
+        <a class="hv2-portal hv2-lift" href="{{ p.href }}" {% if p.ext %}target="_blank" rel="noopener"{% endif %}>
+          <img src="{{ h.url_for_static(p.img) }}" alt="" loading="lazy">
+          <span class="hv2-portal-txt">
+            <span class="hv2-mono hv2-portal-tag">{{ p.tag }}{% if p.ext %} &nearr;{% endif %}</span>
+            <strong>{{ p.title }}</strong>
+            {% if p.sub %}<span class="hv2-portal-sub">{{ p.sub }}</span>{% endif %}
+            <span class="hv2-portal-go">{{ _('Discover') }} &rarr;</span>
+          </span>
+        </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+{# ═════════════ NETWORK ═════════════ #}
+<section class="hv2-sec hv2-grey" id="network">
+  <div class="hv2-wrap">
+    <div class="hv2-shead hv2-rev">
+      <div class="hv2-stack">
+        <span class="hv2-eyebrow hv2-c-ab">{{ _('The network') }}</span>
+        <h2 class="hv2-h2">{{ _('Member States, organizations and initiatives share data in hubs') }}</h2>
+        <div class="hv2-lead">{{ _('People join through their organization. Organizations contribute data, tools and expertise, and can work in several hubs at once. A record is published once and appears in every hub it belongs to.') }}</div>
+      </div>
+      <img class="hv2-shead-img" src="{{ h.url_for_static('/Landing_page/Content/IHPTITLE02DATASETS.jpg') }}" alt="" loading="lazy">
+    </div>
+    <div class="hv2-g4">
+      <a class="hv2-card hv2-pad hv2-lift hv2-hub" href="{{ h.url_for('/memberstates') }}" style="border-top-color:#12A08A">
+        <span class="hv2-hub-head"><strong class="hv2-h4">{{ _('Member State hubs') }}</strong><span class="hv2-mono hv2-hub-n" style="color:#0B7A69">{{ n_states }}</span></span>
+        <span class="hv2-eyebrow" style="color:#0B7A69">{{ _('Where it applies') }}</span>
+        <span class="hv2-grow">{{ _('Country-level data, governance and reporting: national datasets, policies and plans, dashboards and indicators.') }}</span>
+        <span class="hv2-go">{{ _('Browse Member States') }} &rarr;</span>
+      </a>
+      <a class="hv2-card hv2-pad hv2-lift hv2-hub" href="{{ h.url_for('organization.index') }}" style="border-top-color:#0069B4">
+        <span class="hv2-hub-head"><strong class="hv2-h4">{{ _('Organization hubs') }}</strong><span class="hv2-mono hv2-hub-n" style="color:#0069B4">{{ n_orgs }}</span></span>
+        <span class="hv2-eyebrow hv2-c-ab">{{ _('Who provides knowledge') }}</span>
+        <span class="hv2-grow">{{ _('Institutions contribute datasets, research and publications, tools and methods, and capacity building.') }}</span>
+        <span class="hv2-go">{{ _('Browse organizations') }} &rarr;</span>
+      </a>
+      <a class="hv2-card hv2-pad hv2-lift hv2-hub" href="{{ h.url_for('/initiatives') }}" style="border-top-color:#5A4FCF">
+        <span class="hv2-hub-head"><strong class="hv2-h4">{{ _('Initiative hubs') }}</strong><span class="hv2-mono hv2-hub-n" style="color:#5146C0">{{ n_initiatives }}</span></span>
+        <span class="hv2-eyebrow hv2-c-ds">{{ _('What is being done') }}</span>
+        <span class="hv2-grow">{{ _('Project and programme data, activities and results: case studies, pilot solutions and lessons learned.') }}</span>
+        <span class="hv2-go">{{ _('Browse initiatives') }} &rarr;</span>
+      </a>
+      <div class="hv2-card hv2-pad hv2-navy hv2-topo hv2-stack">
+        <span class="hv2-eyebrow" style="color:#F2B01E">{{ _('Contribute') }}</span>
+        <strong class="hv2-allcard-t">{{ _("Share your organization's water data") }}</strong>
+        <span class="hv2-on-dark hv2-grow">{{ _('Register, join or create an organization, and publish to the hubs you work in.') }}</span>
+        <a class="hv2-btn hv2-btn-gold" href="{{ h.url_for('/colab') }}">{{ _('Register') }}</a>
+        <a class="hv2-go" style="color:#9FD4F5" href="{{ h.url_for('/ihpix') }}">{{ _('IHP-IX progress') }} &rarr;</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+{# ═════════════ WATER FAMILY ═════════════ #}
+<section class="hv2-sec" id="WaterFamilyEvents">
+  <div class="hv2-wrap">
+    <div class="hv2-shead">
+      <div class="hv2-stack">
+        <span class="hv2-eyebrow hv2-c-wf">{{ _('Water Family hub') }}</span>
+        <h2 class="hv2-h2">{{ _('News, events and publications from the UNESCO Water Family') }}</h2>
+        <a class="hv2-go" href="{{ h.url_for('/water-family') }}">{{ _('Visit the community of practice') }} &rarr;</a>
+      </div>
+      <img class="hv2-shead-img" src="{{ h.url_for_static('/Landing_page/Content/IHPTITLE10FAMILYEVENTS.jpg') }}" alt="" loading="lazy">
+    </div>
+    {% set posts = h.get_recent_water_news(number=3) %}
+    {% set events = h.get_recent_water_events(number=3) %}
+    {% set publications = h.get_featured_publications()[:3] %}
+    <div class="hv2-g3">
+      <div class="hv2-card hv2-col">
+        <img class="hv2-colimg" src="{{ h.url_for_static('/Landing_page/Content/IHPTITLE11FAMILYNEWS.jpg') }}" alt="" loading="lazy">
+        <div class="hv2-colbody hv2-list">
+          <h3 class="hv2-h4">{{ _('News') }}</h3>
+          {% for post in posts %}
+            <a class="hv2-row hv2-row-v" href="{{ h.url_for('pages.water_news_show', page='' + post.name) }}">{% if post.publish_date %}<span class="hv2-date">{{ h.render_datetime(post.publish_date, date_format='%d %b %Y') }}</span>{% endif %}<span class="hv2-strong">{{ post.title or post.name }}</span></a>
+          {% else %}
+            <div class="hv2-empty">{{ _('No recent news') }}</div>
+          {% endfor %}
+          <a class="hv2-more" href="{{ h.url_for('pages.water_news_index') }}">{{ _('View all news') }} &rarr;</a>
+        </div>
+      </div>
+      <div class="hv2-card hv2-col">
+        <img class="hv2-colimg" src="{{ h.url_for_static('/Landing_page/Content/IHPTITLE06EVENTS.jpg') }}" alt="" loading="lazy">
+        <div class="hv2-colbody hv2-list">
+          <h3 class="hv2-h4">{{ _('Events') }}</h3>
+          {% for event in events %}
+            <a class="hv2-row hv2-row-v" href="{{ h.url_for('pages.water_events_show', page='' + event.name) }}">{% if event.publish_date %}<span class="hv2-date">{{ h.render_datetime(event.publish_date, date_format='%d %b %Y') }}</span>{% endif %}<span class="hv2-strong">{{ event.title or event.name }}</span></a>
+          {% else %}
+            <div class="hv2-empty">{{ _('No upcoming events') }}</div>
+          {% endfor %}
+          <a class="hv2-more" href="{{ h.url_for('pages.water_events_index') }}">{{ _('View all events') }} &rarr;</a>
+        </div>
+      </div>
+      <div class="hv2-card hv2-col">
+        <img class="hv2-colimg" src="{{ h.url_for_static('/Landing_page/Content/IHPTITLE05PUBLICATIONS.jpg') }}" alt="" loading="lazy">
+        <div class="hv2-colbody hv2-list">
+          <h3 class="hv2-h4">{{ _('Publications') }}</h3>
+          {% for pub in publications %}
+            <a class="hv2-row hv2-row-v" href="{{ pub.link or 'https://unesdoc.unesco.org/' }}" target="_blank" rel="noopener"><span class="hv2-date">UNESCO</span><span class="hv2-strong">{{ pub.title }}</span></a>
+          {% else %}
+            <div class="hv2-empty">{{ _('No publications available yet') }}</div>
+          {% endfor %}
+          <a class="hv2-more" href="{{ h.url_for('/documents') }}">{{ _('View all publications') }} &rarr;</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+{# ═════════════ LEARNING ═════════════ #}
+<section class="hv2-sec hv2-grey hv2-learning" id="learning">
+  <a class="hv2-olbanner" href="https://openlearning.unesco.org/program/intergovernmental-hydrological-programme-ihp/" target="_blank" rel="noopener">
+    <img src="{{ h.url_for_static('/IHPOpenLearning.webp') }}" alt="{{ _('IHP Open Learning Environment') }}" loading="lazy">
+    <span class="hv2-wrap hv2-olbanner-cta"><span class="hv2-btn hv2-btn-gold">{{ _('IHP UNESCO Open Learning') }} &nearr;</span></span>
+  </a>
+  <div class="hv2-wrap hv2-stack-lg">
+    <div class="hv2-stack">
+      <span class="hv2-eyebrow hv2-c-cb">{{ _('Capacity building') }}</span>
+      <h2 class="hv2-h2">{{ _('Build capacity in water science and management') }}</h2>
+    </div>
+    {% set courses = h.get_latest_courses()[:3] %}
+    <div class="hv2-g4">
+      {% for course in courses %}
+        {% if course.course_type == 'scheduled' and course.start_display %}
+          {% set course_meta = _('Start:') ~ ' ' ~ course.start_display %}
+        {% elif course.course_type == 'permanent' %}
+          {% set course_meta = _('Self-paced') %}
+        {% else %}
+          {% set course_meta = course.org %}
+        {% endif %}
+        <a class="hv2-card hv2-pad hv2-lift hv2-stack" href="{{ course.course_url }}" target="_blank" rel="noopener">
+          {% if course_meta %}<span class="hv2-badge hv2-badge-neutral">{{ course_meta }}</span>{% endif %}
+          <strong class="hv2-vtitle hv2-grow">{{ course.name }}</strong>
+          <span class="hv2-go">{{ _('Go to course') }} &nearr;</span>
+        </a>
+      {% else %}
+        <div class="hv2-card hv2-pad hv2-empty">{{ _('No courses available at the moment') }}</div>
+      {% endfor %}
+      <a class="hv2-card hv2-pad hv2-lift hv2-navy hv2-allcard" href="{{ h.url_for('theme_ejemplo.courses') }}">
+        <span class="hv2-eyebrow" style="color:#F2B01E">{{ _('All courses') }}</span>
+        <strong class="hv2-allcard-t">{{ _('Water courses from the IHP and partners') }}</strong>
+        <span class="hv2-go" style="color:#FFFFFF">{{ _('View all courses') }} &rarr;</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+{# ═════════════ SPOTLIGHT: the original slide deck ═════════════ #}
+{% set slides = [
+  {'short': 'IHP-WINS', 'title': _('IHP-WINS: Empowering Open Science & Data-Driven Water Governance'), 'sub': _("UNESCO's Water Information Network System for evidence-based decision making"), 'image': '/Landing_page/Content/01IHP-WEB.jpg', 'link': '#IHPWINS', 'link_text': _('Learn More')},
+  {'short': _('Citizen Science'), 'title': _('Citizen Science'), 'sub': _('Community-driven water monitoring and data collection'), 'image': '/Landing_page/Content/02IHP-CITIZEN.jpg', 'link': h.url_for('/citizen-science-portal'), 'link_text': _('IHP Citizen Science Portal')},
+  {'short': _('Internet of Things'), 'title': _('Internet of Things'), 'sub': _('Real-time water monitoring through connected sensors'), 'image': '/Landing_page/Content/03IHP-INTERNET.jpg', 'link': h.url_for('/iot-portal'), 'link_text': _('IHP IoT Portal')},
+  {'short': _('Open Learning'), 'title': _('Open Learning'), 'sub': _('Build capacity in water science and management'), 'image': '/Landing_page/Content/04IHP-OPEN.jpg', 'link': 'https://openlearning.unesco.org/program/intergovernmental-hydrological-programme-ihp/', 'link_text': _('IHP UNESCO Open Learning')},
+  {'short': _('News and Events'), 'title': _('UNESCO News and Events'), 'sub': _('Stay connected with the global water community'), 'image': '/Landing_page/Content/05IHP-NEWS.jpg', 'link': '#WaterFamilyEvents', 'link_text': _('View Events')},
+] %}
+<section class="hv2-spot" id="spotlight" aria-roledescription="carousel" aria-label="{{ _('Spotlight') }}" data-hv2-deck>
+  <div class="hv2-stage">
+    {% for s in slides %}
+      <div class="hv2-slide{% if loop.first %} is-on{% endif %}" data-hv2-slide="{{ loop.index0 }}" aria-hidden="{{ 'false' if loop.first else 'true' }}">
+        <img src="{{ h.url_for_static(s.image) }}" alt="">
+        <div class="hv2-slide-txt">
+          <div class="hv2-stack">
+            <span class="hv2-eyebrow" style="color:#D9F1FC">{{ _('UNESCO IHP') }} · {{ loop.index }} / {{ slides|length }}</span>
+            <h2 class="hv2-slide-t">{{ s.title }}</h2>
+            <div class="hv2-slide-sub">{{ s.sub }}</div>
+          </div>
+          <a class="hv2-btn hv2-btn-white" href="{{ s.link }}"{% if s.link.startswith('http') %} target="_blank" rel="noopener"{% endif %}>{{ s.link_text }} &rarr;</a>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+  <div class="hv2-tabs">
+    <div class="hv2-tabs-head">
+      <span class="hv2-eyebrow" style="color:#D9F1FC">{{ _('Spotlight') }}</span>
+      <span class="hv2-arrows">
+        <button type="button" class="hv2-arrow" data-hv2-prev aria-label="{{ _('Previous slide') }}"><i class="fa fa-chevron-left" aria-hidden="true"></i></button>
+        <button type="button" class="hv2-arrow" data-hv2-toggle aria-label="{{ _('Pause slideshow') }}" data-label-pause="{{ _('Pause slideshow') }}" data-label-play="{{ _('Play slideshow') }}"><i class="fa fa-pause" aria-hidden="true"></i></button>
+        <button type="button" class="hv2-arrow" data-hv2-next aria-label="{{ _('Next slide') }}"><i class="fa fa-chevron-right" aria-hidden="true"></i></button>
+      </span>
+    </div>
+    <div class="hv2-tablist" role="tablist" aria-label="{{ _('Spotlight slides') }}">
+      {% for s in slides %}
+        <button type="button" class="hv2-tabbtn{% if loop.first %} is-on{% endif %}" role="tab" aria-selected="{{ 'true' if loop.first else 'false' }}" data-hv2-goto="{{ loop.index0 }}">
+          <span class="hv2-mono hv2-tabno">{{ '%02d' % loop.index }}</span>
+          <span class="hv2-tabtxt"><strong>{{ s.short }}</strong><span>{{ s.sub }}</span></span>
+          <span class="hv2-prog" aria-hidden="true"></span>
+        </button>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+</div>{# /#hv2-sections #}
+</div>{# /.hv2 #}
+
+<script src="{{ h.url_for_static('/js/home-v2.js') }}?v=20261008" defer></script>

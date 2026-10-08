@@ -24,6 +24,7 @@ from . import completeness
 from . import db_fork_safety
 from . import pageview_tracking
 from . import ranking
+from . import home_v2  # Home page v2 (added by Jorgen Van Der Biest)
 from . import search as theme_search
 from .utils import normalize_user_image_url
 import logging
@@ -1373,6 +1374,7 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
             # error page) on 2026-10-05. Default to "disabled" instead.
             if not plugins.plugin_loaded('learning'):
                 helpers_map['learning_enabled'] = lambda: False
+            helpers_map.update(home_v2.get_helpers())  # Home page v2 (added by Jorgen Van Der Biest)
             return helpers_map
 
         # IActions

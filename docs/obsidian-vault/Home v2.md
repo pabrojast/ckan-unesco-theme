@@ -1,0 +1,54 @@
+# Home page v2 (redesign)
+
+Added by Jorgen Van Der Biest. A new design for the IHP-WINS home page that keeps every link of the current home page, reorganised by the platform's areas.
+
+## Switching it on
+
+| Setting | Values | Default |
+|---|---|---|
+| `ckanext.theme_ejemplo.home_design` | `classic`, `v2` | `classic` |
+| `ckanext.theme_ejemplo.home_design_switch` | `true`, `false` | `false` |
+
+As environment variables: `CKANEXT__THEME_EJEMPLO__HOME_DESIGN=v2` and `CKANEXT__THEME_EJEMPLO__HOME_DESIGN_SWITCH=true`.
+
+With the switch on, `/?home=v2` and `/?home=classic` preview either design for that one request, so v2 can be checked on dev before it becomes the default. With the default settings nothing changes on the site.
+
+## Page order
+
+1. Hero: a looping clip (1:40 to 2:07) from the IHP 50th anniversary film, the UNESCO IHP logo, the headline, dataset search and counts. The site header floats over it as it did over the old hero. A pause button stops the video, and visitors with "reduce motion" see the still poster.
+2. Counters: organizations, initiatives, Member States, datasets, documents, page views.
+3. Sticky section bar: About, Datasets, Knowledge, Thematic viewers, Network, Water Family, Learning, Spotlight, plus "Contribute data".
+4. About IHP-WINS and the brochure.
+5. Datasets: Data Catalogue and Geospatial Viewer tiles, Explore data (Recently added, Trending).
+6. Knowledge: featured viewers, Rapid Response & Recovery, data stories, AI for Water Management, Open Source Tools.
+7. Thematic viewers: the six portals.
+8. Network: Member State, organization and initiative hubs, Register, IHP-IX.
+9. Water Family: news, events, publications.
+10. Learning: IHP Open Learning and courses.
+11. Spotlight: the original five-slide deck.
+
+## Files
+
+New files only:
+
+- `ckanext/theme_ejemplo/home_v2.py`: helpers `home_v2_enabled`, `home_v2_rapid_response`, `home_v2_data_stories`, `home_v2_short_number`.
+- `templates/home/home_v2.html`: the page.
+- `public/css/home-v2.css`: styles, all scoped under `.hv2`.
+- `public/js/home-v2.js`: video pause, tabs, slide deck, section bar.
+- `public/home_v2/`: hero video (7 MB desktop, 2.7 MB mobile), poster, logos, two tile images.
+
+Lines added to existing files, each marked "Home page v2 (added by Jorgen Van Der Biest)":
+
+- `plugin.py`: 2 lines (import, register helpers).
+- `templates/home/index.html`: the switch between `home_v2.html` and `custom_layout.html`.
+- `templates/header.html`: the IHP-WINS logo next to the UNESCO logo, only on the v2 home page.
+
+## Data
+
+It uses the same helpers as the current home page: `theme_ejemplo_site_statistics`, `get_tracking_totals`, `get_recently_added`, `get_popular_datasets`, `get_popular_resources`, `theme_ejemplo_get_featured_viewers`, `get_recent_water_news`, `get_recent_water_events`, `get_featured_publications`, `get_latest_courses`. Rapid response pages and data stories come from ckanext-pages (`ckanext_pages_list` with `page_type=rapid-response`, `data_story_list`), read anonymously so drafts never show.
+
+## Notes
+
+- `theme_ejemplo.css` sets `p { color: #212529 !important }`, so the page uses `<div class="hv2-lead">` instead of `<p>` for running text.
+- The videos could also be served from blob storage instead of the repo: change the two `<source>` lines in `home_v2.html`.
+- Tested locally on CKAN 2.10.9 with ckanext-pages (RapidResponseAndRecovery) at 1440 px and 390 px.
