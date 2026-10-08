@@ -41,7 +41,7 @@
       {% block description %}
       {% if organization.description %}
         <p class="description">
-          {{ h.markdown_extract(organization.description, 180) }}
+          {{ h.theme_ejemplo_markdown_excerpt(organization.description, 180) }}
         </p>
         <p class="read-more">
           {% link_for _('read more'), controller='organization', action='about', id=organization.name %}

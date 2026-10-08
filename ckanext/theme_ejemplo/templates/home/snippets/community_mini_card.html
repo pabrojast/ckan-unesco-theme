@@ -1,0 +1,28 @@
+{# Mini-card compacta del grid "Community and Knowledge".
+
+   Parámetros:
+     title         - texto del enlace (obligatorio)
+     url           - destino (obligatorio)
+     date_text     - fecha ya formateada (opcional)
+     meta_text     - línea secundaria, ej. org o "Self-paced" (opcional)
+     image         - miniatura 56x56 (opcional)
+     fallback_icon - clase FontAwesome si no hay imagen, ej. 'fa-newspaper-o'
+     external      - true para abrir en pestaña nueva (opcional)
+
+   La imagen es decorativa (el título va al lado), por eso alt="". #}
+<a class="community-mini-card" href="{{ url }}"{% if external %} target="_blank" rel="noopener"{% endif %}>
+  {% if image %}
+    <img class="community-mini-thumb" src="{{ image }}" alt="" loading="lazy" width="56" height="56">
+  {% else %}
+    <span class="community-mini-thumb community-mini-thumb--icon" aria-hidden="true"><i class="fa {{ fallback_icon or 'fa-file-o' }}"></i></span>
+  {% endif %}
+  <span class="community-mini-body">
+    {% if date_text %}
+      <span class="community-mini-date"><i class="fa fa-calendar" aria-hidden="true"></i> {{ date_text }}</span>
+    {% endif %}
+    <span class="community-mini-title">{{ title }}</span>
+    {% if meta_text %}
+      <span class="community-mini-meta">{{ meta_text }}</span>
+    {% endif %}
+  </span>
+</a>

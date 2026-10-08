@@ -1,0 +1,192 @@
+# Variables de Entorno
+
+> Todas las claves de configuración y variables de entorno usadas por `ckanext-theme-ejemplo`.
+
+---
+
+## Claves de configuración del plugin
+
+Estas claves se definen en el archivo de configuración de CKAN (`ckan.ini`) y se leen con `toolkit.config.get()`.
+
+### Caching
+
+| Clave | Default | Descripción |
+|---|---|---|
+| `ckanext.theme_ejemplo.courses_cache_ttl` | `600` (10 min) | TTL del micro-caché en memoria de la lectura de cursos desde BD (helper `get_latest_courses`) |
+| `ckanext.theme_ejemplo.groups_cache_ttl` | `300` (5 min) | TTL del caché de estados miembros e iniciativas |
+| `ckanext.theme_ejemplo.home_cache_ttl` | `300` (5 min) | TTL del caché de datasets destacados, visores destacados y estadísticas del sitio |
+| `ckanext.theme_ejemplo.recently_added_cache_ttl` | `300` (5 min) | TTL del caché de datasets/documentos recientes |
+| `ckanext.theme_ejemplo.tracking_cache_ttl` | `300` (5 min) | TTL del caché de estadísticas de tracking (mínimo 60s) |
+
+#### Caché de respuestas anónimas
+
+> [!note]
+> Mitiga la "spider trap" de las búsquedas con facetas (`/dataset/?_X_sort=...`). Sólo aplica a `GET`/`HEAD` sin cookie de sesión y respuestas `200` text/JSON/XML. Usa Redis (vía `ckan.lib.redis.connect_to_redis`) con fallback a un LRU local.
+
+| Clave | Default | Descripción |
+|---|---|---|
+| `ckanext.theme_ejemplo.anon_cache_enabled` | `false` | Activa el caché de respuestas anónimas (recomendado en producción) |
+| `ckanext.theme_ejemplo.anon_cache_ttl` | `300` (5 min) | TTL en segundos de cada entrada |
+| `ckanext.theme_ejemplo.anon_cache_max_bytes` | `1048576` (1 MB) | Tamaño máximo del body para guardarlo en caché |
+| `ckanext.theme_ejemplo.anon_cache_include_paths` | _(vacío = todo)_ | Prefijos de path a cachear (CSV). Si está vacío, se cachea todo lo no excluido |
+| `ckanext.theme_ejemplo.anon_cache_exclude_paths` | `/api,/ckan-admin,/user,/dashboard,/feeds,/util,/_tracking,/membership-requests,/bug-tickets,/ihpix/report,/ihpix/my-reports,/ihpix/outputs,/ihpix/dashboard,/ihpix/priority-area,/ihpix/contributors,/ihpix/workspaces` | Prefijos a saltar siempre (las rutas IHP-IX para usuarios logueados quedan fuera; `/ihpix` landing sí se cachea) |
+
+> [!tip]
+> Para desactivar puntualmente el caché en una request (debug), añade `?_nocache=1` o el header `Cache-Control: no-cache`. Las respuestas servidas/guardadas exponen `X-Anon-Cache: HIT|MISS`.
+
+#### Conteo liviano de vistas (pageviews)
+
+> [!note]
+> Reemplazo del `ckan.tracking_enabled` nativo, que colapsaba la CPU bajo alto tráfico. Registra vistas/descargas en Redis dentro del request (sin INSERT por vista, sin request extra) y vuelca a Postgres por cron. Ver [[Flujos Importantes#Conteo liviano de vistas]]. CKAN tracking debe quedar **desactivado** (`ckan.tracking_enabled = false`).
+
+| Clave | Default | Descripción |
+|---|---|---|
+| `ckanext.theme_ejemplo.pageviews_enabled` | `false` | Activa el conteo liviano. Enciende también los helpers de tracking del tema |
+| `ckanext.theme_ejemplo.pageviews_recent_days` | `14` | Ventana en días para `recent_views` |
+| `ckanext.theme_ejemplo.pageviews_dedup_window` | `1800` (30 min) | Segundos de dedup por IP+URL para no inflar con refrescos (`0` = sin dedup) |
+| `ckanext.theme_ejemplo.pageviews_bot_filter` | `true` | Ignora User-Agents de bots/crawlers conocidos (incluye herramientas server-side: `CKAN-TerriaView`, `python-urllib`, `okhttp`, etc.) |
+| `ckanext.theme_ejemplo.pageviews_view_paths` | `/dataset` | Prefijos de ruta (CSV) que cuentan como vista de dataset |
+| `ckanext.theme_ejemplo.pageviews_downloads_navigation_only` | `true` | Cuenta como descarga solo navegaciones de usuario (`Sec-Fetch-Mode: navigate`, dest `document`/`empty`, sin `Range`). Excluye los fetch de visores embebidos (Terria, MapLibre, PDF), embeds y lectores tileados COG, que inflaban el contador |
+| `ckanext.theme_ejemplo.pageviews_excluded_referrer_hosts` | _(vacío)_ | Fallback para navegadores sin cabeceras `Sec-Fetch-*` (Safari < 16.4): CSV de `host` o `host/prefijo` de visores cuyos `Referer` no cuentan como descarga (ej. `terria.water-data.org, ihp-wins.unesco.org/terria`) |
+
+> [!note]
+> Solo cuentan peticiones `GET` (antes también `HEAD`, que sumaba sondas y health-checks como descargas).
+
+> [!tip]
+> El `tracking_cache_ttl` (TTL de lectura) conviene mantenerlo ≥ al intervalo del CronJob de flush (`*/5`). El volcado lo ejecuta `ckan pageviews flush` (ver [[Comandos Utiles]] y `deploy/cronjob-pageviews-flush.yaml`).
+
+### Open Learning (cursos curados)
+
+Ver [[Open Learning]] para el flujo completo de sincronización y curación.
+
+| Clave | Default | Descripción |
+|---|---|---|
+| `ckanext.theme_ejemplo.openlearning_search_terms` | `water,ihp,hydrology,climate change,groundwater,flood,drought,water management,water governance,wash,sdg6,transboundary,ecohydrology,water education,water quality,aquifer` | Términos de búsqueda contra la API (CSV) |
+| `ckanext.theme_ejemplo.openlearning_sync_ttl` | `21600` (6 h) | TTL del sync lazy; `0` desactiva el sync automático (queda solo CLI/botón admin) |
+| `ckanext.theme_ejemplo.openlearning_max_pages` | `10` | Tope de páginas a seguir por término de búsqueda |
+| `ckanext.theme_ejemplo.openlearning_page_size` | `50` | `page_size` enviado a la API |
+
+### Funcionalidad
+
+| Clave | Default | Descripción |
+|---|---|---|
+| `ckanext.theme_ejemplo.index_followers` | `false` | Habilitar indexación de seguidores de datasets en Solr |
+| `ckanext.theme_ejemplo.search_partial_match` | `true` | Suma `title_ngram`/`name_ngram`/`abstract_ngram` al `qf` de la búsqueda de datasets para encontrar palabras a medio escribir. El abstract requiere esquema actualizado y reindexación. No controla el `qf` propio de las sugerencias. Ver [[Busqueda#Datasets: coincidencia parcial]] |
+| `ckanext.theme_ejemplo.ihpix_recompute_on_approve` | `true` | Al aprobar un reporte IHP-IX recalcula `ihpix_country_summary` para el país del reporte (mapa al día). Ver [[Flujos Importantes#7.3 Recompute del resumen por país]] |
+| `ckanext.theme_ejemplo.ihpix_geojson_max` | `5000` | Máximo de features que devuelve `ihpix_activity_geojson` (antes estaba capado a 20 por accidente) |
+| `ckanext.theme_ejemplo.ihpix_wg_open_join` | `false` | Si `true`, unirse a un working group IHP-IX es inmediato (`active`); si no, queda `pending` hasta que el lead lo apruebe. Ver [[Flujos Importantes#7.4 Working groups (workspaces por Output)]] |
+| `ckanext.theme_ejemplo.ihpix_wg_auto_contributor` | `true` | Al publicar un reporte, su autor pasa a ser contributor activo del workspace del Output (no reactiva membresías `removed`) |
+| `ckanext.theme_ejemplo.ihpix_basemap_url` | Esri World Light Gray Canvas (`server.arcgisonline.com/.../World_Light_Gray_Base/MapServer/tile/{z}/{y}/{x}`) | Plantilla de teselas Leaflet de los mapas IHP-IX (landing y dashboard). Se cambió desde CARTO porque `basemaps.cartocdn.com` exige API key y mostraba "API key required" |
+| `ckanext.theme_ejemplo.ihpix_basemap_attribution` | `Tiles © Esri — Esri, HERE, Garmin, FAO, NOAA, USGS` | Atribución HTML del basemap |
+| `ckanext.theme_ejemplo.ihpix_basemap_max_zoom` | `16` | Zoom máximo del basemap |
+| `ckanext.theme_ejemplo.ihpix_markdown_preview_max_chars` | `20000` | Tamaño máximo del texto aceptado por `POST /ihpix/markdown-preview` (editor Markdown del kit de formularios) |
+| `ckanext.theme_ejemplo.ihpix_upload_max_mb` | `50` | Tamaño máximo del fichero en el modal "Upload a publication" (debe ser ≤ `ckan.max_resource_size`) |
+| `ckanext.theme_ejemplo.ihpix_publication_default_language` | `http://publications.europa.eu/resource/authority/language/ENG` | `language` de las publicaciones creadas desde IHP-IX (URI de la autoridad EU que exige el esquema `documents`) |
+| `ckanext.theme_ejemplo.ihpix_publication_default_license` | `cc-by-sa` | `license_id` de las publicaciones creadas desde IHP-IX |
+| `ckanext.theme_ejemplo.ihpix_publication_tags` | `ihp-ix` | Tags (separados por coma) que llevan siempre esas publicaciones; el código del Output se añade como `ihp-ix-output-<code>` |
+| `ckanext.theme_ejemplo.ihpix_course_proposals_enabled` | `true` | Permite a los usuarios logueados proponer cursos Open Learning (Sección VII y `/courses`) |
+| `ckanext.theme_ejemplo.ihpix_course_proposals_per_day` | `10` | Máximo de propuestas de cursos por usuario y día (`0` = sin límite) |
+
+### Claves de otras extensiones que este tema lee
+
+| Clave | Dueño | Efecto aquí |
+|---|---|---|
+| `ckanext.featured_viewers.enabled` | **ckanext-pages** | Con `false` (o sin `pages` en `ckan.plugins`) desaparecen la sección *Featured Viewers* de la portada y el item «Viewers» de la masthead, y `/ckan-admin/featured-viewers` muestra un aviso en vez de la lista. La comprueba `helpers.featured_viewers_available()`. |
+
+> [!note] Inferencia
+> Es una dependencia **blanda**: el tema nunca importa `ckanext.pages`, sólo
+> consulta la config y el registro de acciones de CKAN. Si `pages` no está
+> instalado, todo degrada en silencio.
+
+---
+
+## Variables de entorno del CI
+
+Definidas en `.github/workflows/test.yml` para el entorno de pruebas Docker:
+
+| Variable | Valor en CI | Descripción |
+|---|---|---|
+| `CKAN_SQLALCHEMY_URL` | `postgresql://ckan_default:pass@postgres/ckan_test` | URL de conexión a PostgreSQL |
+| `CKAN_DATASTORE_WRITE_URL` | `postgresql://datastore_write:pass@postgres/datastore_test` | URL de escritura del datastore |
+| `CKAN_DATASTORE_READ_URL` | `postgresql://datastore_read:pass@postgres/datastore_test` | URL de lectura del datastore |
+| `CKAN_SOLR_URL` | `http://solr:8983/solr/ckan` | URL de conexión a Solr |
+| `CKAN_REDIS_URL` | `redis://redis:6379/1` | URL de conexión a Redis |
+
+---
+
+## Configuración del plugin en CKAN
+
+```ini
+# Activar el plugin (obligatorio)
+ckan.plugins = theme_ejemplo
+
+# Ejemplo de configuración completa
+ckanext.theme_ejemplo.courses_cache_ttl = 600
+ckanext.theme_ejemplo.groups_cache_ttl = 300
+ckanext.theme_ejemplo.home_cache_ttl = 300
+ckanext.theme_ejemplo.recently_added_cache_ttl = 300
+ckanext.theme_ejemplo.tracking_cache_ttl = 300
+ckanext.theme_ejemplo.index_followers = false
+ckanext.theme_ejemplo.search_partial_match = true
+
+# Cursos UNESCO Open Learning (caché curada)
+ckanext.theme_ejemplo.openlearning_search_terms = water
+ckanext.theme_ejemplo.openlearning_sync_ttl = 21600
+ckanext.theme_ejemplo.openlearning_max_pages = 10
+ckanext.theme_ejemplo.openlearning_page_size = 50
+
+# Conteo liviano de vistas (reemplazo de ckan.tracking_enabled)
+ckan.tracking_enabled = false
+ckanext.theme_ejemplo.pageviews_enabled = true
+ckanext.theme_ejemplo.pageviews_recent_days = 14
+ckanext.theme_ejemplo.pageviews_dedup_window = 1800
+ckanext.theme_ejemplo.pageviews_bot_filter = true
+# ckanext.theme_ejemplo.pageviews_view_paths = /dataset
+ckanext.theme_ejemplo.pageviews_downloads_navigation_only = true
+ckanext.theme_ejemplo.pageviews_excluded_referrer_hosts = terria.water-data.org, map.dev-wins.com, ihp-wins.unesco.org/terria
+
+# Caché de respuestas anónimas (mitiga spider trap)
+ckanext.theme_ejemplo.anon_cache_enabled = true
+ckanext.theme_ejemplo.anon_cache_ttl = 300
+ckanext.theme_ejemplo.anon_cache_max_bytes = 1048576
+# Vacío = cachea todo lo no excluido
+# ckanext.theme_ejemplo.anon_cache_include_paths =
+ckanext.theme_ejemplo.anon_cache_exclude_paths = /api,/ckan-admin,/user,/dashboard,/feeds,/util,/_tracking,/membership-requests,/bug-tickets
+```
+
+---
+
+## Variables de entorno del sistema
+
+> [!note] Inferencia
+> El plugin no lee variables de entorno del sistema directamente. Toda la configuración se pasa a través del archivo `ckan.ini` usando el mecanismo estándar de CKAN (`toolkit.config`). Sin embargo, CKAN core sí soporta variables de entorno para configuración base (ver documentación de CKAN).
+
+---
+
+## Servicios Docker del CI
+
+| Servicio | Imagen | Puerto |
+|---|---|---|
+| PostgreSQL | `ckan/ckan-postgres-dev:2.9` | 5432 |
+| Solr | `ckan/ckan-solr:2.9` | 8983 |
+| Redis | `redis:3` | 6379 |
+| CKAN | `openknowledge/ckan-dev:2.9` | — |
+
+---
+
+## Ver también
+
+- [[Setup Local]] — Cómo configurar el entorno
+- [[Deployment]] — Pipeline de CI/CD
+- [[Arquitectura#Estrategia de caching]] — Detalles de caching
+
+## Plugin learning (opcional)
+
+Añadir `learning` a `ckan.plugins` después de los plugins del portal,
+`ckanext.learning:schema.json` a `scheming.dataset_schemas` y
+`ckanext.scheming:presets.json` al final de los presets existentes.
+`ckanext.learning.ihp_owner_org` selecciona la organización de importación inicial
+(default `intergovernmental-hydrological-programme`). Tras inicializar, las fuentes
+se editan en el administrador. Los secretos de socios se referencian mediante
+`CKAN_LEARNING_TOKEN_<PARTNER>`, nunca por valores dentro del mapeo JSON.
+Con learning activo las opciones de TTL lazy del tema dejan de disparar imports.

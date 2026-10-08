@@ -1,0 +1,131 @@
+{% extends "page.html" %}
+
+{% block title %}
+{{ _('Platform statistics') }} - {{ super() }}
+{% endblock %}
+
+{% block content %}
+<div class="homepage layout-1">
+    <div id="content" class="container">
+      {{ self.flash() }}
+    </div>
+
+    {% block primary_content %}
+    <div class="main">
+        <div class="container">
+
+            <!-- Breadcrumb Navigation -->
+            <div class="toolbar" role="navigation" aria-label="Breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="home"><a href="{{ h.url_for('/') }}" aria-label="{{ _('Home') }}"><i class="fa fa-home"></i><span> {{ _('Home') }}</span></a></li>
+                    <li><a href="{{ h.url_for(controller='admin', action='index') }}">{{ _('Admin') }}</a></li>
+                    <li class="active">{{ _('Platform statistics') }}</li>
+                </ol>
+            </div>
+
+            <h1>{{ _('Platform statistics') }}</h1>
+            <p class="admin-stats-note">
+              {{ _('Views and downloads are flushed from Redis to the database every five minutes.') }}
+              {{ _('The contribution ranking is recomputed nightly.') }}
+            </p>
+
+            <div class="admin-stats-cards">
+              <div class="admin-stats-card">
+                <span class="v">{{ '{:,}'.format(totals.page_views or 0) }}</span>
+                <span class="k">{{ _('Page views') }}</span>
+              </div>
+              <div class="admin-stats-card">
+                <span class="v">{{ '{:,}'.format(totals.downloads or 0) }}</span>
+                <span class="k">{{ _('Downloads') }}</span>
+              </div>
+              <div class="admin-stats-card">
+                <span class="v">{{ '{:,}'.format(dataset_total or 0) }}</span>
+                <span class="k">{{ _('Indexed records') }}</span>
+              </div>
+            </div>
+
+            <h2>{{ _('Metadata completeness') }}</h2>
+            {% if completeness %}
+              <table class="table table-striped admin-stats-table">
+                <thead>
+                  <tr><th>{{ _('Band') }}</th><th>{{ _('Datasets') }}</th><th>{{ _('Share') }}</th></tr>
+                </thead>
+                <tbody>
+                  {% for item in completeness %}
+                    <tr>
+                      <td>{{ item.display_name or item.name }}</td>
+                      <td>{{ item.count }}</td>
+                      <td>{{ '%.0f'|format(100.0 * item.count / dataset_total) if dataset_total else '-' }}%</td>
+                    </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            {% else %}
+              <p class="empty">{{ _('No completeness data. Rebuild the search index.') }}</p>
+            {% endif %}
+
+            <div class="admin-stats-columns">
+              <div>
+                <h2>{{ _('Most viewed datasets') }}</h2>
+                {% if popular_datasets %}
+                  <ol class="admin-stats-list">
+                    {% for ds in popular_datasets %}
+                      <li>
+                        <a href="{{ h.url_for('dataset.read', id=ds.name) }}">{{ ds.title or ds.name }}</a>
+                        <span>{{ '{:,}'.format(ds.views or 0) }}</span>
+                      </li>
+                    {% endfor %}
+                  </ol>
+                {% else %}
+                  <p class="empty">{{ _('No views recorded yet') }}.</p>
+                {% endif %}
+              </div>
+              <div>
+                <h2>{{ _('Most downloaded resources') }}</h2>
+                {% if popular_resources %}
+                  <ol class="admin-stats-list">
+                    {% for res in popular_resources %}
+                      <li>
+                        <a href="{{ h.url_for('dataset_resource.read', id=res.dataset_name, resource_id=res.resource_id) }}">
+                          {{ res.resource_name }}{% if res.format %} <small>{{ res.format }}</small>{% endif %}
+                        </a>
+                        <span>{{ '{:,}'.format(res.downloads or 0) }}</span>
+                      </li>
+                    {% endfor %}
+                  </ol>
+                {% else %}
+                  <p class="empty">{{ _('No downloads recorded yet') }}.</p>
+                {% endif %}
+              </div>
+            </div>
+
+            <h2>{{ _('Top contributors') }}</h2>
+            {% set entity_labels = {
+                 'organization': _('Organizations'),
+                 'member_state': _('Member States'),
+                 'initiative': _('Initiatives') } %}
+            <div class="admin-stats-columns">
+              {% for entity, rows in ranking.items() %}
+                <div>
+                  <h3>{{ entity_labels.get(entity, entity) }}</h3>
+                  {% if rows %}
+                    <ol class="admin-stats-list">
+                      {% for row in rows %}
+                        <li>
+                          <span>{{ row.group_title or row.group_name }}</span>
+                          <span title="{{ _('Score') }}">{{ '%.2f'|format(row.score or 0) }}</span>
+                        </li>
+                      {% endfor %}
+                    </ol>
+                  {% else %}
+                    <p class="empty">{{ _('Run') }} <code>ckan ranking recompute</code>.</p>
+                  {% endif %}
+                </div>
+              {% endfor %}
+            </div>
+
+        </div>
+    </div>
+    {% endblock %}
+</div>
+{% endblock %}

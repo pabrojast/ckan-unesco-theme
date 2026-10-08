@@ -93,6 +93,10 @@ setup(
     # http://babel.pocoo.org/docs/messages/#extraction-method-mapping-and-configuration
     message_extractors={
         'ckanext': [
+            # Las reglas se evalúan en orden: 'ignore' va primero para que la
+            # extracción no entre en Leaflet, Chart.js ni el resto de vendor.
+            ('**/public/vendor/**', 'ignore', None),
+            ('**/*.min.js', 'ignore', None),
             ('**.py', 'python', None),
             ('**.js', 'javascript', None),
             ('**/templates/**.html', 'ckan', None),

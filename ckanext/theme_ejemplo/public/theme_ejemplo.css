@@ -1,20 +1,36 @@
+/* CSS Variables - Define at the top for global availability */
+:root {
+  --unesco-blue: #0069B4;
+  --unesco-blue-dark: #005a9e;
+  --unesco-blue-light: #0077d4;
+  --unesco-blue-pale: #E8F4F8;
+  --text-primary: #212529;
+  --text-secondary: #6c757d;
+  --text-muted: #8a8a8a;
+  --shadow-light: 0 2px 4px rgba(0,0,0,0.1);
+  --shadow-medium: 0 4px 8px rgba(0,0,0,0.15);
+  --shadow-strong: 0 6px 12px rgba(0,0,0,0.2);
+  --border-radius: 0.5rem;
+  --transition: all 0.3s ease;
+}
+
 /* background before footer */
 html {
-font-family: sans-serif !important;
-font-size: 16px !important;
-line-height: 1.15 !important;
--webkit-text-size-adjust: 100% !important;
--webkit-font-smoothing: antialiased !important;
--moz-osx-font-smoothing: grayscale !important;
-width: 100% !important;
-overflow-x: hidden !important;
-scroll-behavior: smooth !important;
-scroll-padding-top: 3.5rem !important;  
+font-family: sans-serif;
+font-size: 16px;
+line-height: 1.15;
+-webkit-text-size-adjust: 100%;
+-webkit-font-smoothing: antialiased;
+-moz-osx-font-smoothing: grayscale;
+width: 100%;
+overflow-x: hidden;
+scroll-behavior: smooth;
+scroll-padding-top: 3.5rem;  
 }
 body {
-background: #fff !important;
-font-family: "Inter", sans-serif !important;
-font-size: 16px !important;
+background: #fff;
+font-family: "Inter", sans-serif;
+font-size: 16px;
 }
 header::after{
     display: block;
@@ -28,10 +44,13 @@ header::after{
     background-color: #fff;
     transition: opacity .3s;
 }
-header:hover{
+
+/* Hover effect only for homepage header (when it's transparent) */
+.masthead:hover{
     background-color: #0077d4 !important;
-    transition: opacity .3s !important;
+    transition: background-color .3s !important;
 }
+
 .page-header:hover{
     background-color: #fff !important;
 }
@@ -43,16 +62,272 @@ color: #fff !important;
 background: rgba(0, 0, 0, 0) !important;
 position: absolute !important;
 width: 100% !important;
+z-index: 1000 !important;
 }
+/* Estructura básica sin flexbox complicado */
 .masthead .logo img {
-    width: 300px !important;
-	max-height: none !important;
-/*    max-width: 9.375rem !important; */
-    padding: 15px 0;
-    max-width: 16.375rem;
+    height: 70px !important;
+    width: auto !important;
+    max-width: 400px !important;
+    padding: 8px 0;
+    display: block !important;
+    visibility: visible !important;
 }
+/* Estructura específica del header personalizado - Two Row Layout */
+.masthead .masthead-container {
+    padding: 0 15px;
+    display: flex;
+    flex-direction: column;
+}
+
+/* Primera fila: Top menu alineado a la derecha */
+.masthead .masthead-top-bar {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 5px 0;
+    min-height: 35px;
+    width: 100%;
+    text-align: left;
+    position: relative;
+    z-index: 1010;
+}
+
+.masthead .masthead-nav .masthead-brand {
+    flex-shrink: 0;
+    margin-right: 30px;
+    margin-bottom: 0;
+    display: flex;
+    align-items: center;
+}
+
+/* Top menu en la primera fila */
+.masthead .masthead-top-bar .masthead-topmenu {
+    display: flex !important;
+    align-items: center;
+    visibility: visible !important;
+    width: 100%;
+    justify-content: flex-end;
+}
+
+.masthead .masthead-nav .masthead-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: 15px;
+    flex-shrink: 0;
+}
+
+/* Estilos para el topmenu en la primera fila */
+.masthead .masthead-top-bar .masthead-topmenu ul {
+    display: flex;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    align-items: center;
+    background: transparent;
+    justify-content: flex-start;
+}
+
+.masthead .masthead-top-bar .masthead-topmenu li {
+    margin-right: 15px;
+    white-space: nowrap;
+}
+
+.masthead .masthead-top-bar .masthead-topmenu li:first-child {
+    margin-left: 0;
+}
+
+.masthead .masthead-top-bar .masthead-topmenu a {
+    color: #fff;
+    text-decoration: none;
+    font-size: 12px;
+    padding: 4px 8px;
+    font-weight: 500;
+    border-radius: 3px;
+    transition: background-color 0.2s;
+    white-space: nowrap;
+}
+
+.masthead .masthead-top-bar .masthead-topmenu a:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+/* Elementos mobile */
+.masthead .masthead-lang-mobile {
+    display: none;
+}
+
+/* Segunda fila: Logo + Navigation + Search */
+.masthead .masthead-nav {
+    width: 100%;
+    margin: 0;
+    display: flex !important;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 8px 0;
+    flex-wrap: nowrap;
+    min-height: 60px;
+    position: relative;
+    visibility: visible !important;
+    opacity: 1 !important;
+    height: auto !important;
+    overflow: visible !important;
+}
+
+/* Force desktop visibility - override any Bootstrap collapse rules */
+@media (min-width: 768px) {
+    .masthead .masthead-nav {
+        display: flex !important;
+        visibility: visible !important;
+        opacity: 1 !important;
+        height: auto !important;
+    }
+    
+    .masthead .masthead-nav .navigation,
+    .masthead .masthead-nav .site-search {
+        display: flex !important;
+        visibility: visible !important;
+    }
+    
+    .masthead .masthead-top-bar .masthead-topmenu {
+        display: flex !important;
+        visibility: visible !important;
+    }
+}
+
+/* El logo ahora está dentro de masthead-nav */
+.masthead .masthead-nav .masthead-brand .logo img {
+    height: 64px !important;
+    width: auto !important;
+    max-width: 350px !important;
+    padding: 0;
+    margin: 0;
+    display: block;
+}
+
+/* Alinear logo verticalmente en escritorio */
+.masthead .masthead-nav .masthead-brand .logo {
+    display: flex;
+    align-items: center;
+    margin-top: -50px;
+}
+
+/* Contenedor principal del header */
+.masthead .masthead-nav {
+    align-items: center;
+}
+
+.masthead .masthead-nav .navigation {
+    display: flex !important;
+    align-items: center;
+    justify-content: flex-end;
+    flex: 1;
+    margin-right: 20px;
+    visibility: visible !important;
+}
+
+.masthead .masthead-nav .navigation .nav {
+    display: flex;
+    flex-wrap: nowrap;
+    justify-content: flex-end;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+}
+
+.masthead .masthead-nav .navigation .nav li {
+    list-style: none;
+    margin-right: 18px;
+    white-space: nowrap;
+}
+
+.masthead .masthead-nav .navigation .nav li a {
+    color: white;
+    text-decoration: none;
+    font-size: 13px;
+    padding: 6px 10px;
+    border-radius: 3px;
+    transition: background-color 0.2s;
+}
+
+.masthead .masthead-nav .navigation .nav li a:hover,
+.masthead .masthead-nav .navigation .nav li.active a {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+.masthead .masthead-nav .site-search {
+    margin-left: auto;
+    max-width: 280px;
+    flex-shrink: 0;
+    width: 240px;
+    display: block !important;
+    visibility: visible !important;
+}
+
+.masthead .masthead-nav .site-search .form-control {
+    min-width: 180px;
+    width: 200px;
+    transition: width 0.3s ease;
+}
+
+.masthead .masthead-nav .site-search .form-control:focus {
+    width: 220px;
+}
+
+/* Toggle button para mobile */
+.masthead .navbar-toggle,
+.masthead .navbar-toggler {
+    border: 1px solid rgba(255, 255, 255, 0.6);
+    background: transparent;
+    color: #fff;
+    padding: 6px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    display: none; /* Hidden by default on desktop */
+}
+
+.masthead .navbar-toggle .fa,
+.masthead .navbar-toggler .fa {
+    font-size: 16px;
+}
+
+/* Mobile Navigation Collapse - Updated for two-row structure */
+.masthead .masthead-nav.collapse {
+    display: none;
+}
+
+.masthead .masthead-nav.collapse.in,
+.masthead .masthead-nav.collapse.show {
+    display: flex !important;
+    flex-direction: column;
+    width: 100%;
+}
+/* Navegación simple */
 .masthead .section {
     position: relative !important;
+}
+
+/* Navegación básica - solo lo esencial */
+.masthead .navigation .nav-pills {
+    display: flex !important;
+    margin: 0;
+    flex: 1;
+    gap: 5px;
+}
+
+.masthead .navigation .nav-pills li a {
+    color: #fff !important;
+    padding: 8px 12px !important;
+    font-weight: 500;
+    font-size: 14px;
+    border-radius: 3px;
+}
+
+.masthead .navbar-collapse {
+    display: flex !important;
+    visibility: visible !important;
+    align-items: center;
 }
 /* footer */
 .site-footer {
@@ -67,6 +342,107 @@ border-radius: 3px 3px 0 0;
 background-color: transparent !important;
 border-bottom: none;
 }
+
+/* Make the entire search module container transparent */
+.homepage .module-search {
+    background-color: transparent !important;
+}
+
+/* Make search form and input with WHITE background and clean borders */
+.homepage .module-search .search-form {
+    background-color: transparent !important;
+}
+
+.homepage .module-search .search-input {
+    position: relative !important;
+    background-color: transparent !important;
+    display: flex !important;
+    align-items: stretch !important;
+}
+
+.homepage .module-search .search-input input {
+    flex: 1 !important;
+}
+
+.homepage .module-search input[type="text"],
+.homepage .module-search .form-control {
+    background-color: rgba(255, 255, 255, 0.95) !important;
+    border: 1px solid #d5dadd !important;
+    color: #212529 !important;
+    border-radius: 3px 0 0 3px !important;
+    padding: 12px 15px !important;
+    font-size: 16px !important;
+    line-height: 1.5 !important;
+}
+
+/* Search input placeholder */
+.homepage .module-search input::placeholder {
+    color: #8a8a8a !important;
+}
+
+/* Search button - aligned perfectly with input */
+.homepage .module-search .search-input button {
+    position: relative !important;
+    width: 60px !important;
+    min-width: 60px !important;
+    align-self: stretch !important;
+    background-color: #0069B4 !important;
+    background-color: var(--unesco-blue) !important;
+    border: 1px solid #0069B4 !important;
+    border: 1px solid var(--unesco-blue) !important;
+    border-left: none !important;
+    color: white !important;
+    border-radius: 0 3px 3px 0 !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    z-index: 10 !important;
+    transition: background-color 0.2s ease !important;
+}
+
+.homepage .module-search .search-input.search-giant {
+    position: relative !important;
+    display: flex !important;
+    align-items: stretch !important;
+}
+
+.homepage .module-search .search-input.search-giant input[type="text"],
+.homepage .module-search .search-input.search-giant .form-control {
+    padding-right: 70px !important;
+    height: 100% !important;
+}
+
+.homepage .module-search .search-input.search-giant button[type="submit"] {
+    position: absolute !important;
+    inset: 0 0 0 auto !important;
+    margin: 0 !important;
+    width: 60px !important;
+    min-width: 60px !important;
+    height: 100% !important;
+    border-radius: 0 3px 3px 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+
+.homepage .module-search .search-input button i,
+.homepage .module-search .search-input button .fa,
+.homepage .module-search .search-input button .fa-search {
+    color: white !important;
+    font-size: 16px !important;
+}
+
+.homepage .module-search .search-input button:hover {
+    background-color: #005a9e !important;
+    background-color: var(--unesco-blue-dark) !important;
+    border-color: #005a9e !important;
+    border-color: var(--unesco-blue-dark) !important;
+}
+
 /*search margin */
 .homepage .module-search {
     margin-top: 5px;
@@ -83,14 +459,164 @@ background-color: transparent !important;
 border-radius: 0 0 3px 3px;
 }
 
+/* Mobile responsive styles */
 @media (max-width: 768px){
-    .masthead .logo img {
-        max-width: 9.375rem !important;
+    /* Logo más pequeño en mobile */
+    .masthead .masthead-nav .masthead-brand .logo img {
+        height: 44px !important;
+        max-width: 250px !important;
     }
-    .topmenu{
+    
+    /* Mostrar top menu en mobile con layout compacto */
+    .masthead .masthead-top-bar {
+        display: block !important;
+        padding: 5px 0 !important;
+    }
+    
+    /* Restructurar masthead-nav para mobile */
+    .masthead .masthead-nav {
+        flex-direction: row;
+        justify-content: space-between;
+        align-items: flex-start;
+        padding: 10px 0;
+        flex-wrap: wrap;
+        position: relative;
+        z-index: 1000;
+    }
+    
+    /* Ocultar navegación principal en mobile por defecto */
+    .masthead .masthead-nav .navigation {
+        display: none !important;
+        width: 100%;
+        margin-top: 15px;
+        order: 3;
+        opacity: 0;
+        transform: translateY(-10px);
+        transition: all 0.3s ease;
+    }
+    
+    /* Ocultar search en mobile */
+    .masthead .masthead-nav .site-search {
         display: none !important;
     }
+    
+    /* Mostrar toggle button en mobile */
+    .masthead .masthead-nav .navbar-toggle,
+    .masthead .masthead-nav .navbar-toggler {
+        display: inline-flex !important;
+        align-items: center;
+        justify-content: center;
+        order: 2;
+        width: 38px;
+        height: 38px;
+        padding: 8px;
+        background: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.65);
+        border-radius: 6px;
+        line-height: 1;
+    }
+
+    .masthead .masthead-nav .navbar-toggle .fa,
+    .masthead .masthead-nav .navbar-toggler .fa {
+        font-size: 16px;
+    }
+    
+    .masthead .masthead-actions {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+    }
+    
+    .masthead .masthead-login-mobile {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+    }
+    
+    .masthead .masthead-login-mobile .btn {
+        padding: 6px 10px !important;
+        font-size: 12px !important;
+        line-height: 1.2 !important;
+    }
+    
+    /* Mostrar lang mobile */
+    .masthead .masthead-lang-mobile {
+        display: block;
+    }
+    
+    /* Cuando se activa el collapse, mostrar navigation */
+    .masthead .masthead-nav.show .navigation,
+    .masthead .masthead-nav.in .navigation {
+        display: flex !important;
+        flex-direction: column;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        width: 100%;
+        margin-top: 0;
+        background-color: #0077d4;
+        border-radius: 0 0 8px 8px;
+        padding: 20px 15px;
+        box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+        z-index: 9999;
+        opacity: 1 !important;
+        transform: translateY(0) !important;
+        animation: slideDown 0.3s ease;
+    }
+    
+    @keyframes slideDown {
+        from {
+            opacity: 0;
+            transform: translateY(-20px);
+        }
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+    
+    .masthead .masthead-nav.show .navigation .nav,
+    .masthead .masthead-nav.in .navigation .nav {
+        flex-direction: column;
+        width: 100%;
+        margin: 0;
+        padding: 0;
+    }
+    
+    .masthead .masthead-nav.show .navigation .nav li,
+    .masthead .masthead-nav.in .navigation .nav li {
+        margin-bottom: 8px;
+        margin-right: 0;
+        width: 100%;
+        text-align: left;
+    }
+    
+    .masthead .masthead-nav.show .navigation .nav li a,
+    .masthead .masthead-nav.in .navigation .nav li a {
+        display: block;
+        width: 100%;
+        padding: 15px 20px;
+        background-color: rgba(255, 255, 255, 0.08);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 6px;
+        color: white !important;
+        text-decoration: none;
+        font-size: 15px;
+        font-weight: 500;
+        transition: all 0.2s ease;
+        box-sizing: border-box;
+    }
+    
+    .masthead .masthead-nav.show .navigation .nav li a:hover,
+    .masthead .masthead-nav.in .navigation .nav li a:hover {
+        background-color: rgba(255, 255, 255, 0.15);
+        border-color: rgba(255, 255, 255, 0.2);
+        transform: translateY(-1px);
+    }
 }
+
+/* Eliminado - causaba conflictos */
 
 
 @media (min-width: 993px){
@@ -132,31 +658,224 @@ border-radius: 0 0 3px 3px;
 
 
 
-/* padding fix */
-@media (max-width: 1200px) {
-    .masthead .site-search {
-        /* padding-top: 9rem !important; */
-        display:none !important;
-  }
-  
-}
-@media (min-width: 768px) and (max-width: 991px){
-	.masthead .navigation.section {
-		float: right;
-        /* padding-top: 9rem !important; */
+/* Improved responsive behavior for header */
 
-	}
-    .navbar-collapse.collapse {
-        display: flex !important;
-    }
+/* Large screens - show everything */
+@media (min-width: 1200px) {
     .masthead .site-search {
-        /* padding-top: 9rem !important; */
-        display:none !important;
-  }
+        display: block !important;
+        max-width: 280px;
+    }
+    
+    .masthead .masthead-nav .navigation .nav li {
+        margin-right: 20px;
+    }
+    
+    .masthead .masthead-nav .navigation .nav li a {
+        font-size: 14px;
+        padding: 6px 12px;
+    }
 }
-@media (min-width: 768px) {
-    #main-navigation-toggle {
+
+/* Medium-large screens - reduce search, adjust spacing */
+@media (min-width: 992px) and (max-width: 1199px) {
+    .masthead .site-search {
+        display: block !important;
+        max-width: 200px;
+    }
+    
+    .masthead .site-search .form-control {
+        width: 160px;
+        min-width: 160px;
+    }
+    
+    .masthead .masthead-nav .navigation .nav li {
+        margin-right: 15px;
+    }
+    
+    .masthead .masthead-nav .navigation .nav li a {
+        font-size: 13px;
+        padding: 5px 8px;
+    }
+}
+
+/* Medium screens - hide search, compact menu */
+@media (min-width: 768px) and (max-width: 991px) {
+    .masthead .site-search {
+        display: none !important;
+    }
+    
+    .masthead .masthead-nav .navigation {
+        margin-right: 0;
+    }
+    
+    .masthead .masthead-nav .navigation .nav li {
+        margin-right: 10px;
+    }
+    
+    .masthead .masthead-nav .navigation .nav li a {
+        font-size: 12px;
+        padding: 4px 6px;
+    }
+    
+    /* Hide longer menu items on medium screens if needed */
+    .masthead .masthead-top-bar .masthead-topmenu li:first-child {
+        display: none;
+    }
+}
+
+/* Small-medium screens - further compact */
+@media (min-width: 600px) and (max-width: 767px) {
+    .masthead .masthead-top-bar {
+        display: block !important;
+        padding: 5px 0 !important;
+    }
+    
+    .masthead .masthead-nav .navigation .nav li {
+        margin-right: 8px;
+    }
+    
+    .masthead .masthead-nav .navigation .nav li a {
+        font-size: 11px;
+        padding: 3px 5px;
+    }
+    
+    /* Hide some less critical nav items */
+    .masthead .masthead-nav .navigation .nav li:last-child {
+        display: none;
+    }
+}
+
+/* Critical fix for problematic resolutions like in the image */
+@media (min-width: 768px) and (max-width: 850px) {
+    .masthead .masthead-nav .navigation .nav li a {
+        font-size: 11px !important;
+        padding: 3px 4px !important;
+    }
+    
+    .masthead .masthead-nav .navigation .nav li {
+        margin-right: 6px !important;
+    }
+    
+    /* Hide "About IHP" link in tight spaces */
+    .masthead .masthead-nav .navigation .nav li:last-child {
+        display: none !important;
+    }
+}
+
+/* Very tight spaces - aggressive compacting */
+@media (min-width: 768px) and (max-width: 820px) {
+    .masthead .masthead-nav .navigation .nav li:nth-last-child(2) {
+        display: none !important;
+    }
+}
+
+/* Emergency fallback for extremely tight spaces */
+@media (min-width: 768px) and (max-width: 800px) {
+    .masthead .masthead-nav .navigation {
+        display: none !important;
+    }
+    
+    .masthead .masthead-nav .navbar-toggle,
+    .masthead .masthead-nav .navbar-toggler {
+        display: block !important;
+    }
+    
+    .masthead .masthead-nav.show .navigation,
+    .masthead .masthead-nav.in .navigation {
         display: flex !important;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: rgba(0, 119, 212, 0.95);
+        flex-direction: column;
+        padding: 15px;
+        z-index: 1000;
+        border-radius: 0 0 8px 8px;
+    }
+}
+
+/* Mantener menú y buscador dentro del ancho disponible, también al enfocar. */
+@media (min-width: 768px) {
+    .masthead .masthead-nav {
+        flex-wrap: wrap;
+        gap: 8px 16px;
+    }
+
+    .masthead .masthead-nav .navigation {
+        flex: 1 1 460px;
+        min-width: 0;
+        margin-right: 0;
+    }
+
+    .masthead .masthead-nav .navigation .nav {
+        flex-wrap: wrap;
+        row-gap: 6px;
+        max-width: 100%;
+    }
+
+    .masthead .masthead-nav .site-search {
+        flex: 0 1 240px;
+        width: 240px;
+        min-width: 0;
+        max-width: 100%;
+    }
+
+    .masthead .masthead-nav .site-search .field {
+        width: 100%;
+        min-width: 0;
+    }
+
+    .masthead .masthead-nav .site-search .form-control,
+    .masthead .masthead-nav .site-search .form-control:focus {
+        width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+    }
+}
+
+/* Igualar la especificidad de la regla que fuerza el buscador en escritorio. */
+@media (min-width: 768px) and (max-width: 991px) {
+    .masthead .masthead-nav .site-search {
+        display: none !important;
+    }
+}
+
+/* Ensure mobile menu can close when toggler is pressed again */
+@media (max-width: 768px) {
+    body .masthead .masthead-nav:not(.show):not(.in) .navigation {
+        display: none !important;
+        opacity: 0 !important;
+        transform: translateY(-10px) !important;
+    }
+}
+
+/* Ensure mobile menu can close when toggler is pressed again */
+@media (max-width: 768px) {
+    body .masthead .masthead-nav:not(.show):not(.in) .navigation {
+        display: none !important;
+        opacity: 0 !important;
+        transform: translateY(-10px) !important;
+    }
+}
+@media (min-width: 769px) {
+    .masthead .navbar-collapse {
+        display: block !important;
+        visibility: visible !important;
+    }
+    
+    .masthead .masthead-lang-mobile {
+        display: none;
+    }
+    
+    .masthead .masthead-topmenu {
+        display: flex;
+    }
+    
+    .masthead .navbar-toggle,
+    .masthead .navbar-toggler {
+        display: none !important;
     }
 }
   /* The "navigation pills" in the masthead (the links to Datasets,
@@ -191,6 +910,57 @@ border-radius: 0 0 3px 3px;
     border-left: 1px solid #fff !important;
 }
 
+/* Admin dropdown in account masthead */
+.admin-dropdown-wrapper {
+    position: relative;
+}
+.admin-dropdown-toggle {
+    cursor: pointer;
+}
+.admin-dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    z-index: 9999;
+    min-width: 200px;
+    padding: 6px 0;
+    margin: 0;
+    list-style: none;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.18);
+}
+.admin-dropdown-wrapper:hover .admin-dropdown-menu,
+.admin-dropdown-wrapper.open .admin-dropdown-menu {
+    display: block;
+}
+.admin-dropdown-menu li {
+    float: none !important;
+    display: block !important;
+    border-left: none !important;
+}
+.admin-dropdown-menu li a {
+    display: block !important;
+    padding: 8px 16px !important;
+    color: #333 !important;
+    font-size: 13px;
+    white-space: nowrap;
+    text-decoration: none !important;
+    line-height: 1.5;
+}
+.admin-dropdown-menu li a:hover {
+    background: #f0f6fc !important;
+    color: #0069B4 !important;
+}
+.admin-dropdown-menu li a .fa {
+    width: 18px;
+    text-align: center;
+    margin-right: 6px;
+    color: #0069B4;
+}
+
 /* bottom rectangles*/
 .col-xs-1, .col-sm-1, .col-md-1, .col-lg-1, .col-xs-2, .col-sm-2, .col-md-2, .col-lg-2, .col-xs-3, .col-sm-3, .col-md-3, .col-lg-3, .col-xs-4, .col-sm-4, .col-md-4, .col-lg-4, .col-xs-5, .col-sm-5, .col-md-5, .col-lg-5, .col-xs-6, .col-sm-6, .col-md-6, .col-lg-6, .col-xs-7, .col-sm-7, .col-md-7, .col-lg-7, .col-xs-8, .col-sm-8, .col-md-8, .col-lg-8, .col-xs-9, .col-sm-9, .col-md-9, .col-lg-9, .col-xs-10, .col-sm-10, .col-md-10, .col-lg-10, .col-xs-11, .col-sm-11, .col-md-11, .col-lg-11, .col-xs-12, .col-sm-12, .col-md-12, .col-lg-12 {
     position: relative;
@@ -203,7 +973,7 @@ border-radius: 0 0 3px 3px;
 
 .homepage .row {
     position: relative;
-    background: #fff;
+    background: transparent !important;
 }
 .masthead .navigation .nav-pills li a:hover, .masthead .navigation .nav-pills li a:focus, .masthead .navigation .nav-pills li.active a {
     background-color: transparent !important;
@@ -217,14 +987,10 @@ border-radius: 0 0 3px 3px;
     color: #212529 !important;
 }
 
-.btn-primary {
-    background-color: #0069B4 !important;
-    border-color: #212529 !important;
-}
-
 .lang-select label, .lang-select select, .lang-select .lang-container {
     max-width: 300px !important;
 }
+/* Old topmenu styles - disabled for single-line layout
 .topmenu{
     padding-left: 0;
     margin-bottom: 0;
@@ -241,6 +1007,7 @@ border-radius: 0 0 3px 3px;
     padding-right: 1rem;
     padding-left: 1rem;
 }
+*/
 .main {
     padding-top: 9rem !important;
     z-index: 0;
@@ -333,19 +1100,9 @@ p {
     width: 100%;
 }
 img {
-    border-style: none;
     max-width: 100%;
     height: auto;
-}
-img {
     vertical-align: middle;
-    border-style: none;
-}
-img {
-    vertical-align: middle;
-    border-style: none;
-}
-img {
     border-style: none;
 }
 .is-drupal .card-body {
@@ -483,7 +1240,8 @@ img {
     display: -webkit-box;
     -webkit-box-orient: vertical;
     -webkit-line-clamp: 2;
-    max-height: 2.8rem;
+    /* 2 lineas a line-height 1.3 ocupan ~2.93rem; 2.8rem decapitaba la 2a */
+    max-height: 3rem;
 }
 .cardsmall-text {
     font-size: 1rem;
@@ -553,15 +1311,6 @@ img {
 }
 .page-header.module-content {
     background: #fff;
-}
-.page-header .content_action {
-    float: right;
-    margin-top: -40px;
-}
-.page-header .content_action {
-    float: none !important;
-    margin-top: 0 !important;
-    text-align: right;
 }
 .page-header .nav-tabs {
     float: none !important;
@@ -691,8 +1440,43 @@ img {
     }
 }
 
+/* Search field improvements */
 .masthead .site-search input {
-    width: 100px !important;
+    border: 1px solid rgba(255, 255, 255, 0.3) !important;
+    background: transparent !important;
+    color: white !important;
+    border-radius: 4px !important;
+    padding: 8px 40px 8px 12px !important;
+}
+
+.masthead .site-search input::placeholder {
+    color: rgba(255, 255, 255, 0.7) !important;
+}
+
+.masthead .site-search input:focus {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-color: rgba(255, 255, 255, 0.5) !important;
+    outline: none !important;
+    box-shadow: 0 0 5px rgba(255, 255, 255, 0.3) !important;
+}
+
+.masthead .site-search .btn-search {
+    border: none !important;
+    background: transparent !important;
+    color: rgba(255, 255, 255, 0.8) !important;
+    position: absolute !important;
+    right: 8px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important;
+    padding: 4px !important;
+}
+
+.masthead .site-search .btn-search:hover {
+    color: white !important;
+}
+
+.masthead .site-search .field {
+    position: relative !important;
 }
 .d-flex {
     display: flex !important;
@@ -805,8 +1589,12 @@ a.heading.truncate {
   right: 0;
   padding: 1.5rem;
   background: linear-gradient(to top, rgba(0,0,0,0.9), rgba(0,0,0,0.4) 80%, rgba(0,0,0,0));
-  color: #fff;
+  color: #fff !important;
   overflow: hidden;
+}
+
+.slide-content * {
+  color: #fff;
 }
 
 .slide-content h2 {
@@ -892,7 +1680,8 @@ a.heading.truncate {
   border-radius: 0.5rem;
   overflow: hidden;
   box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-  height: 160px;
+  /* min-height en vez de height: el contenido con boton (ej. View all news) supera los 160px y se cortaba */
+  min-height: 160px;
   display: flex;
   align-items: center;
   border-bottom: none;
@@ -944,9 +1733,36 @@ a.heading.truncate {
   0 0 1px rgba(0, 0, 0, 0.2);
 }
 
+.section-title-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin-top: 0.75rem;
+  padding: 0.4rem 0.9rem;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  border-radius: 999px;
+  font-size: 0.95rem;
+  text-decoration: none;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.section-title-link:hover,
+.section-title-link:focus {
+  background: rgba(255, 255, 255, 0.3);
+  color: #fff;
+  text-decoration: none;
+  transform: translateX(2px);
+}
+
+.section-title-link .fa {
+  font-size: 0.85rem;
+}
+
 @media (max-width: 768px) {
   .section-title {
-    height: 140px;
+    min-height: 140px;
   }
   
   .section-title h2 {
@@ -1031,7 +1847,7 @@ a.heading.truncate {
   display: -webkit-box;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
-  max-height: 2.8rem;
+  max-height: 3rem;
 }
 
 .cardsmall-text {
@@ -1084,6 +1900,52 @@ a.heading.truncate {
 /* Fix column spacing */
 .col3, .col2 {
   margin-bottom: 1.5rem;
+}
+
+/* Ensure Thematic Viewers grid layout works properly */
+.module-content .row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-right: -15px;
+  margin-left: -15px;
+}
+
+.module-content .row .col-md-4 {
+  flex: 0 0 33.333333%;
+  max-width: 33.333333%;
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-bottom: 30px;
+}
+
+/* Support for 4-column layout (IHP Education) */
+.module-content .row .col-md-3 {
+  flex: 0 0 25%;
+  max-width: 25%;
+  padding-right: 15px;
+  padding-left: 15px;
+  margin-bottom: 30px;
+}
+
+/* Responsive behavior for all grid layouts */
+@media (max-width: 991px) {
+  .module-content .row .col-md-4 {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+  
+  .module-content .row .col-md-3 {
+    flex: 0 0 50%;
+    max-width: 50%;
+  }
+}
+
+@media (max-width: 767px) {
+  .module-content .row .col-md-4,
+  .module-content .row .col-md-3 {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
 }
 
 /* Make images consistent size */
@@ -1222,4 +2084,5970 @@ h2.page-heading {
   background-position: -2620px -220px;
   transform: scale(0.53);
   margin: -14px 0 0 -14px;
+}
+
+/* ===== FUNCIONALIDAD DE "LEER MÁS" ===== */
+
+/* Mejoras en las tarjetas pequeñas con truncamiento inteligente */
+.cardsmall-text-enhanced {
+  font-size: 1rem;
+  line-height: 1.5;
+  flex: 1 1 auto;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.cardsmall-text-enhanced .text-content {
+  position: relative;
+}
+
+.cardsmall-text-enhanced .text-preview {
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 0.5rem;
+}
+
+.cardsmall-text-enhanced .text-full {
+  display: none;
+  margin-bottom: 0.5rem;
+}
+
+.cardsmall-text-enhanced .text-full.show {
+  display: block;
+}
+
+.cardsmall-text-enhanced .text-preview.hide {
+  display: none;
+}
+
+.read-more-btn {
+  background: none;
+  border: none;
+  color: var(--unesco-blue);
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 0.25rem 0;
+  text-decoration: none;
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.read-more-btn:hover {
+  color: var(--unesco-blue-dark);
+  text-decoration: none;
+}
+
+.read-more-btn i {
+  font-size: 0.8rem;
+  transition: transform 0.3s ease;
+}
+
+.read-more-btn.expanded i {
+  transform: rotate(180deg);
+}
+
+/* ===== MEJORAS EN TARJETAS EXISTENTES ===== */
+
+/* Mejoras en tarjetas grandes */
+.card-enhanced {
+  box-shadow: var(--shadow-light);
+  border-radius: var(--border-radius);
+  transition: var(--transition);
+  overflow: hidden;
+  border: 1px solid #f0f0f0;
+}
+
+.card-enhanced:hover {
+  box-shadow: var(--shadow-medium);
+  transform: translateY(-2px);
+}
+
+.card-text-enhanced {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+}
+
+.card-text-enhanced .text-content {
+  position: relative;
+}
+
+.card-text-enhanced .text-preview {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-bottom: 0.5rem;
+}
+
+.card-text-enhanced .text-full {
+  display: none;
+  margin-bottom: 0.5rem;
+}
+
+.card-text-enhanced .text-full.show {
+  display: block;
+}
+
+.card-text-enhanced .text-preview.hide {
+  display: none;
+}
+
+/* Mejoras en tarjetas pequeñas */
+.cardsmall-enhanced {
+  box-shadow: var(--shadow-light);
+  border-radius: var(--border-radius);
+  transition: var(--transition);
+  overflow: hidden;
+  border: 1px solid #f0f0f0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.cardsmall-enhanced:hover {
+  box-shadow: var(--shadow-medium);
+  transform: translateY(-2px);
+}
+
+.cardsmall-body-enhanced {
+  flex: 1 1 auto;
+  padding: 1.5rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.cardsmall-title-enhanced {
+  font-size: 1.125rem;
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--text-primary);
+  margin-bottom: 0.75rem;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  text-overflow: ellipsis;
+  max-height: 3rem;
+}
+
+.cardsmall-title-enhanced a {
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: var(--transition);
+}
+
+.cardsmall-title-enhanced a:hover {
+  color: var(--unesco-blue);
+  text-decoration: none;
+}
+
+/* ===== MEJORAS EN BOTONES ===== */
+
+.btn-enhanced {
+  border-radius: 25px;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  text-decoration: none;
+  transition: var(--transition);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  border: 2px solid transparent;
+  cursor: pointer;
+}
+
+.btn-primary-enhanced {
+  background: linear-gradient(135deg, var(--unesco-blue) 0%, var(--unesco-blue-dark) 100%);
+  color: white;
+  border-color: var(--unesco-blue);
+}
+
+.btn-primary-enhanced:hover {
+  background: linear-gradient(135deg, var(--unesco-blue-dark) 0%, var(--unesco-blue) 100%);
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-medium);
+  text-decoration: none;
+}
+
+.btn-outline-enhanced {
+  background: transparent;
+  color: var(--unesco-blue);
+  border-color: var(--unesco-blue);
+}
+
+.btn-outline-enhanced:hover {
+  background: var(--unesco-blue);
+  color: white;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-light);
+  text-decoration: none;
+}
+
+/* ===== MEJORAS EN IMÁGENES ===== */
+
+.cardsmall-img-enhanced {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+  border-radius: var(--border-radius) var(--border-radius) 0 0;
+  transition: var(--transition);
+}
+
+.cardsmall-enhanced:hover .cardsmall-img-enhanced {
+  transform: scale(1.05);
+}
+
+.card-img-enhanced {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: var(--border-radius) var(--border-radius) 0 0;
+  transition: var(--transition);
+}
+
+.card-enhanced:hover .card-img-enhanced {
+  transform: scale(1.05);
+}
+
+/* ===== MEJORAS EN ORGANIZACIÓN EXISTENTE ===== */
+
+.cardsmall-img-top2-enhanced {
+  width: 100%;
+  height: 140px;
+  object-fit: contain;
+  padding: 10px;
+  background: white;
+  border-radius: var(--border-radius) var(--border-radius) 0 0;
+  transition: var(--transition);
+}
+
+.cardsmall-enhanced:hover .cardsmall-img-top2-enhanced {
+  transform: scale(1.02);
+}
+
+/* Clase específica para imágenes de Thematic Viewers */
+.cardsmall-img-thematic-enhanced {
+  width: 100%;
+  height: 140px;
+  object-fit: cover;
+  padding: 0;
+  background: white;
+  border-radius: var(--border-radius) var(--border-radius) 0 0;
+  transition: var(--transition);
+}
+
+.cardsmall-enhanced:hover .cardsmall-img-thematic-enhanced {
+  transform: scale(1.05);
+}
+
+/* ===== MEJORAS EN SECCIÓN DE TÍTULO ===== */
+
+.section-title-enhanced {
+  position: relative;
+  margin-bottom: 2rem;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(0, 114, 188, 0.12);
+  min-height: 140px;
+  display: flex;
+  align-items: center;
+  transition: all 0.3s ease;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+}
+
+/* Soporte para preferencias de movimiento reducido */
+@media (prefers-reduced-motion: reduce) {
+  .section-title-enhanced,
+  .section-title-enhanced .section-title-bg,
+  .section-title-enhanced .section-title-overlay,
+  .section-title-enhanced .section-title-content {
+    transition: none;
+  }
+  
+  .section-title-enhanced:hover,
+  .section-title-enhanced:focus-within {
+    transform: none;
+  }
+  
+  .section-title-enhanced:hover .section-title-bg,
+  .section-title-enhanced:hover .section-title-content {
+    transform: none;
+  }
+}
+
+/* Efectos de presión táctil para dispositivos móviles */
+@media (hover: none) and (pointer: coarse) {
+  .section-title-enhanced:active {
+    transform: scale(0.98);
+  }
+  
+  .section-title-enhanced:active .section-title-content {
+    transform: scale(0.98);
+  }
+}
+
+.section-title-enhanced:hover,
+.section-title-enhanced:focus-within {
+  box-shadow: 0 8px 32px rgba(0, 114, 188, 0.16);
+  transform: translateY(-2px);
+}
+
+.section-title-enhanced:focus-within {
+  outline: 2px solid rgba(255, 255, 255, 0.5);
+  outline-offset: 2px;
+}
+
+.section-title-enhanced .section-title-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  filter: brightness(0.8);
+  transition: transform 0.3s ease;
+}
+
+.section-title-enhanced:hover .section-title-bg {
+  transform: scale(1.02);
+}
+
+.section-title-enhanced .section-title-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, rgba(0, 114, 188, 0.9) 0%, rgba(0, 158, 224, 0.8) 100%);
+  backdrop-filter: blur(2px);
+  transition: opacity 0.3s ease;
+}
+
+.section-title-enhanced:hover .section-title-overlay {
+  opacity: 0.95;
+}
+
+.section-title-enhanced .section-title-content {
+  position: relative;
+  z-index: 10;
+  padding: 2rem 2.5rem;
+  color: white;
+  text-align: center;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100%;
+  transition: transform 0.3s ease;
+}
+
+.section-title-enhanced:hover .section-title-content {
+  transform: scale(1.02);
+}
+
+.section-title-enhanced h2 {
+  font-size: 2.5rem !important;
+  font-weight: 700 !important;
+  margin-bottom: 1rem !important;
+  color: #fff !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  text-shadow: 2px 2px 8px rgba(0,0,0,0.4);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+
+/* Override any inherited h2 styles with maximum specificity for homepage titles */
+body .homepage .section-title-enhanced h2,
+body .container .section-title-enhanced h2,
+body section.module .section-title-enhanced h2,
+body .module-content .section-title-enhanced h2,
+.homepage .section-title-enhanced h2,
+.container .section-title-enhanced h2 {
+  color: #fff !important;
+  background: transparent !important;
+  background-color: transparent !important;
+  border: none !important;
+  margin: 0 0 1rem 0 !important;
+}
+
+.section-title-enhanced .section-title-description {
+  font-size: 1.2rem;
+  font-weight: 300;
+  opacity: 0.95;
+  max-width: 85%;
+  margin: 0 auto;
+  text-shadow: 1px 1px 4px rgba(0,0,0,0.4);
+  line-height: 1.4;
+}
+
+/* ===== MEJORAS EN BADGES ===== */
+
+.badge-enhanced {
+  padding: 0.4rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  box-shadow: var(--shadow-light);
+  transition: var(--transition);
+}
+
+.badge-members-enhanced {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  color: white;
+}
+
+.badge-coming-soon-enhanced {
+  background: linear-gradient(135deg, #e63946 0%, #dc3545 100%);
+  color: white;
+}
+
+.badge-enhanced:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-medium);
+}
+
+/* ===== MEJORAS EN LAYOUT Y ESPACIADO ===== */
+
+/* Mejor espaciado entre elementos */
+.col-enhanced {
+  margin-bottom: 2rem;
+}
+
+/* Mejor alineación de contenido */
+.content-wrapper-enhanced {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.content-body-enhanced {
+  flex: 1 1 auto;
+}
+
+.content-footer-enhanced {
+  margin-top: auto;
+  padding-top: 1rem;
+  border-top: 1px solid #f0f0f0;
+}
+
+/* ===== MEJORAS EN HOVER EFFECTS ===== */
+
+.hover-lift {
+  transition: var(--transition);
+}
+
+.hover-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-medium);
+}
+
+.hover-scale {
+  transition: var(--transition);
+}
+
+.hover-scale:hover {
+  transform: scale(1.02);
+}
+
+/* ===== MEJORAS EN TIPOGRAFÍA ===== */
+
+.text-truncate-enhanced {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.text-truncate-lines-2 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  text-overflow: ellipsis;
+}
+
+.text-truncate-lines-3 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  text-overflow: ellipsis;
+}
+
+.text-truncate-lines-4 {
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  text-overflow: ellipsis;
+}
+
+/* ===== MEJORAS EN RESPONSIVIDAD ===== */
+
+@media (max-width: 768px) {
+  .section-title-enhanced {
+    height: auto;
+    min-height: 180px;
+  }
+  
+  .section-title-enhanced h2 {
+    font-size: 2rem;
+  }
+  
+  .section-title-enhanced .section-title-description {
+    font-size: 1.1rem;
+  }
+  
+  .section-title-enhanced .section-title-content {
+    padding: 1.25rem 1.5rem;
+  }
+  
+  .cardsmall-title-enhanced {
+    font-size: 1rem;
+  }
+  
+  .cardsmall-img-enhanced,
+  .cardsmall-img-top2-enhanced {
+    height: 120px;
+  }
+  
+  .card-img-enhanced {
+    height: 160px;
+  }
+  
+  .read-more-btn {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .section-title-enhanced {
+    height: auto;
+    min-height: 160px;
+  }
+  
+  .section-title-enhanced h2 {
+    font-size: 1.7rem;
+  }
+  
+  .section-title-enhanced .section-title-description {
+    font-size: 0.95rem;
+  }
+  
+  .cardsmall-body-enhanced {
+    padding: 1rem;
+  }
+  
+  .cardsmall-title-enhanced {
+    font-size: 0.95rem;
+  }
+  
+  .cardsmall-img-enhanced,
+  .cardsmall-img-top2-enhanced {
+    height: 100px;
+  }
+  
+  .card-img-enhanced {
+    height: 140px;
+  }
+  
+  .btn-enhanced {
+    padding: 0.6rem 1.2rem;
+    font-size: 0.9rem;
+  }
+}
+
+/* ===== MEJORAS EN ANIMACIONES ===== */
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-out;
+}
+
+@keyframes slideDown {
+  from {
+    max-height: 0;
+    opacity: 0;
+  }
+  to {
+    max-height: 200px;
+    opacity: 1;
+  }
+}
+
+.slide-down {
+  animation: slideDown 0.3s ease-out;
+}
+
+/* ===== MEJORAS EN ACCESIBILIDAD ===== */
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.focus-visible {
+  outline: 2px solid var(--unesco-blue);
+  outline-offset: 2px;
+}
+
+/* ===== MEJORAS EN CONSISTENCIA DE COLORES ===== */
+
+.text-primary-enhanced {
+  color: var(--text-primary) !important;
+}
+
+.text-secondary-enhanced {
+  color: var(--text-secondary) !important;
+}
+
+.text-muted-enhanced {
+  color: var(--text-muted) !important;
+}
+
+.text-unesco-blue {
+  color: var(--unesco-blue) !important;
+}
+
+.bg-unesco-blue {
+  background-color: var(--unesco-blue) !important;
+}
+
+.bg-unesco-blue-pale {
+  background-color: var(--unesco-blue-pale) !important;
+}
+
+/* ===== MEJORAS EN LOADER Y ESTADOS ===== */
+
+.loading-spinner {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  border: 3px solid #f3f3f3;
+  border-top: 3px solid var(--unesco-blue);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* ===== MEJORAS ESPECÍFICAS PARA CONTENIDO LARGO ===== */
+
+.content-expandable {
+  position: relative;
+  overflow: hidden;
+  transition: var(--transition);
+}
+
+.content-expandable.collapsed {
+  max-height: 120px;
+}
+
+.content-expandable.expanded {
+  max-height: none;
+}
+
+.content-fade-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 40px;
+  background: linear-gradient(to bottom, transparent, #f1f4f6);
+  pointer-events: none;
+  transition: var(--transition);
+}
+
+.content-expandable.expanded .content-fade-overlay {
+  opacity: 0;
+}
+
+/* ===== CKAN TAG AND LABEL STYLES (CKAN 2.10 Compatible with SchemingDCAT) ===== */
+
+/* Force tag/label styling with high specificity - CKAN 2.10 Override */
+body .tag, 
+body .label, 
+body .badge-label,
+.dataset-item .tag,
+.dataset-item .label,
+.dataset-item .badge-label,
+.dataset-resources .tag,
+.dataset-resources .label,
+.dataset-resources .badge-label,
+ul.dataset-resources li .tag,
+ul.dataset-resources li .label,
+ul.dataset-resources li .badge-label {
+  display: inline-block !important;
+  padding: 3px 8px !important;
+  margin: 2px 4px 2px 0 !important;
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  line-height: 14px !important;
+  color: #ffffff !important;
+  text-decoration: none !important;
+  white-space: nowrap !important;
+  vertical-align: baseline !important;
+  border-radius: 3px !important;
+  background-color: #999999 !important;
+  transition: all 0.2s ease !important;
+  border: none !important;
+  text-transform: uppercase !important;
+}
+
+body .tag:hover, 
+body .label:hover, 
+body .badge-label:hover,
+.dataset-item .tag:hover,
+.dataset-item .label:hover,
+.dataset-item .badge-label:hover,
+.dataset-resources .tag:hover,
+.dataset-resources .label:hover,
+.dataset-resources .badge-label:hover {
+  text-decoration: none !important;
+  background-color: #777777 !important;
+  color: #ffffff !important;
+}
+
+/* SchemingDCAT specific badges */
+.badge {
+  display: inline-block;
+  padding: 3px 8px;
+  margin: 2px 4px 2px 0;
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 14px;
+  text-align: center;
+  text-decoration: none;
+  white-space: nowrap;
+  vertical-align: baseline;
+  border-radius: 3px;
+  color: #ffffff;
+  transition: all 0.2s ease;
+}
+
+.badge-info {
+  background-color: #5bc0de;
+}
+
+.badge-info:hover {
+  background-color: #46b8da;
+}
+
+.badge-danger {
+  background-color: #d9534f;
+}
+
+.badge-danger:hover {
+  background-color: #c9302c;
+}
+
+.badge.bg-secondary {
+  background-color: #6c757d !important;
+}
+
+.badge.bg-secondary:hover {
+  background-color: #5a6268 !important;
+}
+
+/* Tag list container */
+.tag-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.tag-list li {
+  display: inline-block;
+  margin: 0 5px 5px 0;
+}
+
+.tag-list .tag {
+  background-color: var(--unesco-blue);
+  color: white;
+  text-decoration: none;
+  font-size: 12px;
+  padding: 4px 10px;
+  border-radius: 12px;
+  display: inline-block;
+  transition: all 0.3s ease;
+}
+
+.tag-list .tag:hover {
+  background-color: var(--unesco-blue-dark);
+  text-decoration: none;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+/* Different label colors/types */
+.label-default {
+  background-color: #999999;
+}
+
+.label-primary {
+  background-color: var(--unesco-blue);
+}
+
+.label-success {
+  background-color: #5cb85c;
+}
+
+.label-info {
+  background-color: #5bc0de;
+}
+
+.label-warning {
+  background-color: #f0ad4e;
+}
+
+.label-danger {
+  background-color: #d9534f;
+}
+
+/* Format labels for resources - Compatible with schemingdcat */
+.resource-item .format-label,
+.dataset-resources .label,
+.dataset-resources .badge-label {
+  background-color: #aaa;
+  color: #fff;
+  display: inline-block;
+  font-size: 9px;
+  font-weight: 600;
+  line-height: 1;
+  margin-left: auto;
+  padding: 2px 8px 3px;
+  position: relative;
+  text-align: center;
+  text-transform: uppercase;
+  text-shadow: 0 -1px rgba(0, 0, 0, 0.2);
+  border-radius: 2px;
+}
+
+/* Override schemingdcat format styles to work with existing format icons */
+.dataset-resources .label[data-format],
+.dataset-resources .badge-label[data-format] {
+  margin-left: 0;
+  margin-right: 4px;
+}
+
+/* CSV tags - High specificity for CKAN 2.10 override */
+body .format-label[data-format=csv],
+body .format-label[data-format*=csv],
+body .label[data-format=csv],
+body .label[data-format*=csv],
+body .badge-label[data-format=csv],
+body .badge-label[data-format*=csv],
+body a.label[data-format=csv],
+body a.label[data-format*=csv],
+body a.badge-label[data-format=csv],
+body a.badge-label[data-format*=csv],
+.dataset-resources .format-label[data-format=csv],
+.dataset-resources .format-label[data-format*=csv],
+.dataset-resources .label[data-format=csv],
+.dataset-resources .label[data-format*=csv],
+.dataset-resources .badge-label[data-format=csv],
+.dataset-resources .badge-label[data-format*=csv],
+.dataset-resources a.label[data-format=csv],
+.dataset-resources a.label[data-format*=csv],
+.dataset-resources a.badge-label[data-format=csv],
+.dataset-resources a.badge-label[data-format*=csv],
+.dataset-item .label[data-format=csv],
+.dataset-item .label[data-format*=csv],
+.dataset-item .badge-label[data-format=csv],
+.dataset-item .badge-label[data-format*=csv],
+.dataset-item a.label[data-format=csv],
+.dataset-item a.label[data-format*=csv],
+.dataset-item a.badge-label[data-format=csv],
+.dataset-item a.badge-label[data-format*=csv] {
+  background-color: #5cb85c !important;
+  color: #fff !important;
+}
+
+/* JSON tags */
+body .format-label[data-format=json],
+body .format-label[data-format*=json],
+body .label[data-format=json],
+body .label[data-format*=json],
+body .badge-label[data-format=json],
+body .badge-label[data-format*=json],
+body a.label[data-format=json],
+body a.label[data-format*=json],
+body a.badge-label[data-format=json],
+body a.badge-label[data-format*=json],
+.dataset-resources .format-label[data-format=json],
+.dataset-resources .format-label[data-format*=json],
+.dataset-resources .label[data-format=json],
+.dataset-resources .label[data-format*=json],
+.dataset-resources .badge-label[data-format=json],
+.dataset-resources .badge-label[data-format*=json],
+.dataset-resources a.label[data-format=json],
+.dataset-resources a.label[data-format*=json],
+.dataset-resources a.badge-label[data-format=json],
+.dataset-resources a.badge-label[data-format*=json],
+.dataset-item .label[data-format=json],
+.dataset-item .label[data-format*=json],
+.dataset-item .badge-label[data-format=json],
+.dataset-item .badge-label[data-format*=json],
+.dataset-item a.label[data-format=json],
+.dataset-item a.label[data-format*=json],
+.dataset-item a.badge-label[data-format=json],
+.dataset-item a.badge-label[data-format*=json] {
+  background-color: #f0ad4e !important;
+  color: #fff !important;
+}
+
+/* XML tags */
+body .format-label[data-format=xml],
+body .format-label[data-format*=xml],
+body .label[data-format=xml],
+body .label[data-format*=xml],
+body .badge-label[data-format=xml],
+body .badge-label[data-format*=xml],
+body a.label[data-format=xml],
+body a.label[data-format*=xml],
+body a.badge-label[data-format=xml],
+body a.badge-label[data-format*=xml],
+.dataset-resources .format-label[data-format=xml],
+.dataset-resources .format-label[data-format*=xml],
+.dataset-resources .label[data-format=xml],
+.dataset-resources .label[data-format*=xml],
+.dataset-resources .badge-label[data-format=xml],
+.dataset-resources .badge-label[data-format*=xml],
+.dataset-resources a.label[data-format=xml],
+.dataset-resources a.label[data-format*=xml],
+.dataset-resources a.badge-label[data-format=xml],
+.dataset-resources a.badge-label[data-format*=xml] {
+  background-color: #8a6d3b !important;
+}
+
+/* PDF tags */
+body .format-label[data-format=pdf],
+body .format-label[data-format*=pdf],
+body .label[data-format=pdf],
+body .label[data-format*=pdf],
+body .badge-label[data-format=pdf],
+body .badge-label[data-format*=pdf],
+body a.label[data-format=pdf],
+body a.label[data-format*=pdf],
+body a.badge-label[data-format=pdf],
+body a.badge-label[data-format*=pdf],
+.dataset-resources .format-label[data-format=pdf],
+.dataset-resources .format-label[data-format*=pdf],
+.dataset-resources .label[data-format=pdf],
+.dataset-resources .label[data-format*=pdf],
+.dataset-resources .badge-label[data-format=pdf],
+.dataset-resources .badge-label[data-format*=pdf],
+.dataset-resources a.label[data-format=pdf],
+.dataset-resources a.label[data-format*=pdf],
+.dataset-resources a.badge-label[data-format=pdf],
+.dataset-resources a.badge-label[data-format*=pdf] {
+  background-color: #a94442 !important;
+}
+
+/* XLS/XLSX tags */
+body .format-label[data-format=xls],
+body .format-label[data-format*=xls],
+body .format-label[data-format=xlsx],
+body .format-label[data-format*=xlsx],
+body .label[data-format=xls],
+body .label[data-format*=xls],
+body .label[data-format=xlsx],
+body .label[data-format*=xlsx],
+body .badge-label[data-format=xls],
+body .badge-label[data-format*=xls],
+body .badge-label[data-format=xlsx],
+body .badge-label[data-format*=xlsx],
+body a.label[data-format=xls],
+body a.label[data-format*=xls],
+body a.label[data-format=xlsx],
+body a.label[data-format*=xlsx],
+body a.badge-label[data-format=xls],
+body a.badge-label[data-format*=xls],
+body a.badge-label[data-format=xlsx],
+body a.badge-label[data-format*=xlsx],
+.dataset-resources .format-label[data-format=xls],
+.dataset-resources .format-label[data-format*=xls],
+.dataset-resources .format-label[data-format=xlsx],
+.dataset-resources .format-label[data-format*=xlsx],
+.dataset-resources .label[data-format=xls],
+.dataset-resources .label[data-format*=xls],
+.dataset-resources .label[data-format=xlsx],
+.dataset-resources .label[data-format*=xlsx],
+.dataset-resources .badge-label[data-format=xls],
+.dataset-resources .badge-label[data-format*=xls],
+.dataset-resources .badge-label[data-format=xlsx],
+.dataset-resources .badge-label[data-format*=xlsx],
+.dataset-resources a.label[data-format=xls],
+.dataset-resources a.label[data-format*=xls],
+.dataset-resources a.label[data-format=xlsx],
+.dataset-resources a.label[data-format*=xlsx],
+.dataset-resources a.badge-label[data-format=xls],
+.dataset-resources a.badge-label[data-format*=xls],
+.dataset-resources a.badge-label[data-format=xlsx],
+.dataset-resources a.badge-label[data-format*=xlsx] {
+  background-color: #269abc !important;
+}
+
+/* ZIP tags */
+body .format-label[data-format=zip],
+body .format-label[data-format*=zip],
+body .label[data-format=zip],
+body .label[data-format*=zip],
+body .badge-label[data-format=zip],
+body .badge-label[data-format*=zip],
+body a.label[data-format=zip],
+body a.label[data-format*=zip],
+body a.badge-label[data-format=zip],
+body a.badge-label[data-format*=zip],
+.dataset-resources .format-label[data-format=zip],
+.dataset-resources .format-label[data-format*=zip],
+.dataset-resources .label[data-format=zip],
+.dataset-resources .label[data-format*=zip],
+.dataset-resources .badge-label[data-format=zip],
+.dataset-resources .badge-label[data-format*=zip],
+.dataset-resources a.label[data-format=zip],
+.dataset-resources a.label[data-format*=zip],
+.dataset-resources a.badge-label[data-format=zip],
+.dataset-resources a.badge-label[data-format*=zip] {
+  background-color: #5a5a5a !important;
+}
+
+/* API tags */
+body .format-label[data-format=api],
+body .format-label[data-format*=api],
+body .label[data-format=api],
+body .label[data-format*=api],
+body .badge-label[data-format=api],
+body .badge-label[data-format*=api],
+body a.label[data-format=api],
+body a.label[data-format*=api],
+body a.badge-label[data-format=api],
+body a.badge-label[data-format*=api],
+.dataset-resources .format-label[data-format=api],
+.dataset-resources .format-label[data-format*=api],
+.dataset-resources .label[data-format=api],
+.dataset-resources .label[data-format*=api],
+.dataset-resources .badge-label[data-format=api],
+.dataset-resources .badge-label[data-format*=api],
+.dataset-resources a.label[data-format=api],
+.dataset-resources a.label[data-format*=api],
+.dataset-resources a.badge-label[data-format=api],
+.dataset-resources a.badge-label[data-format*=api] {
+  background-color: #f57c00 !important;
+}
+
+/* Additional format tags from schemingdcat extension - CKAN 2.10 Override */
+body .format-label[data-format=shp],
+body .format-label[data-format*=shp],
+body .label[data-format=shp],
+body .label[data-format*=shp],
+body .badge-label[data-format=shp],
+body .badge-label[data-format*=shp],
+body a.label[data-format=shp],
+body a.label[data-format*=shp],
+body a.badge-label[data-format=shp],
+body a.badge-label[data-format*=shp],
+.dataset-resources .label[data-format=shp],
+.dataset-resources .label[data-format*=shp],
+.dataset-resources .badge-label[data-format=shp],
+.dataset-resources .badge-label[data-format*=shp],
+.dataset-resources a.label[data-format=shp],
+.dataset-resources a.label[data-format*=shp],
+.dataset-resources a.badge-label[data-format=shp],
+.dataset-resources a.badge-label[data-format*=shp],
+.dataset-item .label[data-format=shp],
+.dataset-item .label[data-format*=shp],
+.dataset-item .badge-label[data-format=shp],
+.dataset-item .badge-label[data-format*=shp],
+.dataset-item a.label[data-format=shp],
+.dataset-item a.label[data-format*=shp],
+.dataset-item a.badge-label[data-format=shp],
+.dataset-item a.badge-label[data-format*=shp] {
+  background-color: #36849a !important;
+  color: #fff !important;
+}
+
+body .format-label[data-format=tiff],
+body .format-label[data-format*=tiff],
+body .format-label[data-format=tif],
+body .format-label[data-format*=tif],
+body .label[data-format=tiff],
+body .label[data-format*=tiff],
+body .label[data-format=tif],
+body .label[data-format*=tif],
+body .badge-label[data-format=tiff],
+body .badge-label[data-format*=tiff],
+body .badge-label[data-format=tif],
+body .badge-label[data-format*=tif],
+body a.label[data-format=tiff],
+body a.label[data-format*=tiff],
+body a.label[data-format=tif],
+body a.label[data-format*=tif],
+body a.badge-label[data-format=tiff],
+body a.badge-label[data-format*=tiff],
+body a.badge-label[data-format=tif],
+body a.badge-label[data-format*=tif],
+.dataset-resources .label[data-format=tiff],
+.dataset-resources .label[data-format*=tiff],
+.dataset-resources .label[data-format=tif],
+.dataset-resources .label[data-format*=tif],
+.dataset-resources .badge-label[data-format=tiff],
+.dataset-resources .badge-label[data-format*=tiff],
+.dataset-resources .badge-label[data-format=tif],
+.dataset-resources .badge-label[data-format*=tif],
+.dataset-resources a.label[data-format=tiff],
+.dataset-resources a.label[data-format*=tiff],
+.dataset-resources a.label[data-format=tif],
+.dataset-resources a.label[data-format*=tif],
+.dataset-resources a.badge-label[data-format=tiff],
+.dataset-resources a.badge-label[data-format*=tiff],
+.dataset-resources a.badge-label[data-format=tif],
+.dataset-resources a.badge-label[data-format*=tif] {
+  background-color: #ff5364 !important;
+}
+
+body .format-label[data-format=png],
+body .format-label[data-format*=png],
+body .label[data-format=png],
+body .label[data-format*=png],
+body .badge-label[data-format=png],
+body .badge-label[data-format*=png],
+body a.label[data-format=png],
+body a.label[data-format*=png],
+body a.badge-label[data-format=png],
+body a.badge-label[data-format*=png],
+.dataset-resources .label[data-format=png],
+.dataset-resources .label[data-format*=png],
+.dataset-resources .badge-label[data-format=png],
+.dataset-resources .badge-label[data-format*=png],
+.dataset-resources a.label[data-format=png],
+.dataset-resources a.label[data-format*=png],
+.dataset-resources a.badge-label[data-format=png],
+.dataset-resources a.badge-label[data-format*=png] {
+  background-color: #659c35 !important;
+}
+
+body .format-label[data-format=geojson],
+body .format-label[data-format*=geojson],
+body .label[data-format=geojson],
+body .label[data-format*=geojson],
+body .badge-label[data-format=geojson],
+body .badge-label[data-format*=geojson],
+body a.label[data-format=geojson],
+body a.label[data-format*=geojson],
+body a.badge-label[data-format=geojson],
+body a.badge-label[data-format*=geojson],
+.dataset-resources .label[data-format=geojson],
+.dataset-resources .label[data-format*=geojson],
+.dataset-resources .badge-label[data-format=geojson],
+.dataset-resources .badge-label[data-format*=geojson],
+.dataset-resources a.label[data-format=geojson],
+.dataset-resources a.label[data-format*=geojson],
+.dataset-resources a.badge-label[data-format=geojson],
+.dataset-resources a.badge-label[data-format*=geojson] {
+  background-color: #eeaf4b !important;
+}
+
+/* Fallback for any format tags that might not have specific styling */
+body a.label[data-format],
+body a.badge-label[data-format],
+.dataset-resources a.label[data-format],
+.dataset-resources a.badge-label[data-format],
+.dataset-item a.label[data-format],
+.dataset-item a.badge-label[data-format] {
+  background-color: #999999 !important;
+  color: #ffffff !important;
+  text-decoration: none !important;
+  padding: 3px 8px !important;
+  border-radius: 3px !important;
+  font-size: 11px !important;
+  text-transform: uppercase !important;
+  display: inline-block !important;
+  margin: 2px 4px 2px 0 !important;
+}
+
+body a.label[data-format]:hover,
+body a.badge-label[data-format]:hover,
+.dataset-resources a.label[data-format]:hover,
+.dataset-resources a.badge-label[data-format]:hover,
+.dataset-item a.label[data-format]:hover,
+.dataset-item a.badge-label[data-format]:hover {
+  background-color: #777777 !important;
+  color: #ffffff !important;
+  text-decoration: none !important;
+}
+
+/* Ultra-specific overrides for dataset list items */
+ul.dataset-list li.dataset-item a.label.badge-label,
+.dataset-list .dataset-item a.label.badge-label {
+  background-color: #999999 !important;
+  color: #fff !important;
+}
+
+/* Ultra-specific CSV in dataset lists */
+ul.dataset-list li.dataset-item a.label.badge-label[data-format="csv"],
+ul.dataset-list li.dataset-item a.label.badge-label[data-format*="csv"],
+.dataset-list .dataset-item a.label.badge-label[data-format="csv"],
+.dataset-list .dataset-item a.label.badge-label[data-format*="csv"] {
+  background-color: #5cb85c !important;
+  color: #fff !important;
+}
+
+/* Ultra-specific JSON in dataset lists */
+ul.dataset-list li.dataset-item a.label.badge-label[data-format="json"],
+ul.dataset-list li.dataset-item a.label.badge-label[data-format*="json"],
+.dataset-list .dataset-item a.label.badge-label[data-format="json"],
+.dataset-list .dataset-item a.label.badge-label[data-format*="json"] {
+  background-color: #f0ad4e !important;
+  color: #fff !important;
+}
+
+/* Ultra-specific SHP in dataset lists */
+ul.dataset-list li.dataset-item a.label.badge-label[data-format="shp"],
+ul.dataset-list li.dataset-item a.label.badge-label[data-format*="shp"],
+.dataset-list .dataset-item a.label.badge-label[data-format="shp"],
+.dataset-list .dataset-item a.label.badge-label[data-format*="shp"] {
+  background-color: #36849a !important;
+  color: #fff !important;
+}
+
+/* Popular tags styling */
+.popular-tags {
+  margin: 15px 0;
+}
+
+.popular-tags .tag {
+  margin: 3px 6px 3px 0;
+  padding: 5px 10px;
+  font-size: 13px;
+  background-color: #f8f9fa;
+  color: var(--text-primary);
+  border: 1px solid #e9ecef;
+  border-radius: 15px;
+}
+
+.popular-tags .tag:hover {
+  background-color: var(--unesco-blue-pale);
+  border-color: var(--unesco-blue);
+  color: var(--unesco-blue-dark);
+}
+
+/* Tags in search results */
+.dataset-tags {
+  margin-top: 8px;
+}
+
+.dataset-tags .tag {
+  background-color: #f0f0f0;
+  color: #666;
+  font-size: 11px;
+  padding: 3px 8px;
+  margin-right: 5px;
+  border-radius: 10px;
+}
+
+.dataset-tags .tag:hover {
+  background-color: var(--unesco-blue);
+  color: white;
+}
+
+/* Tags in facet lists */
+.facet-list .nav-item .tag {
+  float: right;
+  background-color: #e9ecef;
+  color: #6c757d;
+  font-size: 10px;
+  padding: 2px 6px;
+  border-radius: 8px;
+}
+
+/* ===== FACET ICONS - CKAN 2.10 + SCHEMINGDCAT COMPATIBILITY ===== */
+
+/* Base facet icon styles - high specificity for CKAN 2.10 */
+img.facet-icon,
+.facet-icon {
+  width: 1.3em !important;
+  height: 1.3em !important;
+  min-width: 1.3em !important;
+  min-height: 1.3em !important;
+  margin-right: 5px !important;
+  display: inline-block !important;
+  border-radius: 50% !important;
+  vertical-align: middle !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  flex-shrink: 0 !important;
+}
+
+/* Facet list in filters sidebar - CKAN 2.10 structure */
+.filters .module .nav img.facet-icon,
+.filters .module nav img.facet-icon,
+.filters .nav-facet img.facet-icon,
+.filters ul.nav img.facet-icon,
+.secondary .module .nav img.facet-icon,
+.secondary .filters img.facet-icon,
+.facet-list .nav-item a img.facet-icon,
+.filters .nav-item a img.facet-icon,
+.nav-facet a img.facet-icon,
+nav.nav-facet li a img.facet-icon,
+ul.nav-facet li a img.facet-icon,
+.module-content .nav-facet li a img.facet-icon,
+.module-content nav.nav-facet a img.facet-icon {
+  width: 1.3em !important;
+  height: 1.3em !important;
+  min-width: 1.3em !important;
+  min-height: 1.3em !important;
+  max-width: 20px !important;
+  max-height: 20px !important;
+  margin-right: 5px !important;
+  display: inline-block !important;
+  border-radius: 50% !important;
+  vertical-align: middle !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  flex-shrink: 0 !important;
+  object-fit: contain !important;
+}
+
+/* Ensure facet links have proper flex layout for icons */
+.filters .nav-item a,
+.nav-facet li a,
+nav.nav-facet a,
+.module-content .nav-facet a {
+  display: flex !important;
+  align-items: center !important;
+  flex-wrap: nowrap !important;
+}
+
+/* Item label in facet */
+.filters .nav-item a .item-label,
+.nav-facet li a .item-label,
+nav.nav-facet a .item-label {
+  flex: 1 1 auto !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+/* Badge count in facet */
+.filters .nav-item a .badge,
+.nav-facet li a .badge,
+nav.nav-facet a .badge,
+.filters .nav-item a .item-count,
+.nav-facet li a .item-count {
+  flex-shrink: 0 !important;
+  margin-left: 5px !important;
+}
+
+/* Separator in facet (hidden) */
+.filters .nav-item a .separator,
+.nav-facet li a .separator {
+  display: none !important;
+}
+
+/* Fix for nav-facet structure in CKAN 2.10 */
+nav.nav-facet,
+.nav-facet {
+  display: block !important;
+}
+
+nav.nav-facet ul,
+.nav-facet ul {
+  list-style: none !important;
+  padding-left: 0 !important;
+  margin: 0 !important;
+}
+
+nav.nav-facet li,
+.nav-facet li {
+  margin-bottom: 2px !important;
+}
+
+/* Active state for facets */
+.nav-facet li.active a,
+.nav-facet .nav-item.active a,
+.filters .nav-item.active a {
+  background-color: rgba(0, 105, 180, 0.1) !important;
+  border-radius: 4px !important;
+}
+
+/* Hover state for facets */
+.nav-facet li a:hover,
+.nav-facet .nav-item a:hover,
+.filters .nav-item a:hover {
+  background-color: rgba(0, 105, 180, 0.05) !important;
+  text-decoration: none !important;
+  border-radius: 4px !important;
+}
+
+/* Tags in home page search section */
+.homepage .module-search .tags .tag {
+  background-color: var(--unesco-blue);
+  color: white;
+  padding: 4px 12px;
+  border-radius: 12px;
+  margin: 5px 10px 5px 0;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+.homepage .module-search .tags .tag:hover {
+  background-color: var(--unesco-blue-dark);
+  text-decoration: none;
+}
+
+/* Responsive adjustments for tags */
+@media (max-width: 768px) {
+  .tag, .label {
+    font-size: 10px;
+    padding: 2px 6px;
+  }
+  
+  .tag-list .tag {
+    font-size: 11px;
+    padding: 3px 8px;
+  }
+  
+  .format-label {
+    font-size: 8px;
+    padding: 2px 6px;
+  }
+}
+
+/* ===== DATASET PAGE STYLING FIXES FOR CKAN 2.10 + SCHEMINGDCAT ===== */
+
+/* Fix metadata section styling */
+.additional-info {
+  margin-top: 30px;
+  background: #fff;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  overflow: visible !important;
+}
+
+.additional-info header {
+  background: linear-gradient(135deg, var(--unesco-blue) 0%, var(--unesco-blue-dark) 100%);
+  padding: 20px 25px;
+  margin-bottom: 0;
+}
+
+.additional-info header h2 {
+  color: white !important;
+  margin: 0 !important;
+  font-size: 24px !important;
+  font-weight: 600 !important;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.additional-info header h2 .btn-group {
+  margin-left: 15px;
+}
+
+/* Fix metadata tables */
+.additional-info .table {
+  margin-bottom: 0 !important;
+  background-color: #fff !important;
+  border: none !important;
+}
+
+.additional-info .table-bordered {
+  border: 1px solid #e9ecef !important;
+  margin-bottom: 20px !important;
+  border-radius: 6px !important;
+  overflow: hidden !important;
+}
+
+.additional-info .table-bordered:last-child {
+  margin-bottom: 0 !important;
+}
+
+/* Fix table headers */
+.additional-info .thead-normal_table td {
+  background-color: #f8f9fa !important;
+  color: #495057 !important;
+  font-weight: 600 !important;
+  padding: 15px 20px !important;
+  border-bottom: 2px solid #dee2e6 !important;
+  font-size: 16px !important;
+  text-align: left !important;
+}
+
+/* Fix table rows */
+.additional-info .table tbody tr {
+  border-bottom: 1px solid #f8f9fa !important;
+}
+
+.additional-info .table tbody tr:last-child {
+  border-bottom: none !important;
+}
+
+.additional-info .table tbody tr:hover {
+  background-color: #f8f9fa !important;
+}
+
+/* Fix dataset labels and details */
+.additional-info .dataset-label {
+  background-color: #fff !important;
+  color: #495057 !important;
+  font-weight: 600 !important;
+  padding: 15px 20px !important;
+  border-right: 1px solid #f0f0f0 !important;
+  width: 30% !important;
+  vertical-align: top !important;
+  font-size: 14px !important;
+}
+
+.additional-info .dataset-details {
+  background-color: #fff !important;
+  color: #212529 !important;
+  padding: 15px 20px !important;
+  vertical-align: top !important;
+  font-size: 14px !important;
+  line-height: 1.5 !important;
+}
+
+.additional-info .dataset-details a {
+  color: var(--unesco-blue) !important;
+  text-decoration: none !important;
+}
+
+.additional-info .dataset-details a:hover {
+  color: var(--unesco-blue-dark) !important;
+  text-decoration: underline !important;
+}
+
+/* Fix DOI label styling */
+.dataset-private.label.label-inverse {
+  background-color: #6c757d !important;
+  color: white !important;
+  padding: 4px 8px !important;
+  border-radius: 3px !important;
+  font-size: 11px !important;
+  margin-left: 10px !important;
+  display: inline-block !important;
+}
+
+/* Fix collapsible table rows (schemingdcat) */
+.additional-info table[data-module="schemingdcat-table-collapsible-rows"] tr.toggle-more {
+  display: none !important;
+}
+
+.additional-info table.table-toggle-more tr.toggle-more {
+  display: none !important;
+}
+
+.additional-info table.table-toggle-less tr.toggle-more {
+  display: table-row !important;
+}
+
+.additional-info .toggle-show-more {
+  background-color: #f8f9fa !important;
+  text-align: center !important;
+  padding: 10px !important;
+  border-top: 1px solid #dee2e6 !important;
+  cursor: pointer !important;
+}
+
+.additional-info .toggle-show-more:hover {
+  background-color: #e9ecef !important;
+}
+
+.additional-info .toggle-show-more a {
+  color: var(--unesco-blue) !important;
+  text-decoration: none !important;
+  font-weight: 600 !important;
+}
+
+.additional-info .toggle-show-more a:hover {
+  color: var(--unesco-blue-dark) !important;
+  text-decoration: underline !important;
+}
+
+/* Fix dataset badges */
+.dataset-badges {
+  margin-bottom: 20px;
+}
+
+.dataset-badges .badge {
+  background-color: #6c757d !important;
+  color: white !important;
+  padding: 8px 12px !important;
+  border-radius: 4px !important;
+  font-size: 12px !important;
+  margin-right: 14px !important;
+  display: inline-block !important;
+}
+
+.dataset-badges .dataset-private.badge {
+  background-color: #dc3545 !important;
+  margin-left: 6px !important;
+  margin-top: 20px !important;
+}
+
+.dataset-badges .dataset-draft.badge {
+  background-color: #ffc107 !important;
+  color: #212529 !important;
+}
+
+.dataset-badges .dataset-delete.badge {
+  background-color: #dc3545 !important;
+}
+
+/* Fix package notes */
+.notes.embedded-content.package_notes {
+  background: #f8f9fa;
+  border-left: 4px solid var(--unesco-blue);
+  padding: 20px;
+  margin: 20px 0;
+  border-radius: 0 6px 6px 0;
+}
+
+.notes.embedded-content.package_notes p {
+  margin-bottom: 10px;
+  color: #495057 !important;
+  line-height: 1.6 !important;
+}
+
+.notes.embedded-content.package_notes p:last-child {
+  margin-bottom: 0;
+}
+
+/* Fix resource list styling */
+.resource-list {
+  margin-top: 20px;
+}
+
+.resource-item {
+  background: #fff;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  padding: 14px 16px;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
+
+.resource-item:hover {
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+}
+
+.resource-item .heading {
+  font-size: 16px !important;
+  font-weight: 600 !important;
+  color: #495057 !important;
+  margin-bottom: 10px !important;
+}
+
+.resource-item .heading a {
+  color: var(--unesco-blue) !important;
+  text-decoration: none !important;
+}
+
+.resource-item .heading a:hover {
+  color: var(--unesco-blue-dark) !important;
+  text-decoration: underline !important;
+}
+
+/* Responsive fixes for dataset page */
+@media (max-width: 768px) {
+  .additional-info .dataset-label,
+  .additional-info .dataset-details {
+    display: block !important;
+    width: 100% !important;
+    border-right: none !important;
+  }
+  
+  .additional-info .dataset-label {
+    background-color: #f8f9fa !important;
+    border-bottom: 1px solid #dee2e6 !important;
+    padding: 12px 15px 8px 15px !important;
+    font-weight: 700 !important;
+  }
+  
+  .additional-info .dataset-details {
+    padding: 8px 15px 12px 15px !important;
+    border-bottom: 1px solid #f0f0f0 !important;
+  }
+  
+  .additional-info header h2 {
+    font-size: 20px !important;
+    flex-direction: column !important;
+    align-items: flex-start !important;
+  }
+  
+  .additional-info header h2 .btn-group {
+    margin-left: 0 !important;
+    margin-top: 10px !important;
+  }
+}
+
+/* ===== ADDITIONAL DATASET PAGE IMPROVEMENTS ===== */
+
+/* Fix page title and dataset title */
+.dataset-heading {
+  font-size: 28px !important;
+  font-weight: 600 !important;
+  color: #212529 !important;
+  margin: 20px 0 !important;
+  line-height: 1.3 !important;
+}
+
+.dataset-heading a {
+  color: #212529 !important;
+  text-decoration: none !important;
+}
+
+.dataset-heading a:hover {
+  color: var(--unesco-blue) !important;
+  text-decoration: none !important;
+}
+
+/* Fix starred dataset icon */
+.dataset-featured-icon {
+  color: #ffc107 !important;
+  margin-left: 10px !important;
+  font-size: 20px !important;
+}
+
+
+/* Fix page layout */
+.wrapper {
+  background: #f8f9fa !important;
+  min-height: 100vh !important;
+}
+
+.primary {
+  background: transparent !important;
+  padding: 20px 0 !important;
+}
+
+/* Fix sidebar styling */
+.secondary {
+  background: transparent !important;
+  padding: 20px 0 !important;
+}
+
+.module {
+  background: #fff !important;
+  border-radius: 8px !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+  margin-bottom: 20px !important;
+  overflow: hidden !important;
+}
+
+.module-content {
+  padding: 20px !important;
+}
+
+.module-heading {
+  background: #f8f9fa !important;
+  color: #495057 !important;
+  font-weight: 600 !important;
+  padding: 15px 20px !important;
+  margin: 0 !important;
+  border-bottom: 1px solid #dee2e6 !important;
+  font-size: 16px !important;
+}
+
+/* Fix social media section */
+.module .social_network {
+  padding: 0 !important;
+}
+
+.module .social_network a {
+  display: flex !important;
+  align-items: center !important;
+  padding: 10px 0 !important;
+  color: #495057 !important;
+  text-decoration: none !important;
+  border-bottom: 1px solid #f0f0f0 !important;
+  transition: all 0.3s ease !important;
+}
+
+.module .social_network a:last-child {
+  border-bottom: none !important;
+}
+
+.module .social_network a:hover {
+  background-color: #f8f9fa !important;
+  color: var(--unesco-blue) !important;
+}
+
+.module .social_network a .icon2 {
+  margin-right: 10px !important;
+  background-color: #e9ecef !important;
+  color: #6c757d !important;
+}
+
+.module .social_network a:hover .icon2 {
+  background-color: var(--unesco-blue) !important;
+  color: white !important;
+}
+
+/* Fix URIRef section */
+.module .permanav {
+  padding: 15px 0 !important;
+  border-bottom: 1px solid #f0f0f0 !important;
+}
+
+.module .permanav:last-child {
+  border-bottom: none !important;
+}
+
+.module .permanav input[type="text"],
+.module .permanav input[type="url"] {
+  background: #fff !important;
+  color: #212529 !important;
+  width: 100% !important;
+}
+
+.permalink-label {
+  background-color: #f8f9fa !important;
+  margin: 0 !important;
+  padding: 10px 15px !important;
+  border-radius: 4px !important;
+  transition: all 0.3s ease !important;
+}
+
+.permalink-label:hover {
+  background-color: #e9ecef !important;
+}
+
+.permalink-input {
+  background: #fff !important;
+  border: 1px solid #dee2e6 !important;
+  border-radius: 4px !important;
+  padding: 8px 12px !important;
+  color: #212529 !important;
+  width: 100% !important;
+  font-family: monospace !important;
+  font-size: 12px !important;
+}
+
+/* Fix followers section */
+.followers {
+  text-align: center !important;
+  padding: 20px 0 !important;
+}
+
+.followers .num {
+  font-size: 36px !important;
+  font-weight: 700 !important;
+  color: var(--unesco-blue) !important;
+  display: block !important;
+  margin-bottom: 5px !important;
+}
+
+.followers .action {
+  font-size: 14px !important;
+  color: #6c757d !important;
+}
+
+.btn.btn-success {
+  background-color: #28a745 !important;
+  border-color: #28a745 !important;
+  color: white !important;
+  padding: 10px 20px !important;
+  border-radius: 4px !important;
+  font-weight: 600 !important;
+  transition: all 0.3s ease !important;
+}
+
+.btn.btn-success:hover {
+  background-color: #218838 !important;
+  border-color: #1e7e34 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2) !important;
+}
+
+/* Fix breadcrumb navigation */
+.toolbar .breadcrumb {
+  background: transparent !important;
+  border: none !important;
+  padding: 10px 0 !important;
+  margin: 0 !important;
+}
+
+.toolbar .breadcrumb li {
+  color: #6c757d !important;
+}
+
+.toolbar .breadcrumb li.active {
+  color: #495057 !important;
+  font-weight: 600 !important;
+}
+
+/* Fix page actions (buttons) */
+.page-header .content_action {
+  margin-top: 0 !important;
+  display: flex !important;
+  gap: 10px !important;
+  align-items: center !important;
+  flex-wrap: wrap !important;
+}
+
+.page-header .content_action .btn {
+  margin-top: 2px !important;
+}
+
+/* Fix action buttons */
+.btn-primary {
+  background-color: var(--unesco-blue) !important;
+  border-color: var(--unesco-blue) !important;
+  color: white !important;
+  padding: 10px 20px !important;
+  border-radius: 4px !important;
+  font-weight: 600 !important;
+  transition: all 0.3s ease !important;
+}
+
+.btn-primary:hover {
+  background-color: var(--unesco-blue-dark) !important;
+  border-color: var(--unesco-blue-dark) !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2) !important;
+}
+
+/* Mobile responsive fixes for dataset page */
+@media (max-width: 768px) {
+  .dataset-heading {
+    font-size: 24px !important;
+    margin: 15px 0 !important;
+  }
+  
+  .page-header .content_action {
+    justify-content: flex-start !important;
+    margin-top: 15px !important;
+  }
+  
+  .module-content {
+    padding: 15px !important;
+  }
+  
+  .module-heading {
+    padding: 12px 15px !important;
+    font-size: 15px !important;
+  }
+}
+
+/* Minor spacing improvements for dataset page */
+.dataset-item {
+  margin-bottom: 15px !important;
+}
+
+.filters .module-content {
+  padding: 12px !important;
+}
+
+.filters .nav.nav-simple li a {
+  padding: 6px 0 !important;
+  font-size: 13px !important;
+}
+
+/* ===== CKAN 2.10 SPECIFIC STYLES ===== */
+
+/* Dataset search page - Filters sidebar */
+.secondary .module.module-narrow {
+  background: #fff !important;
+  border-radius: 8px !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
+  margin-bottom: 15px !important;
+  overflow: visible !important;
+}
+
+.secondary .module.module-narrow .module-heading {
+  background: #f8f9fa !important;
+  border-bottom: 1px solid #e9ecef !important;
+  padding: 14px 15px !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  color: #495057 !important;
+}
+
+/* Nav facet in CKAN 2.10 */
+.secondary .module-content nav.nav-facet,
+.secondary .module-content .nav-facet {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.secondary .module-content nav.nav-facet ul,
+.secondary .module-content .nav-facet ul {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.secondary .module-content nav.nav-facet li,
+.secondary .module-content .nav-facet li,
+.secondary .module-content .nav-facet .nav-item {
+  margin: 0 !important;
+  padding: 0 !important;
+  border-bottom: 1px solid #f5f5f5 !important;
+}
+
+.secondary .module-content nav.nav-facet li:last-child,
+.secondary .module-content .nav-facet li:last-child,
+.secondary .module-content .nav-facet .nav-item:last-child {
+  border-bottom: none !important;
+}
+
+.secondary .module-content nav.nav-facet li a,
+.secondary .module-content .nav-facet li a,
+.secondary .module-content .nav-facet .nav-item a {
+  display: flex !important;
+  align-items: center !important;
+  padding: 8px 5px !important;
+  color: #495057 !important;
+  text-decoration: none !important;
+  transition: all 0.2s ease !important;
+  border-radius: 4px !important;
+  margin: 2px 0 !important;
+}
+
+.secondary .module-content nav.nav-facet li a:hover,
+.secondary .module-content .nav-facet li a:hover,
+.secondary .module-content .nav-facet .nav-item a:hover {
+  background-color: rgba(0, 105, 180, 0.08) !important;
+  color: #0069B4 !important;
+  color: var(--unesco-blue) !important;
+}
+
+.secondary .module-content nav.nav-facet li.active a,
+.secondary .module-content .nav-facet li.active a,
+.secondary .module-content .nav-facet .nav-item.active a {
+  background-color: rgba(0, 105, 180, 0.12) !important;
+  color: #0069B4 !important;
+  color: var(--unesco-blue) !important;
+  font-weight: 600 !important;
+}
+
+/* Facet icon in nav-facet */
+.secondary .module-content nav.nav-facet li a img.facet-icon,
+.secondary .module-content .nav-facet li a img.facet-icon,
+.secondary .module-content .nav-facet .nav-item a img.facet-icon {
+  width: 18px !important;
+  height: 18px !important;
+  min-width: 18px !important;
+  min-height: 18px !important;
+  margin-right: 8px !important;
+  display: inline-block !important;
+  border-radius: 50% !important;
+  vertical-align: middle !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  flex-shrink: 0 !important;
+  object-fit: contain !important;
+}
+
+/* Item label in facet */
+.secondary .module-content nav.nav-facet li a .item-label,
+.secondary .module-content .nav-facet li a .item-label,
+.secondary .module-content .nav-facet .nav-item a .item-label {
+  flex: 1 1 auto !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  font-size: 13px !important;
+}
+
+/* Badge/count in facet */
+.secondary .module-content nav.nav-facet li a .badge,
+.secondary .module-content .nav-facet li a .badge,
+.secondary .module-content .nav-facet .nav-item a .badge,
+.secondary .module-content nav.nav-facet li a .item-count,
+.secondary .module-content .nav-facet li a .item-count,
+.secondary .module-content .nav-facet .nav-item a .item-count {
+  flex-shrink: 0 !important;
+  margin-left: auto !important;
+  padding: 2px 8px !important;
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  background-color: #e9ecef !important;
+  color: #495057 !important;
+  border-radius: 10px !important;
+}
+
+.secondary .module-content nav.nav-facet li.active a .badge,
+.secondary .module-content .nav-facet li.active a .badge,
+.secondary .module-content .nav-facet .nav-item.active a .badge {
+  background-color: #0069B4 !important;
+  background-color: var(--unesco-blue) !important;
+  color: white !important;
+}
+
+/* Show more/less link in facets */
+.secondary .module-footer,
+.module-footer {
+  padding: 10px 15px !important;
+  border-top: 1px solid #e9ecef !important;
+  background-color: #fafafa !important;
+}
+
+.secondary .module-footer a,
+.module-footer a.read-more {
+  color: #0069B4 !important;
+  color: var(--unesco-blue) !important;
+  font-size: 12px !important;
+  font-weight: 500 !important;
+  text-decoration: none !important;
+}
+
+.secondary .module-footer a:hover,
+.module-footer a.read-more:hover {
+  text-decoration: underline !important;
+}
+
+/* Dataset list improvements for CKAN 2.10 */
+.dataset-list {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.dataset-list .dataset-item {
+  background: #fff !important;
+  border: 1px solid #e9ecef !important;
+  border-radius: 8px !important;
+  margin-bottom: 15px !important;
+  padding: 20px !important;
+  transition: all 0.2s ease !important;
+}
+
+.dataset-list .dataset-item:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
+  border-color: #dee2e6 !important;
+}
+
+.dataset-list .dataset-item .dataset-heading {
+  margin-bottom: 10px !important;
+}
+
+.dataset-list .dataset-item .dataset-heading a {
+  color: #0069B4 !important;
+  color: var(--unesco-blue) !important;
+  font-size: 18px !important;
+  font-weight: 600 !important;
+  text-decoration: none !important;
+}
+
+.dataset-list .dataset-item .dataset-heading a:hover {
+  text-decoration: underline !important;
+}
+
+/* Dataset resources badges */
+.dataset-list .dataset-item .dataset-resources {
+  margin-top: 10px !important;
+}
+
+.dataset-list .dataset-item .dataset-resources ul {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 5px !important;
+}
+
+.dataset-list .dataset-item .dataset-resources li {
+  display: inline-block !important;
+}
+
+/* Search form in dataset page */
+.search-form .search-input {
+  position: relative !important;
+}
+
+.search-form .search-input input[type="text"],
+.search-form .search-input .form-control {
+  border-radius: 4px !important;
+  border: 1px solid #ced4da !important;
+  padding-right: 45px !important;
+}
+
+.search-form .search-input button[type="submit"] {
+  position: absolute !important;
+  right: 0 !important;
+  top: 0 !important;
+  height: 100% !important;
+  width: 40px !important;
+  background-color: #0069B4 !important;
+  background-color: var(--unesco-blue) !important;
+  border: none !important;
+  border-radius: 0 4px 4px 0 !important;
+  color: white !important;
+  cursor: pointer !important;
+}
+
+.search-form .search-input button[type="submit"]:hover {
+  background-color: #005a9e !important;
+  background-color: var(--unesco-blue-dark) !important;
+}
+
+/* Order by dropdown */
+.search-form .control-order-by select,
+.search-form .order-by select {
+  border-radius: 4px !important;
+  border: 1px solid #ced4da !important;
+  padding: 6px 12px !important;
+  font-size: 13px !important;
+}
+
+/* Fix for sorting buttons from schemingdcat */
+.filters .module .sorting {
+  border: 1px solid #e9ecef !important;
+  background-color: #f8f9fa !important;
+  border-radius: 4px !important;
+}
+
+.filters .module .sorting:hover {
+  border-color: #0069B4 !important;
+  border-color: var(--unesco-blue) !important;
+  background-color: rgba(0, 105, 180, 0.05) !important;
+}
+
+/* ===== DATASET PAGE STYLES - CKAN 2.10 COMPATIBILITY ===== */
+
+/* Main content area for dataset search */
+.primary .module-content {
+  padding: 0 !important;
+}
+
+/* Dataset search results header */
+.search-form {
+  background: #fff !important;
+  padding: 20px !important;
+  border-radius: 8px !important;
+  margin-bottom: 20px !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.08) !important;
+}
+
+.search-form .control-group {
+  margin-bottom: 15px !important;
+}
+
+.search-form .search-input-group,
+.search-form .input-group {
+  display: flex !important;
+  align-items: stretch !important;
+  position: relative !important;
+}
+
+.search-form .search-input-group input,
+.search-form .input-group input,
+.search-form input[name="q"] {
+  flex: 1 !important;
+  border-radius: 4px 0 0 4px !important;
+  border: 1px solid #ced4da !important;
+  border-right: none !important;
+  padding: 10px 15px !important;
+  font-size: 14px !important;
+}
+
+.search-form .search-input-group button,
+.search-form .input-group button,
+.search-form .input-group .btn {
+  border-radius: 0 4px 4px 0 !important;
+  background-color: #0069B4 !important;
+  background-color: var(--unesco-blue) !important;
+  border: 1px solid #0069B4 !important;
+  border: 1px solid var(--unesco-blue) !important;
+  color: white !important;
+  padding: 10px 20px !important;
+  cursor: pointer !important;
+}
+
+.search-form .search-input-group button:hover,
+.search-form .input-group button:hover,
+.search-form .input-group .btn:hover {
+  background-color: #005a9e !important;
+  background-color: var(--unesco-blue-dark) !important;
+}
+
+/* Search results count */
+.search-form h2,
+.search-form .search-heading {
+  font-size: 18px !important;
+  font-weight: 600 !important;
+  color: #495057 !important;
+  margin-bottom: 15px !important;
+}
+
+/* Order by / Sort controls */
+.search-form .form-select,
+.search-form select,
+.form-select.control-order-by {
+  border: 1px solid #ced4da !important;
+  border-radius: 4px !important;
+  padding: 8px 12px !important;
+  font-size: 13px !important;
+  background-color: #fff !important;
+  min-width: 150px !important;
+}
+
+/* Order by: select + boton de direccion (ver schemingdcat/snippets/search_form.html)
+   Va despues del bloque anterior a proposito: gana por especificidad (0,2,1) y por
+   orden de aparicion sobre las reglas de .search-form select de mas arriba, que
+   forzaban padding-right: 12px y dejaban el caret encima del texto (la opcion
+   "Metadata completeness" se veia cortada). Caret propio para que se vea igual
+   con Bootstrap 3 y con Bootstrap 5. */
+.search-form .control-order-by .order-by-controls {
+  display: flex;
+  align-items: stretch; /* iguala la altura del boton a la del select */
+  gap: 6px;
+}
+
+.search-form .control-order-by select {
+  /* 34px a la derecha = hueco reservado para el caret */
+  padding: 8px 34px 8px 12px !important;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%236c757d' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right 12px center;
+  background-size: 12px 9px;
+  max-width: 100%;
+  text-overflow: ellipsis;
+}
+
+.search-form .control-order-by .order-by-controls select {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.search-form .control-order-by .sort-direction-toggle {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 36px;
+  padding: 0 10px;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  background: #fff;
+  color: var(--text-secondary);
+  font-size: 14px;
+  line-height: 1;
+  cursor: pointer;
+  transition: var(--transition);
+}
+
+.search-form .control-order-by .sort-direction-toggle:hover,
+.search-form .control-order-by .sort-direction-toggle:focus-visible {
+  border-color: var(--unesco-blue);
+  color: var(--unesco-blue);
+  background: var(--unesco-blue-pale);
+}
+
+/* Organizaciones: busqueda y orden en una fila, contador debajo. */
+#organization-search-form {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 16px 20px;
+}
+
+#organization-search-form::before,
+#organization-search-form::after {
+  content: none;
+}
+
+#organization-search-form > * {
+  grid-column: 1 / -1;
+  min-width: 0;
+}
+
+#organization-search-form > .search-input.search-giant,
+#organization-search-form > .input-group.search-input-group {
+  grid-column: 1;
+  grid-row: 1;
+  flex-direction: row !important;
+  margin: 0 !important;
+}
+
+#organization-search-form input[name="q"] {
+  min-width: 0;
+  margin-bottom: 0 !important;
+}
+
+#organization-search-form .input-group-btn {
+  position: static;
+}
+
+#organization-search-form button[type="submit"] {
+  width: 50px !important;
+  margin: 0 !important;
+}
+
+#organization-search-form > .control-order-by {
+  grid-column: 2;
+  grid-row: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  float: none !important;
+  width: auto !important;
+  margin: 0 !important;
+}
+
+#organization-search-form .control-order-by label {
+  margin: 0;
+  white-space: nowrap;
+}
+
+#organization-search-form .order-by-controls {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+#organization-search-form .control-order-by select {
+  min-width: 0 !important;
+}
+
+#organization-search-form > h1,
+#organization-search-form > h2 {
+  margin: 0 !important;
+}
+
+@media (max-width: 768px) {
+  #organization-search-form {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  #organization-search-form > .control-order-by {
+    grid-column: 1;
+    grid-row: 2;
+  }
+}
+
+/* Dataset list container */
+ul.dataset-list,
+.dataset-list {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Individual dataset item - Card style */
+ul.dataset-list li.dataset-item,
+.dataset-list .dataset-item,
+li.dataset-item {
+  background: #fff !important;
+  border: 1px solid #e9ecef !important;
+  border-radius: 8px !important;
+  margin-bottom: 15px !important;
+  padding: 20px !important;
+  transition: all 0.2s ease !important;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+ul.dataset-list li.dataset-item:hover,
+.dataset-list .dataset-item:hover,
+li.dataset-item:hover {
+  box-shadow: 0 4px 16px rgba(0,0,0,0.1) !important;
+  border-color: #dee2e6 !important;
+  transform: translateY(-2px) !important;
+}
+
+/* Dataset heading/title */
+.dataset-item .dataset-heading,
+.dataset-item h2.dataset-heading,
+.dataset-item h3.dataset-heading {
+  margin: 0 0 10px 0 !important;
+  font-size: 18px !important;
+  line-height: 1.4 !important;
+}
+
+.dataset-item .dataset-heading a {
+  color: #0069B4 !important;
+  color: var(--unesco-blue) !important;
+  text-decoration: none !important;
+  font-weight: 600 !important;
+}
+
+.dataset-item .dataset-heading a:hover {
+  color: #005a9e !important;
+  color: var(--unesco-blue-dark) !important;
+  text-decoration: underline !important;
+}
+
+/* Dataset private badge */
+.dataset-item .dataset-private {
+  display: inline-block !important;
+  background-color: #dc3545 !important;
+  color: white !important;
+  padding: 2px 8px !important;
+  border-radius: 3px !important;
+  font-size: 11px !important;
+  margin-left: 10px !important;
+  vertical-align: middle !important;
+}
+
+/* Dataset content/notes */
+.dataset-item .dataset-content,
+.dataset-item .notes {
+  color: #6c757d !important;
+  font-size: 14px !important;
+  line-height: 1.6 !important;
+  margin-bottom: 15px !important;
+  max-height: 4.8em !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+/* Dataset resources section */
+.dataset-item .dataset-resources,
+.dataset-item ul.dataset-resources {
+  margin-top: auto !important;
+  padding-top: 10px !important;
+  border-top: 1px solid #f0f0f0 !important;
+}
+
+.dataset-item .dataset-resources ul,
+.dataset-item ul.dataset-resources {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 6px !important;
+}
+
+.dataset-item .dataset-resources li {
+  display: inline-block !important;
+  margin: 0 !important;
+}
+
+/* Resource format badges */
+.dataset-item .dataset-resources .label,
+.dataset-item .dataset-resources .badge,
+.dataset-item .dataset-resources a.label,
+.dataset-item .dataset-resources a.badge-label {
+  display: inline-block !important;
+  padding: 4px 10px !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  border-radius: 3px !important;
+  color: white !important;
+  text-decoration: none !important;
+  transition: all 0.2s ease !important;
+}
+
+.dataset-item .dataset-resources .label:hover,
+.dataset-item .dataset-resources a.label:hover,
+.dataset-item .dataset-resources a.badge-label:hover {
+  opacity: 0.85 !important;
+  transform: translateY(-1px) !important;
+}
+
+/* Organization info in dataset item */
+.dataset-item .dataset-organization {
+  display: flex !important;
+  align-items: center !important;
+  margin-bottom: 10px !important;
+  font-size: 13px !important;
+  color: #6c757d !important;
+}
+
+.dataset-item .dataset-organization img {
+  width: 24px !important;
+  height: 24px !important;
+  border-radius: 4px !important;
+  margin-right: 8px !important;
+  object-fit: contain !important;
+}
+
+/* Metadata info in dataset item */
+.dataset-item .automatic-local-datetime,
+.dataset-item .dataset-metadata {
+  font-size: 12px !important;
+  color: #868e96 !important;
+  margin-top: 10px !important;
+}
+
+/* Pagination styles */
+.pagination-wrapper,
+.pagination {
+  display: flex !important;
+  justify-content: center !important;
+  margin: 30px 0 !important;
+}
+
+.pagination li {
+  list-style: none !important;
+}
+
+.pagination li a,
+.pagination li span {
+  display: inline-block !important;
+  padding: 8px 14px !important;
+  margin: 0 3px !important;
+  border: 1px solid #dee2e6 !important;
+  border-radius: 4px !important;
+  color: #495057 !important;
+  text-decoration: none !important;
+  transition: all 0.2s ease !important;
+}
+
+.pagination li a:hover {
+  background-color: #e9ecef !important;
+  border-color: #ced4da !important;
+}
+
+.pagination li.active a,
+.pagination li.active span {
+  background-color: #0069B4 !important;
+  background-color: var(--unesco-blue) !important;
+  border-color: #0069B4 !important;
+  border-color: var(--unesco-blue) !important;
+  color: white !important;
+}
+
+.pagination li.disabled a,
+.pagination li.disabled span {
+  color: #adb5bd !important;
+  pointer-events: none !important;
+  background-color: #f8f9fa !important;
+}
+
+/* Empty results message */
+.empty-results,
+.no-results {
+  text-align: center !important;
+  padding: 40px 20px !important;
+  color: #6c757d !important;
+}
+
+.empty-results h2,
+.no-results h2 {
+  color: #495057 !important;
+  margin-bottom: 10px !important;
+}
+
+/* Search facets active filters */
+.filtered .filter-list {
+  background: #e8f4fc !important;
+  border: 1px solid #bee5eb !important;
+  border-radius: 4px !important;
+  padding: 10px 15px !important;
+  margin-bottom: 15px !important;
+}
+
+.filtered .filter-list .nav-item {
+  display: inline-block !important;
+  margin: 3px 5px 3px 0 !important;
+}
+
+.filtered .filter-list .nav-item a {
+  display: inline-flex !important;
+  align-items: center !important;
+  background: #0069B4 !important;
+  background: var(--unesco-blue) !important;
+  color: white !important;
+  padding: 4px 10px !important;
+  border-radius: 15px !important;
+  font-size: 12px !important;
+  text-decoration: none !important;
+}
+
+.filtered .filter-list .nav-item a:hover {
+  background: #005a9e !important;
+  background: var(--unesco-blue-dark) !important;
+}
+
+.filtered .filter-list .nav-item a .icon-remove,
+.filtered .filter-list .nav-item a .fa-times {
+  margin-left: 6px !important;
+}
+
+/* Responsive adjustments for dataset list */
+@media (max-width: 768px) {
+  ul.dataset-list li.dataset-item,
+  .dataset-list .dataset-item,
+  li.dataset-item {
+    padding: 15px !important;
+  }
+  
+  .dataset-item .dataset-heading,
+  .dataset-item h2.dataset-heading,
+  .dataset-item h3.dataset-heading {
+    font-size: 16px !important;
+  }
+  
+  .dataset-item .dataset-content,
+  .dataset-item .notes {
+    font-size: 13px !important;
+    max-height: none !important;
+  }
+  
+  .search-form {
+    padding: 15px !important;
+  }
+  
+  .search-form .search-input-group,
+  .search-form .input-group {
+    flex-direction: column !important;
+  }
+  
+  .search-form .search-input-group input,
+  .search-form .input-group input {
+    border-radius: 4px !important;
+    border-right: 1px solid #ced4da !important;
+    margin-bottom: 10px !important;
+  }
+  
+  .search-form .search-input-group button,
+  .search-form .input-group button {
+    border-radius: 4px !important;
+    width: 100% !important;
+  }
+  
+  /* El control de orden ocupa el ancho y el select puede encogerse sin
+     desbordar la tarjeta blanca del formulario */
+  .search-form .control-order-by {
+    float: none !important;
+    width: 100% !important;
+    margin-left: 0 !important;
+  }
+}
+
+/* ===== DATASET DETAIL PAGE STYLES ===== */
+
+/* Dataset title on detail page */
+.page-heading.dataset-heading {
+  font-size: 28px !important;
+  font-weight: 700 !important;
+  color: #212529 !important;
+  margin-bottom: 20px !important;
+  line-height: 1.3 !important;
+}
+
+/* Resource list on dataset detail page */
+ul.resource-list,
+.resource-list {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+/* Resource item - 3 column grid: icon | content | button */
+ul.resource-list li.resource-item,
+.resource-list .resource-item {
+  background: #fff !important;
+  border: 1px solid #e9ecef !important;
+  border-radius: 8px !important;
+  margin-bottom: 8px !important;
+  padding: 12px 16px !important;
+  display: grid !important;
+  grid-template-columns: auto 1fr auto !important;
+  grid-template-rows: auto auto !important;
+  gap: 6px 12px !important;
+  align-items: start !important;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease !important;
+}
+
+ul.resource-list li.resource-item:hover,
+.resource-list .resource-item:hover {
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1) !important;
+  border-color: #dee2e6 !important;
+}
+
+/* Resource title row - contains format-label and heading - Column 1, Row 1 */
+.resource-item .resource-title-row {
+  grid-column: 1 !important;
+  grid-row: 1 !important;
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 10px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+/* Format label inside resource-title-row */
+.resource-item .resource-title-row .format-label {
+  grid-column: 1 !important;
+  grid-row: 1 / 3 !important;
+  align-self: start !important;
+
+  /* Sprite-based icon */
+  display: inline-block !important;
+  width: 48px !important;
+  height: 52px !important;
+  min-width: 48px !important;
+  background-image: url("/base/images/sprite-resource-icons.png") !important;
+  background-repeat: no-repeat !important;
+  background-color: transparent !important;
+  color: transparent !important;
+  text-indent: -9999px !important;
+  border: none !important;
+  transform: none !important;
+  margin: 0 !important;
+  position: relative !important;
+  z-index: 1 !important;
+  overflow: hidden !important;
+}
+
+/* Fix for non-sprite icons (images) */
+.resource-item .resource-title-row .format-label:has(img) {
+  width: auto !important;
+  height: auto !important;
+  min-width: 0 !important;
+  transform: none !important;
+  margin: 0 !important;
+  background: none !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.resource-item .resource-title-row .format-label img,
+.resource-item .format-label img {
+  max-width: 40px !important;
+  width: auto !important;
+  height: auto !important;
+  display: block !important;
+}
+
+/* Title - Col 2, Row 1 */
+.resource-item .resource-title-row .heading,
+.resource-item .resource-title-row a.heading {
+  grid-column: 2 !important;
+  grid-row: 1 !important;
+  margin: 0 !important;
+  padding-top: 2px !important;
+  align-self: center !important;
+  font-size: 15px !important;
+  font-weight: 700 !important;
+  color: #333 !important;
+  text-decoration: none !important;
+  line-height: 1.4 !important;
+}
+
+.resource-item .resource-title-row .heading:hover {
+  color: #005090 !important;
+  text-decoration: underline !important;
+}
+
+/* Heading link inside resource-title-row */
+.resource-item .resource-title-row .heading,
+.resource-item .resource-title-row a.heading {
+  flex: 1 1 auto !important;
+  display: block !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  margin: 0 !important;
+  color: #0069B4 !important;
+  color: var(--unesco-blue) !important;
+  text-decoration: none !important;
+  line-height: 1.4 !important;
+  text-align: left !important;
+}
+
+/* Global sprite hookup for format labels (fallback) */
+body .format-label,
+.resource-item .format-label,
+.dataset-resources .format-label,
+.dataset-item .dataset-resources .format-label {
+  background-image: url("/base/images/sprite-resource-icons.png") !important;
+  background-repeat: no-repeat !important;
+  background-color: transparent !important;
+  color: transparent !important;
+  text-indent: -9999px !important;
+  border: none !important;
+  overflow: hidden !important;
+}
+
+.resource-item .resource-title-row .heading:hover {
+  text-decoration: underline !important;
+}
+
+/* Fallback: direct heading (older structure) */
+.resource-item > a.heading,
+.resource-item > .heading {
+  grid-column: 1 !important;
+  grid-row: 1 !important;
+  display: block !important;
+  font-size: 15px !important;
+  font-weight: 600 !important;
+  margin: 0 !important;
+  color: #0069B4 !important;
+  color: var(--unesco-blue) !important;
+  text-decoration: none !important;
+  line-height: 1.4 !important;
+  text-align: left !important;
+}
+
+.resource-item .heading a {
+  color: #0069B4 !important;
+  color: var(--unesco-blue) !important;
+  text-decoration: none !important;
+}
+
+.resource-item .heading a:hover,
+.resource-item > a.heading:hover {
+  text-decoration: underline !important;
+}
+
+/* Hide format label inside heading link - shown in resource-title-row separately */
+.resource-item > a.heading .format-label,
+.resource-item > a.heading .label {
+  display: none !important;
+}
+
+/* Description - Column 2, Row 2 */
+.resource-item .description-wrapper {
+  grid-column: 2 !important;
+  grid-row: 2 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 6px !important;
+}
+
+.resource-item p.description,
+.resource-item .description {
+  margin: 0 !important;
+  font-size: 13px !important;
+  color: #666 !important;
+  line-height: 1.5 !important;
+  text-align: left !important;
+}
+
+.resource-item .description-full {
+  font-size: 13px !important;
+  line-height: 1.5 !important;
+  font-weight: 400 !important;
+  color: #555 !important;
+}
+
+.resource-item .resource-read-more {
+  padding: 0 !important;
+  margin: 0 !important;
+  align-self: flex-start !important;
+  font-weight: 600 !important;
+  color: var(--unesco-blue) !important;
+  text-decoration: none !important;
+}
+
+.resource-item .resource-read-more:hover {
+  text-decoration: underline !important;
+}
+
+/* Button group - Column 3, spans both rows */
+.resource-item .btn-group,
+.resource-item .dropdown.btn-group {
+  grid-column: 3 !important;
+  grid-row: 1 / 3 !important;
+  align-self: center !important;
+  justify-self: end !important;
+  position: relative !important;
+  display: inline-flex !important;
+  flex-direction: row !important;
+  z-index: 10 !important;
+}
+
+/* Fix dropdown menu positioning - Override ckan210-fixes.css with higher specificity */
+body .resource-item .dropdown-menu,
+body .resource-item .btn-group .dropdown-menu,
+body ul.resource-list li.resource-item .dropdown-menu,
+body .resource-list .resource-item .dropdown-menu,
+body li.resource-item .dropdown-menu,
+.resource-item .dropdown-menu {
+  position: absolute !important;
+  top: calc(100% + 6px) !important;
+  left: auto !important;
+  right: 0 !important;
+  z-index: 1000 !important;
+  min-width: 160px !important;
+  max-width: 280px !important;
+  background-color: #fff !important;
+  border: 1px solid #e9ecef !important;
+  border-radius: 8px !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  overflow: visible !important;
+  margin: 0 !important;
+  transform: none !important;
+  transition: none !important;
+}
+
+/* Ensure dropdown shows when open */
+body .resource-item .dropdown.open .dropdown-menu,
+body .resource-item .btn-group.open .dropdown-menu,
+body .resource-item .dropdown-menu.show,
+body .resource-item .btn-group .dropdown-menu.show,
+.resource-item .dropdown.open .dropdown-menu,
+.resource-item .btn-group.open .dropdown-menu,
+.resource-item .dropdown-menu.show {
+  display: block !important;
+  opacity: 1 !important;
+  transform: none !important;
+  visibility: visible !important;
+}
+
+/* Additional info tables on dataset page */
+.additional-info {
+  margin-top: 30px !important;
+}
+
+.additional-info .module-heading,
+.additional-info header {
+  background: linear-gradient(135deg, #0069B4 0%, #005a9e 100%) !important;
+  background: linear-gradient(135deg, var(--unesco-blue) 0%, var(--unesco-blue-dark) 100%) !important;
+  color: white !important;
+  padding: 15px 20px !important;
+  border-radius: 8px 8px 0 0 !important;
+  margin: 0 !important;
+}
+
+.additional-info .module-heading h2,
+.additional-info header h2 {
+  color: white !important;
+  font-size: 18px !important;
+  font-weight: 600 !important;
+  margin: 0 !important;
+}
+
+.additional-info table {
+  width: 100% !important;
+  border-collapse: collapse !important;
+  background: #fff !important;
+}
+
+.additional-info table th,
+.additional-info table .dataset-label {
+  background: #f8f9fa !important;
+  font-weight: 600 !important;
+  padding: 12px 15px !important;
+  border: 1px solid #e9ecef !important;
+  width: 30% !important;
+  color: #495057 !important;
+  font-size: 14px !important;
+}
+
+.additional-info table td,
+.additional-info table .dataset-details {
+  padding: 12px 15px !important;
+  border: 1px solid #e9ecef !important;
+  color: #212529 !important;
+  font-size: 14px !important;
+}
+
+.additional-info table a {
+  color: #0069B4 !important;
+  color: var(--unesco-blue) !important;
+}
+
+/* Activity stream */
+.activity-stream {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.activity-stream li {
+  padding: 15px 0 !important;
+  border-bottom: 1px solid #f0f0f0 !important;
+  display: flex !important;
+  align-items: flex-start !important;
+}
+
+.activity-stream li:last-child {
+  border-bottom: none !important;
+}
+
+.activity-stream .gravatar {
+  width: 40px !important;
+  height: 40px !important;
+  border-radius: 50% !important;
+  margin-right: 15px !important;
+  flex-shrink: 0 !important;
+}
+
+.activity-stream .inner {
+  flex: 1 !important;
+}
+
+.activity-stream .actor {
+  font-weight: 600 !important;
+  color: #0069B4 !important;
+  color: var(--unesco-blue) !important;
+}
+
+.activity-stream .date {
+  font-size: 12px !important;
+  color: #868e96 !important;
+}
+
+/* ===== CRITICAL FIXES FOR CKAN 2.10 DATASET PAGE ===== */
+
+/* Dataset search page - Search input with button */
+.primary .search-form .search-input,
+.primary .search-form .search-giant,
+.search-form .search-input,
+.search-form .search-giant {
+  position: relative !important;
+  display: flex !important;
+  align-items: stretch !important;
+}
+
+.primary .search-form .search-input input,
+.primary .search-form .search-giant input,
+.search-form .search-input input[type="text"],
+.search-form .search-giant input[type="text"],
+.search-form input#field-giant-search,
+.search-form input[name="q"] {
+  flex: 1 !important;
+  width: 100% !important;
+  padding: 12px 50px 12px 15px !important;
+  border: 1px solid #ced4da !important;
+  border-radius: 4px !important;
+  font-size: 14px !important;
+  background-color: #fff !important;
+}
+
+.primary .search-form .search-input button,
+.primary .search-form .search-giant button,
+.search-form .search-input button[type="submit"],
+.search-form .search-giant button[type="submit"],
+.search-form button[type="submit"] {
+  position: absolute !important;
+  right: 0 !important;
+  top: 0 !important;
+  height: 100% !important;
+  width: 50px !important;
+  min-width: 50px !important;
+  background-color: #0069B4 !important;
+  border: none !important;
+  border-radius: 0 4px 4px 0 !important;
+  color: white !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  z-index: 10 !important;
+}
+
+.primary .search-form .search-input button:hover,
+.primary .search-form .search-giant button:hover,
+.search-form .search-input button[type="submit"]:hover,
+.search-form .search-giant button[type="submit"]:hover,
+.search-form button[type="submit"]:hover {
+  background-color: #005a9e !important;
+}
+
+.search-form .search-input.search-giant button {
+    margin-top: 0.01rem !important;
+}
+
+.primary .search-form .search-input button i,
+.primary .search-form .search-giant button i,
+.search-form .search-input button i,
+.search-form .search-giant button i,
+.search-form button[type="submit"] i,
+.search-form button[type="submit"] .fa,
+.search-form button[type="submit"] .fa-search {
+  color: white !important;
+  font-size: 16px !important;
+}
+
+/* ===== FACET ICONS FIX - CRITICAL FOR CKAN 2.10 ===== */
+
+/* Force display of facet icons with maximum specificity */
+.secondary img.facet-icon,
+.filters img.facet-icon,
+.module img.facet-icon,
+.module-content img.facet-icon,
+nav img.facet-icon,
+ul img.facet-icon,
+li img.facet-icon,
+a img.facet-icon,
+img.facet-icon {
+  width: 20px !important;
+  height: 20px !important;
+  min-width: 20px !important;
+  min-height: 20px !important;
+  max-width: 20px !important;
+  max-height: 20px !important;
+  margin-right: 8px !important;
+  display: inline-block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  vertical-align: middle !important;
+  border-radius: 50% !important;
+  flex-shrink: 0 !important;
+  object-fit: contain !important;
+}
+
+/* Ensure parent containers don't hide the icons */
+.filters .module-content,
+.secondary .module-content,
+.filters .nav-facet,
+.secondary .nav-facet,
+.filters nav,
+.secondary nav {
+  overflow: visible !important;
+}
+
+/* Fix nav-facet list items for icon display */
+.filters .nav-facet li,
+.secondary .nav-facet li,
+.filters nav.nav-facet li,
+.secondary nav.nav-facet li,
+nav.nav-facet li {
+  display: block !important;
+  overflow: visible !important;
+}
+
+.filters .nav-facet li a,
+.secondary .nav-facet li a,
+.filters nav.nav-facet li a,
+.secondary nav.nav-facet li a,
+nav.nav-facet li a {
+  display: flex !important;
+  align-items: center !important;
+  flex-wrap: nowrap !important;
+  overflow: visible !important;
+  padding: 6px 8px !important;
+  color: #495057 !important;
+  text-decoration: none !important;
+  border-radius: 4px !important;
+  transition: background-color 0.2s ease !important;
+}
+
+.filters .nav-facet li a:hover,
+.secondary .nav-facet li a:hover,
+nav.nav-facet li a:hover {
+  background-color: rgba(0, 105, 180, 0.08) !important;
+  color: #0069B4 !important;
+}
+
+.filters .nav-facet li.active a,
+.secondary .nav-facet li.active a,
+nav.nav-facet li.active a {
+  background-color: rgba(0, 105, 180, 0.12) !important;
+  color: #0069B4 !important;
+  font-weight: 600 !important;
+}
+
+/* Item label text */
+.filters .nav-facet li a .item-label,
+.secondary .nav-facet li a .item-label,
+nav.nav-facet li a .item-label {
+  flex: 1 1 auto !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+  margin-right: 5px !important;
+}
+
+/* Badge/count */
+.filters .nav-facet li a .badge,
+.secondary .nav-facet li a .badge,
+nav.nav-facet li a .badge,
+.filters .nav-facet li a .item-count,
+.secondary .nav-facet li a .item-count,
+nav.nav-facet li a .item-count {
+  flex-shrink: 0 !important;
+  margin-left: auto !important;
+  padding: 2px 8px !important;
+  font-size: 11px !important;
+  font-weight: 500 !important;
+  background-color: #6c757d !important;
+  color: white !important;
+  border-radius: 10px !important;
+  min-width: 20px !important;
+  text-align: center !important;
+}
+
+/* Separator - hide it */
+.filters .nav-facet li a .separator,
+.secondary .nav-facet li a .separator,
+nav.nav-facet li a .separator {
+  display: none !important;
+}
+
+/* Module heading for filters */
+.filters .module-heading,
+.secondary .module-heading {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  background-color: #f8f9fa !important;
+  padding: 12px 15px !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  color: #495057 !important;
+  border-bottom: 1px solid #e9ecef !important;
+}
+
+/* Sorting buttons in filter headings */
+.filters .module-heading .sorting,
+.filters .module .sorting {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 2px !important;
+}
+
+/* Search config OR/AND buttons */
+.filters .container__filter__type__search_and__or {
+  display: flex !important;
+  gap: 5px !important;
+  margin-bottom: 10px !important;
+}
+
+.filters .container__filter__type__search_and__or .btn {
+  padding: 6px 15px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
+  border-radius: 4px !important;
+}
+
+.filters .container__filter__type__search_and__or .btn.active,
+.filters .container__filter__type__search_and__or .btn-primary {
+  background-color: #0069B4 !important;
+  border-color: #0069B4 !important;
+  color: white !important;
+}
+
+.filters .container__filter__type__search_and__or .btn:not(.active):not(.btn-primary) {
+  background-color: #f8f9fa !important;
+  border-color: #ced4da !important;
+  color: #495057 !important;
+}
+
+/* Fix for h1 search results heading */
+.primary h1.h1-search,
+h1.h1-search {
+  font-size: 24px !important;
+  font-weight: 700 !important;
+  color: #212529 !important;
+  margin-bottom: 20px !important;
+}
+
+/* Dataset list - ensure proper card styling */
+.dataset-list,
+ul.dataset-list {
+  list-style: none !important;
+  padding: 0 !important;
+  margin: 0 !important;
+}
+
+.dataset-list > li,
+ul.dataset-list > li,
+.dataset-list .dataset-item,
+ul.dataset-list .dataset-item,
+li.dataset-item {
+  background: #fff !important;
+  border: 1px solid #e9ecef !important;
+  border-radius: 8px !important;
+  margin-bottom: 15px !important;
+  padding: 20px !important;
+  transition: all 0.2s ease !important;
+  list-style: none !important;
+}
+
+.dataset-list > li:hover,
+ul.dataset-list > li:hover,
+li.dataset-item:hover {
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
+  border-color: #dee2e6 !important;
+}
+
+/* Dataset title link */
+.dataset-item h2 a,
+.dataset-item h3 a,
+.dataset-item .dataset-heading a,
+.dataset-heading a {
+  color: #0069B4 !important;
+  text-decoration: none !important;
+  font-weight: 600 !important;
+  font-size: 18px !important;
+}
+
+.dataset-item h2 a:hover,
+.dataset-item h3 a:hover,
+.dataset-item .dataset-heading a:hover,
+.dataset-heading a:hover {
+  color: #005a9e !important;
+  text-decoration: underline !important;
+}
+
+/* Dataset notes/description */
+.dataset-item p,
+.dataset-item .notes,
+.dataset-item .dataset-content {
+  color: #6c757d !important;
+  font-size: 14px !important;
+  line-height: 1.6 !important;
+  margin: 10px 0 !important;
+}
+
+/* Resource format labels in dataset list */
+.dataset-item .dataset-resources,
+.dataset-item ul.dataset-resources {
+  margin-top: 15px !important;
+  padding-top: 10px !important;
+  border-top: 1px solid #f0f0f0 !important;
+}
+
+.dataset-item .dataset-resources li {
+  display: inline-block !important;
+  margin-right: 5px !important;
+  margin-bottom: 5px !important;
+  list-style: none !important;
+}
+
+.dataset-item .dataset-resources a.label,
+.dataset-item .dataset-resources .label,
+.dataset-item .dataset-resources .badge-label {
+  display: inline-block !important;
+  padding: 4px 10px !important;
+  font-size: 11px !important;
+  font-weight: 600 !important;
+  text-transform: uppercase !important;
+  border-radius: 3px !important;
+  color: white !important;
+  text-decoration: none !important;
+  background-color: #6c757d !important;
+}
+
+/* Format-specific colors */
+.dataset-item .dataset-resources a.label[data-format="csv"],
+.dataset-item .dataset-resources a.label[data-format*="csv"],
+.dataset-item .dataset-resources .label[data-format="csv"],
+.dataset-item .dataset-resources .label[data-format*="csv"] {
+  background-color: #28a745 !important;
+}
+
+.dataset-item .dataset-resources a.label[data-format="json"],
+.dataset-item .dataset-resources a.label[data-format*="json"],
+.dataset-item .dataset-resources .label[data-format="json"],
+.dataset-item .dataset-resources .label[data-format*="json"] {
+  background-color: #ffc107 !important;
+  color: #212529 !important;
+}
+
+.dataset-item .dataset-resources a.label[data-format="pdf"],
+.dataset-item .dataset-resources a.label[data-format*="pdf"],
+.dataset-item .dataset-resources .label[data-format="pdf"],
+.dataset-item .dataset-resources .label[data-format*="pdf"] {
+  background-color: #dc3545 !important;
+}
+
+.dataset-item .dataset-resources a.label[data-format="xls"],
+.dataset-item .dataset-resources a.label[data-format*="xls"],
+.dataset-item .dataset-resources .label[data-format="xls"],
+.dataset-item .dataset-resources .label[data-format*="xls"] {
+  background-color: #17a2b8 !important;
+}
+
+.dataset-item .dataset-resources a.label[data-format="shp"],
+.dataset-item .dataset-resources a.label[data-format*="shp"],
+.dataset-item .dataset-resources .label[data-format="shp"],
+.dataset-item .dataset-resources .label[data-format*="shp"] {
+  background-color: #36849a !important;
+}
+
+/* ===== CRITICAL OVERRIDES FOR DATASET SIDEBAR ICONS ===== */
+/* Override all possible conflicting styles with maximum specificity */
+
+/* Dataset sidebar facet icons - Force visibility with maximum specificity */
+body .secondary img.facet-icon,
+body .secondary .module img.facet-icon,
+body .secondary .module-content img.facet-icon,
+body .secondary .nav-facet img.facet-icon,
+body .secondary nav.nav-facet li a img.facet-icon,
+body .filters img.facet-icon,
+body .filters .module img.facet-icon,
+body .filters .module-content img.facet-icon,
+body .filters .nav-facet img.facet-icon,
+body nav.nav-facet li a img.facet-icon,
+body ul.nav-facet li a img.facet-icon,
+body .module-content .nav-facet li a img.facet-icon,
+.secondary img.facet-icon,
+.secondary .module img.facet-icon,
+.secondary .module-content img.facet-icon,
+.secondary .nav-facet img.facet-icon,
+.secondary nav.nav-facet li a img.facet-icon,
+.filters img.facet-icon,
+.filters .module img.facet-icon,
+.filters .module-content img.facet-icon,
+.filters .nav-facet img.facet-icon,
+nav.nav-facet li a img.facet-icon,
+ul.nav-facet li a img.facet-icon,
+.module-content .nav-facet li a img.facet-icon,
+img.facet-icon {
+  display: inline-block !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  width: 20px !important;
+  height: 20px !important;
+  min-width: 20px !important;
+  min-height: 20px !important;
+  max-width: 20px !important;
+  max-height: 20px !important;
+  margin-right: 8px !important;
+  margin-left: 0 !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  vertical-align: middle !important;
+  border-radius: 50% !important;
+  flex-shrink: 0 !important;
+  object-fit: contain !important;
+  background: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  filter: none !important;
+  transform: none !important;
+  position: relative !important;
+  z-index: 1 !important;
+}
+
+/* DROPDOWN FIXES WITH ABSOLUTE MAXIMUM SPECIFICITY */
+/* Override all possible dropdown conflicts */
+html body .resource-item .dropdown-menu,
+html body .resource-item .btn-group .dropdown-menu,
+html body ul.resource-list li.resource-item .dropdown-menu,
+html body .resource-list .resource-item .dropdown-menu,
+html body li.resource-item .dropdown-menu,
+html body .dataset-resources .resource-item .dropdown-menu,
+body .resource-item .dropdown-menu,
+body .resource-item .btn-group .dropdown-menu,
+body ul.resource-list li.resource-item .dropdown-menu,
+body .resource-list .resource-item .dropdown-menu,
+body li.resource-item .dropdown-menu {
+  display: none !important;
+  position: absolute !important;
+  top: calc(100% + 6px) !important;
+  left: auto !important;
+  right: 0 !important;
+  bottom: auto !important;
+  z-index: 9999 !important;
+  min-width: 180px !important;
+  max-width: 300px !important;
+  background-color: #ffffff !important;
+  border: 1px solid #dee2e6 !important;
+  border-radius: 6px !important;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15) !important;
+  margin-top: 0 !important;
+  margin-bottom: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+  padding: 6px 0 !important;
+  overflow: visible !important;
+  clip: auto !important;
+  white-space: nowrap !important;
+  transform: none !important;
+  transition: none !important;
+}
+
+/* Ensure dropdown appears when active/open */
+html body .resource-item .dropdown.open .dropdown-menu,
+html body .resource-item .btn-group.open .dropdown-menu,
+html body .resource-item .dropdown-menu.show,
+html body .resource-item .btn-group .dropdown-menu.show,
+body .resource-item .dropdown.open .dropdown-menu,
+body .resource-item .btn-group.open .dropdown-menu,
+body .resource-item .dropdown-menu.show,
+body .resource-item .btn-group .dropdown-menu.show {
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  transform: none !important;
+  z-index: 9999 !important;
+}
+
+/* Spatial query map container */
+.spatial-query-map,
+#dataset-map-container,
+.dataset-map {
+  border-radius: 8px !important;
+  overflow: hidden !important;
+  margin-bottom: 15px !important;
+}
+
+/* Add dataset button */
+.btn.btn-primary[href*="new"],
+a.btn.btn-primary[href*="dataset/new"] {
+  background-color: #0069B4 !important;
+  border-color: #0069B4 !important;
+  color: white !important;
+  padding: 10px 18px !important;
+  border-radius: 4px !important;
+  font-weight: 600 !important;
+  text-decoration: none !important;
+  box-shadow: 0 2px 8px rgba(0, 105, 180, 0.25) !important;
+  margin-top: 20px !important;
+}
+
+.btn.btn-primary[href*="new"]:hover,
+a.btn.btn-primary[href*="dataset/new"]:hover {
+  background-color: #005a9e !important;
+  border-color: #005a9e !important;
+}
+
+/* Layout spacing for primary action bar on listing pages */
+.page_primary_action,
+.page_primary_action .btn-group,
+.page_primary_action .btn {
+  margin-bottom: 10px !important;
+}
+
+.page_primary_action {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+/* ===== METADATA TABLE DESIGN IMPROVEMENTS - CLEAN FORMAT ===== */
+
+/* Modern metadata section header */
+.additional-info header,
+.additional-info .module-heading,
+body .additional-info header,
+body .additional-info .module-heading {
+  background: transparent !important;
+  border: none !important;
+  padding: 0 0 15px 0 !important;
+  margin: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  border-bottom: 1px solid #e9ecef !important;
+}
+
+.additional-info header h2,
+.additional-info header h2.inline,
+body .additional-info header h2,
+body .additional-info header h2.inline {
+  color: #212529 !important;
+  background: transparent !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  font-size: 24px !important;
+  font-weight: 700 !important;
+  line-height: 1.3 !important;
+}
+
+/* Clean metadata container - like right side */
+.additional-info,
+body .additional-info {
+  background: transparent !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  margin: 30px 0 !important;
+  overflow: visible !important;
+  border: none !important;
+  padding: 0 !important;
+}
+
+/* Section headers within metadata */
+.additional-info h3,
+.additional-info .section-header,
+body .additional-info h3,
+body .additional-info .section-header {
+  color: #212529 !important;
+  font-size: 18px !important;
+  font-weight: 600 !important;
+  margin: 25px 0 15px 0 !important;
+  padding: 0 !important;
+  border-bottom: 1px solid #e9ecef !important;
+  padding-bottom: 8px !important;
+}
+
+/* Clean table styling within bordered container */
+.additional-info .table,
+.additional-info table,
+body .additional-info .table,
+body .additional-info table {
+  margin: 0 !important;
+  background: transparent !important;
+  border-collapse: collapse !important;
+  border-spacing: 0 !important;
+  width: 100% !important;
+  border: none !important;
+}
+
+/* Minimal row styling */
+.additional-info .table tbody tr,
+.additional-info table tbody tr,
+body .additional-info .table tbody tr,
+body .additional-info table tbody tr {
+  border: none !important;
+  border-bottom: 1px solid #f0f0f0 !important;
+  background: transparent !important;
+  transition: none !important;
+}
+
+.additional-info .table tbody tr:hover,
+.additional-info table tbody tr:hover,
+body .additional-info .table tbody tr:hover,
+body .additional-info table tbody tr:hover {
+  background-color: transparent !important;
+}
+
+/* Clean cell styling */
+.additional-info .table td,
+.additional-info table td,
+.additional-info .dataset-label,
+.additional-info .dataset-details,
+body .additional-info .table td,
+body .additional-info table td,
+body .additional-info .dataset-label,
+body .additional-info .dataset-details {
+  padding: 12px 15px !important;
+  vertical-align: top !important;
+  border: none !important;
+  border-bottom: 1px solid #f0f0f0 !important;
+  background: transparent !important;
+}
+
+.additional-info .dataset-label,
+body .additional-info .dataset-label {
+  background: transparent !important;
+  font-weight: 600 !important;
+  color: #6c757d !important;
+  width: 35% !important;
+  border-right: none !important;
+  font-size: 14px !important;
+}
+
+.additional-info .dataset-details,
+body .additional-info .dataset-details {
+  background: transparent !important;
+  color: #212529 !important;
+  width: 65% !important;
+  font-size: 14px !important;
+}
+
+/* Create a container for Basic Information with clear boundaries */
+.additional-info .table:first-of-type,
+body .additional-info .table:first-of-type {
+  border: 1px solid #e9ecef !important;
+  border-radius: 6px 6px 0 0 !important;
+  border-bottom: none !important;
+  overflow: hidden !important;
+  margin-bottom: 0 !important;
+}
+
+/* Show More button connects seamlessly with the table above */
+.additional-info .toggle-show-more,
+body .additional-info .toggle-show-more {
+  background: #f8f9fa !important;
+  border: 1px solid #e9ecef !important;
+  border-top: none !important;
+  padding: 12px 20px !important;
+  text-align: center !important;
+  margin: 0 0 30px 0 !important;
+  cursor: pointer !important;
+  transition: all 0.2s ease !important;
+  font-weight: 500 !important;
+  color: #007bff !important;
+  border-radius: 0 0 6px 6px !important;
+  position: relative !important;
+  font-size: 14px !important;
+  width: 100% !important;
+  display: block !important;
+  box-shadow: none !important;
+}
+
+.additional-info .toggle-show-more:hover,
+body .additional-info .toggle-show-more:hover {
+  background: #e9ecef !important;
+  color: #0056b3 !important;
+  text-decoration: none !important;
+}
+
+.additional-info .toggle-show-more:not(tr)::before,
+body .additional-info .toggle-show-more:not(tr)::before {
+  content: "▼ " !important;
+  font-size: 12px !important;
+  margin-right: 6px !important;
+  transition: transform 0.2s ease !important;
+  display: inline !important;
+}
+
+.additional-info .toggle-show-more.collapsed:not(tr)::before,
+body .additional-info .toggle-show-more.collapsed:not(tr)::before {
+  transform: rotate(-90deg) !important;
+  content: "▶ " !important;
+}
+
+/* Hide arrow for table rows with toggle-show-more class */
+.additional-info tr.toggle-show-more::before,
+.additional-info tr.toggle-show::before,
+body .additional-info tr.toggle-show-more::before,
+body .additional-info tr.toggle-show::before {
+  display: none !important;
+  content: none !important;
+}
+
+/* Clear separation between metadata sections */
+.additional-info h3:not(:first-child),
+.additional-info .section-header:not(:first-child),
+body .additional-info h3:not(:first-child),
+body .additional-info .section-header:not(:first-child) {
+  margin-top: 20px !important;
+  padding-top: 15px !important;
+  border-top: 1px solid #e9ecef !important;
+}
+
+/* Consistent button styling for Download vs Explore */
+.download-links .btn,
+.download-links .btn-group .btn,
+body .download-links .btn,
+body .download-links .btn-group .btn {
+  background: linear-gradient(135deg, #0069B4 0%, #005a9e 100%) !important;
+  border: 1px solid #005a9e !important;
+  color: white !important;
+  padding: 8px 16px !important;
+  font-size: 14px !important;
+  font-weight: 600 !important;
+  border-radius: 4px !important;
+  transition: all 0.2s ease !important;
+  text-decoration: none !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+}
+
+.download-links .btn:hover,
+.download-links .btn-group .btn:hover,
+body .download-links .btn:hover,
+body .download-links .btn-group .btn:hover {
+  background: linear-gradient(135deg, #005a9e 0%, #004d87 100%) !important;
+  border-color: #004d87 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.15) !important;
+}
+
+/* Ensure consistent button icon styling */
+.download-links .btn i,
+.download-links .btn-group .btn i,
+body .download-links .btn i,
+body .download-links .btn-group .btn i {
+  color: white !important;
+  font-size: 14px !important;
+  margin-right: 0 !important;
+}
+
+/* ===== RESPONSIVE TOP MENU ===== */
+
+/* Base styles for responsive top menu */
+.masthead-top-bar {
+  background-color: transparent !important;
+  padding: 8px 0 !important;
+  border-bottom: none !important;
+}
+
+.topmenu-main {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: flex-end !important;
+  gap: 5px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  list-style: none !important;
+}
+
+.topmenu-main li {
+  margin: 0 !important;
+  padding: 0 !important;
+  list-style: none !important;
+}
+
+.topmenu-main a {
+  color: white !important;
+  text-decoration: none !important;
+  padding: 6px 12px !important;
+  border-radius: 4px !important;
+  transition: background-color 0.2s ease !important;
+  font-size: 13px !important;
+  font-weight: 500 !important;
+}
+
+.topmenu-main a:hover {
+  background-color: rgba(255, 255, 255, 0.15) !important;
+  text-decoration: none !important;
+}
+
+/* Login specific styling */
+.topmenu-login a {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  font-weight: 600 !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+}
+
+.topmenu-login a:hover {
+  background-color: rgba(255, 255, 255, 0.25) !important;
+}
+
+.mobile-icon {
+  display: none !important;
+  font-size: 14px !important;
+}
+
+/* Mobile dropdown menu */
+.topmenu-toggle {
+  position: relative !important;
+}
+
+.topmenu-dropdown {
+  display: none !important;
+  position: absolute !important;
+  top: 100% !important;
+  right: 0 !important;
+  background-color: #0077d4 !important;
+  border-radius: 4px !important;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15) !important;
+  padding: 8px 0 !important;
+  margin: 4px 0 0 0 !important;
+  min-width: 200px !important;
+  z-index: 10000 !important;
+}
+
+.topmenu-dropdown li {
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.topmenu-dropdown a {
+  display: block !important;
+  padding: 8px 16px !important;
+  white-space: nowrap !important;
+  border-radius: 0 !important;
+}
+
+.topmenu-dropdown a:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.topmenu-dropdown-toggle.active + .topmenu-dropdown {
+  display: block !important;
+}
+
+/* Responsive visibility classes */
+.desktop-only { display: block !important; }
+.tablet-only { display: none !important; }
+.mobile-only { display: none !important; }
+.desktop-tablet-only { display: block !important; }
+
+/* Tablet styles (768px - 992px) */
+@media (max-width: 992px) and (min-width: 769px) {
+  .desktop-only { display: none !important; }
+  .tablet-only { display: block !important; }
+  .mobile-only { display: none !important; }
+  
+  .topmenu-main {
+    gap: 12px !important;
+  }
+  
+  .topmenu-main a {
+    padding: 6px 10px !important;
+    font-size: 12px !important;
+  }
+}
+
+/* Mobile styles (≤768px) */
+@media (max-width: 768px) {
+  .desktop-only { display: none !important; }
+  .tablet-only { display: none !important; }
+  .mobile-only { display: block !important; }
+  .desktop-tablet-only { display: none !important; }
+  
+  .topmenu-main {
+    gap: 8px !important;
+    justify-content: space-between !important;
+  }
+  
+  .topmenu-unesco {
+    order: 1 !important;
+  }
+  
+  .topmenu-login {
+    order: 2 !important;
+  }
+  
+  .topmenu-lang {
+    order: 3 !important;
+    display: none !important;
+  }
+  
+  .topmenu-toggle {
+    order: 4 !important;
+  }
+  
+  .mobile-icon {
+    display: inline !important;
+  }
+  
+  .login-text {
+    display: none !important;
+  }
+  
+  .topmenu-main a {
+    padding: 8px !important;
+    font-size: 12px !important;
+  }
+  
+  .topmenu-login a {
+    padding: 8px 12px !important;
+  }
+  
+  /* Make dropdown toggle more prominent */
+  .topmenu-dropdown-toggle {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 38px !important;
+    height: 38px !important;
+    padding: 8px !important;
+    background-color: rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(255, 255, 255, 0.65) !important;
+    border-radius: 6px !important;
+    line-height: 1 !important;
+  }
+
+  .topmenu-dropdown-toggle .fa {
+    font-size: 16px !important;
+  }
+}
+
+/* Extra small mobile (≤480px) */
+@media (max-width: 480px) {
+  .topmenu-main {
+    gap: 6px !important;
+  }
+  
+  .topmenu-main a {
+    padding: 6px 8px !important;
+    font-size: 11px !important;
+  }
+  
+  .topmenu-login a {
+    padding: 6px 10px !important;
+  }
+}
+
+.stages li.last {
+     top: -1px;
+}
+.box, .wrapper {
+    background-color: #fff !important; 
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+}
+@media (min-width: 768px) {
+    .wrapper:before {
+        border-right: 0 !important;
+    }
+}
+.btn-default {
+  margin-top: 10px !important;
+}
+
+/* Recently Added Section */
+.recently-added-section {
+  padding: 1.5rem 2rem;
+}
+.recently-added-section > .row {
+  display: flex;
+  flex-wrap: wrap;
+}
+.recently-added-section > .row > [class*="col-"] {
+  display: flex;
+  flex-direction: column;
+}
+.recently-added-heading {
+  font-size: 1.15rem;
+  font-weight: 600;
+  color: var(--unesco-blue);
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--unesco-blue-pale);
+}
+.recently-added-heading i {
+  margin-right: 0.4rem;
+}
+.recently-added-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  flex: 1;
+}
+.recently-added-item {
+  padding: 0.6rem 0;
+  border-bottom: 1px solid #f0f0f0;
+  display: flex;
+  flex-direction: column;
+}
+.recently-added-item:last-child {
+  border-bottom: none;
+}
+.recently-added-item a {
+  color: var(--text-primary);
+  font-weight: 500;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+.recently-added-item a:hover {
+  color: var(--unesco-blue);
+}
+.recently-added-date {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-top: 0.15rem;
+}
+.recently-added-date i {
+  margin-right: 0.3rem;
+}
+.recently-added-more {
+  margin-top: auto;
+  padding-top: 0.8rem;
+  text-align: right;
+}
+
+/* ── Tracking stats ─────────────────────────────────────────────────── */
+
+/* Stats bar on dataset detail page */
+.tracking-stats-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1.2rem;
+  padding: 0.6rem 0;
+  margin: 0.5rem 0 1rem;
+  border-top: 1px solid #e8e8e8;
+  border-bottom: 1px solid #e8e8e8;
+}
+.tracking-stat {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.92rem;
+  color: #555;
+}
+.tracking-stat i {
+  color: #1a6b8a;
+  font-size: 1rem;
+}
+.tracking-stat strong {
+  color: #333;
+}
+.tracking-recent {
+  color: #888;
+  font-size: 0.82rem;
+}
+
+/* Views badge in search results */
+.dataset-views-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.78rem;
+  color: #666;
+  background: #f0f4f7;
+  padding: 0.15rem 0.55rem;
+  border-radius: 10px;
+  margin-left: 0.3rem;
+  vertical-align: middle;
+  font-weight: 500;
+}
+.dataset-views-badge i {
+  font-size: 0.72rem;
+  color: #1a6b8a;
+}
+
+/* Downloads badge on resource items */
+.resource-downloads-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 0.78rem;
+  color: #555;
+  background: #eef6ee;
+  padding: 0.15rem 0.55rem;
+  border-radius: 10px;
+  margin-left: 0.4rem;
+  vertical-align: middle;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.resource-downloads-badge i {
+  font-size: 0.72rem;
+  color: #2e7d32;
+}
+
+/* Trending section (most viewed datasets + most downloaded resources) */
+.trending-section {
+  padding: 0.5rem 1rem 1rem;
+}
+.trending-heading {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #333;
+  margin: 0.8rem 0 0.5rem;
+  padding-bottom: 0.4rem;
+  border-bottom: 2px solid #e8e8e8;
+}
+.trending-heading i {
+  margin-right: 0.35rem;
+  color: #1a6b8a;
+}
+.trending-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.trending-item {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.55rem 0.3rem;
+  border-bottom: 1px solid #f0f0f0;
+  transition: background 0.15s;
+}
+.trending-item:last-child {
+  border-bottom: none;
+}
+.trending-item:hover {
+  background: #f8fbfd;
+}
+.trending-rank {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #1a6b8a;
+  min-width: 1.8rem;
+  text-align: center;
+  flex-shrink: 0;
+}
+.trending-info {
+  flex: 1;
+  min-width: 0;
+}
+.trending-info a {
+  display: block;
+  color: #333;
+  font-size: 0.88rem;
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.trending-info a:hover {
+  color: #1a6b8a;
+}
+.trending-meta {
+  display: block;
+  font-size: 0.76rem;
+  color: #888;
+  margin-top: 0.1rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.trending-meta i {
+  margin-right: 0.15rem;
+}
+.trending-format-badge {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 600;
+  color: #fff;
+  background: #1a6b8a;
+  padding: 0.05rem 0.35rem;
+  border-radius: 3px;
+  margin-right: 0.3rem;
+  vertical-align: middle;
+  letter-spacing: 0.02em;
+}
+.trending-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.2rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.trending-views {
+  color: #1a6b8a;
+}
+.trending-downloads {
+  color: #2e7d32;
+}
+.trending-count i {
+  font-size: 0.72rem;
+}
+.trending-more {
+  margin-top: 0.7rem;
+  text-align: right;
+}
+.trending-more .btn {
+  font-size: 0.8rem;
+}
+
+/* Stats widget enhancements for tracking counters */
+.box.stats li i.fa {
+  margin-right: 0.3rem;
+  color: #1a6b8a;
+}
+
+/* Flash notifications on pages with absolute-positioned header */
+.homepage #content .alert {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1100;
+  margin: 0;
+  border-radius: 0;
+  text-align: center;
+  padding: 12px 40px 12px 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  animation: flashSlideDown 0.3s ease-out;
+}
+.homepage #content .alert .close {
+  position: absolute;
+  right: 15px;
+  top: 50%;
+  transform: translateY(-50%);
+  opacity: 0.8;
+  color: inherit;
+  font-size: 20px;
+}
+@keyframes flashSlideDown {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* ============================================================
+   HOMEPAGE MODERNIZATION — UI/UX Improvements 2026
+   ============================================================ */
+
+/* --- Slideshow Modern --- */
+.slideshow-modern {
+  position: relative;
+  width: 100%;
+  margin: 5px auto 2rem;
+  overflow: hidden;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  max-width: 1181px;
+}
+
+.slideshow-modern .slideshow-wrapper {
+  position: relative;
+  width: 100%;
+}
+
+.slideshow-modern .slide {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.8s ease, visibility 0.8s ease;
+  display: block !important;
+}
+
+.slideshow-modern .slideshow-wrapper {
+  height: 380px;
+}
+
+.slideshow-modern .slide.slide-active {
+  opacity: 1;
+  visibility: visible;
+  z-index: 2;
+}
+
+.slideshow-modern .slide.slide-exit {
+  opacity: 0;
+  visibility: visible;
+  z-index: 1;
+}
+
+.slideshow-modern .slide-image {
+  height: 100%;
+  background-size: cover;
+  background-position: center;
+  position: relative;
+}
+
+.slideshow-modern .slide-content {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 2.5rem 3rem;
+  background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0.5) 60%, transparent 100%);
+  color: #fff !important;
+}
+
+.slideshow-modern .slide-content * {
+  color: #fff;
+}
+
+.slideshow-modern .slide-tag {
+  display: inline-block;
+  background: var(--unesco-blue);
+  color: #fff;
+  padding: 0.3rem 0.8rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 0.75rem;
+}
+
+.slideshow-modern .slide-content h2 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  text-shadow: 1px 1px 4px rgba(0,0,0,0.5);
+  color: #fff;
+  line-height: 1.2;
+  /* Titulos FR/ES largos crecen hacia arriba y el contenedor de altura
+     fija los recorta: limitar a 2 lineas tambien en desktop */
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.slideshow-modern .slide-subtitle,
+p.slide-subtitle {
+  font-size: 1.1rem;
+  opacity: 0.9;
+  margin-bottom: 1.25rem;
+  font-weight: 300;
+  max-width: 600px;
+  color: #fff !important;
+  text-shadow: 1px 1px 3px rgba(0,0,0,0.5);
+}
+
+.slideshow-modern .slide-btn {
+  background: var(--unesco-blue) !important;
+  border: none !important;
+  padding: 0.75rem 1.75rem !important;
+  font-weight: 600 !important;
+  border-radius: 25px !important;
+  box-shadow: 0 4px 12px rgba(0, 105, 180, 0.4) !important;
+  transition: all 0.3s ease !important;
+  display: inline-flex !important;
+  align-items: center !important;
+}
+
+.slideshow-modern .slide-btn:hover {
+  background: var(--unesco-blue-dark) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 16px rgba(0, 105, 180, 0.5) !important;
+}
+
+/* Barra de progreso del slideshow */
+.slideshow-progress {
+  position: absolute;
+  bottom: 56px;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: rgba(255,255,255,0.2);
+  z-index: 10;
+}
+
+.slideshow-progress-bar {
+  height: 100%;
+  width: 0%;
+  background: var(--unesco-blue);
+  transition: width 6s linear;
+}
+
+.slideshow-modern .slideshow-nav {
+  background: rgba(0, 105, 180, 0.05);
+  padding: 0.75rem 0;
+  backdrop-filter: blur(10px);
+}
+
+.slideshow-modern .prev-btn,
+.slideshow-modern .next-btn {
+  background: var(--unesco-blue);
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  font-size: 16px;
+  transition: all 0.3s ease;
+}
+
+.slideshow-modern .prev-btn:hover,
+.slideshow-modern .next-btn:hover {
+  background: var(--unesco-blue-dark);
+  transform: scale(1.1);
+}
+
+.slideshow-modern .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  transition: all 0.3s ease;
+}
+
+.slideshow-modern .dot.active {
+  background: var(--unesco-blue);
+  width: 28px;
+  border-radius: 5px;
+}
+
+/* Responsive slideshow */
+@media (max-width: 992px) {
+  .slideshow-modern .slideshow-wrapper { height: 340px; }
+  .slideshow-modern .slide-content h2 { font-size: 2rem; }
+  .slideshow-modern .slide-content { padding: 2rem; }
+}
+
+@media (max-width: 768px) {
+  .slideshow-modern .slideshow-wrapper { height: 280px; }
+  .slideshow-modern .slide-content h2 { font-size: 1.5rem; }
+  .slideshow-modern .slide-subtitle { font-size: 0.95rem; display: none; }
+  .slideshow-modern .slide-content { padding: 1.5rem; }
+}
+
+@media (max-width: 576px) {
+  .slideshow-modern .slideshow-wrapper { height: 240px; }
+  .slideshow-modern .slide-content h2 { font-size: 1.25rem; }
+  .slideshow-modern .slide-btn { padding: 0.5rem 1.25rem !important; font-size: 0.85rem !important; }
+}
+
+/* --- Homepage Section Alternation --- */
+.homepage-section {
+  padding: 0;
+  border-radius: 0;
+}
+
+.homepage-section-alt {
+  position: relative;
+}
+
+.homepage-section-alt::before {
+  content: '';
+  position: absolute;
+  top: -0.5rem;
+  left: -50vw;
+  right: -50vw;
+  bottom: -0.5rem;
+  background: #f5f8fa;
+  z-index: -1;
+}
+
+/* --- Split Layout for Feature Sections --- */
+.homepage-split-section {
+  display: flex;
+  align-items: center;
+  gap: 2.5rem;
+  padding: 1.5rem 0;
+}
+
+.homepage-split-section.homepage-split-reverse {
+  flex-direction: row-reverse;
+}
+
+.homepage-split-media {
+  flex: 0 0 45%;
+  max-width: 45%;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+  position: relative;
+}
+
+.homepage-split-media::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(135deg, rgba(0, 105, 180, 0.1) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.homepage-split-media img {
+  width: 100%;
+  height: 280px;
+  object-fit: cover;
+  display: block;
+  transition: transform 0.4s ease;
+}
+
+.homepage-split-section:hover .homepage-split-media img {
+  transform: scale(1.03);
+}
+
+.homepage-split-content {
+  flex: 1;
+}
+
+.homepage-split-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+  position: relative;
+  padding-bottom: 0.75rem;
+}
+
+.homepage-split-title::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 50px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--unesco-blue), var(--unesco-blue-light));
+  border-radius: 2px;
+}
+
+.homepage-split-content p {
+  font-size: 1rem;
+  line-height: 1.7;
+  color: var(--text-secondary);
+  margin-bottom: 1.5rem;
+}
+
+.homepage-split-content .btn {
+  border-radius: 25px;
+  padding: 0.65rem 1.5rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.homepage-split-content .btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 105, 180, 0.3);
+}
+
+@media (max-width: 768px) {
+  .homepage-split-section,
+  .homepage-split-section.homepage-split-reverse {
+    flex-direction: column;
+  }
+  
+  .homepage-split-media {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+  
+  .homepage-split-media img {
+    height: 200px;
+  }
+}
+
+/* --- Recently Added Modern --- */
+.recently-added-modern .recently-added-heading {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  padding-bottom: 0.75rem;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid var(--unesco-blue-pale);
+}
+
+.recently-added-modern .recently-added-heading i {
+  color: var(--unesco-blue);
+  margin-right: 0.5rem;
+}
+
+.recently-added-modern .recently-added-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.recently-added-modern .recently-added-item {
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 0.5rem;
+  transition: all 0.25s ease;
+  border-left: 3px solid transparent;
+}
+
+.recently-added-modern .recently-added-item:hover {
+  background: var(--unesco-blue-pale);
+  border-left-color: var(--unesco-blue);
+  transform: translateX(4px);
+}
+
+.recently-added-modern .recently-added-item a {
+  display: block;
+  font-weight: 500;
+  color: var(--text-primary);
+  text-decoration: none;
+  margin-bottom: 0.25rem;
+  transition: color 0.2s ease;
+}
+
+.recently-added-modern .recently-added-item:hover a {
+  color: var(--unesco-blue);
+}
+
+.recently-added-modern .recently-added-date {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.btn-modern-outline {
+  border: 2px solid var(--unesco-blue) !important;
+  color: var(--unesco-blue) !important;
+  background: transparent !important;
+  border-radius: 20px !important;
+  padding: 0.4rem 1rem !important;
+  font-weight: 600 !important;
+  transition: all 0.3s ease !important;
+}
+
+.btn-modern-outline:hover {
+  background: var(--unesco-blue) !important;
+  color: #fff !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 2px 8px rgba(0, 105, 180, 0.3) !important;
+}
+
+/* --- Scroll Reveal (CSS scroll-driven, sin JS) --- */
+/* El contenido es visible por defecto SIEMPRE. El fade-in al entrar al
+   viewport solo corre en navegadores con animation-timeline; no depende
+   de JS ni de IntersectionObserver, asi que no puede dejar la home en
+   blanco (JS caido, tabs en background, capturas de pagina completa).
+   Cuidado: ninguna regla de ocultamiento debe superar en especificidad
+   a la de estado visible (eso paso con html.js vs .revealed). */
+@keyframes reveal-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal-section,
+    .reveal-item {
+      animation: reveal-fade-up linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 40%;
+    }
+  }
+}
+
+/* --- Card Image Gradient Overlay --- */
+.cardsmall-enhanced .cardsmall-img-enhanced,
+.cardsmall-enhanced .cardsmall-img-top2-enhanced,
+.cardsmall-enhanced .cardsmall-img-thematic-enhanced {
+  position: relative;
+}
+
+.cardsmall-enhanced {
+  border: none;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+  border-radius: 16px;
+}
+
+.cardsmall-enhanced:hover {
+  box-shadow: 0 8px 32px rgba(0, 105, 180, 0.15);
+  transform: translateY(-4px);
+}
+
+/* Mejora en tarjetas de Thematic Viewers */
+.cardsmall-thematic .cardsmall-title-enhanced {
+  font-size: 1rem;
+  line-height: 1.3;
+}
+
+/* --- Homepage Search Box Improvements --- */
+.homepage-search-box {
+  border-radius: 16px !important;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.08) !important;
+  overflow: hidden;
+}
+
+.homepage-search-box .search-form {
+  padding: 1.25rem 1.5rem 0.75rem;
+}
+
+.homepage-search-box .search-giant input {
+  border-radius: 12px !important;
+  border: 2px solid #e8e8e8 !important;
+  transition: all 0.3s ease !important;
+  padding: 0.75rem 1rem !important;
+}
+
+.homepage-search-box .search-giant input:focus {
+  border-color: var(--unesco-blue) !important;
+  box-shadow: 0 0 0 3px rgba(0, 105, 180, 0.15) !important;
+}
+
+.homepage-search-box .tags {
+  padding: 0.5rem 1.5rem 1rem;
+}
+
+/* --- Section Title Banner Variant (compact, with icon + button) --- */
+.section-title-banner {
+  height: auto;
+  min-height: 0;
+}
+
+.section-title-banner-content {
+  display: flex !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  text-align: left !important;
+  gap: 1.5rem;
+  padding: 1.5rem 2.5rem !important;
+  width: 100%;
+}
+
+.section-banner-icon {
+  flex-shrink: 0;
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.2);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+}
+
+.section-banner-icon i {
+  font-size: 1.5rem;
+  color: #fff;
+}
+
+.section-banner-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.section-title-banner .section-banner-text h2 {
+  font-size: 1.35rem;
+  margin: 0 0 0.25rem;
+  text-align: left;
+}
+
+.section-title-banner .section-banner-text .section-title-description {
+  font-size: 0.92rem;
+  margin: 0;
+  opacity: 0.85;
+  text-align: left;
+  color: #fff;
+}
+
+.section-banner-btn {
+  flex-shrink: 0;
+  display: inline-flex !important;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.5rem !important;
+  border-radius: 25px !important;
+  background: #fff !important;
+  color: var(--unesco-blue-dark) !important;
+  font-weight: 700 !important;
+  font-size: 0.92rem;
+  text-decoration: none !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15) !important;
+  white-space: nowrap;
+}
+
+.section-banner-btn:hover {
+  background: var(--unesco-blue-pale) !important;
+  transform: translateY(-2px) !important;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.2) !important;
+  color: var(--unesco-blue-dark) !important;
+  text-decoration: none !important;
+}
+
+.section-banner-btn i {
+  transition: transform 0.3s ease;
+}
+
+.section-banner-btn:hover i {
+  transform: translateX(3px);
+}
+
+@media (max-width: 768px) {
+  .section-title-banner-content {
+    flex-direction: column !important;
+    text-align: center !important;
+    padding: 1.25rem 1.5rem !important;
+    gap: 1rem;
+  }
+
+  .section-title-banner .section-banner-text h2,
+  .section-title-banner .section-banner-text .section-title-description {
+    text-align: center;
+  }
+}
+
+/* ============================================================
+   Skip link de accesibilidad (visible solo con foco de teclado)
+   ============================================================ */
+.skip-to-content {
+  position: absolute;
+  left: -9999px;
+  top: 0;
+  z-index: 10000;
+  padding: 0.6rem 1.2rem;
+  background: var(--unesco-blue, #0069b4);
+  color: #fff;
+  border-radius: 0 0 8px 0;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.skip-to-content:focus {
+  left: 0;
+  color: #fff;
+  outline: 3px solid #ffd54f;
+  outline-offset: 2px;
+}
+
+/* ============================================================
+   Tabs del hub "Explore Data" del home (explore_tabs.html)
+   Progressive enhancement: sin html.js los paneles se apilan
+   visibles y la botonera de tabs se oculta
+   ============================================================ */
+.home-tabs-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0 0 1rem;
+}
+
+html:not(.js) .home-tabs-nav {
+  display: none;
+}
+
+.home-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.55rem 1.1rem;
+  border: 1px solid rgba(0, 105, 180, 0.35);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--unesco-blue, #0069b4);
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.home-tab:hover {
+  background: rgba(0, 105, 180, 0.08);
+}
+
+.home-tab[aria-selected="true"] {
+  background: var(--unesco-blue, #0069b4);
+  border-color: var(--unesco-blue, #0069b4);
+  color: #fff;
+}
+
+.home-tab:focus-visible {
+  outline: 3px solid #ffd54f;
+  outline-offset: 2px;
+}
+
+html.js .home-tabs .home-tab-panel:not(.is-active) {
+  display: none;
+}
+
+.home-tab-more {
+  text-align: right;
+  margin-top: 0.75rem;
+}
+
+.home-tab-more a {
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.trending-totals {
+  margin: 0 0 1rem;
+  font-size: 0.95rem;
+}
+
+/* ============================================================
+   Franja de accesos del hub de herramientas (tools_hub)
+   ============================================================ */
+.tools-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.tools-strip-card {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  padding: 1rem 1.2rem;
+  background: #fff;
+  border: 1px solid rgba(0, 105, 180, 0.18);
+  border-radius: 16px;
+  box-shadow: var(--shadow-light, 0 2px 6px rgba(0, 0, 0, 0.06));
+  color: var(--text-primary, #1f2d3d);
+  text-decoration: none;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.tools-strip-card:hover,
+.tools-strip-card:focus {
+  text-decoration: none;
+  color: var(--unesco-blue, #0069b4);
+  box-shadow: var(--shadow-medium, 0 6px 16px rgba(0, 105, 180, 0.15));
+  transform: translateY(-2px);
+}
+
+.tools-strip-icon {
+  flex: 0 0 auto;
+  width: 2.6rem;
+  height: 2.6rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  background: rgba(0, 105, 180, 0.1);
+  color: var(--unesco-blue, #0069b4);
+  font-size: 1.15rem;
+}
+
+.tools-strip-label {
+  flex: 1 1 auto;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+.tools-strip-arrow {
+  flex: 0 0 auto;
+  opacity: 0.6;
+}
+
+.tools-hub-subheading {
+  margin: 0 0 1rem;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--text-primary, #1f2d3d);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .tools-strip-card,
+  .home-tab {
+    transition: none;
+  }
+  .tools-strip-card:hover {
+    transform: none;
+  }
+}
+
+/* ============================================================
+   Stats hero de la home (migrado desde site_stats_hero.html)
+   Tarjetas uniformes: sin variante --primary (era un resaltado
+   arbitrario de "Initiatives" sin semántica).
+   ============================================================ */
+.site-stats-hero {
+  position: relative;
+  max-width: 1181px;
+  margin: -1.25rem auto 1.5rem;
+  padding: 0 0.25rem;
+  background: transparent;
+  box-shadow: none;
+  border-radius: 0;
+}
+
+/* Pieza visual que une el slideshow con las stats */
+.site-stats-bridge {
+  width: 2px;
+  height: 32px;
+  margin: 0 auto 1rem;
+  background: linear-gradient(180deg,
+    rgba(0, 105, 180, 0.0) 0%,
+    rgba(0, 105, 180, 0.45) 100%);
+  border-radius: 2px;
+}
+
+.site-stats-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  margin-bottom: 1rem;
+  padding: 0 0.25rem;
+}
+
+.site-stats-title {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 1.05rem;
+  line-height: 1.3;
+  margin: 0;
+  color: var(--unesco-blue-dark, #005a9e);
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.site-stats-bullet {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--unesco-blue, #0069B4);
+  box-shadow: 0 0 0 4px rgba(0, 105, 180, 0.18);
+  flex-shrink: 0;
+}
+
+.site-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1rem;
+  position: relative;
+}
+
+.site-stat-card {
+  display: flex;
+  align-items: center;
+  gap: 0.95rem;
+  padding: 1.1rem 1.15rem;
+  background: #ffffff;
+  border-radius: 14px;
+  border: 1px solid rgba(0, 105, 180, 0.10);
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+  transition: transform 0.25s ease,
+              box-shadow 0.25s ease,
+              border-color 0.25s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.site-stat-card::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 3px;
+  width: 0%;
+  background: linear-gradient(90deg,
+    var(--unesco-blue, #0069B4),
+    var(--unesco-blue-light, #0077d4));
+  transition: width 0.3s ease;
+}
+
+.site-stat-card:hover,
+.site-stat-card:focus-visible {
+  transform: translateY(-3px);
+  box-shadow: 0 10px 24px rgba(0, 105, 180, 0.14);
+  border-color: rgba(0, 105, 180, 0.25);
+  color: inherit;
+  text-decoration: none;
+  outline: none;
+}
+
+.site-stat-card:hover::after,
+.site-stat-card:focus-visible::after {
+  width: 100%;
+}
+
+.site-stat-card--static {
+  cursor: default;
+}
+
+.site-stat-card--static:hover {
+  transform: none;
+  box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+  border-color: rgba(0, 105, 180, 0.10);
+}
+
+.site-stat-card--static:hover::after {
+  width: 0%;
+}
+
+.site-stat-icon {
+  flex-shrink: 0;
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  background: var(--unesco-blue-pale, #E8F4F8);
+  color: var(--unesco-blue, #0069B4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  transition: transform 0.25s ease;
+}
+
+.site-stat-card:hover .site-stat-icon {
+  transform: scale(1.06) rotate(-3deg);
+}
+
+.site-stat-body {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.2;
+  min-width: 0;
+}
+
+.site-stat-value {
+  font-size: 1.85rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: inherit;
+  font-variant-numeric: tabular-nums;
+}
+
+.site-stat-label {
+  /* 0.9rem para que labels como "Documents"/"Page views" quepan en
+     una línea en tarjetas de ~180px (6 por fila) sin recortarse. */
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: var(--unesco-blue-dark, #005a9e);
+  margin-top: 0.15rem;
+  /* Evita que etiquetas largas (ej. "Organizations" o sus
+     traducciones) se recorten en tarjetas angostas: se ajustan
+     en varias líneas en vez de quedar cortadas por overflow:hidden.
+     hyphens es una mejora progresiva (depende de la plataforma). */
+  overflow-wrap: break-word;
+  -webkit-hyphens: auto;
+  hyphens: auto;
+}
+
+.site-stat-meta {
+  font-size: 0.8rem;
+  color: var(--text-secondary, #6b7785);
+  margin-top: 0.15rem;
+  overflow-wrap: break-word;
+}
+
+@media (max-width: 768px) {
+  .site-stats-hero {
+    padding: 0 0.5rem;
+    margin: -0.5rem auto 1rem;
+  }
+  .site-stats-bridge {
+    height: 24px;
+    margin-bottom: 0.75rem;
+  }
+  .site-stats-header {
+    justify-content: center;
+    text-align: center;
+  }
+  .site-stats-title {
+    font-size: 0.95rem;
+  }
+  .site-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.75rem;
+  }
+  .site-stat-card {
+    padding: 0.9rem 0.85rem;
+    gap: 0.7rem;
+  }
+  .site-stat-icon {
+    width: 40px;
+    height: 40px;
+    font-size: 1.1rem;
+    border-radius: 10px;
+  }
+  .site-stat-value {
+    font-size: 1.45rem;
+  }
+  .site-stat-label {
+    font-size: 0.85rem;
+  }
+  .site-stat-meta {
+    font-size: 0.72rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .site-stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .site-stat-card,
+  .site-stat-card::after,
+  .site-stat-icon {
+    transition: none !important;
+  }
+  .site-stat-card:hover {
+    transform: none;
+  }
+}
+
+/* ============================================================
+   Sección "About IHP-WINS" (migrado desde promoted.html)
+   Banda compacta bajo las stats: intro + 3 highlights en fila
+   + CTA al brochure. Sin la imagen grande del brochure.
+   ============================================================ */
+.homepage-intro-section {
+  padding: 2rem 1.5rem;
+}
+
+.homepage-section-heading {
+  position: relative;
+  padding-bottom: 1rem;
+  margin-bottom: 1.25rem !important;
+}
+
+.homepage-section-heading::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  inset-inline-start: 0;
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, var(--unesco-blue), var(--unesco-blue-light));
+  border-radius: 2px;
+}
+
+.intro-lead {
+  font-size: 1.1rem;
+  line-height: 1.7;
+  color: var(--text-primary);
+  margin-bottom: 1.75rem;
+  max-width: 70ch;
+}
+
+.intro-highlights {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+.intro-highlight-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  border-radius: 12px;
+  background: var(--unesco-blue-pale);
+  border-inline-start: 3px solid var(--unesco-blue);
+  transition: var(--transition);
+}
+
+.intro-highlight-item:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-light);
+}
+
+.intro-highlight-icon {
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, var(--unesco-blue), var(--unesco-blue-light));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 1.2rem;
+}
+
+.intro-highlight-text strong {
+  display: block;
+  font-size: 1rem;
+  color: var(--unesco-blue-dark);
+  margin-bottom: 0.25rem;
+}
+
+.intro-highlight-text p {
+  font-size: 0.9rem;
+  line-height: 1.5;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.about-band-cta {
+  margin-top: 1.5rem;
+}
+
+.about-band-cta .btn {
+  font-weight: 600;
+  padding: 0.75rem 1.5rem;
+}
+
+/* Respiro al llegar por ancla desde los CTAs del hero */
+#IHPWINS,
+#WaterFamilyEvents {
+  scroll-margin-top: 24px;
+}
+
+@media (max-width: 900px) {
+  .intro-highlights {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .intro-highlight-item {
+    padding: 0.75rem 1rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .intro-highlight-item {
+    transition: none;
+  }
+  .intro-highlight-item:hover {
+    transform: none;
+  }
+}
+
+/* ============================================================
+   Hub "Community and Knowledge": grid panorámico
+   Las 4 categorías (News/Events/Publications/Courses) visibles
+   a la vez en columnas de mini-cards. Sustituye a los tabs;
+   .home-tab* sigue vivo para explore_tabs.html.
+   ============================================================ */
+.community-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1.25rem;
+  align-items: stretch;
+  margin-top: 1rem;
+}
+
+.community-col {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.community-col-title {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  padding-bottom: 0.5rem;
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--unesco-blue-dark);
+  border-bottom: 2px solid rgba(0, 105, 180, 0.15);
+}
+
+.community-mini-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.community-mini-card {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.75rem;
+  padding: 0.75rem;
+  background: #fff;
+  border: 1px solid rgba(0, 105, 180, 0.12);
+  border-radius: 12px;
+  color: var(--text-primary);
+  text-decoration: none;
+  transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+}
+
+.community-mini-card:hover,
+.community-mini-card:focus-visible {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-medium);
+  border-color: rgba(0, 105, 180, 0.3);
+  text-decoration: none;
+  color: var(--text-primary);
+}
+
+.community-mini-thumb {
+  flex: 0 0 auto;
+  width: 56px;
+  height: 56px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.community-mini-thumb--icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--unesco-blue-pale);
+  color: var(--unesco-blue);
+  font-size: 1.2rem;
+}
+
+.community-mini-body {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+}
+
+.community-mini-date,
+.community-mini-meta {
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+}
+
+.community-mini-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  line-height: 1.35;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.community-col-empty {
+  padding: 1rem;
+  border-radius: 12px;
+  background: var(--unesco-blue-pale);
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+  text-align: center;
+  margin: 0;
+}
+
+/* Alinea los "View all" al pie aunque las columnas tengan
+   distinta cantidad de items */
+.community-col-more {
+  margin-top: auto;
+  text-align: start;
+}
+
+.community-col-more a {
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.community-col-more a:hover,
+.community-col-more a:focus-visible {
+  text-decoration: underline;
+}
+
+@media (max-width: 1100px) {
+  .community-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 640px) {
+  .community-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .community-mini-card {
+    transition: none;
+  }
+  .community-mini-card:hover {
+    transform: none;
+  }
+}
+
+/* Con reduced-motion no hay auto-avance del slideshow: la barra
+   de progreso no tiene nada que comunicar */
+@media (prefers-reduced-motion: reduce) {
+  .slideshow-progress {
+    display: none;
+  }
+}
+
+/* ── Pastilla de puesto en el ranking de contribución ────────────────────────
+   La usan los cuatro listados (organizaciones, grupos, member states e
+   initiatives); antes cada snippet repetía estos valores en un style="" */
+.org-grid-card-footer .rank-pill {
+  background: #eef3f8;
+  color: #33607f;
+  border-radius: 10px;
+  padding: 1px 8px;
+  font-weight: 600;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+/* ── Grid de tarjetas de organización/grupo ──────────────────────────────────
+   Mismos valores que los <style> embebidos en organization_list.html y en los
+   group_list.html de memberstates/initiatives. Se suben aquí para que
+   /group pueda reusarlos sin una cuarta copia. */
+.org-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 16px;
+}
+.org-grid-card {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  overflow: hidden;
+  text-decoration: none;
+  color: inherit;
+  transition: box-shadow 0.15s;
+}
+.org-grid-card:hover {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  text-decoration: none;
+  color: inherit;
+}
+.org-grid-card-img {
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 12px;
+  background: #f9f9f9;
+}
+.org-grid-card-img img {
+  max-height: 76px;
+  max-width: 100%;
+  object-fit: contain;
+}
+.org-grid-card-img .fa {
+  font-size: 36px;
+  color: #ccc;
+}
+.org-grid-card-body {
+  flex: 1;
+  padding: 10px 12px 4px;
+}
+.org-grid-card-title {
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0 0 4px;
+  line-height: 1.3;
+}
+.org-grid-card-desc {
+  font-size: 12px;
+  color: #666;
+  margin: 0;
+  line-height: 1.4;
+}
+.org-grid-card-footer {
+  padding: 6px 12px 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.org-grid-card-footer .count {
+  font-size: 12px;
+  color: #999;
+}
+
+/* Desglose del score de contribución en la ficha de org/grupo */
+.contribution-breakdown {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 8px 0 0;
+  border-top: 1px solid #e6e9ec;
+  font-size: 12px;
+}
+.contribution-breakdown li {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 2px 0;
+  color: #5b6670;
+}
+.contribution-breakdown li span:last-child {
+  font-weight: 600;
+  color: #33607f;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Franja de indicadores en la barra superior ──────────────────────────────
+   Va entre la fila de idioma/login y la de logo+menú. Se renderiza en todas
+   las páginas, así que es deliberadamente sobria: sin animación, sin sombras,
+   y en móvil se convierte en una fila con scroll horizontal. */
+.masthead-stats-strip {
+  border-top: 1px solid rgba(255, 255, 255, 0.18);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.18);
+  margin: 0 0 4px;
+}
+.masthead-stats {
+  list-style: none;
+  margin: 0;
+  padding: 6px 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 26px;
+}
+.masthead-stats li {
+  margin: 0;
+}
+.masthead-stats a {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  color: #fff;
+  text-decoration: none;
+  opacity: 0.92;
+  white-space: nowrap;
+}
+.masthead-stats a:hover,
+.masthead-stats a:focus {
+  color: #fff;
+  opacity: 1;
+  text-decoration: none;
+}
+.masthead-stats a:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+  border-radius: 3px;
+}
+.masthead-stats strong {
+  font-size: 14px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+.masthead-stats span {
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  opacity: 0.85;
+}
+
+@media (max-width: 767px) {
+  .masthead-stats {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    gap: 18px;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+  }
+  .masthead-stats::-webkit-scrollbar {
+    display: none;
+  }
+  .masthead-stats span {
+    font-size: 10px;
+  }
+}
+
+/* ── Panel /ckan-admin/stats ─────────────────────────────────────────────── */
+.admin-stats-note {
+  color: #5b6670;
+  font-size: 13px;
+  margin: 0 0 18px;
+}
+.admin-stats-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 14px;
+  margin-bottom: 26px;
+}
+.admin-stats-card {
+  border: 1px solid #e0e4e8;
+  border-radius: 6px;
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.admin-stats-card .v {
+  font-size: 24px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  line-height: 1.1;
+}
+.admin-stats-card .k {
+  font-size: 12px;
+  color: #5b6670;
+}
+.admin-stats-table {
+  max-width: 520px;
+}
+.admin-stats-columns {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px;
+  margin-bottom: 20px;
+}
+.admin-stats-list {
+  margin: 0;
+  padding-left: 20px;
+  font-size: 13px;
+}
+.admin-stats-list li {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 3px 0;
+  border-bottom: 1px solid #f0f2f4;
+}
+.admin-stats-list li span:last-child {
+  font-variant-numeric: tabular-nums;
+  color: #33607f;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.admin-stats-list small {
+  color: #99a2aa;
+  font-size: 11px;
+}
+
+
+/* La nueva sección cabe en la cabecera sin recortar enlaces ni buscador. */
+@media (min-width: 769px) {
+    .masthead-learning .masthead-nav {
+        display: grid !important;
+        grid-template-columns: auto minmax(0, 1fr) 180px;
+        gap: 12px;
+    }
+    .masthead-learning .masthead-nav .masthead-brand { margin: 0 10px 0 0; }
+    .masthead-learning .masthead-nav .masthead-brand .logo { margin-top: -32px; }
+    .masthead-learning .masthead-nav .masthead-brand .logo img {
+        height: 50px !important;
+        max-width: 240px !important;
+    }
+    .masthead-learning .masthead-nav .navigation {
+        display: flex !important;
+        min-width: 0;
+        margin: 0;
+        width: auto;
+    }
+    .masthead-learning .masthead-nav .navigation .nav {
+        gap: 2px;
+        flex-wrap: wrap;
+        justify-content: flex-end;
+    }
+    .masthead-learning .masthead-nav .navigation .nav li {
+        display: block !important;
+        margin: 0 !important;
+    }
+    .masthead-learning .masthead-nav .navigation .nav li a {
+        display: block;
+        font-size: 13px !important;
+        padding: 8px 6px !important;
+        border-radius: 5px;
+    }
+    .masthead-learning .masthead-nav .navigation .nav li.active a,
+    .masthead-learning .masthead-nav .navigation .nav li a:hover {
+        background: rgba(255, 255, 255, .14) !important;
+    }
+    .masthead-learning .masthead-nav .site-search {
+        display: block !important;
+        width: 100%;
+        max-width: none;
+        min-width: 0;
+        margin: 0;
+    }
+    .masthead-learning .masthead-nav .site-search .form-control,
+    .masthead-learning .masthead-nav .site-search .form-control:focus {
+        width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+    }
+    .masthead-learning .masthead-nav .masthead-actions { display: none; }
+}
+@media (min-width: 769px) and (max-width: 1199px) {
+    .masthead-learning .masthead-nav { grid-template-columns: 1fr 210px; gap: 8px 20px; }
+    .masthead-learning .masthead-nav .masthead-brand { grid-column: 1; grid-row: 1; }
+    .masthead-learning .masthead-nav .masthead-brand .logo { margin-top: 0; }
+    .masthead-learning .masthead-nav .site-search { grid-column: 2; grid-row: 1; }
+    .masthead-learning .masthead-nav .navigation { grid-column: 1 / -1; grid-row: 2; }
+    .masthead-learning .masthead-nav .navigation .nav { justify-content: space-between; width: 100%; }
+}
+@media (max-width: 768px) {
+    .masthead-learning .masthead-nav { align-items: center; gap: 10px; }
+    .masthead-learning .masthead-nav .masthead-brand { margin: 0; min-width: 0; }
+    .masthead-learning .masthead-nav .masthead-brand .logo { margin-top: 0; }
+    .masthead-learning .masthead-nav .masthead-brand .logo img {
+        height: 36px !important;
+        max-width: 180px !important;
+    }
+    .masthead-learning .masthead-nav .masthead-actions { margin-left: 0; gap: 6px; }
+    .masthead-learning .masthead-nav .navigation .nav li { display: block !important; }
+    .masthead-learning .masthead-nav.show .navigation,
+    .masthead-learning .masthead-nav.in .navigation {
+        max-height: 65vh;
+        overflow-y: auto;
+        margin-right: 0;
+        box-sizing: border-box;
+    }
+    .masthead-learning .masthead-nav .navbar-toggle { min-width: 44px; min-height: 44px; }
+}
+
+@media (max-width: 360px) {
+    .masthead-learning .masthead-nav .masthead-brand .logo img { height: 30px !important; }
+    .masthead-learning .masthead-nav .masthead-actions { gap: 4px; }
+}
+
+@media (max-width: 768px) {
+    .masthead-learning .masthead-nav .masthead-lang-mobile { width: 90px; min-width: 0; }
+    .masthead-learning .masthead-lang-mobile form,
+    .masthead-learning .masthead-lang-mobile .form-group { margin: 0; }
+    .masthead-learning .masthead-lang-mobile select { width: 90px; min-width: 0; max-width: 100%; font-size: 12px; }
 }

@@ -1,0 +1,143 @@
+{# Hub "Comunidad y Conocimiento": grid panorámico con las 4 categorías
+   (News, Events, Publications, Courses) visibles a la vez en columnas
+   de mini-cards. Sustituye a los tabs (community_tabs.html): todo el
+   contenido es escaneable sin clicks y sin JS.
+
+   El id #WaterFamilyEvents lo usa el CTA "View Events" del slide 5
+   del hero. Estilos en theme_ejemplo.css. #}
+<section id="WaterFamilyEvents" class="module module-narrow module-shallow">
+  <div class="section-title section-title-enhanced" style="margin-bottom: 0.5rem;">
+    <div class="section-title-bg" style="background-image: url('/Landing_page/Content/IHPTITLE10FAMILYEVENTS.jpg');"></div>
+    <div class="section-title-overlay"></div>
+    <div class="section-title-content">
+      <h2 id="community-title">{{ _('Community and Knowledge') }}</h2>
+      <p class="section-title-description">{{ _('News, events, publications and courses from the UNESCO Water Family') }}</p>
+    </div>
+  </div>
+</section>
+
+<div class="community-grid">
+  {# ── Noticias ── #}
+  {% set posts = h.get_recent_water_news(number=3) %}
+  <section class="community-col" aria-labelledby="community-col-news">
+    <h3 class="community-col-title" id="community-col-news">
+      <i class="fa fa-newspaper-o" aria-hidden="true"></i> {{ _('News') }}
+    </h3>
+    {% if posts %}
+      <ul class="community-mini-list">
+        {% for post in posts %}
+          <li>
+            {% snippet 'home/snippets/community_mini_card.html',
+               title=post.title or post.name,
+               url=h.url_for('pages.water_news_show', page='' + post.name),
+               date_text=h.render_datetime(post.publish_date) if post.publish_date else None,
+               image=post.image,
+               fallback_icon='fa-newspaper-o' %}
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="community-col-empty">{{ _('No recent news') }}</p>
+    {% endif %}
+    <div class="community-col-more">
+      <a href="{{ h.url_for('pages.water_news_index') }}">
+        {{ _('View all news') }} <i class="fa fa-arrow-right" aria-hidden="true"></i>
+      </a>
+    </div>
+  </section>
+
+  {# ── Eventos ── #}
+  {% set events = h.get_recent_water_events(number=3) %}
+  <section class="community-col" aria-labelledby="community-col-events">
+    <h3 class="community-col-title" id="community-col-events">
+      <i class="fa fa-calendar" aria-hidden="true"></i> {{ _('Events') }}
+    </h3>
+    {% if events %}
+      <ul class="community-mini-list">
+        {% for event in events %}
+          <li>
+            {% snippet 'home/snippets/community_mini_card.html',
+               title=event.title or event.name,
+               url=h.url_for('pages.water_events_show', page='' + event.name),
+               date_text=h.render_datetime(event.publish_date) if event.publish_date else None,
+               image=event.image,
+               fallback_icon='fa-calendar' %}
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="community-col-empty">{{ _('No upcoming events') }}</p>
+    {% endif %}
+    <div class="community-col-more">
+      <a href="{{ h.url_for('pages.water_events_index') }}">
+        {{ _('View all events') }} <i class="fa fa-arrow-right" aria-hidden="true"></i>
+      </a>
+    </div>
+  </section>
+
+  {# ── Publicaciones ── #}
+  {% set publications = h.get_featured_publications()[:3] %}
+  <section class="community-col" aria-labelledby="community-col-publications">
+    <h3 class="community-col-title" id="community-col-publications">
+      <i class="fa fa-book" aria-hidden="true"></i> {{ _('Publications') }}
+    </h3>
+    {% if publications %}
+      <ul class="community-mini-list">
+        {% for pub in publications %}
+          <li>
+            {% snippet 'home/snippets/community_mini_card.html',
+               title=pub.title,
+               url=pub.link or 'https://unesdoc.unesco.org/',
+               image=pub.image_url,
+               fallback_icon='fa-book',
+               external=true %}
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="community-col-empty">{{ _('No publications available yet') }}</p>
+    {% endif %}
+    <div class="community-col-more">
+      <a href="{{ h.url_for('/documents') }}">
+        {{ _('View all publications') }} <i class="fa fa-arrow-right" aria-hidden="true"></i>
+      </a>
+    </div>
+  </section>
+
+  {# ── Cursos ── #}
+  {% set courses = h.get_latest_courses()[:3] %}
+  <section class="community-col" aria-labelledby="community-col-courses">
+    <h3 class="community-col-title" id="community-col-courses">
+      <i class="fa fa-graduation-cap" aria-hidden="true"></i> {{ _('Courses') }}
+    </h3>
+    {% if courses %}
+      <ul class="community-mini-list">
+        {% for course in courses %}
+          {% if course.course_type == 'scheduled' and course.start_display %}
+            {% set course_meta = _('Start:') ~ ' ' ~ course.start_display %}
+          {% elif course.course_type == 'permanent' %}
+            {% set course_meta = _('Self-paced') %}
+          {% else %}
+            {% set course_meta = course.org %}
+          {% endif %}
+          <li>
+            {% snippet 'home/snippets/community_mini_card.html',
+               title=course.name,
+               url=course.course_url,
+               meta_text=course_meta,
+               image=course.image_url,
+               fallback_icon='fa-graduation-cap',
+               external=true %}
+          </li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p class="community-col-empty">{{ _('No courses available at the moment') }}</p>
+    {% endif %}
+    <div class="community-col-more">
+      <a href="{{ h.url_for('theme_ejemplo.courses') }}">
+        {{ _('View all courses') }} <i class="fa fa-arrow-right" aria-hidden="true"></i>
+      </a>
+    </div>
+  </section>
+</div>

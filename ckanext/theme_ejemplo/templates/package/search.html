@@ -1,4 +1,19 @@
 {% ckan_extends %}
+
+{% block page_primary_action %}
+  {% if h.check_access('package_create') %}
+    {% if dataset_type == 'dataset' %}
+      {% set create_label = _('Add Dataset') %}
+    {% elif dataset_type == 'documents' %}
+      {% set create_label = _('Add Documents') %}
+    {% else %}
+      {% set type_label = h.schemingdcat_dataset_type_label(dataset_type, plural=dataset_type.lower().endswith('s')) or _(dataset_type.title()) %}
+      {% set create_label = _('Add %(label)s', label=type_label) %}
+    {% endif %}
+    {% link_for create_label, named_route='%s.new' % dataset_type, class_='btn btn-primary', icon='plus-square' %}
+  {% endif %}
+{% endblock %}
+
 {% block secondary_content %}
 
 {% block toolbar_templates %}
@@ -19,7 +34,7 @@
         {{ h.snippet('schemingdcat/snippets/schemingdcat_facet_list.html', title=facet_titles[facet], name=facet, search_facets=search_facets, scheming_choices=h.scheming_field_by_name(h.schemingdcat_get_dataset_schema('dataset').dataset_fields,facet).choices, label_function = label_function) }}
       {% endfor %}
     </div>
-    <a class="close no-text hide-filters"><i class="fa fa-times-circle"></i><span class="text">_('Close')</span></a>
+    <a class="close no-text hide-filters"><i class="fa fa-times-circle"></i><span class="text">{{ _('Close') }}</span></a>
   </div>
 {% endblock %}
 
@@ -35,13 +50,22 @@
     'translated_fields': translated_fields,
     'remove_field': remove_field }
   %}
+  {% set completeness_sort = 'metadata_completeness_sort desc, metadata_modified desc' %}
   {% set sorting = [
     (_('Relevance'), 'score desc, metadata_modified desc'),
     (_('Name Ascending'), 'title_string asc'),
     (_('Name Descending'), 'title_string desc'),
     (_('Last Modified'), 'metadata_modified desc'),
     (_('Publicador'), 'publisher_name asc'),
-    (_('Popular'), 'views_recent desc') if g.tracking_enabled else (false, false) ]
+    (_('Metadata completeness'), completeness_sort),
+    (_('Popular'), 'views_recent desc') if h.theme_ejemplo_tracking_enabled() else (false, false) ]
   %}
-  {% snippet 'schemingdcat/snippets/search_form.html', type='dataset', query=q, sorting=sorting, sorting_selected=sort_by_selected, count=page.item_count, facets=facets, show_empty=request.params, error=query_error %}
+  {# Sin busqueda ni orden explicito, el backend ordena por completitud
+     (before_dataset_search); reflejarlo como opcion seleccionada #}
+  {% if not sort_by_selected and not (q or '').strip() %}
+    {% set sort_by_selected = completeness_sort %}
+  {% endif %}
+  <div data-suggest-scope="dataset">
+  {% snippet 'schemingdcat/snippets/search_form.html', type='dataset', query=q, sorting=sorting, sorting_selected=sort_by_selected, count=page.item_count, facets=facets, show_empty=request.args, error=query_error %}
+  </div>
 {% endblock %}

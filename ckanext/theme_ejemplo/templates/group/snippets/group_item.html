@@ -1,0 +1,33 @@
+{#
+Renders a card for a group in the /group listing.
+
+group - A group dict.
+#}
+{% set url = h.url_for('group.read', id=group.name) %}
+{% block item %}
+<a href="{{ url }}" class="org-grid-card" title="{{ _('View {name}').format(name=group.display_name) }}">
+  <div class="org-grid-card-img">
+    {% if group.image_display_url %}
+      <img src="{{ group.image_display_url }}" alt="{{ group.display_name }}">
+    {% else %}
+      <i class="fa fa-users"></i>
+    {% endif %}
+  </div>
+  <div class="org-grid-card-body">
+    <h3 class="org-grid-card-title">{{ group.display_name }}</h3>
+    {% if group.description %}
+      <p class="org-grid-card-desc">{{ h.theme_ejemplo_markdown_excerpt(group.description, 80) }}</p>
+    {% endif %}
+  </div>
+  <div class="org-grid-card-footer">
+    {% if ranked %}
+      <span class="count rank-pill" title="{{ _('Contribution rank') }}">#{{ (rank_start or 0) + position }}</span>
+    {% endif %}
+    {% if group.package_count %}
+      <span class="count">{{ ungettext('{num} Dataset', '{num} Datasets', group.package_count).format(num=group.package_count) }}</span>
+    {% else %}
+      <span class="count">{{ _('0 Datasets') }}</span>
+    {% endif %}
+  </div>
+</a>
+{% endblock %}

@@ -1,0 +1,18 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(find:*)",
+      "WebFetch(domain:data210.dev-wins.com)",
+      "WebFetch(domain:data.dev-wins.com)",
+      "Bash(git show:*)",
+      "Read(//c/**)",
+      "Bash(git checkout:*)",
+      "Bash(dir:*)",
+      "Bash(findstr:*)",
+      "Bash(mkdir -p /home/pabrojast/Proyectos/ckan-unesco-theme/ckanext/theme_ejemplo/public/vendor/leaflet)",
+      "Bash(mkdir -p /home/pabrojast/Proyectos/ckan-unesco-theme/ckanext/theme_ejemplo/public/vendor/chartjs)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

@@ -1,0 +1,7 @@
+{% ckan_extends %}
+
+{# Add the metadata completeness badge next to the existing state badges #}
+{% block heading_meta %}
+  {{ super() }}
+  {% snippet 'snippets/completeness_badge.html', package=package, compact=true %}
+{% endblock %}

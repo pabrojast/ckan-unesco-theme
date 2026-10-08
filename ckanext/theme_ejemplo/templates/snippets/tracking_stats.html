@@ -1,0 +1,33 @@
+{#
+  Tracking stats bar for dataset pages.
+  Shows view count and download count with icons.
+
+  pkg - The package dict
+#}
+{% set tracking = h.get_dataset_tracking(pkg.name) %}
+{% set total_downloads = 0 %}
+{% set ns_dl = namespace(total=0) %}
+{% for res in pkg.resources %}
+  {% set dl = h.get_resource_downloads(res.id) %}
+  {% set ns_dl.total = ns_dl.total + dl.total %}
+{% endfor %}
+
+{% if tracking.total > 0 or ns_dl.total > 0 %}
+<div class="tracking-stats-bar">
+  {% if tracking.total > 0 %}
+  <span class="tracking-stat" title="{{ _('Total page views') }}">
+    <i class="fa fa-eye"></i>
+    <strong>{{ h.SI_number_span(tracking.total) }}</strong> {{ _('views') }}
+    {% if tracking.recent > 0 %}
+      <small class="tracking-recent">({{ tracking.recent }} {{ _('recent') }})</small>
+    {% endif %}
+  </span>
+  {% endif %}
+  {% if ns_dl.total > 0 %}
+  <span class="tracking-stat" title="{{ _('Total file downloads') }}">
+    <i class="fa fa-download"></i>
+    <strong>{{ h.SI_number_span(ns_dl.total) }}</strong> {{ _('downloads') }}
+  </span>
+  {% endif %}
+</div>
+{% endif %}

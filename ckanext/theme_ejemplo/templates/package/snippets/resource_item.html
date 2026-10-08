@@ -14,25 +14,80 @@
 #}
 {% set url_action = pkg.type ~ ('_resource.edit' if url_is_edit and can_edit else '_resource.read') %}
 {% set url = h.url_for(url_action, id=pkg.id if is_activity_archive else pkg.name, resource_id=res.id, **({'activity_id': request.args['activity_id']} if 'activity_id' in request.args else {})) %}
+{# Icono por formato para mejorar el escaneo visual #}
+{% set fmt = (res.format or '').lower() %}
+{% set format_icon_map = {
+  'csv': 'fa-file-excel-o',
+  'xls': 'fa-file-excel-o',
+  'xlsx': 'fa-file-excel-o',
+  'tsv': 'fa-file-text-o',
+  'pdf': 'fa-file-pdf-o',
+  'doc': 'fa-file-word-o',
+  'docx': 'fa-file-word-o',
+  'json': 'fa-file-code-o',
+  'xml': 'fa-code',
+  'html': 'fa-code',
+  'zip': 'fa-file-archive-o',
+  'rar': 'fa-file-archive-o',
+  'shp': 'fa-map-o',
+  'geojson': 'fa-map-marker',
+  'kml': 'fa-map',
+  'jpg': 'fa-file-image-o',
+  'jpeg': 'fa-file-image-o',
+  'png': 'fa-file-image-o',
+  'gif': 'fa-file-image-o',
+  'txt': 'fa-file-text-o',
+  'api': 'fa-plug',
+  'wms': 'fa-globe',
+  'wfs': 'fa-globe'
+} %}
+{% set format_icon = format_icon_map.get(fmt, 'fa-file-o') %}
 
 <li class="resource-item" data-id="{{ res.id }}">
   {% block resource_item_title %}
-  <a class="heading" href="{{ url }}" title="{{ res.name or res.description }}">
-    {{ h.resource_display_name(res) }}<span class="format-label" property="dc:format" data-format="{{ res.format.lower() or 'data' }}">{{ h.get_translated(res, 'format') }}</span>
-    {{ h.popular('views', res.tracking_summary.total, min=10) if res.tracking_summary }}
-  </a>
+  <div class="resource-title-row">
+    <span class="format-label" property="dc:format" data-format="{{ res.format.lower() or 'data' }}">{{ h.get_translated(res, 'format') }}</span>
+    <a class="heading" href="{{ url }}" title="{{ res.name or res.description }}">
+      {{ h.resource_display_name(res) }}
+    </a>
+    {% set dl = h.get_resource_downloads(res.id) %}
+    {% if dl.total > 0 %}
+    <span class="resource-downloads-badge" title="{{ _('Downloads') }}">
+      <i class="fa fa-download"></i> {{ dl.total }}
+    </span>
+    {% endif %}
+  </div>
   {% endblock %}
   {% block resource_item_description %}
-    <p class="description">
-      {% if res.description %}
-        {{ h.markdown_extract(h.get_translated(res, 'description'), extract_length=80) }}
-      {% endif %}
-    </p>
+    {% set description = h.get_translated(res, 'description') %}
+    {% if description %}
+      {% set full_plain = h.theme_ejemplo_markdown_excerpt(description, 10000) %}
+      {% set excerpt = h.theme_ejemplo_markdown_excerpt(description, 200) %}
+      {% set is_truncated = full_plain|length > excerpt|length %}
+      <div class="description-wrapper" data-resource-id="{{ res.id }}">
+        <p class="description excerpt{% if is_truncated %} is-truncated{% endif %}">
+          {{ excerpt }}
+        </p>
+        {% if is_truncated %}
+          <p class="description excerpt description-full" hidden>
+            {{ full_plain }}
+          </p>
+          <button class="btn btn-link btn-sm resource-read-more"
+                  type="button"
+                  data-target="{{ res.id }}"
+                  data-label-more="{{ _('Read more') }}"
+                  data-label-less="{{ _('Read less') }}"
+                  aria-expanded="false">
+            {{ _('Read more') }}
+          </button>
+        {% endif %}
+      </div>
+    {% endif %}
   {% endblock %}
   {% block resource_item_explore %}
   {% if not url_is_edit %}
   <div class="dropdown btn-group">
-    <a href="#" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+    <a href="#" class="btn btn-primary dropdown-toggle" data-bs-toggle="dropdown" data-toggle="dropdown">
       <i class="fa fa-share"></i>
       {{ _('Explore') }}
       <span class="caret"></span>
@@ -42,7 +97,7 @@
       <li>
         <a href="{{ url }}">
           {% if not is_activity_archive and res.has_views %}
-            <i class="fa fa-bar-chart-o"></i>
+            <i class="fa fa-info-circle"></i>
             {{ _('Preview') }}
           {% else %}
             <i class="fa fa-info-circle"></i>
@@ -52,21 +107,28 @@
       </li>
       {% if res.url and h.is_url(res.url) %}
       <li>
-        <a href="{{ res.url }}" class="resource-url-analytics" target="_blank">
-          {% if res.has_views or res.url_type == 'upload' %}
-            <i class="fa fa-arrow-circle-o-down"></i>
-            {{ _('Download') }}
-          {% else %}
-            <i class="fa fa-external-link"></i>
-            {{ _('Go to resource') }}
-          {% endif %}
-        </a>
+        {% if 'datashare_can_download' in h and not h.datashare_can_download(pkg, res) %}
+          <span class="datashare-download-locked" title="{{ _('Downloading is not permitted by this dataset\'s data sharing level') }}">
+            <i class="fa fa-lock"></i>
+            {{ _('Download restricted') }}
+          </span>
+        {% else %}
+          <a href="{{ res.url }}" class="resource-url-analytics" target="_blank">
+            {% if res.has_views or res.url_type == 'upload' %}
+              <i class="fa fa-download"></i>
+              {{ _('Download') }}
+            {% else %}
+              <i class="fa fa-external-link"></i>
+              {{ _('Go to resource') }}
+            {% endif %}
+          </a>
+        {% endif %}
       </li>
       {% endif %}
       {% if can_edit %}
       <li>
         <a href="{{ h.url_for(pkg.type ~ '_resource.edit', id=pkg.name, resource_id=res.id) }}">
-          <i class="fa fa-pencil-square-o"></i>
+          <i class="fa fa-pencil"></i>
           {{ _('Edit') }}
         </a>
       </li>
@@ -77,3 +139,6 @@
   {% endif %}
   {% endblock %}
 </li>
+
+{# Read-more toggler is registered once globally via resources_list.html #}
+{% block resource_item_scripts %}{% endblock %}

@@ -1,93 +1,68 @@
-<div role="main" class="hero">
+<a class="skip-to-content" href="#home-sections">{{ _('Skip to main content') }}</a>
+<div role="main" id="main-content">
+  <div class="hero">
     <div class="container">
       {% block search %}
         {% snippet 'home/snippets/search.html' %}
       {% endblock %}
     </div>
   </div>
-  <div role="main">
+  <div>
     <div class="container full-width">
       {% block slideshow %}
         {% snippet 'home/snippets/slideshow.html' %}
       {% endblock %}
     </div>
 
-    <div class="container">
+    <div class="container" id="home-sections">
       <div class="row row2">
-        <div class="col-md-12 col1">
+        <div class="col-md-12 col1 reveal-section" style="border-top: 0 !important;">
+          {% block site_stats_hero %}
+            {% snippet 'home/snippets/site_stats_hero.html' %}
+          {% endblock %}
+        </div>
+
+        {# ── Acerca de IHP-WINS: banda compacta tras las stats ── #}
+        <div class="col-md-12 col1 homepage-section homepage-section-alt reveal-section">
           {% block promoted %}
             {% snippet 'home/snippets/promoted.html' %}
           {% endblock %}
         </div>
-        <div class="col-md-12 col1">
-          {% block data %}
-            {% snippet 'home/snippets/data.html' %}
+
+        {# ── Visores destacados: sustituye a Featured Datasets ── #}
+        {% if h.theme_ejemplo_featured_viewers_available() %}
+          {% set featured_viewers = h.theme_ejemplo_get_featured_viewers() %}
+          {% if featured_viewers %}
+        <div class="col-md-12 col1 homepage-section reveal-section">
+          {% block featuredviewers %}
+            {% snippet 'home/snippets/featuredviewers.html' %}
+          {% endblock %}
+          {% block featuredviewerssnip %}
+            {% snippet 'home/snippets/featuredviewerssnip.html', viewers=featured_viewers %}
           {% endblock %}
         </div>
-        {# 
-        <div class="col-md-12 col1" style="border-top: 0 !important;">
-          {% block IHPIX %}
-            {% snippet 'home/snippets/IHPIX.html' %}
-          {% endblock %}
-        </div>
-        #}
-        <div class="col-md-12 col1" >
-          {% block featureddata %}
-            {% snippet 'home/snippets/featureddata.html' %}
-          {% endblock %}
-        </div>
-        <div class="col-md-12 col1" style="border-top: 0 !important;">
-          {% block featureddatasnip %}
-            {% snippet 'home/snippets/featureddatasnip.html' %}
-          {% endblock %}
-        </div>
-        
-        <div class="col-md-12 col1">
-          {% block IHPViewers %}
-            {% snippet 'home/snippets/IHPViewers.html' %}
-          {% endblock %}
-        </div>
-        <div class="col-md-12 col1" style="border-top: 0 !important;">
-          {% block ThematicViewers %}
-            {% snippet 'home/snippets/ThematicViewers.html' %}
-          {% endblock %}
-        </div>
-        <div class="col-md-12 col1">
-          {% block IHPEducation %}
-            {% snippet 'home/snippets/IHPEducation.html' %}
-          {% endblock %}
-        </div>
-        <div class="col-md-12 col1" style="border-top: 0 !important;">
-          {% block IHPEducationdata %}
-            {% snippet 'home/snippets/IHPEducationdata.html' %}
-          {% endblock %}
-        </div>
-        <div class="col-md-12 col1" style="margin-bottom: 0 !important;">
-          {% block FeaturedPublications %}
-            {% snippet 'home/snippets/FeaturedPublications.html' %}
-          {% endblock %}
-        </div>
-        <div class="col-md-12 col1" style="border-top: 0 !important;">
-          {% block FeaturedPublicationsdata %}
-            {% snippet 'home/snippets/FeaturedPublicationsdata.html' %}
-          {% endblock %}
-        </div>
-        <div class="col-md-12 col1">
-          {% block IHPEvents %}
-            {% snippet 'home/snippets/IHPEvents.html' %}
-          {% endblock %}
-        </div>
-        <div class="col-md-12 col1" style="border-top: 0 !important;">
-          {% block IHPEventsdata %}
-            {% snippet 'home/snippets/IHPEventsdata.html' %}
+          {% endif %}
+        {% endif %}
+        <div class="col-md-12 col1 homepage-section homepage-section-alt reveal-section">
+          {% block explore_tabs %}
+            {% snippet 'home/snippets/explore_tabs.html' %}
           {% endblock %}
         </div>
 
+        {# ── Herramientas y recursos (antes 5 secciones) ── #}
+        <div class="col-md-12 col1 homepage-section reveal-section">
+          {% block tools_hub %}
+            {% snippet 'home/snippets/tools_hub.html' %}
+          {% endblock %}
+        </div>
 
-
-
-
+        {# ── Comunidad y conocimiento: grid panorámico ── #}
+        <div class="col-md-12 col1 homepage-section homepage-section-alt reveal-section">
+          {% block community_grid %}
+            {% snippet 'home/snippets/community_grid.html' %}
+          {% endblock %}
+        </div>
       </div>
     </div>
   </div>
-  
+</div>

@@ -1,0 +1,43 @@
+{% extends "page.html" %}
+
+{% block subtitle %}{{ _('Membership Requests') }}{% endblock %}
+
+{% block breadcrumb_content %}
+  <li class="active">{{ _('Membership Requests') }}</li>
+{% endblock %}
+
+{% block primary_content_inner %}
+  <div class="membership-requests-dashboard">
+    <h1><i class="fa fa-user-plus"></i> {{ _('Membership Requests') }}</h1>
+    <p class="text-muted">{{ _('Organizations with pending membership requests.') }}</p>
+
+    {% if orgs_with_requests %}
+      <div class="membership-orgs-grid">
+        {% for org in orgs_with_requests %}
+        <a href="{{ h.url_for('theme_ejemplo.membership_requests', name=org.name) }}" class="membership-org-card">
+          <div class="membership-org-card-inner">
+            {% if org.image_display_url %}
+              <img src="{{ org.image_display_url }}" alt="{{ org.title }}" class="membership-org-img" />
+            {% else %}
+              <div class="membership-org-img membership-org-img-placeholder">
+                <i class="fa fa-building"></i>
+              </div>
+            {% endif %}
+            <div class="membership-org-info">
+              <h3>{{ org.title }}</h3>
+              <span class="badge membership-badge">
+                {{ org.pending_count }} {{ _('pending') }}
+              </span>
+            </div>
+          </div>
+        </a>
+        {% endfor %}
+      </div>
+    {% else %}
+      <div class="membership-empty-state">
+        <i class="fa fa-inbox"></i>
+        <p>{{ _('No pending membership requests across your organizations.') }}</p>
+      </div>
+    {% endif %}
+  </div>
+{% endblock %}

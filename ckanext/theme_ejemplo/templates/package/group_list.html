@@ -4,32 +4,187 @@
 {% block primary_content_inner %}
   <h2 class="hide-heading">{{ _('Groups') }}</h2>
 
-  {% if h.check_access('package_update', {'id':c.pkg_dict.id }) %}
-    {% set groups = h.get_all_groups() %}
-  {% else %}
-    {% set groups = h.get_all_groups() %}
-  {% endif %}
-
-  {% if groups %}
-    <form class="add-to-group" method="post">
-      <div class="form-group">
-        <select id="field-add_group" class="form-control" name="group_added">
-          {% for option in groups %}
-            <option value="{{ option[0] }}"> {{ option[1] }}</option>
-          {% endfor %}
-        </select>
-      </div>
-      <button type="submit" class="btn btn-primary" title="{{ _('Associate this group with this dataset') }}">{{ _('Add to group') }}</button>
-    </form>
-  {% endif %}
-
+  {% set member_states_groups = h.get_member_states_groups_list() %}
+  {% set initiatives_groups = h.get_initiatives_groups_list() %}
+  
+  {# Separar grupos asociados al dataset por tipo #}
+  {% set member_states_names = member_states_groups|map(attribute=0)|list %}
+  {% set pkg_member_states = [] %}
+  {% set pkg_initiatives = [] %}
   {% if c.pkg_dict.groups %}
+    {% for group in c.pkg_dict.groups %}
+      {% if group.name in member_states_names %}
+        {% set _ = pkg_member_states.append(group) %}
+      {% else %}
+        {% set _ = pkg_initiatives.append(group) %}
+      {% endif %}
+    {% endfor %}
+  {% endif %}
 
-    <form method="post">
-      {% snippet 'group/snippets/group_list.html', groups=c.pkg_dict.groups %}
-    </form>
+  {% if h.check_access('package_update', {'id':c.pkg_dict.id }) %}
+  
+  {# CSS for tabs functionality without JS #}
+  <style>
+    .group-tabs input[type="radio"] { display: none; }
+    .group-tabs .tab-content-panel { display: none; padding-top: 15px; }
+    .group-tabs #tab-ms:checked ~ .tab-content-wrapper #member-states-content,
+    .group-tabs #tab-init:checked ~ .tab-content-wrapper #initiatives-content { display: block; }
+    .group-tabs .tab-labels { display: flex; border-bottom: 1px solid #ddd; margin-bottom: 0; }
+    .group-tabs .tab-labels label { 
+      padding: 10px 15px; 
+      cursor: pointer; 
+      border: 1px solid transparent;
+      border-bottom: none;
+      margin-bottom: -1px;
+      background: #f5f5f5;
+    }
+    .group-tabs #tab-ms:checked ~ .tab-labels label[for="tab-ms"],
+    .group-tabs #tab-init:checked ~ .tab-labels label[for="tab-init"] {
+      background: #fff;
+      border-color: #ddd;
+      border-bottom-color: #fff;
+    }
+    .group-tabs .badge { 
+      background: #2e88a3; 
+      color: #fff; 
+      padding: 2px 6px; 
+      border-radius: 10px; 
+      font-size: 11px;
+      margin-left: 5px;
+    }
+    /* Fix para el media-grid dentro de las pestañas */
+    .group-tabs .media-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 15px;
+      list-style: none;
+      padding: 0;
+      margin: 0;
+      position: relative;
+      height: auto !important;
+    }
+    .group-tabs .media-grid .media-item {
+      position: relative !important;
+      top: auto !important;
+      left: auto !important;
+      width: calc(33.333% - 10px);
+      min-width: 200px;
+      max-width: 280px;
+      flex: 1 1 auto;
+      margin: 0;
+      padding: 15px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      background: #fff;
+    }
+    .group-tabs .media-grid .media-item .media-image {
+      width: 100%;
+      height: 120px;
+      object-fit: cover;
+      border-radius: 4px;
+    }
+    .group-tabs .media-grid .media-item .media-heading {
+      font-size: 14px;
+      margin: 10px 0 5px;
+    }
+    .group-tabs .media-grid .media-item .media-view {
+      position: relative;
+      display: inline-block;
+      margin-top: 10px;
+    }
+    .group-tabs .media-grid .clearfix {
+      display: none;
+    }
+  </style>
+
+  <div class="group-tabs">
+    <input type="radio" name="group-tab" id="tab-ms" checked>
+    <input type="radio" name="group-tab" id="tab-init">
+    
+    <div class="tab-labels">
+      <label for="tab-ms">
+        <i class="fa fa-globe"></i> {{ _('Member States') }}
+        {% if pkg_member_states %}<span class="badge">{{ pkg_member_states|length }}</span>{% endif %}
+      </label>
+      <label for="tab-init">
+        <i class="fa fa-lightbulb-o"></i> {{ _('Initiatives') }}
+        {% if pkg_initiatives %}<span class="badge">{{ pkg_initiatives|length }}</span>{% endif %}
+      </label>
+    </div>
+    
+    <div class="tab-content-wrapper">
+      {# Member States Tab #}
+      <div class="tab-content-panel" id="member-states-content">
+        {% if member_states_groups %}
+          <form class="add-to-group" method="post">
+            {{ h.csrf_input() }}
+            <div class="form-group">
+              <select id="field-add_group_ms" class="form-control" name="group_added">
+                {% for option in member_states_groups %}
+                  <option value="{{ option[0] }}">{{ option[1] }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <button type="submit" class="btn btn-primary" title="{{ _('Associate this Member State with this dataset') }}">
+              {{ _('Add to Member State') }}
+            </button>
+          </form>
+        {% else %}
+          <p class="empty">{{ _('No Member States available') }}</p>
+        {% endif %}
+
+        {% if pkg_member_states %}
+          <form method="post" style="margin-top: 15px;">
+            {{ h.csrf_input() }}
+            {% snippet 'memberstates/snippets/group_list.html', groups=pkg_member_states %}
+          </form>
+        {% else %}
+          <p class="empty">{{ _('There are no Member States associated with this dataset') }}</p>
+        {% endif %}
+      </div>
+
+      {# Initiatives Tab #}
+      <div class="tab-content-panel" id="initiatives-content">
+        {% if initiatives_groups %}
+          <form class="add-to-group" method="post">
+            {{ h.csrf_input() }}
+            <div class="form-group">
+              <select id="field-add_group_init" class="form-control" name="group_added">
+                {% for option in initiatives_groups %}
+                  <option value="{{ option[0] }}">{{ option[1] }}</option>
+                {% endfor %}
+              </select>
+            </div>
+            <button type="submit" class="btn btn-primary" title="{{ _('Associate this Initiative with this dataset') }}">
+              {{ _('Add to Initiative') }}
+            </button>
+          </form>
+        {% else %}
+          <p class="empty">{{ _('No Initiatives available') }}</p>
+        {% endif %}
+
+        {% if pkg_initiatives %}
+          <form method="post" style="margin-top: 15px;">
+            {{ h.csrf_input() }}
+            {% snippet 'initiatives/snippets/group_list.html', groups=pkg_initiatives %}
+          </form>
+        {% else %}
+          <p class="empty">{{ _('There are no Initiatives associated with this dataset') }}</p>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  
   {% else %}
-    <p class="empty">{{ _('There are no groups associated with this dataset') }}</p>
+    {# Vista sin permisos de edición - solo mostrar grupos asociados #}
+    {% if c.pkg_dict.groups %}
+      <form method="post">
+        {{ h.csrf_input() }}
+        {% snippet 'group/snippets/group_list.html', groups=c.pkg_dict.groups %}
+      </form>
+    {% else %}
+      <p class="empty">{{ _('There are no groups associated with this dataset') }}</p>
+    {% endif %}
   {% endif %}
 
 {% endblock %}

@@ -1,0 +1,1791 @@
+{% extends "page.html" %}
+{% import 'ihpix/snippets/forms_assets.html' as forms_ui with context %}
+
+{% block title %}
+{{ _('IHP-IX Activities Management') }} - {{ super() }}
+{% endblock %}
+
+{% block content %}
+{{ forms_ui.forms_styles() }}
+{{ forms_ui.forms_scripts() }}
+{# ── Listas de opciones: única fuente ihpix_constants (vía helper) ── #}
+{% set tax = h.get_ihpix_taxonomies() %}
+{% set institution_type_options = tax.institution_types %}
+{% set biennium_options = tax.biennia %}
+{% set region_options = tax.regions %}
+{% set flagship_options = tax.flagships %}
+{% set cross_cutting_options = tax.cross_cutting_wgs %}
+{% set knowledge_product_type_options = tax.knowledge_product_types %}
+{% set scientific_product_type_options = tax.scientific_product_types %}
+{% set knowledge_activity_type_options = tax.knowledge_activity_types %}
+{% set training_type_options = tax.training_types %}
+{% set stakeholder_group_type_options = tax.stakeholder_group_type_values %}
+
+{# ── Macro: Render all 8 accordion form sections ── #}
+{% macro form_sections(p, is_edit=false) %}
+<div class="ihpact-accordion" id="{{ p }}-accordion">
+
+  {# ── Section 1: Basic Information ── #}
+  <div class="ihpact-accordion-section">
+    <button type="button" class="ihpact-accordion-header active" aria-expanded="true" aria-controls="{{ p }}-section-basic" data-ihpact-accordion>
+      <span><i class="fa fa-info-circle"></i> {{ _('Basic Information') }}</span>
+      <i class="fa fa-chevron-down ihpact-accordion-icon" aria-hidden="true"></i>
+    </button>
+    <div class="ihpact-accordion-body active" id="{{ p }}-section-basic">
+      {% if not is_edit %}
+      <div class="row">
+        <div class="col-md-4">
+          <div class="ihpact-drop-zone" id="{{ p }}-drop-zone">
+            <div class="ihpact-drop-content" id="{{ p }}-drop-content">
+              <i class="fa fa-cloud-upload fa-3x"></i>
+              <p>{{ _('Drag & drop an image here') }}</p>
+              <p class="text-muted small">{{ _('or click to browse') }}</p>
+            </div>
+            <img id="{{ p }}-preview-img" class="ihpact-preview-img" style="display:none;" />
+            <input type="file" id="{{ p }}-file-input" accept="image/*" style="display:none;" />
+            <input type="hidden" id="{{ p }}-image-url" name="image_url" value="" />
+          </div>
+          <div class="ihpact-or-divider">
+            <span>{{ _('or paste image URL') }}</span>
+          </div>
+          <input type="text" id="{{ p }}-image-url-text" class="form-control ihpact-input"
+                 placeholder="https://..." />
+        </div>
+        <div class="col-md-8">
+      {% endif %}
+      {% if is_edit %}
+      <div class="row">
+        <div class="col-md-12">
+      {% endif %}
+          <div class="form-group">
+            <label for="{{ p }}-title">{{ _('Title') }} <span class="text-danger">*</span></label>
+            <input type="text" id="{{ p }}-title" class="form-control ihpact-input"
+                   placeholder="{{ _('Activity title') }}" required />
+          </div>
+          <div class="form-group">
+            <label for="{{ p }}-description">{{ _('Description') }}</label>
+            <textarea id="{{ p }}-description" class="form-control ihpact-input" rows="3" maxlength="250" data-ihpix-counter
+                      placeholder="{{ _('Brief description of the activity...') }}"></textarea>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="{{ p }}-priority-area">{{ _('Priority Area') }} <span class="text-danger">*</span></label>
+                <select id="{{ p }}-priority-area" class="form-control ihpact-input" required>
+                  <option value="">{{ _('Select priority area') }}</option>
+                  <option value="PA1">PA1</option>
+                  <option value="PA2">PA2</option>
+                  <option value="PA3">PA3</option>
+                  <option value="PA4">PA4</option>
+                  <option value="PA5">PA5</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="{{ p }}-output">{{ _('Output') }}</label>
+                <select id="{{ p }}-output" class="form-control ihpact-input" data-placeholder="{{ _('Select output') }}">
+                  <option value="">{{ _('Select output') }}</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="{{ p }}-biennium">{{ _('Biennium') }}</label>
+                <select id="{{ p }}-biennium" class="form-control ihpact-input">
+                  <option value="">{{ _('Select biennium') }}</option>
+                  {% for b in biennium_options %}
+                  <option value="{{ b }}">{{ b }}</option>
+                  {% endfor %}
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-md-4">
+              <div class="form-group">
+                <label for="{{ p }}-status">{{ _('Status') }}</label>
+                <select id="{{ p }}-status" class="form-control ihpact-input">
+                  <option value="published">{{ _('Published') }}</option>
+                  <option value="draft">{{ _('Draft') }}</option>
+                </select>
+              </div>
+            </div>
+            <div class="col-md-8">
+              <div class="form-group">
+                <label for="{{ p }}-link">{{ _('Link') }}</label>
+                <input type="url" id="{{ p }}-link" class="form-control ihpact-input" placeholder="https://..." />
+              </div>
+            </div>
+          </div>
+      {% if is_edit %}
+          <div class="form-group">
+            <label for="{{ p }}-image-url">{{ _('Image URL') }}</label>
+            <input type="text" id="{{ p }}-image-url" class="form-control ihpact-input" placeholder="https://..." />
+            <div class="ihpact-edit-img-preview" id="{{ p }}-img-preview" style="display:none; margin-top:10px;">
+              <img id="{{ p }}-preview-img" style="max-width:200px; border-radius:8px;" />
+            </div>
+          </div>
+          <div class="form-group">
+            <label for="{{ p }}-file-input">{{ _('Or upload new image') }}</label>
+            <input type="file" id="{{ p }}-file-input" accept="image/*" class="form-control" />
+          </div>
+      {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {# ── Section 2: Organization & Geography ── #}
+  <div class="ihpact-accordion-section">
+    <button type="button" class="ihpact-accordion-header" aria-expanded="false" aria-controls="{{ p }}-section-org" data-ihpact-accordion>
+      <span><i class="fa fa-globe"></i> {{ _('Organization & Geography') }}</span>
+      <i class="fa fa-chevron-down ihpact-accordion-icon" aria-hidden="true"></i>
+    </button>
+    <div class="ihpact-accordion-body" id="{{ p }}-section-org">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="{{ p }}-institution">{{ _('Institution') }}</label>
+            <input type="text" id="{{ p }}-institution" class="form-control ihpact-input"
+                   list="{{ p }}-org-datalist" placeholder="{{ _('Search institutions...') }}" />
+            <datalist id="{{ p }}-org-datalist">
+              {% for org in org_list %}
+              <option value="{{ org.title }}">
+              {% endfor %}
+            </datalist>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="{{ p }}-institution-type">{{ _('Institution Type') }}</label>
+            <select id="{{ p }}-institution-type" class="form-control ihpact-input">
+              <option value="">{{ _('Select type') }}</option>
+              {% for it in institution_type_options %}
+              <option value="{{ it }}">{{ _(it) }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="{{ p }}-country">{{ _('Country') }}</label>
+            <input type="text" id="{{ p }}-country" class="form-control ihpact-input" list="{{ p }}-ms-datalist"
+                   autocomplete="off" placeholder="{{ _('Start typing a Member State…') }}" />
+            <span class="help-block small">{{ _('Pick a Member State from the list (stored as its group slug, like the public form) or type a free name for legacy rows.') }}</span>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="{{ p }}-supporting-member-state">{{ _('Supporting Member State') }}</label>
+            <input type="text" id="{{ p }}-supporting-member-state" class="form-control ihpact-input" list="{{ p }}-ms-datalist"
+                   autocomplete="off" placeholder="{{ _('Start typing a Member State…') }}" />
+            <datalist id="{{ p }}-ms-datalist">
+              {% for name, display_name in ms_list %}<option value="{{ name }}">{{ display_name }}</option>{% endfor %}
+            </datalist>
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <span class="ihpact-group-label" id="{{ p }}-ms-label">{{ _('Member States') }}</span>
+        <input type="hidden" id="{{ p }}-member-states" name="member_states" value="" />
+        <div id="{{ p }}-ms-widget" data-ihpix-multipicker data-value-mode="json" data-input="#{{ p }}-member-states"
+             data-label="{{ _('Member States') }}" data-placeholder="{{ _('Search member states...') }}">
+          <div class="ixf-mp-list">
+            {% for name, display_name in ms_list %}
+            <label data-search="{{ name }}">
+              <input type="checkbox" value="{{ name }}" />
+              <span>{{ display_name }}</span>
+            </label>
+            {% endfor %}
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <span class="ihpact-group-label">{{ _('Regions') }}</span>
+        <input type="hidden" id="{{ p }}-regions" name="regions" value="" />
+        <div class="ihpact-checkbox-group" id="{{ p }}-regions-group">
+          {% for r in region_options %}
+          <label>
+            <input type="checkbox" value="{{ r }}" />
+            <span>{{ _(r) }}</span>
+          </label>
+          {% endfor %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {# ── Section 3: Activity Details ── #}
+  <div class="ihpact-accordion-section">
+    <button type="button" class="ihpact-accordion-header" aria-expanded="false" aria-controls="{{ p }}-section-details" data-ihpact-accordion>
+      <span><i class="fa fa-tasks"></i> {{ _('Activity Details') }}</span>
+      <i class="fa fa-chevron-down ihpact-accordion-icon" aria-hidden="true"></i>
+    </button>
+    <div class="ihpact-accordion-body" id="{{ p }}-section-details">
+      <div class="form-group">
+        <label for="{{ p }}-key-activity">{{ _('Key Activity') }}</label>
+        <textarea id="{{ p }}-key-activity" class="form-control ihpact-input" rows="3" maxlength="1000" data-ihpix-markdown data-ihpix-counter
+                  placeholder="{{ _('Describe the key activity...') }}"></textarea>
+      </div>
+      <div class="form-group">
+        <label for="{{ p }}-outcomes">{{ _('Outcomes') }}</label>
+        <textarea id="{{ p }}-outcomes" class="form-control ihpact-input" rows="3" maxlength="250" data-ihpix-counter
+                  placeholder="{{ _('Expected or achieved outcomes...') }}"></textarea>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="{{ p }}-partners">{{ _('Partners') }}</label>
+            <input type="text" id="{{ p }}-partners" class="form-control ihpact-input"
+                   placeholder="{{ _('Partner organizations') }}" />
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <fieldset class="ixf-fieldset">
+              <legend class="ihpact-group-label">{{ _('Did the UNESCO Secretariat participate?') }}</legend>
+              <div class="ihpact-checkbox-group" role="radiogroup">
+                <label><input type="radio" name="{{ p }}-unesco-secretariat-participation" value="yes"> <span>{{ _('Yes') }}</span></label>
+                <label><input type="radio" name="{{ p }}-unesco-secretariat-participation" value="no" checked> <span>{{ _('No') }}</span></label>
+              </div>
+            </fieldset>
+            <label for="{{ p }}-unesco-participation" class="small text-muted" style="margin-top:.4rem;">{{ _('Participation details (legacy, optional)') }}</label>
+            <input type="text" id="{{ p }}-unesco-participation" class="form-control ihpact-input"
+                   placeholder="{{ _('UNESCO participation details') }}" />
+          </div>
+        </div>
+      </div>
+      <div class="form-group">
+        <span class="ihpact-group-label">{{ _('Flagships') }}</span>
+        <input type="hidden" id="{{ p }}-flagships" name="flagships" value="" />
+        <div class="ihpact-checkbox-group" id="{{ p }}-flagships-group">
+          {% for f in flagship_options %}
+          <label>
+            <input type="checkbox" value="{{ f }}" />
+            <span>{{ f }}</span>
+          </label>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="form-group">
+        <span class="ihpact-group-label">{{ _('Cross-Cutting Working Groups') }}</span>
+        <input type="hidden" id="{{ p }}-cross-cutting-wg" name="cross_cutting_wg" value="" />
+        <div class="ihpact-checkbox-group" id="{{ p }}-cross-cutting-wg-group">
+          {% for cw in cross_cutting_options %}
+          <label>
+            <input type="checkbox" value="{{ cw }}" />
+            <span>{{ _(cw) }}</span>
+          </label>
+          {% endfor %}
+        </div>
+      </div>
+      <div class="form-group">
+        <label for="{{ p }}-synergies">{{ _('Synergies') }}</label>
+        <textarea id="{{ p }}-synergies" class="form-control ihpact-input" rows="3" maxlength="1500" data-ihpix-markdown data-ihpix-counter
+                  placeholder="{{ _('Synergies with other programmes...') }}"></textarea>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="{{ p }}-start-date">{{ _('Start Date') }}</label>
+            <input type="date" id="{{ p }}-start-date" class="form-control ihpact-input" />
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="{{ p }}-end-date">{{ _('End Date') }}</label>
+            <input type="date" id="{{ p }}-end-date" class="form-control ihpact-input" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {# ── Section 4: Contact & Reporting ── #}
+  <div class="ihpact-accordion-section">
+    <button type="button" class="ihpact-accordion-header" aria-expanded="false" aria-controls="{{ p }}-section-contact" data-ihpact-accordion>
+      <span><i class="fa fa-user"></i> {{ _('Contact & Reporting') }}</span>
+      <i class="fa fa-chevron-down ihpact-accordion-icon" aria-hidden="true"></i>
+    </button>
+    <div class="ihpact-accordion-body" id="{{ p }}-section-contact">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="{{ p }}-contact-name">{{ _('Contact Name') }}</label>
+            <input type="text" id="{{ p }}-contact-name" class="form-control ihpact-input"
+                   placeholder="{{ _('Full name') }}" />
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="{{ p }}-contact-email">{{ _('Contact Email') }}</label>
+            <input type="email" id="{{ p }}-contact-email" class="form-control ihpact-input"
+                   placeholder="email@example.com" />
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="{{ p }}-reported-by">{{ _('Reported By') }}</label>
+            <input type="text" id="{{ p }}-reported-by" class="form-control ihpact-input"
+                   placeholder="{{ _('Person who reported') }}" />
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="{{ p }}-reported-date">{{ _('Reported Date') }}</label>
+            <input type="date" id="{{ p }}-reported-date" class="form-control ihpact-input" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {# ── Section 5: Knowledge Products ── #}
+  <div class="ihpact-accordion-section">
+    <button type="button" class="ihpact-accordion-header" aria-expanded="false" aria-controls="{{ p }}-section-knowledge" data-ihpact-accordion>
+      <span><i class="fa fa-book"></i> {{ _('Knowledge Products') }}</span>
+      <i class="fa fa-chevron-down ihpact-accordion-icon" aria-hidden="true"></i>
+    </button>
+    <div class="ihpact-accordion-body" id="{{ p }}-section-knowledge">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <span class="ihpact-group-label">{{ _('Knowledge Product Type') }}</span>
+            <input type="hidden" id="{{ p }}-knowledge-product-type" name="knowledge_product_type" value="" />
+            <div class="ihpact-checkbox-group" id="{{ p }}-knowledge-product-type-group" role="group" aria-label="{{ _('Knowledge Product Type') }}">
+              {% for kp in knowledge_product_type_options %}
+              <label><input type="checkbox" value="{{ kp }}" /> <span>{{ _(kp) }}</span></label>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6" id="{{ p }}-knowledge-product-type-other-wrapper" style="display:none;">
+          <div class="form-group">
+            <label for="{{ p }}-knowledge-product-type-other">{{ _('Other (specify)') }}</label>
+            <input type="text" id="{{ p }}-knowledge-product-type-other" class="form-control ihpact-input"
+                   placeholder="{{ _('Specify type') }}" />
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="{{ p }}-num-knowledge-products">{{ _('Number of Knowledge Products') }}</label>
+            <input type="number" id="{{ p }}-num-knowledge-products" class="form-control ihpact-input"
+                   min="0" value="0" />
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <span class="ihpact-group-label">{{ _('Scientific Product Type') }}</span>
+            <input type="hidden" id="{{ p }}-scientific-product-type" name="scientific_product_type" value="" />
+            <div class="ihpact-checkbox-group" id="{{ p }}-scientific-product-type-group" role="group" aria-label="{{ _('Scientific Product Type') }}">
+              {% for sp in scientific_product_type_options %}
+              <label><input type="checkbox" value="{{ sp }}" /> <span>{{ _(sp) }}</span></label>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="{{ p }}-num-scientific-products">{{ _('Number of Scientific Products') }}</label>
+            <input type="number" id="{{ p }}-num-scientific-products" class="form-control ihpact-input"
+                   min="0" value="0" />
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <span class="ihpact-group-label">{{ _('Knowledge Activity Type') }}</span>
+            <input type="hidden" id="{{ p }}-knowledge-activity-type" name="knowledge_activity_type" value="" />
+            <div class="ihpact-checkbox-group" id="{{ p }}-knowledge-activity-type-group" role="group" aria-label="{{ _('Knowledge Activity Type') }}">
+              {% for ka in knowledge_activity_type_options %}
+              <label><input type="checkbox" value="{{ ka }}" /> <span>{{ _(ka) }}</span></label>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6" id="{{ p }}-knowledge-activity-type-other-wrapper" style="display:none;">
+          <div class="form-group">
+            <label for="{{ p }}-knowledge-activity-type-other">{{ _('Other (specify)') }}</label>
+            <input type="text" id="{{ p }}-knowledge-activity-type-other" class="form-control ihpact-input"
+                   placeholder="{{ _('Specify type') }}" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {# ── Section 6: Training & Capacity Building ── #}
+  <div class="ihpact-accordion-section">
+    <button type="button" class="ihpact-accordion-header" aria-expanded="false" aria-controls="{{ p }}-section-training" data-ihpact-accordion>
+      <span><i class="fa fa-graduation-cap"></i> {{ _('Training & Capacity Building') }}</span>
+      <i class="fa fa-chevron-down ihpact-accordion-icon" aria-hidden="true"></i>
+    </button>
+    <div class="ihpact-accordion-body" id="{{ p }}-section-training">
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <span class="ihpact-group-label">{{ _('Training Type') }}</span>
+            <input type="hidden" id="{{ p }}-training-type" name="training_type" value="" />
+            <div class="ihpact-checkbox-group" id="{{ p }}-training-type-group" role="group" aria-label="{{ _('Training Type') }}">
+              {% for tt in training_type_options %}
+              <label><input type="checkbox" value="{{ tt }}" /> <span>{{ _(tt) }}</span></label>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="{{ p }}-num-training-materials">{{ _('Number of Training Materials') }}</label>
+            <input type="number" id="{{ p }}-num-training-materials" class="form-control ihpact-input"
+                   min="0" value="0" />
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="{{ p }}-num-curricula">{{ _('Number of Curricula') }}</label>
+            <input type="number" id="{{ p }}-num-curricula" class="form-control ihpact-input"
+                   min="0" value="0" />
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="{{ p }}-num-transboundary-ms">{{ _('Number of Transboundary Member States') }}</label>
+            <input type="number" id="{{ p }}-num-transboundary-ms" class="form-control ihpact-input"
+                   min="0" value="0" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {# ── Section 7: Stakeholders ── #}
+  <div class="ihpact-accordion-section">
+    <button type="button" class="ihpact-accordion-header" aria-expanded="false" aria-controls="{{ p }}-section-stakeholders" data-ihpact-accordion>
+      <span><i class="fa fa-users"></i> {{ _('Stakeholders') }}</span>
+      <i class="fa fa-chevron-down ihpact-accordion-icon" aria-hidden="true"></i>
+    </button>
+    <div class="ihpact-accordion-body" id="{{ p }}-section-stakeholders">
+      <h4 class="ihpact-subsection-title">{{ _('Knowledge Stakeholders') }}</h4>
+      <div class="row">
+        <div class="col-md-4">
+          <div class="form-group">
+            <label for="{{ p }}-stakeholders-knowledge">{{ _('Total') }}</label>
+            <input type="number" id="{{ p }}-stakeholders-knowledge" class="form-control ihpact-input"
+                   min="0" value="0" />
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group">
+            <label for="{{ p }}-stakeholders-knowledge-female">{{ _('Female') }}</label>
+            <input type="number" id="{{ p }}-stakeholders-knowledge-female" class="form-control ihpact-input"
+                   min="0" value="0" />
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group">
+            <label for="{{ p }}-stakeholders-knowledge-youth">{{ _('Youth') }}</label>
+            <input type="number" id="{{ p }}-stakeholders-knowledge-youth" class="form-control ihpact-input"
+                   min="0" value="0" />
+          </div>
+        </div>
+      </div>
+      <h4 class="ihpact-subsection-title">{{ _('Awareness Stakeholders') }}</h4>
+      <div class="row">
+        <div class="col-md-4">
+          <div class="form-group">
+            <label for="{{ p }}-stakeholders-awareness">{{ _('Total') }}</label>
+            <input type="number" id="{{ p }}-stakeholders-awareness" class="form-control ihpact-input"
+                   min="0" value="0" />
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group">
+            <label for="{{ p }}-stakeholders-awareness-female">{{ _('Female') }}</label>
+            <input type="number" id="{{ p }}-stakeholders-awareness-female" class="form-control ihpact-input"
+                   min="0" value="0" />
+          </div>
+        </div>
+        <div class="col-md-4">
+          <div class="form-group">
+            <label for="{{ p }}-stakeholders-awareness-youth">{{ _('Youth') }}</label>
+            <input type="number" id="{{ p }}-stakeholders-awareness-youth" class="form-control ihpact-input"
+                   min="0" value="0" />
+          </div>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-md-6">
+          <div class="form-group">
+            <label for="{{ p }}-num-stakeholder-groups">{{ _('Number of Stakeholder Groups') }}</label>
+            <input type="number" id="{{ p }}-num-stakeholder-groups" class="form-control ihpact-input"
+                   min="0" value="0" />
+          </div>
+        </div>
+        <div class="col-md-6">
+          <div class="form-group">
+            <span class="ihpact-group-label">{{ _('Stakeholder Group Type') }}</span>
+            <input type="hidden" id="{{ p }}-stakeholder-group-type" name="stakeholder_group_type" value="" />
+            <div class="ihpact-checkbox-group" id="{{ p }}-stakeholder-group-type-group" role="group" aria-label="{{ _('Stakeholder Group Type') }}">
+              {% for sg in stakeholder_group_type_options %}
+              <label><input type="checkbox" value="{{ sg }}" /> <span>{{ _(sg) }}</span></label>
+              {% endfor %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  {# ── Section 8: Notes ── #}
+  <div class="ihpact-accordion-section">
+    <button type="button" class="ihpact-accordion-header" aria-expanded="false" aria-controls="{{ p }}-section-notes" data-ihpact-accordion>
+      <span><i class="fa fa-sticky-note"></i> {{ _('Notes') }}</span>
+      <i class="fa fa-chevron-down ihpact-accordion-icon" aria-hidden="true"></i>
+    </button>
+    <div class="ihpact-accordion-body" id="{{ p }}-section-notes">
+      <div class="form-group">
+        <label for="{{ p }}-additional-notes">{{ _('Additional notes') }}</label>
+        <span class="help-block small">{{ _('Shown with the activity. Markdown is supported (bold, lists, links).') }}</span>
+        <textarea id="{{ p }}-additional-notes" class="form-control ihpact-input" rows="5" maxlength="3000" data-ihpix-markdown data-ihpix-counter
+                  placeholder="{{ _('Additional notes...') }}"></textarea>
+      </div>
+      <div class="form-group">
+        <label for="{{ p }}-notes">{{ _('Internal notes (legacy)') }}</label>
+        <span class="help-block small">{{ _('Free text kept for rows imported from the Excel seed; not shown publicly.') }}</span>
+        <textarea id="{{ p }}-notes" class="form-control ihpact-input" rows="2"></textarea>
+      </div>
+    </div>
+  </div>
+
+</div>
+{% endmacro %}
+
+<div class="homepage layout-1">
+    <div id="content" class="container">
+      {{ self.flash() }}
+    </div>
+
+    {% block primary_content scoped %}
+    <div class="main">
+        <div class="container">
+            <!-- Breadcrumb -->
+            <div class="toolbar" role="navigation" aria-label="Breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="home"><a href="{{ h.url_for('/') }}"><i class="fa fa-home"></i><span> {{ _('Home') }}</span></a></li>
+                    <li><a href="{{ h.url_for(controller='admin', action='index') }}">{{ _('Admin') }}</a></li>
+                    <li class="active">{{ _('IHP-IX Activities') }}</li>
+                </ol>
+            </div>
+
+            <!-- Header Banner -->
+            <section class="module module-narrow module-shallow">
+              <div class="ihpact-banner">
+                <div class="ihpact-banner-overlay"></div>
+                <div class="ihpact-banner-content">
+                  <h1><i class="fa fa-flag"></i> {{ _('IHP-IX Activities Management') }}</h1>
+                  <p>{{ _('Manage IHP-IX activities reported by member states and institutions.') }}</p>
+                </div>
+              </div>
+            </section>
+        </div>
+
+        <div class="container">
+          <!-- Navigation Tabs -->
+          <ul class="nav nav-tabs ihpact-nav-tabs">
+            <li><a href="/ckan-admin/ihpix">{{ _('Page Content') }}</a></li>
+            <li class="active"><a href="/ckan-admin/ihpix/activities">{{ _('Activities') }}</a></li>
+          </ul>
+
+          <div class="row">
+            <div class="col-md-12">
+
+              <!-- Add New Activity -->
+              <div class="ihpact-action-bar">
+                <section class="module module-narrow">
+                  <div class="module-content" style="padding: 2rem 2.5rem;">
+                    <h2 class="ihpact-section-title"><i class="fa fa-plus-circle"></i> {{ _('Add New Activity') }}</h2>
+                    <form id="ihpact-add-form" class="ihpact-form" onsubmit="return false;" style="margin-top:16px;">
+                      {{ form_sections('ihpact') }}
+                      <div class="text-right" style="margin-top:16px;">
+                        <button type="button" id="ihpact-add-btn" class="btn btn-primary btn-lg">
+                          <i class="fa fa-plus"></i> {{ _('Add Activity') }}
+                        </button>
+                      </div>
+                    </form>
+                  </div>
+                </section>
+              </div>
+
+              <!-- Filter Bar -->
+              <div class="ihpact-filter-bar">
+                <div class="row">
+                  <div class="col-md-8">
+                    <h2 class="ihpact-section-title">
+                      <i class="fa fa-flag"></i> {{ _('Activities') }}
+                      <span class="ihpact-count-badge" id="ihpact-count">{{ total }}</span>
+                    </h2>
+                  </div>
+                  <div class="col-md-4 text-right">
+                    <form method="get" action="" class="form-inline" style="display:inline-block;">
+                      <select name="pa_filter" class="form-control ihpact-input" onchange="this.form.submit()" style="width:auto; display:inline-block;">
+                        <option value="">{{ _('All Priority Areas') }}</option>
+                        {% for pa in ['PA1', 'PA2', 'PA3', 'PA4', 'PA5'] %}
+                        <option value="{{ pa }}" {{ 'selected' if pa_filter == pa else '' }}>{{ pa }}</option>
+                        {% endfor %}
+                      </select>
+                    </form>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Activities List -->
+              <div id="ihpact-list" class="ihpact-list">
+                {% if activities %}
+                  {% for activity in activities %}
+                  <div class="ihpact-card" id="ihpact-card-{{ activity.id }}" data-id="{{ activity.id }}">
+                    <article class="module module-narrow">
+                      <div class="module-content" style="padding: 1.5rem 2rem;">
+                        <div class="row">
+                          <div class="col-md-2 col-sm-3">
+                            {% if activity.image_url %}
+                            <img src="{{ activity.image_url }}" class="ihpact-card-img" alt="{{ activity.title }}" />
+                            {% else %}
+                            <div class="ihpact-card-img-placeholder">
+                              <i class="fa fa-flag fa-2x"></i>
+                            </div>
+                            {% endif %}
+                          </div>
+                          <div class="col-md-7 col-sm-6">
+                            <h3 class="ihpact-card-title">
+                              {{ activity.title }}
+                              {% if activity.priority_area %}
+                              <span class="label label-primary ihpact-badge-pa">{{ activity.priority_area }}</span>
+                              {% endif %}
+                              {% if activity.output %}
+                              <span class="label label-info ihpact-badge-output">{{ activity.output }}</span>
+                              {% endif %}
+                              {% if activity.biennium %}
+                              <span class="label label-warning ihpact-badge-biennium">{{ activity.biennium }}</span>
+                              {% endif %}
+                              {% if activity.status == 'draft' %}
+                              <span class="label label-default ihpact-badge-status-draft">{{ _('Draft') }}</span>
+                              {% else %}
+                              <span class="label label-success ihpact-badge-status-published">{{ _('Published') }}</span>
+                              {% endif %}
+                            </h3>
+                            {% if activity.description %}
+                            <p class="ihpact-card-desc">{{ activity.description[:200] }}{% if activity.description|length > 200 %}...{% endif %}</p>
+                            {% endif %}
+                            <div class="ihpact-card-meta">
+                              {% if activity.country %}
+                              <span class="meta-item">
+                                <i class="fa fa-globe"></i> {{ activity.country }}
+                              </span>
+                              {% endif %}
+                              {% if activity.institution %}
+                              <span class="meta-item">
+                                <i class="fa fa-university"></i> {{ activity.institution }}
+                              </span>
+                              {% endif %}
+                              {% if activity.institution_type %}
+                              <span class="meta-item">
+                                <i class="fa fa-building"></i> {{ activity.institution_type }}
+                              </span>
+                              {% endif %}
+                              {% if activity.member_states and activity.member_states != '[]' and activity.member_states != '' %}
+                                {% if activity.member_states is string and activity.member_states.startswith('[') %}
+                                  {% set ms_items = activity.member_states[1:-1].split('",') %}
+                                  {% if ms_items|length > 0 and ms_items[0] != '' %}
+                                <span class="meta-item">
+                                  <i class="fa fa-flag"></i> {{ ms_items|length }} {{ _('member states') }}
+                                </span>
+                                  {% endif %}
+                                {% endif %}
+                              {% endif %}
+                              {% if activity.reported_date %}
+                              <span class="meta-item">
+                                <i class="fa fa-calendar"></i> {{ activity.reported_date }}
+                              </span>
+                              {% endif %}
+                              {% if activity.link %}
+                              <span class="meta-item">
+                                <i class="fa fa-link"></i>
+                                <a href="{{ activity.link }}" target="_blank" class="ihpact-card-link">{{ activity.link[:50] }}{% if activity.link|length > 50 %}...{% endif %}</a>
+                              </span>
+                              {% endif %}
+                            </div>
+                          </div>
+                          <div class="col-md-3 col-sm-3">
+                            <div class="ihpact-card-actions">
+                              <button class="btn btn-default btn-sm ihpact-edit-btn"
+                                      data-id="{{ activity.id }}">
+                                <i class="fa fa-edit"></i> {{ _('Edit') }}
+                              </button>
+                              <button class="btn btn-danger btn-sm ihpact-delete-btn"
+                                      data-id="{{ activity.id }}"
+                                      data-title="{{ activity.title }}">
+                                <i class="fa fa-trash"></i> {{ _('Delete') }}
+                              </button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </article>
+                  </div>
+                  {% endfor %}
+                {% else %}
+                  <div class="ihpact-empty-state" id="ihpact-empty">
+                    <section class="module module-narrow">
+                      <div class="module-content text-center" style="padding: 4rem 2.5rem;">
+                        <div class="ihpact-empty-icon">
+                          <i class="fa fa-flag fa-4x"></i>
+                        </div>
+                        <h3>{{ _('No Activities Yet') }}</h3>
+                        <p class="text-muted">{{ _('Use the form above to add IHP-IX activities.') }}</p>
+                      </div>
+                    </section>
+                  </div>
+                {% endif %}
+              </div>
+
+              <!-- Pagination -->
+              {% set total_pages = (total / items_per_page) | round(0, 'ceil') | int %}
+              {% if total_pages > 1 %}
+              <div class="ihpact-pagination">
+                <ul class="pagination">
+                  {% if page > 1 %}
+                  <li><a href="?page={{ page - 1 }}{% if pa_filter %}&pa_filter={{ pa_filter }}{% endif %}">&laquo;</a></li>
+                  {% else %}
+                  <li class="disabled"><span>&laquo;</span></li>
+                  {% endif %}
+
+                  {% for p in range(1, total_pages + 1) %}
+                    {% if p == page %}
+                    <li class="active"><span>{{ p }}</span></li>
+                    {% elif p == 1 or p == total_pages or (p >= page - 2 and p <= page + 2) %}
+                    <li><a href="?page={{ p }}{% if pa_filter %}&pa_filter={{ pa_filter }}{% endif %}">{{ p }}</a></li>
+                    {% elif p == page - 3 or p == page + 3 %}
+                    <li class="disabled"><span>&hellip;</span></li>
+                    {% endif %}
+                  {% endfor %}
+
+                  {% if page < total_pages %}
+                  <li><a href="?page={{ page + 1 }}{% if pa_filter %}&pa_filter={{ pa_filter }}{% endif %}">&raquo;</a></li>
+                  {% else %}
+                  <li class="disabled"><span>&raquo;</span></li>
+                  {% endif %}
+                </ul>
+                <span class="ihpact-pagination-info">
+                  {{ _('Showing %(start)s to %(end)s of %(total)s activities', start=((page-1)*items_per_page+1), end=([page*items_per_page, total]|min), total=total) }}
+                </span>
+              </div>
+              {% endif %}
+
+            </div>
+          </div>
+        </div>
+
+    </div>
+    {% endblock %}
+</div>
+
+<!-- Edit Modal -->
+<div id="ihpact-edit-modal" class="ihpact-modal" style="display:none;" role="dialog" aria-modal="true" aria-labelledby="ihpact-edit-modal-title">
+  <div class="ihpact-modal-backdrop"></div>
+  <div class="ihpact-modal-dialog">
+    <div class="ihpact-modal-content">
+      <div class="ihpact-modal-header">
+        <h3 id="ihpact-edit-modal-title"><i class="fa fa-edit" aria-hidden="true"></i> {{ _('Edit Activity') }}</h3>
+        <button type="button" class="ihpact-modal-close" id="ihpact-modal-close" aria-label="{{ _('Close') }}">&times;</button>
+      </div>
+      <div class="ihpact-modal-body">
+        <input type="hidden" id="ihpact-edit-id" />
+        <div id="ihpact-edit-loading" class="text-center" style="padding:40px; display:none;">
+          <i class="fa fa-spinner fa-spin fa-3x"></i>
+          <p style="margin-top:12px;">{{ _('Loading activity data...') }}</p>
+        </div>
+        <div id="ihpact-edit-form-wrap">
+          {{ form_sections('ihpact-edit', is_edit=true) }}
+        </div>
+      </div>
+      <div class="ihpact-modal-footer">
+        <button type="button" class="btn btn-default" id="ihpact-modal-cancel">{{ _('Cancel') }}</button>
+        <button type="button" class="btn btn-primary" id="ihpact-modal-save">
+          <i class="fa fa-save"></i> {{ _('Save Changes') }}
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- CSS -->
+<style>
+/* ── Banner ── */
+.ihpact-banner {
+  position: relative;
+  height: 200px;
+  overflow: hidden;
+  border-radius: 16px;
+  margin-bottom: 2.5rem;
+  box-shadow: 0 8px 32px rgba(0, 114, 188, 0.16);
+  display: flex;
+  align-items: center;
+  background: linear-gradient(135deg, #0072BC 0%, #005A9C 100%);
+}
+.ihpact-banner-overlay {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: linear-gradient(to right, rgba(0, 90, 156, 0.95) 0%, rgba(0, 114, 188, 0.7) 50%, rgba(0, 114, 188, 0.4) 100%);
+  z-index: 2;
+}
+.ihpact-banner-content {
+  position: relative;
+  z-index: 3;
+  padding: 2rem 2.5rem;
+  color: white;
+  width: 100%;
+}
+.ihpact-banner-content h1 {
+  font-size: 2.2rem;
+  font-weight: 700;
+  margin-bottom: 0.8rem;
+  text-shadow: 2px 2px 8px rgba(0,0,0,0.3);
+  color: white;
+}
+.ihpact-banner-content h1 .fa { margin-right: 10px; }
+.ihpact-banner .ihpact-banner-content p {
+  font-size: 1.1rem;
+  margin-bottom: 0;
+  opacity: 0.95;
+  text-shadow: 1px 1px 4px rgba(0,0,0,0.3);
+  font-weight: 300;
+  color: #fff !important;
+  max-width: 90%;
+}
+.toolbar { margin-bottom: 2rem; padding: 1rem 0; }
+
+/* ── Nav Tabs ── */
+.ihpact-nav-tabs {
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #e9ecef;
+}
+.ihpact-nav-tabs > li > a {
+  border-radius: 8px 8px 0 0;
+  font-weight: 600;
+  color: #6c757d;
+  padding: 10px 20px;
+  border: 2px solid transparent;
+  border-bottom: none;
+  margin-bottom: -2px;
+}
+.ihpact-nav-tabs > li > a:hover {
+  color: #0072BC;
+  background: #f8f9fa;
+  border-color: #e9ecef #e9ecef transparent;
+}
+.ihpact-nav-tabs > li.active > a,
+.ihpact-nav-tabs > li.active > a:hover,
+.ihpact-nav-tabs > li.active > a:focus {
+  color: #0072BC;
+  background: white;
+  border-color: #0072BC #0072BC transparent;
+  font-weight: 700;
+}
+
+.ihpact-section-title {
+  margin: 0; border: none; font-size: 1.3rem;
+  font-weight: 700; color: #0072BC;
+}
+.ihpact-section-title .fa { margin-right: 8px; }
+.ihpact-count-badge {
+  display: inline-block;
+  background: linear-gradient(135deg, #0072BC 0%, #005A9C 100%);
+  color: white; padding: 3px 12px; border-radius: 20px;
+  font-size: 0.85rem; margin-left: 10px; font-weight: 600;
+}
+
+.ihpact-action-bar { margin-bottom: 2.5rem; }
+.ihpact-action-bar .module {
+  border-radius: 16px;
+  border: 2px dashed #e9ecef;
+  box-shadow: 0 4px 16px rgba(0, 114, 188, 0.08);
+}
+
+/* ── Form ── */
+.ihpact-form .form-group { margin-bottom: 1.2rem; }
+.ihpact-form label { font-weight: 600; color: #2c3e50; margin-bottom: 6px; }
+.ihpact-input {
+  border-radius: 10px !important;
+  border: 2px solid #e9ecef !important;
+  padding: 10px 14px !important;
+  transition: border-color 0.2s ease !important;
+}
+.ihpact-input:focus {
+  border-color: #0072BC !important;
+  box-shadow: 0 0 0 3px rgba(0, 114, 188, 0.1) !important;
+}
+.ihpact-subsection-title {
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: #0072BC;
+  margin: 4px 0 12px 0;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #E3F2FD;
+}
+
+/* ── Drop Zone ── */
+.ihpact-drop-zone {
+  border: 3px dashed #dee2e6;
+  border-radius: 16px;
+  padding: 2rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  background: #f8f9fa;
+}
+.ihpact-drop-zone:hover, .ihpact-drop-zone.dragover {
+  border-color: #0072BC;
+  background: #E3F2FD;
+}
+.ihpact-drop-zone i { color: #0072BC; margin-bottom: 10px; }
+.ihpact-drop-zone p { margin: 0; color: #6c757d; font-weight: 500; }
+.ihpact-preview-img {
+  max-width: 100%;
+  max-height: 160px;
+  border-radius: 12px;
+  object-fit: cover;
+}
+.ihpact-or-divider {
+  text-align: center;
+  margin: 12px 0;
+  color: #6c757d;
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+/* ── Accordion ── */
+.ihpact-accordion { margin-top: 8px; }
+.ihpact-accordion-section { margin-bottom: 4px; }
+.ihpact-accordion-header {
+  cursor: pointer;
+  padding: 12px 16px;
+  background: #f8f9fa;
+  border: 1px solid #e9ecef;
+  border-radius: 8px;
+  margin-bottom: 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 600;
+  color: #2c3e50;
+  transition: all 0.2s;
+  -webkit-user-select: none;
+  user-select: none;
+}
+.ihpact-accordion-header:hover { background: #E3F2FD; color: #0072BC; }
+.ihpact-accordion-header.active { background: #E3F2FD; color: #0072BC; border-color: #BBDEFB; }
+.ihpact-accordion-header .fa { margin-right: 8px; }
+.ihpact-accordion-icon {
+  transition: transform 0.3s ease;
+  font-size: 0.85rem;
+}
+.ihpact-accordion-header.active .ihpact-accordion-icon {
+  transform: rotate(180deg);
+}
+.ihpact-accordion-body { padding: 16px; display: none; }
+.ihpact-accordion-body.active { display: block; }
+
+/* ── Cabeceras de acordeón como <button> (teclado + aria-expanded) ── */
+button.ihpact-accordion-header { width: 100%; text-align: start; font: inherit; appearance: none; -webkit-appearance: none; }
+button.ihpact-accordion-header:focus-visible { outline: 2px solid #0072BC; outline-offset: 2px; }
+.ihpact-group-label { display: block; font-weight: 600; margin-bottom: 6px; }
+fieldset.ixf-fieldset legend.ihpact-group-label { font-size: inherit; border: 0; margin-bottom: 6px; }
+.ihpact-checkbox-group input[type="radio"]:checked + span { color: #0072BC; font-weight: 600; }
+/* Member States: ahora MultiPicker del kit (ixf-mp) */
+
+/* ── Checkbox Groups ── */
+.ihpact-checkbox-group { display: flex; flex-wrap: wrap; gap: 8px; }
+.ihpact-checkbox-group label {
+  display: inline-flex; align-items: center; gap: 4px;
+  padding: 4px 10px; border: 1px solid #e9ecef; border-radius: 16px;
+  font-weight: 400; font-size: 0.85rem; cursor: pointer;
+  transition: all 0.2s;
+}
+.ihpact-checkbox-group label:hover { background: #E3F2FD; border-color: #BBDEFB; }
+.ihpact-checkbox-group input[type="checkbox"]:checked + span {
+  color: #0072BC; font-weight: 600;
+}
+
+/* ── Filter Bar ── */
+.ihpact-filter-bar { margin-bottom: 1.5rem; padding: 0 0.5rem; }
+.ihpact-list { margin-bottom: 3rem; }
+
+/* ── Cards ── */
+.ihpact-card {
+  margin-bottom: 1rem;
+  transition: all 0.3s ease;
+}
+.ihpact-card:hover { transform: translateY(-2px); }
+.ihpact-card .module {
+  border-radius: 12px;
+  border: 1px solid #e9ecef;
+  box-shadow: 0 2px 8px rgba(0, 114, 188, 0.06);
+  margin: 0;
+}
+
+.ihpact-card-img {
+  width: 100%;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 10px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+.ihpact-card-img-placeholder {
+  width: 100%;
+  height: 100px;
+  border-radius: 10px;
+  background: #f8f9fa;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #adb5bd;
+}
+
+.ihpact-card-title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #2c3e50;
+  margin: 0 0 6px 0;
+}
+.ihpact-badge-pa {
+  font-size: 0.7em;
+  margin-left: 8px;
+  background: linear-gradient(135deg, #0072BC, #005A9C);
+  border-radius: 10px;
+  padding: 3px 10px;
+}
+.ihpact-badge-output {
+  font-size: 0.7em;
+  margin-left: 4px;
+  border-radius: 10px;
+  padding: 3px 10px;
+}
+.ihpact-badge-biennium {
+  font-size: 0.7em;
+  margin-left: 4px;
+  background: #f0ad4e;
+  border-radius: 10px;
+  padding: 3px 10px;
+  color: #fff;
+}
+.ihpact-badge-status-published {
+  font-size: 0.7em;
+  margin-left: 4px;
+  background: #28a745;
+  border-radius: 10px;
+  padding: 3px 10px;
+}
+.ihpact-badge-status-draft {
+  font-size: 0.7em;
+  margin-left: 4px;
+  background: #6c757d;
+  border-radius: 10px;
+  padding: 3px 10px;
+}
+.ihpact-card-desc {
+  color: #6c757d;
+  font-size: 0.9rem;
+  margin-bottom: 6px;
+}
+.ihpact-card-meta { font-size: 0.85rem; }
+.ihpact-card-meta .meta-item {
+  display: inline-block;
+  margin-right: 14px;
+  color: #6c757d;
+}
+.ihpact-card-meta .meta-item .fa { margin-right: 4px; color: #0072BC; }
+.ihpact-card-link { color: #0072BC; }
+
+.ihpact-card-actions {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-end;
+  height: 100%;
+  flex-wrap: wrap;
+}
+.ihpact-card-actions .btn {
+  border-radius: 20px;
+  padding: 7px 16px;
+  font-weight: 600;
+  font-size: 0.85rem;
+  white-space: nowrap;
+  transition: all 0.2s ease;
+}
+.ihpact-card-actions .btn-danger {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  border: none; color: white;
+}
+.ihpact-card-actions .btn-danger:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+  color: white;
+}
+.ihpact-card-actions .btn-default {
+  background: linear-gradient(135deg, #fff 0%, #f8f9fa 100%);
+  border: 2px solid #e9ecef; color: #2c3e50;
+}
+.ihpact-card-actions .btn-default:hover {
+  background: #E3F2FD; border-color: #0072BC; color: #0072BC;
+}
+
+.ihpact-empty-state .module { border-left: 5px solid #005A9C; }
+.ihpact-empty-icon { color: #005A9C; opacity: 0.7; margin-bottom: 1.5rem; }
+.ihpact-empty-state h3 { color: #2c3e50; font-weight: 700; margin-bottom: 0.8rem; }
+
+/* ── Pagination ── */
+.ihpact-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 0;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.ihpact-pagination .pagination { margin: 0; }
+.ihpact-pagination .pagination > li > a,
+.ihpact-pagination .pagination > li > span {
+  border-radius: 8px;
+  margin: 0 2px;
+  border: 1px solid #e9ecef;
+  color: #0072BC;
+}
+.ihpact-pagination .pagination > li.active > span {
+  background: linear-gradient(135deg, #0072BC, #005A9C);
+  border-color: #0072BC;
+  color: white;
+}
+.ihpact-pagination-info { font-size: 13px; color: #888; }
+
+/* ── Modal ── */
+.ihpact-modal {
+  position: fixed;
+  top: 0; left: 0; width: 100%; height: 100%;
+  z-index: 10000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ihpact-modal-backdrop {
+  position: absolute;
+  top: 0; left: 0; width: 100%; height: 100%;
+  background: rgba(0,0,0,0.5);
+}
+.ihpact-modal-dialog {
+  position: relative;
+  z-index: 10001;
+  width: 90%;
+  max-width: 900px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+.ihpact-modal-content {
+  background: white;
+  border-radius: 16px;
+  box-shadow: 0 16px 48px rgba(0,0,0,0.2);
+  overflow: hidden;
+}
+.ihpact-modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem 2rem;
+  background: linear-gradient(135deg, #0072BC 0%, #005A9C 100%);
+  color: white;
+}
+.ihpact-modal-header h3 { margin: 0; font-size: 1.3rem; color: white; }
+.ihpact-modal-close {
+  background: none; border: none; color: white; font-size: 1.8rem;
+  cursor: pointer; opacity: 0.8;
+}
+.ihpact-modal-close:hover { opacity: 1; }
+.ihpact-modal-body { padding: 2rem; }
+.ihpact-modal-footer {
+  padding: 1rem 2rem;
+  background: #f8f9fa;
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+@media (max-width: 768px) {
+  .ihpact-banner { height: 160px; }
+  .ihpact-banner-content h1 { font-size: 1.7rem; }
+  .ihpact-card-actions { justify-content: flex-start; margin-top: 10px; }
+  .ihpact-filter-bar .text-right { text-align: left; margin-top: 10px; }
+}
+</style>
+
+<!-- JavaScript -->
+<script>
+(function() {
+  var URLS = {
+    create: '/ckan-admin/ihpix/activities/create',
+    update: '/ckan-admin/ihpix/activities/update',
+    'delete': '/ckan-admin/ihpix/activities/delete',
+    upload: '/ckan-admin/ihpix/activities/upload-image',
+    show: '/ckan-admin/ihpix/activities/show'
+  };
+
+  /* Outputs por PA desde ihpix_constants (34 códigos oficiales) */
+  var PA_OUTPUTS = {
+    {% for pa_code, pairs in tax.outputs_by_pa.items() %}
+    {{ pa_code|tojson }}: {{ (pairs|map(attribute=0)|list)|tojson }}{% if not loop.last %},{% endif %}
+    {% endfor %}
+  };
+
+  /* ── Text fields (ID suffix → form field name) ── */
+  var TEXT_FIELDS = [
+    'title', 'description', 'priority-area', 'output', 'biennium',
+    'status', 'link', 'country', 'institution', 'institution-type',
+    'supporting-member-state', 'key-activity', 'outcomes', 'partners',
+    'unesco-participation', 'synergies', 'contact-name', 'contact-email',
+    'reported-by', 'reported-date', 'start-date', 'end-date',
+    'knowledge-product-type-other', 'knowledge-activity-type-other',
+    'additional-notes', 'notes'
+  ];
+  /* Radios Sí/No (booleanos del PDF 2026): name = prefijo + '-' + campo */
+  var BOOL_FIELDS = ['unesco-secretariat-participation'];
+
+  var NUM_FIELDS = [
+    'num-knowledge-products', 'num-scientific-products',
+    'num-training-materials', 'num-curricula', 'num-transboundary-ms',
+    'stakeholders-knowledge', 'stakeholders-knowledge-female',
+    'stakeholders-knowledge-youth', 'stakeholders-awareness',
+    'stakeholders-awareness-female', 'stakeholders-awareness-youth',
+    'num-stakeholder-groups'
+  ];
+
+  var JSON_FIELDS = ['member-states', 'regions', 'flagships', 'cross-cutting-wg',
+                     'knowledge-product-type', 'scientific-product-type',
+                     'knowledge-activity-type', 'training-type', 'stakeholder-group-type'];
+  var MSG = {
+    imageOnly: {{ _("Please upload an image file")|tojson }},
+    uploadImage: {{ _("Upload an image")|tojson }},
+    uploadError: {{ _("Upload error")|tojson }},
+    required: {{ _("Title and Priority Area are required")|tojson }},
+    error: {{ _("Error")|tojson }},
+    unknown: {{ _("Unknown error")|tojson }},
+    deleteTitle: {{ _("Delete this activity?")|tojson }},
+    deleteLabel: {{ _("Delete")|tojson }},
+    loadError: {{ _("Error loading activity")|tojson }},
+    saved: {{ _("Activity saved.")|tojson }},
+    created: {{ _("Activity created.")|tojson }},
+    deleted: {{ _("Activity deleted.")|tojson }}
+  };
+  function notify(msg, type) {
+    if (window.ihpixToast) { window.ihpixToast(msg, type || 'error'); }
+    else if (type !== 'success') { window.alert(msg); }
+  }
+  function errorText(err) {
+    if (!err) return MSG.unknown;
+    if (typeof err === 'string') return err;
+    if (window.IhpixForms && window.IhpixForms.formatErrors) return window.IhpixForms.formatErrors(err);
+    return Object.keys(err).map(function(k) { return k + ': ' + err[k]; }).join('; ');
+  }
+  /* POST con token CSRF (kit) o fetch plano */
+  function postForm(url, fd) {
+    if (window.IhpixForms && window.IhpixForms.postForm) {
+      return window.IhpixForms.postForm(url, fd).then(function(res) { return res.data || {}; });
+    }
+    return fetch(url, { method: 'POST', body: fd, credentials: 'same-origin' }).then(function(r) { return r.json(); });
+  }
+
+  function idToName(id) { return id.replace(/-/g, '_'); }
+
+  /* ── Accordion Toggle (botones con aria-expanded) ── */
+  window.toggleAccordion = function(header) {
+    var open = !header.classList.contains('active');
+    header.classList.toggle('active', open);
+    header.setAttribute('aria-expanded', open ? 'true' : 'false');
+    var body = document.getElementById(header.getAttribute('aria-controls') || '') || header.nextElementSibling;
+    if (body) body.classList.toggle('active', open);
+  };
+  document.querySelectorAll('[data-ihpact-accordion]').forEach(function(h) {
+    h.addEventListener('click', function() { window.toggleAccordion(h); });
+  });
+
+  /* ── Output Filtering ── */
+  function filterOutputOptions(prefix, keepValue) {
+    var paSelect = document.getElementById(prefix + '-priority-area');
+    var outSelect = document.getElementById(prefix + '-output');
+    if (!paSelect || !outSelect) return;
+    var pa = paSelect.value;
+    var placeholder = outSelect.getAttribute('data-placeholder') || '{{ _("Select output") }}';
+    outSelect.innerHTML = '<option value="">' + placeholder + '</option>';
+    if (pa && PA_OUTPUTS[pa]) {
+      PA_OUTPUTS[pa].forEach(function(o) {
+        var opt = document.createElement('option');
+        opt.value = o; opt.textContent = o;
+        outSelect.appendChild(opt);
+      });
+    }
+    if (keepValue) outSelect.value = keepValue;
+  }
+
+  /* ── Toggle "Other" conditional fields (el campo es ahora un grid JSON) ── */
+  window.toggleOtherField = function(prefix, selectField, otherField) {
+    var hidden = document.getElementById(prefix + '-' + selectField);
+    var wrap = document.getElementById(prefix + '-' + otherField + '-wrapper');
+    if (hidden && wrap) {
+      wrap.style.display = parseJsonArray(hidden.value).indexOf('Other') !== -1 ? 'block' : 'none';
+    }
+  };
+
+  /* ── Member States: MultiPicker del kit (modo json → hidden) ── */
+  function initMSWidget(prefix) { /* lo inicializa IhpixForms.init() al cargar */ }
+
+  /* ── Checkbox Group Sync ── */
+  function syncCheckboxGroup(prefix, field) {
+    var hidden = document.getElementById(prefix + '-' + field);
+    var group = document.getElementById(prefix + '-' + field + '-group');
+    if (!hidden || !group) return;
+    var selected = [];
+    group.querySelectorAll('input[type="checkbox"]:checked').forEach(function(cb) {
+      selected.push(cb.value);
+    });
+    hidden.value = JSON.stringify(selected);
+  }
+
+  function initCheckboxGroup(prefix, field) {
+    var group = document.getElementById(prefix + '-' + field + '-group');
+    if (!group) return;
+    group.querySelectorAll('input[type="checkbox"]').forEach(function(cb) {
+      cb.addEventListener('change', function() { syncCheckboxGroup(prefix, field); });
+    });
+  }
+
+  /* ── Set checkbox group from JSON data ── */
+  function setCheckboxGroup(prefix, field, value) {
+    var group = document.getElementById(prefix + '-' + field + '-group');
+    if (!group) return;
+    var selected = parseJsonArray(value);
+    group.querySelectorAll('input[type="checkbox"]').forEach(function(cb) {
+      cb.checked = selected.indexOf(cb.value) !== -1;
+    });
+    syncCheckboxGroup(prefix, field);
+  }
+
+  function setMemberStates(prefix, value) {
+    var widget = document.getElementById(prefix + '-ms-widget');
+    var hidden = document.getElementById(prefix + '-member-states');
+    if (!widget || !hidden) return;
+    var selected = parseJsonArray(value);
+    widget.querySelectorAll('input[type="checkbox"]').forEach(function(cb) {
+      cb.checked = selected.indexOf(cb.value) !== -1;
+    });
+    hidden.value = JSON.stringify(selected);
+    if (window.IhpixForms) window.IhpixForms.refresh(widget);
+  }
+
+  /* Acepta JSON de lista, lista, o un valor suelto legacy ("Other") */
+  function parseJsonArray(value) {
+    if (!value) return [];
+    if (Array.isArray(value)) return value;
+    if (typeof value === 'string') {
+      var s = value.trim();
+      if (!s) return [];
+      if (s.charAt(0) === '[') {
+        try { var parsed = JSON.parse(s); return Array.isArray(parsed) ? parsed : []; }
+        catch(e) { return []; }
+      }
+      return [s];
+    }
+    return [];
+  }
+
+  /* Radios Sí/No */
+  function setBoolField(prefix, field, value) {
+    var v = (value === true || value === 'true' || value === 'yes' || value === 1 || value === '1') ? 'yes' : 'no';
+    var radio = document.querySelector('input[name="' + prefix + '-' + field + '"][value="' + v + '"]');
+    if (radio) radio.checked = true;
+  }
+
+  /* ── Collect FormData from all fields ── */
+  function collectFormData(prefix) {
+    var fd = new FormData();
+    TEXT_FIELDS.forEach(function(f) {
+      var el = document.getElementById(prefix + '-' + f);
+      if (el) fd.append(idToName(f), el.value || '');
+    });
+    NUM_FIELDS.forEach(function(f) {
+      var el = document.getElementById(prefix + '-' + f);
+      if (el) fd.append(idToName(f), el.value || '0');
+    });
+    JSON_FIELDS.forEach(function(f) {
+      var el = document.getElementById(prefix + '-' + f);
+      if (el) fd.append(idToName(f), el.value || '[]');
+    });
+    BOOL_FIELDS.forEach(function(f) {
+      var checked = document.querySelector('input[name="' + prefix + '-' + f + '"]:checked');
+      fd.append(idToName(f), checked ? checked.value : 'no');
+    });
+    var img = document.getElementById(prefix + '-image-url');
+    if (img) fd.append('image_url', img.value || '');
+    /* For add form, also check the text URL input */
+    var imgText = document.getElementById(prefix + '-image-url-text');
+    if (imgText && imgText.value && !fd.get('image_url')) {
+      fd.set('image_url', imgText.value);
+    }
+    return fd;
+  }
+
+  /* ── Populate Edit Form ── */
+  function populateEditForm(data) {
+    var p = 'ihpact-edit';
+    document.getElementById(p + '-id').value = data.id || '';
+
+    TEXT_FIELDS.forEach(function(f) {
+      var el = document.getElementById(p + '-' + f);
+      if (!el) return;
+      var key = idToName(f);
+      el.value = data[key] != null ? data[key] : '';
+    });
+    NUM_FIELDS.forEach(function(f) {
+      var el = document.getElementById(p + '-' + f);
+      if (!el) return;
+      var key = idToName(f);
+      el.value = data[key] != null ? data[key] : 0;
+    });
+
+    /* Output needs PA to be set first */
+    filterOutputOptions(p, data.output || '');
+
+    /* Image preview */
+    var imgUrl = data.image_url || '';
+    var previewEl = document.getElementById(p + '-img-preview');
+    var previewImg = document.getElementById(p + '-preview-img');
+    if (imgUrl && previewEl && previewImg) {
+      previewImg.src = imgUrl;
+      previewEl.style.display = 'block';
+    } else if (previewEl) {
+      previewEl.style.display = 'none';
+    }
+
+    /* JSON fields */
+    JSON_FIELDS.forEach(function(f) {
+      if (f === 'member-states') return;
+      setCheckboxGroup(p, f, data[idToName(f)]);
+    });
+    setMemberStates(p, data.member_states);
+    BOOL_FIELDS.forEach(function(f) { setBoolField(p, f, data[idToName(f)]); });
+    /* Componentes del kit (Markdown, contadores) releen los valores */
+    if (window.IhpixForms) window.IhpixForms.refresh(document.getElementById('ihpact-edit-form-wrap'));
+
+    /* Conditional "Other" fields */
+    toggleOtherField(p, 'knowledge-product-type', 'knowledge-product-type-other');
+    toggleOtherField(p, 'knowledge-activity-type', 'knowledge-activity-type-other');
+  }
+
+  /* ── Image Upload / Drop Zone (Add Form) ── */
+  var dropZone = document.getElementById('ihpact-drop-zone');
+  var dropContent = document.getElementById('ihpact-drop-content');
+  var fileInput = document.getElementById('ihpact-file-input');
+  var previewImg = document.getElementById('ihpact-preview-img');
+  var imageUrlField = document.getElementById('ihpact-image-url');
+  var imageUrlText = document.getElementById('ihpact-image-url-text');
+
+  if (dropZone) {
+    dropZone.setAttribute('role', 'button');
+    dropZone.setAttribute('tabindex', '0');
+    dropZone.setAttribute('aria-label', MSG.uploadImage);
+    dropZone.addEventListener('keydown', function(e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fileInput.click(); } });
+    dropZone.addEventListener('click', function() { fileInput.click(); });
+    dropZone.addEventListener('dragover', function(e) { e.preventDefault(); dropZone.classList.add('dragover'); });
+    dropZone.addEventListener('dragleave', function() { dropZone.classList.remove('dragover'); });
+    dropZone.addEventListener('drop', function(e) {
+      e.preventDefault();
+      dropZone.classList.remove('dragover');
+      if (e.dataTransfer.files.length > 0) handleFileUpload(e.dataTransfer.files[0], 'ihpact');
+    });
+    fileInput.addEventListener('change', function() {
+      if (fileInput.files.length > 0) handleFileUpload(fileInput.files[0], 'ihpact');
+    });
+  }
+  if (imageUrlText) {
+    imageUrlText.addEventListener('change', function() {
+      var url = imageUrlText.value.trim();
+      if (url && imageUrlField) {
+        imageUrlField.value = url;
+        if (previewImg) { previewImg.src = url; previewImg.style.display = 'block'; }
+        if (dropContent) dropContent.style.display = 'none';
+      }
+    });
+  }
+
+  function handleFileUpload(file, prefix) {
+    if (!file.type.startsWith('image/')) { notify(MSG.imageOnly); return; }
+    var pImg = document.getElementById(prefix + '-preview-img');
+    var pContent = document.getElementById(prefix + '-drop-content');
+    var reader = new FileReader();
+    reader.onload = function(e) {
+      if (pImg) { pImg.src = e.target.result; pImg.style.display = 'block'; }
+      if (pContent) pContent.style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+    var formData = new FormData();
+    formData.append('file', file);
+    postForm(URLS.upload, formData)
+      .then(function(data) {
+        if (data.success) {
+          var urlField = document.getElementById(prefix + '-image-url');
+          var urlText = document.getElementById(prefix + '-image-url-text');
+          if (urlField) urlField.value = data.image_url;
+          if (urlText) urlText.value = data.image_url;
+        } else { notify(MSG.uploadError + ': ' + errorText(data.error)); }
+      })
+      .catch(function(e) { notify(MSG.uploadError + ': ' + e); });
+  }
+
+  /* ── Edit Modal: File upload ── */
+  var editFileInput = document.getElementById('ihpact-edit-file-input');
+  if (editFileInput) {
+    editFileInput.addEventListener('change', function() {
+      if (editFileInput.files.length > 0) {
+        var formData = new FormData();
+        formData.append('file', editFileInput.files[0]);
+        postForm(URLS.upload, formData)
+          .then(function(data) {
+            if (data.success) {
+              document.getElementById('ihpact-edit-image-url').value = data.image_url;
+              var prev = document.getElementById('ihpact-edit-preview-img');
+              var prevWrap = document.getElementById('ihpact-edit-img-preview');
+              if (prev) prev.src = data.image_url;
+              if (prevWrap) prevWrap.style.display = 'block';
+            }
+          });
+      }
+    });
+  }
+
+  /* ── PA → Output binding for Add form ── */
+  var addPA = document.getElementById('ihpact-priority-area');
+  if (addPA) {
+    addPA.addEventListener('change', function() { filterOutputOptions('ihpact'); });
+  }
+  /* ── PA → Output binding for Edit form ── */
+  var editPA = document.getElementById('ihpact-edit-priority-area');
+  if (editPA) {
+    editPA.addEventListener('change', function() { filterOutputOptions('ihpact-edit'); });
+  }
+
+  /* ── Init widgets ── */
+  JSON_FIELDS.forEach(function(f) {
+    if (f === 'member-states') return;
+    initCheckboxGroup('ihpact', f);
+    initCheckboxGroup('ihpact-edit', f);
+  });
+  /* "Other" en los grids de tipo: mostrar/ocultar el campo de texto */
+  ['knowledge-product-type', 'knowledge-activity-type'].forEach(function(f) {
+    ['ihpact', 'ihpact-edit'].forEach(function(prefix) {
+      var group = document.getElementById(prefix + '-' + f + '-group');
+      if (group) group.addEventListener('change', function() { toggleOtherField(prefix, f, f + '-other'); });
+    });
+  });
+
+  /* ── Add Activity ── */
+  document.getElementById('ihpact-add-btn').addEventListener('click', function() {
+    var title = document.getElementById('ihpact-title').value.trim();
+    var priorityArea = document.getElementById('ihpact-priority-area').value;
+    if (!title || !priorityArea) {
+      notify(MSG.required);
+      (title ? document.getElementById('ihpact-priority-area') : document.getElementById('ihpact-title')).focus();
+      return;
+    }
+    var btn = this;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> {{ _("Adding...") }}';
+
+    var fd = collectFormData('ihpact');
+    /* Ensure image_url from either source */
+    var imgHidden = document.getElementById('ihpact-image-url');
+    var imgText = document.getElementById('ihpact-image-url-text');
+    var finalImg = (imgHidden && imgHidden.value) || (imgText && imgText.value) || '';
+    fd.set('image_url', finalImg);
+
+    postForm(URLS.create, fd)
+      .then(function(data) {
+        if (data.success) {
+          notify(MSG.created, 'success');
+          window.location.reload();
+        } else {
+          notify(MSG.error + ': ' + errorText(data.error));
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fa fa-plus"></i> {{ _("Add Activity") }}';
+        }
+      })
+      .catch(function(e) {
+        notify(MSG.error + ': ' + e);
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa fa-plus"></i> {{ _("Add Activity") }}';
+      });
+  });
+
+  /* ── Card Event Binding ── */
+  function initCardEvents(card) {
+    card.querySelectorAll('.ihpact-delete-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() { deleteActivity(btn); });
+    });
+    card.querySelectorAll('.ihpact-edit-btn').forEach(function(btn) {
+      btn.addEventListener('click', function() { openEditModal(btn.getAttribute('data-id')); });
+    });
+  }
+  document.querySelectorAll('.ihpact-card').forEach(function(card) { initCardEvents(card); });
+
+  /* ── Delete ── */
+  function deleteActivity(btn) {
+    var id = btn.getAttribute('data-id');
+    var title = btn.getAttribute('data-title');
+    var ask = (window.IhpixForms && window.IhpixForms.confirm)
+      ? window.IhpixForms.confirm({ title: MSG.deleteTitle, message: title, danger: true, confirmLabel: MSG.deleteLabel })
+      : Promise.resolve(window.confirm(MSG.deleteTitle + '\n\n' + title));
+    ask.then(function(yes) { if (yes) doDelete(btn, id); });
+  }
+  function doDelete(btn, id) {
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i>';
+    var formData = new FormData();
+    formData.append('id', id);
+    postForm(URLS['delete'], formData)
+      .then(function(data) {
+        if (data.success) {
+          notify(MSG.deleted, 'success');
+          var card = document.getElementById('ihpact-card-' + id);
+          if (card) {
+            card.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
+            card.style.opacity = '0';
+            card.style.transform = 'translateX(20px)';
+            setTimeout(function() { card.remove(); updateCount(-1); checkEmpty(); }, 300);
+          }
+        } else {
+          btn.innerHTML = '<i class="fa fa-trash"></i> {{ _("Delete") }}';
+          btn.disabled = false;
+          notify(MSG.error + ': ' + errorText(data.error));
+        }
+      });
+  }
+
+  /* ── Edit Modal ── */
+  var modal = document.getElementById('ihpact-edit-modal');
+  var loadingEl = document.getElementById('ihpact-edit-loading');
+  var formWrap = document.getElementById('ihpact-edit-form-wrap');
+
+  var modalOpener = null;
+  function openEditModal(activityId) {
+    modalOpener = document.activeElement;
+    modal.style.display = 'flex';
+    document.body.classList.add('ixf-modal-open');
+    if (loadingEl) loadingEl.style.display = 'block';
+    if (formWrap) formWrap.style.display = 'none';
+
+    fetch(URLS.show + '?id=' + encodeURIComponent(activityId), { credentials: 'same-origin', headers: { 'Accept': 'application/json' } })
+      .then(function(r) { return r.json(); })
+      .then(function(resp) {
+        if (loadingEl) loadingEl.style.display = 'none';
+        if (formWrap) formWrap.style.display = 'block';
+        if (resp.success && resp.data) {
+          populateEditForm(resp.data);
+          var first = document.getElementById('ihpact-edit-title');
+          if (first) setTimeout(function() { first.focus(); }, 30);
+        } else {
+          notify(MSG.loadError + ': ' + errorText(resp.error));
+          closeModal();
+        }
+      })
+      .catch(function(e) {
+        if (loadingEl) loadingEl.style.display = 'none';
+        notify(MSG.error + ': ' + e);
+        closeModal();
+      });
+  }
+
+  function closeModal() {
+    modal.style.display = 'none';
+    document.body.classList.remove('ixf-modal-open');
+    if (modalOpener && modalOpener.focus) { try { modalOpener.focus(); } catch (e) {} }
+  }
+  document.getElementById('ihpact-modal-close').addEventListener('click', closeModal);
+  document.getElementById('ihpact-modal-cancel').addEventListener('click', closeModal);
+  document.querySelector('.ihpact-modal-backdrop').addEventListener('click', closeModal);
+  document.addEventListener('keydown', function(e) {
+    if (e.key === 'Escape' && modal.style.display === 'flex') { closeModal(); }
+  });
+
+  /* ── Save Edit ── */
+  document.getElementById('ihpact-modal-save').addEventListener('click', function() {
+    var id = document.getElementById('ihpact-edit-id').value;
+    var title = document.getElementById('ihpact-edit-title').value.trim();
+    var priorityArea = document.getElementById('ihpact-edit-priority-area').value;
+
+    if (!title || !priorityArea) {
+      notify(MSG.required);
+      return;
+    }
+
+    var fd = collectFormData('ihpact-edit');
+    fd.append('id', id);
+
+    var btn = this;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i>';
+
+    postForm(URLS.update, fd)
+      .then(function(data) {
+        if (data.success) { notify(MSG.saved, 'success'); window.location.reload(); }
+        else {
+          notify(MSG.error + ': ' + errorText(data.error));
+          btn.disabled = false;
+          btn.innerHTML = '<i class="fa fa-save"></i> {{ _("Save Changes") }}';
+        }
+      })
+      .catch(function(e) {
+        notify(MSG.error + ': ' + e);
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa fa-save"></i> {{ _("Save Changes") }}';
+      });
+  });
+
+  /* ── Helpers ── */
+  function updateCount(delta) {
+    var el = document.getElementById('ihpact-count');
+    el.textContent = Math.max(0, parseInt(el.textContent || '0') + delta);
+  }
+  function checkEmpty() {
+    var list = document.getElementById('ihpact-list');
+    if (!list.querySelector('.ihpact-card')) {
+      list.innerHTML = '<div class="ihpact-empty-state" id="ihpact-empty">'
+        + '<section class="module module-narrow"><div class="module-content text-center" style="padding: 4rem 2.5rem;">'
+        + '<div class="ihpact-empty-icon"><i class="fa fa-flag fa-4x"></i></div>'
+        + '<h3>{{ _("No Activities Yet") }}</h3>'
+        + '<p class="text-muted">{{ _("Use the form above to add IHP-IX activities.") }}</p>'
+        + '</div></section></div>';
+    }
+  }
+})();
+</script>
+{% endblock %}

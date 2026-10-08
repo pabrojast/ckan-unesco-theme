@@ -1,0 +1,99 @@
+{% ckan_extends %}
+
+{# Add additional tabs to organization page #}
+{% block content_primary_nav %}
+  {{ h.build_nav_icon(group_type + '.read', h.humanize_entity_type('package', dataset_type, 'content tab') or _('Datasets'), id=group_dict.name, icon='sitemap') }}
+  {{ h.build_nav_icon('theme_ejemplo.organization_publications', _('Documents'), name=group_dict.name, icon='file-text') }}
+  {{ h.build_nav_icon('theme_ejemplo.organization_people', _('People'), name=group_dict.name, icon='users') }}
+  {{ h.build_nav_icon('theme_ejemplo.organization_news', _('News'), name=group_dict.name, icon='newspaper') }}
+  {{ h.build_nav_icon('theme_ejemplo.organization_events', _('Events'), name=group_dict.name, icon='calendar') }}
+  {{ h.build_nav_icon('theme_ejemplo.organization_data_stories', _('Data Stories'), name=group_dict.name, icon='book') }}
+  {% if current_user.is_authenticated %}
+    {{ h.build_nav_icon('theme_ejemplo.organization_ihpix', _('IHP-IX'), name=group_dict.name, icon='flask') }}
+  {% endif %}
+  {{ h.build_nav_icon(group_type + '.about', _('About'), id=group_dict.name, icon='info-circle') }}
+  {% if h.is_org_admin(group_dict.id) or (current_user.is_authenticated and current_user.sysadmin) %}
+    {% set mr_count = h.get_pending_membership_requests_count() %}
+    <li {{ 'class=active' if request.endpoint == 'theme_ejemplo.membership_requests' }}>
+      <a href="{{ h.url_for('theme_ejemplo.membership_requests', name=group_dict.name) }}">
+        <i class="fa fa-user-plus"></i> {{ _('Requests') }}
+        {% if mr_count > 0 %}
+          <span class="badge membership-badge">{{ mr_count }}</span>
+        {% endif %}
+      </a>
+    </li>
+  {% endif %}
+{% endblock %}
+
+{# Botón "Add" contextual según la pestaña activa #}
+{% block page_primary_action %}
+  {% set ep = request.endpoint %}
+  {% if ep in ('organization.read', group_type + '.read') %}
+    {% if h.check_access('package_create', {'owner_org': group_dict.id}) %}
+      <a class="btn btn-primary" href="{{ h.url_for('dataset.new', group=group_dict.id) }}">
+        <i class="fa fa-plus-square"></i> {{ _('Add Dataset') }}
+      </a>
+    {% endif %}
+  {% elif ep == 'theme_ejemplo.organization_publications' %}
+    {% if h.check_access('package_create', {'owner_org': group_dict.id}) %}
+      <a class="btn btn-primary" href="{{ h.url_for('documents.new', group=group_dict.id) }}">
+        <i class="fa fa-plus-square"></i> {{ _('Add Document') }}
+      </a>
+    {% endif %}
+  {% endif %}
+{% endblock %}
+
+{# Add request membership button #}
+{% block content_action %}
+  {{ super() }}
+  {% if current_user.is_authenticated and not h.is_org_member(group_dict.id) %}
+    {% if h.has_pending_membership_request(group_dict.id) %}
+      <span class="btn btn-default disabled" title="{{ _('Your request is being reviewed') }}">
+        <i class="fa fa-clock-o"></i> {{ _('Request Pending') }}
+      </span>
+    {% else %}
+      <a href="{{ h.url_for('theme_ejemplo.request_membership', name=group_dict.name) }}" class="btn btn-default">
+        <i class="fa fa-user-plus"></i> {{ _('Request to Join') }}
+      </a>
+    {% endif %}
+  {% endif %}
+{% endblock %}
+
+{# Organization statistics in sidebar #}
+{% block secondary_content %}
+  {{ super() }}
+  {% set stats = h.get_org_statistics(group_dict.id) %}
+  {% if stats %}
+  <div class="module module-narrow module-shallow org-stats">
+    <h2 class="module-heading"><i class="fa fa-bar-chart"></i> {{ _('Statistics') }}</h2>
+    <div class="module-content">
+      <div class="nums">
+        <dl>
+          <dt>{{ _('Datasets') }}</dt>
+          <dd>{{ stats.datasets }}</dd>
+        </dl>
+        <dl>
+          <dt>{{ _('Documents') }}</dt>
+          <dd>{{ stats.publications }}</dd>
+        </dl>
+        <dl>
+          <dt>{{ _('Members') }}</dt>
+          <dd>{{ stats.members }}</dd>
+        </dl>
+        {% set rank = h.get_contribution_rank(group_dict.name) %}
+        {% if rank %}
+        <dl>
+          <dt>{{ _('Contribution rank') }}</dt>
+          <dd title="{{ _('Score') }}: {{ '%.2f'|format(rank.score or 0) }}">
+            #{{ rank.rank }} <small>{{ _('of') }} {{ rank.total }}</small>
+          </dd>
+        </dl>
+        {% endif %}
+      </div>
+      {% if rank %}
+        {% snippet 'snippets/contribution_breakdown.html', rank=rank %}
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
+{% endblock %}

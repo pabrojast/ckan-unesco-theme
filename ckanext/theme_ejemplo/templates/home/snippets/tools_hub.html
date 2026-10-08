@@ -1,0 +1,73 @@
+{# Hub "Herramientas y Recursos": consolida en una sola sección los
+   antiguos banners de Data Catalogue, Geospatial Viewer, AI Water Tools
+   y Open Source Tools (franja de accesos) más la grilla de Thematic
+   Viewers. Sustituye a 5 secciones a página completa. #}
+<section class="module module-narrow module-shallow">
+  <div class="section-title section-title-enhanced" style="margin-bottom: 0.5rem;">
+    <div class="section-title-bg" style="background-image: url('/Landing_page/Content/IHPTITLE03GEOSPATIAL.jpg');"></div>
+    <div class="section-title-overlay"></div>
+    <div class="section-title-content">
+      <h2 id="tools-hub-title">{{ _('Tools and Resources') }}</h2>
+      <p class="section-title-description">{{ _('Viewers, AI tools and open source software from the water community') }}</p>
+    </div>
+  </div>
+</section>
+
+<div class="module-content box">
+  <div class="tools-strip">
+    <a class="tools-strip-card" href="https://ihp-wins.unesco.org/terria/" target="_blank" rel="noopener">
+      <span class="tools-strip-icon" aria-hidden="true"><i class="fa fa-globe"></i></span>
+      <span class="tools-strip-label">{{ _('Geospatial Catalogue Viewer') }}</span>
+      <i class="fa fa-arrow-right tools-strip-arrow" aria-hidden="true"></i>
+    </a>
+    <a class="tools-strip-card" href="/dataset/">
+      <span class="tools-strip-icon" aria-hidden="true"><i class="fa fa-database"></i></span>
+      <span class="tools-strip-label">{{ _('Data Catalogue and Management System') }}</span>
+      <i class="fa fa-arrow-right tools-strip-arrow" aria-hidden="true"></i>
+    </a>
+    <a class="tools-strip-card" href="/ai-water-tools">
+      <span class="tools-strip-icon" aria-hidden="true"><i class="fa fa-flask"></i></span>
+      <span class="tools-strip-label">{{ _('AI for Water Management') }}</span>
+      <i class="fa fa-arrow-right tools-strip-arrow" aria-hidden="true"></i>
+    </a>
+    <a class="tools-strip-card" href="/open-source-tools">
+      <span class="tools-strip-icon" aria-hidden="true"><i class="fa fa-code-fork"></i></span>
+      <span class="tools-strip-label">{{ _('Open Source Tools') }}</span>
+      <i class="fa fa-arrow-right tools-strip-arrow" aria-hidden="true"></i>
+    </a>
+  </div>
+
+  <h3 class="tools-hub-subheading">{{ _('Thematic Viewers') }}</h3>
+  <div class="row">
+    <div class="col-md-4 col3">
+      <div class="col-small"><div class="cardsmall cardsmall-enhanced cardsmall-thematic cardsmall-cta cardsmall-hero"> <img class="cardsmall-img-top cardsmall-img-thematic-enhanced image-style-cardsmall-1-column" src="/Landing_page/Content/flood_and_drought_monitoring_button_image.jpg" width="289" height="424" alt="" loading="lazy"><div class="cardsmall-body cardsmall-body-enhanced"><div class="cardsmall-title cardsmall-title-enhanced">{{ _('Flood and Drought Monitoring and Early Warning Systems') }}</div><div class="cardsmall-text"></div>
+      </div>            <div class="field field--name-field-link field--type-link field--label-hidden field__item"><a href="{{ h.url_for('/flood-drought-portal') }}" class="btn btn-primary btn-arrow-right" target="_blank">{{ _("Discover") }}</a></div>
+      </div></div>
+    </div>
+    <div class="col-md-4 col3">
+      <div class="col-small"><div class="cardsmall cardsmall-enhanced cardsmall-thematic cardsmall-cta cardsmall-hero"> <img class="cardsmall-img-top cardsmall-img-thematic-enhanced image-style-cardsmall-1-column" src="/Landing_page/Content/ecohydrology_web_platform_button_image.png" width="289" height="424" alt="" loading="lazy"><div class="cardsmall-body cardsmall-body-enhanced"><div class="cardsmall-title cardsmall-title-enhanced">{{ _('Ecohydrology Demonstration Sites') }}</div><div class="cardsmall-text"></div>
+      </div>            <div class="field field--name-field-link field--type-link field--label-hidden field__item"><a href="http://www.ecohydrology-ihp.org/demosites/" class="btn btn-primary btn-arrow-right" target="_blank">{{ _("Discover") }}</a></div>
+      </div></div>
+    </div>
+    <div class="col-md-4 col3">
+      <div class="col-small"><div class="cardsmall cardsmall-enhanced cardsmall-thematic cardsmall-cta cardsmall-hero"> <img class="cardsmall-img-top cardsmall-img-thematic-enhanced image-style-cardsmall-1-column" src="/Landing_page/Content/water_quality_portal_button_image.png" width="289" height="424" alt="" loading="lazy"><div class="cardsmall-body cardsmall-body-enhanced"><div class="cardsmall-title cardsmall-title-enhanced">{{ _('Water Quality Monitoring Portal') }}</div><div class="cardsmall-text"></div>
+      </div>            <div class="field field--name-field-link field--type-link field--label-hidden field__item"><a href="https://en.unesco.org/waterqualitymonitor" class="btn btn-primary btn-arrow-right" target="_blank">{{ _("Discover") }}</a></div>
+      </div></div>
+    </div>
+    <div class="col-md-4 col3">
+      <div class="col-small"><div class="cardsmall cardsmall-enhanced cardsmall-thematic cardsmall-cta cardsmall-hero"> <img class="cardsmall-img-top cardsmall-img-thematic-enhanced image-style-cardsmall-1-column" src="/Landing_page/Content/urban_water_solutions_database_button_image.jpg" width="289" height="424" alt="" loading="lazy"><div class="cardsmall-body cardsmall-body-enhanced"><div class="cardsmall-title cardsmall-title-enhanced">{{ _('Urban Water Solutions Database') }}</div><div class="cardsmall-text"></div>
+      </div>            <div class="field field--name-field-link field--type-link field--label-hidden field__item"><a href="https://ecociv.my.site.com/W12Blueprint/s/" class="btn btn-primary btn-arrow-right" target="_blank">{{ _("Discover") }}</a></div>
+      </div></div>
+    </div>
+    <div class="col-md-4 col3">
+      <div class="col-small"><div class="cardsmall cardsmall-enhanced cardsmall-thematic cardsmall-cta cardsmall-hero"> <img class="cardsmall-img-top cardsmall-img-thematic-enhanced image-style-cardsmall-1-column" src="/Landing_page/Content/internet_of_things_button_image.PNG" width="289" height="424" alt="" loading="lazy"><div class="cardsmall-body cardsmall-body-enhanced"><div class="cardsmall-title cardsmall-title-enhanced">{{ _('Internet of Things Portal') }}</div><div class="cardsmall-text"></div>
+      </div>            <div class="field field--name-field-link field--type-link field--label-hidden field__item"><a href="{{ h.url_for('/iot-portal') }}" class="btn btn-primary btn-arrow-right" target="_blank">{{ _("Discover") }}</a></div>
+      </div></div>
+    </div>
+    <div class="col-md-4 col3">
+      <div class="col-small"><div class="cardsmall cardsmall-enhanced cardsmall-thematic cardsmall-cta cardsmall-hero"> <img class="cardsmall-img-top cardsmall-img-thematic-enhanced image-style-cardsmall-1-column" src="/Landing_page/Content/citizen_science_portal_button_image.png" width="289" height="424" alt="" loading="lazy"><div class="cardsmall-body cardsmall-body-enhanced"><div class="cardsmall-title cardsmall-title-enhanced">{{ _('Citizen Science Portal') }}</div><div class="cardsmall-text"></div>
+      </div>            <div class="field field--name-field-link field--type-link field--label-hidden field__item"><a href="{{ h.url_for('/citizen-science-portal') }}" class="btn btn-primary btn-arrow-right" target="_blank">{{ _("Discover") }}</a></div>
+      </div></div>
+    </div>
+  </div>
+</div>

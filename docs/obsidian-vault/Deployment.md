@@ -1,0 +1,215 @@
+# Deployment
+
+> CI/CD, packaging y proceso de release para `ckanext-theme-ejemplo`.
+
+---
+
+## CI/CD Pipeline
+
+### Ubicación
+`.github/workflows/test.yml`
+
+### Trigger
+`workflow_dispatch` — ejecución manual solamente.
+
+> [!note] Pendiente por confirmar
+> No hay triggers automáticos (push, pull_request). El CI se ejecuta solo manualmente.
+
+### Entorno
+
+| Componente | Detalle |
+|---|---|
+| Runner | `ubuntu-latest` |
+| Container | `openknowledge/ckan-dev:2.9` |
+| Python | 3.x (del container) |
+
+### Servicios Docker
+
+| Servicio | Imagen | Config |
+|---|---|---|
+| PostgreSQL | `ckan/ckan-postgres-dev:2.9` | user: postgres, password: postgres |
+| Solr | `ckan/ckan-solr:2.9` | — |
+| Redis | `redis:3` | — |
+
+### Variables de entorno del CI
+Ver [[Variables de Entorno#Variables de entorno del CI]] para la lista completa.
+
+### Pasos del pipeline
+
+```
+1. Checkout del código
+2. Instalar paquetes del sistema:
+   - gcc, libc-dev, geos-dev, geos, gfortran, musl-dev, python3-dev
+   - py3-numpy, py3-setuptools
+3. Instalar Shapely < 2
+4. Instalar forks de extensiones CKAN:
+   - ckanext-spatial (fork mjanez)
+   - ckanext-dcat (fork mjanez)
+   - ckanext-scheming (oficial)
+   - ckanext-schemingdcat (fork mjanez)
+5. Instalar la extensión:
+   - pip install -e .
+   - pip install -r requirements.txt
+   - pip install -r dev-requirements.txt
+6. Configurar test.ini:
+   - Actualizar ruta a test-core.ini del container
+7. Inicializar DB:
+   - ckan -c test.ini db init
+8. Ejecutar tests:
+   - pytest --ckan-ini=test.ini --cov=ckanext.theme_ejemplo --disable-warnings ckanext/theme_ejemplo
+```
+
+---
+
+## Dependencias de extensiones CKAN
+
+> [!warning] Forks específicos
+> Se usan forks, no las versiones oficiales de PyPI.
+
+| Extensión | Repositorio | Propósito |
+|---|---|---|
+| ckanext-spatial | `github.com/mjanez/ckanext-spatial` | Búsqueda espacial |
+| ckanext-dcat | `github.com/mjanez/ckanext-dcat` | Catálogo DCAT |
+| ckanext-scheming | `github.com/ckan/ckanext-scheming` | Schemas custom |
+| ckanext-schemingdcat | `github.com/mjanez/ckanext-schemingdcat` | Schemas DCAT |
+
+---
+
+## Proceso de release
+
+### 1. Actualizar versión
+
+Editar `setup.py`:
+```python
+version='X.Y.Z',
+```
+
+### 2. Crear distribución
+
+```bash
+python setup.py sdist bdist_wheel && twine check dist/*
+```
+
+### 3. Subir a PyPI
+
+```bash
+twine upload dist/*
+```
+
+### 4. Tag en Git
+
+```bash
+git commit -a -m "Release vX.Y.Z"
+git tag X.Y.Z
+git push && git push --tags
+```
+
+---
+
+## Distribución (MANIFEST.in)
+
+Archivos incluidos en el paquete distribuido:
+
+```
+README.rst
+LICENSE
+requirements.txt
+ckanext/theme_ejemplo/**/*.html    # Templates
+ckanext/theme_ejemplo/**/*.json    # Configuración
+ckanext/theme_ejemplo/**/*.js      # JavaScript
+ckanext/theme_ejemplo/**/*.less    # Estilos LESS
+ckanext/theme_ejemplo/**/*.css     # Estilos CSS
+ckanext/theme_ejemplo/**/*.mo      # Traducciones compiladas
+ckanext/theme_ejemplo/**/*.yml     # Configuración YAML
+ckanext/theme_ejemplo/migration/** # Migraciones (si existen)
+```
+
+---
+
+## Despliegue a desarrollo (data.dev-wins.com)
+
+Dev (contexto kubectl `default`, ns `ckan`) corre imágenes construidas a mano
+sobre el digest que ya está desplegado, fijadas por digest con `kubectl set
+image` sólo en el contenedor `ckan`. La receta para el tema está en el repo de
+despliegue: `deploy/docker/Dockerfile.ihpix-dev` + `deploy/docker/ihpix-dev.md`
+(rama `feat/ihpix-forms-dev-20260925`). Resumen:
+
+```bash
+BASE=$(kubectl --context default -n ckan get deploy ckan -o jsonpath='{.spec.template.spec.containers[?(@.name=="ckan")].image}')
+docker build -f deploy/docker/Dockerfile.ihpix-dev --build-arg BASE_IMAGE="$BASE" --build-arg THEME_REF="$(git rev-parse HEAD)" -t pabrojast/ckan-base210:ihpix-forms-dev-<sha7>-<fecha> .
+docker push … && DIGEST=$(docker buildx imagetools inspect … --format '{{.Manifest.Digest}}')
+kubectl --context default -n ckan set image deployment/ckan ckan=pabrojast/ckan-base210@$DIGEST
+kubectl --context default -n ckan rollout status deployment/ckan --timeout=15m
+```
+
+> [!warning] Otras líneas de trabajo comparten dev
+> El Dockerfile principal instala `ckan-unesco-theme@dev210`, pero dev puede
+> llevar el tema en otra rama (el 24/09/2026 corría `feat/learning-catalog`).
+> Antes de construir, comprobar el commit del tema en el pod
+> (`git -c safe.directory=… -C /app/src/ckanext-theme-ejemplo log -1`) y fusionar
+> esa rama en `dev210` si hace falta; nunca retirar trabajo ajeno de dev.
+
+**Validar antes de reconstruir**: `kubectl cp` de los ficheros cambiados al pod y
+`kubectl exec -i $POD -c ckan -- python3 - < scripts/ihpix_dev_smoke.py`. El
+script arranca un proceso nuevo (el uwsgi en marcha no se entera) y renderiza
+las páginas IHP-IX como sysadmin con el cliente de pruebas de Flask. Ver
+[[Testing#Humo en dev]].
+
+> [!note] Fallos que sólo aparecen con CKAN real (2026-09-25)
+> El parseo local de Jinja no detecta: comentarios `{# #}` anidados (dejan
+> código vivo), macros importados sin `with context` (`h` indefinido),
+> `_('… %(x)s …')` sin kwargs (gettext newstyle hace `texto % kwargs`),
+> helpers del tema llamados como `h.x()` en el controller (son `toolkit.h.x()`)
+> y `h.pager_url` en rutas con parámetros. Hay tests puros que cubren los tres
+> primeros.
+
+## Entorno de producción
+
+> [!note] Pendiente por confirmar
+> No hay documentación explícita del entorno de producción en el repositorio. Información inferida:
+
+- **Stack probable**: CKAN 2.9 + Apache/Nginx + PostgreSQL + Solr + Redis
+- **Deployment**: Instalación del paquete en virtualenv de CKAN + restart del servidor web
+- **Tablas custom**: Se crean automáticamente al iniciar el plugin (idempotente)
+- **Migraciones**: Soportadas por `model.py` (agrega columnas nuevas sin perder datos)
+
+---
+
+## Ver también
+
+- [[Setup Local]] — Configuración del entorno de desarrollo
+- [[Testing]] — Ejecución de tests
+- [[Comandos Utiles#Packaging y distribución]] — Comandos de packaging
+- [[Variables de Entorno]] — Configuración completa
+
+## Learning en desarrollo
+
+El catálogo se empaqueta mediante `deploy/docker/Dockerfile.learning-dev` en el
+repositorio Docker, con commits fijos del tema y SchemingDCAT sobre la imagen
+de desarrollo existente. El destino autorizado es `default/ckan`
+(`https://data.dev-wins.com`). La imagen y configuración de producción no forman
+parte de este despliegue. Respaldar DB, almacenamiento local y configuración
+antes de migrar; conservar la tabla legado y el digest anterior. Ver la guía
+`docs/learning-development.md` del repositorio Docker para rollback y verificaciones.
+
+## Búsqueda por abstract en desarrollo (2026-10-02)
+
+En `ckan-unesco-docker`, rama `miserver-2.10`, el workflow `push.yml` admite
+`theme_search_only=true`. Usa una imagen base fijada por digest y el commit del
+tema publicado en `dev210`; prepara `abstract_ngram` y su copia a `text` mediante
+Schema API antes del rollout, conservando los demás campos. Después espera la
+readiness y reindexa los datasets activos en lotes de 100.
+
+```bash
+gh workflow run push.yml --repo pabrojast/ckan-unesco-docker \
+  --ref miserver-2.10 -f theme_search_only=true
+```
+
+El destino está limitado a `default/ckan`, host `data.dev-wins.com`, y se comprueba
+el digest anterior. Solo cambia la imagen web de CKAN, conservando sidecars,
+configuración y volúmenes. La guía y el rollback están en
+`deploy/docker/abstract-search-dev.md` del repositorio Docker.
+
+La rama `production` del repositorio Docker usa ahora `THEME_REF=dev210` para
+futuras construcciones, en lugar del commit fijo `c7a1a54`. Publicar esa referencia
+no despliega producción. Ver [[Busqueda]] y [[Testing#Búsqueda por abstract]].

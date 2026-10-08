@@ -1,0 +1,123 @@
+# -*- coding: utf-8 -*-
+"""Tests de `ihpix_constants` (títulos de Output y helpers) y del módulo de
+cadenas i18n."""
+import json
+
+from ckanext.theme_ejemplo import ihpix_constants as C
+from ckanext.theme_ejemplo import ihpix_i18n_strings as S
+
+
+def test_output_titles_default_to_codes_only():
+    titles = C.load_output_titles(path='/nonexistent/ihpix_output_titles.json')
+    assert titles == {}
+
+
+def test_output_titles_loaded_from_json(tmp_path):
+    path = tmp_path / 'ihpix_output_titles.json'
+    path.write_text(json.dumps({'1.1': 'Water science networks', '9.9': 'x'}),
+                    encoding='utf-8')
+    titles = C.load_output_titles(path=str(path))
+    assert titles['1.1'] == 'Water science networks'
+    # No valida contra OUTPUTS: un código desconocido también se carga
+    assert titles['9.9'] == 'x'
+
+
+def test_output_label_falls_back_to_code(monkeypatch):
+    monkeypatch.setattr(C, '_output_titles_cache', {'1.1': 'Networks'})
+    assert C.output_label('1.1') == '1.1 – Networks'
+    assert C.output_label('1.2') == '1.2'
+    assert C.output_title('1.2') == ''
+
+
+def test_priority_area_for_output():
+    assert C.priority_area_for_output('1.10') == 'PA1'
+    assert C.priority_area_for_output('5.5') == 'PA5'
+    assert C.priority_area_for_output('9.1') is None
+
+
+def test_i18n_strings_cover_taxonomies():
+    assert set(S.PRIORITY_AREA_TITLES) == set(C.PRIORITY_AREAS.values())
+    assert set(S.REGIONS) == set(C.REGIONS)
+    assert set(S.CROSS_CUTTING_WGS) == set(C.CROSS_CUTTING_WGS)
+    assert set(S.LEAD_INSTITUTION_TYPES) == set(C.LEAD_INSTITUTION_TYPES)
+    assert set(S.SCIENTIFIC_PRODUCT_TYPES) == set(C.SCIENTIFIC_PRODUCT_TYPES)
+    assert set(S.TRAINING_TYPES) == set(C.TRAINING_TYPES)
+    # 'Other' aparece en varias listas; se cubre desde LEAD_INSTITUTION_TYPES
+    assert set(C.KNOWLEDGE_PRODUCT_TYPES) - {'Other'} == set(S.KNOWLEDGE_PRODUCT_TYPES)
+    assert set(C.KNOWLEDGE_ACTIVITY_TYPES) - {'Other'} == set(S.KNOWLEDGE_ACTIVITY_TYPES)
+    assert set(C.STAKEHOLDER_GROUP_TYPE_VALUES) - {'Other'} == set(S.STAKEHOLDER_GROUP_TYPES)
+
+
+def test_i18n_strings_cover_validation_messages():
+    from ckanext.theme_ejemplo import ihpix_forms as F
+    from ckanext.theme_ejemplo import ihpix_links as L
+    literals = set(S.VALIDATION_MESSAGES)
+    assert set(F.MESSAGES.values()) <= literals
+    assert set(L.MESSAGES.values()) <= literals
+
+
+def test_ihpix_snippet_modules_have_no_live_top_level_code():
+    """Los snippets de macros no deben ejecutar nada al importarse (un `{# #}`
+    anidado en un comentario dejó código vivo y rompió /ihpix/report en dev)."""
+    import os
+    from jinja2 import Environment, FileSystemLoader, nodes
+    from jinja2.ext import Extension
+
+    class CkanTags(Extension):
+        tags = {'ckan_extends', 'snippet', 'resource', 'asset', 'url_for', 'link_for', 'image_for'}
+
+        def parse(self, parser):
+            tok = next(parser.stream)
+            while parser.stream.current.type != 'block_end':
+                next(parser.stream)
+            return nodes.Output([nodes.Const('')]).set_lineno(tok.lineno)
+
+    base = os.path.join(os.path.dirname(__file__), '..', 'templates')
+    env = Environment(loader=FileSystemLoader(base),
+                      extensions=['jinja2.ext.i18n', 'jinja2.ext.do', CkanTags])
+    env.install_null_translations()
+    for name in ('ihpix/snippets/publication_modal.html', 'ihpix/snippets/forms_assets.html',
+                 'ihpix/snippets/activity_links.html', 'ihpix/snippets/page_styles.html'):
+        module = env.get_template(name).module  # evalúa el nivel superior
+        assert any(not n.startswith('_') for n in dir(module)), name
+
+
+def test_templates_do_not_call_gettext_with_printf_placeholders_and_no_kwargs():
+    """El gettext "newstyle" de CKAN hace `texto % kwargs`: `_('… %(code)s …')`
+    sin argumentos lanza KeyError al renderizar (500 en dev, 2026-09-24)."""
+    import glob
+    import io
+    import os
+    import re
+    pat = re.compile(r"""(?<![\w.])_\(\s*(['"])(?P<s>(?:(?!\1).)*%\((?:[a-z_]+)\)[sdr](?:(?!\1).)*)\1\s*\)""")
+    base = os.path.join(os.path.dirname(__file__), '..', 'templates')
+    offenders = []
+    for path in glob.glob(os.path.join(base, '**', '*.html'), recursive=True):
+        source = io.open(path, encoding='utf-8').read()
+        for m in pat.finditer(source):
+            offenders.append((os.path.relpath(path, base), m.group('s')[:60]))
+    assert offenders == []
+
+
+def test_templates_do_not_nest_jinja_comments():
+    """Un `{# … #}` dentro de otro cierra el comentario antes de tiempo y deja
+    código de ejemplo vivo (UndefinedError en dev, 2026-09-24)."""
+    import glob
+    import io
+    import os
+    base = os.path.join(os.path.dirname(__file__), '..', 'templates')
+    offenders = []
+    for path in glob.glob(os.path.join(base, '**', '*.html'), recursive=True):
+        source = io.open(path, encoding='utf-8').read()
+        i = 0
+        while True:
+            a = source.find('{#', i)
+            if a < 0:
+                break
+            b = source.find('#}', a + 2)
+            if b < 0:
+                break
+            if '{#' in source[a + 2:b]:
+                offenders.append((os.path.relpath(path, base), source[:a].count('\n') + 1))
+            i = b + 2
+    assert offenders == []

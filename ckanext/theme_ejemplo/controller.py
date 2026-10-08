@@ -1,5 +1,5 @@
 from random import random
-from flask import render_template, request, abort
+from flask import render_template, abort, jsonify, redirect, Response, stream_with_context
 import ckan.plugins.toolkit as toolkit
 import ckan.model as model
 import ckan.logic as logic
@@ -9,10 +9,16 @@ import ckan.lib.navl.dictization_functions as dict_fns
 import ckan.lib.search as search
 import ckan.authz as authz
 import ckan.plugins as plugins
-from ckan.common import c, config, request, _
+import ckan.lib.mailer as mailer
+from ckan.common import c, config, request, _, current_user
 from functools import lru_cache
 import time
+import json
 import logging
+from ckanext.theme_ejemplo.utils import normalize_user_image_url
+from ckanext.theme_ejemplo.helpers import get_member_state_title, get_ihpix_reporter
+from ckanext.theme_ejemplo import ranking
+from ckanext.theme_ejemplo import search as theme_search
 
 log = logging.getLogger(__name__)
 group_type = u'group'
@@ -47,17 +53,165 @@ def timed_lru_cache(seconds: int, maxsize: int = 128):
 
 @timed_lru_cache(seconds=300, maxsize=10)  # Cache de 5 minutos
 def get_member_states_groups():
-    """Obtiene los grupos hijos de member-states con cache"""
+    """Obtiene los grupos hijos de member-states con cache.
+    Uses a direct DB query to avoid N+1 overhead from group_show(include_groups=True).
+    """
     try:
-        member_states = toolkit.get_action('group_show')(
-            data_dict={'id': 'member-states', 'include_groups': True}
+        ms_group = model.Group.get('member-states')
+        if not ms_group:
+            return ['member-states']
+        members = (
+            model.Session.query(model.Group.name)
+            .join(model.Member, model.Member.table_id == model.Group.id)
+            .filter(
+                model.Member.group_id == ms_group.id,
+                model.Member.state == 'active',
+                model.Member.table_name == 'group',
+                model.Group.state == 'active',
+            )
+            .all()
         )
-        group_names = [item['name'] for item in member_states.get("groups", [])]
-        group_names.append('member-states')  # Añadir el grupo principal
+        group_names = [g.name for g in members if g.name]
+        group_names.append('member-states')
         return group_names
     except Exception as e:
         log.error(f"Error obteniendo member-states: {e}")
-        return ['member-states']  # Retornar al menos el grupo principal
+        return ['member-states']
+
+
+_INSTITUTION_SUGGESTIONS_CACHE = {'at': 0.0, 'value': []}
+_INSTITUTION_SUGGESTIONS_TTL = 600  # 10 minutos
+_INSTITUTION_SUGGESTIONS_MAX = 300
+
+
+def _ihpix_institution_suggestions():
+    """Nombres de institución distintos de las actividades publicadas, para
+    el `<datalist>` del reporte (autocompletar sin imponer un vocabulario).
+
+    Caché en proceso de 10 minutos; máximo 300 nombres ordenados
+    alfabéticamente. Sólo lee actividades `published` para no filtrar datos
+    de borradores ajenos.
+    """
+    import time
+    now = time.time()
+    cache = _INSTITUTION_SUGGESTIONS_CACHE
+    if cache['value'] and now - cache['at'] < _INSTITUTION_SUGGESTIONS_TTL:
+        return cache['value']
+    from ckanext.theme_ejemplo.model import IhpixActivity, init_ihpix_activities_db
+    from sqlalchemy import func
+    init_ihpix_activities_db()  # idempotente: asegura el mapeo de la clase
+    rows = (model.Session.query(IhpixActivity.institution)
+            .filter(IhpixActivity.institution != None)  # noqa: E711
+            .filter(func.length(func.trim(IhpixActivity.institution)) > 0)
+            .filter(IhpixActivity.status == 'published')
+            .distinct()
+            .order_by(IhpixActivity.institution)
+            .limit(_INSTITUTION_SUGGESTIONS_MAX)
+            .all())
+    seen = set()
+    names = []
+    for (name,) in rows:
+        clean = (name or '').strip()
+        key = clean.lower()
+        if clean and key not in seen:
+            seen.add(key)
+            names.append(clean)
+    cache['at'] = now
+    cache['value'] = names
+    return names
+
+
+@timed_lru_cache(seconds=300, maxsize=20)
+def get_member_states_for_select():
+    """Devuelve los grupos hijos de `member-states` como [(name, title), ...]
+    ordenados por título — fuente única para los selects del form IHP-IX.
+
+    Usa una sola query SQL (idéntico patrón al de ckanext-colab).
+    Si la BD aún no tiene el grupo `member-states`, devuelve [].
+    """
+    try:
+        ms_group = model.Group.get('member-states')
+        if not ms_group:
+            return []
+        rows = (
+            model.Session.query(model.Group.name, model.Group.title)
+            .join(model.Member, model.Member.table_id == model.Group.id)
+            .filter(
+                model.Member.group_id == ms_group.id,
+                model.Member.state == 'active',
+                model.Member.table_name == 'group',
+                model.Group.state == 'active',
+                model.Group.name != 'member-states',
+            )
+            .order_by(model.Group.title)
+            .all()
+        )
+        return [(r.name, r.title or r.name) for r in rows if r.name]
+    except Exception as e:
+        log.error(f"Error obteniendo member-states para select: {e}")
+        return []
+
+
+def _require_login():
+    """Redirige al login (con came_from) si no hay sesión; None si la hay.
+
+    Uso: ``redirect = _require_login(); if redirect: return redirect``.
+    """
+    if c.userobj:
+        return None
+    came_from = request.full_path.rstrip('?') if request.query_string else request.path
+    return h.redirect_to('user.login', came_from=came_from)
+
+
+def _collect_report_form(form):
+    """Extrae de `request.form` el payload completo del reporte IHP-IX.
+
+    Los nombres de campo viven en `ihpix_forms` (única fuente de verdad
+    compartida con la validación); aquí sólo se distingue valor único de
+    lista (`getlist`).
+    """
+    from ckanext.theme_ejemplo import ihpix_forms
+    data = {f: form.get(f, '') for f in ihpix_forms.SINGLE_FORM_FIELDS}
+    for f in ihpix_forms.MULTI_FORM_FIELDS:
+        data[f] = form.getlist(f)
+    # Adjuntos (Sección VII): sólo si el form los envía; si faltara (página
+    # vieja en caché) no se tocan los existentes.
+    if 'links_json' in form:
+        data['links_json'] = form.get('links_json', '')
+    return data
+
+
+def _ihpix_safe_url(endpoint, fallback):
+    """url_for con fallback (el blueprint puede no existir en tests)."""
+    try:
+        return h.url_for(endpoint)
+    except Exception:
+        return fallback
+
+
+def _ihpix_links_map(activities):
+    """{activity_id: [adjuntos]} para una lista de dicts de actividades."""
+    try:
+        from ckanext.theme_ejemplo.model import (
+            IhpixActivityLink, init_ihpix_activity_links_db,
+        )
+        init_ihpix_activity_links_db()
+        return IhpixActivityLink.get_for_activities(
+            [a.get('id') for a in activities or []])
+    except Exception as e:
+        log.warning('IHP-IX: no se pudieron cargar los adjuntos: %s', e)
+        return {}
+
+
+def _format_error_dict(error_dict):
+    """'campo: mensaje; campo2: mensaje2' para toasts/flash."""
+    parts = []
+    for key, val in (error_dict or {}).items():
+        if isinstance(val, (list, tuple)):
+            val = '; '.join(str(v) for v in val)
+        parts.append('{}: {}'.format(key, val))
+    return '; '.join(parts)
+
 
 @timed_lru_cache(seconds=300, maxsize=20)  # Cache de 5 minutos
 def get_all_groups_cached(sort_by=None):
@@ -70,71 +224,415 @@ def get_all_groups_cached(sort_by=None):
         log.error(f"Error obteniendo lista de grupos: {e}")
         return []
 
-class MyLogica():  
+def _get_pages_by_initiative(initiative_name, page_type=None):
+    """Query pages associated with an initiative via the initiative_groups extras field."""
+    try:
+        from ckanext.pages.db import Page
+        search_pattern = '"%s"' % initiative_name
+        query = model.Session.query(Page).filter(
+            Page.extras.like('%' + search_pattern + '%')
+        )
+        if page_type:
+            query = query.filter(Page.page_type == page_type)
+        else:
+            query = query.filter(
+                Page.page_type.in_(['water-news', 'water-events', 'water-publications'])
+            )
+        query = query.order_by(Page.created.desc())
+        results = []
+        for pg in query.all():
+            extras = {}
+            if pg.extras:
+                try:
+                    extras = json.loads(pg.extras)
+                except (ValueError, TypeError):
+                    pass
+            initiative_groups = extras.get('initiative_groups', '[]')
+            if isinstance(initiative_groups, str):
+                try:
+                    initiative_groups = json.loads(initiative_groups)
+                except (ValueError, TypeError):
+                    initiative_groups = []
+            names = [g.get('name', '') if isinstance(g, dict) else str(g)
+                     for g in initiative_groups]
+            if initiative_name not in names:
+                continue
+            page_dict = {
+                'title': pg.title,
+                'name': pg.name,
+                'content': pg.content,
+                'publish_date': pg.publish_date.isoformat() if pg.publish_date else None,
+                'created': pg.created.isoformat() if pg.created else None,
+                'page_type': pg.page_type,
+            }
+            page_dict.update(extras)
+            results.append(page_dict)
+        return results
+    except Exception as e:
+        log.warning(f"_get_pages_by_initiative error: {e}")
+        return []
+
+
+def _get_pages_by_organization(org_id, page_type=None):
+    """Query pages associated with an organization via the organization_id extras field."""
+    try:
+        from ckanext.pages.db import Page
+        query = model.Session.query(Page).filter(
+            Page.extras.like('%"organization_id"%'),
+            Page.extras.like(f'%{org_id}%')
+        )
+        if page_type:
+            query = query.filter(Page.page_type == page_type)
+        else:
+            query = query.filter(
+                Page.page_type.in_(['water-news', 'water-events', 'water-publications'])
+            )
+        query = query.order_by(Page.created.desc())
+        results = []
+        for pg in query.all():
+            extras = {}
+            if pg.extras:
+                try:
+                    extras = json.loads(pg.extras)
+                except (ValueError, TypeError):
+                    pass
+            if extras.get('organization_id') != org_id:
+                continue
+            page_dict = {
+                'title': pg.title,
+                'name': pg.name,
+                'content': pg.content,
+                'publish_date': pg.publish_date.isoformat() if pg.publish_date else None,
+                'created': pg.created.isoformat() if pg.created else None,
+                'page_type': pg.page_type,
+            }
+            page_dict.update(extras)
+            results.append(page_dict)
+        return results
+    except Exception as e:
+        log.warning(f"_get_pages_by_organization error: {e}")
+        return []
+
+
+def _get_data_stories_by_group(group_id, limit=50):
+    """Query data stories associated with a CKAN group or organization."""
+    try:
+        result = toolkit.get_action('data_story_list')(
+            {'ignore_auth': True},
+            {
+                'organization_id': group_id,
+                'limit': limit,
+                'sort': 'recent',
+            }
+        )
+        return result.get('stories', [])
+    except Exception as e:
+        log.warning(f"Error fetching data stories for group {group_id}: {e}")
+        return []
+
+
+def _name_filter_key(list_action):
+    """Clave con la que cada acción acepta un filtro por lista de nombres.
+
+    ``group_list`` lee ``groups``, pero ``organization_list`` lo documenta como
+    ``organizations`` y empieza haciendo::
+
+        data_dict['groups'] = data_dict.pop('organizations', [])
+
+    (ckan/logic/action/get.py), así que un ``groups`` pasado a mano queda
+    sobrescrito con ``[]`` y el filtro se ignora **en silencio**: la acción
+    devuelve la primera página en orden ``sort`` en vez del subconjunto pedido.
+    """
+    return 'organizations' if list_action == 'organization_list' else 'groups'
+
+
+def _resolve_entity_sort(q, sort_by):
+    """Traduce el ``?sort=`` de los listados de entidades.
+
+    Devuelve (modo, sort seleccionado en el desplegable, sort real para la
+    acción). Modos: 'relevance' (por defecto con búsqueda), 'rank' (por
+    contribución, por defecto sin búsqueda) y 'plain' (un sort real del core).
+    'relevance' y 'score desc' son pseudo-sorts: la lista blanca de
+    group_list/organization_list los rechazaría con ValidationError.
+    """
+    has_q = bool((q or '').strip())
+    if sort_by in (None, '', 'relevance'):
+        mode = 'relevance' if has_q else 'rank'
+    elif sort_by == 'score desc':
+        mode = 'rank'
+    else:
+        mode = 'plain'
+    if mode == 'relevance':
+        return mode, 'relevance', 'title asc'
+    if mode == 'rank':
+        return mode, 'score desc', 'title asc'
+    return mode, sort_by, sort_by
+
+
+def _filter_names_by_query(names, q, sort_mode, **search_kwargs):
+    """Acota ``names`` a los que coinciden con ``q`` (tokens en cualquier orden).
+
+    En modo 'relevance' manda el orden del buscador; en el resto se conserva el
+    orden en que venían los nombres.
+    """
+    matched = theme_search.search_entity_names(q, **search_kwargs)
+    if sort_mode == 'relevance':
+        available = set(names)
+        return [n for n in matched if n in available]
+    matched = set(matched)
+    return [n for n in names if n in matched]
+
+
+def _ranked_entity_index(entity_type, list_action, ckan_type, template):
+    """Listado de organizaciones/grupos ordenado por contribución.
+
+    Sustituye a ``ckan.views.group.index`` para /organization y /group (las
+    reglas de un blueprint de extensión se ordenan por encima de las del core,
+    ver flask_app.register_extension_blueprint).
+
+    El core pasa el ``?sort=`` tal cual a group_list/organization_list, cuya
+    lista blanca es name|packages|package_count|title, así que 'score desc'
+    reventaría con ValidationError. Igual que en /memberstates, el orden por
+    ranking se resuelve aquí y a la acción sólo le llega un sort real.
+
+    entity_type: tipo de entidad en contribution_score; None ordena con el
+    ranking completo (útil en /group, que mezcla member states e initiatives).
+    """
+    items_per_page = int(config.get('ckan.datasets_per_page') or 20)
+    page = 1
+    q = c.q = request.args.get('q', '')
+    sort_by = request.args.get('sort')
+    # Con búsqueda el orden por defecto es la relevancia; sin búsqueda, el
+    # ranking por contribución. Ambos son pseudo-sorts nuestros y nunca deben
+    # llegar a la acción (ver _resolve_entity_sort).
+    sort_mode, c.sort_by_selected, list_sort = _resolve_entity_sort(q, sort_by)
+    rank_order = sort_mode == 'rank'
+
+    def _render(items, collection, current_page):
+        c.page = h.Page(
+            collection=collection,
+            page=current_page,
+            url=h.pager_url,
+            items_per_page=items_per_page,
+        )
+        c.page.items = items
+        return render_template(
+            template,
+            q=q,
+            page=c.page,
+            group_type=ckan_type,
+            sort_by_selected=c.sort_by_selected,
+            ranked=rank_order,
+            rank_start=items_per_page * (current_page - 1),
+        )
+
+    try:
+        page = h.get_page_number(request.args) or 1
+        context = {'model': model, 'session': model.Session,
+                   'user': c.user, 'for_view': True}
+        action = toolkit.get_action(list_action)
+
+        # 1) nombres completos, para el contador y la paginación
+        # `q` no se pasa a la acción: el core busca la frase completa con
+        # ILIKE ("quality water" no encontraba "Water Quality ..."). El filtro
+        # por tokens, en cualquier orden, vive en theme_search.
+        names = action(context, {
+            'all_fields': False,
+            'sort': list_sort,
+            'type': ckan_type,
+        })
+        if q.strip():
+            names = _filter_names_by_query(
+                names, q, sort_mode,
+                is_organization=(list_action == 'organization_list'),
+                ckan_type=ckan_type)
+        if rank_order:
+            names = ranking.order_by_score(names, entity_type)
+
+        # 2) detalle sólo de la página actual
+        start = items_per_page * (page - 1)
+        page_names = names[start:start + items_per_page]
+        items = []
+        if page_names:
+            # Ver _name_filter_key: con la clave equivocada el filtro se
+            # ignora y, como abajo intersectamos con page_names, /organization
+            # se quedaba sólo con las organizaciones que caían a la vez en el
+            # top por score y en las primeras por título -- una de 230.
+            name_filter = _name_filter_key(list_action)
+            items = action(context, {
+                'all_fields': True,
+                'include_extras': True,
+                name_filter: page_names,
+                'type': ckan_type,
+                'limit': items_per_page,
+                'sort': list_sort,
+            })
+            if sort_mode != 'plain':
+                # la acción no respeta el orden de `groups`
+                by_name = {g['name']: g for g in items}
+                items = [by_name[n] for n in page_names if n in by_name]
+
+        return _render(items, names, page)
+
+    except toolkit.ValidationError as e:
+        # ?sort= inválido escrito a mano: mismo comportamiento que el core.
+        h.flash_error(str(e))
+        return _render([], [], 1)
+    except Exception as e:
+        log.error(f"Error en {list_action} index: {e}")
+        return _render([], [], 1)
+
+
+# Qué fuentes consulta cada scope del endpoint de sugerencias, en el orden en
+# que se muestran.
+SUGGEST_SCOPES = {
+    'all': ('dataset', 'learning', 'organization', 'initiative', 'memberstate'),
+    'learning': ('learning',),
+    'dataset': ('dataset',),
+    'organization': ('organization',),
+    'initiative': ('initiative',),
+    'memberstate': ('memberstate',),
+    'group': ('initiative', 'memberstate'),
+}
+SUGGEST_LIMIT = 6
+# Los n-gramas van primero: permiten completar una palabra a medio escribir.
+SUGGEST_DATASET_QF = ('title_ngram^3 name_ngram title^4 tags^2 text^0.5 '
+                     'abstract_ngram^0.2')
+
+
+def _suggest_label(kind):
+    return {
+        'dataset': _('Datasets'),
+        'learning': _('Learning resources'),
+        'organization': _('Organizations'),
+        'initiative': _('Initiatives'),
+        'memberstate': _('Member States'),
+    }[kind]
+
+
+def _suggest_items(kind, q):
+    """Items {title, url, subtitle} de una fuente de sugerencias."""
+    if kind == 'learning':
+        import ckan.plugins as p
+        if not p.plugin_loaded('learning'):
+            return []
+        result = toolkit.get_action('package_search')({'user': ''}, {
+            'q': theme_search.escape_solr(q), 'fq': 'type:learning', 'rows': SUGGEST_LIMIT})
+        return [{'title': pkg['title'], 'url': h.url_for('learning.read', id=pkg['name']),
+                 'subtitle': pkg.get('learning_provider', '')} for pkg in result['results']]
+    if kind == 'dataset':
+        solr_q = theme_search.escape_solr(q)
+        if not solr_q:
+            return []
+        context = {'model': model, 'session': model.Session, 'user': c.user}
+        result = toolkit.get_action('package_search')(context, {
+            'q': solr_q,
+            'qf': SUGGEST_DATASET_QF,
+            'fq': '-type:learning',
+            'mm': '100%',
+            'rows': SUGGEST_LIMIT,
+            'fl': 'name,title,type,organization',
+        })
+        # Con `fl`, `organization` llega como slug (el doc crudo de Solr).
+        org_titles = {e['name']: e['title']
+                      for e in theme_search.get_entity_index()
+                      if e['is_organization']}
+        return [{
+            'title': pkg.get('title') or pkg.get('name'),
+            'url': h.url_for('dataset.read', id=pkg.get('name')),
+            'subtitle': org_titles.get(pkg.get('organization'), ''),
+        } for pkg in result.get('results', []) if pkg.get('name')]
+
+    if kind == 'organization':
+        found = theme_search.search_entities(
+            q, is_organization=True, limit=SUGGEST_LIMIT,
+            include_description=False)
+        route = 'organization.read'
+    else:
+        member_states = get_member_states_groups()
+        if kind == 'memberstate':
+            found = theme_search.search_entities(
+                q, is_organization=False, limit=SUGGEST_LIMIT,
+                include_description=False,
+                allowed=[g for g in member_states if g != 'member-states'])
+        else:
+            found = theme_search.search_entities(
+                q, is_organization=False, limit=SUGGEST_LIMIT,
+                include_description=False,
+                excluded=member_states)
+        route = 'group.read'
+    return [{
+        'title': item['title'],
+        'url': h.url_for(route, id=item['name']),
+        'subtitle': '',
+    } for item in found]
+
+
+class MyLogica():
         
         def initiatives():
             if request.method == 'GET':
+                # Ligado fuera del try: el handler de error lo usa y, si algo
+                # falla antes de esta línea, el except daba UnboundLocalError.
+                items_per_page = 21
                 try:
                     # Obtener parámetros
-                    q = c.q = request.params.get('q', '')
-                    sort_by = c.sort_by_selected = request.params.get('sort')
-                    page = h.get_page_number(request.params) or 1
-                    items_per_page = 21
-                    
+                    q = c.q = request.args.get('q', '')
+                    sort_by = request.args.get('sort')
+                    # Orden por contribución por defecto (por relevancia si
+                    # hay búsqueda); ninguno es un sort válido de group_list,
+                    # así que se resuelven aquí, antes de paginar.
+                    sort_mode, c.sort_by_selected, group_list_sort = \
+                        _resolve_entity_sort(q, sort_by)
+                    rank_order = sort_mode == 'rank'
+                    page = h.get_page_number(request.args) or 1
+
                     # Obtener grupos de member-states desde cache
                     member_states_groups = get_member_states_groups()
-                    
+
                     # Obtener todos los grupos desde cache
-                    all_groups = get_all_groups_cached(sort_by)
-                    
-                    # Calcular grupos de iniciativas (excluyendo member-states)
-                    initiatives_groups = list(set(all_groups) - set(member_states_groups))
-                    
-                    # Si hay búsqueda, filtrar los grupos
-                    if q:
-                        # Hacer una sola consulta con todos los filtros
-                        groups_result = toolkit.get_action('group_list')(
-                            data_dict={
-                                'q': q,
-                                'include_dataset_count': True,
-                                'all_fields': True,
-                                'groups': initiatives_groups,
-                                'include_groups': True,
-                                'limit': items_per_page,
-                                'offset': items_per_page * (page - 1),
-                                'sort': sort_by
-                            }
-                        )
-                        
-                        # Para el conteo total con búsqueda
-                        total_result = toolkit.get_action('group_list')(
-                            data_dict={
-                                'q': q,
-                                'include_dataset_count': True,
-                                'groups': initiatives_groups,
-                                'limit': 500
-                            }
-                        )
-                        groupcount = len(total_result)
-                    else:
-                        # Sin búsqueda, usar los datos cacheados y paginar manualmente
-                        groupcount = len(initiatives_groups)
-                        start = items_per_page * (page - 1)
-                        end = start + items_per_page
-                        
-                        # Obtener detalles completos solo para la página actual
-                        page_groups = initiatives_groups[start:end]
+                    all_groups = get_all_groups_cached(group_list_sort)
+
+                    # Iniciativas = todos los grupos menos los member states.
+                    # Se filtra sobre all_groups (no con set()) para conservar
+                    # el orden del group_list cacheado.
+                    ms = set(member_states_groups)
+                    initiatives_groups = [g for g in all_groups if g not in ms]
+
+                    if q.strip():
+                        # Coincidencia por tokens en cualquier orden (el `q` de
+                        # group_list busca la frase completa con ILIKE); el
+                        # orden y la paginación se resuelven aquí.
+                        initiatives_groups = _filter_names_by_query(
+                            initiatives_groups, q, sort_mode,
+                            is_organization=False)
+                    if rank_order:
+                        initiatives_groups = ranking.order_by_score(
+                            initiatives_groups, 'initiative')
+
+                    # Con y sin búsqueda se pagina igual: sobre la lista de
+                    # nombres ya ordenada.
+                    groupcount = len(initiatives_groups)
+                    start = items_per_page * (page - 1)
+                    page_groups = initiatives_groups[start:start + items_per_page]
+                    groups_result = []
+                    if page_groups:
                         groups_result = toolkit.get_action('group_list')(
                             data_dict={
                                 'include_dataset_count': True,
                                 'all_fields': True,
                                 'groups': page_groups,
-                                'include_groups': True,
+                                'include_groups': False,
                                 'limit': items_per_page,
-                                'sort': sort_by
+                                'sort': group_list_sort
                             }
                         )
-                    
+                        if sort_mode != 'plain':
+                            # group_list no respeta el orden de page_groups
+                            by_name = {g['name']: g for g in groups_result}
+                            groups_result = [by_name[n] for n in page_groups
+                                             if n in by_name]
+
                     # Configurar paginación
                     c.page = h.Page(
                         collection=initiatives_groups,
@@ -143,13 +641,15 @@ class MyLogica():
                         items_per_page=items_per_page,
                     )
                     c.page.items = groups_result
-                    
-                    return render_template("initiatives/index.html", 
-                                         q=q, 
-                                         page=c.page, 
-                                         groups=groups_result, 
-                                         group_type=group_type, 
-                                         groupcount=groupcount)
+
+                    return render_template("initiatives/index.html",
+                                         q=q,
+                                         page=c.page,
+                                         groups=groups_result,
+                                         group_type=group_type,
+                                         groupcount=groupcount,
+                                         ranked=rank_order,
+                                         rank_start=items_per_page * (page - 1))
                     
                 except Exception as e:
                     log.error(f"Error en initiatives: {e}")
@@ -170,6 +670,20 @@ class MyLogica():
         def redirect_to_group(name):
             """Redirige /paises/<nombre> a /group/<nombre>."""
             return toolkit.redirect_to('/group/{}'.format(name))
+
+        # Slugs reservados bajo /initiatives/ que NO son grupos navegables.
+        _RESERVED_INITIATIVE_SLUGS = {'request'}
+
+        @staticmethod
+        def initiative_by_name(name):
+            """Maneja /initiatives/<name>. Para grupos reales redirige a /group/<name>.
+            Defensa en profundidad: si <name> es un slug reservado (p.ej. 'request'),
+            sirve el formulario directamente en vez de redirigir, evitando el bucle
+            /initiatives/request <-> /group/request si el ruteo no priorizara la
+            ruta estática. Comparación en memoria, sin I/O."""
+            if name in MyLogica._RESERVED_INITIATIVE_SLUGS:
+                return MyLogica.request_initiative()
+            return MyLogica.redirect_to_group(name)
 #        Deshabilita el registro de usuarios
 #       @staticmethod
 #       def redirect_to_colab():
@@ -178,66 +692,60 @@ class MyLogica():
             
         def memberstates():
             if request.method == 'GET':
+                # Ligado fuera del try: el handler de error lo usa y, si algo
+                # falla antes de esta línea, el except daba UnboundLocalError.
+                items_per_page = 21
                 try:
                     # Obtener parámetros
-                    q = c.q = request.params.get('q', '')
-                    sort_by = c.sort_by_selected = request.params.get('sort')
-                    page = h.get_page_number(request.params) or 1
-                    items_per_page = 21
-                    
+                    q = c.q = request.args.get('q', '')
+                    sort_by = request.args.get('sort')
+                    # Orden por contribución por defecto (por relevancia si
+                    # hay búsqueda); ninguno es un sort válido de group_list,
+                    # así que se resuelven aquí, antes de paginar.
+                    sort_mode, c.sort_by_selected, group_list_sort = \
+                        _resolve_entity_sort(q, sort_by)
+                    rank_order = sort_mode == 'rank'
+                    page = h.get_page_number(request.args) or 1
+
                     # Obtener grupos de member-states desde cache (sin incluir el principal)
                     member_states_groups = get_member_states_groups()
                     # Remover 'member-states' del listado ya que solo queremos los hijos
                     member_states_only = [g for g in member_states_groups if g != 'member-states']
-                    
-                    # Si hay búsqueda, hacer consulta filtrada
-                    if q:
-                        # Consulta paginada con búsqueda
+
+                    if q.strip():
+                        # Coincidencia por tokens en cualquier orden (el `q` de
+                        # group_list busca la frase completa con ILIKE); el
+                        # orden y la paginación se resuelven aquí.
+                        member_states_only = _filter_names_by_query(
+                            member_states_only, q, sort_mode,
+                            is_organization=False)
+                    if rank_order:
+                        member_states_only = ranking.order_by_score(
+                            member_states_only, 'member_state')
+
+                    # Con y sin búsqueda se pagina igual: sobre la lista de
+                    # nombres ya ordenada.
+                    groupcount = len(member_states_only)
+                    start = items_per_page * (page - 1)
+                    page_groups = member_states_only[start:start + items_per_page]
+                    groups_result = []
+                    if page_groups:
                         groups_result = toolkit.get_action('group_list')(
                             data_dict={
-                                'q': q,
                                 'include_dataset_count': True,
                                 'all_fields': True,
-                                'groups': member_states_only,
-                                'include_groups': True,
+                                'groups': page_groups,
+                                'include_groups': False,
                                 'limit': items_per_page,
-                                'offset': items_per_page * (page - 1),
-                                'sort': sort_by
+                                'sort': group_list_sort
                             }
                         )
-                        
-                        # Para el conteo total con búsqueda
-                        total_result = toolkit.get_action('group_list')(
-                            data_dict={
-                                'q': q,
-                                'include_dataset_count': True,
-                                'groups': member_states_only,
-                                'limit': 500
-                            }
-                        )
-                        groupcount = len(total_result)
-                    else:
-                        # Sin búsqueda, usar cache y paginar manualmente
-                        groupcount = len(member_states_only)
-                        start = items_per_page * (page - 1)
-                        end = start + items_per_page
-                        
-                        # Obtener detalles completos solo para la página actual
-                        page_groups = member_states_only[start:end]
-                        if page_groups:
-                            groups_result = toolkit.get_action('group_list')(
-                                data_dict={
-                                    'include_dataset_count': True,
-                                    'all_fields': True,
-                                    'groups': page_groups,
-                                    'include_groups': True,
-                                    'limit': items_per_page,
-                                    'sort': sort_by
-                                }
-                            )
-                        else:
-                            groups_result = []
-                    
+                        if sort_mode != 'plain':
+                            # group_list no respeta el orden de page_groups
+                            by_name = {g['name']: g for g in groups_result}
+                            groups_result = [by_name[n] for n in page_groups
+                                             if n in by_name]
+
                     # Configurar paginación
                     c.page = h.Page(
                         collection=member_states_only,
@@ -246,13 +754,15 @@ class MyLogica():
                         items_per_page=items_per_page,
                     )
                     c.page.items = groups_result
-                    
-                    return render_template("memberstates/index.html", 
-                                         q=q, 
-                                         page=c.page, 
-                                         groups=groups_result, 
-                                         group_type=group_type, 
-                                         groupcount=groupcount)
+
+                    return render_template("memberstates/index.html",
+                                         q=q,
+                                         page=c.page,
+                                         groups=groups_result,
+                                         group_type=group_type,
+                                         groupcount=groupcount,
+                                         ranked=rank_order,
+                                         rank_start=items_per_page * (page - 1))
                     
                 except Exception as e:
                     log.error(f"Error en memberstates: {e}")
@@ -263,13 +773,120 @@ class MyLogica():
                         url=h.pager_url,
                         items_per_page=items_per_page,
                     )
-                    return render_template("memberstates/index.html", 
-                                         q='', 
-                                         page=c.page, 
-                                         groups=[], 
-                                         group_type=group_type, 
+                    return render_template("memberstates/index.html",
+                                         q='',
+                                         page=c.page,
+                                         groups=[],
+                                         group_type=group_type,
                                          groupcount=0)
-        
+
+        @staticmethod
+        def stats_admin():
+            """Panel de estadísticas de uso. Sólo sysadmin.
+
+            Reúne en una página lo que hasta ahora sólo se veía por CLI
+            (`ckan pageviews status`, `ckan ranking show`) o disperso por la
+            home. Todo sale de helpers ya cacheados.
+            """
+            if not (c.userobj and c.userobj.sysadmin):
+                return base.abort(403, _('Not authorized'))
+
+            from ckanext.theme_ejemplo import helpers as theme_helpers
+
+            extra_vars = {
+                'totals': theme_helpers.get_tracking_totals(),
+                'site_stats': {},
+                'popular_datasets': [],
+                'popular_resources': [],
+                'completeness': [],
+                'ranking': {},
+            }
+            try:
+                extra_vars['popular_datasets'] = \
+                    theme_helpers.get_popular_datasets(limit=10)
+                extra_vars['popular_resources'] = \
+                    theme_helpers.get_popular_resources(limit=10)
+            except Exception as e:
+                log.warning(f"stats_admin: popular lists unavailable: {e}")
+
+            try:
+                result = toolkit.get_action('package_search')(
+                    {'ignore_auth': True},
+                    {'rows': 0, 'facet.field': ['metadata_completeness_category']})
+                facet = (result.get('search_facets', {})
+                         .get('metadata_completeness_category', {}))
+                order = {'full': 0, 'medium': 1, 'limited': 2}
+                extra_vars['completeness'] = sorted(
+                    facet.get('items', []),
+                    key=lambda i: order.get(i['name'], 9))
+                extra_vars['dataset_total'] = result.get('count', 0)
+            except Exception as e:
+                log.warning(f"stats_admin: completeness facet unavailable: {e}")
+                extra_vars['dataset_total'] = 0
+
+            try:
+                from ckanext.theme_ejemplo.model import ContributionScore
+                for entity in (ContributionScore.ENTITY_ORGANIZATION,
+                               ContributionScore.ENTITY_MEMBER_STATE,
+                               ContributionScore.ENTITY_INITIATIVE):
+                    extra_vars['ranking'][entity] = \
+                        ContributionScore.get_ranked(entity)[:10]
+            except Exception as e:
+                log.warning(f"stats_admin: ranking unavailable: {e}")
+
+            return base.render('admin/stats.html', extra_vars=extra_vars)
+
+        @staticmethod
+        def organization_index():
+            """/organization ordenado por contribución (ver _ranked_entity_index)."""
+            return _ranked_entity_index(
+                entity_type='organization',
+                list_action='organization_list',
+                ckan_type='organization',
+                template='organization/index.html')
+
+        @staticmethod
+        def group_index():
+            """/group ordenado por contribución (ver _ranked_entity_index)."""
+            return _ranked_entity_index(
+                entity_type=None,
+                list_action='group_list',
+                ckan_type='group',
+                template='group/index.html')
+
+        @staticmethod
+        def search_suggest():
+            """GET /api/theme/suggest?q=&scope= — sugerencias mientras se escribe.
+
+            scope: all | dataset | organization | initiative | memberstate.
+            Devuelve grupos de {title, url, subtitle}; el orden de las palabras
+            y los acentos no importan, y la última palabra puede ir a medias.
+            """
+            q = (request.args.get('q') or '').strip()[:200]
+            scope = request.args.get('scope') or 'all'
+            if scope not in SUGGEST_SCOPES:
+                scope = 'all'
+            groups = []
+            if len(q) >= theme_search.MIN_SUGGEST_CHARS:
+                for kind in SUGGEST_SCOPES[scope]:
+                    try:
+                        items = _suggest_items(kind, q)
+                    except Exception as e:
+                        # Una fuente caída no debe tumbar el resto del desplegable.
+                        log.warning('search_suggest: falló %s para %r: %s', kind, q, e)
+                        items = []
+                    if items:
+                        groups.append({
+                            'type': kind,
+                            'label': _suggest_label(kind),
+                            'items': items,
+                        })
+            response = jsonify({'query': q, 'scope': scope, 'groups': groups})
+            if not c.user:
+                # Sólo anónimos: con sesión los resultados incluyen privados.
+                response.headers['Cache-Control'] = 'no-store' if 'learning' in SUGGEST_SCOPES[scope] else 'public, max-age=60'
+            return response
+
         def thematicbuilder():
             
             if request.method == 'GET':
@@ -280,19 +897,4315 @@ class MyLogica():
         def ihpix():
             
             if request.method == 'GET':
-                return render_template("ihpix/index.html")
+                from ckanext.theme_ejemplo.model import (
+                    IhpixContent, init_ihpix_content_db,
+                    IhpixActivity, init_ihpix_activities_db,
+                )
+                init_ihpix_content_db()
+                init_ihpix_activities_db()
+
+                # Load page content from DB
+                cta_cards = [item.as_dict() for item in
+                             IhpixContent.get_by_type('cta_card')
+                             if item.is_active]
+                pa_sections = [item.as_dict() for item in
+                               IhpixContent.get_by_type('priority_area')
+                               if item.is_active]
+
+                # Cargar hero y títulos de sección
+                hero_item = IhpixContent.get_by_key('hero')
+                hero_content = hero_item.as_dict() if hero_item else {
+                    'title': 'IHP-IX Strategic Plan',
+                    'description': '',
+                }
+                section_titles = {}
+                for key in ('section_pa', 'section_metrics', 'section_cta'):
+                    item = IhpixContent.get_by_key(key)
+                    section_titles[key] = item.as_dict() if item else {'title': key}
+
+                # Load recent activities per priority area
+                priority_areas = {}
+                for pa_num in range(1, 6):
+                    pa_key = 'PA{}'.format(pa_num)
+                    try:
+                        activities = IhpixActivity.get_by_priority_area(
+                            pa_key, status='published', limit=3
+                        )
+                        priority_areas[pa_key] = [a.as_dict() for a in activities]
+                    except Exception:
+                        priority_areas[pa_key] = []
+
+                # Stats globales para la landing pública: la acción exige
+                # login, así que se llama en servidor con ignore_auth y el
+                # template las recibe inyectadas (sin fetch a la API).
+                try:
+                    ctx = {'ignore_auth': True, 'model': model}
+                    stats = toolkit.get_action('ihpix_dashboard_stats')(ctx, {})
+                except Exception as e:
+                    log.warning('IHP-IX landing: sin stats: %s', e)
+                    stats = {}
+
+                is_sysadmin = False
+                try:
+                    if c.userobj and c.userobj.sysadmin:
+                        is_sysadmin = True
+                except Exception:
+                    pass
+
+                return render_template("ihpix/index.html",
+                                       cta_cards=cta_cards,
+                                       pa_sections=pa_sections,
+                                       priority_areas=priority_areas,
+                                       stats=stats,
+                                       hero_content=hero_content,
+                                       section_titles=section_titles,
+                                       is_sysadmin=is_sysadmin)
+
+        def ihpix_outputs():
+            """Explorador de actividades: cualquier usuario logueado."""
+            redirect = _require_login()
+            if redirect:
+                return redirect
+            if request.method == 'GET':
+                from ckanext.theme_ejemplo.model import (
+                    IhpixActivity, init_ihpix_activities_db,
+                )
+                init_ihpix_activities_db()
+
+                pa_filter = request.args.get('pa', '')
+                output_filter = request.args.get('output', '')
+                biennium_filter = request.args.get('biennium', '')
+                region_filter = request.args.get('region', '')
+                country_filter = request.args.get('country', '')
+                organization_filter = request.args.get('organization', '')
+                q = request.args.get('q', '')
+                page = int(request.args.get('page', 1))
+                items_per_page = 20
+                offset = items_per_page * (page - 1)
+
+                try:
+                    results, total = IhpixActivity.get_published(
+                        priority_area=pa_filter or None,
+                        output=output_filter or None,
+                        q_text=q or None,
+                        biennium=biennium_filter or None,
+                        country=country_filter or None,
+                        region=region_filter or None,
+                        organization=organization_filter or None,
+                        limit=items_per_page,
+                        offset=offset,
+                    )
+                    activities = [a.as_dict() for a in results]
+                    facets = IhpixActivity.get_facets()
+                except Exception as e:
+                    log.error('Error fetching IHP-IX outputs: %s', e)
+                    activities = []
+                    facets = {}
+                    total = 0
+
+                return render_template("ihpix/outputs.html",
+                                       activities=activities,
+                                       links_by_activity=_ihpix_links_map(activities),
+                                       facets=facets,
+                                       total=total,
+                                       pa_filter=pa_filter,
+                                       output_filter=output_filter,
+                                       biennium_filter=biennium_filter,
+                                       region_filter=region_filter,
+                                       country_filter=country_filter,
+                                       organization_filter=organization_filter,
+                                       q=q,
+                                       page=page,
+                                       items_per_page=items_per_page)
+
+        # ── IHP-IX: working groups / workspaces (fase iv) ─────────────────
+
+        @staticmethod
+        def _ihpix_ctx():
+            return {'user': c.user, 'model': model, 'auth_user_obj': c.userobj}
+
+        @staticmethod
+        def _ihpix_workspace_or_404(code):
+            try:
+                return toolkit.get_action('ihpix_working_group_show')(
+                    MyLogica._ihpix_ctx(), {'id': code})
+            except toolkit.ObjectNotFound:
+                return abort(404, _('Working group not found'))
+
+        @staticmethod
+        def ihpix_workspaces():
+            """Listado de workspaces (uno por Output) agrupados por PA."""
+            redirect = _require_login()
+            if redirect:
+                return redirect
+            from ckanext.theme_ejemplo import ihpix_constants as C
+            from collections import OrderedDict
+            pa_filter = request.args.get('pa', '').strip()
+            try:
+                data = toolkit.get_action('ihpix_working_group_list')(
+                    MyLogica._ihpix_ctx(),
+                    {'priority_area': pa_filter if pa_filter in C.PRIORITY_AREAS else ''})
+                workspaces = data.get('results', [])
+            except Exception as e:
+                log.error('IHP-IX workspaces: %s', e)
+                workspaces = []
+            by_pa = OrderedDict((pa, []) for pa in C.PRIORITY_AREAS)
+            for ws in workspaces:
+                by_pa.setdefault(ws['priority_area'], []).append(ws)
+            mine = [ws for ws in workspaces
+                    if ws.get('my_membership') and ws['my_membership']['status'] != 'removed']
+            return render_template(
+                'ihpix/workspaces.html',
+                workspaces=workspaces,
+                workspaces_by_pa=by_pa,
+                mine=mine,
+                pa_filter=pa_filter,
+                priority_areas=C.PRIORITY_AREAS,
+                pending_requests=toolkit.h.get_pending_ihpix_wg_members_count(),
+            )
+
+        @staticmethod
+        def ihpix_workspace_detail(code):
+            """Página de un workspace: overview, actividades, miembros, adjuntos, feed."""
+            redirect = _require_login()
+            if redirect:
+                return redirect
+            from ckanext.theme_ejemplo.model import IhpixActivity
+            ws = MyLogica._ihpix_workspace_or_404(code)
+            ctx = MyLogica._ihpix_ctx()
+            output = ws['output_code']
+
+            page = h.get_page_number(request.args) or 1
+            items_per_page = 10
+            try:
+                results, total = IhpixActivity.get_published(
+                    output=output, limit=items_per_page,
+                    offset=items_per_page * (page - 1))
+                activities = [a.as_dict() for a in results]
+                # Reportes propios aún no publicados para este Output
+                own_rows, _n = IhpixActivity.get_filtered(
+                    status=None, output=output,
+                    reported_by=[c.userobj.id, c.userobj.name], limit=50)
+                own_in_progress = [a.as_dict() for a in own_rows
+                                   if a.status != IhpixActivity.STATUS_PUBLISHED]
+            except Exception as e:
+                log.error('IHP-IX workspace %s activities: %s', code, e)
+                activities, total, own_in_progress = [], 0, []
+
+            try:
+                members = toolkit.get_action('ihpix_working_group_member_list')(
+                    ctx, {'id': ws['id'], 'status': 'active'}).get('results', [])
+            except Exception as e:
+                log.error('IHP-IX workspace %s members: %s', code, e)
+                members = []
+            try:
+                feed = toolkit.get_action('ihpix_contribution_list')(
+                    ctx, {'working_group_id': ws['id'], 'limit': 30}).get('results', [])
+            except Exception as e:
+                log.error('IHP-IX workspace %s feed: %s', code, e)
+                feed = []
+
+            links_by_activity = _ihpix_links_map(activities + own_in_progress)
+            links_grouped = {}
+            for act in activities:
+                for link in links_by_activity.get(act['id'], []):
+                    links_grouped.setdefault(link.get('link_type', 'other'), []).append(link)
+
+            return render_template(
+                'ihpix/workspace_detail.html',
+                ws=ws,
+                activities=activities,
+                total=total,
+                page=MyLogica._ihpix_pager(total, page, items_per_page, activities),
+                own_in_progress=own_in_progress,
+                members=members,
+                feed=feed,
+                links_by_activity=links_by_activity,
+                links_grouped=links_grouped,
+                pending_count=ws.get('members_pending', 0) if ws.get('can_manage') else 0,
+                publication_ctx=MyLogica._ihpix_publication_context(output),
+            )
+
+        @staticmethod
+        def ihpix_workspace_join(code):
+            redirect = _require_login()
+            if redirect:
+                return redirect
+            ws = MyLogica._ihpix_workspace_or_404(code)
+            try:
+                result = toolkit.get_action('ihpix_working_group_join')(
+                    MyLogica._ihpix_ctx(),
+                    {'id': ws['id'], 'note': request.form.get('note', '')})
+                if result.get('status') == 'active':
+                    h.flash_success(_('You have joined the working group.'))
+                else:
+                    h.flash_success(_('Your request was sent to the working group lead.'))
+            except toolkit.ValidationError as e:
+                h.flash_error(_format_error_dict(e.error_dict))
+            except toolkit.NotAuthorized:
+                return abort(403, _('Not authorized'))
+            return h.redirect_to('theme_ejemplo.ihpix_workspace_detail', code=ws['output_code'])
+
+        @staticmethod
+        def ihpix_workspace_leave(code):
+            redirect = _require_login()
+            if redirect:
+                return redirect
+            ws = MyLogica._ihpix_workspace_or_404(code)
+            try:
+                toolkit.get_action('ihpix_working_group_leave')(
+                    MyLogica._ihpix_ctx(), {'id': ws['id']})
+                h.flash_success(_('You have left the working group.'))
+            except toolkit.ValidationError as e:
+                h.flash_error(_format_error_dict(e.error_dict))
+            except toolkit.NotAuthorized:
+                return abort(403, _('Not authorized'))
+            return h.redirect_to('theme_ejemplo.ihpix_workspace_detail', code=ws['output_code'])
+
+        @staticmethod
+        def ihpix_workspace_members(code):
+            """Gestión de miembros (lead o sysadmin)."""
+            redirect = _require_login()
+            if redirect:
+                return redirect
+            ws = MyLogica._ihpix_workspace_or_404(code)
+            if not ws.get('can_manage'):
+                return abort(403, _('Only the working group lead can manage members'))
+            ctx = MyLogica._ihpix_ctx()
+            try:
+                members = toolkit.get_action('ihpix_working_group_member_list')(
+                    ctx, {'id': ws['id']}).get('results', [])
+            except Exception as e:
+                log.error('IHP-IX workspace %s member management: %s', code, e)
+                members = []
+            for m in members:
+                user = m.get('user') or {}
+                m['profile'] = h.get_user_profile(user['name']) if user.get('name') else None
+            return render_template(
+                'ihpix/workspace_members.html',
+                ws=ws,
+                pending=[m for m in members if m['status'] == 'pending'],
+                active=[m for m in members if m['status'] == 'active'],
+                removed=[m for m in members if m['status'] == 'removed'],
+            )
+
+        @staticmethod
+        def ihpix_workspace_member_process_view(code):
+            redirect = _require_login()
+            if redirect:
+                return redirect
+            ws = MyLogica._ihpix_workspace_or_404(code)
+            try:
+                toolkit.get_action('ihpix_working_group_member_process')(
+                    MyLogica._ihpix_ctx(), {
+                        'membership_id': request.form.get('membership_id', ''),
+                        'action': request.form.get('action', ''),
+                        'role': request.form.get('role', ''),
+                    })
+                h.flash_success(_('Membership updated.'))
+            except toolkit.ValidationError as e:
+                h.flash_error(_format_error_dict(e.error_dict))
+            except toolkit.NotAuthorized:
+                return abort(403, _('Not authorized'))
+            except toolkit.ObjectNotFound:
+                return abort(404, _('Membership not found'))
+            return h.redirect_to('theme_ejemplo.ihpix_workspace_members', code=ws['output_code'])
+
+        @staticmethod
+        def ihpix_workspaces_admin():
+            """Panel sysadmin: título, descripción, lead y estado de cada workspace."""
+            if not (c.userobj and c.userobj.sysadmin):
+                return abort(403, _('Not authorized'))
+            from ckanext.theme_ejemplo import ihpix_constants as C
+            try:
+                workspaces = toolkit.get_action('ihpix_working_group_list')(
+                    MyLogica._ihpix_ctx(), {}).get('results', [])
+            except Exception as e:
+                log.error('IHP-IX workspaces admin: %s', e)
+                workspaces = []
+            return render_template(
+                'admin/ihpix_workspaces.html',
+                workspaces=workspaces,
+                priority_areas=C.PRIORITY_AREAS,
+                pending_requests=toolkit.h.get_pending_ihpix_wg_members_count(),
+            )
+
+        @staticmethod
+        def ihpix_workspaces_admin_update():
+            if not (c.userobj and c.userobj.sysadmin):
+                return abort(403, _('Not authorized'))
+            data = {
+                'id': request.form.get('id', ''),
+                'title': request.form.get('title', ''),
+                'description': request.form.get('description', ''),
+                'lead_user_id': request.form.get('lead_user', '').strip(),
+                'status': request.form.get('status', 'active'),
+            }
+            try:
+                toolkit.get_action('ihpix_working_group_update')(MyLogica._ihpix_ctx(), data)
+                h.flash_success(_('Working group updated.'))
+            except toolkit.ValidationError as e:
+                h.flash_error(_format_error_dict(e.error_dict))
+            except toolkit.ObjectNotFound:
+                return abort(404, _('Working group not found'))
+            return h.redirect_to('theme_ejemplo.ihpix_workspaces_admin')
+
+        # ── IHP-IX: páginas navegables (fase iii) ─────────────────────────
+
+        @staticmethod
+        def _ihpix_pager(total, page, items_per_page, items):
+            # h.pager_url sólo pasa `page`; las rutas por Output/workspace
+            # necesitan también sus view_args (`code`, `pa`, `id`).
+            def _url(**kwargs):
+                params = dict(request.view_args or {})
+                for key, value in request.args.items():
+                    if key != 'page':
+                        params[key] = value
+                params.update(kwargs)
+                return h.url_for(request.endpoint, **params)
+            pager = h.Page(
+                collection=range(total),
+                page=page,
+                url=_url,
+                items_per_page=items_per_page,
+            )
+            pager.items = items
+            return pager
+
+        @staticmethod
+        def _ihpix_resolve_contributors(rows):
+            for row in rows:
+                row['reporter'] = get_ihpix_reporter(row.get('reported_by'))
+            return rows
+
+        @staticmethod
+        def ihpix_output_detail(code):
+            """Página de un Output: actividades, contribuidores y adjuntos."""
+            redirect = _require_login()
+            if redirect:
+                return redirect
+            from ckanext.theme_ejemplo.model import (
+                IhpixActivity, init_ihpix_activities_db,
+            )
+            from ckanext.theme_ejemplo import ihpix_constants as C
+            init_ihpix_activities_db()
+
+            code = (code or '').strip()
+            pa = C.priority_area_for_output(code)
+            if not pa:
+                return abort(404, _('Output not found'))
+
+            page = h.get_page_number(request.args) or 1
+            items_per_page = 12
+            try:
+                results, total = IhpixActivity.get_published(
+                    output=code, limit=items_per_page,
+                    offset=items_per_page * (page - 1))
+                activities = [a.as_dict() for a in results]
+                stats = IhpixActivity.get_stats({'output': code})
+                contributors, contributors_total = IhpixActivity.get_contributor_stats(
+                    {'output': code}, limit=12)
+                MyLogica._ihpix_resolve_contributors(contributors)
+                top_institutions = IhpixActivity.get_top_institutions(
+                    {'output': code}, limit=8)
+                timeline = IhpixActivity.get_timeline({'output': code})
+            except Exception as e:
+                log.error('IHP-IX output %s: %s', code, e)
+                activities, total, stats = [], 0, {}
+                contributors, contributors_total, top_institutions, timeline = [], 0, [], []
+
+            links_by_activity = _ihpix_links_map(activities)
+            links_grouped = {}
+            for links in links_by_activity.values():
+                for link in links:
+                    links_grouped.setdefault(link.get('link_type', 'other'), []).append(link)
+
+            return render_template(
+                'ihpix/output_detail.html',
+                code=code,
+                pa=pa,
+                pa_title=C.PRIORITY_AREAS.get(pa, pa),
+                output_title=C.output_title(code),
+                sibling_outputs=C.output_codes_for(pa),
+                activities=activities,
+                total=total,
+                page=MyLogica._ihpix_pager(total, page, items_per_page, activities),
+                stats=stats,
+                contributors=contributors,
+                contributors_total=contributors_total,
+                top_institutions=top_institutions,
+                timeline=timeline,
+                links_by_activity=links_by_activity,
+                links_grouped=links_grouped,
+                publication_ctx=MyLogica._ihpix_publication_context(code),
+            )
+
+        @staticmethod
+        def ihpix_priority_area(pa):
+            """Página de una Priority Area: sus Outputs con conteos y stats."""
+            redirect = _require_login()
+            if redirect:
+                return redirect
+            from ckanext.theme_ejemplo.model import (
+                IhpixActivity, init_ihpix_activities_db,
+                IhpixContent, init_ihpix_content_db,
+            )
+            from ckanext.theme_ejemplo import ihpix_constants as C
+            init_ihpix_activities_db()
+            init_ihpix_content_db()
+
+            pa = (pa or '').strip().upper()
+            if pa not in C.PRIORITY_AREAS:
+                return abort(404, _('Priority Area not found'))
+
+            content = None
+            try:
+                item = IhpixContent.get_by_key('pa_' + pa[-1])
+                content = item.as_dict() if item else None
+            except Exception:
+                content = None
+
+            try:
+                stats = IhpixActivity.get_stats({'priority_area': pa})
+                facet_items = IhpixActivity.get_facets().get('ihpix_output', {}).get('items', [])
+                counts = {item['name']: item['count'] for item in facet_items}
+                results, _total = IhpixActivity.get_published(
+                    priority_area=pa, limit=6)
+                recent = [a.as_dict() for a in results]
+                contributors, contributors_total = IhpixActivity.get_contributor_stats(
+                    {'priority_area': pa}, limit=8)
+                MyLogica._ihpix_resolve_contributors(contributors)
+                top_institutions = IhpixActivity.get_top_institutions(
+                    {'priority_area': pa}, limit=8)
+                links_by_type = stats.get('links_by_type', {})
+            except Exception as e:
+                log.error('IHP-IX priority area %s: %s', pa, e)
+                stats, counts, recent = {}, {}, []
+                contributors, contributors_total, top_institutions = [], 0, []
+                links_by_type = {}
+
+            outputs = [{'code': code, 'title': C.output_title(code),
+                        'count': counts.get(code, 0)}
+                       for code in C.output_codes_for(pa)]
+
+            return render_template(
+                'ihpix/priority_area.html',
+                pa=pa,
+                pa_title=C.PRIORITY_AREAS[pa],
+                pa_index=int(pa[-1]),
+                content=content,
+                outputs=outputs,
+                stats=stats,
+                recent=recent,
+                links_by_activity=_ihpix_links_map(recent),
+                contributors=contributors,
+                contributors_total=contributors_total,
+                top_institutions=top_institutions,
+                links_by_type=links_by_type,
+                all_pas=C.PRIORITY_AREAS,
+            )
+
+        @staticmethod
+        def ihpix_contributors():
+            """Directorio de contribuidores IHP-IX (usuarios con reportes publicados)."""
+            redirect = _require_login()
+            if redirect:
+                return redirect
+            from ckanext.theme_ejemplo.model import (
+                IhpixActivity, init_ihpix_activities_db,
+            )
+            from ckanext.theme_ejemplo import ihpix_constants as C
+            init_ihpix_activities_db()
+
+            q = request.args.get('q', '').strip()
+            pa_filter = request.args.get('pa', '').strip()
+            output_filter = request.args.get('output', '').strip()
+            biennium_filter = request.args.get('biennium', '').strip()
+            filters = {}
+            if pa_filter in C.PRIORITY_AREAS:
+                filters['priority_area'] = pa_filter
+            if output_filter:
+                filters['output'] = output_filter
+            if biennium_filter:
+                filters['biennium'] = biennium_filter
+
+            page = h.get_page_number(request.args) or 1
+            items_per_page = 24
+            try:
+                rows, total = IhpixActivity.get_contributor_stats(
+                    filters, q_text=q or None, limit=items_per_page,
+                    offset=items_per_page * (page - 1))
+                MyLogica._ihpix_resolve_contributors(rows)
+                for row in rows:
+                    reporter = row.get('reporter') or {}
+                    row['profile'] = (h.get_user_profile(reporter['name'])
+                                      if reporter.get('name') else None)
+                contributors_total = IhpixActivity.count_distinct_reporters(filters)
+            except Exception as e:
+                log.error('IHP-IX contributors: %s', e)
+                rows, total, contributors_total = [], 0, 0
+
+            return render_template(
+                'ihpix/contributors.html',
+                contributors=rows,
+                total=total,
+                contributors_total=contributors_total,
+                page=MyLogica._ihpix_pager(total, page, items_per_page, rows),
+                q=q,
+                pa_filter=pa_filter,
+                output_filter=output_filter,
+                biennium_filter=biennium_filter,
+                taxonomies=toolkit.h.get_ihpix_taxonomies(),
+            )
 
         def iot_portal():
-            
             if request.method == 'GET':
-                return render_template("iot_portal/index.html")
+                from ckanext.theme_ejemplo.model import PortalCard, init_portal_cards_db
+                init_portal_cards_db()
+                cards = PortalCard.get_active_by_portal('iot')
+                is_sysadmin = c.userobj and c.userobj.sysadmin
+                return render_template("iot_portal/index.html",
+                                       cards=[cd.as_dict() for cd in cards],
+                                       is_sysadmin=is_sysadmin)
 
         def flood_drought_portal():
-            
             if request.method == 'GET':
-                return render_template("flood_drought_portal/index.html")
+                from ckanext.theme_ejemplo.model import PortalCard, init_portal_cards_db
+                init_portal_cards_db()
+                cards = PortalCard.get_active_by_portal('flood_drought')
+                is_sysadmin = c.userobj and c.userobj.sysadmin
+                return render_template("flood_drought_portal/index.html",
+                                       cards=[cd.as_dict() for cd in cards],
+                                       is_sysadmin=is_sysadmin)
 
         def citizen_science_portal():
-            
             if request.method == 'GET':
-                return render_template("citizen_science_portal/index.html")
+                from ckanext.theme_ejemplo.model import PortalCard, init_portal_cards_db
+                init_portal_cards_db()
+                cards = PortalCard.get_active_by_portal('citizen_science')
+                is_sysadmin = c.userobj and c.userobj.sysadmin
+                return render_template("citizen_science_portal/index.html",
+                                       cards=[cd.as_dict() for cd in cards],
+                                       is_sysadmin=is_sysadmin)
+
+        # --- People & Organizations views ---
+
+        def people_index():
+            """People directory page."""
+            q = request.args.get('q', '')
+            country = request.args.get('country', '')
+            organization = request.args.get('organization', '')
+            expertise = request.args.get('expertise', '')
+            ihpix_workspace = request.args.get('ihpix_workspace', '').strip()
+            page = h.get_page_number(request.args) or 1
+            items_per_page = 21
+
+            try:
+                result = toolkit.get_action('people_list')(
+                    {'ignore_auth': True},
+                    {
+                        'q': q,
+                        'country': country,
+                        'organization': organization,
+                        'expertise': expertise,
+                        'ihpix_workspace': ihpix_workspace,
+                        'limit': items_per_page,
+                        'offset': items_per_page * (page - 1),
+                    }
+                )
+
+                people = result.get('results', [])
+                total = result.get('count', 0)
+
+                # Get filter options
+                try:
+                    org_query = (
+                        model.Session.query(model.Group.id, model.Group.name, model.Group.title)
+                        .filter(model.Group.type == 'organization', model.Group.state == 'active')
+                        .order_by(model.Group.title)
+                        .all()
+                    )
+                    orgs = [{'id': o.id, 'name': o.name, 'title': o.title or o.name, 'display_name': o.title or o.name} for o in org_query]
+                except Exception:
+                    orgs = toolkit.get_action('organization_list')(
+                        {'ignore_auth': True},
+                        {'all_fields': True, 'sort': 'title asc'}
+                    )
+
+                from ckanext.theme_ejemplo.helpers import get_country_list
+                countries = get_country_list()
+
+                # Member states list for filter dropdown
+                try:
+                    ms_list = toolkit.h.get_member_states_groups_list()
+                except Exception:
+                    ms_list = []
+
+                # Build pagination
+                dummy_collection = range(total)
+                pager = h.Page(
+                    collection=dummy_collection,
+                    page=page,
+                    url=h.pager_url,
+                    items_per_page=items_per_page,
+                )
+                pager.items = people
+
+                return render_template(
+                    "people/index.html",
+                    people=people,
+                    page=pager,
+                    q=q,
+                    country=country,
+                    organization=organization,
+                    expertise=expertise,
+                    organizations=orgs,
+                    countries=countries,
+                    member_states=ms_list,
+                    total=total,
+                )
+            except Exception as e:
+                log.error(f"Error in people_index: {e}")
+                return render_template(
+                    "people/index.html",
+                    people=[],
+                    page=h.Page(collection=[], page=1, url=h.pager_url, items_per_page=items_per_page),
+                    q=q, country='', organization='', expertise='',
+                    organizations=[], countries=[], member_states=[], total=0,
+                )
+
+        def organization_people(name):
+            """Organization people tab."""
+            try:
+                context = {'ignore_auth': True}
+                org = toolkit.get_action('organization_show')(
+                    context, {'id': name, 'include_users': True}
+                )
+                result = toolkit.get_action('organization_people')(
+                    context, {'id': name}
+                )
+                members = result.get('members', [])
+
+                return render_template(
+                    "organization/people.html",
+                    group_dict=org,
+                    group_type='organization',
+                    members=members,
+                )
+            except toolkit.ObjectNotFound:
+                abort(404, _('Organization not found'))
+            except Exception as e:
+                log.error(f"Error in organization_people: {e}")
+                abort(500)
+
+        def organization_publications(name):
+            """Organization publications tab — shows documents."""
+            try:
+                context = {'ignore_auth': True}
+                org = toolkit.get_action('organization_show')(
+                    context, {'id': name}
+                )
+
+                page = h.get_page_number(request.args) or 1
+                items_per_page = 20
+
+                pub_search = toolkit.get_action('package_search')(
+                    {},
+                    {
+                        'fq': f'owner_org:{org["id"]} +type:documents',
+                        'rows': items_per_page,
+                        'start': items_per_page * (page - 1),
+                        'sort': 'metadata_modified desc',
+                    }
+                )
+
+                documents = pub_search.get('results', [])
+                total = pub_search.get('count', 0)
+
+                pager = h.Page(
+                    collection=range(total),
+                    page=page,
+                    url=h.pager_url,
+                    items_per_page=items_per_page,
+                )
+                pager.items = documents
+
+                return render_template(
+                    "organization/publications.html",
+                    group_dict=org,
+                    group_type='organization',
+                    documents=documents,
+                    page=pager,
+                    total=total,
+                )
+            except toolkit.ObjectNotFound:
+                abort(404, _('Organization not found'))
+            except Exception as e:
+                log.error(f"Error in organization_publications: {e}")
+                abort(500)
+
+        def organization_news(name):
+            """Organization news tab."""
+            try:
+                context = {'ignore_auth': True}
+                org = toolkit.get_action('organization_show')(
+                    context, {'id': name}
+                )
+
+                news = []
+                try:
+                    from ckanext.pages.db import Page
+                    org_id = org.get('id', '')
+                    pages = model.Session.query(Page).filter(
+                        Page.page_type == 'water-news',
+                        Page.ihp_organization == org_id,
+                    ).order_by(Page.created.desc()).all()
+                    for pg in pages:
+                        news.append({
+                            'title': pg.title,
+                            'name': pg.name,
+                            'content': pg.content,
+                            'publish_date': pg.publish_date.isoformat() if pg.publish_date else None,
+                            'created': pg.created.isoformat() if pg.created else None,
+                            'page_type': pg.page_type,
+                            'image_url': pg.image_url if hasattr(pg, 'image_url') else None,
+                        })
+                except Exception as e:
+                    log.warning(f"Error fetching news for org {name}: {e}")
+
+                return render_template(
+                    "organization/news.html",
+                    group_dict=org,
+                    group_type='organization',
+                    news=news,
+                )
+            except toolkit.ObjectNotFound:
+                abort(404, _('Organization not found'))
+            except Exception as e:
+                log.error(f"Error in organization_news: {e}")
+                abort(500)
+
+        def organization_events(name):
+            """Organization events tab."""
+            try:
+                context = {'ignore_auth': True}
+                org = toolkit.get_action('organization_show')(
+                    context, {'id': name}
+                )
+
+                events = []
+                try:
+                    from ckanext.pages.db import Page
+                    org_id = org.get('id', '')
+                    pages = model.Session.query(Page).filter(
+                        Page.page_type == 'water-events',
+                        Page.ihp_organization == org_id,
+                    ).order_by(Page.created.desc()).all()
+                    for pg in pages:
+                        events.append({
+                            'title': pg.title,
+                            'name': pg.name,
+                            'content': pg.content,
+                            'publish_date': pg.publish_date.isoformat() if pg.publish_date else None,
+                            'created': pg.created.isoformat() if pg.created else None,
+                            'page_type': pg.page_type,
+                        })
+                except Exception as e:
+                    log.warning(f"Error fetching events for org {name}: {e}")
+
+                return render_template(
+                    "organization/events.html",
+                    group_dict=org,
+                    group_type='organization',
+                    events=events,
+                )
+            except toolkit.ObjectNotFound:
+                abort(404, _('Organization not found'))
+            except Exception as e:
+                log.error(f"Error in organization_events: {e}")
+                abort(500)
+
+        def organization_data_stories(name):
+            """Organization data stories tab."""
+            try:
+                context = {'ignore_auth': True}
+                org = toolkit.get_action('organization_show')(
+                    context, {'id': name}
+                )
+
+                stories = _get_data_stories_by_group(org['id'])
+
+                return render_template(
+                    "organization/data_stories.html",
+                    group_dict=org,
+                    group_type='organization',
+                    stories=stories,
+                )
+            except toolkit.ObjectNotFound:
+                abort(404, _('Organization not found'))
+            except Exception as e:
+                log.error(f"Error in organization_data_stories: {e}")
+                abort(500)
+
+        def organization_ihpix(name):
+            """Organization IHP-IX tab — actividades IHP-IX de esta organización (usuarios logueados)."""
+            redirect = _require_login()
+            if redirect:
+                return redirect
+
+            try:
+                context = {'ignore_auth': True}
+                org = toolkit.get_action('organization_show')(
+                    context, {'id': name}
+                )
+
+                from ckanext.theme_ejemplo.model import (
+                    IhpixActivity, init_ihpix_activities_db,
+                )
+                init_ihpix_activities_db()
+
+                pa_filter = request.args.get('pa', '')
+                output_filter = request.args.get('output', '')
+                biennium_filter = request.args.get('biennium', '')
+                q = request.args.get('q', '')
+                page = int(request.args.get('page', 1))
+                items_per_page = 20
+                offset = items_per_page * (page - 1)
+
+                try:
+                    # Buscar por título de organización (no slug) para mejor matching
+                    org_title = org.get('title', '')
+                    org_name = org.get('name', '')
+                    results, total = IhpixActivity.get_published(
+                        priority_area=pa_filter or None,
+                        output=output_filter or None,
+                        q_text=q or None,
+                        biennium=biennium_filter or None,
+                        organization=org_title or org_name or None,
+                        limit=items_per_page,
+                        offset=offset,
+                    )
+                    activities = [a.as_dict() for a in results]
+                    facets = IhpixActivity.get_facets()
+                except Exception as e:
+                    log.error(f"Error fetching IHP-IX activities for org {name}: {e}")
+                    activities = []
+                    facets = {}
+                    total = 0
+
+                return render_template(
+                    "organization/ihpix.html",
+                    group_dict=org,
+                    group_type='organization',
+                    activities=activities,
+                    links_by_activity=_ihpix_links_map(activities),
+                    facets=facets,
+                    total=total,
+                    pa_filter=pa_filter,
+                    output_filter=output_filter,
+                    biennium_filter=biennium_filter,
+                    q=q,
+                    page=page,
+                    items_per_page=items_per_page,
+                )
+            except toolkit.ObjectNotFound:
+                abort(404, _('Organization not found'))
+            except Exception as e:
+                log.error(f"Error in organization_ihpix: {e}")
+                abort(500)
+
+        def group_data_stories(name):
+            """Group/member state/initiative data stories tab."""
+            try:
+                context = {'ignore_auth': True}
+                group = toolkit.get_action('group_show')(
+                    context, {'id': name}
+                )
+
+                stories = _get_data_stories_by_group(group['id'])
+
+                return render_template(
+                    "group/data_stories.html",
+                    group_dict=group,
+                    group_type='group',
+                    stories=stories,
+                )
+            except toolkit.ObjectNotFound:
+                abort(404, _('Group not found'))
+            except Exception as e:
+                log.error(f"Error in group_data_stories: {e}")
+                abort(500)
+
+        def group_members(name):
+            """Group/Initiative members tab."""
+            try:
+                context = {'ignore_auth': True}
+                group = toolkit.get_action('group_show')(
+                    context, {'id': name}
+                )
+
+                member_tuples = toolkit.get_action('member_list')(
+                    context, {'id': group['id'], 'object_type': 'user'}
+                )
+
+                members = []
+                for user_id, _obj_type, capacity in member_tuples:
+                    try:
+                        user_obj = model.User.get(user_id)
+                        if not user_obj or user_obj.state != 'active':
+                            continue
+
+                        extras = user_obj.plugin_extras or {}
+                        profile = extras.get('theme_ejemplo', {})
+
+                        expertise_areas = profile.get('expertise_areas', '[]')
+                        if isinstance(expertise_areas, str):
+                            try:
+                                expertise_areas = json.loads(expertise_areas)
+                            except (json.JSONDecodeError, TypeError):
+                                expertise_areas = []
+
+                        members.append({
+                            'id': user_obj.id,
+                            'name': user_obj.name,
+                            'fullname': user_obj.fullname or user_obj.name,
+                            'image_url': normalize_user_image_url(user_obj.image_url),
+                            'job_title': profile.get('job_title', ''),
+                            'institution': profile.get('institution', ''),
+                            'country': profile.get('country', ''),
+                            'country_display': get_member_state_title(profile.get('country', '')) if profile.get('country') else '',
+                            'expertise_areas': expertise_areas,
+                            'capacity': capacity or 'member',
+                        })
+                    except Exception as e:
+                        log.warning(f"Error getting user profile for {user_id}: {e}")
+
+                return render_template(
+                    "group/members.html",
+                    group_dict=group,
+                    group_type='group',
+                    members=members,
+                )
+            except toolkit.ObjectNotFound:
+                abort(404, _('Group not found'))
+            except Exception as e:
+                log.error(f"Error in group_members: {e}")
+                abort(500)
+
+        def group_news(name):
+            """Group/Initiative news tab — shows water-news pages associated via initiative_groups."""
+            try:
+                context = {'ignore_auth': True}
+                group = toolkit.get_action('group_show')(
+                    context, {'id': name}
+                )
+
+                news = []
+                try:
+                    news = _get_pages_by_initiative(name, page_type='water-news')
+                except Exception as e:
+                    log.warning(f"Error fetching news for group {name}: {e}")
+
+                return render_template(
+                    "group/news.html",
+                    group_dict=group,
+                    group_type='group',
+                    news=news,
+                )
+            except toolkit.ObjectNotFound:
+                abort(404, _('Group not found'))
+            except Exception as e:
+                log.error(f"Error in group_news: {e}")
+                abort(500)
+
+        def group_events(name):
+            """Group/Initiative events tab — shows water-events pages associated via initiative_groups."""
+            try:
+                context = {'ignore_auth': True}
+                group = toolkit.get_action('group_show')(
+                    context, {'id': name}
+                )
+
+                events = []
+                try:
+                    events = _get_pages_by_initiative(name, page_type='water-events')
+                except Exception as e:
+                    log.warning(f"Error fetching events for group {name}: {e}")
+
+                return render_template(
+                    "group/events.html",
+                    group_dict=group,
+                    group_type='group',
+                    events=events,
+                )
+            except toolkit.ObjectNotFound:
+                abort(404, _('Group not found'))
+            except Exception as e:
+                log.error(f"Error in group_events: {e}")
+                abort(500)
+
+        def group_publications(name):
+            """Group/Initiative publications tab — shows documents associated with the group."""
+            try:
+                context = {'ignore_auth': True}
+                group = toolkit.get_action('group_show')(
+                    context, {'id': name}
+                )
+
+                datasets = []
+                try:
+                    result = toolkit.get_action('package_search')(
+                        {'ignore_auth': True},
+                        {
+                            'fq': f'groups:{name} +type:documents',
+                            'rows': 50,
+                            'sort': 'metadata_modified desc',
+                        }
+                    )
+                    datasets = result.get('results', [])
+                except Exception as e:
+                    log.warning(f"Error fetching datasets for group {name}: {e}")
+
+                return render_template(
+                    "group/publications.html",
+                    group_dict=group,
+                    group_type='group',
+                    datasets=datasets,
+                )
+            except toolkit.ObjectNotFound:
+                abort(404, _('Group not found'))
+            except Exception as e:
+                log.error(f"Error in group_publications: {e}")
+                abort(500)
+
+        def group_ihpix(name):
+            """Group/Member State IHP-IX tab — actividades IHP-IX de este país (usuarios logueados)."""
+            redirect = _require_login()
+            if redirect:
+                return redirect
+
+            try:
+                context = {'ignore_auth': True}
+                group = toolkit.get_action('group_show')(
+                    context, {'id': name}
+                )
+
+                from ckanext.theme_ejemplo.model import (
+                    IhpixActivity, init_ihpix_activities_db,
+                )
+                init_ihpix_activities_db()
+
+                pa_filter = request.args.get('pa', '')
+                output_filter = request.args.get('output', '')
+                biennium_filter = request.args.get('biennium', '')
+                q = request.args.get('q', '')
+                page = int(request.args.get('page', 1))
+                items_per_page = 20
+                offset = items_per_page * (page - 1)
+
+                try:
+                    results, total = IhpixActivity.get_published(
+                        priority_area=pa_filter or None,
+                        output=output_filter or None,
+                        q_text=q or None,
+                        biennium=biennium_filter or None,
+                        country=name or None,
+                        limit=items_per_page,
+                        offset=offset,
+                    )
+                    activities = [a.as_dict() for a in results]
+                    facets = IhpixActivity.get_facets()
+                except Exception as e:
+                    log.error(f"Error fetching IHP-IX activities for group {name}: {e}")
+                    activities = []
+                    facets = {}
+                    total = 0
+
+                return render_template(
+                    "group/ihpix.html",
+                    group_dict=group,
+                    group_type='group',
+                    activities=activities,
+                    links_by_activity=_ihpix_links_map(activities),
+                    facets=facets,
+                    total=total,
+                    pa_filter=pa_filter,
+                    output_filter=output_filter,
+                    biennium_filter=biennium_filter,
+                    q=q,
+                    page=page,
+                    items_per_page=items_per_page,
+                )
+            except toolkit.ObjectNotFound:
+                abort(404, _('Group not found'))
+            except Exception as e:
+                log.error(f"Error in group_ihpix: {e}")
+                abort(500)
+
+        def request_membership(name):
+            """Handle membership request for an organization."""
+            try:
+                context = {'ignore_auth': True}
+                org = toolkit.get_action('organization_show')(
+                    context, {'id': name}
+                )
+            except toolkit.ObjectNotFound:
+                abort(404, _('Organization not found'))
+                return
+
+            if not current_user.is_authenticated:
+                return toolkit.redirect_to('user.login')
+
+            # Check if already a member
+            try:
+                members = toolkit.get_action('member_list')(
+                    {'ignore_auth': True},
+                    {'id': org['id'], 'object_type': 'user'}
+                )
+                if any(m[0] == current_user.id for m in members):
+                    h.flash_notice(
+                        _('You are already a member of "{org}".').format(
+                            org=org.get('title', org['name'])
+                        )
+                    )
+                    return toolkit.redirect_to('organization.read', id=name)
+            except Exception:
+                members = []
+
+            # Check for existing pending request
+            from ckanext.theme_ejemplo.model import MembershipRequest
+            existing = MembershipRequest.get_pending_for_user_and_org(
+                current_user.id, org['id']
+            )
+            if existing:
+                h.flash_notice(
+                    _('You already have a pending request for "{org}". Please wait for an administrator to review it.').format(
+                        org=org.get('title', org['name'])
+                    )
+                )
+                return toolkit.redirect_to('organization.read', id=name)
+
+            if request.method == 'POST':
+                message = request.form.get('message', '')
+                user_name = current_user.name
+                user_fullname = current_user.fullname or current_user.name
+
+                # Persist the request
+                try:
+                    toolkit.get_action('membership_request_create')(
+                        {'auth_user_obj': current_user, 'user': current_user.name},
+                        {
+                            'organization_id': org['id'],
+                            'message': message,
+                        }
+                    )
+                except toolkit.ValidationError as e:
+                    h.flash_error(str(e))
+                    return toolkit.redirect_to('organization.read', id=name)
+
+                # Notify org admins via email
+                for member_id, _obj_type, capacity in members:
+                    if capacity == 'admin':
+                        try:
+                            admin_obj = model.User.get(member_id)
+                            if admin_obj and admin_obj.email:
+                                subject = _('Membership Request for {org}').format(org=org.get('title', org['name']))
+                                body = _(
+                                    'User {user} ({fullname}) has requested to join the organization "{org}".\n\n'
+                                    'Message:\n{message}\n\n'
+                                    'To review this request, visit: {url}'
+                                ).format(
+                                    user=user_name,
+                                    fullname=user_fullname,
+                                    org=org.get('title', org['name']),
+                                    message=message or _('No message provided'),
+                                    url=toolkit.url_for('theme_ejemplo.membership_requests', name=org['name'], qualified=True),
+                                )
+                                try:
+                                    mailer.mail_user(admin_obj, subject, body)
+                                except Exception as mail_err:
+                                    log.warning(f"Failed to send membership request email: {mail_err}")
+                        except Exception as e:
+                            log.warning(f"Error notifying admin {member_id}: {e}")
+
+                h.flash_success(
+                    _('Your membership request for "{org}" has been sent. An administrator will review it shortly.').format(
+                        org=org.get('title', org['name'])
+                    )
+                )
+                return toolkit.redirect_to('organization.read', id=name)
+
+            return render_template(
+                "organization/request_membership.html",
+                group_dict=org,
+                group_type='organization',
+            )
+
+        @staticmethod
+        def membership_requests(name):
+            """Dashboard to manage membership requests for an organization."""
+            if not current_user.is_authenticated:
+                return toolkit.redirect_to('user.login')
+
+            try:
+                org = toolkit.get_action('organization_show')(
+                    {'ignore_auth': True}, {'id': name}
+                )
+            except toolkit.ObjectNotFound:
+                abort(404, _('Organization not found'))
+                return
+
+            # Check user is org admin or sysadmin
+            is_admin = False
+            if current_user.sysadmin:
+                is_admin = True
+            else:
+                try:
+                    members = toolkit.get_action('member_list')(
+                        {'ignore_auth': True},
+                        {'id': org['id'], 'object_type': 'user'}
+                    )
+                    is_admin = any(
+                        m[0] == current_user.id and m[2] == 'admin'
+                        for m in members
+                    )
+                except Exception:
+                    pass
+
+            if not is_admin:
+                abort(403, _('Only organization administrators can manage membership requests.'))
+                return
+
+            tab = request.args.get('tab', 'pending')
+
+            # Handle approve/reject POST
+            if request.method == 'POST':
+                action = request.form.get('action', '')
+                request_id = request.form.get('request_id', '')
+                admin_note = request.form.get('admin_note', '')
+                role = request.form.get('role', 'member')
+
+                if action in ('approve', 'reject') and request_id:
+                    try:
+                        toolkit.get_action('membership_request_process')(
+                            {'auth_user_obj': current_user, 'user': current_user.name},
+                            {
+                                'id': request_id,
+                                'action': action,
+                                'admin_note': admin_note,
+                                'role': role,
+                            }
+                        )
+                        if action == 'approve':
+                            h.flash_success(_('Membership request approved successfully.'))
+                        else:
+                            h.flash_success(_('Membership request rejected.'))
+                    except Exception as e:
+                        h.flash_error(str(e))
+
+                return toolkit.redirect_to(
+                    'theme_ejemplo.membership_requests', name=name, tab=tab
+                )
+
+            # Fetch requests — bypass auth since we verified admin above
+            ctx = {'ignore_auth': True}
+            try:
+                pending = toolkit.get_action('membership_request_list')(
+                    ctx, {'organization_id': org['id'], 'status': 'pending'}
+                )
+            except Exception as e:
+                log.error(f"Error fetching pending membership requests: {e}")
+                pending = {'results': [], 'count': 0}
+
+            try:
+                history = toolkit.get_action('membership_request_list')(
+                    ctx, {'organization_id': org['id']}
+                )
+            except Exception as e:
+                log.error(f"Error fetching membership request history: {e}")
+                history = {'results': [], 'count': 0}
+            # Filter history to only processed requests
+            history_results = [
+                r for r in history.get('results', [])
+                if r['status'] != 'pending'
+            ]
+
+            return render_template(
+                "organization/membership_requests.html",
+                group_dict=org,
+                group_type='organization',
+                pending_requests=pending.get('results', []),
+                pending_count=pending.get('count', 0),
+                history_requests=history_results,
+                active_tab=tab,
+            )
+
+        @staticmethod
+        def membership_requests_overview():
+            """Overview of pending membership requests across all orgs the user administers."""
+            if not current_user.is_authenticated:
+                return toolkit.redirect_to('user.login')
+
+            from ckanext.theme_ejemplo.model import MembershipRequest
+
+            # Get orgs where user is admin
+            if current_user.sysadmin:
+                # Sysadmins see all orgs with pending requests
+                try:
+                    org_rows = (
+                        model.Session.query(
+                            model.Group.id, model.Group.name, model.Group.title, model.Group.image_url
+                        )
+                        .filter(model.Group.type == 'organization', model.Group.state == 'active')
+                        .all()
+                    )
+                    all_orgs = [
+                        {'id': o.id, 'name': o.name, 'title': o.title or o.name,
+                         'image_display_url': o.image_url or ''}
+                        for o in org_rows
+                    ]
+                except Exception:
+                    all_orgs = toolkit.get_action('organization_list')(
+                        {'ignore_auth': True}, {'all_fields': True, 'limit': 1000}
+                    )
+            else:
+                all_orgs = toolkit.get_action('organization_list_for_user')(
+                    {'user': current_user.name},
+                    {'permission': 'admin'}
+                )
+
+            orgs_with_requests = []
+            for org in all_orgs:
+                count = MembershipRequest.count_pending_for_orgs([org['id']])
+                if count > 0:
+                    orgs_with_requests.append({
+                        'name': org['name'],
+                        'title': org.get('title') or org['name'],
+                        'image_display_url': org.get('image_display_url', ''),
+                        'pending_count': count,
+                    })
+
+            # If only one org has requests, redirect directly
+            if len(orgs_with_requests) == 1:
+                return toolkit.redirect_to(
+                    'theme_ejemplo.membership_requests',
+                    name=orgs_with_requests[0]['name']
+                )
+
+            return render_template(
+                "organization/membership_requests_overview.html",
+                orgs_with_requests=orgs_with_requests,
+            )
+
+        # --- Initiative Request Views ---
+
+        @staticmethod
+        def request_initiative():
+            """Formulario público para solicitar la creación de una iniciativa."""
+            if not current_user.is_authenticated:
+                return toolkit.redirect_to('user.login')
+
+            from ckanext.theme_ejemplo.model import InitiativeRequest
+
+            # Si ya tiene una solicitud pendiente, redirigir con aviso
+            existing = InitiativeRequest.get_pending_for_user(current_user.id)
+            if existing and request.method == 'GET':
+                h.flash_notice(_(
+                    'Ya tienes una solicitud de iniciativa pendiente de revisión. '
+                    'Espera a que un administrador la procese antes de enviar otra.'
+                ))
+                return toolkit.redirect_to('theme_ejemplo.initiatives')
+
+            if request.method == 'POST':
+                title = (request.form.get('title') or '').strip()
+                description = (request.form.get('description') or '').strip()
+                logo_url = (request.form.get('logo_url') or '').strip()
+                logo_upload = request.files.get('logo_upload')
+
+                try:
+                    result = toolkit.get_action('initiative_request_create')(
+                        {'auth_user_obj': current_user, 'user': current_user.name},
+                        {
+                            'title': title,
+                            'description': description,
+                            'logo_url': logo_url,
+                            'logo_upload': logo_upload,
+                        },
+                    )
+                except toolkit.ValidationError as e:
+                    err = e.error_dict if hasattr(e, 'error_dict') else {}
+                    for field, msgs in (err or {}).items():
+                        for m in msgs if isinstance(msgs, (list, tuple)) else [msgs]:
+                            h.flash_error('{}: {}'.format(field, m))
+                    if not err:
+                        h.flash_error(str(e))
+                    return render_template(
+                        'initiatives/request.html',
+                        form={
+                            'title': title,
+                            'description': description,
+                            'logo_url': logo_url,
+                        },
+                    )
+                except toolkit.NotAuthorized:
+                    abort(403, _('No autorizado'))
+                    return
+
+                # Notificar a sysadmins por email
+                try:
+                    sysadmins = (
+                        model.Session.query(model.User)
+                        .filter(model.User.sysadmin.is_(True),
+                                model.User.state == 'active')
+                        .all()
+                    )
+                    subject = _('Nueva solicitud de iniciativa: {title}').format(
+                        title=result.get('title', '')
+                    )
+                    body = _(
+                        'El usuario {user} ({fullname}) ha solicitado la creación '
+                        'de una nueva iniciativa.\n\n'
+                        'Título: {title}\n'
+                        'Descripción:\n{description}\n\n'
+                        'Para revisar la solicitud visita: {url}'
+                    ).format(
+                        user=current_user.name,
+                        fullname=current_user.fullname or current_user.name,
+                        title=result.get('title', ''),
+                        description=result.get('description') or _('(sin descripción)'),
+                        url=toolkit.url_for(
+                            'theme_ejemplo.initiative_requests_admin', qualified=True
+                        ),
+                    )
+                    for admin_obj in sysadmins:
+                        if admin_obj.email:
+                            try:
+                                mailer.mail_user(admin_obj, subject, body)
+                            except Exception as mail_err:
+                                log.warning(
+                                    f'Failed to send initiative request email '
+                                    f'to {admin_obj.name}: {mail_err}'
+                                )
+                except Exception as e:
+                    log.warning(f'Error notifying sysadmins of initiative request: {e}')
+
+                h.flash_success(_(
+                    'Tu solicitud de iniciativa ha sido enviada. '
+                    'Un administrador la revisará pronto.'
+                ))
+                return toolkit.redirect_to('theme_ejemplo.initiatives')
+
+            return render_template('initiatives/request.html', form={})
+
+        @staticmethod
+        def group_request_redirect():
+            """Redirección permanente de la URL antigua /group/request al flujo
+            real de solicitud de iniciativa. Evita 404 desde enlaces/cachés viejos."""
+            return redirect(h.url_for('theme_ejemplo.request_initiative'), code=301)
+
+        @staticmethod
+        def initiative_requests_admin():
+            """Panel sysadmin para listar y revisar solicitudes de iniciativa."""
+            if not current_user.is_authenticated:
+                return toolkit.redirect_to('user.login')
+            if not current_user.sysadmin:
+                abort(403, _('Solo los administradores pueden gestionar solicitudes de iniciativa.'))
+                return
+
+            tab = request.args.get('tab', 'pending')
+
+            ctx = {
+                'auth_user_obj': current_user,
+                'user': current_user.name,
+                'ignore_auth': True,
+            }
+            try:
+                pending = toolkit.get_action('initiative_request_list')(
+                    ctx, {'status': 'pending'}
+                )
+            except Exception as e:
+                log.error(f'Error fetching pending initiative requests: {e}')
+                pending = {'results': [], 'count': 0}
+
+            try:
+                history = toolkit.get_action('initiative_request_list')(ctx, {})
+            except Exception as e:
+                log.error(f'Error fetching initiative request history: {e}')
+                history = {'results': [], 'count': 0}
+
+            history_results = [
+                r for r in history.get('results', [])
+                if r['status'] != 'pending'
+            ]
+
+            return render_template(
+                'admin/initiative_requests.html',
+                pending_requests=pending.get('results', []),
+                pending_count=pending.get('count', 0),
+                history_requests=history_results,
+                active_tab=tab,
+            )
+
+        @staticmethod
+        def initiative_request_process_view(request_id):
+            """Endpoint POST para aprobar/rechazar una solicitud de iniciativa."""
+            if not current_user.is_authenticated:
+                return toolkit.redirect_to('user.login')
+            if not current_user.sysadmin:
+                abort(403, _('Solo los administradores pueden procesar solicitudes.'))
+                return
+
+            action = (request.form.get('action') or '').strip()
+            admin_note = (request.form.get('admin_note') or '').strip()
+            override_name = (request.form.get('name') or '').strip()
+            tab = request.args.get('tab', 'pending')
+
+            if action not in ('approve', 'reject'):
+                h.flash_error(_('Invalid action.'))
+                return toolkit.redirect_to(
+                    'theme_ejemplo.initiative_requests_admin', tab=tab
+                )
+
+            try:
+                result = toolkit.get_action('initiative_request_process')(
+                    {'auth_user_obj': current_user, 'user': current_user.name},
+                    {
+                        'id': request_id,
+                        'action': action,
+                        'admin_note': admin_note,
+                        'name': override_name,
+                    },
+                )
+                if action == 'approve':
+                    # Notificar al solicitante
+                    try:
+                        from ckanext.theme_ejemplo.model import InitiativeRequest
+                        req = InitiativeRequest.get(request_id)
+                        if req:
+                            requester = model.User.get(req.user_id)
+                            if requester and requester.email:
+                                subject = _('Tu iniciativa "{title}" fue aprobada').format(
+                                    title=req.title
+                                )
+                                body = _(
+                                    'Tu solicitud de iniciativa "{title}" fue aprobada. '
+                                    'Ahora eres administrador del grupo. '
+                                    'Puedes acceder en: {url}'
+                                ).format(
+                                    title=req.title,
+                                    url=toolkit.url_for(
+                                        'group.read',
+                                        id=result.get('name', req.name),
+                                        qualified=True,
+                                    ),
+                                )
+                                try:
+                                    mailer.mail_user(requester, subject, body)
+                                except Exception:
+                                    pass
+                    except Exception as notify_err:
+                        log.warning(f'Approval notification failed: {notify_err}')
+                    h.flash_success(_('Request approved and initiative created.'))
+                else:
+                    # Notificar rechazo
+                    try:
+                        from ckanext.theme_ejemplo.model import InitiativeRequest
+                        req = InitiativeRequest.get(request_id)
+                        if req:
+                            requester = model.User.get(req.user_id)
+                            if requester and requester.email:
+                                subject = _('Tu solicitud de iniciativa fue rechazada')
+                                body = _(
+                                    'Tu solicitud "{title}" fue rechazada.\n\n'
+                                    'Motivo: {note}'
+                                ).format(
+                                    title=req.title,
+                                    note=admin_note or _('(sin motivo proporcionado)'),
+                                )
+                                try:
+                                    mailer.mail_user(requester, subject, body)
+                                except Exception:
+                                    pass
+                    except Exception as notify_err:
+                        log.warning(f'Rejection notification failed: {notify_err}')
+                    h.flash_success(_('Request rejected.'))
+            except toolkit.ValidationError as e:
+                err = e.error_dict if hasattr(e, 'error_dict') else {}
+                for field, msgs in (err or {}).items():
+                    for m in msgs if isinstance(msgs, (list, tuple)) else [msgs]:
+                        h.flash_error('{}: {}'.format(field, m))
+                if not err:
+                    h.flash_error(str(e))
+            except toolkit.ObjectNotFound as e:
+                h.flash_error(str(e))
+            except Exception as e:
+                log.error(f'Error processing initiative request: {e}')
+                h.flash_error(str(e))
+
+            return toolkit.redirect_to(
+                'theme_ejemplo.initiative_requests_admin', tab=tab
+            )
+
+        # --- User profile tab views ---
+
+        def _get_user_context(id):
+            """Shared helper to load user data for profile tabs."""
+            context = {'ignore_auth': True}
+            user_dict = toolkit.get_action('user_show')(context, {'id': id, 'include_plugin_extras': True})
+            is_myself = hasattr(current_user, 'name') and current_user.name == user_dict['name']
+            is_sysadmin = hasattr(current_user, 'sysadmin') and current_user.sysadmin
+            return user_dict, is_myself, is_sysadmin
+
+        def user_documents(id):
+            """User documents tab."""
+            try:
+                user_dict, is_myself, is_sysadmin = MyLogica._get_user_context(id)
+                page = h.get_page_number(request.args) or 1
+                items_per_page = 21
+
+                fq = 'creator_user_id:{} +type:documents'.format(user_dict['id'])
+                result = toolkit.get_action('package_search')(
+                    {'ignore_auth': True},
+                    {
+                        'fq': fq,
+                        'rows': items_per_page,
+                        'start': items_per_page * (page - 1),
+                        'sort': 'metadata_modified desc',
+                    }
+                )
+                documents = result.get('results', [])
+                total = result.get('count', 0)
+
+                pager = h.Page(
+                    collection=range(total),
+                    page=page,
+                    url=h.pager_url,
+                    items_per_page=items_per_page,
+                )
+                pager.items = documents
+
+                return render_template(
+                    "user/documents.html",
+                    user_dict=user_dict,
+                    documents=documents,
+                    page=pager,
+                    total=total,
+                    is_myself=is_myself,
+                    is_sysadmin=is_sysadmin,
+                )
+            except toolkit.ObjectNotFound:
+                abort(404, _('User not found'))
+            except Exception as e:
+                log.error(f"Error in user_documents: {e}")
+                abort(500)
+
+        def user_organizations(id):
+            """User organizations tab."""
+            try:
+                user_dict, is_myself, is_sysadmin = MyLogica._get_user_context(id)
+
+                orgs = toolkit.get_action('organization_list_for_user')(
+                    {'ignore_auth': True},
+                    {'id': user_dict['id'], 'permission': 'read'}
+                )
+
+                return render_template(
+                    "user/organizations.html",
+                    user_dict=user_dict,
+                    organizations=orgs,
+                    is_myself=is_myself,
+                    is_sysadmin=is_sysadmin,
+                )
+            except toolkit.ObjectNotFound:
+                abort(404, _('User not found'))
+            except Exception as e:
+                log.error(f"Error in user_organizations: {e}")
+                abort(500)
+
+        def user_data_stories(id):
+            """User data stories tab."""
+            try:
+                user_dict, is_myself, is_sysadmin = MyLogica._get_user_context(id)
+
+                stories = []
+                try:
+                    result = toolkit.get_action('data_story_list')(
+                        {'ignore_auth': True},
+                        {'author_id': user_dict['id'], 'limit': 50}
+                    )
+                    stories = result.get('stories', [])
+                except Exception as e:
+                    log.warning(f"Error fetching data stories for user {id}: {e}")
+
+                return render_template(
+                    "user/data_stories.html",
+                    user_dict=user_dict,
+                    stories=stories,
+                    is_myself=is_myself,
+                    is_sysadmin=is_sysadmin,
+                )
+            except toolkit.ObjectNotFound:
+                abort(404, _('User not found'))
+            except Exception as e:
+                log.error(f"Error in user_data_stories: {e}")
+                abort(500)
+
+        def user_news(id):
+            """User news tab (water-news from pages plugin)."""
+            try:
+                user_dict, is_myself, is_sysadmin = MyLogica._get_user_context(id)
+
+                news = []
+                try:
+                    from ckanext.pages.db import Page
+                    pages = model.Session.query(Page).filter(
+                        Page.user_id == user_dict['id'],
+                        Page.page_type == 'water-news',
+                    ).order_by(Page.created.desc()).all()
+                    for pg in pages:
+                        news.append({
+                            'title': pg.title,
+                            'name': pg.name,
+                            'content': pg.content,
+                            'publish_date': pg.publish_date.isoformat() if pg.publish_date else None,
+                            'created': pg.created.isoformat() if pg.created else None,
+                            'page_type': pg.page_type,
+                            'image_url': pg.image_url if hasattr(pg, 'image_url') else None,
+                        })
+                except Exception as e:
+                    log.warning(f"Error fetching news for user {id}: {e}")
+
+                return render_template(
+                    "user/news.html",
+                    user_dict=user_dict,
+                    news=news,
+                    is_myself=is_myself,
+                    is_sysadmin=is_sysadmin,
+                )
+            except toolkit.ObjectNotFound:
+                abort(404, _('User not found'))
+            except Exception as e:
+                log.error(f"Error in user_news: {e}")
+                abort(500)
+
+        def user_events(id):
+            """User events tab (water-events from pages plugin)."""
+            try:
+                user_dict, is_myself, is_sysadmin = MyLogica._get_user_context(id)
+
+                events = []
+                try:
+                    from ckanext.pages.db import Page
+                    pages = model.Session.query(Page).filter(
+                        Page.user_id == user_dict['id'],
+                        Page.page_type == 'water-events',
+                    ).order_by(Page.created.desc()).all()
+                    for pg in pages:
+                        events.append({
+                            'title': pg.title,
+                            'name': pg.name,
+                            'content': pg.content,
+                            'publish_date': pg.publish_date.isoformat() if pg.publish_date else None,
+                            'created': pg.created.isoformat() if pg.created else None,
+                            'page_type': pg.page_type,
+                        })
+                except Exception as e:
+                    log.warning(f"Error fetching events for user {id}: {e}")
+
+                return render_template(
+                    "user/events.html",
+                    user_dict=user_dict,
+                    events=events,
+                    is_myself=is_myself,
+                    is_sysadmin=is_sysadmin,
+                )
+            except toolkit.ObjectNotFound:
+                abort(404, _('User not found'))
+            except Exception as e:
+                log.error(f"Error in user_events: {e}")
+                abort(500)
+
+        @staticmethod
+        def dataset_resources_ajax(id):
+            """AJAX endpoint for paginated/filtered resource list."""
+            page = request.args.get('page', 1, type=int)
+            items_per_page = request.args.get('limit', 20, type=int)
+            q = request.args.get('q', '').strip()
+            format_filter = request.args.get('format', '').strip()
+
+            items_per_page = min(items_per_page, 100)
+
+            try:
+                pkg = toolkit.get_action('package_show')({}, {'id': id})
+                can_edit = h.check_access('package_update', {'id': pkg['id']})
+            except toolkit.ObjectNotFound:
+                abort(404)
+            except Exception:
+                pkg = {'id': id, 'name': id, 'type': 'dataset'}
+                can_edit = False
+
+            # Filter and paginate from already-loaded resources
+            resources = pkg.get('resources', [])
+            all_formats = sorted(set(
+                (r.get('format') or '').strip()
+                for r in resources
+                if (r.get('format') or '').strip()
+            ), key=str.lower)
+
+            if q:
+                q_lower = q.lower()
+                resources = [
+                    r for r in resources
+                    if q_lower in (r.get('name') or '').lower()
+                    or q_lower in (r.get('description') or '').lower()
+                    or q_lower in (r.get('url') or '').lower()
+                ]
+            if format_filter:
+                fmt_lower = format_filter.lower()
+                resources = [
+                    r for r in resources
+                    if (r.get('format') or '').lower() == fmt_lower
+                ]
+
+            total = len(resources)
+            start = (page - 1) * items_per_page
+            paged = resources[start:start + items_per_page]
+
+            html = render_template(
+                'package/snippets/resources_list_items.html',
+                pkg=pkg,
+                resources=paged,
+                can_edit=can_edit,
+            )
+
+            return jsonify({
+                'html': html,
+                'total': total,
+                'page': page,
+                'items_per_page': items_per_page,
+                'formats': all_formats,
+            })
+
+        @staticmethod
+        def dataset_read(package_type, id):
+            """Optimized dataset read view.
+
+            Replaces the CKAN core read() which calls resource_view_list
+            per resource (N+1 query problem). Uses a single batch SQL query
+            instead.
+            """
+            from flask import g
+            from ckan.logic import get_action, NotFound, NotAuthorized
+            from ckan.lib.plugins import lookup_package_plugin
+            import ckan.lib.datapreview as datapreview
+
+            context = {
+                u'model': model,
+                u'session': model.Session,
+                u'user': current_user.name,
+                u'for_view': True,
+                u'auth_user_obj': current_user,
+            }
+            data_dict = {u'id': id, u'include_tracking': True}
+
+            try:
+                pkg_dict = get_action(u'package_show')(context, data_dict)
+                pkg = context[u'package']
+            except NotFound:
+                return base.abort(404, _(u'Dataset not found or you have no permission to view it'))
+            except NotAuthorized:
+                if config.get(u'ckan.auth.reveal_private_datasets'):
+                    if current_user.is_authenticated:
+                        return base.abort(403, _(u'Unauthorized to read package %s') % id)
+                    else:
+                        return h.redirect_to('user.login', came_from=h.url_for('{}.read'.format(package_type), id=id))
+                return base.abort(404, _(u'Dataset not found or you have no permission to view it'))
+
+            g.pkg_dict = pkg_dict
+            g.pkg = pkg
+
+            if plugins.plugin_loaded('activity'):
+                activity_id = request.args.get('activity_id')
+                if activity_id:
+                    return h.redirect_to('activity.package_history', id=id, activity_id=activity_id)
+
+            if data_dict['id'] == pkg_dict['id'] and data_dict['id'] != pkg_dict['name']:
+                return h.redirect_to(u'{}.read'.format(package_type), id=pkg_dict['name'])
+
+            # Batch query: get resource IDs that have views in ONE SQL query
+            resource_ids = [r['id'] for r in pkg_dict.get('resources', [])]
+            ids_with_views = set()
+            if resource_ids:
+                try:
+                    rv_query = model.Session.query(
+                        model.ResourceView.resource_id,
+                        model.ResourceView.view_type,
+                    ).filter(
+                        model.ResourceView.resource_id.in_(resource_ids)
+                    )
+                    for rv_resource_id, rv_view_type in rv_query:
+                        if datapreview.get_view_plugin(rv_view_type):
+                            ids_with_views.add(rv_resource_id)
+                except Exception as e:
+                    log.warning(f'Batch resource_view query failed, falling back: {e}')
+                    for r in pkg_dict['resources'][:20]:
+                        try:
+                            views = get_action('resource_view_list')(dict(context), {'id': r['id']})
+                            if views:
+                                ids_with_views.add(r['id'])
+                        except Exception:
+                            pass
+
+            for r in pkg_dict['resources']:
+                r['has_views'] = r['id'] in ids_with_views
+
+            actual_type = pkg_dict[u'type'] or package_type
+            pkg_plugin = lookup_package_plugin(actual_type)
+            pkg_plugin.setup_template_variables(context, {u'id': id})
+            try:
+                template = pkg_plugin.read_template()
+            except AttributeError:
+                template = 'package/read.html'
+
+            try:
+                return base.render(
+                    template, {
+                        u'dataset_type': actual_type,
+                        u'pkg_dict': pkg_dict,
+                        u'pkg': pkg,
+                    }
+                )
+            except Exception as e:
+                log.error(f'Error rendering dataset read template: {e}')
+                return base.abort(500, str(e))
+
+        # ── Featured Datasets Admin Panel ─────────────────────────────────
+
+        @staticmethod
+        def featured_datasets_admin():
+            """Render the featured datasets admin panel. Sysadmin only."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('featured_dataset_list', context, {})
+            except toolkit.NotAuthorized:
+                return base.abort(403, _('Not authorized'))
+
+            featured = toolkit.get_action('featured_dataset_list')(context, {})
+            extra_vars = {
+                'featured_datasets': featured.get('results', []),
+                'featured_count': featured.get('count', 0),
+            }
+            return base.render('admin/featured_datasets.html', extra_vars=extra_vars)
+
+        @staticmethod
+        def featured_datasets_search():
+            """AJAX: Search datasets to add as featured."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('featured_dataset_list', context, {})
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+
+            q = request.args.get('q', '')
+            if not q or len(q) < 2:
+                return jsonify({'results': []})
+
+            try:
+                search_result = toolkit.get_action('package_search')(
+                    {'ignore_auth': True},
+                    {'q': q, 'rows': 10}
+                )
+                results = []
+                for pkg in search_result.get('results', []):
+                    is_featured = any(
+                        t['name'] == 'FeaturedDataset'
+                        for t in pkg.get('tags', [])
+                    )
+                    org = pkg.get('organization') or {}
+                    results.append({
+                        'id': pkg['id'],
+                        'name': pkg['name'],
+                        'title': pkg.get('title', pkg['name']),
+                        'organization_title': org.get('title', ''),
+                        'is_featured': is_featured,
+                    })
+                return jsonify({'results': results})
+            except Exception as e:
+                log.error(f'Error searching datasets: {e}')
+                return jsonify({'results': [], 'error': str(e)})
+
+        @staticmethod
+        def featured_datasets_add():
+            """AJAX: Add a dataset as featured."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('featured_dataset_add', context, {})
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+
+            dataset_id = request.form.get('id', '')
+            if not dataset_id:
+                return jsonify({'success': False, 'error': 'Missing dataset id'}), 400
+
+            try:
+                result = toolkit.get_action('featured_dataset_add')(
+                    context, {'id': dataset_id}
+                )
+                return jsonify(result)
+            except toolkit.ObjectNotFound:
+                return jsonify({'success': False, 'error': 'Dataset not found'}), 404
+            except Exception as e:
+                log.error(f'Error adding featured dataset: {e}')
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        @staticmethod
+        def featured_datasets_remove():
+            """AJAX: Remove a dataset from featured."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('featured_dataset_remove', context, {})
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+
+            dataset_id = request.form.get('id', '')
+            if not dataset_id:
+                return jsonify({'success': False, 'error': 'Missing dataset id'}), 400
+
+            try:
+                result = toolkit.get_action('featured_dataset_remove')(
+                    context, {'id': dataset_id}
+                )
+                return jsonify(result)
+            except toolkit.ObjectNotFound:
+                return jsonify({'success': False, 'error': 'Dataset not found'}), 404
+            except Exception as e:
+                log.error(f'Error removing featured dataset: {e}')
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        # ── Featured Publications Admin Panel ─────────────────────────────
+
+        @staticmethod
+        def featured_publications_admin():
+            """Render the featured publications admin panel. Sysadmin only."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('featured_publication_list', context, {})
+            except toolkit.NotAuthorized:
+                return base.abort(403, _('Not authorized'))
+
+            pubs = toolkit.get_action('featured_publication_list')(context, {})
+
+            # Check for legacy UNESDOC datasets so we can show an import button
+            legacy_count = 0
+            try:
+                legacy_user = '8ad64841-340c-49dc-8716-c6b61ea4b111'
+                query = (
+                    '( followers:yes AND tags:UNESDOC ) OR '
+                    '( tags:UNESDOC AND creator_user_id:{user} )'
+                ).format(user=legacy_user)
+                search_result = toolkit.get_action('package_search')(
+                    {'ignore_auth': True},
+                    {'q': query, 'rows': 0}
+                )
+                legacy_count = search_result.get('count', 0)
+            except Exception:
+                legacy_count = 0
+
+            extra_vars = {
+                'publications': pubs.get('results', []),
+                'publications_count': pubs.get('count', 0),
+                'legacy_count': legacy_count,
+            }
+            return base.render('admin/featured_publications.html', extra_vars=extra_vars)
+
+        @staticmethod
+        def featured_publications_create():
+            """AJAX: Create a featured publication."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('featured_publication_create', context, {})
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+
+            data = {
+                'title': request.form.get('title', ''),
+                'link': request.form.get('link', ''),
+                'description': request.form.get('description', ''),
+                'image_url': request.form.get('image_url', ''),
+            }
+
+            if not data['title'] or not data['link']:
+                return jsonify({'success': False, 'error': 'Title and link are required'}), 400
+
+            try:
+                result = toolkit.get_action('featured_publication_create')(context, data)
+                return jsonify(result)
+            except Exception as e:
+                log.error(f'Error creating featured publication: {e}')
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        @staticmethod
+        def featured_publications_update():
+            """AJAX: Update a featured publication."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('featured_publication_update', context, {})
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+
+            pub_id = request.form.get('id', '')
+            if not pub_id:
+                return jsonify({'success': False, 'error': 'Missing id'}), 400
+
+            data = {'id': pub_id}
+            for field in ('title', 'link', 'description', 'image_url'):
+                if field in request.form:
+                    data[field] = request.form[field]
+
+            try:
+                result = toolkit.get_action('featured_publication_update')(context, data)
+                return jsonify(result)
+            except toolkit.ObjectNotFound:
+                return jsonify({'success': False, 'error': 'Not found'}), 404
+            except Exception as e:
+                log.error(f'Error updating featured publication: {e}')
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        @staticmethod
+        def featured_publications_delete():
+            """AJAX: Delete a featured publication."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('featured_publication_delete', context, {})
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+
+            pub_id = request.form.get('id', '')
+            if not pub_id:
+                return jsonify({'success': False, 'error': 'Missing id'}), 400
+
+            try:
+                result = toolkit.get_action('featured_publication_delete')(context, {'id': pub_id})
+                return jsonify(result)
+            except toolkit.ObjectNotFound:
+                return jsonify({'success': False, 'error': 'Not found'}), 404
+            except Exception as e:
+                log.error(f'Error deleting featured publication: {e}')
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        @staticmethod
+        def featured_publications_reorder():
+            """AJAX: Reorder featured publications."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('featured_publication_reorder', context, {})
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+
+            try:
+                order = request.get_json(force=True).get('order', [])
+            except Exception:
+                order = request.form.getlist('order[]')
+
+            try:
+                result = toolkit.get_action('featured_publication_reorder')(
+                    context, {'order': order}
+                )
+                return jsonify(result)
+            except Exception as e:
+                log.error(f'Error reordering featured publications: {e}')
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        @staticmethod
+        def featured_publications_upload_image():
+            """AJAX: Upload an image for a featured publication.
+            Uses CKAN's storage to save the file and returns the URL.
+            """
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('featured_publication_create', context, {})
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+
+            if 'file' not in request.files:
+                return jsonify({'success': False, 'error': 'No file uploaded'}), 400
+
+            upload_file = request.files['file']
+            if not upload_file.filename:
+                return jsonify({'success': False, 'error': 'Empty filename'}), 400
+
+            try:
+                import ckan.lib.uploader as uploader
+                upload = uploader.get_uploader('featured_publications')
+                upload.update_data_dict(
+                    {'upload': upload_file, 'url': '', 'clear_upload': ''},
+                    'url', 'upload', 'clear_upload'
+                )
+                upload.upload()
+                image_url = h.url_for_static(
+                    'uploads/featured_publications/{}'.format(upload.filename),
+                    qualified=False
+                )
+                return jsonify({'success': True, 'image_url': image_url})
+            except Exception as e:
+                log.error(f'Error uploading image: {e}')
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        @staticmethod
+        def featured_publications_import_legacy():
+            """AJAX: Import legacy UNESDOC datasets as featured publications."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('featured_publication_import_legacy', context, {})
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+
+            try:
+                result = toolkit.get_action('featured_publication_import_legacy')(context, {})
+                return jsonify({
+                    'success': True,
+                    'imported': result.get('imported', 0),
+                    'skipped': result.get('skipped', 0),
+                    'results': result.get('results', []),
+                })
+            except Exception as e:
+                log.error(f'Error importing legacy publications: {e}')
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        # ── Featured Viewers Admin Panel ─────────────────────────────────────
+        # Los datos viven en ckanext-pages (tabla `featured_viewers`). Este
+        # panel NO registra acciones ni auth propias: los nombres
+        # `featured_viewer_*` pertenecen a ckanext-pages y duplicarlos hace que
+        # CKAN falle al arrancar (NameConflict en logic, Exception en authz).
+        # Por eso el gate es una comprobación directa de sysadmin, equivalente
+        # a `auth._sysadmin_only` y al gate de la masthead.
+
+        @staticmethod
+        def _fv_admin_guard():
+            """Devuelve (context, error) donde error es (mensaje, status)."""
+            if not (c.userobj and getattr(c.userobj, 'sysadmin', False)):
+                return None, (_('Not authorized'), 403)
+            if not toolkit.asbool(
+                    config.get('ckanext.featured_viewers.enabled', False)):
+                return None, (_('Featured Viewers is not enabled on this site'), 404)
+            try:
+                toolkit.get_action('featured_viewer_list')
+            except KeyError:
+                return None, (_('Featured Viewers is not available'), 404)
+            return {'user': c.user, 'auth_user_obj': c.userobj}, None
+
+        @staticmethod
+        def _fv_anon_context():
+            """Contexto sin usuario: la acción filtra a `published` por sí sola."""
+            return {'user': '', 'auth_user_obj': None, 'ignore_auth': True}
+
+        @staticmethod
+        def _fv_card(viewer):
+            """Proyección mínima de un viewer para las respuestas JSON."""
+            org = viewer.get('organization') or {}
+            return {
+                'id': viewer.get('id'),
+                'title': viewer.get('title'),
+                'slug': viewer.get('slug'),
+                'thumbnail_url': viewer.get('thumbnail_url') or '',
+                'category': viewer.get('category') or '',
+                'organization_title': org.get('title') or '',
+                'is_featured': bool(viewer.get('is_featured')),
+                'order_index': viewer.get('order_index') or 0,
+            }
+
+        @staticmethod
+        def _fv_patch(context, viewer_id, **fields):
+            """Update parcial de un viewer de ckanext-pages.
+
+            OJO: `featured_viewer_update` valida contra `featured_viewer_schema()`,
+            donde `title` es `not_empty`. Un data_dict {'id', 'is_featured'}
+            falla con "Missing value", así que hay que releer y reenviar el
+            título actual. El resto de claves del schema son `ignore_missing`,
+            de modo que no se toca nada más.
+            """
+            current = toolkit.get_action('featured_viewer_show')(
+                dict(MyLogica._fv_anon_context()),
+                {'id': viewer_id, 'include_datasets': False})
+            data_dict = {'id': current['id'], 'title': current.get('title') or ''}
+            data_dict.update(fields)
+            return toolkit.get_action('featured_viewer_update')(
+                dict(context), data_dict)
+
+        @staticmethod
+        def _fv_featured_list():
+            """Viewers destacados actualmente, en orden de aparición."""
+            result = toolkit.get_action('featured_viewer_list')(
+                dict(MyLogica._fv_anon_context()),
+                {'is_featured': True, 'status': 'published',
+                 'sort': 'order', 'limit': 100}) or {}
+            viewers = result.get('viewers') or []
+            return sorted(viewers,
+                          key=lambda v: (v.get('order_index') or 0,
+                                         v.get('created_at') or ''))
+
+        @staticmethod
+        def featured_viewers_admin():
+            """Panel para elegir y ordenar los visores de la home. Sysadmin."""
+            if not (c.userobj and getattr(c.userobj, 'sysadmin', False)):
+                return base.abort(403, _('Not authorized'))
+
+            context, error = MyLogica._fv_admin_guard()
+            if error:
+                # El módulo está apagado: renderizamos el panel con el aviso en
+                # lugar de un 404 seco, para que el sysadmin sepa qué activar.
+                return base.render('admin/featured_viewers.html', extra_vars={
+                    'fv_unavailable': True,
+                    'fv_unavailable_msg': error[0],
+                    'featured_viewers': [],
+                    'featured_count': 0,
+                })
+
+            try:
+                featured = MyLogica._fv_featured_list()
+            except Exception as e:
+                log.error(f'Error loading featured viewers: {e}')
+                model.Session.rollback()
+                featured = []
+
+            return base.render('admin/featured_viewers.html', extra_vars={
+                'fv_unavailable': False,
+                'fv_unavailable_msg': '',
+                'featured_viewers': featured,
+                'featured_count': len(featured),
+            })
+
+        @staticmethod
+        def featured_viewers_search():
+            """AJAX: busca visores publicados para añadir a la home."""
+            context, error = MyLogica._fv_admin_guard()
+            if error:
+                return jsonify({'success': False, 'error': error[0]}), error[1]
+
+            q = (request.args.get('q') or '').strip()
+            data_dict = {'status': 'published', 'sort': 'alphabetical', 'limit': 20}
+            if q:
+                data_dict['q'] = q
+
+            try:
+                result = toolkit.get_action('featured_viewer_list')(
+                    dict(MyLogica._fv_anon_context()), data_dict) or {}
+                return jsonify({
+                    'success': True,
+                    'results': [MyLogica._fv_card(v)
+                                for v in (result.get('viewers') or [])],
+                })
+            except Exception as e:
+                log.error(f'Error searching featured viewers: {e}')
+                model.Session.rollback()
+                return jsonify({'success': False, 'results': [],
+                                'error': str(e)}), 500
+
+        @staticmethod
+        def featured_viewers_add():
+            """AJAX: marca un visor como destacado, al final de la lista."""
+            context, error = MyLogica._fv_admin_guard()
+            if error:
+                return jsonify({'success': False, 'error': error[0]}), error[1]
+
+            viewer_id = request.form.get('id')
+            if not viewer_id:
+                return jsonify({'success': False,
+                                'error': _('Viewer ID is required')}), 400
+
+            try:
+                next_index = len(MyLogica._fv_featured_list())
+                updated = MyLogica._fv_patch(context, viewer_id,
+                                             is_featured=True,
+                                             order_index=next_index)
+                return jsonify({'success': True,
+                                'viewer': MyLogica._fv_card(updated)})
+            except toolkit.ObjectNotFound:
+                return jsonify({'success': False,
+                                'error': _('Viewer not found')}), 404
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False,
+                                'error': _('Not authorized')}), 403
+            except toolkit.ValidationError as e:
+                return jsonify({'success': False, 'error': str(e.error_dict)}), 400
+            except Exception as e:
+                log.error(f'Error adding featured viewer: {e}')
+                model.Session.rollback()
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        @staticmethod
+        def featured_viewers_remove():
+            """AJAX: quita un visor de la sección destacada de la home."""
+            context, error = MyLogica._fv_admin_guard()
+            if error:
+                return jsonify({'success': False, 'error': error[0]}), error[1]
+
+            viewer_id = request.form.get('id')
+            if not viewer_id:
+                return jsonify({'success': False,
+                                'error': _('Viewer ID is required')}), 400
+
+            try:
+                MyLogica._fv_patch(context, viewer_id,
+                                   is_featured=False, order_index=0)
+                return jsonify({'success': True})
+            except toolkit.ObjectNotFound:
+                return jsonify({'success': False,
+                                'error': _('Viewer not found')}), 404
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False,
+                                'error': _('Not authorized')}), 403
+            except Exception as e:
+                log.error(f'Error removing featured viewer: {e}')
+                model.Session.rollback()
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        @staticmethod
+        def featured_viewers_reorder():
+            """AJAX: reescribe order_index segun el orden recibido."""
+            context, error = MyLogica._fv_admin_guard()
+            if error:
+                return jsonify({'success': False, 'error': error[0]}), error[1]
+
+            order = []
+            try:
+                payload = request.get_json(force=True, silent=True) or {}
+                order = payload.get('order') or []
+            except Exception:
+                order = []
+            if not order:
+                order = request.form.getlist('order[]')
+
+            if not order:
+                return jsonify({'success': False,
+                                'error': _('No order provided')}), 400
+
+            try:
+                for index, viewer_id in enumerate(order):
+                    MyLogica._fv_patch(context, viewer_id, order_index=index)
+                return jsonify({'success': True, 'updated': len(order)})
+            except Exception as e:
+                log.error(f'Error reordering featured viewers: {e}')
+                model.Session.rollback()
+                return jsonify({'success': False, 'error': str(e)}), 500
+        # ── Portal Card Admin Views ──────────────────────────────────────────
+
+        PORTAL_META = {
+            'flood_drought': {
+                'name': 'Flood and Drought Monitoring Portal',
+                'icon': 'fa-tint',
+                'url': '/flood-drought-portal',
+                'banner_image': '/Landing_page/Content/flood_and_drought_monitoring_button_image.jpg',
+            },
+            'iot': {
+                'name': 'Internet of Things Portal',
+                'icon': 'fa-microchip',
+                'url': '/iot-portal',
+                'banner_image': '/Landing_page/Content/03IHP-INTERNET.jpg',
+            },
+            'citizen_science': {
+                'name': 'Citizen Science Portal',
+                'icon': 'fa-users',
+                'url': '/citizen-science-portal',
+                'banner_image': '/Landing_page/Content/02IHP-CITIZEN.jpg',
+            },
+        }
+
+        @staticmethod
+        def portal_cards_admin(portal_id):
+            """Render the portal cards admin panel. Sysadmin only."""
+            if portal_id not in MyLogica.PORTAL_META:
+                return base.abort(404, _('Portal not found'))
+
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('portal_card_list', context, {})
+            except toolkit.NotAuthorized:
+                return base.abort(403, _('Not authorized'))
+
+            cards = toolkit.get_action('portal_card_list')(
+                context, {'portal_id': portal_id}
+            )
+            portal_info = MyLogica.PORTAL_META[portal_id]
+            extra_vars = {
+                'cards': cards.get('results', []),
+                'cards_count': cards.get('count', 0),
+                'portal_id': portal_id,
+                'portal_name': portal_info['name'],
+                'portal_icon': portal_info['icon'],
+                'portal_url': portal_info['url'],
+                'portal_banner_image': portal_info.get('banner_image', ''),
+            }
+            return base.render('admin/portal_cards.html', extra_vars=extra_vars)
+
+        @staticmethod
+        def portal_cards_create():
+            """AJAX: Create a portal card."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('portal_card_create', context, {})
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+
+            data = {
+                'portal_id': request.form.get('portal_id', ''),
+                'title': request.form.get('title', ''),
+                'link': request.form.get('link', ''),
+                'description': request.form.get('description', ''),
+                'image_url': request.form.get('image_url', ''),
+                'is_coming_soon': request.form.get('is_coming_soon', ''),
+            }
+
+            if not data['title'] or not data['link'] or not data['portal_id']:
+                return jsonify({'success': False, 'error': 'Title, link, and portal_id are required'}), 400
+
+            try:
+                result = toolkit.get_action('portal_card_create')(context, data)
+                return jsonify(result)
+            except toolkit.ValidationError as e:
+                return jsonify({'success': False, 'error': str(e)}), 400
+            except Exception as e:
+                log.error(f'Error creating portal card: {e}')
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        @staticmethod
+        def portal_cards_update():
+            """AJAX: Update a portal card."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('portal_card_update', context, {})
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+
+            card_id = request.form.get('id', '')
+            if not card_id:
+                return jsonify({'success': False, 'error': 'Missing id'}), 400
+
+            data = {'id': card_id}
+            for field in ('title', 'link', 'description', 'image_url', 'is_coming_soon', 'is_archived'):
+                if field in request.form:
+                    data[field] = request.form[field]
+
+            try:
+                result = toolkit.get_action('portal_card_update')(context, data)
+                return jsonify(result)
+            except toolkit.ObjectNotFound:
+                return jsonify({'success': False, 'error': 'Not found'}), 404
+            except Exception as e:
+                log.error(f'Error updating portal card: {e}')
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        @staticmethod
+        def portal_cards_delete():
+            """AJAX: Delete a portal card."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('portal_card_delete', context, {})
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+
+            card_id = request.form.get('id', '')
+            if not card_id:
+                return jsonify({'success': False, 'error': 'Missing id'}), 400
+
+            try:
+                result = toolkit.get_action('portal_card_delete')(context, {'id': card_id})
+                return jsonify(result)
+            except toolkit.ObjectNotFound:
+                return jsonify({'success': False, 'error': 'Not found'}), 404
+            except Exception as e:
+                log.error(f'Error deleting portal card: {e}')
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        @staticmethod
+        def portal_cards_reorder():
+            """AJAX: Reorder portal cards."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('portal_card_reorder', context, {})
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+
+            try:
+                order = request.get_json(force=True).get('order', [])
+            except Exception:
+                order = request.form.getlist('order[]')
+
+            try:
+                result = toolkit.get_action('portal_card_reorder')(
+                    context, {'order': order}
+                )
+                return jsonify(result)
+            except Exception as e:
+                log.error(f'Error reordering portal cards: {e}')
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        @staticmethod
+        def portal_cards_upload_image():
+            """AJAX: Upload an image for a portal card."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('portal_card_create', context, {})
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+
+            if 'file' not in request.files:
+                return jsonify({'success': False, 'error': 'No file uploaded'}), 400
+
+            upload_file = request.files['file']
+            if not upload_file.filename:
+                return jsonify({'success': False, 'error': 'Empty filename'}), 400
+
+            try:
+                import ckan.lib.uploader as uploader
+                upload = uploader.get_uploader('portal_cards')
+                upload.update_data_dict(
+                    {'upload': upload_file, 'url': '', 'clear_upload': ''},
+                    'url', 'upload', 'clear_upload'
+                )
+                upload.upload()
+                image_url = h.url_for_static(
+                    'uploads/portal_cards/{}'.format(upload.filename),
+                    qualified=False
+                )
+                return jsonify({'success': True, 'image_url': image_url})
+            except Exception as e:
+                log.error(f'Error uploading portal card image: {e}')
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        @staticmethod
+        def bug_tickets_list():
+            """List all bug tickets (own for users, all for sysadmin)."""
+            context = {
+                'model': model, 'session': model.Session,
+                'user': c.user, 'auth_user_obj': c.userobj,
+            }
+            if not c.userobj:
+                return toolkit.redirect_to('user.login')
+
+            status_filter = request.args.get('status', '')
+            try:
+                result = toolkit.get_action('bug_ticket_list')(
+                    context, {'status': status_filter or None}
+                )
+            except toolkit.NotAuthorized:
+                return toolkit.abort(403, _('Not authorized'))
+
+            extra_vars = {
+                'tickets': result['results'],
+                'count': result['count'],
+                'status_filter': status_filter,
+                'is_sysadmin': c.userobj.sysadmin if c.userobj else False,
+            }
+            return toolkit.render('bug_tickets/list.html', extra_vars=extra_vars)
+
+        @staticmethod
+        def bug_tickets_new():
+            """Show the new ticket form or create a ticket on POST."""
+            context = {
+                'model': model, 'session': model.Session,
+                'user': c.user, 'auth_user_obj': c.userobj,
+            }
+            if not c.userobj:
+                return toolkit.redirect_to('user.login')
+
+            errors = {}
+            data = {}
+
+            if request.method == 'POST':
+                data = {
+                    'title': request.form.get('title', '').strip(),
+                    'description': request.form.get('description', '').strip(),
+                    'url': request.form.get('url', '').strip(),
+                    'browser_info': request.form.get('browser_info', ''),
+                    'log_snapshot': request.form.get('log_snapshot', ''),
+                }
+
+                # Handle image upload
+                image_filename = u''
+                upload_file = request.files.get('image')
+                if upload_file and upload_file.filename:
+                    try:
+                        import ckan.lib.uploader as uploader
+                        upload = uploader.get_uploader('bug_tickets')
+                        upload.update_data_dict(
+                            {'upload': upload_file, 'url': '', 'clear_upload': ''},
+                            'url', 'upload', 'clear_upload'
+                        )
+                        upload.upload()
+                        image_filename = upload.filename
+                    except Exception as e:
+                        log.error('Error uploading bug ticket image: %s', e)
+
+                data['image_filename'] = image_filename
+
+                if not data['title']:
+                    errors['title'] = [_('Title is required')]
+                if not data['description']:
+                    errors['description'] = [_('Description is required')]
+
+                if not errors:
+                    try:
+                        ticket = toolkit.get_action('bug_ticket_create')(context, data)
+                        h.flash_success(_('Bug ticket created successfully'))
+                        return toolkit.redirect_to('theme_ejemplo.bug_tickets_show',
+                                                   id=ticket['id'])
+                    except toolkit.ValidationError as e:
+                        errors = e.error_dict
+
+            extra_vars = {
+                'data': data,
+                'errors': errors,
+                'referrer_url': request.referrer or '',
+            }
+            return toolkit.render('bug_tickets/new.html', extra_vars=extra_vars)
+
+        @staticmethod
+        def bug_tickets_show(id):
+            """Show a single bug ticket detail."""
+            context = {
+                'model': model, 'session': model.Session,
+                'user': c.user, 'auth_user_obj': c.userobj,
+            }
+            if not c.userobj:
+                return toolkit.redirect_to('user.login')
+
+            try:
+                ticket = toolkit.get_action('bug_ticket_show')(context, {'id': id})
+            except toolkit.ObjectNotFound:
+                return toolkit.abort(404, _('Ticket not found'))
+            except toolkit.NotAuthorized:
+                return toolkit.abort(403, _('Not authorized'))
+
+            extra_vars = {
+                'ticket': ticket,
+                'is_sysadmin': c.userobj.sysadmin if c.userobj else False,
+                'is_owner': c.userobj.id == ticket['user_id'] if c.userobj else False,
+            }
+            return toolkit.render('bug_tickets/show.html', extra_vars=extra_vars)
+
+        @staticmethod
+        def bug_tickets_close(id):
+            """Close a ticket (user resolves it)."""
+            context = {
+                'model': model, 'session': model.Session,
+                'user': c.user, 'auth_user_obj': c.userobj,
+            }
+            if not c.userobj:
+                return toolkit.redirect_to('user.login')
+
+            from ckanext.theme_ejemplo.model import BugTicket
+            status = BugTicket.STATUS_RESOLVED_USER
+            if c.userobj.sysadmin:
+                status = request.form.get('status', BugTicket.STATUS_RESOLVED_ADMIN)
+
+            admin_notes = request.form.get('admin_notes', '')
+
+            try:
+                data = {'id': id, 'status': status}
+                if admin_notes:
+                    data['admin_notes'] = admin_notes
+                toolkit.get_action('bug_ticket_update')(context, data)
+                h.flash_success(_('Ticket updated successfully'))
+            except (toolkit.NotAuthorized, toolkit.ObjectNotFound) as e:
+                h.flash_error(str(e))
+
+            return toolkit.redirect_to('theme_ejemplo.bug_tickets_show', id=id)
+
+        @staticmethod
+        def bug_tickets_update_status(id):
+            """Admin: change ticket status (in_progress, resolved_by_admin, etc.)."""
+            context = {
+                'model': model, 'session': model.Session,
+                'user': c.user, 'auth_user_obj': c.userobj,
+            }
+            if not c.userobj or not c.userobj.sysadmin:
+                return toolkit.abort(403, _('Not authorized'))
+
+            new_status = request.form.get('status', '')
+            admin_notes = request.form.get('admin_notes', '')
+
+            try:
+                data = {'id': id, 'status': new_status}
+                if admin_notes:
+                    data['admin_notes'] = admin_notes
+                toolkit.get_action('bug_ticket_update')(context, data)
+                h.flash_success(_('Ticket status updated'))
+            except (toolkit.ValidationError, toolkit.NotAuthorized,
+                    toolkit.ObjectNotFound) as e:
+                h.flash_error(str(e))
+
+            return toolkit.redirect_to('theme_ejemplo.bug_tickets_show', id=id)
+
+        # ── Sysadmin User Management Panel ────────────────────────────────
+
+        @staticmethod
+        def users_admin():
+            """Render the sysadmin user management panel."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('admin_user_list', context, {})
+            except toolkit.NotAuthorized:
+                return base.abort(403, _('Not authorized'))
+
+            # Leer parámetros de filtro desde query string
+            q = request.args.get('q', '')
+            state = request.args.get('state', '')
+            sysadmin = request.args.get('sysadmin', '')
+            order_by = request.args.get('order_by', 'created')
+            page = max(int(request.args.get('page', 1)), 1)
+            limit = 25
+            offset = (page - 1) * limit
+
+            data_dict = {
+                'q': q,
+                'state': state,
+                'order_by': order_by,
+                'limit': limit,
+                'offset': offset,
+            }
+            if sysadmin:
+                data_dict['sysadmin'] = sysadmin
+
+            result = toolkit.get_action('admin_user_list')(context, data_dict)
+            total = result.get('count', 0)
+            total_pages = max(1, (total + limit - 1) // limit)
+
+            extra_vars = {
+                'users': result.get('results', []),
+                'total': total,
+                'q': q,
+                'state': state,
+                'sysadmin_filter': sysadmin,
+                'order_by': order_by,
+                'page': page,
+                'limit': limit,
+                'total_pages': total_pages,
+            }
+            return base.render('admin/users.html', extra_vars=extra_vars)
+
+        @staticmethod
+        def users_admin_search():
+            """AJAX: Search users for autocomplete/quick search."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('admin_user_list', context, {})
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+
+            q = request.args.get('q', '')
+            if not q or len(q) < 2:
+                return jsonify({'results': []})
+
+            try:
+                result = toolkit.get_action('admin_user_list')(
+                    context,
+                    {'q': q, 'limit': 10, 'offset': 0}
+                )
+                return jsonify({
+                    'results': result.get('results', []),
+                    'count': result.get('count', 0),
+                })
+            except Exception as e:
+                log.error(f'Error searching users: {e}')
+                return jsonify({'results': [], 'error': str(e)})
+
+        @staticmethod
+        def users_admin_create():
+            """AJAX: Create a new user."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('admin_user_create', context, {})
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+
+            try:
+                data = {
+                    'name': request.form.get('name', ''),
+                    'email': request.form.get('email', ''),
+                    'fullname': request.form.get('fullname', ''),
+                    'password': request.form.get('password', ''),
+                    'sysadmin': request.form.get('sysadmin', 'false'),
+                }
+                result = toolkit.get_action('admin_user_create')(context, data)
+                return jsonify(result)
+            except toolkit.ValidationError as e:
+                return jsonify({'success': False, 'error': e.error_dict}), 400
+            except Exception as e:
+                log.error(f'Error creating user: {e}')
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        @staticmethod
+        def users_admin_reset_password():
+            """AJAX: Reset a user's password."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('admin_user_reset_password', context, {})
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+
+            try:
+                data = {
+                    'id': request.form.get('id', ''),
+                    'password': request.form.get('password', ''),
+                    'sysadmin_password': request.form.get('sysadmin_password', ''),
+                }
+                result = toolkit.get_action('admin_user_reset_password')(context, data)
+                return jsonify(result)
+            except toolkit.ValidationError as e:
+                return jsonify({'success': False, 'error': e.error_dict}), 400
+            except toolkit.ObjectNotFound:
+                return jsonify({'success': False, 'error': 'User not found'}), 404
+            except Exception as e:
+                log.error(f'Error resetting password: {e}')
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        @staticmethod
+        def users_admin_request_password_reset():
+            """AJAX: Send password reset email to a user."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('admin_user_request_password_reset', context, {})
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+
+            try:
+                data = {'id': request.form.get('id', '')}
+                result = toolkit.get_action('admin_user_request_password_reset')(context, data)
+                return jsonify(result)
+            except toolkit.ValidationError as e:
+                return jsonify({'success': False, 'error': e.error_dict}), 400
+            except toolkit.ObjectNotFound:
+                return jsonify({'success': False, 'error': 'User not found'}), 404
+            except Exception as e:
+                log.error(f'Error sending password reset email: {e}')
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        @staticmethod
+        def users_admin_delete():
+            """AJAX: Soft-delete a user."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('admin_user_delete', context, {})
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+
+            try:
+                data = {'id': request.form.get('id', '')}
+                result = toolkit.get_action('admin_user_delete')(context, data)
+                return jsonify(result)
+            except toolkit.ValidationError as e:
+                return jsonify({'success': False, 'error': e.error_dict}), 400
+            except toolkit.ObjectNotFound:
+                return jsonify({'success': False, 'error': 'User not found'}), 404
+            except Exception as e:
+                log.error(f'Error deleting user: {e}')
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        @staticmethod
+        def users_admin_purge():
+            """AJAX: Permanently purge a deleted user."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('admin_user_purge', context, {})
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+
+            try:
+                data = {
+                    'id': request.form.get('id', ''),
+                    'sysadmin_password': request.form.get('sysadmin_password', ''),
+                }
+                result = toolkit.get_action('admin_user_purge')(context, data)
+                return jsonify(result)
+            except toolkit.ValidationError as e:
+                return jsonify({'success': False, 'error': e.error_dict}), 400
+            except toolkit.ObjectNotFound:
+                return jsonify({'success': False, 'error': 'User not found'}), 404
+            except Exception as e:
+                log.error(f'Error purging user: {e}')
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        @staticmethod
+        def users_admin_reactivate():
+            """AJAX: Reactivate a deleted user."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('admin_user_reactivate', context, {})
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+
+            try:
+                data = {'id': request.form.get('id', '')}
+                result = toolkit.get_action('admin_user_reactivate')(context, data)
+                return jsonify(result)
+            except toolkit.ValidationError as e:
+                return jsonify({'success': False, 'error': e.error_dict}), 400
+            except toolkit.ObjectNotFound:
+                return jsonify({'success': False, 'error': 'User not found'}), 404
+            except Exception as e:
+                log.error(f'Error reactivating user: {e}')
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        @staticmethod
+        def users_admin_toggle_sysadmin():
+            """AJAX: Promote or demote a user as sysadmin."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('admin_user_toggle_sysadmin', context, {})
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+
+            try:
+                data = {
+                    'id': request.form.get('id', ''),
+                    'sysadmin': request.form.get('sysadmin', 'false'),
+                }
+                result = toolkit.get_action('admin_user_toggle_sysadmin')(context, data)
+                return jsonify(result)
+            except toolkit.ValidationError as e:
+                return jsonify({'success': False, 'error': e.error_dict}), 400
+            except toolkit.ObjectNotFound:
+                return jsonify({'success': False, 'error': 'User not found'}), 404
+            except Exception as e:
+                log.error(f'Error toggling sysadmin: {e}')
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        # ── IHP-IX Admin Controller Methods ──────────────────────────────────
+
+        @staticmethod
+        def ihpix_content_admin():
+            """Render IHP-IX content admin panel. Sysadmin only."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('ihpix_content_list', context, {})
+            except toolkit.NotAuthorized:
+                return base.abort(403, _('Not authorized'))
+
+            result = toolkit.get_action('ihpix_content_list')(context, {})
+            cta_cards = [i for i in result['results']
+                         if i['section_type'] == 'cta_card']
+            priority_areas = [i for i in result['results']
+                              if i['section_type'] == 'priority_area']
+            hero_sections = [i for i in result['results']
+                             if i['section_type'] == 'hero']
+            section_headers = [i for i in result['results']
+                               if i['section_type'] == 'section_header']
+
+            return render_template(
+                'admin/ihpix_content.html',
+                cta_cards=cta_cards,
+                priority_areas=priority_areas,
+                hero_sections=hero_sections,
+                section_headers=section_headers,
+            )
+
+        @staticmethod
+        def ihpix_content_update():
+            """AJAX: Update an IHP-IX content section."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                data = {}
+                for key in ('id', 'section_key', 'title', 'description',
+                            'image_url', 'link', 'badge_text', 'is_active',
+                            'extra_fields'):
+                    val = request.form.get(key)
+                    if val is not None:
+                        data[key] = val
+
+                result = toolkit.get_action('ihpix_content_update')(context, data)
+                return jsonify({'success': True, 'data': result})
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+            except toolkit.ObjectNotFound:
+                return jsonify({'success': False, 'error': 'Content not found'}), 404
+            except toolkit.ValidationError as e:
+                return jsonify({'success': False, 'error': e.error_dict}), 400
+            except Exception as e:
+                log.error('Error updating IHP-IX content: %s', e)
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        @staticmethod
+        def ihpix_content_upload_image():
+            """AJAX: Upload an image for IHP-IX content."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('ihpix_content_update', context, {})
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+
+            if 'file' not in request.files:
+                return jsonify({'success': False, 'error': 'No file uploaded'}), 400
+
+            upload_file = request.files['file']
+            if not upload_file.filename:
+                return jsonify({'success': False, 'error': 'Empty filename'}), 400
+
+            try:
+                import ckan.lib.uploader as uploader
+                upload = uploader.get_uploader('ihpix')
+                upload.update_data_dict(
+                    {'upload': upload_file, 'url': '', 'clear_upload': ''},
+                    'url', 'upload', 'clear_upload'
+                )
+                upload.upload()
+                image_url = h.url_for_static(
+                    'uploads/ihpix/{}'.format(upload.filename),
+                    qualified=False
+                )
+                return jsonify({'success': True, 'image_url': image_url})
+            except Exception as e:
+                log.error('Error uploading IHP-IX image: %s', e)
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        @staticmethod
+        def ihpix_activities_admin():
+            """Render IHP-IX activities admin panel. Sysadmin only."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('ihpix_activity_create', context, {})
+            except toolkit.NotAuthorized:
+                return base.abort(403, _('Not authorized'))
+
+            pa_filter = request.args.get('pa_filter', '')
+            page = int(request.args.get('page', 1))
+            limit = 20
+            offset = (page - 1) * limit
+
+            data = {'limit': limit, 'offset': offset}
+            if pa_filter:
+                data['priority_area'] = pa_filter
+
+            result = toolkit.get_action('ihpix_activity_list')(context, data)
+
+            # Listas para selectores del formulario
+            try:
+                org_list = toolkit.get_action('organization_list')(
+                    {'ignore_auth': True}, {'all_fields': True, 'limit': 1000}
+                )
+            except Exception:
+                org_list = []
+
+            try:
+                ms_list = toolkit.h.get_member_states_groups_list()
+            except Exception:
+                ms_list = []
+
+            return render_template(
+                'admin/ihpix_activities.html',
+                activities=result['results'],
+                total=result['count'],
+                facets=result.get('facets', {}),
+                pa_filter=pa_filter,
+                page=page,
+                items_per_page=limit,
+                org_list=org_list,
+                ms_list=ms_list,
+            )
+
+        # Todos los campos del formulario de actividades IHP-IX
+        _IHPIX_FORM_FIELDS = (
+            'title', 'description', 'priority_area', 'output', 'country',
+            'institution', 'link', 'image_url', 'status', 'reported_date',
+            'contact_name', 'contact_email', 'reported_by',
+            'start_date', 'end_date', 'key_activity', 'outcomes', 'biennium',
+            'institution_type', 'partners', 'unesco_participation',
+            'flagships', 'regions', 'member_states',
+            'knowledge_product_type', 'knowledge_product_type_other',
+            'num_knowledge_products', 'scientific_product_type',
+            'num_scientific_products', 'training_type',
+            'num_training_materials', 'num_curricula', 'num_transboundary_ms',
+            'knowledge_activity_type', 'knowledge_activity_type_other',
+            'stakeholders_knowledge', 'stakeholders_knowledge_female',
+            'stakeholders_knowledge_youth', 'stakeholders_awareness',
+            'stakeholders_awareness_female', 'stakeholders_awareness_youth',
+            'num_stakeholder_groups', 'stakeholder_group_type',
+            'notes', 'cross_cutting_wg', 'synergies',
+            'supporting_member_state',
+            # Pase UX admin (2026-09-24): booleano del PDF y notas Markdown
+            'unesco_secretariat_participation', 'additional_notes',
+        )
+
+        @staticmethod
+        def ihpix_activities_create():
+            """AJAX: Create an IHP-IX activity."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                data = {}
+                for key in MyLogica._IHPIX_FORM_FIELDS:
+                    val = request.form.get(key)
+                    if val is not None and val != '':
+                        data[key] = val
+
+                result = toolkit.get_action('ihpix_activity_create')(context, data)
+                return jsonify({'success': True, 'data': result})
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+            except toolkit.ValidationError as e:
+                return jsonify({'success': False, 'error': e.error_dict}), 400
+            except Exception as e:
+                log.error('Error creating IHP-IX activity: %s', e)
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        @staticmethod
+        def ihpix_activities_update():
+            """AJAX: Update an IHP-IX activity."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                data = {'id': request.form.get('id', '')}
+                for key in MyLogica._IHPIX_FORM_FIELDS:
+                    val = request.form.get(key)
+                    if val is not None:
+                        data[key] = val
+
+                result = toolkit.get_action('ihpix_activity_update')(context, data)
+                return jsonify({'success': True, 'data': result})
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+            except toolkit.ObjectNotFound:
+                return jsonify({'success': False, 'error': 'Activity not found'}), 404
+            except toolkit.ValidationError as e:
+                return jsonify({'success': False, 'error': e.error_dict}), 400
+            except Exception as e:
+                log.error('Error updating IHP-IX activity: %s', e)
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        @staticmethod
+        def ihpix_activities_show():
+            """AJAX: Get full activity data for editing."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                activity_id = request.args.get('id', '')
+                result = toolkit.get_action('ihpix_activity_show')(
+                    context, {'id': activity_id}
+                )
+                return jsonify({'success': True, 'data': result})
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+            except toolkit.ObjectNotFound:
+                return jsonify({'success': False, 'error': 'Activity not found'}), 404
+            except Exception as e:
+                log.error('Error showing IHP-IX activity: %s', e)
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        @staticmethod
+        def ihpix_activities_delete():
+            """AJAX: Delete an IHP-IX activity."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                activity_id = request.form.get('id', '')
+                result = toolkit.get_action('ihpix_activity_delete')(
+                    context, {'id': activity_id}
+                )
+                return jsonify(result)
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+            except toolkit.ObjectNotFound:
+                return jsonify({'success': False, 'error': 'Activity not found'}), 404
+            except Exception as e:
+                log.error('Error deleting IHP-IX activity: %s', e)
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        @staticmethod
+        def ihpix_activities_upload_image():
+            """AJAX: Upload an image for an IHP-IX activity."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('ihpix_activity_create', context, {})
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+
+            if 'file' not in request.files:
+                return jsonify({'success': False, 'error': 'No file uploaded'}), 400
+
+            upload_file = request.files['file']
+            if not upload_file.filename:
+                return jsonify({'success': False, 'error': 'Empty filename'}), 400
+
+            try:
+                import ckan.lib.uploader as uploader
+                upload = uploader.get_uploader('ihpix_activities')
+                upload.update_data_dict(
+                    {'upload': upload_file, 'url': '', 'clear_upload': ''},
+                    'url', 'upload', 'clear_upload'
+                )
+                upload.upload()
+                image_url = h.url_for_static(
+                    'uploads/ihpix_activities/{}'.format(upload.filename),
+                    qualified=False
+                )
+                return jsonify({'success': True, 'image_url': image_url})
+            except Exception as e:
+                log.error('Error uploading IHP-IX activity image: %s', e)
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        # ── IHP-IX Reporting Form ──────────────────────────────────────────
+
+        @staticmethod
+        def _ihpix_report_form_context():
+            """Vocabularios controlados que consume `ihpix/report.html`."""
+            from ckanext.theme_ejemplo import ihpix_constants as C
+            try:
+                institution_suggestions = _ihpix_institution_suggestions()
+            except Exception as e:  # nunca romper el formulario por el datalist
+                log.warning('No se pudieron cargar las instituciones sugeridas: %s', e)
+                institution_suggestions = []
+            # Member states desde los grupos CKAN (hijos de `member-states`);
+            # fallback a la lista ISO-2 si el portal aún no los tiene.
+            ms_groups = get_member_states_for_select() or list(C.MEMBER_STATES)
+            return dict(
+                priority_areas=C.PRIORITY_AREAS,
+                outputs_by_pa=C.OUTPUTS,
+                biennia=C.BIENNIA,
+                institution_types=C.LEAD_INSTITUTION_TYPES,
+                flagships=C.FLAGSHIPS,
+                cross_cutting_wgs=C.CROSS_CUTTING_WGS,
+                regions=C.REGIONS,
+                member_states=ms_groups,
+                institution_suggestions=institution_suggestions,
+                knowledge_product_types=C.KNOWLEDGE_PRODUCT_TYPES,
+                scientific_product_types=C.SCIENTIFIC_PRODUCT_TYPES,
+                knowledge_activity_types=C.KNOWLEDGE_ACTIVITY_TYPES,
+                training_types=C.TRAINING_TYPES,
+                stakeholder_group_types=C.STAKEHOLDER_GROUP_TYPES,
+            )
+
+        @staticmethod
+        def _ihpix_handle_report_post(action_name, extra):
+            """POST (fetch/JSON) compartido por el reporte nuevo y la edición.
+
+            Devuelve `next_url`: el borrador continúa en su página de edición
+            (fuente de verdad en servidor) y el envío vuelve a "mis reportes".
+            """
+            from ckanext.theme_ejemplo import ihpix_constants as C
+            if not c.user:
+                return jsonify({'success': False,
+                                'error': _('You must be logged in')}), 403
+            try:
+                data_dict = _collect_report_form(request.form)
+                data_dict.update(extra)
+                context = {'user': c.user, 'model': model,
+                           'auth_user_obj': c.userobj}
+                result = toolkit.get_action(action_name)(context, data_dict)
+                is_draft = C.normalize_bool(data_dict.get('save_as_draft'))
+                if is_draft:
+                    msg = _('Draft saved.')
+                    next_url = h.url_for('theme_ejemplo.ihpix_report_edit',
+                                         id=result['id'])
+                else:
+                    msg = _('Report submitted successfully!')
+                    next_url = h.url_for('theme_ejemplo.user_ihpix',
+                                         id=c.user, status='pending')
+                    h.flash_success(_(
+                        'Your report "%(title)s" was submitted and will be '
+                        'reviewed by an administrator.') % {
+                            'title': result.get('title', '')})
+                return jsonify({'success': True, 'message': msg,
+                                'data': result, 'next_url': next_url})
+            except toolkit.ValidationError as e:
+                return jsonify({'success': False,
+                                'errors': e.error_dict,
+                                'error': _format_error_dict(e.error_dict)}), 400
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False,
+                                'error': _('Not authorized')}), 403
+            except toolkit.ObjectNotFound:
+                return jsonify({'success': False,
+                                'error': _('Report not found')}), 404
+            except Exception as e:
+                log.error('Error saving IHP-IX report: %s', e)
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        @staticmethod
+        def ihpix_report():
+            """Formulario IHP-IX (PDF 2026): reporte nuevo.
+
+            GET es público (muestra el aviso de login); POST exige sesión.
+            Acepta ``?pa=PA1&output=1.1`` para prellenar desde las páginas
+            por Output / workspaces.
+            """
+            from ckanext.theme_ejemplo.model import init_ihpix_activities_db
+            from ckanext.theme_ejemplo import ihpix_constants as C
+            init_ihpix_activities_db()
+
+            if request.method == 'POST':
+                return MyLogica._ihpix_handle_report_post(
+                    'ihpix_report_submit', {})
+
+            form_initial = {}
+            pa = request.args.get('pa', '').strip()
+            output = request.args.get('output', '').strip()
+            if output and not pa:
+                # Deducir la PA a partir del código de Output (1.3 → PA1)
+                for candidate in C.PRIORITY_AREAS:
+                    if C.is_valid_output_for_pa(candidate, output):
+                        pa = candidate
+                        break
+            if pa in C.PRIORITY_AREAS:
+                form_initial['priority_area'] = pa
+                if output and C.is_valid_output_for_pa(pa, output):
+                    form_initial['output'] = output
+
+            return render_template(
+                'ihpix/report.html',
+                is_logged_in=bool(c.user),
+                edit_mode=False,
+                activity=None,
+                can_edit=True,
+                form_initial=form_initial,
+                form_action_url=h.url_for('theme_ejemplo.ihpix_report'),
+                publication_ctx=MyLogica._ihpix_publication_context(
+                    form_initial.get('output', '')),
+                **MyLogica._ihpix_report_form_context()
+            )
+
+        @staticmethod
+        def ihpix_report_edit(id):
+            """Edición / reenvío de un reporte propio (o cualquiera, sysadmin)."""
+            redirect = _require_login()
+            if redirect:
+                return redirect
+            from ckanext.theme_ejemplo.model import init_ihpix_activities_db
+            init_ihpix_activities_db()
+
+            if request.method == 'POST':
+                return MyLogica._ihpix_handle_report_post(
+                    'ihpix_report_update', {'id': id})
+
+            context = {'user': c.user, 'model': model,
+                       'auth_user_obj': c.userobj}
+            try:
+                activity = toolkit.get_action('ihpix_report_show')(
+                    context, {'id': id})
+            except toolkit.ObjectNotFound:
+                return abort(404, _('Report not found'))
+            except toolkit.NotAuthorized:
+                return abort(403, _('Not authorized'))
+
+            return render_template(
+                'ihpix/report.html',
+                is_logged_in=True,
+                edit_mode=True,
+                activity=activity,
+                can_edit=activity.get('can_edit', False),
+                form_initial=activity.get('form', {}),
+                form_action_url=h.url_for('theme_ejemplo.ihpix_report_edit',
+                                          id=id),
+                publication_ctx=MyLogica._ihpix_publication_context(
+                    (activity.get('output') or ''), activity=activity),
+                **MyLogica._ihpix_report_form_context()
+            )
+
+        @staticmethod
+        def ihpix_report_delete_view(id):
+            """POST: borra un borrador propio (o cualquier reporte, sysadmin)."""
+            redirect = _require_login()
+            if redirect:
+                return redirect
+            context = {'user': c.user, 'model': model,
+                       'auth_user_obj': c.userobj}
+            try:
+                toolkit.get_action('ihpix_report_delete')(context, {'id': id})
+                h.flash_success(_('Report deleted.'))
+            except toolkit.ObjectNotFound:
+                return abort(404, _('Report not found'))
+            except toolkit.NotAuthorized:
+                return abort(403, _('Not authorized'))
+            except toolkit.ValidationError as e:
+                h.flash_error(_format_error_dict(e.error_dict))
+            return h.redirect_to('theme_ejemplo.user_ihpix', id=c.user)
+
+        @staticmethod
+        def ihpix_markdown_preview():
+            """POST {text} → {'html': Markdown renderizado y saneado}.
+
+            Solo usuarios logueados; el tamaño se limita con
+            `ckanext.theme_ejemplo.ihpix_markdown_preview_max_chars`.
+            """
+            if not c.userobj:
+                return jsonify({'success': False,
+                                'error': _('You must be logged in')}), 403
+            payload = request.get_json(silent=True) or {}
+            text = request.form.get('text') or payload.get('text') or ''
+            try:
+                max_chars = int(config.get(
+                    'ckanext.theme_ejemplo.ihpix_markdown_preview_max_chars', 20000))
+            except (TypeError, ValueError):
+                max_chars = 20000
+            if len(text) > max_chars:
+                return jsonify({'success': False,
+                                'error': _('Text is too long to preview.')}), 413
+            return jsonify({'success': True,
+                            'html': str(h.render_markdown(text)) if text.strip() else ''})
+
+        @staticmethod
+        def _ihpix_publication_context(output_code='', activity=None):
+            """Contexto del modal "Upload a publication" (reporte, workspace,
+            página de Output): organizaciones donde el usuario puede crear
+            datasets, listas de grupos, campos disponibles del esquema
+            `documents`, reportes propios del Output y límites."""
+            from ckanext.theme_ejemplo import ihpix_publications as P
+            from ckanext.theme_ejemplo import actions as theme_actions
+            ctx = MyLogica._ihpix_ctx()
+            logged_in = bool(c.userobj)
+            orgs, ds_fields, res_fields, own_reports = [], [], [], []
+            if logged_in:
+                try:
+                    orgs = theme_actions.ihpix_publication_orgs(ctx)
+                except Exception as e:
+                    log.warning('IHP-IX: orgs del modal de publicación: %s', e)
+                try:
+                    ds_fields, res_fields = theme_actions.ihpix_documents_schema_fields(ctx)
+                except Exception as e:
+                    log.warning('IHP-IX: esquema documents: %s', e)
+                if output_code and activity is None:
+                    try:
+                        from ckanext.theme_ejemplo.model import IhpixActivity
+                        rows, _n = IhpixActivity.get_filtered(
+                            status=None, output=output_code,
+                            reported_by=[c.userobj.id, c.userobj.name], limit=50)
+                        own_reports = [{'id': a.id, 'title': a.title, 'status': a.status}
+                                       for a in rows]
+                    except Exception as e:
+                        log.warning('IHP-IX: reportes propios del Output %s: %s', output_code, e)
+            try:
+                initiatives = toolkit.h.get_initiatives_groups_list() or []
+            except Exception:
+                initiatives = []
+            try:
+                upload_max_mb = int(config.get('ckanext.theme_ejemplo.ihpix_upload_max_mb', 50))
+            except (TypeError, ValueError):
+                upload_max_mb = 50
+            return {
+                'logged_in': logged_in,
+                'orgs': [{'id': o.get('id'), 'name': o.get('name'),
+                          'title': o.get('title') or o.get('display_name') or o.get('name')}
+                         for o in orgs],
+                'member_states': get_member_states_for_select(),
+                'initiatives': [(n, t) for n, t in initiatives],
+                'schema_fields': ds_fields,
+                'document_types': list(P.DOCUMENT_TYPES),
+                'default_document_type': P.DEFAULT_DOCUMENT_TYPE,
+                'educational_type': P.EDUCATIONAL_DOCUMENT_TYPE,
+                'own_reports': own_reports,
+                'user_email': (c.userobj.email or '') if logged_in else '',
+                'output_code': output_code or '',
+                'activity_id': activity.get('id') if isinstance(activity, dict) and activity.get('id') else '',
+                'upload_max_mb': upload_max_mb,
+                'accept': ','.join('.' + e for e in P.ALLOWED_EXTENSIONS),
+                'can_propose_courses': toolkit.asbool(config.get(
+                    'ckanext.theme_ejemplo.ihpix_course_proposals_enabled', True)),
+                'post_url': h.url_for('theme_ejemplo.ihpix_publication_create'),
+                'propose_url': h.url_for('theme_ejemplo.ihpix_course_propose'),
+                'dataset_new_url': _ihpix_safe_url('dataset.new', '/dataset/new'),
+                'organizations_url': h.url_for('/organization'),
+            }
+
+        @staticmethod
+        def _ihpix_error_response(e, status=400):
+            """ValidationError → JSON {'success': False, 'errors': {...}}."""
+            errors = {}
+            for key, msgs in (getattr(e, 'error_dict', None) or {}).items():
+                if isinstance(msgs, (list, tuple)):
+                    msgs = ', '.join(str(m) for m in msgs)
+                errors[key] = str(msgs)
+            if not errors:
+                errors['__all__'] = str(e)
+            return jsonify({'success': False, 'errors': errors}), status
+
+        @staticmethod
+        def ihpix_publication_create_view():
+            """POST multipart /ihpix/publications → crea el dataset `documents`
+            (+ recurso) y, si viene `activity_id`, lo adjunta al reporte."""
+            if not c.userobj:
+                return jsonify({'success': False, 'reason': 'login',
+                                'error': _('You must be logged in')}), 403
+            data = {k: v for k, v in request.form.items()}
+            upload = request.files.get('file') or request.files.get('upload')
+            if upload is not None and not getattr(upload, 'filename', ''):
+                upload = None
+            if upload is not None:
+                data['upload'] = upload
+            try:
+                result = toolkit.get_action('ihpix_publication_create')(
+                    MyLogica._ihpix_ctx(), data)
+            except toolkit.ValidationError as e:
+                return MyLogica._ihpix_error_response(e, 400)
+            except toolkit.NotAuthorized as e:
+                return jsonify({'success': False, 'reason': 'no_org', 'error': str(e),
+                                'organizations_url': h.url_for('/organization')}), 403
+            except toolkit.ObjectNotFound as e:
+                return jsonify({'success': False, 'error': str(e)}), 404
+            except Exception as e:
+                log.error('IHP-IX: error creando publicación: %s', e, exc_info=True)
+                return jsonify({'success': False,
+                                'error': _('The publication could not be created')}), 500
+            result['success'] = True
+            return jsonify(result)
+
+        @staticmethod
+        def ihpix_course_propose_view():
+            """POST /ihpix/courses/propose (XHR → JSON; form → redirect+flash)."""
+            wants_json = (request.headers.get('X-Requested-With') == 'XMLHttpRequest'
+                          or 'application/json' in (request.headers.get('Accept') or ''))
+            if not c.userobj:
+                if wants_json:
+                    return jsonify({'success': False, 'reason': 'login',
+                                    'error': _('You must be logged in')}), 403
+                return _require_login()
+            data = {k: v for k, v in request.form.items()}
+            back = data.get('came_from') or h.url_for('theme_ejemplo.courses')
+            try:
+                result = toolkit.get_action('ihpix_course_propose')(MyLogica._ihpix_ctx(), data)
+            except toolkit.ValidationError as e:
+                if wants_json:
+                    return MyLogica._ihpix_error_response(e, 400)
+                h.flash_error(_format_error_dict(e.error_dict))
+                return redirect(back)
+            except toolkit.NotAuthorized as e:
+                if wants_json:
+                    return jsonify({'success': False, 'error': str(e)}), 403
+                h.flash_error(str(e))
+                return redirect(back)
+            if wants_json:
+                result['success'] = True
+                return jsonify(result)
+            if result.get('status') == 'approved':
+                h.flash_success(_('This course is already in the IHP-WINS catalogue.'))
+            else:
+                h.flash_success(_('Thank you! The course was proposed and will appear once the IHP-WINS team approves it.'))
+            return redirect(back)
+
+        @staticmethod
+        def ihpix_my_reports():
+            """Atajo /ihpix/my-reports → pestaña IHP-IX del perfil propio."""
+            redirect = _require_login()
+            if redirect:
+                return redirect
+            status = request.args.get('status', '').strip()
+            kwargs = {'status': status} if status else {}
+            return h.redirect_to('theme_ejemplo.user_ihpix', id=c.user, **kwargs)
+
+        @staticmethod
+        def user_ihpix(id):
+            """Pestaña IHP-IX del perfil: reportes del usuario.
+
+            El propio usuario y los sysadmins ven todos los estados con
+            contadores; el resto sólo los publicados.
+            """
+            from ckanext.theme_ejemplo.model import (
+                IhpixActivity, init_ihpix_activities_db,
+            )
+            init_ihpix_activities_db()
+            try:
+                user_dict, is_myself, is_sysadmin = MyLogica._get_user_context(id)
+            except toolkit.ObjectNotFound:
+                return abort(404, _('User not found'))
+            user_obj = model.User.get(user_dict['id'])
+
+            can_see_all = bool(is_myself or is_sysadmin)
+            status_filter = request.args.get('status', '').strip()
+            if not can_see_all:
+                status_filter = IhpixActivity.STATUS_PUBLISHED
+            elif status_filter not in IhpixActivity.VALID_STATUSES:
+                status_filter = ''
+
+            page = h.get_page_number(request.args) or 1
+            items_per_page = 20
+            try:
+                results, total = IhpixActivity.get_by_reporter(
+                    user_obj, status=status_filter or None,
+                    limit=items_per_page,
+                    offset=items_per_page * (page - 1))
+                reports = [r.as_dict() for r in results]
+                counts = (IhpixActivity.count_by_status_for_reporter(user_obj)
+                          if can_see_all else {})
+            except Exception as e:
+                log.error('Error listing IHP-IX reports for user %s: %s', id, e)
+                reports, total, counts = [], 0, {}
+
+            pager = h.Page(
+                collection=range(total),
+                page=page,
+                url=h.pager_url,
+                items_per_page=items_per_page,
+            )
+            pager.items = reports
+
+            summary, feed = None, []
+            if c.userobj:
+                summary = toolkit.h.get_user_ihpix_summary(user_dict['id'])
+                try:
+                    feed = toolkit.get_action('ihpix_contribution_list')(
+                        {'user': c.user, 'model': model, 'auth_user_obj': c.userobj},
+                        {'user_id': user_dict['id'], 'limit': 20}).get('results', [])
+                except Exception as e:
+                    log.warning('IHP-IX feed de usuario %s: %s', id, e)
+
+            return render_template(
+                'user/ihpix.html',
+                user_dict=user_dict,
+                reports=reports,
+                total=total,
+                page=pager,
+                status_filter=status_filter,
+                counts=counts,
+                counts_total=sum(counts.values()) if counts else total,
+                can_see_all=can_see_all,
+                is_myself=is_myself,
+                is_sysadmin=is_sysadmin,
+                summary=summary,
+                feed=feed,
+            )
+
+        # ── IHP-IX Dashboard ──────────────────────────────────────────────
+
+        @staticmethod
+        def ihpix_dashboard():
+            """Dashboard IHP-IX: cualquier usuario logueado."""
+            redirect = _require_login()
+            if redirect:
+                return redirect
+            from ckanext.theme_ejemplo.model import (
+                IhpixActivity, init_ihpix_activities_db,
+            )
+            init_ihpix_activities_db()
+
+            pa_filter = request.args.get('pa', '')
+            try:
+                context = {'user': c.user, 'model': model}
+                stats = toolkit.get_action('ihpix_dashboard_stats')(
+                    context, {'priority_area': pa_filter}
+                )
+            except Exception as e:
+                log.error('Error fetching IHP-IX dashboard stats: %s', e)
+                stats = {
+                    'total_activities': 0, 'total_countries': 0,
+                    'total_institutions': 0, 'pending_reports': 0,
+                    'by_priority_area': [], 'by_output': [],
+                    'timeline': [], 'by_country': [],
+                    'by_biennium': [],
+                    'stakeholders_knowledge': 0, 'stakeholders_awareness': 0,
+                    'knowledge_products': 0, 'scientific_products': 0,
+                    'training_materials': 0,
+                    'filter_options': {
+                        'bienniums': [], 'countries': [],
+                        'priority_areas': ['PA1', 'PA2', 'PA3', 'PA4', 'PA5'],
+                    },
+                }
+
+            is_sysadmin = False
+            try:
+                if c.userobj and c.userobj.sysadmin:
+                    is_sysadmin = True
+            except Exception:
+                pass
+
+            return render_template(
+                'ihpix/dashboard.html',
+                stats=stats,
+                pa_filter=pa_filter,
+                is_sysadmin=is_sysadmin,
+            )
+
+        # ── IHP-IX Admin: Review Reports ──────────────────────────────────
+
+        @staticmethod
+        def ihpix_reports_admin():
+            """Admin panel to review pending/rejected reports."""
+            try:
+                context = {'user': c.user, 'model': model}
+                toolkit.check_access('ihpix_report_review', context, {})
+            except toolkit.NotAuthorized:
+                return abort(403)
+
+            from ckanext.theme_ejemplo.model import (
+                IhpixActivity, init_ihpix_activities_db,
+            )
+            init_ihpix_activities_db()
+
+            status_filter = request.args.get('status', 'pending')
+            if status_filter not in IhpixActivity.VALID_STATUSES + ('all',):
+                status_filter = 'pending'
+            page = int(request.args.get('page', 1))
+            items_per_page = 20
+            offset = items_per_page * (page - 1)
+
+            try:
+                results, total = IhpixActivity.get_all(
+                    status=None if status_filter == 'all' else status_filter,
+                    limit=items_per_page, offset=offset
+                )
+                reports = [r.as_dict() for r in results]
+            except Exception as e:
+                log.error('Error fetching IHP-IX reports: %s', e)
+                reports = []
+                total = 0
+
+            counts = {}
+            for status in IhpixActivity.VALID_STATUSES:
+                try:
+                    counts[status] = IhpixActivity.count_by_status(status)
+                except Exception:
+                    counts[status] = 0
+
+            return render_template(
+                'admin/ihpix_reports.html',
+                reports=reports,
+                links_by_activity=_ihpix_links_map(reports),
+                total=total,
+                status_filter=status_filter,
+                page=page,
+                items_per_page=items_per_page,
+                pending_count=counts.get('pending', 0),
+                rejected_count=counts.get('rejected', 0),
+                draft_count=counts.get('draft', 0),
+                published_count=counts.get('published', 0),
+            )
+
+        @staticmethod
+        def ihpix_report_review_admin():
+            """AJAX endpoint: approve or reject a report."""
+            try:
+                context = {'user': c.user, 'model': model}
+                toolkit.check_access('ihpix_report_review', context, {})
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False,
+                                'error': 'Not authorized'}), 403
+
+            try:
+                data_dict = {
+                    'id': request.form.get('id', ''),
+                    'action': request.form.get('action', ''),
+                    'review_notes': request.form.get('review_notes', ''),
+                }
+                context = {'user': c.user, 'model': model}
+                result = toolkit.get_action('ihpix_report_review')(
+                    context, data_dict
+                )
+                return jsonify({'success': True, 'data': result})
+            except toolkit.ValidationError as e:
+                return jsonify({'success': False,
+                                'error': str(e.error_dict)}), 400
+            except toolkit.ObjectNotFound:
+                return jsonify({'success': False,
+                                'error': 'Report not found'}), 404
+            except Exception as e:
+                log.error('Error reviewing IHP-IX report: %s', e)
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        # ── IHP-IX Admin Overview (PDF 2026 spec) ─────────────────────────
+
+        @staticmethod
+        def ihpix_admin_overview():
+            """Sysadmin overview dashboard: KPIs, completeness, distributions."""
+            if not (c.userobj and c.userobj.sysadmin):
+                return abort(403, _('Not authorized'))
+
+            from ckanext.theme_ejemplo import ihpix_constants as C
+
+            # Optional filters from query string
+            filter_keys = ('priority_area', 'biennium', 'region', 'country',
+                           'output', 'flagship', 'ctwg', 'status')
+            filters = {k: (request.args.get(k) or '').strip()
+                       for k in filter_keys}
+            filters = {k: v for k, v in filters.items() if v}
+
+            if request.args.get('export') == 'csv':
+                return MyLogica._ihpix_export_csv(filters)
+
+            context = {'user': c.user, 'model': model}
+            try:
+                stats = toolkit.get_action('ihpix_admin_overview_stats')(
+                    context, dict(filters)
+                )
+            except Exception as e:
+                log.error('Error loading IHP-IX overview stats: %s', e)
+                stats = {}
+
+            return render_template(
+                'admin/ihpix_overview.html',
+                stats=stats,
+                filters=filters,
+                priority_areas=C.PRIORITY_AREAS,
+                biennia=C.BIENNIA,
+                regions=C.REGIONS,
+                flagships=C.FLAGSHIPS,
+                cross_cutting_wgs=C.CROSS_CUTTING_WGS,
+                kpis=C.KPIS,
+                statuses=['draft', 'pending', 'published', 'rejected'],
+            )
+
+        @staticmethod
+        def _ihpix_export_csv(filters):
+            """CSV completo de actividades con los filtros del overview (streaming)."""
+            import csv
+            import io as _io
+            import datetime as _dt
+            from ckanext.theme_ejemplo.model import (
+                IhpixActivity, init_ihpix_activities_db,
+            )
+            init_ihpix_activities_db()
+
+            results, _total = IhpixActivity.get_filtered(
+                status=filters.get('status') or None,
+                priority_area=filters.get('priority_area') or None,
+                biennium=filters.get('biennium') or None,
+                output=filters.get('output') or None,
+                country=filters.get('country') or None,
+                region=filters.get('region') or None,
+                flagship=filters.get('flagship') or None,
+                ctwg=filters.get('ctwg') or None,
+                limit=None,
+            )
+            rows = [a.as_dict() for a in results]
+            links_map = _ihpix_links_map(rows)
+            fields = list(rows[0].keys()) if rows else ['id', 'title']
+            fields.append('links_count')
+            fields.append('links')
+
+            def generate():
+                buf = _io.StringIO()
+                writer = csv.writer(buf)
+                writer.writerow(fields)
+                yield buf.getvalue()
+                for row in rows:
+                    buf.seek(0)
+                    buf.truncate(0)
+                    links = links_map.get(row['id'], [])
+                    row['links_count'] = len(links)
+                    row['links'] = ' | '.join(
+                        '{} ({})'.format(l.get('title', ''), l.get('public_url') or l.get('url', ''))
+                        for l in links)
+                    writer.writerow([
+                        '' if row.get(f) is None else row.get(f) for f in fields
+                    ])
+                    yield buf.getvalue()
+
+            filename = 'ihpix-activities-{}.csv'.format(
+                _dt.date.today().isoformat())
+            return Response(
+                stream_with_context(generate()),
+                mimetype='text/csv; charset=utf-8',
+                headers={'Content-Disposition': 'attachment; filename="%s"' % filename},
+            )
+
+        @staticmethod
+        def ihpix_recompute_summary_view():
+            """POST: recalcula ihpix_country_summary y vuelve al overview."""
+            if not (c.userobj and c.userobj.sysadmin):
+                return abort(403, _('Not authorized'))
+            context = {'user': c.user, 'model': model, 'auth_user_obj': c.userobj}
+            try:
+                result = toolkit.get_action('ihpix_country_summary_recompute')(
+                    context, {})
+                h.flash_success(_('Country summary recomputed for %(n)d countries.')
+                                % {'n': result.get('updated', 0)})
+            except Exception as e:
+                log.error('IHP-IX recompute summary: %s', e)
+                h.flash_error(_('Could not recompute the country summary.'))
+            return h.redirect_to('theme_ejemplo.ihpix_admin_overview')
+
+        # ── Open Learning Courses (caché curada) ──────────────────────────
+
+        @staticmethod
+        def open_learning_admin():
+            """Panel admin de curación de cursos Open Learning. Solo sysadmin."""
+            from ckan import plugins as p
+            if p.plugin_loaded('learning'):
+                return toolkit.redirect_to('learning_admin.admin')
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('open_learning_course_list', context, {})
+            except toolkit.NotAuthorized:
+                return base.abort(403, _('Not authorized'))
+
+            data = toolkit.get_action('open_learning_course_list')(context, {})
+            extra_vars = {
+                'courses': data.get('results', []),
+                'courses_count': data.get('count', 0),
+                'counts_by_status': data.get('counts_by_status', {}),
+                'last_sync_at': data.get('last_sync_at'),
+            }
+            return base.render('admin/open_learning.html', extra_vars=extra_vars)
+
+        @staticmethod
+        def open_learning_set_status():
+            """AJAX: cambiar el status de curación de un curso."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('open_learning_course_set_status', context, {})
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+
+            course_id = request.form.get('id', '')
+            status = request.form.get('status', '')
+            if not course_id or not status:
+                return jsonify({'success': False, 'error': 'Missing id or status'}), 400
+
+            try:
+                result = toolkit.get_action('open_learning_course_set_status')(
+                    context, {'id': course_id, 'status': status}
+                )
+                return jsonify(result)
+            except toolkit.ObjectNotFound:
+                return jsonify({'success': False, 'error': 'Not found'}), 404
+            except toolkit.ValidationError as e:
+                return jsonify({'success': False, 'error': str(e)}), 400
+            except Exception as e:
+                log.error(f'Error al cambiar status de curso Open Learning: {e}')
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        @staticmethod
+        def open_learning_set_type():
+            """AJAX: corregir el tipo (permanent/scheduled) de un curso."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('open_learning_course_set_type', context, {})
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+
+            course_id = request.form.get('id', '')
+            if not course_id:
+                return jsonify({'success': False, 'error': 'Missing id'}), 400
+
+            data = {'id': course_id}
+            if 'course_type' in request.form:
+                data['course_type'] = request.form['course_type']
+            if 'reset_override' in request.form:
+                data['reset_override'] = request.form['reset_override']
+
+            try:
+                result = toolkit.get_action('open_learning_course_set_type')(
+                    context, data
+                )
+                return jsonify(result)
+            except toolkit.ObjectNotFound:
+                return jsonify({'success': False, 'error': 'Not found'}), 404
+            except toolkit.ValidationError as e:
+                return jsonify({'success': False, 'error': str(e)}), 400
+            except Exception as e:
+                log.error(f'Error al cambiar tipo de curso Open Learning: {e}')
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        @staticmethod
+        def open_learning_sync_now():
+            """AJAX: forzar sincronización con la API de Open Learning."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access('open_learning_sync', context, {})
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+
+            try:
+                result = toolkit.get_action('open_learning_sync')(context, {})
+                result['success'] = True
+                return jsonify(result)
+            except Exception as e:
+                log.error(f'Error en sync manual de Open Learning: {e}')
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        @staticmethod
+        def open_learning_search():
+            """AJAX: buscar cursos en la API de Open Learning por término."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access(
+                    'open_learning_course_search', context, {})
+            except toolkit.NotAuthorized:
+                return jsonify(
+                    {'success': False, 'error': 'Not authorized'}), 403
+
+            query = request.form.get('query', '').strip()
+            if not query:
+                return jsonify(
+                    {'success': False, 'error': 'Query is required'}), 400
+
+            try:
+                result = toolkit.get_action('open_learning_course_search')(
+                    context, {'query': query}
+                )
+                result['success'] = True
+                return jsonify(result)
+            except Exception as e:
+                log.error(f'Error en búsqueda API de Open Learning: {e}')
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        @staticmethod
+        def open_learning_add_course():
+            """AJAX: agregar un curso de Open Learning por course_id."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            try:
+                toolkit.check_access(
+                    'open_learning_course_add', context, {})
+            except toolkit.NotAuthorized:
+                return jsonify(
+                    {'success': False, 'error': 'Not authorized'}), 403
+
+            course_id = request.form.get('course_id', '').strip()
+            if not course_id:
+                return jsonify(
+                    {'success': False, 'error': 'course_id is required'}), 400
+
+            try:
+                result = toolkit.get_action('open_learning_course_add')(
+                    context, {'course_id': course_id}
+                )
+                return jsonify(result)
+            except toolkit.ObjectNotFound as e:
+                return jsonify({'success': False, 'error': str(e)}), 404
+            except toolkit.ValidationError as e:
+                return jsonify({'success': False, 'error': str(e)}), 400
+            except Exception as e:
+                log.error(f'Error al agregar curso Open Learning: {e}')
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        @staticmethod
+        def courses():
+            """Página pública de cursos Open Learning, separados por tipo."""
+            from ckan import plugins as p
+            if p.plugin_loaded('learning'):
+                return toolkit.redirect_to('learning.search', ext_learning_courses='1')
+            from ckanext.theme_ejemplo import openlearning
+            from ckanext.theme_ejemplo.model import OpenLearningCourse
+
+            # Sync lazy: solo dispara si pasó el TTL; nunca rompe el render
+            openlearning.maybe_sync_courses()
+
+            permanent_courses = [
+                course.as_dict()
+                for course in OpenLearningCourse.get_public(
+                    OpenLearningCourse.TYPE_PERMANENT)
+            ]
+            scheduled_courses = [
+                course.as_dict()
+                for course in OpenLearningCourse.get_public(
+                    OpenLearningCourse.TYPE_SCHEDULED)
+            ]
+            return base.render('courses/index.html', extra_vars={
+                'permanent_courses': permanent_courses,
+                'scheduled_courses': scheduled_courses,
+            })

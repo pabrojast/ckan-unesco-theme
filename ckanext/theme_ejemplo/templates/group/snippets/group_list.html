@@ -1,0 +1,19 @@
+{#
+Display a grid of group items for /group.
+
+groups     - A list of group dicts.
+ranked     - True when the listing is ordered by contribution score.
+rank_start - Offset of the current page, so the pill numbers continue.
+
+The .org-grid* styles live in theme_ejemplo.css (shared with the
+organization, member-state and initiative listings).
+#}
+{% block group_list %}
+<div class="org-grid">
+  {% block group_list_inner %}
+  {% for group in groups %}
+    {% snippet "group/snippets/group_item.html", group=group, position=loop.index, ranked=ranked, rank_start=rank_start or 0 %}
+  {% endfor %}
+  {% endblock %}
+</div>
+{% endblock %}
