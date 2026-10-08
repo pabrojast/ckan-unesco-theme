@@ -48,12 +48,11 @@
     <div class="hv2-hero-title">
       <img class="hv2-hero-logo" src="{{ h.url_for_static('/home_v2/unesco-ihp-logo-white.png') }}" alt="{{ _('UNESCO Intergovernmental Hydrological Programme') }}">
       <span class="hv2-hero-rule" aria-hidden="true"></span>
-      <h1 class="hv2-h1">
-        <span class="hv2-ln"><span>{{ _('Bridging the water data') }}</span></span>
-        <span class="hv2-ln"><span>{{ _('and knowledge gap') }}</span></span>
-      </h1>
+      <div class="hv2-hero-titles">
+        <h1 class="hv2-h1"><span class="hv2-ln"><span>IHP-WINS</span></span></h1>
+        <div class="hv2-hero-sub hv2-fade">{{ _('Bridging the Water Data Knowledge Gap') }}</div>
+      </div>
     </div>
-    <div class="hv2-hero-lead hv2-fade">{{ _('Open water data, maps and knowledge from the UNESCO Water Family, shared on one platform for evidence-based decision making.') }}</div>
 
     <form class="hv2-search hv2-fade" method="get" action="{{ h.url_for('dataset.search') }}" role="search">
       <label for="hv2-q">{{ _('Search data') }}</label>

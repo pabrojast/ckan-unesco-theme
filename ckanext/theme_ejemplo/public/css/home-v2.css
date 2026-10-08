@@ -128,7 +128,9 @@ a.hv2-btn-white, a.hv2-btn-white:hover { background: #FFFFFF; color: var(--hv2-n
 .hv2-hero-title { display: flex; align-items: center; gap: clamp(20px, 2.4vw, 40px); }
 .hv2-hero-logo { height: clamp(110px, 10.5vw, 190px); width: auto; flex: none; filter: drop-shadow(0 2px 14px rgba(0, 0, 0, .35)); }
 .hv2-hero-rule { align-self: stretch; width: 2px; background: rgba(255, 255, 255, .55); flex: none; }
-.hv2 .hv2-h1 { font-weight: 700; font-size: clamp(40px, 5.2vw, 92px); line-height: .98; letter-spacing: -.035em; color: #FFFFFF; text-shadow: 0 2px 6px rgba(0, 0, 0, .35), 0 4px 30px rgba(0, 0, 0, .45); }
+.hv2-hero-titles { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.hv2 .hv2-h1 { font-weight: 700; font-size: clamp(56px, 7vw, 124px); line-height: .95; letter-spacing: -.035em; color: #FFFFFF; text-shadow: 0 2px 6px rgba(0, 0, 0, .35), 0 4px 30px rgba(0, 0, 0, .45); }
+.hv2-hero-sub { font-family: var(--hv2-disp); font-weight: 500; font-size: clamp(22px, 2.3vw, 38px); line-height: 1.15; letter-spacing: -.01em; color: #E6F1FA; text-shadow: 0 1px 4px rgba(0, 0, 0, .4), 0 2px 18px rgba(0, 0, 0, .35); }
 .hv2-ln { display: block; }
 .hv2-ln > span { display: inline-block; animation: hv2-rise 1s cubic-bezier(.2, .7, .2, 1) both; }
 .hv2-ln:nth-child(1) > span { animation-delay: .15s; }
@@ -289,7 +291,8 @@ a.hv2-portal:hover { color: #FFFFFF; }
   .hv2-hero-title { flex-direction: column; align-items: flex-start; gap: 16px; }
   .hv2-hero-rule, .hv2-sep, .hv2-secnav-lbl { display: none; }
   .hv2-hero-logo { height: 96px; }
-  .hv2 .hv2-h1 { font-size: 40px; }
+  .hv2 .hv2-h1 { font-size: 56px; }
+  .hv2-hero-sub { font-size: 22px; }
   .hv2-shead { margin-bottom: 28px; }
   .hv2-xbanner { height: 120px; }
   .hv2-portal-txt { padding: 40px 12px 12px; }
@@ -306,6 +309,7 @@ a.hv2-portal:hover { color: #FFFFFF; }
 .masthead .masthead-brand:has(.hv2-wins-logo) { display: flex; align-items: center; gap: 18px; }
 .masthead .masthead-brand a.logo.hv2-wins-logo { display: inline-flex; align-items: center; padding-left: 18px; border-left: 1px solid rgba(255, 255, 255, .45); }
 .masthead .masthead-brand a.logo.hv2-wins-logo img { height: 46px !important; width: auto !important; padding: 0 !important; filter: drop-shadow(0 1px 8px rgba(0, 0, 0, .35)); }
+/* phones: the header is too narrow for a second logo */
 @media (max-width: 640px) {
-  .masthead .masthead-brand a.logo.hv2-wins-logo img { height: 32px !important; }
+  .masthead .masthead-brand a.logo.hv2-wins-logo { display: none !important; }
 }
