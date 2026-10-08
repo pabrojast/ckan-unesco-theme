@@ -8,49 +8,19 @@
 {% block subtitle %}{{ _(dataset_type.title()) }}{% endblock %}
 
 {% block breadcrumb_content %}
-    {% if pkg %}
-      {% set dataset = h.dataset_display_name(pkg) %}
-      {% if pkg.organization %}
-        {% set organization = h.get_translated(pkg.organization, 'title') or pkg.organization.name %}
-        {% set group_type = pkg.organization.type %}
-        <li>{% link_for _('Organizations'), named_route=pkg.organization.type ~ '.index' %}</li>
-        <li>{% link_for organization|truncate(80), named_route=pkg.organization.type ~ '.read', id=pkg.organization.name, title=organization %}</li>
-      {% else %}
-        <li>{% link_for _(dataset_type.title()), named_route=dataset_type ~ '.search' %}</li>
-      {% endif %}
-    <li{{ self.breadcrumb_content_selected() }}>{% link_for dataset|truncate(80), named_route=pkg.type ~ '.read', id=pkg.id if is_activity_archive else pkg.name, title=dataset %}</li>
+  {% if pkg %}
+    {% set dataset = h.dataset_display_name(pkg) %}
+    {% if pkg.organization %}
+      {% set organization = h.get_translated(pkg.organization, 'title') or pkg.organization.name %}
+      {% set group_type = pkg.organization.type %}
+      <li>{% link_for _('Organizations'), named_route=pkg.organization.type ~ '.index' %}</li>
+      <li>{% link_for organization|truncate(30), named_route=pkg.organization.type ~ '.read', id=pkg.organization.name %}</li>
+    {% else %}
+      <li>{% link_for _(dataset_type.title()), named_route=dataset_type ~ '.search' %}</li>
+    {% endif %}
+    <li{{ self.breadcrumb_content_selected() }}>{% link_for dataset|truncate(30), named_route=pkg.type ~ '.read', id=pkg.id if is_activity_archive else pkg.name %}</li>
   {% else %}
     <li>{% link_for _(dataset_type.title()), named_route=dataset_type ~ '.search' %}</li>
     <li class="active"><a href="">{{ _('Create') }} {{ dataset_type.title() }}</a></li>
-  {% endif %}
-{% endblock %}
-
-{% block scripts %}
-  {{ super() }}
-  {# La barra se muestra si hay vistas O descargas: un dataset recién
-     publicado puede tener descargas y cero vistas todavía. #}
-  {% set dl = namespace(total=0) %}
-  {% for res in (pkg.resources if pkg else []) %}
-    {% set dl.total = dl.total + (res.tracking_summary.total if res.tracking_summary else 0) %}
-  {% endfor %}
-  {% if pkg and pkg.tracking_summary and (pkg.tracking_summary.total or dl.total) %}
-  <script id="tracking-data" type="application/json">
-    {
-      "total": {{ pkg.tracking_summary.total|default(0) }},
-      "recent": {{ pkg.tracking_summary.recent|default(0) }},
-      "resources": {
-        {% for res in pkg.resources %}
-        "{{ res.id }}": {{ res.tracking_summary.total if res.tracking_summary else 0 }}{{ "," if not loop.last }}
-        {% endfor %}
-      },
-      "labels": {
-        "view": {{ _('view')|tojson }},
-        "views": {{ _('views')|tojson }},
-        "download": {{ _('download')|tojson }},
-        "downloads": {{ _('downloads')|tojson }}
-      }
-    }
-  </script>
-  <script src="{{ h.url_for_static('/tracking-display.js') }}"></script>
   {% endif %}
 {% endblock %}

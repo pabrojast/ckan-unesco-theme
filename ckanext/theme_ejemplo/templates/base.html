@@ -1,42 +1,7 @@
 {% ckan_extends %}
 {% block styles %}
-  {# Marca html.js ANTES del CSS: los tabs del home solo colapsan sus
-     paneles cuando hay JS (sin JS se apilan visibles y la botonera de
-     tabs se oculta) #}
-  <script>document.documentElement.classList.add('js');</script>
   {{ super() }}
-<link rel="stylesheet" href="{{ h.url_for_static('/theme_ejemplo.css') }}?v=20261001-header-1" />
-<link rel="stylesheet" href="{{ h.url_for_static('/css/people-orgs.css') }}" />
-<link rel="stylesheet" href="{{ h.url_for_static('/css/search-suggest.css') }}" />
+<link rel="stylesheet" href="/theme_ejemplo.css" />
 <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet" />
-{# Load schemingdcat icons for INSPIRE theme icons globally #}
-{% asset 'ckanext-schemingdcat/schemingdcat-icons' %}
 
-{% endblock %}
-
-{% block head_extras %}
-  {{ super() }}
-  {# Load ckan210-fixes.css LAST to override all other styles #}
-  <link rel="stylesheet" href="{{ h.url_for_static('/ckan210-fixes.css') }}" />
-  {# Analytics Umami (client-side, sin cookies y sin carga en el backend) #}
-  {# El tracker varía según el sitio: producción UNESCO usa aquedra, el resto usa dev-wins #}
-  {% set site_url = config.get('ckan.site_url', '') %}
-  {% if 'ihp-wins.unesco.org' in site_url %}
-    <script defer src="https://analytics.aquedra.com/umami" data-website-id="917993ae-a8ec-4e1c-8685-d0b163ce2f98"></script>
-  {% else %}
-    <script defer src="https://analytics.dev-wins.com/umami" data-website-id="41d963a2-bde7-46b4-8395-7702aa768e59"></script>
-  {% endif %}
-{% endblock %}
-
-{% block scripts %}
-  {% asset 'theme/ckan-bs5-compat-js' %}
-  {{ super() }}
-  {% asset 'theme/theme-ejemplo-runtime-js' %}
-  {# Sugerencias mientras se escribe: se activa en inputs con (o dentro de)
-     data-suggest-scope. La URL pasa por url_for para respetar el idioma. #}
-  <script defer src="{{ h.url_for_static('/search-suggest.js') }}"
-          data-suggest-url="{{ h.url_for('theme_ejemplo.search_suggest') }}"
-          data-label-all="{{ _('See all results for') }}"
-          data-label-empty="{{ _('No suggestions found') }}"
-          data-label-list="{{ _('Search suggestions') }}"></script>
 {% endblock %}

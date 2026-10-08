@@ -1,55 +1,45 @@
 {% set slideshow_items = [
   {
-    'title': _('IHP-WINS: Empowering Open Science & Data-Driven Water Governance'),
-    'subtitle': _("UNESCO's Water Information Network System for evidence-based decision making"),
+    'title': 'IHP-WINS: Empowering Open Science & Data-Driven Water Governance',
     'image': '/Landing_page/Content/01IHP-WEB.jpg',
     'link': '#IHPWINS',
-    'link_text': _('Learn More')
+    'link_text': 'Learn More'
   },
   {
-    'title': _('Citizen Science'),
-    'subtitle': _('Community-driven water monitoring and data collection'),
+    'title': 'Citizen Science',
     'image': '/Landing_page/Content/02IHP-CITIZEN.jpg',
     'link': '/citizen-science-portal',
-    'link_text': _('IHP Citizen Science Portal')
+    'link_text': 'IHP Citizen Science Portal'
   },
   {
-    'title': _('Internet of Things'),
-    'subtitle': _('Real-time water monitoring through connected sensors'),
+    'title': 'Internet of Things',
     'image': '/Landing_page/Content/03IHP-INTERNET.jpg',
     'link': '/iot-portal',
-    'link_text': _('IHP IoT Portal')
+    'link_text': 'IHP IOT Portal'
   },
   {
-    'title': _('Open Learning'),
-    'subtitle': _('Build capacity in water science and management'),
+    'title': 'Open Learning',
     'image': '/Landing_page/Content/04IHP-OPEN.jpg',
     'link': 'https://openlearning.unesco.org/program/intergovernmental-hydrological-programme-ihp/',
-    'link_text': _('IHP UNESCO Open Learning')
+    'link_text': 'IHP UNESCO Open Learning'
   },
   {
-    'title': _('UNESCO News and Events'),
-    'subtitle': _('Stay connected with the global water community'),
+    'title': 'UNESCO Water Family News and Events',
     'image': '/Landing_page/Content/05IHP-NEWS.jpg',
-    'link': '#WaterFamilyEvents',
-    'link_text': _('View Events')
+    'link': '#IHPEvents',
+    'link_text': 'View Events'
   }
 ] %}
 
-<div class="slideshow-container slideshow-modern">
+<div class="slideshow-container">
   <div class="slideshow-wrapper">
     {% for item in slideshow_items %}
-      <div class="slide {% if loop.first %}slide-active{% endif %}" data-index="{{ loop.index0 }}">
+      <div class="slide">
         <div class="slide-image" style="background-image: url('{{ item.image }}');">
           <div class="slide-content">
-            <span class="slide-tag">{{ _('UNESCO IHP') }}</span>
             <h2>{{ item.title }}</h2>
-            <p class="slide-subtitle">{{ item.subtitle }}</p>
             {% if item.link %}
-              <a href="{{ item.link }}" class="btn btn-primary slide-btn" {% if not item.link.startswith('#') %}target="_blank" rel="noopener"{% endif %}>
-                {{ item.link_text }}
-                <i class="fa fa-arrow-right" style="margin-left: 8px;"></i>
-              </a>
+              <a href="{{ item.link }}" class="btn btn-primary slide-btn" {% if not item.link.startswith('#') %}target="_blank" rel="noopener"{% endif %}>{{ item.link_text }}</a>
             {% endif %}
           </div>
         </div>
@@ -57,143 +47,77 @@
     {% endfor %}
   </div>
   
-  <div class="slideshow-progress">
-    <div class="slideshow-progress-bar"></div>
-  </div>
-  
   <div class="slideshow-nav">
-    <button class="prev-btn" aria-label="{{ _('Previous slide') }}">&#10094;</button>
+    <button class="prev-btn" aria-label="Previous slide">&#10094;</button>
     <div class="slideshow-dots">
       {% for item in slideshow_items %}
-        <button class="dot {% if loop.first %}active{% endif %}" aria-label="{{ _('Go to slide {number}').format(number=loop.index) }}"></button>
+        <button class="dot {% if loop.first %}active{% endif %}" aria-label="Go to slide {{ loop.index }}"></button>
       {% endfor %}
     </div>
-    <button class="next-btn" aria-label="{{ _('Next slide') }}">&#10095;</button>
+    <button class="next-btn" aria-label="Next slide">&#10095;</button>
   </div>
 </div>
 
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     let currentSlide = 0;
-    const container = document.querySelector('.slideshow-modern');
-    const slides = document.querySelectorAll('.slideshow-modern .slide');
-    const dots = document.querySelectorAll('.slideshow-modern .dot');
-    const progressBar = document.querySelector('.slideshow-progress-bar');
+    const slides = document.querySelectorAll('.slide');
+    const dots = document.querySelectorAll('.dot');
     const totalSlides = slides.length;
-    const SLIDE_DURATION = 6000;
-    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
-    let slideInterval = null;
-
-    if (!container || !totalSlides) return;
-
-    function runProgress() {
-      if (!progressBar) return;
-      progressBar.style.transition = 'none';
-      progressBar.style.width = '0%';
-      requestAnimationFrame(() => {
-        requestAnimationFrame(() => {
-          progressBar.style.transition = 'width ' + SLIDE_DURATION + 'ms linear';
-          progressBar.style.width = '100%';
-        });
-      });
-    }
-
-    function freezeProgress() {
-      if (!progressBar) return;
-      const width = getComputedStyle(progressBar).width;
-      progressBar.style.transition = 'none';
-      progressBar.style.width = width;
-    }
-
+    
     function showSlide(n) {
-      const prevSlide = currentSlide;
+      // Reset current slide
       currentSlide = (n + totalSlides) % totalSlides;
-
-      slides.forEach((slide, i) => {
-        slide.classList.remove('slide-active', 'slide-exit');
-        if (i === prevSlide && i !== currentSlide) {
-          slide.classList.add('slide-exit');
-        }
+      
+      // Hide all slides
+      slides.forEach(slide => {
+        slide.style.display = 'none';
       });
-
-      dots.forEach(dot => dot.classList.remove('active'));
-
-      slides[currentSlide].classList.add('slide-active');
+      
+      // Remove active class from all dots
+      dots.forEach(dot => {
+        dot.classList.remove('active');
+      });
+      
+      // Show current slide and activate current dot
+      slides[currentSlide].style.display = 'block';
       dots[currentSlide].classList.add('active');
-
-      // La barra de progreso solo corre con el auto-avance activo;
-      // en pausa queda a cero para no sugerir un avance inminente
-      if (slideInterval !== null) {
-        runProgress();
-      } else if (progressBar) {
-        progressBar.style.transition = 'none';
-        progressBar.style.width = '0%';
-      }
     }
-
-    function stopAuto() {
-      if (slideInterval === null) return;
-      clearInterval(slideInterval);
-      slideInterval = null;
-      freezeProgress();
-    }
-
-    function startAuto() {
-      if (slideInterval !== null || reduceMotion.matches || totalSlides < 2) return;
-      slideInterval = setInterval(() => showSlide(currentSlide + 1), SLIDE_DURATION);
-      runProgress();
-    }
-
-    function resetInterval() {
-      // Interacción manual: reinicia el ciclo solo si el auto-avance está activo
-      if (slideInterval === null) return;
-      clearInterval(slideInterval);
-      slideInterval = setInterval(() => showSlide(currentSlide + 1), SLIDE_DURATION);
-    }
-
+    
+    // Initialize the slideshow
     showSlide(0);
-    startAuto();
-
-    // Pausa en hover y mientras el foco esté dentro del carrusel
-    container.addEventListener('mouseenter', stopAuto);
-    container.addEventListener('mouseleave', startAuto);
-    container.addEventListener('focusin', stopAuto);
-    container.addEventListener('focusout', (e) => {
-      if (!container.contains(e.relatedTarget)) startAuto();
-    });
-
-    if (typeof reduceMotion.addEventListener === 'function') {
-      reduceMotion.addEventListener('change', () => {
-        if (reduceMotion.matches) stopAuto(); else startAuto();
-      });
-    }
-
-    document.querySelector('.slideshow-modern .prev-btn').addEventListener('click', () => {
-      resetInterval();
-      showSlide(currentSlide - 1);
-    });
-
-    document.querySelector('.slideshow-modern .next-btn').addEventListener('click', () => {
-      resetInterval();
+    
+    // Auto advance slides every 5 seconds
+    let slideInterval = setInterval(() => {
       showSlide(currentSlide + 1);
+    }, 5000);
+    
+    // Event listeners for navigation
+    document.querySelector('.prev-btn').addEventListener('click', () => {
+      clearInterval(slideInterval);
+      showSlide(currentSlide - 1);
+      slideInterval = setInterval(() => {
+        showSlide(currentSlide + 1);
+      }, 5000);
     });
-
+    
+    document.querySelector('.next-btn').addEventListener('click', () => {
+      clearInterval(slideInterval);
+      showSlide(currentSlide + 1);
+      slideInterval = setInterval(() => {
+        showSlide(currentSlide + 1);
+      }, 5000);
+    });
+    
+    // Event listeners for dots
     dots.forEach((dot, index) => {
       dot.addEventListener('click', () => {
-        resetInterval();
+        clearInterval(slideInterval);
         showSlide(index);
+        slideInterval = setInterval(() => {
+          showSlide(currentSlide + 1);
+        }, 5000);
       });
     });
-
-    // Soporte táctil (swipe)
-    let touchStartX = 0;
-    container.addEventListener('touchstart', (e) => { touchStartX = e.changedTouches[0].screenX; }, {passive: true});
-    container.addEventListener('touchend', (e) => {
-      const diff = e.changedTouches[0].screenX - touchStartX;
-      if (Math.abs(diff) > 50) {
-        resetInterval();
-        showSlide(currentSlide + (diff > 0 ? -1 : 1));
-      }
-    }, {passive: true});
   });
-</script>
+</script> 
