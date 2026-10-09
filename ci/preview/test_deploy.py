@@ -28,3 +28,25 @@ def test_patch_compares_live_revision_and_changes_only_ckan(monkeypatch):
     assert ops[1]['value'] == 'old'
     assert ops[2]['path'] == '/spec/template/spec/containers/1/image'
     assert ops[3]['value']['keep'] == 'yes'
+
+
+def test_smoke_retries_transient_route_failure(monkeypatch):
+    calls = []
+    def check(sha):
+        calls.append(sha)
+        if len(calls) == 1:
+            raise OSError('transient ingress connection reset')
+    monkeypatch.setattr(deploy, 'smoke_once', check)
+    monkeypatch.setattr(deploy.time, 'sleep', lambda _: None)
+    deploy.smoke('expected-sha')
+    assert calls == ['expected-sha', 'expected-sha']
+
+
+def test_smoke_persistent_failure_is_not_accepted(monkeypatch):
+    ticks = iter([0, 151])
+    monkeypatch.setattr(deploy.time, 'monotonic', lambda: next(ticks))
+    def fail(_):
+        raise RuntimeError('wrong SHA')
+    monkeypatch.setattr(deploy, 'smoke_once', fail)
+    with pytest.raises(RuntimeError, match='wrong SHA'):
+        deploy.smoke('expected-sha')
