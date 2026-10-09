@@ -89,11 +89,8 @@
       <a class="hv2-gl" href="{{ h.url_for('/memberstates') }}"><span class="hv2-gl-n">{{ h.home_v2_short_number(n_states) }}</span><span class="hv2-gl-l">{{ _('Member States') }}</span></a>
       <a class="hv2-gl" href="{{ h.url_for('dataset.search') }}"><span class="hv2-gl-n">{{ h.home_v2_short_number(n_datasets) }}</span><span class="hv2-gl-l">{{ _('Datasets') }}</span></a>
       <a class="hv2-gl" href="{{ h.url_for('/documents') }}"><span class="hv2-gl-n">{{ h.home_v2_short_number(n_docs) }}</span><span class="hv2-gl-l">{{ _('Documents') }}</span></a>
-      {% if n_views and n_views > 0 %}
       <div class="hv2-gl"><span class="hv2-gl-n">{{ h.home_v2_short_number(n_views) }}</span><span class="hv2-gl-l">{{ _('Page views') }}</span></div>
-      {% elif n_downloads and n_downloads > 0 %}
       <div class="hv2-gl"><span class="hv2-gl-n">{{ h.home_v2_short_number(n_downloads) }}</span><span class="hv2-gl-l">{{ _('Downloads') }}</span></div>
-      {% endif %}
     </div>
   </div>
 </section>
