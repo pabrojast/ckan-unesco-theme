@@ -20,6 +20,9 @@
 
 <div class="aiw" data-group="{{ group_dict.name }}">
   {% include "ai_water_portal/snippets/header.html" %}
+  <div class="aiw-wrap aiw-actions">
+    {% snippet 'group/snippets/membership_action.html', group_dict=group_dict %}
+  </div>
 
 
 <section class="aiw-hero" aria-labelledby="aiw-hero-title">

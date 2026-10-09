@@ -65,6 +65,7 @@
       {% if c.userobj %}
       <li><a href="{{ h.url_for('theme_ejemplo.group_ihpix', name=gname) }}" {% if section == 'ihpix' %}aria-current="page"{% endif %}>{{ _('IHP-IX') }}</a></li>
       {% endif %}
+      {% snippet 'group/snippets/membership_nav.html', group_dict=group_dict %}
     </ul>
   </div>
 </nav>

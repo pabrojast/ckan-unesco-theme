@@ -123,6 +123,65 @@ def define_membership_request_table():
         meta.mapper(MembershipRequest, membership_request_table)
 
 
+# ── Solicitudes de membresía de iniciativas ──────────────────────────────────
+
+initiative_membership_request_table = None
+
+
+class InitiativeMembershipRequest(model.DomainObject):
+    """Solicitud para incorporarse a una iniciativa existente."""
+
+    def __init__(self, user_id, group_id, message=u''):
+        self.id = str(uuid.uuid4())
+        self.user_id = user_id
+        self.group_id = group_id
+        self.message = message
+        self.status = u'pending'
+        self.role = u'member'
+        self.created_at = datetime.datetime.utcnow()
+        self.handled_by = None
+        self.handled_at = None
+        self.admin_note = u''
+
+    def as_dict(self):
+        result = {key: getattr(self, key) for key in (
+            'id', 'user_id', 'group_id', 'message', 'status', 'role',
+            'handled_by', 'admin_note')}
+        for key in ('created_at', 'handled_at'):
+            value = getattr(self, key)
+            result[key] = value.isoformat() if value else None
+        return result
+
+
+def init_initiative_memberships_db():
+    """Crea la tabla y su protección contra pendientes duplicados."""
+    global initiative_membership_request_table
+    if initiative_membership_request_table is None:
+        table = initiative_membership_request_table = Table(
+            'initiative_membership_request', meta.metadata,
+            Column('id', UnicodeText, primary_key=True),
+            Column('user_id', UnicodeText, nullable=False),
+            Column('group_id', UnicodeText, nullable=False),
+            Column('message', UnicodeText, nullable=False, default=u''),
+            Column('status', UnicodeText, nullable=False, default=u'pending'),
+            Column('role', UnicodeText, nullable=False, default=u'member'),
+            Column('created_at', DateTime, nullable=False),
+            Column('handled_by', UnicodeText),
+            Column('handled_at', DateTime),
+            Column('admin_note', UnicodeText, nullable=False, default=u''),
+        )
+        Index('initiative_membership_pending_unique', table.c.user_id,
+              table.c.group_id, unique=True,
+              postgresql_where=table.c.status == 'pending',
+              sqlite_where=table.c.status == 'pending')
+        Index('initiative_membership_group_status', table.c.group_id, table.c.status)
+        try:
+            meta.registry.map_imperatively(InitiativeMembershipRequest, table)
+        except AttributeError:
+            meta.mapper(InitiativeMembershipRequest, table)
+    initiative_membership_request_table.create(meta.engine, checkfirst=True)
+
+
 # ── Featured Publication Model ───────────────────────────────────────────────
 
 featured_publication_table = None

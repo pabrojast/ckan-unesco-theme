@@ -1,0 +1,26 @@
+{% extends "page.html" %}
+{% block subtitle %}{{ _('Initiative membership requests') }}{% endblock %}
+{% block breadcrumb_content %}<li class="active">{{ _('Initiative membership requests') }}</li>{% endblock %}
+{% block primary_content_inner %}
+  <div class="membership-requests-dashboard">
+    <h1>{{ _('Initiative membership requests') }}</h1>
+    <p>{{ _('Initiatives with pending membership requests.') }}</p>
+    {% if groups_with_requests %}
+      <div class="membership-orgs-grid">
+        {% for group in groups_with_requests %}
+          <a class="membership-org-card" href="{{ h.url_for('theme_ejemplo.initiative_membership_requests', name=group.name) }}">
+            <div class="membership-org-card-inner">
+              {% if group.image_url %}<img class="membership-org-img" src="{{ group.image_url }}" alt="" />{% endif %}
+              <div class="membership-org-info">
+                <h3>{{ group.title or group.name }}</h3>
+                <span class="badge membership-badge">{{ group.pending_count }} {{ _('pending') }}</span>
+              </div>
+            </div>
+          </a>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="empty">{{ _('No pending membership requests across your initiatives.') }}</p>
+    {% endif %}
+  </div>
+{% endblock %}

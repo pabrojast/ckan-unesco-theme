@@ -8487,3 +8487,96 @@ msgstr ""
 msgid "Login"
 msgstr ""
 
+
+#. Membresías de iniciativas.
+msgid "Initiative membership requests"
+msgstr ""
+
+#. Membresías de iniciativas.
+msgid "Initiative not found"
+msgstr ""
+
+#. Membresías de iniciativas.
+msgid "You are already a member of this initiative."
+msgstr ""
+
+#. Membresías de iniciativas.
+msgid "You already have a pending request for this initiative."
+msgstr ""
+
+#. Membresías de iniciativas.
+msgid "Message must be text."
+msgstr ""
+
+#. Membresías de iniciativas.
+msgid "Invalid request status."
+msgstr ""
+
+#. Membresías de iniciativas.
+msgid "Invalid membership role."
+msgstr ""
+
+#. Membresías de iniciativas.
+msgid "The applicant is no longer an active user."
+msgstr ""
+
+#. Membresías de iniciativas.
+msgid "Only initiative administrators can manage membership requests."
+msgstr ""
+
+#. Membresías de iniciativas.
+msgid "Your request to join this initiative has been sent."
+msgstr ""
+
+#. Membresías de iniciativas.
+msgid ""
+"Membership in this initiative is managed by its administrators. Your request"
+" will be reviewed and you will be notified of the outcome."
+msgstr ""
+
+#. Membresías de iniciativas.
+msgid ""
+"Describe your interest in this initiative, your experience and how you would"
+" like to contribute..."
+msgstr ""
+
+#. Membresías de iniciativas.
+msgid "Initiatives with pending membership requests."
+msgstr ""
+
+#. Membresías de iniciativas.
+msgid "No pending membership requests across your initiatives."
+msgstr ""
+
+#. Membresías de iniciativas.
+msgid "Request to join initiative: {title}"
+msgstr ""
+
+#. Membresías de iniciativas.
+msgid ""
+"{name} has requested to join the initiative \"{title}\".\n"
+"\n"
+"Message:\n"
+"{message}\n"
+"\n"
+"Review the request: {url}"
+msgstr ""
+
+#. Membresías de iniciativas.
+msgid "Your membership request for {title}"
+msgstr ""
+
+#. Membresías de iniciativas.
+msgid ""
+"Your request to join the initiative \"{title}\" was reviewed.\n"
+"\n"
+"Decision: {decision}\n"
+"{note}\n"
+"\n"
+"Initiative: {url}"
+msgstr ""
+
+#. Membresías de iniciativas.
+msgid "Deleted user"
+msgstr ""
+

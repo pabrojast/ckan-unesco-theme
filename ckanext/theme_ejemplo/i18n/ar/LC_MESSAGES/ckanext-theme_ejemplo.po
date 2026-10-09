@@ -8912,3 +8912,107 @@ msgstr "موارد التعلّم"
 #~ "A growing global hub for water knowledge — real-time figures from our "
 #~ "network."
 #~ msgstr "مركز عالمي متنامٍ للمعرفة المائية — أرقام فورية من شبكتنا."
+
+#. Membresías de iniciativas.
+msgid "Initiative membership requests"
+msgstr "طلبات الانضمام إلى المبادرات"
+
+#. Membresías de iniciativas.
+msgid "Initiative not found"
+msgstr "لم يتم العثور على المبادرة"
+
+#. Membresías de iniciativas.
+msgid "You are already a member of this initiative."
+msgstr "أنت عضو في هذه المبادرة بالفعل."
+
+#. Membresías de iniciativas.
+msgid "You already have a pending request for this initiative."
+msgstr "لديك بالفعل طلب قيد المراجعة لهذه المبادرة."
+
+#. Membresías de iniciativas.
+msgid "Message must be text."
+msgstr "يجب أن تكون الرسالة نصًا."
+
+#. Membresías de iniciativas.
+msgid "Invalid request status."
+msgstr "حالة الطلب غير صالحة."
+
+#. Membresías de iniciativas.
+msgid "Invalid membership role."
+msgstr "دور العضوية غير صالح."
+
+#. Membresías de iniciativas.
+msgid "The applicant is no longer an active user."
+msgstr "لم يعد حساب مقدم الطلب نشطًا."
+
+#. Membresías de iniciativas.
+msgid "Only initiative administrators can manage membership requests."
+msgstr "يمكن لمسؤولي المبادرة فقط إدارة طلبات الانضمام."
+
+#. Membresías de iniciativas.
+msgid "Your request to join this initiative has been sent."
+msgstr "تم إرسال طلب انضمامك إلى هذه المبادرة."
+
+#. Membresías de iniciativas.
+msgid ""
+"Membership in this initiative is managed by its administrators. Your request"
+" will be reviewed and you will be notified of the outcome."
+msgstr "يدير مسؤولو هذه المبادرة العضوية فيها. ستتم مراجعة طلبك وإبلاغك بالنتيجة."
+
+#. Membresías de iniciativas.
+msgid ""
+"Describe your interest in this initiative, your experience and how you would"
+" like to contribute..."
+msgstr "صِف اهتمامك بهذه المبادرة وخبرتك وكيف تود المساهمة..."
+
+#. Membresías de iniciativas.
+msgid "Initiatives with pending membership requests."
+msgstr "مبادرات لديها طلبات انضمام قيد المراجعة."
+
+#. Membresías de iniciativas.
+msgid "No pending membership requests across your initiatives."
+msgstr "لا توجد طلبات انضمام قيد المراجعة في مبادراتك."
+
+#. Membresías de iniciativas.
+msgid "Request to join initiative: {title}"
+msgstr "طلب الانضمام إلى المبادرة: {title}"
+
+#. Membresías de iniciativas.
+msgid ""
+"{name} has requested to join the initiative \"{title}\".\n"
+"\n"
+"Message:\n"
+"{message}\n"
+"\n"
+"Review the request: {url}"
+msgstr ""
+"طلب {name} الانضمام إلى المبادرة «{title}».\n"
+"\n"
+"الرسالة:\n"
+"{message}\n"
+"\n"
+"مراجعة الطلب: {url}"
+
+#. Membresías de iniciativas.
+msgid "Your membership request for {title}"
+msgstr "طلب انضمامك إلى {title}"
+
+#. Membresías de iniciativas.
+msgid ""
+"Your request to join the initiative \"{title}\" was reviewed.\n"
+"\n"
+"Decision: {decision}\n"
+"{note}\n"
+"\n"
+"Initiative: {url}"
+msgstr ""
+"تمت مراجعة طلب انضمامك إلى المبادرة «{title}».\n"
+"\n"
+"القرار: {decision}\n"
+"{note}\n"
+"\n"
+"المبادرة: {url}"
+
+#. Membresías de iniciativas.
+msgid "Deleted user"
+msgstr "مستخدم محذوف"

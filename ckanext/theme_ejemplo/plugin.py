@@ -19,6 +19,7 @@ from . import actions as custom_actions
 from . import auth as custom_auth
 from . import model as membership_model
 from . import approvals
+from . import initiative_membership, initiative_membership_views
 from . import cache as anon_cache
 from . import completeness
 from . import db_fork_safety
@@ -460,6 +461,7 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
 
             # Create membership_request table if needed
             membership_model.init_db()
+            membership_model.init_initiative_memberships_db()
             # Create featured_publication table if needed
             membership_model.init_featured_publications_db()
             # Create bug_ticket table if needed
@@ -1296,10 +1298,12 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 methods=['GET']
             )
 
+            initiative_membership_views.register_routes(blueprint)
             return blueprint
         
         def get_helpers(self):
             helpers_map = {
+                 **initiative_membership.get_helpers(),
                  'get_latest_courses': self.get_latest_courses,
                  'get_featured_datasets': self.get_featured_datasets,
                  'get_organization_image_by_name': self.get_organization_image_by_name,
@@ -1378,6 +1382,7 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
         # IActions
         def get_actions(self):
             return {
+                **initiative_membership.get_actions(),
                 'user_show': custom_actions.user_show,
                 'user_update': custom_actions.user_update,
                 'people_list': custom_actions.people_list,
@@ -1470,6 +1475,7 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
         # IAuthFunctions
         def get_auth_functions(self):
             return {
+                **initiative_membership.get_auth_functions(),
                 'membership_request_create': custom_auth.membership_request_create,
                 'membership_request_list': custom_auth.membership_request_list,
                 'membership_request_process': custom_auth.membership_request_process,

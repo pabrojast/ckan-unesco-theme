@@ -4,6 +4,47 @@
 
 ---
 
+## Membresías de iniciativas
+
+`test_initiative_membership.py` usa CKAN, PostgreSQL y servicios de pruebas
+aislados. Comprueba permisos por iniciativa, roles, rechazo/reintento, usuarios
+inactivos, exclusión de Member States/organizaciones, solicitudes simultáneas,
+resoluciones simultáneas, conservación de roles existentes, rollback y correos.
+
+```bash
+pytest --ckan-ini=test.ini ckanext/theme_ejemplo/tests/test_initiative_membership.py -q
+```
+
+Las pruebas limpian la BD: nunca usar una configuración de desarrollo compartido
+o producción. La validación de navegador debe cubrir formulario, panel, historial,
+CSRF, móvil/escritorio y la portada especial de AI for Water. Ver
+[[Membresias de Iniciativas]].
+
+Verificación local del 2026-10-09 con CKAN 2.10.9, PostgreSQL 15, Solr 9 y
+Redis 7 aislados: **19 pruebas nuevas aprobadas**; **44 pruebas existentes
+aprobadas** de aprobaciones, plugin, cabecera y constantes IHP-IX. Dos pruebas
+IHP-IX existentes fallan también en el commit base `b1b1fe6`, con la misma
+configuración:
+
+- `test_ihpix_report_form_uses_kit_components`: el formulario anónimo no trae
+  los dos combobox esperados.
+- `test_ihpix_course_propose_requires_login`: el cliente sigue la redirección
+  al login y obtiene 200; la prueba espera 302/403.
+
+El entorno carga `activity theme_ejemplo`, crea el esquema real de Pages para
+la portada AI y neutraliza únicamente los dos helpers opcionales de login de
+Citizen Science. Los correos se interceptan en las pruebas, sin envíos externos.
+En CKAN 2.10 se usan los plugins pytest incluidos en CKAN
+(`ckan.tests.pytest_ckan.ckan_setup` y `ckan.tests.pytest_ckan.fixtures`).
+
+Playwright comprobó login con retorno al formulario, envío con y sin mensaje,
+estado pendiente, resumen de dos iniciativas, aprobación como editor, presencia
+en Members, rechazo con nota e historial en la portada especial AI. Formulario,
+panel e historial se revisaron en escritorio y móvil de 390 px, sin
+desbordamiento horizontal; el panel se revisó también en español. Los catálogos
+compilados es/fr/ar conservan todas las traducciones anteriores y añaden las
+nuevas. Esta verificación es local; no valida un despliegue ni la entrega SMTP.
+
 ## Estado actual
 
 > [!warning] Cobertura limitada

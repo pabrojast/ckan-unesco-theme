@@ -1,5 +1,14 @@
 # Flujos Importantes
 
+## Unirse a una iniciativa
+
+`/group/<name>/request-membership` (GET/POST) permite solicitar membresía con
+mensaje opcional. `/group/<name>/membership-requests` (GET/POST) muestra pendientes
+e historial y permite aprobar/rechazar a administradores de esa iniciativa y
+sysadmins. La campana enlaza `/initiative-membership-requests` (GET), con el
+resumen de iniciativas administrables. Ver [[Membresias de Iniciativas]] para
+roles, mensajes, concurrencia y notificaciones.
+
 ## Login contextual de Citizen Science
 
 El header usa el helper opcional `csunesco_login_return_url` de `csunesco`

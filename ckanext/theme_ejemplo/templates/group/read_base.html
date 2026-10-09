@@ -12,6 +12,12 @@
     {{ h.build_nav_icon('theme_ejemplo.group_ihpix', _('IHP-IX'), name=group_dict.name, icon='flask') }}
   {% endif %}
   {{ h.build_nav_icon(group_type + '.about', _('About'), id=group_dict.name, icon='info-circle') }}
+  {% snippet 'group/snippets/membership_nav.html', group_dict=group_dict %}
+{% endblock %}
+
+{% block content_action %}
+  {{ super() }}
+  {% snippet 'group/snippets/membership_action.html', group_dict=group_dict %}
 {% endblock %}
 
 {# Contextual "Add" button per active tab #}

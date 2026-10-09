@@ -9181,3 +9181,113 @@ msgstr "Recursos de aprendizaje"
 #~ msgstr ""
 #~ "Un núcleo global creciente de conocimiento sobre el agua: cifras en tiempo "
 #~ "real desde nuestra red."
+
+#. Membresías de iniciativas.
+msgid "Initiative membership requests"
+msgstr "Solicitudes de membresía de iniciativas"
+
+#. Membresías de iniciativas.
+msgid "Initiative not found"
+msgstr "Iniciativa no encontrada"
+
+#. Membresías de iniciativas.
+msgid "You are already a member of this initiative."
+msgstr "Ya eres miembro de esta iniciativa."
+
+#. Membresías de iniciativas.
+msgid "You already have a pending request for this initiative."
+msgstr "Ya tienes una solicitud pendiente para esta iniciativa."
+
+#. Membresías de iniciativas.
+msgid "Message must be text."
+msgstr "El mensaje debe ser texto."
+
+#. Membresías de iniciativas.
+msgid "Invalid request status."
+msgstr "Estado de solicitud no válido."
+
+#. Membresías de iniciativas.
+msgid "Invalid membership role."
+msgstr "Rol de membresía no válido."
+
+#. Membresías de iniciativas.
+msgid "The applicant is no longer an active user."
+msgstr "La cuenta del solicitante ya no está activa."
+
+#. Membresías de iniciativas.
+msgid "Only initiative administrators can manage membership requests."
+msgstr ""
+"Solo los administradores de la iniciativa pueden gestionar las solicitudes "
+"de membresía."
+
+#. Membresías de iniciativas.
+msgid "Your request to join this initiative has been sent."
+msgstr "Se ha enviado tu solicitud para unirte a esta iniciativa."
+
+#. Membresías de iniciativas.
+msgid ""
+"Membership in this initiative is managed by its administrators. Your request"
+" will be reviewed and you will be notified of the outcome."
+msgstr ""
+"Los administradores de esta iniciativa gestionan las membresías. Revisarán "
+"tu solicitud y te notificarán el resultado."
+
+#. Membresías de iniciativas.
+msgid ""
+"Describe your interest in this initiative, your experience and how you would"
+" like to contribute..."
+msgstr ""
+"Describe tu interés en esta iniciativa, tu experiencia y cómo te gustaría "
+"contribuir..."
+
+#. Membresías de iniciativas.
+msgid "Initiatives with pending membership requests."
+msgstr "Iniciativas con solicitudes de membresía pendientes."
+
+#. Membresías de iniciativas.
+msgid "No pending membership requests across your initiatives."
+msgstr "No hay solicitudes de membresía pendientes en tus iniciativas."
+
+#. Membresías de iniciativas.
+msgid "Request to join initiative: {title}"
+msgstr "Solicitud para unirse a la iniciativa: {title}"
+
+#. Membresías de iniciativas.
+msgid ""
+"{name} has requested to join the initiative \"{title}\".\n"
+"\n"
+"Message:\n"
+"{message}\n"
+"\n"
+"Review the request: {url}"
+msgstr ""
+"{name} ha solicitado unirse a la iniciativa «{title}».\n"
+"\n"
+"Mensaje:\n"
+"{message}\n"
+"\n"
+"Revisa la solicitud: {url}"
+
+#. Membresías de iniciativas.
+msgid "Your membership request for {title}"
+msgstr "Tu solicitud de membresía para {title}"
+
+#. Membresías de iniciativas.
+msgid ""
+"Your request to join the initiative \"{title}\" was reviewed.\n"
+"\n"
+"Decision: {decision}\n"
+"{note}\n"
+"\n"
+"Initiative: {url}"
+msgstr ""
+"Se ha revisado tu solicitud para unirte a la iniciativa «{title}».\n"
+"\n"
+"Decisión: {decision}\n"
+"{note}\n"
+"\n"
+"Iniciativa: {url}"
+
+#. Membresías de iniciativas.
+msgid "Deleted user"
+msgstr "Usuario eliminado"

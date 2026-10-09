@@ -1,0 +1,12 @@
+{% set membership = h.initiative_membership_state(group_dict) %}
+{% if membership.eligible and not membership.member %}
+  {% if membership.pending %}
+    <span class="btn btn-default disabled" aria-disabled="true" title="{{ _('Your request is being reviewed') }}">
+      <i class="fa fa-clock-o" aria-hidden="true"></i> {{ _('Request Pending') }}
+    </span>
+  {% else %}
+    <a class="btn btn-default" href="{{ h.url_for('theme_ejemplo.request_initiative_membership', name=group_dict.name) }}">
+      <i class="fa fa-user-plus" aria-hidden="true"></i> {{ _('Request to Join') }}
+    </a>
+  {% endif %}
+{% endif %}

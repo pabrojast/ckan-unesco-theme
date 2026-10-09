@@ -4,6 +4,18 @@
 
 ---
 
+## Membresías de iniciativas
+
+- `initiative_membership.py`: acciones `initiative_membership_request_*`, auth,
+  clasificación de iniciativas, helpers de estado y avisos por correo.
+- `initiative_membership_views.py`: formulario, revisión e historial, resumen y
+  registro de las tres rutas. Las operaciones de formularios validan CSRF.
+- `model.py`: `InitiativeMembershipRequest` e inicialización idempotente de su
+  tabla. `plugin.py` registra modelo, acciones, auth, helpers y rutas.
+- `approvals.py`: cola independiente `initiative_membership` por revisor.
+
+Ver [[Membresias de Iniciativas]] para contratos, permisos y persistencia.
+
 ## plugin.py (~1,274 líneas)
 
 **Rol**: Clase principal del plugin. Punto de entrada de CKAN.

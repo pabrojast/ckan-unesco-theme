@@ -1,0 +1,9 @@
+{% set membership = h.initiative_membership_state(group_dict) %}
+{% if membership.can_manage %}
+  <li{% if request.endpoint == 'theme_ejemplo.initiative_membership_requests' %} class="active"{% endif %}>
+    <a href="{{ h.url_for('theme_ejemplo.initiative_membership_requests', name=group_dict.name) }}">
+      <i class="fa fa-user-plus" aria-hidden="true"></i> {{ _('Requests') }}
+      {% if membership.count %}<span class="badge membership-badge">{{ membership.count }}</span>{% endif %}
+    </a>
+  </li>
+{% endif %}

@@ -57,6 +57,7 @@ _DEFAULT_EXCLUDE_PREFIXES = (
     '/util',
     '/_tracking',
     '/membership-requests',
+    '/initiative-membership-requests',
     '/bug-tickets',
     # IHP-IX: reporte y páginas para usuarios logueados (la landing /ihpix
     # sigue siendo cacheable; _matches_prefix no confunde /ihpix con /ihpix/x)

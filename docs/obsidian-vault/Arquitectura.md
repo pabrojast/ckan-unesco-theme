@@ -4,6 +4,16 @@
 
 ---
 
+## Membresías de iniciativas
+
+La tabla `initiative_membership_request` almacena solicitudes para grupos CKAN
+existentes, separada de `membership_request` (organizaciones) e
+`initiative_request` (creación de iniciativas). Tiene solicitante, grupo,
+mensaje, estado, rol y datos de resolución. El plugin la inicializa de forma
+idempotente, con índice único parcial para pendientes por usuario/grupo.
+Al aprobar, una transacción crea la membresía CKAN y registra la resolución;
+los emails se envían después del commit. Ver [[Membresias de Iniciativas]].
+
 ## Visión general
 
 El plugin es una extensión monolítica de CKAN que extiende el portal con:

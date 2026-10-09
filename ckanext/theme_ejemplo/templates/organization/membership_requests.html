@@ -1,4 +1,4 @@
-{% extends "organization/read_base.html" %}
+{% extends membership_base|default("organization/read_base.html") %}
 
 {% block subtitle %}{{ _('Membership Requests') }} {{ g.template_title_delimiter }} {{ group_dict.display_name }}{% endblock %}
 
@@ -18,14 +18,14 @@
 
     {# Tabs #}
     <div class="membership-tabs-wrapper">
-      <a href="{{ h.url_for('theme_ejemplo.membership_requests', name=group_dict.name, tab='pending') }}"
+      <a href="{{ h.url_for(membership_endpoint|default('theme_ejemplo.membership_requests'), name=group_dict.name, tab='pending') }}"
          class="membership-tab-btn {{ 'active' if active_tab == 'pending' }}">
         <i class="fa fa-clock-o"></i> {{ _('Pending') }}
         {% if pending_count > 0 %}
           <span class="membership-badge">{{ pending_count }}</span>
         {% endif %}
       </a>
-      <a href="{{ h.url_for('theme_ejemplo.membership_requests', name=group_dict.name, tab='history') }}"
+      <a href="{{ h.url_for(membership_endpoint|default('theme_ejemplo.membership_requests'), name=group_dict.name, tab='history') }}"
          class="membership-tab-btn {{ 'active' if active_tab == 'history' }}">
         <i class="fa fa-history"></i> {{ _('History') }}
       </a>
@@ -76,9 +76,9 @@
                 <div class="approve-role-group">
                   <label class="role-label" for="role-{{ req.id }}">{{ _('Role') }}:</label>
                   <select name="role" id="role-{{ req.id }}" class="role-select">
-                    <option value="member" selected>Member</option>
-                    <option value="editor">Editor</option>
-                    <option value="admin">Admin</option>
+                    <option value="member" selected>{{ _('Member') }}</option>
+                    <option value="editor">{{ _('Editor') }}</option>
+                    <option value="admin">{{ _('Admin') }}</option>
                   </select>
                   <button type="submit" class="btn-request btn-request-approve" title="{{ _('Approve') }}">
                     <i class="fa fa-check"></i> {{ _('Approve') }}

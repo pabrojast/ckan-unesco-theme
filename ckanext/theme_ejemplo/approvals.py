@@ -64,6 +64,9 @@ QUEUE_DEFS = [
     {'id': 'membership', 'icon': 'fa-users', 'scope': 'user',
      'helper': 'get_pending_membership_requests_count',
      'route': 'theme_ejemplo.membership_requests_overview'},
+    {'id': 'initiative_membership', 'icon': 'fa-user-plus', 'scope': 'user',
+     'helper': 'get_pending_initiative_memberships_count',
+     'route': 'theme_ejemplo.initiative_membership_requests_overview'},
     {'id': 'data_access', 'icon': 'fa-key', 'scope': 'user',
      'helper': 'datashare_pending_access_count',
      'url': '/datashare/requests'},
@@ -88,6 +91,7 @@ def _labels():
         'devices': _('Device approvals'),
         'citizen_science': _('Citizen science'),
         'membership': _('Membership requests'),
+        'initiative_membership': _('Initiative membership requests'),
         'data_access': _('Data access requests'),
         'bugs': _('Bug tickets'),
     }
