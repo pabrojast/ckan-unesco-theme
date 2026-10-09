@@ -127,7 +127,7 @@ a.hv2-btn-white, a.hv2-btn-white:hover { background: #FFFFFF; color: var(--hv2-n
 .hv2-hero-video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; display: block; }
 .hv2-hero-scrim { position: absolute; inset: 0; background: linear-gradient(180deg, rgba(6, 22, 40, .45) 0%, rgba(6, 22, 40, 0) 24%), linear-gradient(90deg, rgba(6, 22, 40, .28) 0%, rgba(6, 22, 40, .1) 38%, rgba(6, 22, 40, 0) 60%), linear-gradient(0deg, rgba(6, 22, 40, .42) 0%, rgba(6, 22, 40, 0) 32%); }
 /* space at the top for the site header, which floats over the video */
-.hv2-hero-body { position: relative; flex: 1; display: flex; flex-direction: column; justify-content: flex-end; gap: 24px; padding-top: 190px; padding-bottom: 36px; max-width: calc(1500px + 2 * var(--hv2-gutter)); }
+.hv2-hero-body { position: relative; flex: 1; display: flex; flex-direction: column; justify-content: flex-end; gap: 24px; padding-top: 190px; padding-bottom: 40px; max-width: calc(1500px + 2 * var(--hv2-gutter)); }
 .hv2-hero-title { display: flex; align-items: center; gap: clamp(20px, 2.4vw, 40px); }
 .hv2-hero-logo { height: clamp(110px, 10.5vw, 190px); width: auto; flex: none; filter: drop-shadow(0 2px 14px rgba(0, 0, 0, .35)); }
 .hv2-hero-rule { align-self: stretch; width: 2px; background: rgba(255, 255, 255, .55); flex: none; }
@@ -183,18 +183,20 @@ a.hv2-about-brochure:hover { background: rgba(255, 255, 255, .14); color: #FFFFF
 .hv2-hero-links strong { font-family: var(--hv2-mono); font-weight: 500; }
 .hv2-hero-links a.hv2-hero-cta { color: #9FD4F5; font-weight: 700; }
 .hv2-sep { width: 1px; height: 18px; background: rgba(255, 255, 255, .35); }
-.hv2-hero-foot { position: relative; display: flex; justify-content: flex-end; align-items: center; gap: 14px; padding-top: 22px; padding-bottom: 28px; }
-.hv2-vbtn { cursor: pointer; width: 44px; height: 44px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, .16); border: 1px solid rgba(255, 255, 255, .5); color: #FFFFFF; padding: 0; }
+.hv2-vbtn { flex: none; cursor: pointer; width: 44px; height: 44px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; background: rgba(255, 255, 255, .16); border: 1px solid rgba(255, 255, 255, .5); color: #FFFFFF; padding: 0; }
 .hv2-vbtn:hover { background: rgba(255, 255, 255, .28); }
 
-/* ── counters band ── */
-.hv2-band { background: var(--hv2-navy); color: #FFFFFF; padding: 8px 0; }
-.hv2-glance { display: grid; grid-template-columns: repeat(7, minmax(0, 1fr)); }
-.hv2-gl { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; padding: 18px 22px; color: #FFFFFF; border-left: 1px solid rgba(255, 255, 255, .18); transition: background .2s; }
+/* ── counters: a ribbon on the bottom edge of the video, in the style of
+   the title and the About panel (white type with a soft shadow, thin white
+   rules, no box) ── */
+.hv2-ribbon { position: relative; border-top: 1px solid rgba(255, 255, 255, .35); background: linear-gradient(0deg, rgba(6, 22, 40, .38) 0%, rgba(6, 22, 40, .12) 100%); }
+.hv2-ribbon-in { display: flex; align-items: center; gap: 20px; }
+.hv2-glance { flex: 1; min-width: 0; display: grid; grid-template-columns: repeat(7, minmax(max-content, 1fr)); }
+.hv2-gl { display: flex; flex-wrap: nowrap; white-space: nowrap; align-items: baseline; gap: 7px; padding: 18px 12px; color: #FFFFFF; border-left: 1px solid rgba(255, 255, 255, .35); text-shadow: 0 1px 4px rgba(0, 0, 0, .45), 0 2px 18px rgba(0, 0, 0, .4); transition: background .2s; }
 .hv2-gl:first-child { border-left: 0; padding-left: 0; }
 a.hv2-gl:hover { background: rgba(255, 255, 255, .1); color: #FFFFFF; }
-.hv2-gl-n { font-family: var(--hv2-mono); font-size: 32px; font-weight: 500; letter-spacing: -.02em; }
-.hv2-gl-l { font-weight: 700; font-size: 15px; }
+.hv2-gl-n { font-family: var(--hv2-disp); font-size: clamp(22px, 1.9vw, 30px); font-weight: 600; letter-spacing: -.02em; line-height: 1.1; }
+.hv2-gl-l { font-family: var(--hv2-disp); font-weight: 500; font-size: clamp(13px, 1.05vw, 15px); color: #E6F1FA; }
 
 /* ── sticky section bar ── */
 .hv2-secnav { position: sticky; top: 0; z-index: 900; background: #FFFFFF; border-bottom: 1px solid var(--hv2-line); }
@@ -287,9 +289,16 @@ a.hv2-portal:hover { color: #FFFFFF; }
 @keyframes hv2-fill { from { width: 0; } to { width: 100%; } }
 
 /* ── responsive ── */
+@media (max-width: 1279px) {
+  /* counters on two rows of four */
+  .hv2-glance { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+  .hv2-gl { padding: 10px 14px; }
+  .hv2-gl:nth-child(n+5) { border-top: 1px solid rgba(255, 255, 255, .22); }
+  .hv2-gl:nth-child(5) { border-left: 0; padding-left: 0; }
+  .hv2-gl-n { font-size: 24px; }
+  .hv2-gl-l { font-size: 14px; }
+}
 @media (max-width: 1180px) {
-  .hv2-gl { padding-left: 16px; padding-right: 16px; }
-  .hv2-gl-n { font-size: 28px; }
   .hv2-g6 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .hv2-g4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .hv2-split, .hv2-about-panel { grid-template-columns: minmax(0, 1fr); }
@@ -304,9 +313,6 @@ a.hv2-portal:hover { color: #FFFFFF; }
   .hv2-tablist { flex-direction: row; overflow-x: auto; }
   .hv2-tabbtn { flex: 0 0 230px; border-top: 0; border-left: 1px solid rgba(255, 255, 255, .14); }
   .hv2-tabbtn:first-child { border-left: 0; }
-  .hv2-glance { grid-template-columns: repeat(4, minmax(0, 1fr)); }
-  .hv2-gl { border-top: 1px solid rgba(255, 255, 255, .18); }
-  .hv2-gl:nth-child(5) { border-left: 0; padding-left: 0; }
   .hv2-shead, .hv2-shead.hv2-rev { grid-template-columns: minmax(0, 1fr); }
   .hv2-shead.hv2-rev > .hv2-stack { order: 0; }
   .hv2-g3 { grid-template-columns: minmax(0, 1fr); }
@@ -315,10 +321,12 @@ a.hv2-portal:hover { color: #FFFFFF; }
 @media (max-width: 640px) {
   .hv2-g6 { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
   .hv2-g4, .hv2-cards3, .hv2-about-cards { grid-template-columns: minmax(0, 1fr); }
+  .hv2-ribbon-in { align-items: flex-end; gap: 12px; padding-bottom: 10px; }
   .hv2-glance { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .hv2-gl { border-left: 0 !important; padding-left: 0 !important; }
-  .hv2-gl:nth-child(even) { border-left: 1px solid rgba(255, 255, 255, .18) !important; padding-left: 16px !important; }
-  .hv2-gl-n { font-size: 24px; }
+  .hv2-gl { border-left: 0 !important; padding: 8px 0 !important; border-top: 0 !important; }
+  .hv2-gl:nth-child(even) { border-left: 1px solid rgba(255, 255, 255, .3) !important; padding-left: 14px !important; }
+  .hv2-gl-n { font-size: 22px; }
+  .hv2-gl-l { font-size: 14px; }
   .hv2-hero-title { flex-direction: column; align-items: flex-start; gap: 16px; }
   .hv2-hero-rule, .hv2-sep, .hv2-secnav-lbl { display: none; }
   .hv2-hero-logo { height: 96px; }

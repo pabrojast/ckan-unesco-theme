@@ -30,7 +30,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&family=Source+Sans+3:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="{{ h.url_for_static('/css/home-v2.css') }}?v=20261009">
+<link rel="stylesheet" href="{{ h.url_for_static('/css/home-v2.css') }}?v=20261009b">
 
 <div class="hv2" id="hv2">
 <a class="hv2-skip" href="#hv2-sections">{{ _('Skip to main content') }}</a>
@@ -107,25 +107,23 @@
     </div>
   </div>
 
-  <div class="hv2-wrap hv2-hero-foot">
-    <button type="button" class="hv2-vbtn" id="hv2-vbtn" aria-label="{{ _('Pause background video') }}"
-            data-label-pause="{{ _('Pause background video') }}" data-label-play="{{ _('Play background video') }}">
-      <i class="fa fa-pause" aria-hidden="true"></i>
-    </button>
-  </div>
-</section>
-
-{# ═════════════ AT A GLANCE ═════════════ #}
-<section class="hv2-band" aria-label="{{ _('IHP-WINS at a glance') }}">
-  <div class="hv2-wrap">
-    <div class="hv2-glance">
-      <a class="hv2-gl" href="{{ h.url_for('organization.index') }}"><span class="hv2-gl-n">{{ h.home_v2_short_number(n_orgs) }}</span><span class="hv2-gl-l">{{ _('Organizations') }}</span></a>
-      <a class="hv2-gl" href="{{ h.url_for('/initiatives') }}"><span class="hv2-gl-n">{{ h.home_v2_short_number(n_initiatives) }}</span><span class="hv2-gl-l">{{ _('Initiatives') }}</span></a>
-      <a class="hv2-gl" href="{{ h.url_for('/memberstates') }}"><span class="hv2-gl-n">{{ h.home_v2_short_number(n_states) }}</span><span class="hv2-gl-l">{{ _('Member States') }}</span></a>
-      <a class="hv2-gl" href="{{ h.url_for('dataset.search') }}"><span class="hv2-gl-n">{{ h.home_v2_short_number(n_datasets) }}</span><span class="hv2-gl-l">{{ _('Datasets') }}</span></a>
-      <a class="hv2-gl" href="{{ h.url_for('/documents') }}"><span class="hv2-gl-n">{{ h.home_v2_short_number(n_docs) }}</span><span class="hv2-gl-l">{{ _('Documents') }}</span></a>
-      <div class="hv2-gl"><span class="hv2-gl-n">{{ h.home_v2_short_number(n_views) }}</span><span class="hv2-gl-l">{{ _('Page views') }}</span></div>
-      <div class="hv2-gl"><span class="hv2-gl-n">{{ h.home_v2_short_number(n_downloads) }}</span><span class="hv2-gl-l">{{ _('Downloads') }}</span></div>
+  {# Live counters: a ribbon along the bottom edge of the video, with the
+     video pause button on the right #}
+  <div class="hv2-ribbon" role="group" aria-label="{{ _('IHP-WINS at a glance') }}">
+    <div class="hv2-wrap hv2-ribbon-in">
+      <div class="hv2-glance">
+        <a class="hv2-gl" href="{{ h.url_for('organization.index') }}"><span class="hv2-gl-n">{{ h.home_v2_short_number(n_orgs) }}</span><span class="hv2-gl-l">{{ _('Organizations') }}</span></a>
+        <a class="hv2-gl" href="{{ h.url_for('/initiatives') }}"><span class="hv2-gl-n">{{ h.home_v2_short_number(n_initiatives) }}</span><span class="hv2-gl-l">{{ _('Initiatives') }}</span></a>
+        <a class="hv2-gl" href="{{ h.url_for('/memberstates') }}"><span class="hv2-gl-n">{{ h.home_v2_short_number(n_states) }}</span><span class="hv2-gl-l">{{ _('Member States') }}</span></a>
+        <a class="hv2-gl" href="{{ h.url_for('dataset.search') }}"><span class="hv2-gl-n">{{ h.home_v2_short_number(n_datasets) }}</span><span class="hv2-gl-l">{{ _('Datasets') }}</span></a>
+        <a class="hv2-gl" href="{{ h.url_for('/documents') }}"><span class="hv2-gl-n">{{ h.home_v2_short_number(n_docs) }}</span><span class="hv2-gl-l">{{ _('Documents') }}</span></a>
+        <div class="hv2-gl"><span class="hv2-gl-n">{{ h.home_v2_short_number(n_views) }}</span><span class="hv2-gl-l">{{ _('Page views') }}</span></div>
+        <div class="hv2-gl"><span class="hv2-gl-n">{{ h.home_v2_short_number(n_downloads) }}</span><span class="hv2-gl-l">{{ _('Downloads') }}</span></div>
+      </div>
+      <button type="button" class="hv2-vbtn" id="hv2-vbtn" aria-label="{{ _('Pause background video') }}"
+              data-label-pause="{{ _('Pause background video') }}" data-label-play="{{ _('Play background video') }}">
+        <i class="fa fa-pause" aria-hidden="true"></i>
+      </button>
     </div>
   </div>
 </section>
