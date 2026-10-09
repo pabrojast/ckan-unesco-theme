@@ -45,12 +45,46 @@
   <div class="hv2-hero-scrim" aria-hidden="true"></div>
 
   <div class="hv2-wrap hv2-hero-body">
-    <div class="hv2-hero-title">
+    <div class="hv2-hero-title" data-hv2-about-toggle title="{{ _('About IHP-WINS') }}">
       <img class="hv2-hero-logo" src="{{ h.url_for_static('/home_v2/unesco-ihp-logo-white.png') }}" alt="{{ _('UNESCO Intergovernmental Hydrological Programme') }}">
       <span class="hv2-hero-rule" aria-hidden="true"></span>
       <div class="hv2-hero-titles">
         <h1 class="hv2-h1"><span class="hv2-ln"><span>IHP-WINS</span></span></h1>
         <div class="hv2-hero-sub hv2-fade">{{ _('Bridging the Water Data Knowledge Gap') }}</div>
+        <button type="button" class="hv2-about-btn hv2-fade" id="hv2-about-btn" aria-expanded="false" aria-controls="IHPWINS"
+                data-label-open="{{ _('About IHP-WINS') }}" data-label-close="{{ _('Close') }}">
+          <span class="hv2-about-label">{{ _('About IHP-WINS') }}</span> <i class="fa fa-chevron-down" aria-hidden="true"></i>
+        </button>
+      </div>
+    </div>
+
+    {# About IHP-WINS: collapsed by default, opens over the video (open without JavaScript) #}
+    <div class="hv2-about-wrap" id="IHPWINS" role="region" aria-labelledby="hv2-about-btn">
+      <div class="hv2-about-clip">
+        <div class="hv2-about-panel">
+          <div class="hv2-about-intro">
+            <h2 class="hv2-about-h">{{ _('The IHP Water Information Network System') }}</h2>
+            <div class="hv2-about-txt">{{ _("The Intergovernmental Hydrological Programme's Water Information Network System (IHP-WINS) promotes the sharing of water-related data among countries, organizations and stakeholders as part of the UNESCO IHP mandate.") }}</div>
+            <a class="hv2-btn hv2-btn-white" href="https://unesdoc.unesco.org/ark:/48223/pf0000393465" target="_blank" rel="noopener">{{ _('Access the brochure') }} <span class="hv2-mono">PDF &nearr;</span></a>
+          </div>
+          <div class="hv2-about-cards">
+            <div class="hv2-about-card">
+              <i class="fa fa-database" aria-hidden="true"></i>
+              <h3>{{ _('Data integration') }}</h3>
+              <div>{{ _('Integrates water-related data from monitoring networks, research institutions and international organizations using standardized formats.') }}</div>
+            </div>
+            <div class="hv2-about-card">
+              <i class="fa fa-globe" aria-hidden="true"></i>
+              <h3>{{ _('International cooperation') }}</h3>
+              <div>{{ _('Strengthens collaboration and knowledge exchange among water professionals at national, regional and global scales.') }}</div>
+            </div>
+            <div class="hv2-about-card">
+              <i class="fa fa-line-chart" aria-hidden="true"></i>
+              <h3>{{ _('Evidence-based decisions') }}</h3>
+              <div>{{ _('Supports sustainable water management through tools for data visualization, analysis and informed decision-making.') }}</div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -72,7 +106,7 @@
   </div>
 
   <div class="hv2-wrap hv2-hero-foot">
-    <a class="hv2-explore" href="#IHPWINS">{{ _('Explore') }} <span aria-hidden="true">&darr;</span></a>
+    <a class="hv2-explore" href="#datasets">{{ _('Explore') }} <span aria-hidden="true">&darr;</span></a>
     <button type="button" class="hv2-vbtn" id="hv2-vbtn" aria-label="{{ _('Pause background video') }}"
             data-label-pause="{{ _('Pause background video') }}" data-label-play="{{ _('Play background video') }}">
       <i class="fa fa-pause" aria-hidden="true"></i>
@@ -112,35 +146,6 @@
 </nav>
 
 <div id="hv2-sections">
-
-{# ═════════════ ABOUT ═════════════ #}
-<section class="hv2-sec" id="IHPWINS">
-  <div class="hv2-wrap hv2-about">
-    <div class="hv2-stack">
-      <span class="hv2-eyebrow hv2-c-ab">{{ _('About the platform') }}</span>
-      <h2 class="hv2-h2">{{ _('The IHP Water Information Network System') }}</h2>
-      <div class="hv2-lead">{{ _("The Intergovernmental Hydrological Programme's Water Information Network System (IHP-WINS) promotes the sharing of water-related data among countries, organizations and stakeholders as part of the UNESCO IHP mandate.") }}</div>
-      <a class="hv2-btn hv2-btn-dark" href="https://unesdoc.unesco.org/ark:/48223/pf0000393465" target="_blank" rel="noopener">{{ _('Access the brochure') }} <span class="hv2-mono">PDF &nearr;</span></a>
-    </div>
-    <div class="hv2-cards3">
-      <div class="hv2-card hv2-pad">
-        <i class="fa fa-database hv2-ico hv2-c-ds" aria-hidden="true"></i>
-        <h3 class="hv2-h4">{{ _('Data integration') }}</h3>
-        <div class="hv2-muted">{{ _('Integrates water-related data from monitoring networks, research institutions and international organizations using standardized formats.') }}</div>
-      </div>
-      <div class="hv2-card hv2-pad">
-        <i class="fa fa-globe hv2-ico hv2-c-nw" aria-hidden="true"></i>
-        <h3 class="hv2-h4">{{ _('International cooperation') }}</h3>
-        <div class="hv2-muted">{{ _('Strengthens collaboration and knowledge exchange among water professionals at national, regional and global scales.') }}</div>
-      </div>
-      <div class="hv2-card hv2-pad">
-        <i class="fa fa-line-chart hv2-ico hv2-c-th" aria-hidden="true"></i>
-        <h3 class="hv2-h4">{{ _('Evidence-based decisions') }}</h3>
-        <div class="hv2-muted">{{ _('Supports sustainable water management through tools for data visualization, analysis and informed decision-making.') }}</div>
-      </div>
-    </div>
-  </div>
-</section>
 
 {# ═════════════ DATASETS ═════════════ #}
 <section class="hv2-sec hv2-grey" id="datasets">

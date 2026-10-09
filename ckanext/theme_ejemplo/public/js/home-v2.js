@@ -1,8 +1,10 @@
 /* IHP-WINS home page v2 (redesign) - added by Jorgen Van Der Biest.
-   Behaviour for templates/home/home_v2.html: hero video pause, explore-data
-   tabs, the spotlight slide deck, and the sticky section bar.
-   Without JavaScript the page still works: both data panels show, the first
-   slide shows, and the section links are normal anchors. */
+   Behaviour for templates/home/home_v2.html: hero video pause, the About
+   panel in the hero, explore-data tabs, the spotlight slide deck, and the
+   sticky section bar.
+   Without JavaScript the page still works: the About panel is open, both
+   data panels show, the first slide shows, and the section links are normal
+   anchors. */
 (function () {
   'use strict';
 
@@ -20,12 +22,55 @@
     return true;
   }
 
-  /* In-page links (#IHPWINS, #datasets, ...): smooth scroll, offset by the
-     sticky bar through scroll-margin-top in the CSS. */
+  /* ── About IHP-WINS: a panel in the hero, collapsed by default. The title
+     block and the "About IHP-WINS" button open and close it; the title moves
+     up because the hero body sits at the bottom of the hero. ── */
+  var hero = document.getElementById('hv2-top');
+  var aboutBtn = document.getElementById('hv2-about-btn');
+  var aboutPanel = document.getElementById('IHPWINS');
+  function setAbout(open) {
+    if (!hero || !aboutPanel) { return; }
+    hero.classList.toggle('hv2-about-open', open);
+    aboutPanel.setAttribute('aria-hidden', open ? 'false' : 'true');
+    if ('inert' in aboutPanel) { aboutPanel.inert = !open; }
+    if (aboutBtn) {
+      aboutBtn.setAttribute('aria-expanded', open ? 'true' : 'false');
+      var label = aboutBtn.querySelector('.hv2-about-label');
+      if (label) { label.textContent = aboutBtn.getAttribute(open ? 'data-label-close' : 'data-label-open'); }
+    }
+  }
+  function aboutIsOpen() { return !!hero && hero.classList.contains('hv2-about-open'); }
+  if (hero && aboutPanel) {
+    setAbout(false);
+    hero.addEventListener('click', function (e) {
+      if (!e.target.closest) { return; }
+      var trigger = e.target.closest('[data-hv2-about-toggle], #hv2-about-btn');
+      if (!trigger || e.target.closest('a')) { return; }
+      setAbout(!aboutIsOpen());
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && aboutIsOpen()) {
+        setAbout(false);
+        if (aboutBtn) { aboutBtn.focus(); }
+      }
+    });
+    if (location.hash === '#IHPWINS') { setAbout(true); }
+  }
+
+  /* In-page links (#datasets, ...): smooth scroll, offset by the sticky bar
+     through scroll-margin-top in the CSS. Links to #IHPWINS open the About
+     panel and scroll back to the top of the hero. */
   root.addEventListener('click', function (e) {
     var a = e.target.closest ? e.target.closest('a[href^="#"]') : null;
     if (!a || !root.contains(a)) { return; }
     var id = a.getAttribute('href').slice(1);
+    if (id === 'IHPWINS' && hero && aboutPanel) {
+      e.preventDefault();
+      setAbout(true);
+      window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
+      if (history.replaceState) { history.replaceState(null, '', '#IHPWINS'); }
+      return;
+    }
     if (id && scrollToId(id)) { e.preventDefault(); }
   });
 
@@ -156,12 +201,13 @@
       entries.forEach(function (en) {
         if (!en.isIntersecting) { return; }
         Array.prototype.forEach.call(navLinks, function (a) { a.classList.remove('is-on'); a.removeAttribute('aria-current'); });
-        var a = byId[en.target.id];
+        var a = byId[en.target.id === 'hv2-top' ? 'IHPWINS' : en.target.id];
         if (a) { a.classList.add('is-on'); a.setAttribute('aria-current', 'location'); }
       });
     }, { rootMargin: '-45% 0px -50% 0px' });
     Object.keys(byId).forEach(function (id) {
-      var el = document.getElementById(id);
+      // The About panel lives in the hero: watch the hero for it
+      var el = document.getElementById(id === 'IHPWINS' ? 'hv2-top' : id);
       if (el) { io.observe(el); }
     });
   }

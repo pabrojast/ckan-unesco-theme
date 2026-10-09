@@ -66,7 +66,6 @@
 .hv2-g4 { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 .hv2-g6 { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 20px; }
 .hv2-cards3 { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; }
-.hv2-about { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 40px clamp(32px, 5vw, 96px); align-items: start; }
 .hv2-split { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 2fr); gap: 28px; }
 .hv2-cols2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr)); gap: 32px; }
 
@@ -138,6 +137,25 @@ a.hv2-btn-white, a.hv2-btn-white:hover { background: #FFFFFF; color: var(--hv2-n
 @keyframes hv2-rise { from { transform: translateY(28px); opacity: 0; } to { transform: none; opacity: 1; } }
 .hv2-fade { animation: hv2-fadeup 1s .5s ease both; }
 @keyframes hv2-fadeup { from { transform: translateY(14px); opacity: .15; } to { transform: none; opacity: 1; } }
+/* About IHP-WINS panel inside the hero: collapsed by default (with JS),
+   opens below the title, which slides up as the panel grows */
+.hv2-hero-title[data-hv2-about-toggle] { cursor: pointer; }
+.hv2-about-btn { align-self: flex-start; display: inline-flex; align-items: center; gap: 10px; margin-top: 6px; padding: 8px 16px; border-radius: 6px; border: 1px solid rgba(255, 255, 255, .55); background: rgba(8, 30, 58, .35); color: #FFFFFF; font-weight: 700; font-size: 14px; letter-spacing: .04em; cursor: pointer; backdrop-filter: blur(4px); }
+.hv2-about-btn:hover { background: rgba(255, 255, 255, .16); }
+.hv2-about-btn .fa { transition: transform .35s ease; }
+.hv2-about-open .hv2-about-btn .fa { transform: rotate(180deg); }
+.hv2-about-wrap { display: grid; grid-template-rows: 1fr; transition: grid-template-rows .55s cubic-bezier(.2, .7, .2, 1), opacity .4s ease, margin .55s ease; scroll-margin-top: 0; }
+.hv2-js .hv2-about-wrap { grid-template-rows: 0fr; opacity: 0; margin: -12px 0; }
+.hv2-js .hv2-about-open .hv2-about-wrap { grid-template-rows: 1fr; opacity: 1; margin: 0; }
+.hv2-about-clip { overflow: hidden; min-height: 0; }
+.hv2-about-panel { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 28px clamp(28px, 4vw, 64px); align-items: start; padding: 28px; border-radius: 14px; background: rgba(8, 30, 58, .62); border: 1px solid rgba(255, 255, 255, .18); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); }
+.hv2-about-intro { display: flex; flex-direction: column; gap: 14px; }
+.hv2 .hv2-about-h { font-weight: 700; font-size: clamp(22px, 1.9vw, 30px); line-height: 1.15; color: #FFFFFF; }
+.hv2-about-txt { font-size: 17px; line-height: 1.55; color: #DCEAF6; }
+.hv2-about-cards { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px; }
+.hv2-about-card { display: flex; flex-direction: column; gap: 8px; padding: 18px; border-radius: 10px; background: rgba(255, 255, 255, .08); border: 1px solid rgba(255, 255, 255, .14); color: #C7D7E6; font-size: 15px; line-height: 1.5; }
+.hv2-about-card .fa { font-size: 22px; color: #4CC9F0; }
+.hv2 .hv2-about-card h3 { font-weight: 600; font-size: 18px; color: #FFFFFF; }
 .hv2-hero-lead { font-size: clamp(18px, 1.4vw, 21px); color: #E6F1FA; max-width: 36em; text-shadow: 0 1px 8px rgba(0, 0, 0, .35); }
 .hv2-search { display: flex; flex-direction: column; gap: 8px; max-width: 760px; margin: 0; }
 .hv2-search label { font-weight: 700; font-size: 14px; color: #FFFFFF; margin: 0; }
@@ -263,7 +281,7 @@ a.hv2-portal:hover { color: #FFFFFF; }
   .hv2-gl-n { font-size: 28px; }
   .hv2-g6 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .hv2-g4 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  .hv2-split, .hv2-about { grid-template-columns: minmax(0, 1fr); }
+  .hv2-split, .hv2-about-panel { grid-template-columns: minmax(0, 1fr); }
   .hv2-tiles { flex-direction: row; }
 }
 @media (max-width: 900px) {
@@ -285,7 +303,8 @@ a.hv2-portal:hover { color: #FFFFFF; }
 }
 @media (max-width: 640px) {
   .hv2-g6 { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; }
-  .hv2-g4, .hv2-cards3 { grid-template-columns: minmax(0, 1fr); }
+  .hv2-g4, .hv2-cards3, .hv2-about-cards { grid-template-columns: minmax(0, 1fr); }
+  .hv2-about-panel { padding: 18px; }
   .hv2-glance { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .hv2-gl { border-left: 0 !important; padding-left: 0 !important; }
   .hv2-gl:nth-child(even) { border-left: 1px solid rgba(255, 255, 255, .18) !important; padding-left: 16px !important; }
@@ -303,7 +322,7 @@ a.hv2-portal:hover { color: #FFFFFF; }
 @media (prefers-reduced-motion: reduce) {
   .hv2-ln > span, .hv2-fade, .hv2-slide.is-on img { animation: none; }
   .hv2-tabbtn.is-on .hv2-prog { animation: none; }
-  .hv2-slide, .hv2-lift, .hv2-portal img, a.hv2-snav::after { transition: none; }
+  .hv2-slide, .hv2-lift, .hv2-portal img, a.hv2-snav::after, .hv2-about-wrap, .hv2-about-btn .fa { transition: none; }
 }
 
 /* Site header on the new home page: IHP-WINS logo beside the UNESCO logo.

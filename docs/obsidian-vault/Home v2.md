@@ -16,16 +16,16 @@ With the switch on, `/?home=v2` and `/?home=classic` preview either design for t
 ## Page order
 
 1. Hero: a looping clip (1:40 to 2:07) from the IHP 50th anniversary film, the UNESCO IHP logo, the headline, dataset search and counts. The site header floats over it as it did over the old hero. A pause button stops the video, and visitors with "reduce motion" see the still poster.
-2. Counters: organizations, initiatives, Member States, datasets, documents, page views.
+   - About IHP-WINS (`#IHPWINS`) is a panel inside the hero, collapsed by default. Clicking the title block or the "About IHP-WINS" button opens it over the video, and the title moves up. Escape closes it. Links to `#IHPWINS` (section bar, first spotlight slide) open it and scroll to the top. Without JavaScript the panel is open.
+2. Counters: organizations, initiatives, Member States, datasets, documents, page views, downloads.
 3. Sticky section bar: About, Datasets, Knowledge, Thematic viewers, Network, Water Family, Learning, Spotlight, plus "Contribute data".
-4. About IHP-WINS and the brochure.
-5. Datasets: Data Catalogue and Geospatial Viewer tiles, Explore data (Recently added, Trending).
-6. Knowledge: featured viewers, Rapid Response & Recovery, data stories, AI for Water Management, Open Source Tools.
-7. Thematic viewers: the six portals.
-8. Network: Member State, organization and initiative hubs, Register, IHP-IX.
-9. Water Family: news, events, publications.
-10. Learning: IHP Open Learning and courses.
-11. Spotlight: the original five-slide deck.
+4. Datasets: Data Catalogue and Geospatial Viewer tiles, Explore data (Recently added, Trending).
+5. Knowledge: featured viewers, Rapid Response & Recovery, data stories, AI for Water Management, Open Source Tools.
+6. Thematic viewers: the six portals.
+7. Network: Member State, organization and initiative hubs, Register, IHP-IX.
+8. Water Family: news, events, publications.
+9. Learning: IHP Open Learning and courses.
+10. Spotlight: the original five-slide deck.
 
 ## Files
 
@@ -34,7 +34,7 @@ New files only:
 - `ckanext/theme_ejemplo/home_v2.py`: helpers `home_v2_enabled`, `home_v2_rapid_response`, `home_v2_data_stories`, `home_v2_short_number`.
 - `templates/home/home_v2.html`: the page.
 - `public/css/home-v2.css`: styles, all scoped under `.hv2`.
-- `public/js/home-v2.js`: video pause, tabs, slide deck, section bar.
+- `public/js/home-v2.js`: video pause, About panel, tabs, slide deck, section bar.
 - `public/home_v2/`: hero video (7 MB desktop, 2.7 MB mobile), poster, logos, two tile images.
 
 Lines added to existing files, each marked "Home page v2 (added by Jorgen Van Der Biest)":
