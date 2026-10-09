@@ -18,11 +18,11 @@ With the switch on, `/?home=v2` and `/?home=classic` preview either design for t
 1. Hero: a looping clip (1:40 to 2:07) from the IHP 50th anniversary film, the UNESCO IHP logo, the headline, dataset search and counts. The site header floats over it as it did over the old hero. A pause button stops the video, and visitors with "reduce motion" see the still poster.
    - About IHP-WINS (`#IHPWINS`) is a panel inside the hero, collapsed by default. The "About IHP-WINS" button sits under the dataset counts; it or a click on the title block opens the panel over the video, and the title moves up. Escape closes it. Links to `#IHPWINS` (section bar, first spotlight slide) open it and scroll to the top. Without JavaScript the panel is open.
 2. Counters: organizations, initiatives, Member States, datasets, documents, page views, downloads.
-3. Sticky section bar: About, Datasets, Knowledge, Thematic viewers, Network, Water Family, Learning, Spotlight, plus "Contribute data".
-4. Datasets: Data Catalogue and Geospatial Viewer tiles, Explore data (Recently added, Trending).
-5. Knowledge: featured viewers, Rapid Response & Recovery, data stories, AI for Water Management, Open Source Tools.
-6. Thematic viewers: the six portals.
-7. Network: Member State, organization and initiative hubs, Register, IHP-IX.
+3. Sticky section bar: About, Network, Datasets, Knowledge, Thematic viewers, Water Family, Learning, Spotlight, plus "Contribute data".
+4. Network: Member State, organization and initiative hubs, Register, IHP-IX.
+5. Datasets: Data Catalogue and Geospatial Viewer tiles, Explore data (Recently added, Trending).
+6. Knowledge: featured viewers, Rapid Response & Recovery, data stories, AI for Water Management, Open Source Tools.
+7. Thematic viewers: the six portals.
 8. Water Family: news, events, publications.
 9. Learning: IHP Open Learning and courses.
 10. Spotlight: the original five-slide deck.
@@ -43,7 +43,7 @@ Lines added to existing files, each marked "Home page v2 (added by Jorgen Van De
 - `templates/home/index.html`: the switch between `home_v2.html` and `custom_layout.html`.
 - `templates/header.html`: the IHP-WINS logo next to the UNESCO logo, only on the v2 home page.
 
-On the v2 home page only, `home-v2.css` also restyles Pablo's header through `body:has(#hv2)` selectors (no change to `theme_ejemplo.css`): it stays transparent over the video instead of turning blue on hover, has a thin line under the top links with UNESCO on the left, a plain "Log in", the menu on one row from 1260 px, and Home underlined in the IHP-WINS logo blue (`#37B7E7`). The header only stays transparent at exactly `/`, as in Pablo's `header.html`; with a query string such as `/?home=v2` it keeps its blue background.
+On the v2 home page only, `home-v2.css` also restyles Pablo's header through `body:has(#hv2)` selectors (no change to `theme_ejemplo.css`): it stays transparent over the video instead of turning blue on hover, has a thin line under the top links with UNESCO on the left, a plain "Log in", the menu on one row from 1260 px, and rounded menu buttons with Home marked by a bottom edge in the IHP-WINS logo blue (`#37B7E7`). The header only stays transparent at exactly `/`, as in Pablo's `header.html`; with a query string such as `/?home=v2` it keeps its blue background.
 
 ## Data
 

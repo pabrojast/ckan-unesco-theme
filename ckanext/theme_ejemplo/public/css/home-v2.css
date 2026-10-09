@@ -362,9 +362,11 @@ body:has(#hv2) .masthead :focus-visible { outline: 3px solid #37B7E7; outline-of
   body:has(#hv2) .masthead .masthead-nav { padding: 14px 0; }
   body:has(#hv2) .masthead .masthead-nav .masthead-brand .logo { margin-top: 0; }
   body:has(#hv2) .masthead .masthead-nav .masthead-brand .logo img { height: 52px !important; }
-  body:has(#hv2) .masthead .masthead-nav .navigation .nav li a { border-radius: 0; background: none; text-shadow: 0 1px 6px rgba(0, 0, 0, .3); }
-  body:has(#hv2) .masthead .masthead-nav .navigation .nav li a:hover, body:has(#hv2) .masthead .masthead-nav .navigation .nav li a:focus { text-decoration: none !important; box-shadow: inset 0 -2px 0 rgba(255, 255, 255, .6); }
-  body:has(#hv2) .masthead .masthead-nav .navigation .nav li:first-child a { box-shadow: inset 0 -2px 0 #37B7E7; }
+  /* menu buttons as in the design: rounded, a light fill on hover, and the
+     current page (Home) with a blue bottom edge */
+  body:has(#hv2) .masthead .masthead-nav .navigation .nav li a { border-radius: 6px; text-shadow: 0 1px 6px rgba(0, 0, 0, .3); transition: background-color .2s; }
+  body:has(#hv2) .masthead .masthead-nav .navigation .nav li a:hover, body:has(#hv2) .masthead .masthead-nav .navigation .nav li a:focus { text-decoration: none !important; background-color: rgba(255, 255, 255, .14) !important; }
+  body:has(#hv2) .masthead .masthead-nav .navigation .nav li:first-child a { box-shadow: inset 0 -3px 0 #37B7E7; background-color: rgba(255, 255, 255, .08) !important; }
   body:has(#hv2) .masthead .masthead-nav .site-search .form-control { background: rgba(8, 30, 58, .25); }
 }
 @media (min-width: 1260px) {

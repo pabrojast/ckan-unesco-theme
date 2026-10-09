@@ -134,10 +134,10 @@
   <div class="hv2-wrap hv2-secnav-in">
     <span class="hv2-secnav-lbl">{{ _('On this page') }}</span>
     <a class="hv2-snav" href="#IHPWINS">{{ _('About') }}</a>
+    <a class="hv2-snav" href="#network">{{ _('Network') }}</a>
     <a class="hv2-snav" href="#datasets">{{ _('Datasets') }}</a>
     <a class="hv2-snav" href="#knowledge">{{ _('Knowledge') }}</a>
     <a class="hv2-snav" href="#thematic">{{ _('Thematic viewers') }}</a>
-    <a class="hv2-snav" href="#network">{{ _('Network') }}</a>
     <a class="hv2-snav" href="#WaterFamilyEvents">{{ _('Water Family') }}</a>
     <a class="hv2-snav" href="#learning">{{ _('Learning') }}</a>
     <a class="hv2-snav" href="#spotlight">{{ _('Spotlight') }}</a>
@@ -147,10 +147,51 @@
 
 <div id="hv2-sections">
 
-{# ═════════════ DATASETS ═════════════ #}
-<section class="hv2-sec hv2-grey" id="datasets">
+{# ═════════════ NETWORK ═════════════ #}
+<section class="hv2-sec hv2-grey" id="network">
   <div class="hv2-wrap">
     <div class="hv2-shead">
+      <div class="hv2-stack">
+        <span class="hv2-eyebrow hv2-c-ab">{{ _('The network') }}</span>
+        <h2 class="hv2-h2">{{ _('Member States, organizations and initiatives share data in hubs') }}</h2>
+        <div class="hv2-lead">{{ _('People join through their organization. Organizations contribute data, tools and expertise, and can work in several hubs at once. A record is published once and appears in every hub it belongs to.') }}</div>
+      </div>
+      <img class="hv2-shead-img" src="{{ h.url_for_static('/Landing_page/Content/IHPTITLE02DATASETS.jpg') }}" alt="" loading="lazy">
+    </div>
+    <div class="hv2-g4">
+      <a class="hv2-card hv2-pad hv2-lift hv2-hub" href="{{ h.url_for('/memberstates') }}" style="border-top-color:#12A08A">
+        <span class="hv2-hub-head"><strong class="hv2-h4">{{ _('Member State hubs') }}</strong><span class="hv2-mono hv2-hub-n" style="color:#0B7A69">{{ n_states }}</span></span>
+        <span class="hv2-eyebrow" style="color:#0B7A69">{{ _('Where it applies') }}</span>
+        <span class="hv2-grow">{{ _('Country-level data, governance and reporting: national datasets, policies and plans, dashboards and indicators.') }}</span>
+        <span class="hv2-go">{{ _('Browse Member States') }} &rarr;</span>
+      </a>
+      <a class="hv2-card hv2-pad hv2-lift hv2-hub" href="{{ h.url_for('organization.index') }}" style="border-top-color:#0069B4">
+        <span class="hv2-hub-head"><strong class="hv2-h4">{{ _('Organization hubs') }}</strong><span class="hv2-mono hv2-hub-n" style="color:#0069B4">{{ n_orgs }}</span></span>
+        <span class="hv2-eyebrow hv2-c-ab">{{ _('Who provides knowledge') }}</span>
+        <span class="hv2-grow">{{ _('Institutions contribute datasets, research and publications, tools and methods, and capacity building.') }}</span>
+        <span class="hv2-go">{{ _('Browse organizations') }} &rarr;</span>
+      </a>
+      <a class="hv2-card hv2-pad hv2-lift hv2-hub" href="{{ h.url_for('/initiatives') }}" style="border-top-color:#5A4FCF">
+        <span class="hv2-hub-head"><strong class="hv2-h4">{{ _('Initiative hubs') }}</strong><span class="hv2-mono hv2-hub-n" style="color:#5146C0">{{ n_initiatives }}</span></span>
+        <span class="hv2-eyebrow hv2-c-ds">{{ _('What is being done') }}</span>
+        <span class="hv2-grow">{{ _('Project and programme data, activities and results: case studies, pilot solutions and lessons learned.') }}</span>
+        <span class="hv2-go">{{ _('Browse initiatives') }} &rarr;</span>
+      </a>
+      <div class="hv2-card hv2-pad hv2-navy hv2-topo hv2-stack">
+        <span class="hv2-eyebrow" style="color:#F2B01E">{{ _('Contribute') }}</span>
+        <strong class="hv2-allcard-t">{{ _("Share your organization's water data") }}</strong>
+        <span class="hv2-on-dark hv2-grow">{{ _('Register, join or create an organization, and publish to the hubs you work in.') }}</span>
+        <a class="hv2-btn hv2-btn-gold" href="{{ h.url_for('/colab') }}">{{ _('Register') }}</a>
+        <a class="hv2-go" style="color:#9FD4F5" href="{{ h.url_for('/ihpix') }}">{{ _('IHP-IX progress') }} &rarr;</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+{# ═════════════ DATASETS ═════════════ #}
+<section class="hv2-sec" id="datasets">
+  <div class="hv2-wrap">
+    <div class="hv2-shead hv2-rev">
       <div class="hv2-stack">
         <span class="hv2-eyebrow hv2-c-ds">{{ _('Datasets') }}</span>
         <h2 class="hv2-h2">{{ _('Data catalogue and geospatial viewer') }}</h2>
@@ -261,9 +302,9 @@
 </section>
 
 {# ═════════════ KNOWLEDGE ═════════════ #}
-<section class="hv2-sec" id="knowledge">
+<section class="hv2-sec hv2-grey" id="knowledge">
   <div class="hv2-wrap">
-    <div class="hv2-shead hv2-rev">
+    <div class="hv2-shead">
       <div class="hv2-stack">
         <span class="hv2-eyebrow hv2-c-kn">{{ _('Knowledge') }}</span>
         <h2 class="hv2-h2">{{ _('Featured viewers, map rooms and data stories') }}</h2>
@@ -344,7 +385,7 @@
 ] %}
 <section class="hv2-sec hv2-dark" id="thematic">
   <div class="hv2-wrap">
-    <div class="hv2-shead">
+    <div class="hv2-shead hv2-rev">
       <div class="hv2-stack">
         <span class="hv2-eyebrow" style="color:#8FE3D2">{{ _('Thematic viewers') }}</span>
         <h2 class="hv2-h2">{{ _('Monitoring portals for floods, droughts, water quality and more') }}</h2>
@@ -364,47 +405,6 @@
           </span>
         </a>
       {% endfor %}
-    </div>
-  </div>
-</section>
-
-{# ═════════════ NETWORK ═════════════ #}
-<section class="hv2-sec hv2-grey" id="network">
-  <div class="hv2-wrap">
-    <div class="hv2-shead hv2-rev">
-      <div class="hv2-stack">
-        <span class="hv2-eyebrow hv2-c-ab">{{ _('The network') }}</span>
-        <h2 class="hv2-h2">{{ _('Member States, organizations and initiatives share data in hubs') }}</h2>
-        <div class="hv2-lead">{{ _('People join through their organization. Organizations contribute data, tools and expertise, and can work in several hubs at once. A record is published once and appears in every hub it belongs to.') }}</div>
-      </div>
-      <img class="hv2-shead-img" src="{{ h.url_for_static('/Landing_page/Content/IHPTITLE02DATASETS.jpg') }}" alt="" loading="lazy">
-    </div>
-    <div class="hv2-g4">
-      <a class="hv2-card hv2-pad hv2-lift hv2-hub" href="{{ h.url_for('/memberstates') }}" style="border-top-color:#12A08A">
-        <span class="hv2-hub-head"><strong class="hv2-h4">{{ _('Member State hubs') }}</strong><span class="hv2-mono hv2-hub-n" style="color:#0B7A69">{{ n_states }}</span></span>
-        <span class="hv2-eyebrow" style="color:#0B7A69">{{ _('Where it applies') }}</span>
-        <span class="hv2-grow">{{ _('Country-level data, governance and reporting: national datasets, policies and plans, dashboards and indicators.') }}</span>
-        <span class="hv2-go">{{ _('Browse Member States') }} &rarr;</span>
-      </a>
-      <a class="hv2-card hv2-pad hv2-lift hv2-hub" href="{{ h.url_for('organization.index') }}" style="border-top-color:#0069B4">
-        <span class="hv2-hub-head"><strong class="hv2-h4">{{ _('Organization hubs') }}</strong><span class="hv2-mono hv2-hub-n" style="color:#0069B4">{{ n_orgs }}</span></span>
-        <span class="hv2-eyebrow hv2-c-ab">{{ _('Who provides knowledge') }}</span>
-        <span class="hv2-grow">{{ _('Institutions contribute datasets, research and publications, tools and methods, and capacity building.') }}</span>
-        <span class="hv2-go">{{ _('Browse organizations') }} &rarr;</span>
-      </a>
-      <a class="hv2-card hv2-pad hv2-lift hv2-hub" href="{{ h.url_for('/initiatives') }}" style="border-top-color:#5A4FCF">
-        <span class="hv2-hub-head"><strong class="hv2-h4">{{ _('Initiative hubs') }}</strong><span class="hv2-mono hv2-hub-n" style="color:#5146C0">{{ n_initiatives }}</span></span>
-        <span class="hv2-eyebrow hv2-c-ds">{{ _('What is being done') }}</span>
-        <span class="hv2-grow">{{ _('Project and programme data, activities and results: case studies, pilot solutions and lessons learned.') }}</span>
-        <span class="hv2-go">{{ _('Browse initiatives') }} &rarr;</span>
-      </a>
-      <div class="hv2-card hv2-pad hv2-navy hv2-topo hv2-stack">
-        <span class="hv2-eyebrow" style="color:#F2B01E">{{ _('Contribute') }}</span>
-        <strong class="hv2-allcard-t">{{ _("Share your organization's water data") }}</strong>
-        <span class="hv2-on-dark hv2-grow">{{ _('Register, join or create an organization, and publish to the hubs you work in.') }}</span>
-        <a class="hv2-btn hv2-btn-gold" href="{{ h.url_for('/colab') }}">{{ _('Register') }}</a>
-        <a class="hv2-go" style="color:#9FD4F5" href="{{ h.url_for('/ihpix') }}">{{ _('IHP-IX progress') }} &rarr;</a>
-      </div>
     </div>
   </div>
 </section>
