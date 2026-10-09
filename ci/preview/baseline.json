@@ -1,0 +1,7 @@
+{
+  "base_image": "ghcr.io/pabrojast/ckan-theme-preview-base@sha256:5f97d2dbfe753203aa48e5fba59495d0a80c762d28d70a07228e8ac8cb79ee6d",
+  "source_theme_sha": "b1b1fe6a8f40082a052ede2265cf4682e8d90051",
+  "host": "preview.dev-wins.com",
+  "namespace": "ckan-preview",
+  "cluster_uid": "181dc298-2adb-48f5-9d78-8fbe4a340795"
+}
