@@ -232,3 +232,5 @@ su proceso de release. Después, incorporar `dev210` a `preview` mediante merge.
 El Environment `preview` sólo permite esa rama; su kubeconfig carece de permisos
 en dev. Los PR sólo ejecutan pruebas. La infraestructura y la copia depurada
 se administran en `ckan-unesco-docker/deploy/preview`.
+
+Preview desactiva el plugin DOI: su hook de creación requiere servicios externos incluso en modo de prueba. Los DOI existentes se conservan como metadatos del catálogo.

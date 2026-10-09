@@ -14,5 +14,6 @@ coerce_session_params({key.removeprefix('beaker.session.'): value
 assert app['ckan.site_url'] == 'https://preview.dev-wins.com'
 assert app['beaker.session.key'] == 'ckan_preview'
 assert 'beaker.session.cookie_domain' not in app
+assert 'doi' not in app['ckan.plugins'].split()
 assert Path('/app/preview-theme-sha').read_text().strip()
 print('Preview runtime and session configuration verified')
