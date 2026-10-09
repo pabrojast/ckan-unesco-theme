@@ -182,7 +182,16 @@
         <span class="hv2-eyebrow" style="color:#F2B01E">{{ _('Contribute') }}</span>
         <strong class="hv2-allcard-t">{{ _("Share your organization's water data") }}</strong>
         <span class="hv2-on-dark hv2-grow">{{ _('Register, join or create an organization, and publish to the hubs you work in.') }}</span>
-        <a class="hv2-btn hv2-btn-gold" href="{{ h.url_for('/colab') }}">{{ _('Register') }}</a>
+        <span class="hv2-btnrow">
+          {% if not c.userobj %}
+            {# same destination as the Log in link in the site header #}
+            {% set cs_return = h.csunesco_login_return_url() if h.csunesco_login_return_url is defined else none %}
+            {% set cs_login = h.csunesco_login_url() if h.csunesco_login_url is defined else none %}
+            {% set login_url = cs_login or (h.url_for('user.login', came_from=cs_return) if cs_return else h.url_for('user.login')) %}
+            <a class="hv2-btn hv2-btn-gold" href="{{ login_url }}">{{ _('Log in') }}</a>
+          {% endif %}
+          <a class="hv2-btn hv2-btn-gold-line" href="{{ h.url_for('/colab') }}">{{ _('Register') }}</a>
+        </span>
         <a class="hv2-go" style="color:#9FD4F5" href="{{ h.url_for('/ihpix') }}">{{ _('IHP-IX progress') }} &rarr;</a>
       </div>
     </div>

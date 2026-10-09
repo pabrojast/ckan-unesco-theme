@@ -105,6 +105,9 @@ a.hv2-navy, a.hv2-navy:hover { color: #FFFFFF; }
 .hv2-btn { align-self: flex-start; display: inline-flex; align-items: center; gap: 10px; font-weight: 700; padding: 12px 20px; border-radius: 6px; }
 a.hv2-btn-dark, a.hv2-btn-dark:hover { background: var(--hv2-navy); color: #FFFFFF; }
 .hv2-btn-gold, a.hv2-btn-gold:hover { background: var(--hv2-gold); color: var(--hv2-navy); }
+a.hv2-btn-gold-line { background: transparent; color: var(--hv2-gold); box-shadow: inset 0 0 0 2px var(--hv2-gold); transition: background-color .2s; }
+a.hv2-btn-gold-line:hover { background: rgba(242, 176, 30, .14); color: var(--hv2-gold); }
+.hv2-btnrow { display: flex; flex-wrap: wrap; gap: 10px; }
 a.hv2-btn-white, a.hv2-btn-white:hover { background: #FFFFFF; color: var(--hv2-navy); flex: none; }
 
 /* lists */
