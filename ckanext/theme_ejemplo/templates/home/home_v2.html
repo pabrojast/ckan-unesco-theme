@@ -51,12 +51,29 @@
       <div class="hv2-hero-titles">
         <h1 class="hv2-h1"><span class="hv2-ln"><span>IHP-WINS</span></span></h1>
         <div class="hv2-hero-sub hv2-fade">{{ _('Bridging the Water Data Knowledge Gap') }}</div>
-        <button type="button" class="hv2-about-btn hv2-fade" id="hv2-about-btn" aria-expanded="false" aria-controls="IHPWINS"
-                data-label-open="{{ _('About IHP-WINS') }}" data-label-close="{{ _('Close') }}">
-          <span class="hv2-about-label">{{ _('About IHP-WINS') }}</span> <i class="fa fa-chevron-down" aria-hidden="true"></i>
-        </button>
       </div>
     </div>
+
+    <form class="hv2-search hv2-fade" method="get" action="{{ h.url_for('dataset.search') }}" role="search">
+      <label for="hv2-q">{{ _('Search data') }}</label>
+      <div class="hv2-search-box">
+        <i class="fa fa-search" aria-hidden="true"></i>
+        <input id="hv2-q" type="text" name="q" autocomplete="off" data-suggest-scope="all" placeholder="{{ _('E.g. environment') }}">
+        <button type="submit">{{ _('Search') }}</button>
+      </div>
+    </form>
+
+    <div class="hv2-hero-links hv2-fade">
+      <a href="{{ h.url_for('dataset.search') }}"><strong>{{ h.SI_number_span(n_all) }}</strong> {{ _('dataset') if n_all == 1 else _('datasets') }}</a>
+      <a href="{{ h.url_for('organization.index') }}"><strong>{{ h.SI_number_span(n_orgs) }}</strong> {{ _('organization') if n_orgs == 1 else _('organizations') }}</a>
+      <span class="hv2-sep" aria-hidden="true"></span>
+      <a class="hv2-hero-cta" href="{{ h.url_for('dataset.search') }}">{{ _('Browse the data catalogue') }} &rarr;</a>
+    </div>
+
+    <button type="button" class="hv2-about-btn hv2-fade" id="hv2-about-btn" aria-expanded="false" aria-controls="IHPWINS"
+            data-label-open="{{ _('About IHP-WINS') }}" data-label-close="{{ _('Close') }}">
+      <span class="hv2-about-label">{{ _('About IHP-WINS') }}</span> <i class="fa fa-chevron-down" aria-hidden="true"></i>
+    </button>
 
     {# About IHP-WINS: collapsed by default, opens over the video (open without JavaScript) #}
     <div class="hv2-about-wrap" id="IHPWINS" role="region" aria-labelledby="hv2-about-btn">
@@ -87,26 +104,9 @@
         </div>
       </div>
     </div>
-
-    <form class="hv2-search hv2-fade" method="get" action="{{ h.url_for('dataset.search') }}" role="search">
-      <label for="hv2-q">{{ _('Search data') }}</label>
-      <div class="hv2-search-box">
-        <i class="fa fa-search" aria-hidden="true"></i>
-        <input id="hv2-q" type="text" name="q" autocomplete="off" data-suggest-scope="all" placeholder="{{ _('E.g. environment') }}">
-        <button type="submit">{{ _('Search') }}</button>
-      </div>
-    </form>
-
-    <div class="hv2-hero-links hv2-fade">
-      <a href="{{ h.url_for('dataset.search') }}"><strong>{{ h.SI_number_span(n_all) }}</strong> {{ _('dataset') if n_all == 1 else _('datasets') }}</a>
-      <a href="{{ h.url_for('organization.index') }}"><strong>{{ h.SI_number_span(n_orgs) }}</strong> {{ _('organization') if n_orgs == 1 else _('organizations') }}</a>
-      <span class="hv2-sep" aria-hidden="true"></span>
-      <a class="hv2-hero-cta" href="{{ h.url_for('dataset.search') }}">{{ _('Browse the data catalogue') }} &rarr;</a>
-    </div>
   </div>
 
   <div class="hv2-wrap hv2-hero-foot">
-    <a class="hv2-explore" href="#datasets">{{ _('Explore') }} <span aria-hidden="true">&darr;</span></a>
     <button type="button" class="hv2-vbtn" id="hv2-vbtn" aria-label="{{ _('Pause background video') }}"
             data-label-pause="{{ _('Pause background video') }}" data-label-play="{{ _('Play background video') }}">
       <i class="fa fa-pause" aria-hidden="true"></i>

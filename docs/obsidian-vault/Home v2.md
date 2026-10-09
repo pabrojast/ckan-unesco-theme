@@ -16,7 +16,7 @@ With the switch on, `/?home=v2` and `/?home=classic` preview either design for t
 ## Page order
 
 1. Hero: a looping clip (1:40 to 2:07) from the IHP 50th anniversary film, the UNESCO IHP logo, the headline, dataset search and counts. The site header floats over it as it did over the old hero. A pause button stops the video, and visitors with "reduce motion" see the still poster.
-   - About IHP-WINS (`#IHPWINS`) is a panel inside the hero, collapsed by default. Clicking the title block or the "About IHP-WINS" button opens it over the video, and the title moves up. Escape closes it. Links to `#IHPWINS` (section bar, first spotlight slide) open it and scroll to the top. Without JavaScript the panel is open.
+   - About IHP-WINS (`#IHPWINS`) is a panel inside the hero, collapsed by default. The "About IHP-WINS" button sits under the dataset counts; it or a click on the title block opens the panel over the video, and the title moves up. Escape closes it. Links to `#IHPWINS` (section bar, first spotlight slide) open it and scroll to the top. Without JavaScript the panel is open.
 2. Counters: organizations, initiatives, Member States, datasets, documents, page views, downloads.
 3. Sticky section bar: About, Datasets, Knowledge, Thematic viewers, Network, Water Family, Learning, Spotlight, plus "Contribute data".
 4. Datasets: Data Catalogue and Geospatial Viewer tiles, Explore data (Recently added, Trending).
