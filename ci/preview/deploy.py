@@ -37,7 +37,7 @@ def patch(deployment, image, annotations):
     kube('rollout', 'status', 'deployment/ckan', '--timeout=900s')
 
 
-def smoke(sha):
+def smoke_once(sha):
     version = json.load(urllib.request.urlopen(HOST + '/__preview/version', timeout=45))
     if version.get('theme_sha') != sha:
         raise RuntimeError('Live theme SHA differs from the requested commit')
@@ -51,6 +51,20 @@ def smoke(sha):
             continue
         if any(c.get('restartCount', 0) for c in pod.get('status', {}).get('containerStatuses', [])):
             raise RuntimeError('New CKAN container restarted')
+
+
+def smoke(sha):
+    # Ingress/endpoints pueden tardar unos segundos tras Ready y durante el drenaje.
+    deadline = time.monotonic() + 150
+    while True:
+        try:
+            smoke_once(sha)
+            return
+        except Exception as exc:
+            if time.monotonic() >= deadline:
+                raise
+            print('Waiting for public routing to converge:', type(exc).__name__)
+            time.sleep(5)
 
 
 def main():
