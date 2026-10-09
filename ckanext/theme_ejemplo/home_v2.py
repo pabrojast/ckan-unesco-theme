@@ -1,57 +1,24 @@
 # -*- coding: utf-8 -*-
 """Home page v2 (redesign) for IHP-WINS.
 
-Added by Jorgen Van Der Biest. Everything for the new home page lives in its
-own files so it can be reviewed, switched on and removed separately:
+Added by Jorgen Van Der Biest. Everything for the home page design lives in
+its own files so it can be reviewed and maintained separately:
 
 - this module (template helpers)
-- templates/home/home_v2.html
+- templates/home/home_v2.html (rendered by templates/home/index.html)
 - public/css/home-v2.css and public/js/home-v2.js
 - public/home_v2/ (hero video, poster and logos)
 
-The page reuses the data helpers the current home page already uses
-(site statistics, recently added, popular datasets, featured viewers, news,
-events, publications, courses). The helpers below only add what the current
-home page does not show yet (rapid response events, data stories) and the
-switch between the current and the new design.
-
-Settings (ckan.ini or environment variables):
-
-    ckanext.theme_ejemplo.home_design = classic | v2     (default: classic)
-    ckanext.theme_ejemplo.home_design_switch = true      (default: false)
-
-With the switch on, ?home=v2 or ?home=classic previews either design for
-that one request, so the new page can be checked on the dev site before it
-becomes the default.
+The page reuses the data helpers the previous home page used (site
+statistics, recently added, popular datasets, featured viewers, news, events,
+publications, courses). The helpers below only add what the previous home
+page did not show (rapid response events, data stories).
 """
 import logging
 
 import ckan.plugins.toolkit as toolkit
 
 log = logging.getLogger(__name__)
-
-_DESIGNS = ('classic', 'v2')
-
-
-def _config_design():
-    value = (toolkit.config.get('ckanext.theme_ejemplo.home_design') or 'classic')
-    value = str(value).strip().lower()
-    return value if value in _DESIGNS else 'classic'
-
-
-def home_v2_enabled():
-    """True when the new home page should be shown for this request."""
-    design = _config_design()
-    try:
-        if toolkit.asbool(toolkit.config.get(
-                'ckanext.theme_ejemplo.home_design_switch', False)):
-            asked = (toolkit.request.args.get('home') or '').strip().lower()
-            if asked in _DESIGNS:
-                design = asked
-    except Exception:
-        # No request context (CLI, tests): keep the configured design
-        pass
-    return design == 'v2'
 
 
 def _anonymous_context():
@@ -99,7 +66,6 @@ def home_v2_short_number(value):
 
 def get_helpers():
     return {
-        'home_v2_enabled': home_v2_enabled,
         'home_v2_rapid_response': home_v2_rapid_response,
         'home_v2_data_stories': home_v2_data_stories,
         'home_v2_short_number': home_v2_short_number,

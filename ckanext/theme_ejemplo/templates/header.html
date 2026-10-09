@@ -254,7 +254,7 @@
         {% if g.site_description %}
         <h2>{{ g.site_description }}</h2>{% endif %} {% endif %} {% endblock %}
         {# Home page v2 (added by Jorgen Van Der Biest): IHP-WINS logo next to the UNESCO logo #}
-        {% if request.endpoint == 'home.index' and h.home_v2_enabled() %}<a class="logo hv2-wins-logo" href="{{ h.url_for('/') }}"><img src="{{ h.url_for_static('/home_v2/ihp-wins-logo-white.png') }}" alt="IHP-WINS" /></a>{% endif %}
+        {% if request.endpoint == 'home.index' %}<a class="logo hv2-wins-logo" href="{{ h.url_for('/') }}"><img src="{{ h.url_for_static('/home_v2/ihp-wins-logo-white.png') }}" alt="IHP-WINS" /></a>{% endif %}
       </hgroup>
       
       {% block header_site_navigation %}

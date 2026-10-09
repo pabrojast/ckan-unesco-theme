@@ -12,13 +12,9 @@
       {{ self.flash() }}
     </div>
     {% block primary_content %}
-      {# Home page v2 (added by Jorgen Van Der Biest): new design when
-         ckanext.theme_ejemplo.home_design = v2, see home_v2.py #}
-      {% if h.home_v2_enabled() %}
-        {% snippet "home/home_v2.html" %}
-      {% else %}
-      {% snippet "home/custom_layout.html"%}
-      {% endif %}
+      {# Home page v2 (added by Jorgen Van Der Biest): replaces
+         {% snippet "home/custom_layout.html" %}, see home_v2.py #}
+      {% snippet "home/home_v2.html" %}
     {% endblock %}
   </div>
 {% endblock %}

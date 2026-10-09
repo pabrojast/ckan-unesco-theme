@@ -1,17 +1,10 @@
 # Home page v2 (redesign)
 
-Added by Jorgen Van Der Biest. A new design for the IHP-WINS home page that keeps every link of the current home page, reorganised by the platform's areas.
+Added by Jorgen Van Der Biest. The IHP-WINS home page design. It keeps every link of the previous home page, reorganised by the platform's areas.
 
-## Switching it on
+## How it is wired
 
-| Setting | Values | Default |
-|---|---|---|
-| `ckanext.theme_ejemplo.home_design` | `classic`, `v2` | `classic` |
-| `ckanext.theme_ejemplo.home_design_switch` | `true`, `false` | `false` |
-
-As environment variables: `CKANEXT__THEME_EJEMPLO__HOME_DESIGN=v2` and `CKANEXT__THEME_EJEMPLO__HOME_DESIGN_SWITCH=true`.
-
-With the switch on, `/?home=v2` and `/?home=classic` preview either design for that one request, so v2 can be checked on dev before it becomes the default. With the default settings nothing changes on the site.
+`templates/home/index.html` renders `home/home_v2.html` in place of `home/custom_layout.html` (one line replaced, marked). There is no setting: this is the home page. `custom_layout.html` is left in the repo unused, so going back is a one-line change in `index.html`.
 
 ## Page order
 
@@ -31,19 +24,19 @@ With the switch on, `/?home=v2` and `/?home=classic` preview either design for t
 
 New files only:
 
-- `ckanext/theme_ejemplo/home_v2.py`: helpers `home_v2_enabled`, `home_v2_rapid_response`, `home_v2_data_stories`, `home_v2_short_number`.
+- `ckanext/theme_ejemplo/home_v2.py`: helpers `home_v2_rapid_response`, `home_v2_data_stories`, `home_v2_short_number`.
 - `templates/home/home_v2.html`: the page.
 - `public/css/home-v2.css`: styles, all scoped under `.hv2`.
 - `public/js/home-v2.js`: video pause, About panel, tabs, slide deck, section bar.
 - `public/home_v2/`: hero video (7 MB desktop, 2.7 MB mobile), poster, logos, two tile images.
 
-Lines added to existing files, each marked "Home page v2 (added by Jorgen Van Der Biest)":
+Changes to existing files, each marked "Home page v2 (added by Jorgen Van Der Biest)":
 
 - `plugin.py`: 2 lines (import, register helpers).
-- `templates/home/index.html`: the switch between `home_v2.html` and `custom_layout.html`.
-- `templates/header.html`: the IHP-WINS logo next to the UNESCO logo, only on the v2 home page.
+- `templates/home/index.html`: renders `home_v2.html` instead of `custom_layout.html`.
+- `templates/header.html`: the IHP-WINS logo next to the UNESCO logo, only on the home page.
 
-On the v2 home page only, `home-v2.css` also restyles Pablo's header through `body:has(#hv2)` selectors (no change to `theme_ejemplo.css`): it stays transparent over the video instead of turning blue on hover, has a thin line under the top links with UNESCO on the left, a plain "Log in", the menu on one row from 1260 px, and rounded menu buttons with Home marked by a bottom edge in the IHP-WINS logo blue (`#37B7E7`). The header only stays transparent at exactly `/`, as in Pablo's `header.html`; with a query string such as `/?home=v2` it keeps its blue background.
+On the home page only, `home-v2.css` also restyles Pablo's header through `body:has(#hv2)` selectors (no change to `theme_ejemplo.css`): it stays transparent over the video instead of turning blue on hover, has a thin line under the top links with UNESCO on the left, a plain "Log in", the menu on one row from 1260 px, and rounded menu buttons with Home marked by a bottom edge in the IHP-WINS logo blue (`#37B7E7`). The header only stays transparent at exactly `/`, as in Pablo's `header.html`; with a query string (for example `/?lang=fr`) it keeps its blue background.
 
 ## Data
 

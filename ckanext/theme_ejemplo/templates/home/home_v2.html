@@ -1,14 +1,14 @@
 {#
   IHP-WINS home page v2 (redesign) - added by Jorgen Van Der Biest.
 
-  Shown instead of home/custom_layout.html when
-  ckanext.theme_ejemplo.home_design = v2 (see home_v2.py). The site header
-  (header.html) floats over the hero video, as it floated over the old hero.
+  Rendered by home/index.html in place of home/custom_layout.html (helpers
+  in home_v2.py). The site header (header.html) floats over the hero video,
+  as it floated over the old hero.
 
-  Order follows the platform's areas: hero (video + search), live counters,
-  section bar, About, Datasets, Knowledge, Thematic viewers, Network,
+  Order follows the platform's areas: hero (video + search, About panel),
+  live counters, section bar, Network, Datasets, Knowledge, Thematic viewers,
   Water Family, Learning, Spotlight (the original slide deck). Every link of
-  the current home page is kept.
+  the previous home page is kept.
 
   All data comes from helpers the current home page already uses, plus
   h.home_v2_rapid_response() and h.home_v2_data_stories(). Styles are scoped
