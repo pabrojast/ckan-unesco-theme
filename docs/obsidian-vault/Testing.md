@@ -251,3 +251,5 @@ header de login y despliegue. El build importa el plugin y ejecuta `pip check`.
 Después del rollout se verifica el SHA en `/__preview/version`, portada, catálogo,
 organizaciones, iniciativas, Stories, Terria y API. Un fallo restaura el digest
 anterior. Estos checks no sustituyen revisar visualmente las páginas modificadas.
+
+El build de preview valida también los parámetros reales de sesión Beaker antes de publicar la imagen (`ci/preview/check_runtime.py`).

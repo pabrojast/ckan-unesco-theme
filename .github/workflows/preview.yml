@@ -69,7 +69,7 @@ jobs:
       - name: Validate built runtime
         env: {THEME_SHA: '${{ github.sha }}'}
         run: |
-          docker run --rm --entrypoint python "ghcr.io/pabrojast/ckan-theme-preview:$THEME_SHA" -c 'import ckanext.theme_ejemplo.plugin; from pathlib import Path; import os; assert Path("/app/preview-theme-sha").read_text().strip()'
+          docker run --rm -i --entrypoint python "ghcr.io/pabrojast/ckan-theme-preview:$THEME_SHA" < ci/preview/check_runtime.py
           docker run --rm --entrypoint pip "ghcr.io/pabrojast/ckan-theme-preview:$THEME_SHA" check
       - name: Publish verified image
         id: image
