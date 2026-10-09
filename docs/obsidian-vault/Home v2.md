@@ -43,11 +43,15 @@ Lines added to existing files, each marked "Home page v2 (added by Jorgen Van De
 - `templates/home/index.html`: the switch between `home_v2.html` and `custom_layout.html`.
 - `templates/header.html`: the IHP-WINS logo next to the UNESCO logo, only on the v2 home page.
 
+On the v2 home page only, `home-v2.css` also restyles Pablo's header through `body:has(#hv2)` selectors (no change to `theme_ejemplo.css`): it stays transparent over the video instead of turning blue on hover, has a thin line under the top links with UNESCO on the left, a plain "Log in", the menu on one row from 1260 px, and Home underlined in the IHP-WINS logo blue (`#37B7E7`). The header only stays transparent at exactly `/`, as in Pablo's `header.html`; with a query string such as `/?home=v2` it keeps its blue background.
+
 ## Data
 
 It uses the same helpers as the current home page: `theme_ejemplo_site_statistics`, `get_tracking_totals`, `get_recently_added`, `get_popular_datasets`, `get_popular_resources`, `theme_ejemplo_get_featured_viewers`, `get_recent_water_news`, `get_recent_water_events`, `get_featured_publications`, `get_latest_courses`. Rapid response pages and data stories come from ckanext-pages (`ckanext_pages_list` with `page_type=rapid-response`, `data_story_list`), read anonymously so drafts never show.
 
 ## Notes
+
+- Accents (focus outlines, the Home underline, the spotlight progress bar) use the IHP-WINS logo blue `#37B7E7`.
 
 - `theme_ejemplo.css` sets `p { color: #212529 !important }`, so the page uses `<div class="hv2-lead">` instead of `<p>` for running text.
 - The videos could also be served from blob storage instead of the repo: change the two `<source>` lines in `home_v2.html`.
