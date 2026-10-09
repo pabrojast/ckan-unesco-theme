@@ -242,3 +242,12 @@ La validación en navegador cubre catálogo, edición, relaciones y tamaño móv
 ## Encabezado responsive (2026-10-01)
 
 Verificar inicio, catálogo y Rapid Response entre 320 y 1920 px, incluyendo 768/800/820/991/992/1024/1199/1366. En catálogo y Rapid Response, el ancho del documento debe coincidir con el viewport. En inicio, comparar además con la versión previa: la auditoría detectó desbordamiento preexistente fuera del encabezado (480 px de documento a 320 px), idéntico antes y después del parche. Comprobar el menú móvil abierto/cerrado, la navegación que pasa a varias líneas, el foco del buscador y su panel de sugerencias. Repetir con traducciones. La prueba del candidato debe cargar el CSS real del checkout en el orden de producción y repetirse con los assets de la imagen final y las URLs públicas. Ver [[Troubleshooting]].
+
+
+## Comprobaciones de preview
+
+`Theme checks` ejecuta pruebas independientes de búsqueda, historial de licencias,
+header de login y despliegue. El build importa el plugin y ejecuta `pip check`.
+Después del rollout se verifica el SHA en `/__preview/version`, portada, catálogo,
+organizaciones, iniciativas, Stories, Terria y API. Un fallo restaura el digest
+anterior. Estos checks no sustituyen revisar visualmente las páginas modificadas.

@@ -213,3 +213,22 @@ configuración y volúmenes. La guía y el rollback están en
 La rama `production` del repositorio Docker usa ahora `THEME_REF=dev210` para
 futuras construcciones, en lugar del commit fijo `c7a1a54`. Publicar esa referencia
 no despliega producción. Ver [[Busqueda]] y [[Testing#Búsqueda por abstract]].
+
+
+## Preview persistente del theme
+
+La rama `preview` publica automáticamente en https://preview.dev-wins.com.
+El workflow `Theme preview` verifica plantillas/Python, construye el SHA exacto
+sobre `ci/preview/baseline.json` y despliega por digest en `default/ckan-preview`.
+La imagen base contiene las extensiones de dev con configuración neutralizada;
+actualizar dependencias o migraciones exige revisar y actualizar esa base.
+
+Los datos persisten entre despliegues. No se copian datos hacia dev al hacer merge.
+Para integrar: abrir PR de `preview` a `dev210`, obtener aprobación y ejecutar
+manualmente el despliegue de theme en `ckan-unesco-docker`. Producción conserva
+su proceso de release. Después, incorporar `dev210` a `preview` mediante merge.
+
+`Run workflow`, rama `preview`, acción `rollback` restaura el digest anterior.
+El Environment `preview` sólo permite esa rama; su kubeconfig carece de permisos
+en dev. Los PR sólo ejecutan pruebas. La infraestructura y la copia depurada
+se administran en `ckan-unesco-docker/deploy/preview`.

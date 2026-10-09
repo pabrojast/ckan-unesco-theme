@@ -1,0 +1,117 @@
+name: Theme preview
+on:
+  push:
+    branches: [preview]
+  pull_request:
+    branches: [dev210]
+  workflow_dispatch:
+    inputs:
+      action:
+        description: Deploy current preview or restore its previous verified image
+        type: choice
+        options: [deploy, rollback]
+        default: deploy
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    name: Theme checks
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: actions/setup-python@v5
+        with: {python-version: '3.10'}
+      - run: pip install pytest==8.3.5 Jinja2==3.1.6 MarkupSafe==2.1.5 setuptools==75.8.2
+      - name: Compile Python and test independent templates
+        run: |
+          python -m compileall -q ckanext/theme_ejemplo ci/preview
+          pytest -q ckanext/theme_ejemplo/tests/test_search.py ckanext/theme_ejemplo/tests/test_license_history_template.py ckanext/theme_ejemplo/tests/test_cs_login_header.py ci/preview/test_deploy.py
+      - name: Refuse automatic dependency or migration changes
+        if: github.event_name != 'pull_request'
+        run: |
+          BASE=$(python -c 'import json; print(json.load(open("ci/preview/baseline.json"))["source_theme_sha"])')
+          git fetch --no-tags origin "$BASE"
+          CHANGED=$(git diff --name-only "$BASE" HEAD -- requirements.txt setup.py 'ckanext/theme_ejemplo/migration*')
+          if [ -n "$CHANGED" ]; then echo "Update the reviewed preview baseline before deploying dependency/migration changes."; exit 1; fi
+
+  build:
+    needs: checks
+    if: github.ref == 'refs/heads/preview' && github.event_name != 'pull_request' && inputs.action != 'rollback'
+    runs-on: ubuntu-latest
+    permissions: {contents: read, packages: write}
+    outputs:
+      image: ${{ steps.image.outputs.reference }}
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: docker/setup-buildx-action@v3
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - id: baseline
+        run: echo "image=$(python -c 'import json; print(json.load(open("ci/preview/baseline.json"))["base_image"])')" >> "$GITHUB_OUTPUT"
+      - uses: docker/build-push-action@v6
+        id: build
+        with:
+          context: .
+          file: ci/preview/Dockerfile
+          load: true
+          tags: ghcr.io/pabrojast/ckan-theme-preview:${{ github.sha }}
+          build-args: |
+            BASE_IMAGE=${{ steps.baseline.outputs.image }}
+            THEME_SHA=${{ github.sha }}
+          cache-from: type=gha,scope=theme-preview
+          cache-to: type=gha,mode=max,scope=theme-preview
+      - name: Validate built runtime
+        env: {THEME_SHA: '${{ github.sha }}'}
+        run: |
+          docker run --rm --entrypoint python "ghcr.io/pabrojast/ckan-theme-preview:$THEME_SHA" -c 'import ckanext.theme_ejemplo.plugin; from pathlib import Path; import os; assert Path("/app/preview-theme-sha").read_text().strip()'
+          docker run --rm --entrypoint pip "ghcr.io/pabrojast/ckan-theme-preview:$THEME_SHA" check
+      - name: Publish verified image
+        id: image
+        env: {THEME_SHA: '${{ github.sha }}'}
+        run: |
+          IMAGE="ghcr.io/pabrojast/ckan-theme-preview:$THEME_SHA"
+          docker push "$IMAGE"
+          DIGEST=$(docker buildx imagetools inspect "$IMAGE" --format '{{.Manifest.Digest}}')
+          echo "reference=ghcr.io/pabrojast/ckan-theme-preview@$DIGEST" >> "$GITHUB_OUTPUT"
+
+  deploy:
+    needs: [checks, build]
+    if: always() && needs.checks.result == 'success' && github.ref == 'refs/heads/preview' && github.event_name != 'pull_request' && vars.PREVIEW_DEPLOY_ENABLED == 'true' && (needs.build.result == 'success' || inputs.action == 'rollback')
+    runs-on: ubuntu-latest
+    environment:
+      name: preview
+      url: https://preview.dev-wins.com
+    concurrency:
+      group: ckan-preview-deploy
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+        with: {persist-credentials: false}
+      - uses: azure/setup-kubectl@v4
+        with: {version: v1.33.4}
+      - name: Configure restricted preview credentials
+        env: {PREVIEW_KUBECONFIG: '${{ secrets.PREVIEW_KUBECONFIG }}'}
+        run: |
+          mkdir -p "$HOME/.kube"
+          printf '%s' "$PREVIEW_KUBECONFIG" > "$HOME/.kube/config"
+          chmod 600 "$HOME/.kube/config"
+      - name: Deploy and verify
+        env:
+          IMAGE: ${{ needs.build.outputs.image }}
+          THEME_SHA: ${{ github.sha }}
+          ACTION: ${{ inputs.action }}
+        run: |
+          if [ "$ACTION" = rollback ]; then
+            python ci/preview/deploy.py --rollback
+          else
+            python ci/preview/deploy.py --image "$IMAGE" --sha "$THEME_SHA"
+          fi
+      - name: Remove credentials
+        if: always()
+        run: rm -f "$HOME/.kube/config"
