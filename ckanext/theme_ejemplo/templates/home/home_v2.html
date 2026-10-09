@@ -30,7 +30,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&family=Source+Sans+3:wght@400;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="{{ h.url_for_static('/css/home-v2.css') }}?v=20261008">
+<link rel="stylesheet" href="{{ h.url_for_static('/css/home-v2.css') }}?v=20261009">
 
 <div class="hv2" id="hv2">
 <a class="hv2-skip" href="#hv2-sections">{{ _('Skip to main content') }}</a>
@@ -76,6 +76,7 @@
     </button>
 
     {# About IHP-WINS: collapsed by default, opens over the video (open without JavaScript) #}
+    <noscript><style>.hv2-about-wrap { grid-template-rows: 1fr !important; opacity: 1 !important; margin: 0 !important; } .hv2-about-btn { display: none !important; }</style></noscript>
     <div class="hv2-about-wrap" id="IHPWINS" role="region" aria-labelledby="hv2-about-btn">
       <div class="hv2-about-clip">
         <div class="hv2-about-panel">
@@ -550,4 +551,4 @@
 </div>{# /#hv2-sections #}
 </div>{# /.hv2 #}
 
-<script src="{{ h.url_for_static('/js/home-v2.js') }}?v=20261008" defer></script>
+<script src="{{ h.url_for_static('/js/home-v2.js') }}?v=20261009" defer></script>
