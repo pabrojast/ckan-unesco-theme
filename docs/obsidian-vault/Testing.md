@@ -18,6 +18,10 @@
 | `test_ihpix_publications.py` | 18 | `ihpix_publications.py` — modal "Upload a publication": filtrado por esquema (13 vs 29 campos), slugs, autores (subcampos name/orcid/affiliation), contact_email obligatorio, errores del esquema (módulo puro) |
 | `test_ihpix_constants.py` | 9 | `ihpix_constants.py` (títulos de Output desde JSON, PA por Output), `ihpix_i18n_strings.py` (cobertura de taxonomías y mensajes de validación) y guardas de plantillas: snippets importables como módulo, sin `{# #}` anidados, sin `_('%(x)s')` sin kwargs |
 | `test_ihpix_workspaces.py` | 11 | `ihpix_workspaces.py` — reglas de membresía y permisos de los working groups (módulo puro) |
+| `test_ihpix_normalize.py` | 13 | `ihpix_normalize.py` — alias de valores heredados (doble espacio, `2022 - 2023`, `Report`, stakeholder groups con paréntesis, multis con comas, flagship `No`), puertas derivadas, alias de país, idempotencia (módulo puro, 2026-10) |
+| `test_ihpix_stats.py` | 12 | `ihpix_stats.py` — totales por ámbito, unión de los tres campos de país, región por índice, filas con puerta en `false` pero conteo > 0, "por tipo", dimensión por ámbito, `Unspecified`, porcentajes con total 0, matriz, no resueltos (módulo puro, 2026-10) |
+
+Los tests puros IHP-IX (`test_ihpix_*.py`, 112 el 2026-10-11) corren sin CKAN: `PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python3 -m pytest -q ckanext/theme_ejemplo/tests/test_ihpix_*.py`. `test_ihpix_constants.py` comprueba además que los JSON de títulos y key activities cargan, que hay 18 flagships con slug de ida y vuelta y que cada literal nuevo está en `ihpix_i18n_strings.py`.
 
 ### Módulos sin tests
 - `actions.py` (45 acciones)
@@ -43,6 +47,28 @@ kubectl --context default -n ckan exec -i $POD -c ckan -- python3 - < scripts/ih
 
 Para validar cambios sin reconstruir la imagen: `kubectl cp` de los ficheros al
 pod y volver a lanzar el script (el proceso es nuevo y lee el disco).
+
+> [!warning] El paquete del pod es de root (2026-10-11)
+> Desde el despliegue del 2026-10 `/app/src/ckanext-theme-ejemplo` pertenece a
+> root y el contenedor corre como `ckan`: `kubectl cp` no puede sobrescribir.
+> Alternativa que funcionó: copiar el árbol a `/tmp/theme-overlay`
+> (`kubectl exec … -- cp -r /app/src/ckanext-theme-ejemplo/ckanext /tmp/theme-overlay/`),
+> extraer ahí un tarball con los ficheros cambiados y lanzar los procesos con
+> `PYTHONPATH=/tmp/theme-overlay` más un `sitecustomize.py` en esa carpeta que
+> haga `ckanext.__path__.insert(0, '/tmp/theme-overlay/ckanext')` (el namespace
+> `ckanext` de pkg_resources no respeta el orden de PYTHONPATH por sí solo).
+> El smoke se lanza entonces con `python3 -c "import sys; sys.path.insert(0,
+> '/tmp/theme-overlay'); import ckanext; ckanext.__path__.insert(0,
+> '/tmp/theme-overlay/ckanext'); exec(open('/tmp/theme-overlay/scripts/ihpix_dev_smoke.py').read())"`.
+> Ojo: cualquier proceso nuevo con el modelo nuevo aplica la migración (y la
+> normalización de heredados) a la base de dev: respaldar antes
+> (ver [[Deployment#Despliegue a desarrollo (data.dev-wins.com)]]).
+
+El smoke incluye desde 2026-10-11 las cinco rutas de progreso, la redirección
+de `/ihpix/dashboard`, los marcadores del formulario rediseñado
+(`key_activity_code`, `training_type_other`, `UWMP`, `section-review`) y una
+llamada a `ihpix_progress_stats` cuyos totales deben coincidir con la SQL
+directa (`sum(stakeholders_knowledge)` de las publicadas, etc.).
 
 ## Navegador real (Playwright) contra dev
 
@@ -70,6 +96,35 @@ Crea un borrador "Playwright IHP-IX draft (delete me)" y una publicación
 "…smoke publication (delete me)" del usuario editor: borrarlos después
 (`ihpix_report_delete` / `dataset_purge`) y revocar los tokens. Ejecutada en
 verde el 2026-09-25 (16 pasos, 0 errores de consola).
+
+### Formulario rediseñado y dashboards de progreso (2026-10-11)
+
+`scripts/playwright/ihpix_progress.js` solo hace GET (no crea datos): comprueba
+el formulario (23 obligatorios, 18 flagships, 12 tipos de formación, 13 puertas
+sin valor por defecto, key activities filtradas por Output, tabla de revisión,
+resumen de errores al enviar incompleto), móvil 390 px, árabe RTL, los cinco
+ámbitos de progreso (tiles, ≥ 8 gráficos, franja de 34 outputs, mapa con
+marcadores, filtro de bienio vía API, "Show as table") y la redirección del
+dashboard antiguo; guarda capturas y `results.json`.
+
+Para verificar **sin desplegar**: servidor de desarrollo en el pod con la copia
+de `/tmp/theme-overlay` (`kubectl exec … -- env PYTHONPATH=/tmp/theme-overlay
+ckan -c /srv/app/production.ini run -H 0.0.0.0 -p 5001 -r -t`) y
+`kubectl port-forward pod/<ckan> 5001:5001`. El port-forward se cae con las
+peticiones en paralelo del navegador, así que el script acepta
+`IHPIX_PW_TUNNEL` (comando del port-forward) e `IHPIX_PW_SERVER` (comando que
+reinicia el servidor) y los relanza él mismo cuando el sitio deja de responder:
+
+```bash
+NODE_PATH=/ruta/privada/node_modules IHPIX_PW_TOKENS=/ruta/privada/tokens.json \
+IHPIX_PW_BASE=http://127.0.0.1:5001 \
+IHPIX_PW_TUNNEL="kubectl --context default -n ckan port-forward pod/<ckan> 5001:5001" \
+IHPIX_PW_SERVER=/ruta/privada/restart-server.sh \
+node scripts/playwright/ihpix_progress.js
+```
+
+Playwright 1.58 necesita Chromium 1208 en `~/.cache/ms-playwright`; una
+instalación 1.57 pide la 1200 y falla aunque haya otras builds.
 
 ## Cómo ejecutar tests
 

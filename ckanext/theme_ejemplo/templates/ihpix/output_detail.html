@@ -45,8 +45,8 @@
       <a class="ixp-btn ixp-btn-ghost" href="{{ h.url_for('/ihpix/outputs', output=code) }}">
         <i class="fa fa-list-alt"></i> {{ _('Open in explorer') }}
       </a>
-      <a class="ixp-btn ixp-btn-ghost" href="{{ h.url_for('/ihpix/dashboard', output=code) }}">
-        <i class="fa fa-bar-chart"></i> {{ _('Dashboard') }}
+      <a class="ixp-btn ixp-btn-ghost" href="{{ h.url_for('theme_ejemplo.ihpix_progress_output', value=code) }}">
+        <i class="fa fa-bar-chart"></i> {{ _('Implementation progress') }}
       </a>
       <a class="ixp-btn ixp-btn-ghost" href="{{ h.url_for('theme_ejemplo.ihpix_workspace_detail', code=code) }}">
         <i class="fa fa-users"></i> {{ _('Working group') }}

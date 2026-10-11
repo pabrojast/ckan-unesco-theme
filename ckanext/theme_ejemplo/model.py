@@ -768,26 +768,35 @@ def _ensure_new_ihpix_sections():
 
 # Prefijo del Microsoft Form externo que usaba el CTA de reporte hasta 2026-09
 _LEGACY_IHPIX_REPORT_FORM_PREFIX = 'https://forms.office.com'
+# Página SharePoint con los Power BI que usaba el CTA de progreso hasta 2026-10
+_LEGACY_IHPIX_PROGRESS_PREFIX = 'https://unesco.sharepoint.com'
+
+# (tarjeta, prefijo del enlace externo heredado, destino interno)
+_IHPIX_CTA_LINK_MIGRATIONS = (
+    ('cta_1', _LEGACY_IHPIX_REPORT_FORM_PREFIX, u'/ihpix/report'),
+    ('cta_2', _LEGACY_IHPIX_PROGRESS_PREFIX, u'/ihpix/progress'),
+)
 
 
 def _migrate_ihpix_cta_links():
-    """Apunta la tarjeta 'IHP IX Reporting' al formulario interno.
+    """Apunta las tarjetas CTA a las páginas internas equivalentes.
 
-    El reporte IHP-IX se hace ahora dentro de IHP-WINS (`/ihpix/report`).
-    Sólo se modifica si el enlace sigue siendo el Microsoft Form externo,
+    El reporte IHP-IX se hace dentro de IHP-WINS (`/ihpix/report`) y los
+    dashboards de progreso también (`/ihpix/progress`). Sólo se modifica si
+    el enlace sigue siendo el externo heredado (Microsoft Form / SharePoint),
     para respetar cualquier edición posterior del administrador.
     """
-    try:
-        card = IhpixContent.get_by_key('cta_1')
-        if card and (card.link or u'').startswith(
-                _LEGACY_IHPIX_REPORT_FORM_PREFIX):
-            card.link = u'/ihpix/report'
-            card.updated_at = datetime.datetime.utcnow()
-            meta.Session.commit()
-            log.info(u'ihpix_content: cta_1 ahora enlaza a /ihpix/report')
-    except Exception as e:
-        meta.Session.rollback()
-        log.warning(u'ihpix_content: no se pudo migrar el enlace del CTA: %s', e)
+    for key, prefix, target in _IHPIX_CTA_LINK_MIGRATIONS:
+        try:
+            card = IhpixContent.get_by_key(key)
+            if card and (card.link or u'').startswith(prefix):
+                card.link = target
+                card.updated_at = datetime.datetime.utcnow()
+                meta.Session.commit()
+                log.info(u'ihpix_content: %s ahora enlaza a %s', key, target)
+        except Exception as e:
+            meta.Session.rollback()
+            log.warning(u'ihpix_content: no se pudo migrar el enlace del CTA %s: %s', key, e)
 
 
 def _get_default_ihpix_content():
@@ -810,7 +819,7 @@ def _get_default_ihpix_content():
             'title': 'IHP IX Implementation Progress',
             'description': 'Track implementation progress and view results across priority areas.',
             'image_url': '/Landing_page/Content/ihpix_2.png',
-            'link': 'https://unesco.sharepoint.com/sites/IntergovernmentalHydrologicalProgrammeIHP/SitePages/IHP-IX-Implementation-Progress.aspx?OR=Teams-HL&CT=1736211052496&clickparams=eyJBcHBOYW1lIjoiVGVhbXMtRGVza3RvcCIsIkFwcFZlcnNpb24iOiI0OS8yNDEyMDEwMDIxMSJ9',
+            'link': '/ihpix/progress',
             'badge_text': 'Members Only',
             'display_order': 1,
         },
@@ -961,7 +970,8 @@ class IhpixActivity(model.DomainObject):
                  kpi_4_active=False, kpi_5_active=False,
                  kpi_6_active=False, kpi_8_active=False,
                  additional_notes=u'',
-                 original_timestamp=u'', original_id=u''):
+                 original_timestamp=u'', original_id=u'',
+                 key_activity_code=u'', training_type_other=u''):
         self.id = str(uuid.uuid4())
         self.title = title
         self.priority_area = priority_area
@@ -1036,6 +1046,11 @@ class IhpixActivity(model.DomainObject):
         self.additional_notes = additional_notes
         self.original_timestamp = original_timestamp
         self.original_id = original_id
+        # Key activity oficial ('1.3.2'), 'Other' del KPI 3 y marca de
+        # normalización de valores heredados (2026-10)
+        self.key_activity_code = key_activity_code or u''
+        self.training_type_other = training_type_other or u''
+        self.legacy_normalized_at = None
         self.created_at = datetime.datetime.utcnow()
         self.updated_at = datetime.datetime.utcnow()
 
@@ -1690,6 +1705,10 @@ class IhpixActivity(model.DomainObject):
             'kpi_6_active': bool(self.kpi_6_active),
             'kpi_8_active': bool(self.kpi_8_active),
             'additional_notes': self.additional_notes or u'',
+            'key_activity_code': getattr(self, 'key_activity_code', u'') or u'',
+            'training_type_other': getattr(self, 'training_type_other', u'') or u'',
+            'legacy_normalized_at': (self.legacy_normalized_at.isoformat()
+                                     if getattr(self, 'legacy_normalized_at', None) else None),
             'submitted_at': self.submitted_at.isoformat() if self.submitted_at else None,
             'created_at': self.created_at.isoformat() if self.created_at else None,
             'updated_at': self.updated_at.isoformat() if self.updated_at else None,
@@ -1705,6 +1724,7 @@ _IHPIX_ACTIVITY_INDEXES = (
     ('idx_ihpix_activity_output', 'output'),
     ('idx_ihpix_activity_biennium', 'biennium'),
     ('idx_ihpix_activity_reported_by', 'reported_by'),
+    ('idx_ihpix_activity_key_activity_code', 'key_activity_code'),
 )
 
 
@@ -1789,6 +1809,11 @@ def define_ihpix_activity_table():
         Column('original_timestamp', UnicodeText, default=u''),
         Column('original_id', UnicodeText, default=u''),
         Column('submitted_at', DateTime, nullable=True),
+        # Key activity oficial, 'Other' del KPI 3 y marca de normalización
+        # de valores heredados (2026-10)
+        Column('key_activity_code', UnicodeText, default=u''),
+        Column('training_type_other', UnicodeText, default=u''),
+        Column('legacy_normalized_at', DateTime, nullable=True),
         Column('created_at', DateTime, default=datetime.datetime.utcnow),
         Column('updated_at', DateTime, default=datetime.datetime.utcnow),
         *[Index(name, col) for name, col in _IHPIX_ACTIVITY_INDEXES]
@@ -1882,6 +1907,11 @@ _IHPIX_ACTIVITY_ADDED_COLUMNS = (
     ('original_id', "TEXT DEFAULT ''"),
     # Workflow de reporte (2026-09): fecha del último envío a revisión
     ('submitted_at', 'TIMESTAMP'),
+    # Key activity oficial, 'Other' del KPI 3 y normalización de heredados
+    # (2026-10). Al añadirse disparan `_normalize_ihpix_legacy_values`.
+    ('key_activity_code', "TEXT DEFAULT ''"),
+    ('training_type_other', "TEXT DEFAULT ''"),
+    ('legacy_normalized_at', 'TIMESTAMP'),
 )
 
 
@@ -1913,6 +1943,93 @@ def _migrate_ihpix_activities(inspector):
         return
     if missing:
         _migrate_ihpix_reported_by()
+        _normalize_ihpix_legacy_values()
+
+
+def normalize_legacy_activities(session=None, dry_run=False, status=None,
+                                batch_size=200, only_pending=True):
+    """Normaliza los valores heredados de `ihpix_activity` con
+    `ihpix_normalize.normalize_activity_row` y deriva las puertas Sí/No.
+
+    - `only_pending`: sólo filas con `legacy_normalized_at IS NULL` (la
+      migración al arrancar); el CLI puede pasar False para revisar todo.
+    - `dry_run`: no escribe; devuelve el mismo resumen.
+    - Commit por lotes de `batch_size`; idempotente (una fila ya normalizada
+      no produce cambios y queda marcada).
+
+    Devuelve {'scanned', 'changed', 'fields': {campo: n},
+    'unknown_values': {campo: {valor: n}}, 'examples': {campo: (viejo, nuevo)}}.
+    """
+    import datetime as _dt
+    from collections import OrderedDict as _OD
+    from ckanext.theme_ejemplo import ihpix_normalize as N
+
+    session = session or meta.Session
+    q = session.query(IhpixActivity)
+    if only_pending and not dry_run:
+        q = q.filter(IhpixActivity.legacy_normalized_at == None)  # noqa: E711
+    if status:
+        q = q.filter(IhpixActivity.status == status)
+    q = q.order_by(IhpixActivity.created_at)
+
+    summary = {'scanned': 0, 'changed': 0, 'fields': _OD(),
+               'unknown_values': _OD(), 'examples': _OD()}
+    now = _dt.datetime.utcnow()
+    pending_commit = 0
+    for activity in q.all():
+        summary['scanned'] += 1
+        row = activity.as_dict()
+        changes = N.normalize_activity_row(row)
+        # Valores que no encajan en ninguna lista (para revisarlos a mano)
+        for field, (allowed, _other) in N.MULTI_VOCABULARIES.items():
+            _valid, unknown = N.normalize_multi(field, row.get(field), allowed)
+            for value in unknown:
+                bucket = summary['unknown_values'].setdefault(field, _OD())
+                bucket[value] = bucket.get(value, 0) + 1
+        if changes:
+            summary['changed'] += 1
+            for field, new_value in changes.items():
+                summary['fields'][field] = summary['fields'].get(field, 0) + 1
+                summary['examples'].setdefault(field, (row.get(field), new_value))
+        if dry_run:
+            continue
+        for field, new_value in changes.items():
+            if field == 'end_date':
+                try:
+                    new_value = _dt.datetime.strptime(new_value, '%Y-%m-%d').date()
+                except (TypeError, ValueError):
+                    continue
+            setattr(activity, field, new_value)
+        activity.legacy_normalized_at = now
+        pending_commit += 1
+        if pending_commit >= batch_size:
+            session.commit()
+            pending_commit = 0
+    if not dry_run and pending_commit:
+        session.commit()
+    return summary
+
+
+def _normalize_ihpix_legacy_values():
+    """Normalización de heredados al arrancar (sólo filas sin marcar).
+
+    Corre una vez por despliegue, justo después de añadir columnas, y nunca
+    rompe el arranque: cualquier error se registra y se deja para el CLI
+    `ckan ihpix normalize-legacy`.
+    """
+    try:
+        summary = normalize_legacy_activities(only_pending=True)
+        if summary['scanned']:
+            log.info(u'ihpix_activity: %d filas revisadas, %d normalizadas (%s)',
+                     summary['scanned'], summary['changed'],
+                     u', '.join(u'%s=%d' % kv for kv in summary['fields'].items()))
+    except Exception as e:
+        try:
+            meta.Session.rollback()
+        except Exception:
+            pass
+        log.warning(u'ihpix_activity: no se pudieron normalizar los valores '
+                    u'heredados (ejecutar `ckan ihpix normalize-legacy`): %s', e)
 
 
 def _migrate_ihpix_reported_by():

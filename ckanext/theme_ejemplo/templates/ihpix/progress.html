@@ -1,0 +1,513 @@
+{% extends "page.html" %}
+{#
+  Dashboards de progreso IHP-IX: réplica web de los Power BI oficiales
+  ("IHP-IX Implementation Progress"). Una plantilla para los cinco ámbitos
+  (overall / pa / output / flagship / ctwg); los datos llegan ya calculados de
+  la acción `ihpix_progress_stats` y los pinta `public/js/ihpix-progress.js`.
+#}
+{% set sc = (stats.scope if stats and stats.scope else {}) %}
+{% set ov = (stats.overview if stats and stats.overview else {}) %}
+{% set opts = (stats.options if stats and stats.options else {}) %}
+{% set scope_label = sc.label or scope_value or '' %}
+{% set scope_pa = (scope_value if scope == 'pa' else (h.ihpix_priority_area_for_output(scope_value) if scope == 'output' else '')) %}
+{% set pa_short = {'PA1': _('Scientific research'), 'PA2': _('Water education'), 'PA3': _('Data-knowledge gap'), 'PA4': _('Water management'), 'PA5': _('Water governance')} %}
+
+{% block title %}{{ _('Implementation progress') }}{% if scope != 'overall' %} - {{ scope_label }}{% endif %} - IHP-IX - {{ super() }}{% endblock %}
+
+{% block breadcrumb_content %}
+  <li><a href="{{ h.url_for('/ihpix') }}">IHP IX</a></li>
+  <li{% if scope == 'overall' %} class="active"{% endif %}><a href="{{ h.url_for('theme_ejemplo.ihpix_progress') }}">{{ _('Implementation progress') }}</a></li>
+  {% if scope != 'overall' %}<li class="active">{{ scope_label }}</li>{% endif %}
+{% endblock %}
+
+{% block page_header %}{% endblock %}
+
+{% block content %}
+<div class="main">
+<div class="container ixg">
+<link rel="stylesheet" href="{{ h.url_for_static('/vendor/leaflet/leaflet.css') }}" />
+{% asset 'theme/ihpix-progress-css' %}
+<div class="ixg-page">
+
+  <header class="ixg-head">
+    <div class="ixg-head-inner">
+      <div class="ixg-head-row">
+        <div>
+          <div class="ixg-kicker">{{ _('Intergovernmental Hydrological Programme · Phase IX, 2022–2029') }}</div>
+          <h1 class="ixg-title">{{ _('Implementation progress') }}</h1>
+        </div>
+        <div class="ixg-head-tools">
+          <label for="ixg-filter-biennium">{{ _('Biennium') }}</label>
+          <select id="ixg-filter-biennium" class="ixg-select">
+            <option value="">{{ _('All bienniums') }}</option>
+            {% for b in opts.biennia or [] %}
+              <option value="{{ b }}"{% if filters.biennium == b %} selected{% endif %}>{{ b }}</option>
+            {% endfor %}
+          </select>
+          <label for="ixg-filter-region">{{ _('Region') }}</label>
+          <select id="ixg-filter-region" class="ixg-select">
+            <option value="">{{ _('All regions') }}</option>
+            {% for r in opts.regions or [] %}
+              <option value="{{ r }}"{% if filters.region == r %} selected{% endif %}>{{ h.ihpix_t(r) }}</option>
+            {% endfor %}
+          </select>
+          <a id="ixg-download" class="ixg-btn" href="{{ h.url_for('/api/3/action/ihpix_progress_stats', scope=scope, value=scope_value or None, biennium=filters.biennium or None, region=filters.region or None) }}" download="ihpix-progress-{{ scope }}{% if scope_value %}-{{ scope_value|lower|replace(' ', '-') }}{% endif %}.json">
+            <i class="fa fa-download" aria-hidden="true"></i> {{ _('Download data') }}
+          </a>
+        </div>
+      </div>
+
+      <nav class="ixg-scope" aria-label="{{ _('Scope') }}">
+        <ul class="ixg-scope-tabs">
+          <li><a href="{{ h.url_for('theme_ejemplo.ihpix_progress') }}"{% if scope == 'overall' %} aria-current="page"{% endif %}>{{ _('Overall') }}</a></li>
+          <li><a href="{{ h.url_for('theme_ejemplo.ihpix_progress_pa', value=(scope_pa or 'PA1')) }}"{% if scope == 'pa' %} aria-current="page"{% endif %}>{{ _('Priority area') }}</a></li>
+          <li><a href="{{ h.url_for('theme_ejemplo.ihpix_progress_output', value=(scope_value if scope == 'output' else '1.1')) }}"{% if scope == 'output' %} aria-current="page"{% endif %}>{{ _('Output') }}</a></li>
+          <li><a href="{{ h.url_for('theme_ejemplo.ihpix_progress_flagship', value=((opts.flagships or [{'slug': 'friend'}])[0].slug if scope != 'flagship' else scope_slug)) }}"{% if scope == 'flagship' %} aria-current="page"{% endif %}>{{ _('Flagship initiative') }}</a></li>
+          <li><a href="{{ h.url_for('theme_ejemplo.ihpix_progress_ctwg', value=((opts.ctwgs or [{'slug': 'ecohydrology-and-water-quality'}])[0].slug if scope != 'ctwg' else scope_slug)) }}"{% if scope == 'ctwg' %} aria-current="page"{% endif %}>{{ _('Cross-cutting working group') }}</a></li>
+        </ul>
+        {% if scope == 'pa' %}
+          <div class="ixg-scope-pick">
+            <label for="ixg-pick">{{ _('Priority area') }}</label>
+            <select id="ixg-pick" class="ixg-select" data-ixg-scope-select>
+              {% for pa in opts.priority_areas or [] %}
+                <option data-url="{{ h.url_for('theme_ejemplo.ihpix_progress_pa', value=pa.code) }}"{% if pa.code == scope_value %} selected{% endif %}>{{ pa.code }} · {{ h.ihpix_t(pa.label) }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        {% elif scope == 'output' %}
+          <div class="ixg-scope-pick">
+            <label for="ixg-pick">{{ _('Output') }}</label>
+            <select id="ixg-pick" class="ixg-select" data-ixg-scope-select>
+              {% for pa in opts.priority_areas or [] %}
+                <optgroup label="{{ pa.code }} · {{ h.ihpix_t(pa.label) }}">
+                  {% for o in (opts.outputs_by_pa or {}).get(pa.code, []) %}
+                    <option data-url="{{ h.url_for('theme_ejemplo.ihpix_progress_output', value=o.code) }}"{% if o.code == scope_value %} selected{% endif %}>{{ o.code }}{% if o.label %} · {{ o.label|truncate(90) }}{% endif %}</option>
+                  {% endfor %}
+                </optgroup>
+              {% endfor %}
+            </select>
+          </div>
+        {% elif scope == 'flagship' %}
+          <div class="ixg-scope-pick">
+            <label for="ixg-pick">{{ _('Flagship initiative') }}</label>
+            <select id="ixg-pick" class="ixg-select" data-ixg-scope-select>
+              {% for f in opts.flagships or [] %}
+                <option data-url="{{ h.url_for('theme_ejemplo.ihpix_progress_flagship', value=f.slug) }}"{% if f.code == scope_value %} selected{% endif %}>{{ f.label or f.code }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        {% elif scope == 'ctwg' %}
+          <div class="ixg-scope-pick">
+            <label for="ixg-pick">{{ _('Working group') }}</label>
+            <select id="ixg-pick" class="ixg-select" data-ixg-scope-select>
+              {% for w in opts.ctwgs or [] %}
+                <option data-url="{{ h.url_for('theme_ejemplo.ihpix_progress_ctwg', value=w.slug) }}"{% if w.name == scope_value %} selected{% endif %}>{{ h.ihpix_t(w.name) }}</option>
+              {% endfor %}
+            </select>
+          </div>
+        {% endif %}
+      </nav>
+    </div>
+  </header>
+
+  <div class="ixg-body">
+
+    {% if scope == 'overall' %}
+      <section id="ixg-strip" class="ixg-strip" aria-label="{{ _('Activities by output') }}">
+        <div class="ixg-strip-head">
+          <h2>{{ _('Activities across outputs') }}</h2>
+          <span class="ixg-strip-hint">{{ _('Each segment is one output. Select one to open its dashboard.') }}</span>
+        </div>
+        <div class="ixg-strip-bar"></div>
+        <div class="ixg-strip-legend"></div>
+      </section>
+    {% else %}
+      <section class="ixg-scope-banner" data-pa="{{ scope_pa }}" aria-labelledby="ixg-scope-title">
+        <div class="ixg-scope-banner-body">
+          {% if scope == 'output' %}
+            <div class="ixg-kicker"><a href="{{ h.url_for('theme_ejemplo.ihpix_progress_pa', value=scope_pa) }}">{{ _('Priority Area') }} {{ scope_pa[2:] }} · {{ h.ihpix_t((opts.priority_areas or [])|selectattr('code', 'equalto', scope_pa)|map(attribute='label')|first or '') }}</a></div>
+            <h2 id="ixg-scope-title">{{ _('Output') }} {{ scope_value }}</h2>
+            <p>{{ h.ihpix_output_title(scope_value) }}</p>
+          {% elif scope == 'pa' %}
+            <div class="ixg-kicker">{{ _('Priority Area') }} {{ scope_value[2:] }}</div>
+            <h2 id="ixg-scope-title">{{ h.ihpix_t(scope_label) }}</h2>
+            <p>{{ _('Activities, outputs and key performance indicators reported under this Priority Area of the IHP-IX Strategic Plan.') }}</p>
+          {% elif scope == 'flagship' %}
+            <div class="ixg-kicker">{{ _('Flagship initiative') }}</div>
+            <h2 id="ixg-scope-title">{{ scope_label }}</h2>
+            <p>{{ _('Activities can be reported under several Flagship Initiatives, so totals across initiatives may overlap.') }}</p>
+          {% else %}
+            <div class="ixg-kicker">{{ _('Cross-cutting working group') }}</div>
+            <h2 id="ixg-scope-title">{{ h.ihpix_t(scope_label) }}</h2>
+            <p>{{ _('Activities can contribute to several cross-cutting working groups, so totals across groups may overlap.') }}</p>
+          {% endif %}
+        </div>
+        <div class="ixg-scope-banner-actions">
+          {% if scope == 'output' %}
+            <a class="ixg-btn" href="{{ h.url_for('theme_ejemplo.ihpix_output_detail', code=scope_value) }}">{{ _('Output page') }}</a>
+            <a class="ixg-btn" href="{{ h.url_for('theme_ejemplo.ihpix_workspace_detail', code=scope_value) }}">{{ _('Working group') }}</a>
+            <a class="ixg-btn ixg-btn--primary" href="{{ h.url_for('theme_ejemplo.ihpix_report', output=scope_value) }}">{{ _('Report an activity') }}</a>
+          {% elif scope == 'pa' %}
+            <a class="ixg-btn" href="{{ h.url_for('theme_ejemplo.ihpix_priority_area', pa=scope_value) }}">{{ _('Priority Area page') }}</a>
+            <a class="ixg-btn ixg-btn--primary" href="{{ h.url_for('theme_ejemplo.ihpix_report', pa=scope_value) }}">{{ _('Report an activity') }}</a>
+          {% else %}
+            {% if scope == 'flagship' %}
+            <a class="ixg-btn" href="{{ h.url_for('/ihpix/outputs', flagship=scope_value) }}">{{ _('Open in explorer') }}</a>
+            {% else %}
+            <a class="ixg-btn" href="{{ h.url_for('/ihpix/outputs', q=scope_value) }}">{{ _('Open in explorer') }}</a>
+            {% endif %}
+            <a class="ixg-btn ixg-btn--primary" href="{{ h.url_for('theme_ejemplo.ihpix_report') }}">{{ _('Report an activity') }}</a>
+          {% endif %}
+        </div>
+      </section>
+    {% endif %}
+
+    <div class="ixg-layout">
+      <nav class="ixg-index" aria-label="{{ _('Dashboard sections') }}">
+        <ol>
+          <li><a href="#ixg-overview" class="is-active">{{ _('Who is benefiting') }}</a></li>
+          {% if scope == 'output' %}
+            <li><a href="#ixg-produced">{{ _('What was produced') }}</a></li>
+            <li><a href="#ixg-reached">{{ _('Stakeholders reached') }}</a></li>
+          {% endif %}
+          <li><a href="#ixg-kpi1">{{ _('KPI 1 · Knowledge generation') }}</a></li>
+          <li><a href="#ixg-kpi2">{{ _('KPI 2 · Knowledge improvement') }}</a></li>
+          <li><a href="#ixg-kpi34">{{ _('KPI 3 and 4 · Training and curricula') }}</a></li>
+          <li><a href="#ixg-kpi5">{{ _('KPI 5 · Awareness raising') }}</a></li>
+          <li><a href="#ixg-kpi68">{{ _('KPI 6 and 8 · Member States and stakeholder groups supported') }}</a></li>
+        </ol>
+        <p id="ixg-status" class="ixg-status" aria-live="polite"></p>
+      </nav>
+
+      <div class="ixg-sections">
+
+        {# ── Who is benefiting ──────────────────────────────────── #}
+        <section id="ixg-overview" class="ixg-section" aria-labelledby="ixg-h-overview">
+          <div class="ixg-section-head">
+            <h2 id="ixg-h-overview">{% if scope == 'output' %}{{ _('Who is benefiting from the activities under output {code}?').format(code=scope_value) }}{% else %}{{ _('Who is benefiting from the activities?') }}{% endif %}</h2>
+          </div>
+          <div class="ixg-grid ixg-grid--3">
+            <div class="ixg-tile"><div class="ixg-tile-n" id="ixg-tile-activities">{{ ov.activities|default('–', true) }}</div><div class="ixg-tile-l">{{ _('Activities reported') }}</div></div>
+            <div class="ixg-tile"><div class="ixg-tile-n" id="ixg-tile-ms">{{ ov.member_states_impacted|default('–', true) }}</div><div class="ixg-tile-l">{{ _('Member States impacted') }}</div></div>
+            <div class="ixg-tile"><div class="ixg-tile-n" id="ixg-tile-institutions">{{ ov.institutions|default('–', true) }}</div><div class="ixg-tile-l">{{ _('Institutions reporting') }}</div></div>
+            {% if is_sysadmin %}
+            <div class="ixg-tile"><div class="ixg-tile-n" id="ixg-tile-pending">{{ ov.pending|default('–', true) }}</div><div class="ixg-tile-l"><a href="{{ h.url_for('/ckan-admin/ihpix/reports', status='pending') }}">{{ _('Reports pending review') }}</a></div></div>
+            {% endif %}
+          </div>
+          <div class="ixg-grid ixg-grid--2">
+            <figure class="ixg-fig" id="ixg-fig-dimension">
+              <figcaption>
+                <span class="ixg-fig-title">{% if sc.dimension == 'output' %}{{ _('Reported activities per output') }}{% elif sc.dimension == 'key_activity' %}{{ _('Reported activities per key activity') }}{% else %}{{ _('Reported activities per priority area') }}{% endif %}</span>
+                <span class="ixg-fig-tools"><button type="button" class="ixg-linkbtn" data-ixg-toggle-table aria-expanded="false">{{ _('Show as table') }}</button></span>
+              </figcaption>
+              <div class="ixg-plot ixg-plot--donut"><div class="ixg-canvas-wrap"></div></div>
+            </figure>
+            <figure class="ixg-fig" id="ixg-fig-region">
+              <figcaption>
+                <span class="ixg-fig-title">{{ _('Member States impacted per region') }}</span>
+                <span class="ixg-fig-tools"><button type="button" class="ixg-linkbtn" data-ixg-toggle-table aria-expanded="false">{{ _('Show as table') }}</button></span>
+              </figcaption>
+              <div class="ixg-plot"><div class="ixg-canvas-wrap ixg-plot-bars"></div></div>
+            </figure>
+          </div>
+          <figure class="ixg-fig" id="ixg-fig-map">
+            <figcaption>
+              <span class="ixg-fig-title">{{ _('Activity impact map') }}</span>
+              <span class="ixg-fig-tools"><span class="ixg-fig-sub">{{ _('Circle size: activities benefiting the Member State') }}</span><button type="button" class="ixg-linkbtn" data-ixg-toggle-table aria-expanded="false">{{ _('Show as table') }}</button></span>
+            </figcaption>
+            <div class="ixg-plot ixg-plot--map is-tall"></div>
+          </figure>
+          <p id="ixg-unresolved" class="ixg-note" hidden></p>
+          <div class="ixg-grid ixg-grid--2">
+            <figure class="ixg-fig" id="ixg-fig-biennium">
+              <figcaption>
+                <span class="ixg-fig-title">{{ _('Activities per biennium') }}</span>
+                <span class="ixg-fig-tools"><button type="button" class="ixg-linkbtn" data-ixg-toggle-table aria-expanded="false">{{ _('Show as table') }}</button></span>
+              </figcaption>
+              <div class="ixg-plot"><div class="ixg-canvas-wrap ixg-plot-bars"></div></div>
+            </figure>
+            <figure class="ixg-fig" id="ixg-fig-institutions">
+              <figcaption>
+                <span class="ixg-fig-title">{{ _('Institutions with most activities') }}</span>
+                <span class="ixg-fig-tools"><button type="button" class="ixg-linkbtn" data-ixg-toggle-table aria-expanded="false">{{ _('Show as table') }}</button></span>
+              </figcaption>
+              <div class="ixg-plot"><div class="ixg-canvas-wrap ixg-plot-bars"></div></div>
+            </figure>
+          </div>
+        </section>
+
+        {% if scope == 'output' %}
+        {# ── Output: qué se produjo ──────────────────────────────── #}
+        <section id="ixg-produced" class="ixg-section" aria-labelledby="ixg-h-produced">
+          <div class="ixg-section-head">
+            <div class="ixg-kicker">{{ _('KPI 1, 3 and 4') }}</div>
+            <h2 id="ixg-h-produced">{{ _('What did the activities produce or revise under output {code}?').format(code=scope_value) }}</h2>
+          </div>
+          <figure class="ixg-fig" id="ixg-fig-produced">
+            <figcaption>
+              <span class="ixg-fig-title">{{ _('Products per key activity') }}</span>
+              <span class="ixg-fig-tools"><button type="button" class="ixg-linkbtn" data-ixg-toggle-table aria-expanded="false">{{ _('Show as table') }}</button></span>
+            </figcaption>
+            <div class="ixg-plot"><div class="ixg-canvas-wrap ixg-plot-bars"></div></div>
+          </figure>
+          <div class="ixg-fig" hidden>
+            <span class="ixg-fig-title">{{ _('Key activities of this output') }}</span>
+            <ul id="ixg-key-activities" class="ixg-legend" style="font-size:13px"></ul>
+          </div>
+        </section>
+
+        {# ── Output: stakeholders alcanzados ─────────────────────── #}
+        <section id="ixg-reached" class="ixg-section" aria-labelledby="ixg-h-reached">
+          <div class="ixg-section-head">
+            <div class="ixg-kicker">{{ _('KPI 2 and 5') }}</div>
+            <h2 id="ixg-h-reached">{{ _('How many stakeholders have been reached under output {code}?').format(code=scope_value) }}</h2>
+          </div>
+          <figure class="ixg-fig" id="ixg-fig-reached">
+            <figcaption>
+              <span class="ixg-fig-title">{{ _('Stakeholders reached per key activity') }}</span>
+              <span class="ixg-fig-tools"><button type="button" class="ixg-linkbtn" data-ixg-toggle-table aria-expanded="false">{{ _('Show as table') }}</button></span>
+            </figcaption>
+            <div class="ixg-plot"><div class="ixg-canvas-wrap ixg-plot-bars"></div></div>
+          </figure>
+        </section>
+        {% endif %}
+
+        {# ── KPI 1 ──────────────────────────────────────────────── #}
+        <section id="ixg-kpi1" class="ixg-section" aria-labelledby="ixg-h-kpi1">
+          <div class="ixg-section-head">
+            <div class="ixg-kicker">{{ _('KPI 1 · Knowledge generation') }}</div>
+            <h2 id="ixg-h-kpi1">{{ _('How many knowledge and scientific products did the activities produce?') }}</h2>
+          </div>
+          <div class="ixg-grid ixg-grid--2">
+            <div class="ixg-tile"><div class="ixg-tile-n" id="ixg-tile-kp">–</div><div class="ixg-tile-l" id="ixg-sub-kp">{{ _('Knowledge products') }}</div></div>
+            <div class="ixg-tile"><div class="ixg-tile-n" id="ixg-tile-sp">–</div><div class="ixg-tile-l" id="ixg-sub-sp">{{ _('Scientific products') }}</div></div>
+          </div>
+          <figure class="ixg-fig" id="ixg-fig-kpi1-dim">
+            <figcaption>
+              <span class="ixg-fig-title">{% if sc.dimension == 'output' %}{{ _('Products per output') }}{% elif sc.dimension == 'key_activity' %}{{ _('Products per key activity') }}{% else %}{{ _('Products per priority area') }}{% endif %}</span>
+              <span class="ixg-fig-tools"><button type="button" class="ixg-linkbtn" data-ixg-toggle-table aria-expanded="false">{{ _('Show as table') }}</button></span>
+            </figcaption>
+            <div class="ixg-plot"><div class="ixg-canvas-wrap ixg-plot-bars"></div></div>
+          </figure>
+          <div class="ixg-grid ixg-grid--2">
+            <figure class="ixg-fig" id="ixg-fig-kpi1-kt">
+              <figcaption>
+                <span class="ixg-fig-title">{{ _('Knowledge products per type') }}</span>
+                <span class="ixg-fig-tools"><button type="button" class="ixg-linkbtn" data-ixg-toggle-table aria-expanded="false">{{ _('Show as table') }}</button></span>
+              </figcaption>
+              <div class="ixg-plot ixg-plot--donut"><div class="ixg-canvas-wrap"></div></div>
+              <p class="ixg-note">{{ _('An activity that reports several types counts its products under each of them.') }}</p>
+            </figure>
+            <figure class="ixg-fig" id="ixg-fig-kpi1-st">
+              <figcaption>
+                <span class="ixg-fig-title">{{ _('Scientific products per type') }}</span>
+                <span class="ixg-fig-tools"><button type="button" class="ixg-linkbtn" data-ixg-toggle-table aria-expanded="false">{{ _('Show as table') }}</button></span>
+              </figcaption>
+              <div class="ixg-plot ixg-plot--donut"><div class="ixg-canvas-wrap"></div></div>
+            </figure>
+          </div>
+        </section>
+
+        {# ── KPI 2 ──────────────────────────────────────────────── #}
+        <section id="ixg-kpi2" class="ixg-section" aria-labelledby="ixg-h-kpi2">
+          <div class="ixg-section-head">
+            <div class="ixg-kicker">{{ _('KPI 2 · Knowledge improvement') }}</div>
+            <h2 id="ixg-h-kpi2">{{ _('How many key stakeholders had their knowledge improved?') }}</h2>
+          </div>
+          <div class="ixg-grid ixg-grid--3">
+            <div class="ixg-tile"><div class="ixg-tile-n" id="ixg-kpi2-tile">–</div><div class="ixg-tile-l" id="ixg-kpi2-sub">{{ _('Individuals with improved knowledge') }}</div></div>
+            <figure class="ixg-tile ixg-tile--gauge" id="ixg-kpi2-gauge-female"><div class="ixg-gauge ixg-canvas-wrap"></div><div><div class="ixg-gauge-n" id="ixg-kpi2-gauge-female-n">–</div><div class="ixg-gauge-l" id="ixg-kpi2-gauge-female-l">{{ _('women') }}</div></div></figure>
+            <figure class="ixg-tile ixg-tile--gauge" id="ixg-kpi2-gauge-youth"><div class="ixg-gauge ixg-canvas-wrap"></div><div><div class="ixg-gauge-n" id="ixg-kpi2-gauge-youth-n">–</div><div class="ixg-gauge-l" id="ixg-kpi2-gauge-youth-l">{{ _('youth, 18–35') }}</div></div></figure>
+          </div>
+          <div class="ixg-grid ixg-grid--2">
+            <figure class="ixg-fig" id="ixg-kpi2-fig-dim">
+              <figcaption>
+                <span class="ixg-fig-title">{% if sc.dimension == 'output' %}{{ _('Stakeholders with improved knowledge, by output') }}{% elif sc.dimension == 'key_activity' %}{{ _('Stakeholders with improved knowledge, by key activity') }}{% else %}{{ _('Stakeholders with improved knowledge, by priority area') }}{% endif %}</span>
+                <span class="ixg-fig-tools"><button type="button" class="ixg-linkbtn" data-ixg-toggle-table aria-expanded="false">{{ _('Show as table') }}</button></span>
+              </figcaption>
+              <div class="ixg-plot"><div class="ixg-canvas-wrap ixg-plot-bars"></div></div>
+            </figure>
+            <figure class="ixg-fig" id="ixg-kpi2-fig-type">
+              <figcaption>
+                <span class="ixg-fig-title">{{ _('Individuals per knowledge generating activity') }}</span>
+                <span class="ixg-fig-tools"><button type="button" class="ixg-linkbtn" data-ixg-toggle-table aria-expanded="false">{{ _('Show as table') }}</button></span>
+              </figcaption>
+              <div class="ixg-plot ixg-plot--donut"><div class="ixg-canvas-wrap"></div></div>
+            </figure>
+          </div>
+        </section>
+
+        {# ── KPI 3 y 4 ──────────────────────────────────────────── #}
+        <section id="ixg-kpi34" class="ixg-section" aria-labelledby="ixg-h-kpi34">
+          <div class="ixg-section-head">
+            <div class="ixg-kicker">{{ _('KPI 3 · Training materials') }} &nbsp;·&nbsp; {{ _('KPI 4 · Educational curricula') }}</div>
+            <h2 id="ixg-h-kpi34">{{ _('How much training material and how many curricula did the activities produce?') }}</h2>
+          </div>
+          <div class="ixg-grid ixg-grid--2">
+            <div class="ixg-tile"><div class="ixg-tile-n" id="ixg-tile-tm">–</div><div class="ixg-tile-l" id="ixg-sub-tm">{{ _('Training materials and courses') }}</div></div>
+            <div class="ixg-tile"><div class="ixg-tile-n" id="ixg-tile-cu">–</div><div class="ixg-tile-l" id="ixg-sub-cu">{{ _('Curricula produced or revised') }}</div></div>
+          </div>
+          <div class="ixg-grid ixg-grid--2">
+            <figure class="ixg-fig" id="ixg-fig-kpi34-dim">
+              <figcaption>
+                <span class="ixg-fig-title">{% if sc.dimension == 'output' %}{{ _('Training materials and curricula per output') }}{% elif sc.dimension == 'key_activity' %}{{ _('Training materials and curricula per key activity') }}{% else %}{{ _('Training materials and curricula per priority area') }}{% endif %}</span>
+                <span class="ixg-fig-tools"><button type="button" class="ixg-linkbtn" data-ixg-toggle-table aria-expanded="false">{{ _('Show as table') }}</button></span>
+              </figcaption>
+              <div class="ixg-plot"><div class="ixg-canvas-wrap ixg-plot-bars"></div></div>
+            </figure>
+            <figure class="ixg-fig" id="ixg-fig-kpi3-type">
+              <figcaption>
+                <span class="ixg-fig-title">{{ _('Training material per type') }}</span>
+                <span class="ixg-fig-tools"><button type="button" class="ixg-linkbtn" data-ixg-toggle-table aria-expanded="false">{{ _('Show as table') }}</button></span>
+              </figcaption>
+              <div class="ixg-plot ixg-plot--donut"><div class="ixg-canvas-wrap"></div></div>
+            </figure>
+          </div>
+        </section>
+
+        {# ── KPI 5 ──────────────────────────────────────────────── #}
+        <section id="ixg-kpi5" class="ixg-section" aria-labelledby="ixg-h-kpi5">
+          <div class="ixg-section-head">
+            <div class="ixg-kicker">{{ _('KPI 5 · Awareness raising') }}</div>
+            <h2 id="ixg-h-kpi5">{{ _('How many key stakeholders have been informed?') }}</h2>
+          </div>
+          <div class="ixg-grid ixg-grid--3">
+            <div class="ixg-tile"><div class="ixg-tile-n" id="ixg-kpi5-tile">–</div><div class="ixg-tile-l" id="ixg-kpi5-sub">{{ _('Individuals reached') }}</div></div>
+            <figure class="ixg-tile ixg-tile--gauge" id="ixg-kpi5-gauge-female"><div class="ixg-gauge ixg-canvas-wrap"></div><div><div class="ixg-gauge-n" id="ixg-kpi5-gauge-female-n">–</div><div class="ixg-gauge-l" id="ixg-kpi5-gauge-female-l">{{ _('women') }}</div></div></figure>
+            <figure class="ixg-tile ixg-tile--gauge" id="ixg-kpi5-gauge-youth"><div class="ixg-gauge ixg-canvas-wrap"></div><div><div class="ixg-gauge-n" id="ixg-kpi5-gauge-youth-n">–</div><div class="ixg-gauge-l" id="ixg-kpi5-gauge-youth-l">{{ _('youth, 18–35') }}</div></div></figure>
+          </div>
+          <figure class="ixg-fig" id="ixg-kpi5-fig-dim">
+            <figcaption>
+              <span class="ixg-fig-title">{% if sc.dimension == 'output' %}{{ _('Stakeholders with raised awareness, by output') }}{% elif sc.dimension == 'key_activity' %}{{ _('Stakeholders with raised awareness, by key activity') }}{% else %}{{ _('Stakeholders with raised awareness, by priority area') }}{% endif %}</span>
+              <span class="ixg-fig-tools"><button type="button" class="ixg-linkbtn" data-ixg-toggle-table aria-expanded="false">{{ _('Show as table') }}</button></span>
+            </figcaption>
+            <div class="ixg-plot"><div class="ixg-canvas-wrap ixg-plot-bars"></div></div>
+          </figure>
+        </section>
+
+        {# ── KPI 6 y 8 ──────────────────────────────────────────── #}
+        <section id="ixg-kpi68" class="ixg-section" aria-labelledby="ixg-h-kpi68">
+          <div class="ixg-section-head">
+            <div class="ixg-kicker">{{ _('KPI 6 · Transboundary water systems') }} &nbsp;·&nbsp; {{ _('KPI 8 · Capacity support and strengthening') }}</div>
+            <h2 id="ixg-h-kpi68">{{ _('Which Member States and stakeholder groups were supported?') }}</h2>
+          </div>
+          <div class="ixg-grid ixg-grid--2">
+            <div class="ixg-tile"><div class="ixg-tile-n" id="ixg-tile-tb">–</div><div class="ixg-tile-l" id="ixg-sub-tb">{{ _('Member States supported in transboundary water management, as reported') }}</div></div>
+            <div class="ixg-tile"><div class="ixg-tile-n" id="ixg-tile-sg">–</div><div class="ixg-tile-l" id="ixg-sub-sg">{{ _('Stakeholder groups with strengthened capacity') }}</div></div>
+          </div>
+          <div class="ixg-grid ixg-grid--2">
+            <figure class="ixg-fig" id="ixg-fig-kpi6-map">
+              <figcaption>
+                <span class="ixg-fig-title">{{ _('Member States of the activities improving transboundary water systems') }}</span>
+                <span class="ixg-fig-tools"><button type="button" class="ixg-linkbtn" data-ixg-toggle-table aria-expanded="false">{{ _('Show as table') }}</button></span>
+              </figcaption>
+              <div class="ixg-plot ixg-plot--map"></div>
+            </figure>
+            <figure class="ixg-fig" id="ixg-fig-kpi8-type">
+              <figcaption>
+                <span class="ixg-fig-title">{{ _('Stakeholder groups by type') }}</span>
+                <span class="ixg-fig-tools"><button type="button" class="ixg-linkbtn" data-ixg-toggle-table aria-expanded="false">{{ _('Show as table') }}</button></span>
+              </figcaption>
+              <div class="ixg-plot ixg-plot--donut"><div class="ixg-canvas-wrap"></div></div>
+            </figure>
+          </div>
+        </section>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+{% set basemap = h.ihpix_basemap() %}
+{% set taxonomies = h.get_ihpix_taxonomies() %}
+<script type="application/json" id="ihpix-progress-data">{{ (stats or {})|tojson }}</script>
+<script type="application/json" id="ihpix-progress-config">{{ {
+  'apiUrl': h.url_for('/api/3/action/ihpix_progress_stats'),
+  'scope': scope,
+  'value': scope_value or '',
+  'locale': h.lang(),
+  'basemap': basemap,
+  'routes': {
+    'pa': h.url_for('theme_ejemplo.ihpix_progress_pa', value='__CODE__'),
+    'output': h.url_for('theme_ejemplo.ihpix_progress_output', value='__CODE__'),
+  },
+  'priorityAreas': opts.priority_areas or [],
+  'outputsByPa': opts.outputs_by_pa or {},
+  'paShort': pa_short,
+  'paColors': {'PA1': '#0069B4', 'PA2': '#0891B2', 'PA3': '#059669', 'PA4': '#D97706', 'PA5': '#DC2626'},
+  'categorical': ['#0069B4', '#D97706', '#7C3AED', '#059669', '#DC2626', '#0891B2', '#DB2777', '#4D7C0F'],
+  'neutral': '#94A3B8',
+  'action': '#0069B4', 'deep': '#004E8C', 'ink': '#0B2A4A', 'ink2': '#5B6B7F', 'ruleSoft': '#E6EEF6',
+  'types': {
+    'knowledge_product_type': taxonomies.knowledge_product_types,
+    'scientific_product_type': taxonomies.scientific_product_types,
+    'knowledge_activity_type': taxonomies.knowledge_activity_types,
+    'training_type': taxonomies.training_types,
+    'stakeholder_group_type': taxonomies.stakeholder_group_types,
+  },
+  'strings': {
+    'noData': _('No activities match this selection yet.'),
+    'showTable': _('Show as table'),
+    'showChart': _('Show as chart'),
+    'loading': _('Updating…'),
+    'loadError': _('The data could not be updated. Reload the page to try again.'),
+    'category': _('Category'),
+    'activities': _('Activities'),
+    'activitiesLower': _('activities'),
+    'activitiesPer': _('Activities per'),
+    'activitiesAcross': _('activities across'),
+    'outputs': _('outputs'),
+    'output': _('Output'),
+    'keyActivity': _('Key activity'),
+    'priorityArea': _('priority area'),
+    'memberState': _('Member State'),
+    'memberStates': _('Member States'),
+    'memberStatesPerRegion': _('Member States impacted per region'),
+    'region': _('Region'),
+    'biennium': _('Biennium'),
+    'institution': _('Institution'),
+    'topInstitutions': _('Institutions with most activities'),
+    'activitiesPerBiennium': _('Activities per biennium'),
+    'unresolved': _('Names without a known Member State'),
+    'knowledgeProducts': _('Knowledge products'),
+    'scientificProducts': _('Scientific products'),
+    'products': _('Products'),
+    'productsPer': _('Products per'),
+    'knowledgeProductsPerType': _('Knowledge products per type'),
+    'scientificProductsPerType': _('Scientific products per type'),
+    'individuals': _('Individuals'),
+    'individualsImproved': _('Individuals with improved knowledge'),
+    'individualsReached': _('Individuals reached'),
+    'individualsPerActivityType': _('Individuals per knowledge generating activity'),
+    'women': _('women'),
+    'youth': _('youth'),
+    'youthRange': _('youth, 18–35'),
+    'per': _('per'),
+    'trainingMaterials': _('Training materials and courses'),
+    'curricula': _('Curricula'),
+    'materials': _('Materials'),
+    'trainingPerType': _('Training material per type'),
+    'materialsAndCurriculaPer': _('Training materials and curricula per'),
+    'transboundaryMs': _('Member States supported in transboundary water management, as reported'),
+    'stakeholderGroups': _('Stakeholder groups with strengthened capacity'),
+    'stakeholderGroupsByType': _('Stakeholder groups by type'),
+    'groups': _('Groups'),
+    'knowledgeImproved': _('Knowledge improved'),
+    'awarenessRaised': _('Awareness raised'),
+    'productsPerKeyActivity': _('Products per key activity'),
+    'stakeholdersPerKeyActivity': _('Stakeholders reached per key activity'),
+    'other': _('Other'),
+    'notSpecified': _('Not specified'),
+  },
+}|tojson }}</script>
+
+</div>{# /.container.ixg #}
+</div>{# /.main #}
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+  <script src="{{ h.url_for_static('/vendor/chartjs/chart.umd.min.js') }}"></script>
+  <script src="{{ h.url_for_static('/vendor/leaflet/leaflet.js') }}"></script>
+  {% asset 'theme/ihpix-progress-js' %}
+{% endblock %}

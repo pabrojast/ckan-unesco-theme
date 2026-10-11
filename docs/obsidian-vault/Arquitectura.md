@@ -203,7 +203,7 @@ scripts/generate_seed.py → JSON seed (744 actividades, 205 países)
 CLI: ckan ihpix seed-data → DB (IhpixActivity + IhpixCountrySummary)
     │
     ▼
-API actions (ihpix_geojson, ihpix_activity_geojson, ihpix_dashboard_stats)
+API actions (ihpix_geojson, ihpix_activity_geojson, ihpix_dashboard_stats, ihpix_progress_stats)
     │
     ▼
 Frontend: Leaflet maps + dashboards + exportación CSV

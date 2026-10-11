@@ -410,6 +410,12 @@ def ihpix_dashboard_stats(context, data_dict):
     return _logged_in_only(context, data_dict)
 
 
+def ihpix_progress_stats(context, data_dict):
+    """Dashboard de progreso (réplica Power BI): usuarios autenticados,
+    misma política que `ihpix_dashboard_stats`."""
+    return _logged_in_only(context, data_dict)
+
+
 def ihpix_admin_overview_stats(context, data_dict):
     """Sysadmin-only access to the extended admin overview statistics."""
     return _sysadmin_only(context, data_dict)

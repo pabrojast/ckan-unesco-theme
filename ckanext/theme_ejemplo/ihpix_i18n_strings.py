@@ -55,8 +55,9 @@ LEAD_INSTITUTION_TYPES = [
 ]
 
 KNOWLEDGE_PRODUCT_TYPES = [
-    _('Book'), _('Report'), _('Assessment'), _('Statistic'), _('Tool'),
-    _('Methodology'),
+    _('Book'), _('Report or paper'), _('Assessment'),
+    _('Statistic or data source'), _('Tool'), _('Methodology'),
+    _('Website'), _('Brochure'),
 ]
 
 SCIENTIFIC_PRODUCT_TYPES = [
@@ -76,6 +77,16 @@ TRAINING_TYPES = [
     _('Physical training material (soft copy)'),
     _('Physical training course'),
     _('Online training course'),
+    _('Presentation'), _('Lecture'), _('Training video'), _('Manual'),
+    _('Module'), _('Handout'), _('Textbook'),
+]
+
+TRAINING_TYPE_GROUPS = [
+    _('Training materials'), _('Training courses'),
+]
+
+FLAGSHIP_LABELS = [
+    _('FRIEND-Water'), _('LaSII'),
 ]
 
 STAKEHOLDER_GROUP_TYPES = [
@@ -91,6 +102,54 @@ STAKEHOLDER_GROUP_TYPES = [
 
 KPI_TITLES = [
     _('Knowledge generation'),
+    _('Scientific products'),
+    _('Knowledge improvement'),
+    _('Training materials'),
+    _('Educational curricula'),
+    _('Awareness raising'),
+    _('Transboundary water systems'),
+    _('Capacity support and strengthening'),
+]
+
+# Preguntas de cabecera del dashboard de progreso (página oficial Power BI)
+KPI_QUESTIONS = [
+    _('How many knowledge/scientific products did the activities produce?'),
+    _('How many key stakeholders had their knowledge improved?'),
+    _('How much training material did the activities produce?'),
+    _('How many curricula were produced/revised to include sustainable water management?'),
+    _('How many key stakeholders have been informed?'),
+    _('What number of member states were supported in improving their transboundary water systems management and governance?'),
+    _('What number of member states and stakeholder groups have been supported/strengthened in their capacity?'),
+]
+
+# Preguntas Sí/No de cada KPI (guía oficial)
+KPI_GATE_QUESTIONS = [
+    _('Did the activity generate (or improve) and/or disseminate knowledge products?'),
+    _('Did the activity generate scientific products?'),
+    _('Did the activity improve knowledge of stakeholders?'),
+    _('Did the activity produce any training materials or was a training course implemented?'),
+    _('Did the activity produce or revise educational curricula on sustainable water management?'),
+    _('Did the activity contribute to awareness-raising of target stakeholders?'),
+    _('Did the activity support Member States in improving their transboundary water systems (surface water and groundwater) management and governance?'),
+    _('Did the activity strengthen the capacity of certain Stakeholder Groups (river basin groups, communities, sectors)?'),
+]
+
+KPI_TARGETS = [
+    _('How many knowledge products were generated?'),
+    _('How many scientific products were generated?'),
+    _('How many key stakeholders improved their knowledge as a result of the activity?'),
+    _('How many training materials were produced or how many training courses were implemented?'),
+    _('How many educational curricula were produced or revised?'),
+    _('How many key stakeholders have been reached by the awareness-raising activity?'),
+    _('How many Member States were supported in improving their transboundary water systems?'),
+    _('What is the number of Stakeholder Groups that benefitted from the Activity?'),
+]
+
+# Etiquetas de dimensión y buckets del dashboard de progreso
+PROGRESS_LABELS = [
+    _('Overall'), _('Priority Area'), _('Output'), _('Key Activity'),
+    _('Flagship Initiative'), _('Cross-cutting Working Group'),
+    _('Unspecified'),
 ]
 
 LINK_TYPE_LABELS = [
@@ -119,6 +178,12 @@ VALIDATION_MESSAGES = [
     _('Invalid date format. Use YYYY-MM-DD'),
     _('The completion date cannot be earlier than the start date'),
     _('Cannot exceed the total number of stakeholders'),
+    _('Description is required'),
+    _('Key outputs and outcomes are required'),
+    _('Priority Area is required'),
+    _('Output is required'),
+    _('Please answer yes or no'),
+    _('Key activity {code} does not belong to output {output}'),
     _('Invalid JSON'),
     _('Expected a list of links'),
     _('{link_type} cannot point to a {target_kind}'),

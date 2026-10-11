@@ -10,7 +10,8 @@ from ckanext.theme_ejemplo import ihpix_forms as F
 
 
 def _full_payload(**overrides):
-    """Payload mínimo válido para un envío a revisión."""
+    """Payload mínimo válido para un envío a revisión (todas las preguntas
+    Sí/No respondidas, como exige el formulario oficial)."""
     data = {
         'title': 'Water education workshop',
         'priority_area': 'PA2',
@@ -23,6 +24,8 @@ def _full_payload(**overrides):
         'description': 'Short description',
         'outcomes': 'Some outcomes',
     }
+    for gate in F.GATE_FIELDS_REQUIRED:
+        data[gate] = 'no'
     data.update(overrides)
     return data
 
@@ -48,6 +51,68 @@ def test_submission_requires_all_mandatory_fields_at_once():
     for field in F.REQUIRED_FOR_SUBMISSION:
         assert field in errors
     assert 'priority_area' in errors
+    assert exc.value.details['description'][0] == 'description_required'
+    assert exc.value.details['output'][0] == 'output_required'
+    # Las 12 preguntas Sí/No deben venir respondidas
+    for gate in F.GATE_FIELDS_REQUIRED:
+        assert exc.value.details[gate][0] == 'gate_required'
+
+
+def test_unanswered_gate_blocks_submission_but_not_draft():
+    with pytest.raises(F.ReportValidationError) as exc:
+        F.validate_report_payload(_full_payload(kpi_4_active=''), is_draft=False)
+    assert set(exc.value.errors) == {'kpi_4_active'}
+    values = F.validate_report_payload({'title': 'x', 'kpi_4_active': ''}, is_draft=True)
+    assert values['kpi_4_active'] is False
+    # Cualquier forma de 'yes'/'no' cuenta como respuesta
+    values = F.validate_report_payload(_full_payload(kpi_4_active='yes', num_curricula='2'),
+                                       is_draft=False)
+    assert values['kpi_4_active'] is True and values['num_curricula'] == 2
+
+
+def test_key_activity_code_validated_against_output():
+    values = F.validate_report_payload(_full_payload(output='2.1', key_activity_code='2.1.1'),
+                                       is_draft=False)
+    assert values['key_activity_code'] == '2.1.1'
+    with pytest.raises(F.ReportValidationError) as exc:
+        F.validate_report_payload(_full_payload(output='2.1', key_activity_code='1.3.2'),
+                                  is_draft=False)
+    assert exc.value.details['key_activity_code'][0] == 'key_activity_invalid'
+    # Sin código elegido se deriva del texto heredado "x.y.z. …" si cuadra
+    values = F.validate_report_payload(
+        _full_payload(output='2.1', key_activity='2.1.2. Capacity building of educators'),
+        is_draft=False)
+    assert values['key_activity_code'] == '2.1.2'
+    values = F.validate_report_payload(
+        _full_payload(output='2.1', key_activity='1.3.2. Not this output'), is_draft=False)
+    assert values['key_activity_code'] == ''
+
+
+def test_legacy_aliases_are_accepted_and_stored_canonically():
+    values = F.validate_report_payload(
+        _full_payload(kpi_1a_active='yes', knowledge_product_type=['Report', 'Website', 'Poster'],
+                      num_knowledge_products='2', kpi_3_active='yes',
+                      training_type='Online Course, Lecture', num_training_materials='1',
+                      biennium='2024 - 2025', institution_type='NGO',
+                      has_flagship='yes', flagships=['FRIEND-Water', 'UWMP']),
+        is_draft=False)
+    assert json.loads(values['knowledge_product_type']) == ['Report or paper', 'Website']
+    assert json.loads(values['training_type']) == ['Online training course', 'Lecture']
+    assert values['biennium'] == '2024-2025'
+    assert values['institution_type'] == 'Non-Governmental Organization'
+    assert json.loads(values['flagships']) == ['FRIEND', 'UWMP']
+
+
+def test_training_type_other_reset_when_gate_off():
+    values = F.validate_report_payload(
+        _full_payload(kpi_3_active='no', training_type=['Other'], training_type_other='Podcast'),
+        is_draft=False)
+    assert values['training_type'] == '' and values['training_type_other'] == ''
+    values = F.validate_report_payload(
+        _full_payload(kpi_3_active='yes', training_type=['Other'], training_type_other='Podcast',
+                      num_training_materials='1'),
+        is_draft=False)
+    assert values['training_type_other'] == 'Podcast'
 
 
 def test_submission_valid_payload_returns_column_values():
@@ -169,6 +234,8 @@ def test_activity_to_form_dict_round_trip():
     form = F.activity_to_form_dict(activity)
     assert form['has_flagship'] == 'yes'
     assert form['kpi_1a_active'] == 'no'
+    # Pregunta sin responder (None) → '' para que el form no preseleccione
+    assert F.activity_to_form_dict({'kpi_2_active': None})['kpi_2_active'] == ''
     assert form['flagships'] == ['FRIEND']
     assert form['regions'] == []
     assert form['end_date'] == ''

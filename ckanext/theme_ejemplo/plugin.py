@@ -645,6 +645,43 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 methods=['GET']
             )
 
+            # Dashboards de progreso IHP-IX (una vista, cinco ámbitos)
+            blueprint.add_url_rule(
+                u'/ihpix/progress',
+                u'ihpix_progress',
+                MyLogica.ihpix_progress,
+                methods=['GET'],
+                defaults={'scope': 'overall', 'value': None}
+            )
+            blueprint.add_url_rule(
+                u'/ihpix/progress/pa/<value>',
+                u'ihpix_progress_pa',
+                MyLogica.ihpix_progress,
+                methods=['GET'],
+                defaults={'scope': 'pa'}
+            )
+            blueprint.add_url_rule(
+                u'/ihpix/progress/output/<value>',
+                u'ihpix_progress_output',
+                MyLogica.ihpix_progress,
+                methods=['GET'],
+                defaults={'scope': 'output'}
+            )
+            blueprint.add_url_rule(
+                u'/ihpix/progress/flagship/<value>',
+                u'ihpix_progress_flagship',
+                MyLogica.ihpix_progress,
+                methods=['GET'],
+                defaults={'scope': 'flagship'}
+            )
+            blueprint.add_url_rule(
+                u'/ihpix/progress/ctwg/<value>',
+                u'ihpix_progress_ctwg',
+                MyLogica.ihpix_progress,
+                methods=['GET'],
+                defaults={'scope': 'ctwg'}
+            )
+
             blueprint.add_url_rule(
                 u'/iot-portal',
                 u'iot_portal',
@@ -1342,6 +1379,7 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                  'ihpix_priority_area_for_output': helpers.ihpix_priority_area_for_output,
                  'ihpix_t': helpers.ihpix_t,
                  'ihpix_basemap': helpers.ihpix_basemap,
+                 'ihpix_flagship_label': helpers.ihpix_flagship_label,
                  'ihpix_pages_url': helpers.ihpix_pages_url,
                  'ihpix_markdown': helpers.ihpix_markdown,
                  'ihpix_link_type_icon': helpers.ihpix_link_type_icon,
@@ -1450,6 +1488,7 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 'ihpix_working_group_member_list': custom_actions.ihpix_working_group_member_list,
                 'ihpix_contribution_list': custom_actions.ihpix_contribution_list,
                 'ihpix_dashboard_stats': custom_actions.ihpix_dashboard_stats,
+                'ihpix_progress_stats': custom_actions.ihpix_progress_stats,
                 'ihpix_admin_overview_stats': custom_actions.ihpix_admin_overview_stats,
                 # IHP-IX GeoJSON & country summary
                 'ihpix_geojson': custom_actions.ihpix_geojson,
@@ -1538,6 +1577,7 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 'ihpix_working_group_member_list': custom_auth.ihpix_working_group_member_list,
                 'ihpix_contribution_list': custom_auth.ihpix_contribution_list,
                 'ihpix_dashboard_stats': custom_auth.ihpix_dashboard_stats,
+                'ihpix_progress_stats': custom_auth.ihpix_progress_stats,
                 # IHP-IX GeoJSON & country summary
                 'ihpix_geojson': custom_auth.ihpix_geojson,
                 'ihpix_activity_geojson': custom_auth.ihpix_activity_geojson,

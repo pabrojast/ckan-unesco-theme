@@ -21,6 +21,74 @@ def ihpix():
     pass
 
 
+def _apply_legacy_normalization(activity):
+    """Aplica `ihpix_normalize.normalize_activity_row` a una actividad recién
+    construida (seed) y la marca como normalizada."""
+    from ckanext.theme_ejemplo import ihpix_normalize as N
+    changes = N.normalize_activity_row(activity.as_dict())
+    for field, value in changes.items():
+        if field == 'end_date':
+            try:
+                value = datetime.datetime.strptime(value, '%Y-%m-%d').date()
+            except (TypeError, ValueError):
+                continue
+        setattr(activity, field, value)
+    activity.legacy_normalized_at = datetime.datetime.utcnow()
+
+
+@ihpix.command(name='normalize-legacy')
+@click.option('--apply', 'apply_changes', is_flag=True, default=False,
+              help='Escribir los cambios (por defecto sólo los muestra)')
+@click.option('--status', default=None,
+              help='Limitar a un estado (published, pending, draft, rejected)')
+@click.option('--all', 'all_rows', is_flag=True, default=False,
+              help='Revisar también las filas ya marcadas como normalizadas')
+def normalize_legacy(apply_changes, status, all_rows):
+    """Normalizar valores heredados del Excel (alias, puertas Sí/No,
+    países, key activity). Sin --apply es un ensayo."""
+    from ckanext.theme_ejemplo.model import (
+        init_ihpix_activities_db, normalize_legacy_activities,
+        IhpixCountrySummary, init_ihpix_country_summary_db,
+    )
+    import ckan.model.meta as meta
+
+    init_ihpix_activities_db()
+    dry_run = not apply_changes
+    try:
+        summary = normalize_legacy_activities(
+            dry_run=dry_run, status=status, only_pending=not all_rows)
+    except Exception as e:
+        meta.Session.rollback()
+        click.echo('Error normalizando: {}'.format(e))
+        raise SystemExit(1)
+
+    click.echo('{}: {} filas revisadas, {} con cambios'.format(
+        'ENSAYO' if dry_run else 'APLICADO', summary['scanned'], summary['changed']))
+    for field, n in sorted(summary['fields'].items(), key=lambda kv: -kv[1]):
+        old, new = summary['examples'].get(field, ('', ''))
+        click.echo('  {:34s} {:5d}   ej: {!r:.45} -> {!r:.45}'.format(field, n, old, new))
+    if summary['unknown_values']:
+        click.echo('Valores fuera de las listas (revisar a mano):')
+        for field, values in summary['unknown_values'].items():
+            for value, n in sorted(values.items(), key=lambda kv: -kv[1]):
+                click.echo('  {:28s} {:4d}  {}'.format(field, n, value[:80]))
+    if dry_run:
+        click.echo('Nada escrito. Repite con --apply para guardar.')
+        return
+
+    try:
+        init_ihpix_country_summary_db()
+        from ckanext.theme_ejemplo.actions import (
+            ihpix_country_name, _ihpix_invalidate_stats_cache)
+        updated = IhpixCountrySummary.recompute_from_activities(
+            resolve_name=ihpix_country_name)
+        _ihpix_invalidate_stats_cache()
+        click.echo('Country summaries recalculados: {}'.format(updated))
+    except Exception as e:
+        meta.Session.rollback()
+        click.echo('Normalización guardada, pero falló el recálculo por país: {}'.format(e))
+
+
 @ihpix.command(name='seed-data')
 @click.option('-f', '--file', 'json_file', default=None,
               help='Ruta al archivo JSON seed (ihpix_seed_data.json)')
@@ -138,6 +206,9 @@ def seed_data(json_file, excel_file, append):
                     original_timestamp=act_data.get('original_timestamp', u''),
                     original_id=str(act_data.get('original_id', u'')),
                 )
+                # Alias, puertas Sí/No y código de key activity al cargar,
+                # para que un re-seed no reintroduzca valores heredados
+                _apply_legacy_normalization(activity)
                 meta.Session.add(activity)
                 loaded += 1
                 if loaded % 100 == 0:

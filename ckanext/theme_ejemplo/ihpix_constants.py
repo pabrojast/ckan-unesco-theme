@@ -21,6 +21,7 @@ from __future__ import unicode_literals
 import io
 import json
 import os
+import re
 from collections import OrderedDict
 
 
@@ -150,6 +151,92 @@ def output_label(code):
     return u'{} \u2013 {}'.format(code, title) if title else code
 
 
+# ─── Key Activities (Section II) ─────────────────────────────────────────
+#
+# El Operational Implementation Plan define key activities bajo cada
+# Output ("1.3.2. Research and …"). La lista oficial no está en el repo:
+# `data/ihpix_key_activities.json` se deriva de los reportes heredados con
+# `scripts/build_ihpix_taxonomy_data.py` (inferencia; ver vault IHP-IX) y
+# se sobreescribe sin tocar código cuando llegue la lista oficial.
+# Formato: {"1.3": [{"code": "1.3.2", "title": "…"}, …]}.
+KEY_ACTIVITIES_FILE = os.path.join(os.path.dirname(__file__), 'data',
+                                   'ihpix_key_activities.json')
+# '1.3.2' o '1.3.2. Texto…', pero no '1.3.2.1'
+KEY_ACTIVITY_CODE_RE = re.compile(r'^\s*(\d+\.\d+\.\d+)(?!\.?\d)')
+_key_activities_cache = None
+
+
+def load_key_activities(path=None, force=False):
+    u"""{output: [{'code', 'title'}, …]} desde el JSON (vacío si no existe)."""
+    global _key_activities_cache
+    if _key_activities_cache is not None and not force and path is None:
+        return _key_activities_cache
+    result = OrderedDict()
+    try:
+        with io.open(path or KEY_ACTIVITIES_FILE, encoding='utf-8') as fh:
+            data = json.load(fh)
+        if isinstance(data, dict):
+            for output, items in data.items():
+                clean = []
+                for item in items or []:
+                    if not isinstance(item, dict):
+                        continue
+                    code = str(item.get('code') or '').strip()
+                    title = str(item.get('title') or '').strip()
+                    if code:
+                        clean.append({'code': code, 'title': title})
+                if clean:
+                    result[str(output)] = clean
+    except (IOError, OSError, ValueError, TypeError):
+        pass
+    if path is None:
+        _key_activities_cache = result
+    return result
+
+
+def key_activities_for(output_code):
+    u"""Key activities conocidas de un Output ([] si no hay lista)."""
+    return list(load_key_activities().get(output_code, []))
+
+
+def key_activity_code(text):
+    u"""Extrae el código oficial ('1.3.2') del principio de un texto, o ''."""
+    if not text:
+        return ''
+    m = KEY_ACTIVITY_CODE_RE.match(str(text))
+    return m.group(1) if m else ''
+
+
+def key_activity_title(code):
+    u"""Título de una key activity por código, o '' si no se conoce."""
+    if not code:
+        return ''
+    output = code.rsplit('.', 1)[0]
+    for item in load_key_activities().get(output, []):
+        if item['code'] == code:
+            return item['title']
+    return ''
+
+
+def key_activity_label(code):
+    u"""'1.3.2 – Título' si hay título; si no, solo el código."""
+    title = key_activity_title(code)
+    return u'{} – {}'.format(code, title) if title else code
+
+
+def is_valid_key_activity(output_code, code):
+    u"""True si `code` pertenece al Output. Sin lista para ese Output basta
+    con que el código tenga el patrón 'x.y.z' y cuelgue de él."""
+    if not code or not output_code:
+        return False
+    if not KEY_ACTIVITY_CODE_RE.match(code) or code.rsplit('.', 1)[0] != output_code:
+        return False
+    known = load_key_activities().get(output_code)
+    if not known:
+        return True
+    return any(item['code'] == code for item in known)
+
+
 # ─── Cross-cutting Working Groups (Section III, 3) ───────────────────────
 
 CROSS_CUTTING_WGS = (
@@ -172,7 +259,12 @@ REGIONS = (
 )
 
 
-# ─── Flagship Initiatives (Section I, 15) ────────────────────────────────
+# ─── Flagship Initiatives (Section I, 18) ────────────────────────────────
+#
+# Los 15 del PDF de la guía más IWRM, JIIHP y UWMP, que aparecen en la
+# página oficial "IHP-IX Implementation Progress" y en los reportes
+# heredados. El valor almacenado es el código; `FLAGSHIP_LABELS` da la
+# etiqueta de presentación cuando difiere ("FRIEND-Water", "LaSII").
 
 FLAGSHIPS = (
     'FRIEND',
@@ -184,13 +276,51 @@ FLAGSHIPS = (
     'IIWQ',
     'ISARM',
     'ISI',
+    'IWRM',
+    'JIIHP',
     'LASII',
     'MAR',
     'PCCP',
+    'UWMP',
+    'WAMU-NET',
     'WHYMAP',
     'WLRI',
-    'WAMU-NET',
 )
+
+FLAGSHIP_LABELS = {
+    'FRIEND': 'FRIEND-Water',
+    'LASII': 'LaSII',
+}
+
+
+def flagship_label(code):
+    u"""Etiqueta de presentación de un flagship ('FRIEND' → 'FRIEND-Water')."""
+    return FLAGSHIP_LABELS.get(code, code)
+
+
+_SLUG_RE = re.compile(r'[^a-z0-9]+')
+
+
+def slugify(value):
+    u"""'G-WADI' → 'g-wadi'; 'Ecohydrology and Water Quality' →
+    'ecohydrology-and-water-quality'. Sólo ASCII minúsculas y guiones."""
+    return _SLUG_RE.sub('-', str(value or '').lower()).strip('-')
+
+
+FLAGSHIP_SLUGS = OrderedDict((slugify(code), code) for code in FLAGSHIPS)
+
+
+def flagship_for_slug(slug):
+    u"""Código de flagship a partir de su slug de URL, o None."""
+    return FLAGSHIP_SLUGS.get(slugify(slug))
+
+
+CTWG_SLUGS = OrderedDict((slugify(name), name) for name in CROSS_CUTTING_WGS)
+
+
+def ctwg_for_slug(slug):
+    u"""Nombre del Cross-cutting Working Group a partir de su slug, o None."""
+    return CTWG_SLUGS.get(slugify(slug))
 
 
 # ─── Biennia del programa IHP-IX 2022-2029 (Section I, 4) ────────────────
@@ -221,15 +351,20 @@ LEAD_INSTITUTION_TYPES = (
 )
 
 
-# ─── KPI 1a: Knowledge Products (Section V, 7) ───────────────────────────
+# ─── KPI 1a: Knowledge Products (Section V, 7 del PDF + 2 del Microsoft
+# Form: Website, Brochure). El valor canónico es la etiqueta del Microsoft
+# Form / Power BI ("Report or paper"); las abreviadas del PDF ("Report")
+# se aceptan como alias en `ihpix_normalize`.
 
 KNOWLEDGE_PRODUCT_TYPES = (
     'Book',
-    'Report',
+    'Report or paper',
     'Assessment',
-    'Statistic',
+    'Statistic or data source',
     'Tool',
     'Methodology',
+    'Website',
+    'Brochure',
     'Other',
 )
 
@@ -255,14 +390,38 @@ KNOWLEDGE_ACTIVITY_TYPES = (
 )
 
 
-# ─── KPI 3: Training materials / courses (Section V, 4) ──────────────────
+# ─── KPI 3: Training materials / courses (Section V, 4 del PDF + los tipos
+# del Microsoft Form / Power BI y de los reportes heredados) ──────────────
 
 TRAINING_TYPES = (
     'Physical training material (hard copy)',
     'Physical training material (soft copy)',
     'Physical training course',
     'Online training course',
+    'Presentation',
+    'Lecture',
+    'Training video',
+    'Manual',
+    'Module',
+    'Handout',
+    'Textbook',
+    'Other',
 )
+
+# Agrupación visual para la grilla del formulario (subtítulos)
+TRAINING_TYPE_GROUPS = OrderedDict([
+    ('Training materials', (
+        'Physical training material (hard copy)',
+        'Physical training material (soft copy)',
+        'Presentation', 'Lecture', 'Training video', 'Manual', 'Module',
+        'Handout', 'Textbook',
+    )),
+    ('Training courses', (
+        'Physical training course',
+        'Online training course',
+    )),
+    ('Other', ('Other',)),
+])
 
 
 # ─── KPI 8: Stakeholder Groups (Section V, 9) ────────────────────────────
@@ -302,81 +461,105 @@ STAKEHOLDER_GROUP_TYPE_VALUES = tuple(value for value, _ in STAKEHOLDER_GROUP_TY
 
 # ─── KPIs (descriptores para tabla / dashboard) ──────────────────────────
 #
-# Mapa estable id → metadata para alimentar tablas del overview admin.
-# Cada KPI se almacena en el modelo con `kpi_<id>_active` (Boolean) y
-# `num_<target_column>` (Integer) o `stakeholders_*` (Integer + sub-tot).
+# Mapa estable id → metadata para alimentar tablas del overview admin y el
+# dashboard de progreso. Cada KPI se almacena en el modelo con
+# `kpi_<id>_active` (Boolean) y `num_<target_column>` (Integer) o
+# `stakeholders_*` (Integer + sub-tot).
+#
+# - `title`: nombre del KPI (guía oficial).
+# - `question`: pregunta de la página "IHP-IX Implementation Progress"
+#   (Power BI), para las cabeceras del dashboard.
+# - `gate_question`: pregunta Sí/No del formulario (guía).
+# - `target`: pregunta del contador.
+# - `other_column`: texto libre asociado a la opción 'Other' del tipo.
 
 KPIS = OrderedDict([
     ('1a', {
         'title': 'Knowledge generation',
-        'question': 'Did the activity generate (or improve) and/or disseminated knowledge products?',
+        'question': 'How many knowledge/scientific products did the activities produce?',
+        'gate_question': 'Did the activity generate (or improve) and/or disseminate knowledge products?',
         'target': 'How many knowledge products were generated?',
         'count_column': 'num_knowledge_products',
         'type_column': 'knowledge_product_type',  # CSV / JSON list
         'type_choices': KNOWLEDGE_PRODUCT_TYPES,
+        'other_column': 'knowledge_product_type_other',
         'has_youth_female': False,
     }),
     ('1b', {
-        'title': 'Knowledge improvement',
-        'question': 'Did the activity generate scientific products?',
+        'title': 'Scientific products',
+        'question': 'How many knowledge/scientific products did the activities produce?',
+        'gate_question': 'Did the activity generate scientific products?',
         'target': 'How many scientific products were generated?',
         'count_column': 'num_scientific_products',
         'type_column': 'scientific_product_type',
         'type_choices': SCIENTIFIC_PRODUCT_TYPES,
+        'other_column': None,
         'has_youth_female': False,
     }),
     ('2', {
-        'title': 'Education material (stakeholder knowledge)',
-        'question': 'Did the activity improve knowledge of stakeholders?',
-        'target': 'How many key stakeholders improved their knowledge?',
+        'title': 'Knowledge improvement',
+        'question': 'How many key stakeholders had their knowledge improved?',
+        'gate_question': 'Did the activity improve knowledge of stakeholders?',
+        'target': 'How many key stakeholders improved their knowledge as a result of the activity?',
         'count_column': 'stakeholders_knowledge',
         'type_column': 'knowledge_activity_type',
         'type_choices': KNOWLEDGE_ACTIVITY_TYPES,
+        'other_column': 'knowledge_activity_type_other',
         'has_youth_female': True,
     }),
     ('3', {
-        'title': 'Curricula (training)',
-        'question': 'Did the activity produce any training materials or training course?',
-        'target': 'How many training materials/courses were produced?',
+        'title': 'Training materials',
+        'question': 'How much training material did the activities produce?',
+        'gate_question': 'Did the activity produce any training materials or was a training course implemented?',
+        'target': 'How many training materials were produced or how many training courses were implemented?',
         'count_column': 'num_training_materials',
         'type_column': 'training_type',
         'type_choices': TRAINING_TYPES,
+        'other_column': 'training_type_other',
         'has_youth_female': False,
     }),
     ('4', {
         'title': 'Educational curricula',
-        'question': 'Did the activity produce or revise educational curricula on sustainable water management?',
+        'question': 'How many curricula were produced/revised to include sustainable water management?',
+        'gate_question': 'Did the activity produce or revise educational curricula on sustainable water management?',
         'target': 'How many educational curricula were produced or revised?',
         'count_column': 'num_curricula',
         'type_column': None,
         'type_choices': None,
+        'other_column': None,
         'has_youth_female': False,
     }),
     ('5', {
-        'title': 'Awareness training',
-        'question': 'Did the activity contribute to awareness-raising of target stakeholders?',
+        'title': 'Awareness raising',
+        'question': 'How many key stakeholders have been informed?',
+        'gate_question': 'Did the activity contribute to awareness-raising of target stakeholders?',
         'target': 'How many key stakeholders have been reached by the awareness-raising activity?',
         'count_column': 'stakeholders_awareness',
         'type_column': None,
         'type_choices': None,
+        'other_column': None,
         'has_youth_female': True,
     }),
     ('6', {
-        'title': 'Water cooperation (transboundary)',
-        'question': 'Did the activity support Member States in improving their transboundary water systems management and governance?',
+        'title': 'Transboundary water systems',
+        'question': 'What number of member states were supported in improving their transboundary water systems management and governance?',
+        'gate_question': 'Did the activity support Member States in improving their transboundary water systems (surface water and groundwater) management and governance?',
         'target': 'How many Member States were supported in improving their transboundary water systems?',
         'count_column': 'num_transboundary_ms',
         'type_column': None,
         'type_choices': None,
+        'other_column': None,
         'has_youth_female': False,
     }),
     ('8', {
         'title': 'Capacity support and strengthening',
-        'question': 'Did the activity strengthen the capacity of certain Stakeholder Groups?',
-        'target': 'Number of Stakeholder Groups that benefitted from the Activity?',
+        'question': 'What number of member states and stakeholder groups have been supported/strengthened in their capacity?',
+        'gate_question': 'Did the activity strengthen the capacity of certain Stakeholder Groups (river basin groups, communities, sectors)?',
+        'target': 'What is the number of Stakeholder Groups that benefitted from the Activity?',
         'count_column': 'num_stakeholder_groups',
         'type_column': 'stakeholder_group_type',
         'type_choices': STAKEHOLDER_GROUP_TYPE_VALUES,
+        'other_column': 'stakeholder_group_type_other',
         'has_youth_female': False,
     }),
 ])

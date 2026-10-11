@@ -153,7 +153,19 @@ kubectl --context default -n ckan rollout status deployment/ckan --timeout=15m
 `kubectl exec -i $POD -c ckan -- python3 - < scripts/ihpix_dev_smoke.py`. El
 script arranca un proceso nuevo (el uwsgi en marcha no se entera) y renderiza
 las páginas IHP-IX como sysadmin con el cliente de pruebas de Flask. Ver
-[[Testing#Humo en dev]].
+[[Testing#Humo en dev]] (desde 2026-10 el paquete del pod es de root: usar la
+copia en `/tmp/theme-overlay` descrita allí).
+
+> [!warning] La migración de 2026-10 escribe en la tabla de actividades
+> La primera vez que arranca un proceso con el modelo de 2026-10-11,
+> `_migrate_ihpix_activities()` añade `key_activity_code`, `training_type_other`
+> y `legacy_normalized_at` y **normaliza las filas heredadas** (alias de valores,
+> puertas KPI derivadas de los conteos; ver
+> [[Flujos Importantes#7.5 Normalización de los datos heredados (2026-10)]]).
+> Antes de desplegar en producción respaldar `ihpix_activity` (en dev se hizo el
+> 2026-10-11 a `~/backups/ckan-dev-ihpix-20261011/ihpix-backup.json` desde el
+> pod, sin psql). Es idempotente: el CLI `ckan ihpix normalize-legacy` permite
+> ensayar antes (`--apply` para escribir).
 
 > [!note] Fallos que sólo aparecen con CKAN real (2026-09-25)
 > El parseo local de Jinja no detecta: comentarios `{# #}` anidados (dejan

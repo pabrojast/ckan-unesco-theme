@@ -118,6 +118,19 @@ ckan ihpix recompute-summary --country france
 
 # Crear los workspaces (working groups) que falten, uno por Output
 ckan ihpix seed-workspaces
+
+# Normalizar los datos heredados del Excel (alias de valores, puertas KPI
+# derivadas de los conteos, key_activity_code). Ensayo por defecto; con
+# --apply escribe, recalcula el resumen por país e invalida la caché de stats.
+# Se ejecuta solo al arrancar cuando la migración añade columnas nuevas.
+ckan ihpix normalize-legacy
+ckan ihpix normalize-legacy --apply
+ckan ihpix normalize-legacy --apply --status published --all   # también las ya marcadas
+
+# Regenerar títulos de Output y key activities desde el seed (JSON derivados
+# del Excel; --check solo comprueba que están al día, para CI)
+python3 -I scripts/build_ihpix_taxonomy_data.py
+python3 -I scripts/build_ihpix_taxonomy_data.py --check
 ```
 
 > [!warning] Sin `--append`, el comando elimina actividades con `original_id` y todos los country summaries antes de cargar.

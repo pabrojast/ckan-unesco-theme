@@ -226,6 +226,11 @@
     </button>
     <div class="ihpact-accordion-body" id="{{ p }}-section-details">
       <div class="form-group">
+        <label for="{{ p }}-key-activity-code">{{ _('Key Activity code') }}</label>
+        <input type="text" id="{{ p }}-key-activity-code" class="form-control ihpact-input" maxlength="16"
+               placeholder="{{ _('e.g. 1.3.2 (Operational Implementation Plan)') }}" />
+      </div>
+      <div class="form-group">
         <label for="{{ p }}-key-activity">{{ _('Key Activity') }}</label>
         <textarea id="{{ p }}-key-activity" class="form-control ihpact-input" rows="3" maxlength="1000" data-ihpix-markdown data-ihpix-counter
                   placeholder="{{ _('Describe the key activity...') }}"></textarea>
@@ -446,6 +451,11 @@
             <label for="{{ p }}-num-training-materials">{{ _('Number of Training Materials') }}</label>
             <input type="number" id="{{ p }}-num-training-materials" class="form-control ihpact-input"
                    min="0" value="0" />
+          </div>
+          <div class="form-group" id="{{ p }}-training-type-other-wrapper" style="display:none;">
+            <label for="{{ p }}-training-type-other">{{ _('Other (specify)') }}</label>
+            <input type="text" id="{{ p }}-training-type-other" class="form-control ihpact-input"
+                   placeholder="{{ _('Specify type') }}" />
           </div>
         </div>
       </div>
@@ -1263,10 +1273,11 @@ fieldset.ixf-fieldset legend.ihpact-group-label { font-size: inherit; border: 0;
   var TEXT_FIELDS = [
     'title', 'description', 'priority-area', 'output', 'biennium',
     'status', 'link', 'country', 'institution', 'institution-type',
-    'supporting-member-state', 'key-activity', 'outcomes', 'partners',
+    'supporting-member-state', 'key-activity', 'key-activity-code', 'outcomes', 'partners',
     'unesco-participation', 'synergies', 'contact-name', 'contact-email',
     'reported-by', 'reported-date', 'start-date', 'end-date',
     'knowledge-product-type-other', 'knowledge-activity-type-other',
+    'training-type-other',
     'additional-notes', 'notes'
   ];
   /* Radios Sí/No (booleanos del PDF 2026): name = prefijo + '-' + campo */
@@ -1500,6 +1511,7 @@ fieldset.ixf-fieldset legend.ihpact-group-label { font-size: inherit; border: 0;
     /* Conditional "Other" fields */
     toggleOtherField(p, 'knowledge-product-type', 'knowledge-product-type-other');
     toggleOtherField(p, 'knowledge-activity-type', 'knowledge-activity-type-other');
+    toggleOtherField(p, 'training-type', 'training-type-other');
   }
 
   /* ── Image Upload / Drop Zone (Add Form) ── */
@@ -1601,7 +1613,7 @@ fieldset.ixf-fieldset legend.ihpact-group-label { font-size: inherit; border: 0;
     initCheckboxGroup('ihpact-edit', f);
   });
   /* "Other" en los grids de tipo: mostrar/ocultar el campo de texto */
-  ['knowledge-product-type', 'knowledge-activity-type'].forEach(function(f) {
+  ['knowledge-product-type', 'knowledge-activity-type', 'training-type'].forEach(function(f) {
     ['ihpact', 'ihpact-edit'].forEach(function(prefix) {
       var group = document.getElementById(prefix + '-' + f + '-group');
       if (group) group.addEventListener('change', function() { toggleOtherField(prefix, f, f + '-other'); });

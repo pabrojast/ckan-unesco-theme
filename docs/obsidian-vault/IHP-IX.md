@@ -11,27 +11,46 @@ Hub de la implementación del **reporting y gestión del conocimiento IHP-IX** e
 |---|---|---|
 | **Reporte** (`/ihpix/report`, `/ihpix/report/<id>/edit`, `/user/<id>/ihpix`) | Formulario PDF 2026 con borradores en servidor, edición/reenvío, cola de revisión con email y campana | [[Flujos Importantes#7. Portal IHP-IX]] · [[Modulos#ihpix_forms.py]] |
 | **Adjuntos** (Sección VII) | Publicaciones (datasets `documents`), eventos (páginas `water-events`), datasets y enlaces asociados a cada reporte | [[Flujos Importantes#7.1 Adjuntos (Sección VII)]] · [[Modulos#ihpix_links.py]] |
-| **Descubribilidad** (`/ihpix/outputs`, `/ihpix/outputs/<code>`, `/ihpix/priority-area/<pa>`, `/ihpix/contributors`, `/ihpix/dashboard`) | Páginas navegables y analítica para usuarios logueados; landing pública | [[Flujos Importantes#7.2 Visibilidad (2026-09)]] · [[Flujos Importantes#7.3 Recompute del resumen por país]] |
+| **Descubribilidad** (`/ihpix/outputs`, `/ihpix/outputs/<code>`, `/ihpix/priority-area/<pa>`, `/ihpix/contributors`) | Páginas navegables para usuarios logueados; landing pública | [[Flujos Importantes#7.2 Visibilidad (2026-09)]] · [[Flujos Importantes#7.3 Recompute del resumen por país]] |
+| **Progreso** (`/ihpix/progress`, `/pa/<pa>`, `/output/<code>`, `/flagship/<slug>`, `/ctwg/<slug>`) | Dashboards que replican los Power BI oficiales (KPI 1–8, mapa, % mujeres/jóvenes) por ámbito; `/ihpix/dashboard` redirige | [[Flujos Importantes#7. Portal IHP-IX]] punto 4 · [[Modulos#ihpix_stats.py]] |
 | **Working groups** (`/ihpix/workspaces`) | Piloto: un workspace por Output, membresías (lead / contributor / observer) y ledger de contribuciones | [[Flujos Importantes#7.4 Working groups (workspaces por Output)]] · [[Modulos#ihpix_workspaces.py]] |
 | **Admin** (`/ckan-admin/ihpix/*`) | Contenido, actividades, cola de revisión, overview (CSV, recompute) y working groups | [[Arquitectura#Paneles de administración]] |
 
 ## Módulos
 
-- `ihpix_constants.py` — taxonomías oficiales (5 PA, 34 Outputs, KPIs…) y títulos de Output desde `data/ihpix_output_titles.json`.
-- `ihpix_forms.py`, `ihpix_links.py`, `ihpix_workspaces.py`, `ihpix_publications.py` — módulos **puros** con la lógica de validación/reglas; testeados sin CKAN.
+- `ihpix_constants.py` — taxonomías oficiales (5 PA, 34 Outputs, 18 flagships, KPIs…), títulos de Output desde `data/ihpix_output_titles.json` y key activities desde `data/ihpix_key_activities.json` (ambos generados del Excel con `scripts/build_ihpix_taxonomy_data.py`).
+- `ihpix_forms.py`, `ihpix_links.py`, `ihpix_workspaces.py`, `ihpix_publications.py`, `ihpix_normalize.py` (alias y puertas de los datos heredados), `ihpix_stats.py` (agregación de los dashboards de progreso) — módulos **puros** con la lógica de validación/reglas; testeados sin CKAN.
 - Puentes al ecosistema (2026-09-24): modal "Upload a publication" (crea datasets `documents` y los adjunta), tipo de adjunto `course` + propuesta de cursos Open Learning, "Add a dataset" prellenado → [[Flujos Importantes#7.1 Adjuntos (Sección VII)]].
 - `ihpix_i18n_strings.py` — literales de taxonomías para Babel; los templates traducen valores con `h.ihpix_t`.
 - Kit de formularios `public/js/ihpix-forms.js` + `public/css/ihpix-forms.css` (Combobox, MultiPicker, MarkdownEditor, CharCounter, Toast, Modal, FileUpload; se carga con `ihpix/snippets/forms_assets.html`) → [[Modulos#Kit de formularios IHP-IX]]. El reporte lo usa desde 2026-09-24 (pase UX: ver [[Flujos Importantes#7. Portal IHP-IX]] punto 3).
+- Rediseño 2026-10-11 (línea IHP, tokens: tinta `#0B2A4A`, azul UNESCO `#0069B4`/`#004E8C`, papel `#F4F8FC`, radio 6px, sin sombras): `public/css/ihpix-report.css` + `public/js/ihpix-report.js` (formulario) y `public/css/ihpix-progress.css` + `public/js/ihpix-progress.js` (dashboards). Mockup en el artefacto Design "IHP-IX reporting redesign".
 - Modelos: `IhpixActivity`, `IhpixActivityLink`, `IhpixWorkingGroup`, `IhpixWorkingGroupMember`, `IhpixContribution`, `IhpixCountrySummary`, `IhpixContent` → [[Modulos#model.py]].
 
 ## Configuración
 
-`ckanext.theme_ejemplo.ihpix_recompute_on_approve`, `ihpix_geojson_max`, `ihpix_wg_open_join`, `ihpix_wg_auto_contributor`, `ihpix_basemap_url` / `_attribution` / `_max_zoom` (basemap Leaflet; por defecto Esri Light Gray porque CARTO exige API key), `ihpix_markdown_preview_max_chars`, `ihpix_upload_max_mb`, `ihpix_publication_default_language` / `_default_license` / `_tags`, `ihpix_course_proposals_enabled` / `_per_day` → [[Variables de Entorno]].
+`ckanext.theme_ejemplo.ihpix_recompute_on_approve`, `ihpix_geojson_max`, `ihpix_wg_open_join`, `ihpix_wg_auto_contributor`, `ihpix_basemap_url` / `_attribution` / `_max_zoom` (basemap Leaflet; por defecto Esri Light Gray porque CARTO exige API key), `ihpix_markdown_preview_max_chars`, `ihpix_upload_max_mb`, `ihpix_publication_default_language` / `_default_license` / `_tags`, `ihpix_course_proposals_enabled` / `_per_day`, `ihpix_stats_cache_ttl`, `ihpix_key_activities_file` → [[Variables de Entorno]].
 
 ## Operación
 
-- `ckan ihpix seed-data`, `ckan ihpix recompute-summary`, `ckan ihpix seed-workspaces` → [[Comandos Utiles#IHP-IX: Ingesta de datos]].
+- `ckan ihpix seed-data`, `ckan ihpix recompute-summary`, `ckan ihpix seed-workspaces`, `ckan ihpix normalize-legacy` → [[Comandos Utiles#IHP-IX: Ingesta de datos]].
 - Tests puros: `PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python3 -m pytest -q ckanext/theme_ejemplo/tests/test_ihpix_*.py` → [[Testing]].
+
+## Estado en dev (2026-10-11): ciclo 3 verificado sin desplegar
+
+Formulario completo rediseñado, dashboards de progreso y normalización de
+heredados están en `dev210` **sin desplegar** (ni imagen ni `kubectl set
+image`). Verificado contra la base real de dev con una copia del tema en
+`/tmp/theme-overlay` del pod (el paquete del pod es de root; ver
+[[Testing#Humo en dev]]): smoke de 24 páginas en verde (las 5 rutas de
+progreso incluidas, `/ihpix/dashboard` → 302), migración aplicada en dev
+(3 columnas, 745 filas revisadas, 744 normalizadas; respaldo previo en
+`~/backups/ckan-dev-ihpix-20261011/`), `ihpix_progress_stats` cuadra con la
+SQL (744 publicadas, 191 Member States, KPI 2 = 120 579) y navegador real
+con `scripts/playwright/ihpix_progress.js` por `port-forward` (formulario
+desktop/móvil/RTL, los cinco ámbitos de progreso, filtro de bienio vía API,
+"Show as table", redirección). Para llevarlo a dev: receta de
+[[Deployment#Despliegue a desarrollo (data.dev-wins.com)]] con respaldo
+previo de `ihpix_activity`.
 
 ## Estado en dev (2026-09-25)
 
@@ -50,4 +69,4 @@ Cursos vía el plugin `learning` cuando está cargado (DOC-030). Ver
 
 ## Pendientes conocidos
 
-Ver DOC-008 (títulos oficiales de Outputs), DOC-018/021 (autor y país de las filas del seed), DOC-019 (datasets/eventos sin `came_from`), DOC-022/023 (alcance del piloto y leads iniciales), DOC-028 (rol editor para subir publicaciones; verificación en dev del modal) en [[Backlog Documentacion]].
+Ver DOC-008 (títulos de Outputs derivados del Excel, cotejar con el OIP), DOC-031 (lista oficial de key activities), DOC-032 (etiquetas canónicas de los tipos KPI), DOC-033 (paleta por PA y daltonismo), DOC-034 (regenerar `.pot`), DOC-018/021 (autor y país de las filas del seed), DOC-019 (datasets/eventos sin `came_from`), DOC-022/023 (alcance del piloto y leads iniciales), DOC-028 (rol editor para subir publicaciones) en [[Backlog Documentacion]].

@@ -665,8 +665,8 @@
         <a href="{{ h.url_for('/ihpix/outputs') }}" class="ihpix-btn ihpix-btn-ghost">
           <i class="fa fa-list-alt"></i> {{ _('Explore Activities') }}
         </a>
-        <a href="{{ h.url_for('/ihpix/dashboard') }}" class="ihpix-btn ihpix-btn-ghost">
-          <i class="fa fa-bar-chart"></i> {{ _('Dashboard') }}
+        <a href="{{ h.url_for('theme_ejemplo.ihpix_progress') }}" class="ihpix-btn ihpix-btn-ghost">
+          <i class="fa fa-bar-chart"></i> {{ _('Implementation progress') }}
         </a>
         <a href="{{ h.url_for('theme_ejemplo.ihpix_workspaces') }}" class="ihpix-btn ihpix-btn-ghost">
           <i class="fa fa-users"></i> {{ _('Working groups') }}
@@ -866,10 +866,10 @@
               <i class="fa fa-bar-chart"></i>
             </div>
             <div class="ihpix-cta-card-body">
-              <h3 class="ihpix-cta-card-title">{{ _('Explore Dashboard') }}</h3>
-              <p class="ihpix-cta-card-desc">{{ _('Visualize IHP-IX programme data with interactive charts, maps, and analytics.') }}</p>
-              <a href="{{ h.url_for('/ihpix/dashboard') }}" class="ihpix-cta-card-link">
-                {{ _('Open Dashboard') }} <i class="fa fa-arrow-right"></i>
+              <h3 class="ihpix-cta-card-title">{{ _('Implementation progress') }}</h3>
+              <p class="ihpix-cta-card-desc">{{ _('Track the IHP-IX key performance indicators by priority area, output, flagship initiative and working group.') }}</p>
+              <a href="{{ h.url_for('theme_ejemplo.ihpix_progress') }}" class="ihpix-cta-card-link">
+                {{ _('Open the progress dashboards') }} <i class="fa fa-arrow-right"></i>
               </a>
             </div>
           </div>
@@ -917,8 +917,8 @@
     <a href="{{ h.url_for('/ihpix/outputs') }}" class="ihpix-footer-link ihpix-footer-link-primary">
       {{ _('Activities Explorer') }} <i class="fa fa-arrow-right"></i>
     </a>
-    <a href="{{ h.url_for('/ihpix/dashboard') }}" class="ihpix-footer-link ihpix-footer-link-outline">
-      {{ _('Dashboard') }} <i class="fa fa-arrow-right"></i>
+    <a href="{{ h.url_for('theme_ejemplo.ihpix_progress') }}" class="ihpix-footer-link ihpix-footer-link-outline">
+      {{ _('Implementation progress') }} <i class="fa fa-arrow-right"></i>
     </a>
   </div>
   {% endif %}

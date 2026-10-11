@@ -33,3 +33,34 @@ ihpix-forms-js:
   filters: rjsmin
   contents:
     - js/ihpix-forms.js
+
+# Formulario de reporte IHP-IX (templates/ihpix/report.html). El JS depende
+# del kit `ihpix-forms-js`, que se declara como preload para cargar antes.
+ihpix-report-js:
+  output: theme/ihpix-report.js
+  filters: rjsmin
+  extra:
+    preload:
+      - theme/ihpix-forms-js
+  contents:
+    - js/ihpix-report.js
+
+ihpix-report-css:
+  output: theme/ihpix-report.css
+  filters: cssrewrite,cssmin
+  contents:
+    - css/ihpix-report.css
+
+# Dashboards de progreso IHP-IX (templates/ihpix/progress.html). Chart.js y
+# Leaflet se enlazan desde public/vendor con url_for_static en el template.
+ihpix-progress-js:
+  output: theme/ihpix-progress.js
+  filters: rjsmin
+  contents:
+    - js/ihpix-progress.js
+
+ihpix-progress-css:
+  output: theme/ihpix-progress.css
+  filters: cssrewrite,cssmin
+  contents:
+    - css/ihpix-progress.css

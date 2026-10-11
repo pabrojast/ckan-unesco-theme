@@ -941,10 +941,19 @@ def get_ihpix_taxonomies():
         'scientific_product_types': C.SCIENTIFIC_PRODUCT_TYPES,
         'knowledge_activity_types': C.KNOWLEDGE_ACTIVITY_TYPES,
         'training_types': C.TRAINING_TYPES,
+        'training_type_groups': C.TRAINING_TYPE_GROUPS,
+        'flagship_labels': C.FLAGSHIP_LABELS,
+        'key_activities': C.load_key_activities(),
         'stakeholder_group_types': C.STAKEHOLDER_GROUP_TYPES,
         'stakeholder_group_type_values': C.STAKEHOLDER_GROUP_TYPE_VALUES,
         'kpis': C.KPIS,
     }
+
+
+def ihpix_flagship_label(code):
+    """Etiqueta de presentación de un flagship ('FRIEND' → 'FRIEND-Water')."""
+    from ckanext.theme_ejemplo import ihpix_constants as C
+    return C.flagship_label(code)
 
 
 def ihpix_output_title(code):

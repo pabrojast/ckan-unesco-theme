@@ -230,9 +230,9 @@ Patrón LRU con buster:
 
 ## 7. Portal IHP-IX
 
-**Rutas**: `/ihpix` (pública), `/ihpix/outputs`, `/ihpix/outputs/<code>`, `/ihpix/priority-area/<pa>`, `/ihpix/contributors`, `/ihpix/workspaces`, `/ihpix/workspaces/<code>` (+ `/join`, `/leave`, `/members`, `/members/process`), `/ihpix/report`, `/ihpix/report/<id>/edit`, `/ihpix/my-reports`, `/user/<id>/ihpix`, `/ihpix/dashboard` (todas las demás: **usuarios logueados**), `/ckan-admin/ihpix/overview`, `/ckan-admin/ihpix/workspaces`
+**Rutas**: `/ihpix` (pública), `/ihpix/outputs`, `/ihpix/outputs/<code>`, `/ihpix/priority-area/<pa>`, `/ihpix/contributors`, `/ihpix/workspaces`, `/ihpix/workspaces/<code>` (+ `/join`, `/leave`, `/members`, `/members/process`), `/ihpix/report`, `/ihpix/report/<id>/edit`, `/ihpix/my-reports`, `/user/<id>/ihpix`, `/ihpix/progress` (+ `/pa/<pa>`, `/output/<code>`, `/flagship/<slug>`, `/ctwg/<slug>`; `/ihpix/dashboard` redirige ahí desde 2026-10) (todas las demás: **usuarios logueados**), `/ckan-admin/ihpix/overview`, `/ckan-admin/ihpix/workspaces`
 
-**Taxonomías oficiales**: ver [[Modulos]] → `ihpix_constants.py` (5 Priority Areas, 34 Outputs, 15 Flagships, 7 Regions, 3 CTWGs, 12 Institution Types, 8 KPIs, 195 Member States, 4 Biennia 2022-2029).
+**Taxonomías oficiales**: ver [[Modulos]] → `ihpix_constants.py` (5 Priority Areas, 34 Outputs con título, 128 key activities derivadas del Excel, 18 Flagships, 7 Regions, 3 CTWGs, 12 Institution Types, 8 KPIs con 9 tipos de producto de conocimiento y 12 de material de formación, 195 Member States, 4 Biennia 2022-2029).
 
 ```
 1. Página principal (/ihpix):
@@ -257,10 +257,34 @@ Patrón LRU con buster:
      Outputs con conteos, stats, actividades recientes, top contribuidores
    → /ihpix/contributors: directorio de reportantes (GROUP BY reported_by,
      usuario resuelto + perfil) con filtros nombre / PA / Output / bienio
-3. Reporte (/ihpix/report) — alineado al PDF UNESCO 2026:
+3. Reporte (/ihpix/report) — alineado al PDF UNESCO 2026 y al Microsoft
+   Form oficial (rediseño 2026-10-11, ver [[IHP-IX]]):
    → 7 secciones (I General, II Priority Areas, III CTWGs, IV Region,
-     V KPIs, VI Notes, VII Attachments), ~50 campos con lógica
-     condicional Y/N
+     V KPIs, VI Notes, VII Attachments) + bloque "Review and submit";
+     preguntas numeradas 1…28 como en el formulario oficial, carril
+     lateral pegajoso con estado por sección (barra horizontal en móvil),
+     cabecera plana con progreso y autoguardado, barra de acciones
+     pegajosa abajo
+   → 23 obligatorios para enviar: focal point, email, categoría y nombre
+     de institución, título, descripción, outputs/outcomes, bienio,
+     priority area, output + las 13 preguntas Sí/No (5 generales y 8
+     KPI), que ya NO vienen con "No" por defecto (ihpix_forms.
+     GATE_FIELDS_REQUIRED; el borrador sigue exigiendo solo el título)
+   → Sí/No como control segmentado; la subpregunta abre con una regla
+     izquierda azul (eco de las cajas anidadas de la guía)
+   → Sección II: select de key activity dependiente del Output
+     (`key_activity_code`, lista de data/ihpix_key_activities.json;
+     si el Output no tiene lista se muestra un aviso "pendiente") y
+     texto opcional "How does the activity contribute" (`key_activity`)
+   → "Date of completion" = `end_date` (la guía pide una sola fecha);
+     `start_date` queda opcional plegado en <details>
+   → 18 flagships con etiqueta (h.ihpix_flagship_label: FRIEND-Water,
+     LaSII); KPI 1a con 9 tipos; KPI 3 con 12 tipos agrupados
+     (TRAINING_TYPE_GROUPS) y `training_type_other`
+   → CSS/JS en ficheros propios: public/css/ihpix-report.css y
+     public/js/ihpix-report.js (bundles theme/ihpix-report-css|js;
+     config en <script id="ihpix-report-config"> con las cadenas
+     traducidas y las key activities)
    → Char counters 250 chars (description, outcomes); límites largos
      con contador en partners 500 / key_activity 1000 / synergies 1500 /
      additional_notes 3000 (los tres últimos con editor Markdown + preview)
@@ -273,9 +297,10 @@ Patrón LRU con buster:
    → Sticky section nav con barra de progreso (7 campos obligatorios),
      indicadores por sección (✓ completa, ! error, ✓ tenue = opcional con
      respuestas); en móvil la barra es horizontal con scroll-snap
-   → Autoguardado en localStorage (clave `ihpix-report-draft-v1:<user_id>`,
-     migra la clave global anterior) solo en reporte nuevo; en modo
-     edición la BD es la única fuente de verdad
+   → Autoguardado en localStorage (clave `ihpix-report-draft-v2:<user_id>`;
+     los borradores v1 se descartan porque marcaban "No" por defecto en
+     las puertas) solo en reporte nuevo; en modo edición la BD es la
+     única fuente de verdad
    → Acepta ?pa=PA1&output=1.1 para prellenar (páginas por Output)
    → CSRF: {{ h.csrf_input() }} dentro del form (viaja en el FormData)
    → Validación inline al salir de cada campo + resumen de errores
@@ -297,14 +322,33 @@ Patrón LRU con buster:
    → Propietario edita solo draft/rejected; pending/published se abren en
      solo lectura (READ_ONLY deshabilita los inputs)
    → Eliminar (POST /ihpix/report/<id>/delete): solo borradores propios
-4. Dashboard (/ihpix/dashboard) — usuarios logueados:
-   → ihpix_dashboard_stats() genera estadísticas expandidas (+ contributors_total,
-     top_institutions, output_biennium_matrix, links_by_type)
-   → Mapa interactivo Leaflet con GeoJSON de países; PA/bienio se aplican en
-     servidor (conteos en vivo), el país en cliente
-   → Tablas "Top Lead Institutions" y "Activities by Output and Biennium"
-     que se refrescan con los filtros (AJAX)
-   → Gráficas por biennium, paneles de región e impacto
+4. Dashboards de progreso (/ihpix/progress…) — usuarios logueados
+   (2026-10-11; sustituyen al antiguo /ihpix/dashboard, que redirige):
+   → Réplica web de los Power BI oficiales "IHP-IX Implementation
+     Progress": una plantilla (ihpix/progress.html) para cinco ámbitos
+     — overall, pa/<PA>, output/<code>, flagship/<slug>, ctwg/<slug> —
+     con selector de ámbito (pestañas + <select> que navega), filtros de
+     bienio y región (fetch a ihpix_progress_stats + replaceState)
+   → Secciones (una por página Power BI): "Who is benefiting" (tiles,
+     donut por PA/output/key activity, barras de Member States por
+     región, mapa Leaflet, bienio, instituciones), KPI 1 (productos de
+     conocimiento y científicos, por dimensión y por tipo), KPI 2
+     (individuos, % mujeres y % jóvenes en gauges, por dimensión y tipo
+     de actividad), KPI 3 y 4, KPI 5, KPI 6 y 8; en ámbito output
+     además "What was produced" y "Stakeholders reached" por key activity
+   → En overall, franja de los 34 outputs proporcional (navega al output)
+   → Cada gráfico tiene "Show as table" (misma información, accesible);
+     los gráficos se pintan al entrar en pantalla; sin animación con
+     prefers-reduced-motion
+   → Datos: acción ihpix_progress_stats (ihpix_stats.compute_progress_stats
+     sobre las actividades publicadas; "activo" en un KPI = puerta o
+     conteo > 0 o tipo no vacío; Member States impactados = unión de
+     member_states, country y supporting_member_state normalizados con
+     IhpixCountrySummary; "por tipo" suma los productos de cada
+     actividad bajo cada tipo que declaró, como Power BI); caché en
+     proceso 120 s (ihpix_stats_cache_ttl), invalidada al aprobar/editar
+   → Assets: public/js/ihpix-progress.js + css/ihpix-progress.css
+     (bundles theme/ihpix-progress-js|css), Chart.js y Leaflet locales
 5. Admin Overview (/ckan-admin/ihpix/overview) — sysadmin:
    → ihpix_admin_overview_stats() expone métricas extendidas
    → 5 tabs: KPI Targets, Distributions, Geography, Completeness, Pending queue
@@ -472,9 +516,9 @@ reporte público: tipos KPI como listas JSON, `member_states` JSON,
   redirige a `/user/login?came_from=…`. Las acciones de lectura pasan a
   `_logged_in_only`.
 - `cache.py` excluye `/ihpix/report`, `/ihpix/outputs`, `/ihpix/dashboard`,
-  `/ihpix/priority-area`, `/ihpix/contributors`, `/ihpix/workspaces`,
-  `/ihpix/my-reports`, `/ihpix/markdown-preview`, `/ihpix/publications` de la
-  caché anónima (la landing sí se cachea).
+  `/ihpix/progress`, `/ihpix/priority-area`, `/ihpix/contributors`,
+  `/ihpix/workspaces`, `/ihpix/my-reports`, `/ihpix/markdown-preview`,
+  `/ihpix/publications` de la caché anónima (la landing sí se cachea).
 - `POST /ihpix/markdown-preview` (login): `{text}` → `{html}` con
   `h.render_markdown` (CKAN 2.10 no expone `/api/util/markdown`). Lo usa el
   editor Markdown del kit de formularios ([[Modulos#Kit de formularios IHP-IX]]).
@@ -560,6 +604,37 @@ reporte público: tipos KPI como listas JSON, `member_states` JSON,
 > asigna manualmente (sysadmin); no hay auto-asignación al primer reportante.
 > Pendiente por confirmar con UNESCO si los observers deben ver los borradores
 > ajenos (hoy solo cada autor ve sus reportes en curso).
+
+### 7.5 Normalización de los datos heredados (2026-10)
+
+Las 744 filas del Excel de Microsoft Forms traían valores fuera de las listas
+(`Report` / `Report or paper`, `Online Course`, `Asia and the  Pacific`,
+`2022 - 2023`, stakeholder groups con la descripción entre paréntesis, multis
+unidos por comas, flagship `No`, países `Turkey`/`State of Palestine`…) y todas
+las puertas `kpi_*_active` en `false` aunque hubiera conteos, así que la
+agregación por KPI salía vacía.
+
+```
+1. ihpix_normalize.py (puro): LEGACY_VALUE_ALIASES, COUNTRY_NAME_ALIASES,
+   split_legacy_multi, normalize_multi (desconocidos → Other + *_other),
+   normalize_stakeholder_group_types, normalize_date, derive_gates
+   (puerta = puerta or conteo > 0 or tipo no vacío; has_flagship,
+   regions_benefit, has_member_state_support, has_synergies,
+   unesco_secretariat_participation ← unesco_participation),
+   normalize_activity_row(row) → solo las claves que cambian; idempotente
+2. Al arrancar: _migrate_ihpix_activities() añade las columnas nuevas
+   (key_activity_code, training_type_other, legacy_normalized_at) y, solo
+   cuando acaba de añadirlas, _normalize_ihpix_legacy_values() recorre las
+   filas con legacy_normalized_at IS NULL en lotes de 200 y las marca.
+   Nunca rompe el arranque (log de resumen por campo).
+3. A demanda: ckan ihpix normalize-legacy (ensayo) / --apply; seed-data
+   normaliza cada fila al cargar.
+4. Lectura tolerante: ihpix_stats.prepare_row vuelve a aplicar los alias,
+   así los dashboards son correctos aunque una fila escape a la migración.
+```
+
+Aplicado en dev el 2026-10-11 (745 filas revisadas, 744 normalizadas;
+respaldo previo en `~/backups/ckan-dev-ihpix-20261011/`).
 
 ---
 

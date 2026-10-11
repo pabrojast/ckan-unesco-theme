@@ -1907,6 +1907,8 @@ _IHPIX_TEXT_FIELDS = (
     'focal_point_name', 'institution_type_other',
     'stakeholder_group_type_other', 'stakeholder_group_name',
     'additional_notes',
+    # Key activity oficial y 'Other' del KPI 3 (2026-10)
+    'key_activity_code', 'training_type_other',
 )
 
 # Gates Y/N del PDF 2026 (booleanos explícitos)
@@ -2031,6 +2033,7 @@ def ihpix_activity_update(context, data_dict):
 
     activity.updated_at = _dt.datetime.utcnow()
     model.Session.commit()
+    _ihpix_invalidate_stats_cache()
     result = activity.as_dict()
     result['links'] = _ihpix_links_for(activity.id)
     return result
@@ -2050,6 +2053,7 @@ def ihpix_activity_delete(context, data_dict):
     IhpixActivityLink.delete_for_activity(activity.id)
     model.Session.delete(activity)
     model.Session.commit()
+    _ihpix_invalidate_stats_cache()
     return {'success': True}
 
 
@@ -3593,6 +3597,7 @@ def ihpix_report_review(context, data_dict):
         _ihpix_ledger_on_publish(activity)
     model.Session.commit()
     _invalidate_approvals_cache()
+    _ihpix_invalidate_stats_cache()
     _ihpix_notify_reporter(activity, action)
     if action == 'approve':
         _ihpix_recompute_country_after_approve(activity)
@@ -3645,6 +3650,161 @@ def ihpix_dashboard_stats(context, data_dict):
     stats['contributors_total'] = IhpixActivity.count_distinct_reporters(filters)
     stats['top_institutions'] = IhpixActivity.get_top_institutions(filters, limit=10)
     stats['output_biennium_matrix'] = IhpixActivity.get_output_biennium_matrix(filters)
+    return stats
+
+
+# ── IHP-IX Implementation Progress (réplica de los dashboards Power BI) ────
+#
+# Caché en proceso: filas publicadas, índice de países y resultados por
+# (ámbito, valor, filtros). Con varios workers la frescura máxima es el TTL;
+# las escrituras del propio proceso la invalidan al momento.
+
+_IHPIX_STATS_CACHE = {'rows': None, 'index': None, 'labels': None, 'results': {}}
+
+
+def _ihpix_stats_ttl(key='ckanext.theme_ejemplo.ihpix_stats_cache_ttl', default=120):
+    try:
+        return max(0, int(toolkit.config.get(key, default)))
+    except (TypeError, ValueError):
+        return default
+
+
+def _ihpix_invalidate_stats_cache():
+    """Vacía la caché del dashboard de progreso (tras aprobar, editar,
+    borrar o normalizar actividades)."""
+    _IHPIX_STATS_CACHE['rows'] = None
+    _IHPIX_STATS_CACHE['index'] = None
+    _IHPIX_STATS_CACHE['labels'] = None
+    _IHPIX_STATS_CACHE['results'] = {}
+
+
+def _ihpix_cached(slot, ttl, builder):
+    import time as _time
+    now = _time.time()
+    cached = _IHPIX_STATS_CACHE.get(slot)
+    if cached and cached[0] > now:
+        return cached[1]
+    value = builder()
+    _IHPIX_STATS_CACHE[slot] = (now + ttl, value)
+    return value
+
+
+def _ihpix_published_rows():
+    """Dicts de todas las actividades publicadas (una consulta, cacheada)."""
+    def _build():
+        rows, _total = IhpixActivity.get_filtered(
+            status=IhpixActivity.STATUS_PUBLISHED, limit=None)
+        return [a.as_dict() for a in rows]
+    return _ihpix_cached('rows', _ihpix_stats_ttl(), _build)
+
+
+def _ihpix_country_index():
+    """Índice de países para `ihpix_stats`: resúmenes por país (región,
+    coordenadas) + títulos/slugs de los grupos `member-states` + alias."""
+    from ckanext.theme_ejemplo import ihpix_stats
+
+    def _build():
+        init_ihpix_country_summary_db()
+        summaries = [cs.as_dict() for cs in IhpixCountrySummary.get_all()]
+        try:
+            pairs = list(toolkit.h.get_member_states_groups_list())
+        except Exception:
+            pairs = []
+        return ihpix_stats.build_country_index(summaries, pairs)
+    return _ihpix_cached('index', _ihpix_stats_ttl(default=300), _build)
+
+
+def _ihpix_key_activities():
+    """Key activities por Output, con ruta sobreescribible por config
+    (`ckanext.theme_ejemplo.ihpix_key_activities_file`)."""
+    from ckanext.theme_ejemplo import ihpix_constants as C
+    path = (toolkit.config.get('ckanext.theme_ejemplo.ihpix_key_activities_file') or u'').strip()
+    return C.load_key_activities(path=path or None)
+
+
+def _ihpix_stats_labels():
+    from ckanext.theme_ejemplo import ihpix_constants as C
+
+    def _build():
+        key_activities = {}
+        for items in _ihpix_key_activities().values():
+            for item in items:
+                key_activities[item['code']] = item['title']
+        return {'outputs': C.load_output_titles(), 'key_activities': key_activities}
+    return _ihpix_cached('labels', _ihpix_stats_ttl(default=300), _build)
+
+
+def _ihpix_resolve_scope_value(scope, value):
+    """Valida/resuelve el valor del ámbito (PA, Output, flagship por código
+    o slug, CTWG por nombre o slug). Devuelve None si no existe."""
+    from ckanext.theme_ejemplo import ihpix_constants as C
+    value = (value or u'').strip()
+    if scope == 'overall':
+        return u''
+    if scope == 'pa':
+        value = value.upper()
+        return value if value in C.PRIORITY_AREAS else None
+    if scope == 'output':
+        return value if value in C.all_output_codes() else None
+    if scope == 'flagship':
+        if value in C.FLAGSHIPS:
+            return value
+        return C.flagship_for_slug(value)
+    if scope == 'ctwg':
+        if value in C.CROSS_CUTTING_WGS:
+            return value
+        return C.ctwg_for_slug(value)
+    return None
+
+
+@toolkit.side_effect_free
+def ihpix_progress_stats(context, data_dict):
+    """Progreso IHP-IX por ámbito (réplica de los dashboards Power BI).
+
+    Params: scope (overall|pa|output|flagship|ctwg), value (PA1 / 1.3 /
+    código o slug de flagship / nombre o slug de CTWG), biennium, region,
+    country, institution_type. Usuarios autenticados. El JSON lo define
+    `ihpix_stats.compute_progress_stats`; los sysadmin reciben además
+    `overview.pending`.
+    """
+    toolkit.check_access('ihpix_progress_stats', context, data_dict)
+    init_ihpix_activities_db()
+    from ckanext.theme_ejemplo import ihpix_stats
+    import time as _time
+
+    scope = (data_dict.get('scope') or u'overall').strip().lower()
+    if scope not in ihpix_stats.SCOPES:
+        raise toolkit.ValidationError(
+            {'scope': 'Must be one of: {}'.format(', '.join(ihpix_stats.SCOPES))})
+    value = _ihpix_resolve_scope_value(scope, data_dict.get('value'))
+    if value is None:
+        raise toolkit.ObjectNotFound('Unknown {} "{}"'.format(scope, data_dict.get('value')))
+    filters = {}
+    for key in ('biennium', 'region', 'country', 'institution_type'):
+        val = (data_dict.get(key) or u'').strip()
+        if val:
+            filters[key] = val
+
+    cache_key = (scope, value, tuple(sorted(filters.items())))
+    now = _time.time()
+    cached = _IHPIX_STATS_CACHE['results'].get(cache_key)
+    if cached and cached[0] > now:
+        stats = cached[1]
+    else:
+        stats = ihpix_stats.compute_progress_stats(
+            _ihpix_published_rows(), scope=scope, value=value or None,
+            filters=filters, country_index=_ihpix_country_index(),
+            labels=_ihpix_stats_labels())
+        if len(_IHPIX_STATS_CACHE['results']) > 200:
+            _IHPIX_STATS_CACHE['results'] = {}
+        _IHPIX_STATS_CACHE['results'][cache_key] = (now + _ihpix_stats_ttl(), stats)
+
+    user_obj = context.get('auth_user_obj')
+    if user_obj is not None and getattr(user_obj, 'sysadmin', False):
+        stats = dict(stats)
+        stats['overview'] = dict(stats['overview'])
+        stats['overview']['pending'] = IhpixActivity.count_by_status(
+            IhpixActivity.STATUS_PENDING)
     return stats
 
 
@@ -3728,11 +3888,15 @@ def ihpix_admin_overview_stats(context, data_dict):
         status_counts[s] = sum(1 for a in activities if a.status == s)
 
     # ── KPI activation & target totals ──
+    # "Activo" = puerta marcada *o* conteo/tipo informado: así cuentan las
+    # filas heredadas del Excel, cuyo seed dejó las puertas en False.
+    from ckanext.theme_ejemplo import ihpix_normalize as N
+    derived_gates = {a.id: N.derive_gates(a.as_dict()) for a in activities}
     kpi_breakdown = {}
     for kpi_id, meta in C.KPIS.items():
         gate_attr = 'kpi_{}_active'.format(kpi_id)
         count_col = meta.get('count_column')
-        actives = [a for a in activities if getattr(a, gate_attr, False)]
+        actives = [a for a in activities if derived_gates[a.id].get(gate_attr)]
         total_target = 0
         youth_total = 0
         female_total = 0
@@ -4034,6 +4198,7 @@ def ihpix_country_summary_recompute(context, data_dict):
     country = (data_dict.get('country') or u'').strip() or None
     updated = IhpixCountrySummary.recompute_from_activities(
         country=country, resolve_name=ihpix_country_name)
+    _ihpix_invalidate_stats_cache()
     return {'success': True, 'updated': updated}
 
 

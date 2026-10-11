@@ -181,6 +181,22 @@ def _collect_report_form(form):
     return data
 
 
+def _ihpix_key_activities_by_output():
+    """Key activities por Output para el select dependiente del formulario.
+
+    Respeta `ckanext.theme_ejemplo.ihpix_key_activities_file` si está
+    configurado (misma regla que la acción de progreso); si el fichero no
+    existe devuelve {} y el formulario muestra el aviso "pendiente".
+    """
+    from ckanext.theme_ejemplo import ihpix_constants as C
+    path = config.get('ckanext.theme_ejemplo.ihpix_key_activities_file')
+    try:
+        return C.load_key_activities(path or None)
+    except Exception as e:
+        log.warning('No se pudieron cargar las key activities: %s', e)
+        return {}
+
+
 def _ihpix_safe_url(endpoint, fallback):
     """url_for con fallback (el blueprint puede no existir en tests)."""
     try:
@@ -4372,7 +4388,10 @@ class MyLogica():
                 scientific_product_types=C.SCIENTIFIC_PRODUCT_TYPES,
                 knowledge_activity_types=C.KNOWLEDGE_ACTIVITY_TYPES,
                 training_types=C.TRAINING_TYPES,
+                training_type_groups=C.TRAINING_TYPE_GROUPS,
                 stakeholder_group_types=C.STAKEHOLDER_GROUP_TYPES,
+                flagship_labels=C.FLAGSHIP_LABELS,
+                key_activities_by_output=_ihpix_key_activities_by_output(),
             )
 
         @staticmethod
@@ -4767,37 +4786,68 @@ class MyLogica():
 
         @staticmethod
         def ihpix_dashboard():
-            """Dashboard IHP-IX: cualquier usuario logueado."""
+            """Antiguo dashboard: redirige al dashboard de progreso equivalente."""
+            output = (request.args.get('output') or '').strip()
+            pa = (request.args.get('pa') or '').strip()
+            if output:
+                return h.redirect_to('theme_ejemplo.ihpix_progress_output', value=output)
+            if pa:
+                return h.redirect_to('theme_ejemplo.ihpix_progress_pa', value=pa)
+            return h.redirect_to('theme_ejemplo.ihpix_progress')
+
+        def ihpix_progress(scope='overall', value=None):
+            """Dashboards de progreso IHP-IX (réplica web de los Power BI oficiales).
+
+            Una sola vista para los cinco ámbitos: overall, pa, output, flagship
+            y ctwg. El ámbito llega por `defaults` de la ruta y el valor por la
+            URL (código de PA/Output o slug de flagship/CTWG). Solo usuarios
+            logueados, como el resto de la analítica IHP-IX.
+            """
             redirect = _require_login()
             if redirect:
                 return redirect
-            from ckanext.theme_ejemplo.model import (
-                IhpixActivity, init_ihpix_activities_db,
-            )
+            from ckanext.theme_ejemplo import ihpix_constants as C
+            from ckanext.theme_ejemplo.model import init_ihpix_activities_db
             init_ihpix_activities_db()
 
-            pa_filter = request.args.get('pa', '')
+            resolved = None
+            if scope == 'overall':
+                resolved = None
+            elif scope == 'pa':
+                if value not in C.PRIORITY_AREAS:
+                    return abort(404, _('Priority Area not found'))
+                resolved = value
+            elif scope == 'output':
+                if not C.priority_area_for_output(value or ''):
+                    return abort(404, _('Output not found'))
+                resolved = value
+            elif scope == 'flagship':
+                resolved = C.flagship_for_slug(value or '')
+                if not resolved:
+                    return abort(404, _('Flagship initiative not found'))
+            elif scope == 'ctwg':
+                resolved = C.ctwg_for_slug(value or '')
+                if not resolved:
+                    return abort(404, _('Working group not found'))
+            else:
+                return abort(404)
+
+            filters = {
+                'biennium': (request.args.get('biennium') or '').strip(),
+                'region': (request.args.get('region') or '').strip(),
+            }
+            context = {'user': c.user, 'model': model}
             try:
-                context = {'user': c.user, 'model': model}
-                stats = toolkit.get_action('ihpix_dashboard_stats')(
-                    context, {'priority_area': pa_filter}
-                )
+                stats = toolkit.get_action('ihpix_progress_stats')(context, {
+                    'scope': scope,
+                    'value': resolved,
+                    'biennium': filters['biennium'],
+                    'region': filters['region'],
+                })
             except Exception as e:
-                log.error('Error fetching IHP-IX dashboard stats: %s', e)
-                stats = {
-                    'total_activities': 0, 'total_countries': 0,
-                    'total_institutions': 0, 'pending_reports': 0,
-                    'by_priority_area': [], 'by_output': [],
-                    'timeline': [], 'by_country': [],
-                    'by_biennium': [],
-                    'stakeholders_knowledge': 0, 'stakeholders_awareness': 0,
-                    'knowledge_products': 0, 'scientific_products': 0,
-                    'training_materials': 0,
-                    'filter_options': {
-                        'bienniums': [], 'countries': [],
-                        'priority_areas': ['PA1', 'PA2', 'PA3', 'PA4', 'PA5'],
-                    },
-                }
+                log.error('Error al calcular el progreso IHP-IX (%s/%s): %s',
+                          scope, resolved, e)
+                stats = {}
 
             is_sysadmin = False
             try:
@@ -4807,9 +4857,12 @@ class MyLogica():
                 pass
 
             return render_template(
-                'ihpix/dashboard.html',
+                'ihpix/progress.html',
                 stats=stats,
-                pa_filter=pa_filter,
+                scope=scope,
+                scope_value=resolved,
+                scope_slug=value,
+                filters=filters,
                 is_sysadmin=is_sysadmin,
             )
 
