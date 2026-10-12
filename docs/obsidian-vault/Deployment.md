@@ -167,6 +167,28 @@ copia en `/tmp/theme-overlay` descrita allí).
 > pod, sin psql). Es idempotente: el CLI `ckan ihpix normalize-legacy` permite
 > ensayar antes (`--apply` para escribir).
 
+### Registro — 2026-10-12 (IHP-IX ciclo 3: formulario completo + progreso)
+
+- Base: `pabrojast/ckan-base210@sha256:7ceef7ffe8f8e3025b5e657603ffb8e3bd4bc5dc19d7b4f365dda657f23fd7a4`
+  (dev corría el tema en `9e89d32`, merge del rediseño de la home, PR #3).
+- El commit de IHP-IX se rebaseó sobre `origin/dev210` antes de construir
+  (`69b0740` → **`64dad73`**, único solape `plugin.py`, sin conflictos) y se
+  publicó `dev210`; la imagen `Dockerfile.ihpix-dev` descarga el commit de GitHub.
+- Imagen: `pabrojast/ckan-base210:ihpix-progress-dev-64dad73-20261012`, digest
+  `sha256:c09610374e415e28bcab05e2120afa91540b770a7136f5d9f8547a86fafc2e5e`.
+  Deployment previo guardado fuera de Git para rollback (`kubectl set image` al
+  digest base).
+- Respaldo previo: `~/backups/ckan-dev-ihpix-20261012/ihpix-backup.json`
+  (745 actividades, ya normalizadas el 2026-10-11: el arranque no volvió a
+  escribir en `ihpix_activity`, sin trazas de migración en el log).
+- Verificación en la imagen desplegada: `scripts/ihpix_dev_smoke.py` en el pod
+  (24 páginas 200/302, marcadores completos, `ihpix_progress_stats` 744
+  actividades / 191 Member States / KPI 2 = 120 579); HTTP público (`/ihpix`
+  200, `/ihpix/progress*` 302 a login para anónimos, `/ihpix/dashboard` 302 a
+  `/ihpix/progress`); `scripts/playwright/ihpix_progress.js` contra
+  `https://data.dev-wins.com` con tokens temporales (revocados): 30/30 pasos,
+  sin errores de consola ni respuestas ≥ 400. Producción no se tocó.
+
 > [!note] Fallos que sólo aparecen con CKAN real (2026-09-25)
 > El parseo local de Jinja no detecta: comentarios `{# #}` anidados (dejan
 > código vivo), macros importados sin `with context` (`h` indefinido),
