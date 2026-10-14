@@ -20,6 +20,7 @@ from ckanext.theme_ejemplo.controller import (
     _get_data_stories_by_group,
     _get_pages_by_initiative,
 )
+from ckanext.theme_ejemplo import initiative  # Initiative pages (added by Jorgen Van Der Biest)
 
 log = logging.getLogger(__name__)
 
@@ -58,6 +59,10 @@ def group_landing(group_dict):
     """
     try:
         conf = GROUP_LANDINGS.get((group_dict or {}).get('name'))
+        # Initiative pages (added by Jorgen Van Der Biest): las iniciativas con
+        # página completa usan la plantilla común (ver initiative.py)
+        if not conf:
+            conf = initiative.landing_conf(group_dict)
         if not conf:
             return None
         conf = dict(conf)

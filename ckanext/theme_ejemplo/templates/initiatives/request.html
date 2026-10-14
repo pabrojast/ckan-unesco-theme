@@ -11,6 +11,7 @@
 
 {% block primary_content_inner %}
   <h1><i class="fa fa-flag"></i> {{ _('Request a new initiative') }}</h1>
+  {% snippet 'initiative/snippets/request_mode.html', active='standard' %}{# Initiative pages (added by Jorgen Van Der Biest) #}
 
   <div class="alert alert-info" role="alert">
     <p>{{ _('Fill out the form below to request the creation of a new initiative. A site administrator will review your submission. Once approved, the initiative will be created as a CKAN group and you will become its administrator.') }}</p>

@@ -1,0 +1,28 @@
+{% extends "page.html" %}
+{#
+  Initiative pages (added by Jorgen Van Der Biest). New file.
+  /initiatives/request/full: solicitud de una iniciativa con página completa
+  (cuestionario de 7 pasos). Al enviar, la solicitud se crea con la vista de
+  siempre (initiatives/request.html sigue siendo la solicitud estándar).
+#}
+{% block title %}{{ _('Request a new initiative') }} - {{ super() }}{% endblock %}
+{% block subtitle %}{{ _('Request a new initiative') }}{% endblock %}
+
+{% block breadcrumb_content %}
+  <li><a href="{{ h.url_for('theme_ejemplo.initiatives') }}">{% trans %}Initiatives{% endtrans %}</a></li>
+  <li class="active"><a href="">{{ _('New request') }}</a></li>
+{% endblock %}
+
+{% block secondary %}{% endblock %}
+{% block page_header %}{% endblock %}
+{% block primary %}
+  <div class="primary col-xs-12" role="main">{{ self.primary_content() }}</div>
+{% endblock %}
+
+{% block primary_content_inner %}
+  <h1><i class="fa fa-flag"></i> {{ _('Request a new initiative') }}</h1>
+  {% snippet 'initiative/snippets/request_mode.html', active='full' %}
+  <p class="ini-lead">{{ _('Tell us about your initiative and upload a few images. Your answers build its page on IHP-WINS, with colours taken from your images. An IHP-WINS administrator reviews every request; once approved, the initiative is created and you become its administrator.') }}</p>
+  {% set action_url = h.url_for('theme_ejemplo.initiative_request_full') %}
+  {% include "initiative/snippets/questionnaire.html" %}
+{% endblock %}
