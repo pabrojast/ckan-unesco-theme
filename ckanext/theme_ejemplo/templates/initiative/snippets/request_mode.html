@@ -1,0 +1,24 @@
+{# Initiative pages (added by Jorgen Van Der Biest). New file.
+   Elección entre la solicitud estándar (formulario de siempre en
+   /initiatives/request) y la página completa (/initiatives/request/full).
+   Recibe active = 'standard' | 'full'. #}
+<link rel="stylesheet" href="{{ h.url_for_static('/css/initiative.css') }}?v=20261015-1" />
+<nav class="ini-mode" aria-label="{{ _('How would you like to set up your initiative?') }}">
+  <p class="ini-mode-title">{{ _('How would you like to set up your initiative?') }}</p>
+  <div class="ini-mode-cards">
+    <a class="ini-mode-card{% if active == 'standard' %} is-active{% endif %}" href="{{ h.url_for('theme_ejemplo.request_initiative') }}"{% if active == 'standard' %} aria-current="page"{% endif %}>
+      <span class="ini-mode-radio" aria-hidden="true"></span>
+      <span class="ini-mode-text">
+        <strong>{{ _('Standard request') }}</strong>
+        <span>{{ _('The current form: title, description and logo. The initiative gets the standard page, which you can upgrade to a full page later from the initiative itself.') }}</span>
+      </span>
+    </a>
+    <a class="ini-mode-card{% if active == 'full' %} is-active{% endif %}" href="{{ h.url_for('theme_ejemplo.initiative_request_full') }}"{% if active == 'full' %} aria-current="page"{% endif %}>
+      <span class="ini-mode-radio" aria-hidden="true"></span>
+      <span class="ini-mode-text">
+        <strong>{{ _('Full initiative page') }} <span class="ini-mode-badge">{{ _('Recommended') }}</span></strong>
+        <span>{{ _('Seven steps: story, objectives, partners, alignment and images. The page gets its own colours from your images.') }}</span>
+      </span>
+    </a>
+  </div>
+</nav>

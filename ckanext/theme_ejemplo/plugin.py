@@ -26,6 +26,7 @@ from . import pageview_tracking
 from . import ranking
 from . import home_v2  # Home page v2 (added by Jorgen Van Der Biest)
 from . import community  # Community of practice (added by Jorgen Van Der Biest)
+from . import initiative  # Initiative pages (added by Jorgen Van Der Biest)
 from . import search as theme_search
 from .utils import normalize_user_image_url
 import logging
@@ -1301,6 +1302,7 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
             # Community of practice (added by Jorgen Van Der Biest): see community.py
             community.register(blueprint)
 
+            initiative.add_url_rules(blueprint)  # Initiative pages (added by Jorgen Van Der Biest)
             return blueprint
         
         def get_helpers(self):
@@ -1379,6 +1381,7 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
             if not plugins.plugin_loaded('learning'):
                 helpers_map['learning_enabled'] = lambda: False
             helpers_map.update(home_v2.get_helpers())  # Home page v2 (added by Jorgen Van Der Biest)
+            helpers_map.update(initiative.get_helpers())  # Initiative pages (added by Jorgen Van Der Biest)
             return helpers_map
 
         # IActions

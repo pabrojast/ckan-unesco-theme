@@ -1,0 +1,460 @@
+{#
+  Initiative pages (added by Jorgen Van Der Biest). New file.
+  Cuestionario de la página completa de una iniciativa (7 pasos). Se incluye
+  desde initiative/request_full.html (mode = 'request') y
+  initiative/page_setup.html (mode = 'setup').
+  Recibe: details (respuestas, ver initiative.normalize_details), palette,
+  checks, errors, form (envío anterior), lists (initiative.form_lists),
+  mode, action_url y, en modo setup, group.
+  Sin JavaScript funciona con los controles estándar; public/js/initiative-form.js
+  añade la búsqueda en las listas, filas repetibles, la vista previa de imágenes
+  y la extracción de colores.
+#}
+{% set d = details %}
+{% set is_request = mode == 'request' %}
+{% set r = palette.roles %}
+<link rel="stylesheet" href="{{ h.url_for_static('/css/initiative.css') }}?v=20261015-1" />
+<script src="{{ h.url_for_static('/js/initiative-form.js') }}?v=20261015-1" defer></script>
+
+<div class="ini-form-wrap">
+<nav class="ini-steps" aria-label="{{ _('Questionnaire steps') }}">
+  <a href="#ini-step-1"><span>1</span>{{ _('The basics') }}</a>
+  <a href="#ini-step-2"><span>2</span>{{ _('The story') }}</a>
+  <a href="#ini-step-3"><span>3</span>{{ _('Scope and alignment') }}</a>
+  <a href="#ini-step-4"><span>4</span>{{ _('People and partners') }}</a>
+  <a href="#ini-step-5"><span>5</span>{{ _('Visual identity') }}</a>
+  <a href="#ini-step-6"><span>6</span>{{ _('Page content and links') }}<small>{{ _('Optional') }}</small></a>
+  <a href="#ini-step-7"><span>7</span>{% if is_request %}{{ _('Review and submit') }}{% else %}{{ _('Review and save') }}{% endif %}</a>
+</nav>
+
+<form id="ini-form" class="ini-form" method="post" action="{{ action_url }}" enctype="multipart/form-data" novalidate>
+  {{ h.csrf_input() }}
+
+  {% if errors %}
+  <div class="ini-errors" role="alert">
+    <strong>{{ _('Please check these answers:') }}</strong>
+    <ul>{% for label, msgs in errors.items() %}{% for m in msgs %}<li><b>{{ label }}</b>: {{ m }}</li>{% endfor %}{% endfor %}</ul>
+  </div>
+  {% endif %}
+
+  {# ===================== 1. The basics ===================== #}
+  <fieldset id="ini-step-1" class="ini-step">
+    <legend><span class="ini-step-no">{{ _('Step 1 of 7') }}</span><span class="ini-step-title">{{ _('The basics') }}</span></legend>
+    <div class="ini-grid">
+      {% if is_request %}
+      <div class="ini-field ini-full">
+        <label for="field-title">{{ _('Initiative name') }} <span class="ini-req">*</span></label>
+        <span class="ini-help" id="field-title-h">{{ _('The full official name.') }}</span>
+        <input id="field-title" type="text" name="title" maxlength="200" required aria-describedby="field-title-h" value="{{ form.get('title', '') }}" placeholder="{{ _('e.g. Global Network on Water Quality') }}" data-slug-source />
+        <span class="ini-where">{{ _('Address:') }} <code>…/group/<span data-slug-preview>{{ _('your-initiative') }}</span></code> · {{ _('the administrator confirms it') }}</span>
+      </div>
+      {% else %}
+      <div class="ini-field ini-full ini-readonly">
+        <span class="ini-label">{{ _('Initiative name and address') }}</span>
+        <p><strong>{{ group.display_name }}</strong> · <code>/group/{{ group.name }}</code></p>
+        <span class="ini-help">{{ _('The name, address, description and logo are edited from the initiative\'s Manage page.') }} <a href="{{ h.url_for('group.edit', id=group.name) }}">{{ _('Manage') }}</a></span>
+      </div>
+      {% endif %}
+      <div class="ini-field">
+        <label for="ini-short">{{ _('Short name') }}</label>
+        <span class="ini-help" id="ini-short-h">{{ _('Used in the page texts, e.g. "AI for Water". Up to 24 characters.') }}</span>
+        <input id="ini-short" type="text" name="ini_short_name" maxlength="24" aria-describedby="ini-short-h" value="{{ d.short_name }}" />
+      </div>
+      <div class="ini-field ini-full">
+        <span class="ini-label">{{ _('Title on the page, in two lines') }}</span>
+        <span class="ini-help">{{ _('Like "Artificial Intelligence" / "for water management". The first line is highlighted. Leave empty to use the name.') }}</span>
+        <div class="ini-pair">
+          <input type="text" name="ini_title_line1" maxlength="60" aria-label="{{ _('First line (highlighted)') }}" placeholder="{{ _('First line (highlighted)') }}" value="{{ d.title_line1 }}" />
+          <input type="text" name="ini_title_line2" maxlength="60" aria-label="{{ _('Second line') }}" placeholder="{{ _('Second line') }}" value="{{ d.title_line2 }}" />
+        </div>
+      </div>
+      <div class="ini-field ini-full">
+        <label for="ini-tagline">{{ _('Tagline') }} <span class="ini-req">*</span></label>
+        <span class="ini-help" id="ini-tagline-h">{{ _('One sentence on what the initiative does and for whom. Up to 200 characters.') }}</span>
+        <textarea id="ini-tagline" name="ini_tagline" rows="2" maxlength="200" aria-describedby="ini-tagline-h">{{ d.tagline }}</textarea>
+        <span class="ini-where">{{ _('On the page: under the title') }}</span>
+      </div>
+      <div class="ini-field">
+        <label for="ini-type">{{ _('Type of initiative') }} <span class="ini-req">*</span></label>
+        <select id="ini-type" name="ini_type">
+          <option value="">{{ _('Choose…') }}</option>
+          {% for key, label in lists.types %}<option value="{{ key }}"{% if d.type == key %} selected{% endif %}>{{ _(label) }}</option>{% endfor %}
+        </select>
+      </div>
+      <fieldset class="ini-field ini-sub">
+        <legend class="ini-label">{{ _('Status') }}</legend>
+        <div class="ini-inline">
+          {% for key, label in lists.statuses %}
+          <label class="ini-check"><input type="radio" name="ini_status" value="{{ key }}"{% if d.status == key %} checked{% endif %} /> {{ _(label) }}</label>
+          {% endfor %}
+        </div>
+        <div class="ini-pair">
+          <label class="ini-mini">{{ _('Start year') }}<input type="text" inputmode="numeric" name="ini_start_year" maxlength="4" placeholder="YYYY" value="{{ d.start_year }}" /></label>
+          <label class="ini-mini">{{ _('End year') }}<input type="text" inputmode="numeric" name="ini_end_year" maxlength="4" placeholder="YYYY" value="{{ d.end_year }}" /></label>
+        </div>
+      </fieldset>
+      <div class="ini-field ini-full">
+        <label for="ini-lead">{{ _('Lead organisation') }} <span class="ini-req">*</span></label>
+        <span class="ini-help" id="ini-lead-h">{{ _('Choose from the %(n)s organisations on IHP-WINS. Type part of the name or its initials.', n=lists.organizations | length) }}</span>
+        <select id="ini-lead" name="ini_lead_org" data-picker="single" data-noun="{{ _('organisations') }}" data-placeholder="{{ _('Search organisations, e.g. UNESCO, Deltares, ICHARM') }}" aria-describedby="ini-lead-h">
+          <option value="">{{ _('Choose…') }}</option>
+          {% for name, title in lists.organizations %}<option value="{{ name }}"{% if d.lead_org == name %} selected{% endif %}>{{ title }}</option>{% endfor %}
+        </select>
+        <span class="ini-help">{{ _('Not in the list?') }} <a href="mailto:ihp-wins@unesco.org">{{ _('Ask the IHP-WINS team to add it') }}</a></span>
+      </div>
+    </div>
+  </fieldset>
+
+  {# ===================== 2. The story ===================== #}
+  <fieldset id="ini-step-2" class="ini-step">
+    <legend><span class="ini-step-no">{{ _('Step 2 of 7') }}</span><span class="ini-step-title">{{ _('The story') }}</span></legend>
+    {% if is_request %}
+    <div class="ini-field">
+      <label for="field-description">{{ _('About the initiative') }} <span class="ini-req">*</span></label>
+      <span class="ini-help" id="field-description-h">{{ _('A few paragraphs: aims, approach, who is involved. Markdown is supported.') }}</span>
+      <textarea id="field-description" name="description" rows="6" aria-describedby="field-description-h">{{ form.get('description', '') }}</textarea>
+      <span class="ini-where">{{ _('On the page: About tab, search results') }}</span>
+    </div>
+    {% endif %}
+    <div class="ini-grid">
+      <div class="ini-field">
+        <label for="ini-why-title">{{ _('Why it matters: headline') }}</label>
+        <input id="ini-why-title" type="text" name="ini_why_title" maxlength="80" value="{{ d.why_title }}" placeholder="{{ _('e.g. Water problems first, AI second') }}" />
+      </div>
+      <div class="ini-field">
+        <label for="ini-why-text">{{ _('Why it matters: text') }}</label>
+        <span class="ini-help">{{ _('One or two short paragraphs (new line = new paragraph).') }}</span>
+        <textarea id="ini-why-text" name="ini_why_text" rows="4" maxlength="1200">{{ d.why_text }}</textarea>
+      </div>
+    </div>
+    <fieldset class="ini-box">
+      <legend>{{ _('Theory of change') }} <span class="ini-opt">{{ _('(optional)') }}</span></legend>
+      <label class="ini-toc"><span>{{ _('IF') }}</span><input type="text" name="ini_toc_if" maxlength="300" value="{{ d.toc['if'] }}" /></label>
+      <label class="ini-toc"><span>{{ _('THEN') }}</span><input type="text" name="ini_toc_then" maxlength="300" value="{{ d.toc.then }}" /></label>
+      <label class="ini-toc"><span>{{ _('SO THAT') }}</span><input type="text" name="ini_toc_so_that" maxlength="300" value="{{ d.toc.so_that }}" /></label>
+    </fieldset>
+
+    <fieldset class="ini-sub">
+      <legend class="ini-label">{{ _('Objectives or pillars') }} <span class="ini-req">*</span> <span class="ini-count" data-count-for="ini_obj"></span></legend>
+      <span class="ini-help">{{ _('Between 1 and %(n)s. Each gets a numbered card with a title, one sentence, an optional tag, key points and image.', n=lists.limits.objectives) }}</span>
+      <div class="ini-grid">
+        <label class="ini-field">{{ _('Section heading') }}<input type="text" name="ini_objectives_heading" maxlength="80" value="{{ d.objectives_heading }}" placeholder="{{ _('e.g. Four pillars, one shared impact') }}" /></label>
+        <label class="ini-field">{{ _('Section intro') }}<input type="text" name="ini_objectives_intro" maxlength="400" value="{{ d.objectives_intro }}" /></label>
+      </div>
+      <div class="ini-repeat" data-repeat="ini_obj" data-min="1" data-max="{{ lists.limits.objectives }}">
+        {% set objs = d.objectives if d.objectives else [{'title': '', 'text': '', 'tag': '', 'items': [], 'image': ''}] %}
+        {% for o in objs %}
+        {% set i = loop.index0 %}
+        <div class="ini-row ini-obj" data-row>
+          <div class="ini-row-head"><span class="ini-row-no" data-row-no>{{ loop.index }}</span><button type="button" class="ini-ghost" data-remove aria-label="{{ _('Remove objective') }}">{{ _('Remove') }}</button></div>
+          <div class="ini-grid">
+            <label class="ini-field">{{ _('Title') }}<input type="text" name="ini_obj-{{ i }}-title" maxlength="60" value="{{ o.title }}" /></label>
+            <label class="ini-field">{{ _('Tag') }} <span class="ini-opt">{{ _('e.g. Output 1.9') }}</span><input type="text" name="ini_obj-{{ i }}-tag" maxlength="30" value="{{ o.tag }}" /></label>
+            <label class="ini-field ini-full">{{ _('One sentence') }}<input type="text" name="ini_obj-{{ i }}-text" maxlength="300" value="{{ o.text }}" /></label>
+            <label class="ini-field">{{ _('Key points, one per line') }} <span class="ini-opt">{{ _('optional') }}</span><textarea name="ini_obj-{{ i }}-items" rows="3">{{ o['items'] | join('\n') }}</textarea></label>
+            <div class="ini-field">
+              <label for="ini-obj-{{ i }}-image">{{ _('Image') }} <span class="ini-opt">{{ _('optional') }}</span></label>
+              <div class="ini-thumbrow">
+                <img class="ini-thumb" data-preview{% if o.image %} src="{{ o.image }}"{% else %} hidden{% endif %} alt="" />
+                <input id="ini-obj-{{ i }}-image" type="file" name="ini_obj-{{ i }}-image" accept="image/png,image/jpeg,image/webp" data-image-input />
+              </div>
+              <input type="hidden" name="ini_obj-{{ i }}-image_url" value="{{ o.image }}" />
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+        <template data-row-template>
+          <div class="ini-row ini-obj" data-row>
+            <div class="ini-row-head"><span class="ini-row-no" data-row-no></span><button type="button" class="ini-ghost" data-remove aria-label="{{ _('Remove objective') }}">{{ _('Remove') }}</button></div>
+            <div class="ini-grid">
+              <label class="ini-field">{{ _('Title') }}<input type="text" name="ini_obj-__i__-title" maxlength="60" /></label>
+              <label class="ini-field">{{ _('Tag') }} <span class="ini-opt">{{ _('e.g. Output 1.9') }}</span><input type="text" name="ini_obj-__i__-tag" maxlength="30" /></label>
+              <label class="ini-field ini-full">{{ _('One sentence') }}<input type="text" name="ini_obj-__i__-text" maxlength="300" /></label>
+              <label class="ini-field">{{ _('Key points, one per line') }} <span class="ini-opt">{{ _('optional') }}</span><textarea name="ini_obj-__i__-items" rows="3"></textarea></label>
+              <div class="ini-field">
+                <label for="ini-obj-__i__-image">{{ _('Image') }} <span class="ini-opt">{{ _('optional') }}</span></label>
+                <div class="ini-thumbrow">
+                  <img class="ini-thumb" data-preview hidden alt="" />
+                  <input id="ini-obj-__i__-image" type="file" name="ini_obj-__i__-image" accept="image/png,image/jpeg,image/webp" data-image-input />
+                </div>
+                <input type="hidden" name="ini_obj-__i__-image_url" value="" />
+              </div>
+            </div>
+          </div>
+        </template>
+        <button type="button" class="ini-add" data-add>+ {{ _('Add objective') }}</button>
+      </div>
+      <span class="ini-where">{{ _('On the page: Objectives section') }}</span>
+    </fieldset>
+
+    <fieldset class="ini-sub">
+      <legend class="ini-label">{{ _('Key figures') }} <span class="ini-count" data-count-for="ini_fig"></span></legend>
+      <span class="ini-help">{{ _('Add as many as you have sources for, up to %(n)s. Label targets as "(target)".', n=lists.limits.figures) }}</span>
+      <div class="ini-repeat ini-repeat--grid" data-repeat="ini_fig" data-min="0" data-max="{{ lists.limits.figures }}">
+        {% for f in d.figures %}
+        {% set i = loop.index0 %}
+        <div class="ini-row ini-fig" data-row>
+          <input type="text" name="ini_fig-{{ i }}-value" maxlength="16" value="{{ f.value }}" aria-label="{{ _('Value') }}" placeholder="{{ _('Value') }}" />
+          <input type="text" name="ini_fig-{{ i }}-label" maxlength="80" value="{{ f.label }}" aria-label="{{ _('What it counts') }}" placeholder="{{ _('What it counts') }}" />
+          <button type="button" class="ini-x" data-remove aria-label="{{ _('Remove key figure') }}">&times;</button>
+        </div>
+        {% endfor %}
+        <template data-row-template>
+          <div class="ini-row ini-fig" data-row>
+            <input type="text" name="ini_fig-__i__-value" maxlength="16" aria-label="{{ _('Value') }}" placeholder="{{ _('Value') }}" />
+            <input type="text" name="ini_fig-__i__-label" maxlength="80" aria-label="{{ _('What it counts') }}" placeholder="{{ _('What it counts') }}" />
+            <button type="button" class="ini-x" data-remove aria-label="{{ _('Remove key figure') }}">&times;</button>
+          </div>
+        </template>
+        <button type="button" class="ini-add" data-add>+ {{ _('Add key figure') }}</button>
+      </div>
+      <span class="ini-where">{{ _('On the page: band of key figures under the title') }}</span>
+    </fieldset>
+  </fieldset>
+
+  {# ===================== 3. Scope and alignment ===================== #}
+  <fieldset id="ini-step-3" class="ini-step">
+    <legend><span class="ini-step-no">{{ _('Step 3 of 7') }}</span><span class="ini-step-title">{{ _('Scope and alignment') }}</span></legend>
+    <fieldset class="ini-sub">
+      <legend class="ini-label">{{ _('Geographic scope') }} <span class="ini-req">*</span></legend>
+      <div class="ini-inline">
+        {% for key, label in lists.scopes %}
+        <label class="ini-check"><input type="radio" name="ini_scope" value="{{ key }}"{% if d.scope == key %} checked{% endif %} /> {{ _(label) }}</label>
+        {% endfor %}
+      </div>
+    </fieldset>
+    <div class="ini-field">
+      <label for="ini-ms">{{ _('Member States involved') }}</label>
+      <span class="ini-help" id="ini-ms-h">{{ _('From the %(n)s Member States on IHP-WINS. Add as many as needed; optional for global initiatives.', n=lists.member_states | length) }}</span>
+      <select id="ini-ms" name="ini_member_states" multiple size="6" data-picker="multi" data-noun="{{ _('Member States') }}" data-placeholder="{{ _('Type a country, e.g. Malawi, Korea, Côte d\'Ivoire') }}" aria-describedby="ini-ms-h">
+        {% for name, title in lists.member_states %}<option value="{{ name }}"{% if name in d.member_states %} selected{% endif %}>{{ title }}</option>{% endfor %}
+      </select>
+    </div>
+    <div class="ini-field">
+      <label for="ini-outputs">{{ _('IHP-IX outputs the initiative contributes to') }}</label>
+      <span class="ini-help" id="ini-outputs-h">{{ _('The outputs of the IHP-IX Operational Implementation Plan. Search by number or by words, or browse a priority area.') }}</span>
+      <select id="ini-outputs" name="ini_outputs" multiple size="8" data-picker="outputs" data-noun="{{ _('outputs') }}" data-placeholder="{{ _('Search outputs, e.g. 1.10 or citizen science') }}" aria-describedby="ini-outputs-h">
+        {% for pa, pa_title, items in lists.outputs %}
+        <optgroup label="{{ pa }} · {{ pa_title }}" data-pa="{{ pa }}">
+          {% for code, title in items %}<option value="{{ code }}" data-text="{{ title }}"{% if code in d.outputs %} selected{% endif %}>{{ code }} · {{ title }}</option>{% endfor %}
+        </optgroup>
+        {% endfor %}
+      </select>
+      <span class="ini-where">{{ _('On the page: About tab, with the text of each output') }}</span>
+    </div>
+    <fieldset class="ini-sub">
+      <legend class="ini-label">{{ _('Sustainable Development Goals') }}</legend>
+      <span class="ini-help">{{ _('Select all that apply.') }}</span>
+      <div class="ini-sdgs">
+        {% for n, name in lists.sdgs %}
+        <label class="ini-sdg"><input type="checkbox" name="ini_sdgs" value="{{ n }}"{% if n in d.sdgs %} checked{% endif %} /><span><b>{{ n }}</b> {{ _(name) }}</span></label>
+        {% endfor %}
+      </div>
+    </fieldset>
+    <div class="ini-field">
+      <label for="ini-themes">{{ _('Themes and keywords') }}</label>
+      <span class="ini-help">{{ _('Separated by commas.') }}</span>
+      <input id="ini-themes" type="text" name="ini_themes" maxlength="400" value="{{ d.themes | join(', ') }}" />
+    </div>
+  </fieldset>
+
+  {# ===================== 4. People and partners ===================== #}
+  <fieldset id="ini-step-4" class="ini-step">
+    <legend><span class="ini-step-no">{{ _('Step 4 of 7') }}</span><span class="ini-step-title">{{ _('People and partners') }}</span></legend>
+    <fieldset class="ini-sub">
+      <legend class="ini-label">{{ _('Contact people') }} <span class="ini-req">*</span> <span class="ini-count" data-count-for="ini_contact"></span></legend>
+      <span class="ini-help">{{ _('At least one, up to %(n)s.', n=lists.limits.contacts) }}</span>
+      <div class="ini-repeat" data-repeat="ini_contact" data-min="1" data-max="{{ lists.limits.contacts }}">
+        {% set contacts = d.contacts if d.contacts else [{'name': '', 'role': '', 'email': '', 'public': True}] %}
+        {% for c in contacts %}
+        {% set i = loop.index0 %}
+        <div class="ini-row ini-contact" data-row>
+          <div class="ini-row-head"><span class="ini-row-label">{{ _('Contact') }} <span data-row-no>{{ loop.index }}</span></span><button type="button" class="ini-ghost" data-remove aria-label="{{ _('Remove contact') }}">{{ _('Remove') }}</button></div>
+          <div class="ini-grid ini-grid--3">
+            <label class="ini-field">{{ _('Name') }}<input type="text" name="ini_contact-{{ i }}-name" maxlength="80" value="{{ c.name }}" /></label>
+            <label class="ini-field">{{ _('Role') }}<input type="text" name="ini_contact-{{ i }}-role" maxlength="100" value="{{ c.role }}" /></label>
+            <label class="ini-field">{{ _('Email') }}<input type="email" name="ini_contact-{{ i }}-email" maxlength="120" value="{{ c.email }}" /></label>
+          </div>
+          <label class="ini-check"><input type="checkbox" name="ini_contact-{{ i }}-public" value="1"{% if c.public %} checked{% endif %} /> {{ _('Show on the public page') }}</label>
+        </div>
+        {% endfor %}
+        <template data-row-template>
+          <div class="ini-row ini-contact" data-row>
+            <div class="ini-row-head"><span class="ini-row-label">{{ _('Contact') }} <span data-row-no></span></span><button type="button" class="ini-ghost" data-remove aria-label="{{ _('Remove contact') }}">{{ _('Remove') }}</button></div>
+            <div class="ini-grid ini-grid--3">
+              <label class="ini-field">{{ _('Name') }}<input type="text" name="ini_contact-__i__-name" maxlength="80" /></label>
+              <label class="ini-field">{{ _('Role') }}<input type="text" name="ini_contact-__i__-role" maxlength="100" /></label>
+              <label class="ini-field">{{ _('Email') }}<input type="email" name="ini_contact-__i__-email" maxlength="120" /></label>
+            </div>
+            <label class="ini-check"><input type="checkbox" name="ini_contact-__i__-public" value="1" checked /> {{ _('Show on the public page') }}</label>
+          </div>
+        </template>
+        <button type="button" class="ini-add" data-add>+ {{ _('Add contact person') }}</button>
+      </div>
+    </fieldset>
+    <div class="ini-field">
+      <label for="ini-partners">{{ _('Partners') }}</label>
+      <span class="ini-help" id="ini-partners-h">{{ _('Organisations on IHP-WINS. Their logo, description and page come from IHP-WINS.') }}</span>
+      <select id="ini-partners" name="ini_partners" multiple size="6" data-picker="multi" data-noun="{{ _('organisations') }}" data-placeholder="{{ _('Search organisations, e.g. UNESCO Chair, IHE Delft, IWMI') }}" aria-describedby="ini-partners-h">
+        {% for name, title in lists.organizations %}<option value="{{ name }}"{% if name in d.partners %} selected{% endif %}>{{ title }}</option>{% endfor %}
+      </select>
+      <span class="ini-where">{{ _('On the page: Partners & people') }}</span>
+    </div>
+    <p class="ini-help">{{ _('After approval, add the people who help edit the initiative from its Members tab.') }}</p>
+  </fieldset>
+
+  {# ===================== 5. Visual identity ===================== #}
+  <fieldset id="ini-step-5" class="ini-step ini-step--identity">
+    <legend><span class="ini-step-no">{{ _('Step 5 of 7') }}</span><span class="ini-step-title">{{ _('Visual identity') }}</span><span class="ini-step-intro">{{ _('Upload up to three images. The page colours are taken from them; you can adjust them below.') }}</span></legend>
+    {% if is_request %}
+    <div class="ini-grid">
+      <div class="ini-field">
+        <label for="field-logo-upload">{{ _('Logo') }}</label>
+        <span class="ini-help">{{ _('Square images work best. Shown on the list of initiatives.') }}</span>
+        <input id="field-logo-upload" type="file" name="logo_upload" accept="image/png,image/jpeg,image/gif,image/webp,image/bmp,image/tiff,image/avif" />
+      </div>
+      <div class="ini-field">
+        <label for="field-logo-url">{{ _('… or paste a logo URL') }}</label>
+        <input id="field-logo-url" type="url" name="logo_url" placeholder="https://..." value="{{ form.get('logo_url', '') }}" />
+      </div>
+    </div>
+    {% endif %}
+    <div class="ini-images">
+      {% for slot, label, required, help in [
+          ('hero', _('Hero image'), True, _('Beside the title. At least 1600 px wide.')),
+          ('band', _('Band or texture image'), False, _('A wide decorative strip under the title.')),
+          ('support', _('Supporting image'), False, _('At the top of the other tabs.'))] %}
+      {% set img = d.images[slot] %}
+      <div class="ini-image" data-image-slot="{{ slot }}">
+        <label for="ini-{{ slot }}-image" class="ini-label">{{ label }}{% if required %} <span class="ini-req">*</span>{% endif %}</label>
+        <span class="ini-help">{{ help }}</span>
+        <div class="ini-image-frame"><img data-preview{% if img.url and img.url != 'pending' %} src="{{ img.url }}"{% else %} hidden{% endif %} alt="" /><span class="ini-image-empty"{% if img.url and img.url != 'pending' %} hidden{% endif %}>{{ _('No image yet') }}</span></div>
+        <input id="ini-{{ slot }}-image" type="file" name="ini_{{ slot }}_image" accept="image/png,image/jpeg,image/webp" data-image-input data-colour-source />
+        <input type="hidden" name="ini_{{ slot }}_image_url" value="{{ img.url if img.url != 'pending' else '' }}" />
+        <label class="ini-mini">{{ _('Credit') }}{% if required %} <span class="ini-req">*</span>{% endif %}<input type="text" name="ini_{{ slot }}_credit" maxlength="160" value="{{ img.credit }}" /></label>
+        <label class="ini-mini">{{ _('Alt text') }}{% if required %} <span class="ini-req">*</span>{% endif %}<input type="text" name="ini_{{ slot }}_alt" maxlength="200" value="{{ img.alt }}" placeholder="{{ _('Leave empty if decorative') if not required else '' }}" /></label>
+      </div>
+      {% endfor %}
+    </div>
+    <span class="ini-help">{{ _('JPG, PNG or WebP, up to %(n)s MB. Only images you own or have permission to publish.', n=lists.limits.image_mb) }}</span>
+
+    <fieldset class="ini-sub">
+      <legend class="ini-label">{{ _('Hero layout') }}</legend>
+      <div class="ini-layouts">
+        {% for key, label in lists.layouts %}
+        <label class="ini-layout ini-layout--{{ key }}"><input type="radio" name="ini_hero_layout" value="{{ key }}"{% if d.hero_layout == key %} checked{% endif %} /><span class="ini-layout-pic" aria-hidden="true"><i></i><i></i><em></em></span><span>{{ _(label) }}</span></label>
+        {% endfor %}
+      </div>
+    </fieldset>
+
+    <div class="ini-colours" data-colours>
+      <div class="ini-colours-head">
+        <h3>{{ _('Colours found in your images') }}</h3>
+        <button type="button" class="ini-ghost" data-colour-reset>{{ _('Reset to automatic') }}</button>
+      </div>
+      <p class="ini-help">{{ _('We pick the main colour, the accent and the light band from your images. Click another swatch to change one; the shades are adjusted so text stays readable.') }}</p>
+      <input type="hidden" name="ini_seed_primary" value="{{ palette.seeds.primary }}" data-seed="primary" />
+      <input type="hidden" name="ini_seed_accent" value="{{ palette.seeds.accent }}" data-seed="accent" />
+      <input type="hidden" name="ini_seed_soft" value="{{ palette.seeds.soft }}" data-seed="soft" />
+      <input type="hidden" name="ini_seed_auto" value="{{ '1' if palette.auto else '0' }}" data-seed-auto />
+      <div class="ini-swatch-rows">
+        <span class="ini-label">{{ _('Main colour') }}</span><div class="ini-swatches" role="group" aria-label="{{ _('Main colour') }}" data-swatches="primary"></div>
+        <span class="ini-label">{{ _('Accent') }}</span><div class="ini-swatches" role="group" aria-label="{{ _('Accent') }}" data-swatches="accent"></div>
+        <span class="ini-label">{{ _('Light band') }}</span><div class="ini-swatches" role="group" aria-label="{{ _('Light band') }}" data-swatches="soft"></div>
+      </div>
+      <div class="ini-preview-grid">
+        <div class="ini-preview" data-preview-box style="--p: {{ r.primary }}; --soft: {{ r.soft }}; --tint: {{ r.tint }}; --line: {{ r.line }}; --hl: {{ r.highlight }}; --onp: {{ r.on_primary_soft }}; --acc: {{ r.accent }}; --acci: {{ r.accent_ink }}; --ink: {{ r.ink }};">
+          <div class="ini-preview-hero"><span class="ini-preview-eyebrow">{{ _('Initiative') }}</span><span class="ini-preview-title">{{ _('Your initiative') }}</span><span class="ini-preview-tag">{{ _('The tagline appears here.') }}</span></div>
+          <div class="ini-preview-band"><strong>10</strong><span>{{ _('key figure') }}</span></div>
+          <div class="ini-preview-section"><span class="ini-preview-eyebrow2">{{ _('Why it matters') }}</span><span class="ini-preview-h">{{ _('Section heading') }}</span><i></i><span class="ini-preview-body">{{ _('Body text in the page\'s ink colour.') }}</span></div>
+        </div>
+        <div>
+          <span class="ini-label">{{ _('Readability checks') }}</span>
+          <ul class="ini-checks" data-checks>
+            {% for c in checks %}<li class="{{ 'ok' if c.ok else 'fail' }}"><span class="ini-check-mark" aria-label="{{ _('Passes') if c.ok else _('Fails') }}"></span><span>{{ _(c.label) }}</span><code>{{ c.value }}:1 / {{ c.target }}:1</code></li>{% endfor %}
+          </ul>
+        </div>
+      </div>
+    </div>
+    <label class="ini-check ini-rights"><input type="checkbox" name="ini_image_rights" value="1"{% if d.image_rights %} checked{% endif %} /> {{ _('I have the right to publish these images on IHP-WINS, and the credits are correct.') }} <span class="ini-req">*</span></label>
+  </fieldset>
+
+  {# ===================== 6. Page content and links (optional) ===================== #}
+  <fieldset id="ini-step-6" class="ini-step ini-step--optional{% if d.content_skipped %} is-skipped{% endif %}" data-skippable>
+    <legend><span class="ini-step-no">{{ _('Step 6 of 7 · Optional') }}</span><span class="ini-step-title">{{ _('Page content and links') }}</span></legend>
+    <input type="hidden" name="ini_skip_content" value="{{ '1' if d.content_skipped else '0' }}" data-skip-input />
+    <button type="button" class="ini-ghost ini-skip" data-skip-toggle aria-pressed="{{ 'true' if d.content_skipped else 'false' }}">{% if d.content_skipped %}{{ _('Fill in this step') }}{% else %}{{ _('Skip this step') }}{% endif %}</button>
+    <div class="ini-skipped-note">
+      <strong>{{ _('Skipped. The page uses the defaults:') }}</strong>
+      <ul><li>{{ _('No buttons under the title.') }}</li><li>{{ _('Every section that has content is shown.') }}</li><li>{{ _('Datasets: the initiative\'s most viewed datasets.') }}</li></ul>
+    </div>
+    <div class="ini-step6-fields">
+      <div class="ini-field">
+        <label for="ini-eyebrow">{{ _('Small line above the title') }}</label>
+        <span class="ini-help">{{ _('Leave empty to show the type of initiative and its IHP-IX outputs.') }}</span>
+        <input id="ini-eyebrow" type="text" name="ini_eyebrow" maxlength="80" value="{{ d.eyebrow }}" />
+      </div>
+      <div class="ini-grid">
+        <label class="ini-field">{{ _('Main button: text') }}<input type="text" name="ini_cta_label" maxlength="40" value="{{ d.cta.label }}" /></label>
+        <label class="ini-field">{{ _('Main button: link') }}<input type="url" name="ini_cta_url" value="{{ d.cta.url }}" placeholder="https://" /></label>
+        <label class="ini-field">{{ _('Second button: text') }}<input type="text" name="ini_cta2_label" maxlength="40" value="{{ d.cta2.label }}" /></label>
+        <label class="ini-field">{{ _('Second button: link') }}<input type="url" name="ini_cta2_url" value="{{ d.cta2.url }}" placeholder="https://" /></label>
+        <label class="ini-field">{{ _('Closing call: heading') }} <span class="ini-opt">{{ _('uses the main button') }}</span><input type="text" name="ini_cta_heading" maxlength="100" value="{{ d.cta_heading }}" /></label>
+        <label class="ini-field">{{ _('Closing call: text') }}<input type="text" name="ini_cta_text" maxlength="400" value="{{ d.cta_text }}" /></label>
+      </div>
+      <fieldset class="ini-sub">
+        <legend class="ini-label">{{ _('Sections to show on the overview') }}</legend>
+        <span class="ini-help">{{ _('Sections without content stay hidden even if ticked.') }}</span>
+        <div class="ini-checks-grid">
+          {% for key, label in lists.sections %}
+          <label class="ini-check"><input type="checkbox" name="ini_sections" value="{{ key }}"{% if key in d.sections %} checked{% endif %} /> {{ _(label) }}</label>
+          {% endfor %}
+        </div>
+      </fieldset>
+      <div class="ini-grid">
+        <div class="ini-field">
+          <label for="ini-featured">{{ _('Featured datasets') }}</label>
+          {% if lists.datasets %}
+          <span class="ini-help" id="ini-featured-h">{{ _('Pick up to %(n)s. Leave empty and the page shows the initiative\'s most viewed datasets, updated automatically.', n=lists.limits.featured) }}</span>
+          <select id="ini-featured" name="ini_featured_datasets" multiple size="6" data-picker="multi" data-max="{{ lists.limits.featured }}" data-noun="{{ _('datasets') }}" data-placeholder="{{ _('Search the initiative\'s datasets') }}" aria-describedby="ini-featured-h">
+            {% for name, title in lists.datasets %}<option value="{{ name }}"{% if name in d.featured_datasets %} selected{% endif %}>{{ title }}</option>{% endfor %}
+          </select>
+          {% else %}
+          <span class="ini-help">{{ _('You can pick featured datasets once the initiative has datasets. Until then the page shows its most viewed datasets.') }}</span>
+          {% endif %}
+        </div>
+        <div class="ini-field">
+          <label for="ini-links">{{ _('Website and social media') }}</label>
+          <span class="ini-help">{{ _('One link per line.') }}</span>
+          <textarea id="ini-links" name="ini_links" rows="3" placeholder="https://">{{ d.links | join('\n') }}</textarea>
+        </div>
+      </div>
+    </div>
+  </fieldset>
+
+  {# ===================== 7. Review ===================== #}
+  <fieldset id="ini-step-7" class="ini-step">
+    <legend><span class="ini-step-no">{{ _('Step 7 of 7') }}</span><span class="ini-step-title">{% if is_request %}{{ _('Review and submit') }}{% else %}{{ _('Review and save') }}{% endif %}</span></legend>
+    <div class="ini-summary">
+      <div><strong data-summary="objectives">{{ d.objectives | length }}</strong><span>{{ _('objectives') }}</span></div>
+      <div><strong data-summary="outputs">{{ d.outputs | length }}</strong><span>{{ _('IHP-IX outputs') }}</span></div>
+      <div><strong data-summary="partners">{{ d.partners | length }}</strong><span>{{ _('partners on IHP-WINS') }}</span></div>
+      <div><strong data-summary="checks">{{ checks | selectattr('ok') | list | length }} / {{ checks | length }}</strong><span>{{ _('readability checks passed') }}</span></div>
+    </div>
+    {% if is_request %}
+    <p>{{ _('An IHP-WINS administrator reviews every request before the page goes live. After approval you can change everything from the initiative\'s page (Edit page).') }}</p>
+    {% else %}
+    <p>{{ _('The page is updated as soon as you save.') }}</p>
+    {% endif %}
+    <div class="ini-actions">
+      {% if is_request %}
+      <a class="btn btn-default" href="{{ h.url_for('theme_ejemplo.initiatives') }}">{{ _('Cancel') }}</a>
+      <button class="btn btn-primary" type="submit"><i class="fa fa-paper-plane"></i> {{ _('Submit for review') }}</button>
+      {% else %}
+      <a class="btn btn-default" href="{{ h.url_for('group.read', id=group.name) }}">{{ _('Cancel') }}</a>
+      <button class="btn btn-primary" type="submit"><i class="fa fa-check"></i> {{ _('Save the page') }}</button>
+      {% endif %}
+    </div>
+  </fieldset>
+</form>
+</div>

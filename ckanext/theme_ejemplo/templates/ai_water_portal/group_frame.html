@@ -10,7 +10,8 @@
 {# .main deja el espacio de la cabecera del sitio, como en las demás páginas del tema #}
 <div class="main">
   <div id="content" class="container">{{ aiw_flash }}</div>
-  <div class="aiw" data-group="{{ group_dict.name }}">
+  {# Initiative pages (added by Jorgen Van Der Biest): clase y colores de la plantilla común #}
+  <div class="aiw{% if landing.root_class %} {{ landing.root_class }}{% endif %}" data-group="{{ group_dict.name }}"{% if landing.root_style %} style="{{ landing.root_style }}"{% endif %}>
     {% include landing['header'] %}
     {% if intro %}{% include intro %}{% endif %}
     <div class="aiw-wrap aiw-main">
@@ -26,6 +27,6 @@
         <div class="aiw-tab-body">{{ aiw_primary }}</div>
       {% endif %}
     </div>
-    {% include "ai_water_portal/snippets/credit.html" %}
+    {% include landing.get('credit') or "ai_water_portal/snippets/credit.html" %}
   </div>
 </div>

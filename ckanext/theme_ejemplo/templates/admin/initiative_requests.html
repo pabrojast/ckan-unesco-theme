@@ -86,6 +86,7 @@
                   <p>{{ req.description }}</p>
                 </div>
                 {% endif %}
+                {% snippet 'initiative/snippets/admin_request_badge.html', req=req %}{# Initiative pages (added by Jorgen Van Der Biest) #}
 
                 <div class="request-actions">
                   <form method="POST"

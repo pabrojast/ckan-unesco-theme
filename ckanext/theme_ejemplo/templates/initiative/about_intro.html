@@ -1,0 +1,30 @@
+{#
+  Initiative pages (added by Jorgen Van Der Biest). New file.
+  About de una iniciativa con página completa: ficha con el alcance y la
+  alineación (respuestas del cuestionario), encima del contenido estándar de
+  /group/about/<name>. Los outputs de IHP-IX llevan su texto del OIP.
+#}
+{% set ini = h.theme_ejemplo_initiative_data(group_dict) %}
+{% set d = ini.details %}
+<div class="aiw-wrap aiw-intro">
+  <dl class="ini-facts">
+    {% if ini.lead %}<div><dt>{{ _('Lead organisation') }}</dt><dd><a href="{{ ini.lead.url }}">{{ ini.lead.title }}</a></dd></div>{% endif %}
+    {% if ini.type_label %}<div><dt>{{ _('Type') }}</dt><dd>{{ ini.type_label }}</dd></div>{% endif %}
+    {% if ini.status_label or d.start_year %}<div><dt>{{ _('Status') }}</dt><dd>{{ ini.status_label }}{% if d.start_year %}{% if ini.status_label %} · {% endif %}{{ d.start_year }}{% if d.end_year %}–{{ d.end_year }}{% endif %}{% endif %}</dd></div>{% endif %}
+    {% if ini.scope_label %}<div><dt>{{ _('Geographic scope') }}</dt><dd>{{ ini.scope_label }}</dd></div>{% endif %}
+    {% if ini.member_states %}<div><dt>{{ _('Member States') }}</dt><dd class="ini-chips">{% for m in ini.member_states %}<a class="ini-chip" href="{{ m.url }}">{{ m.title }}</a>{% endfor %}</dd></div>{% endif %}
+    {% if ini.sdgs %}<div><dt>{{ _('Sustainable Development Goals') }}</dt><dd class="ini-chips">{% for s in ini.sdgs %}<span class="ini-chip">SDG {{ s.n }} · {{ s.name }}</span>{% endfor %}</dd></div>{% endif %}
+    {% if d.themes %}<div><dt>{{ _('Themes') }}</dt><dd>{{ d.themes | join(', ') }}</dd></div>{% endif %}
+    {% if d.links %}<div><dt>{{ _('Links') }}</dt><dd class="ini-links">{% for u in d.links %}<a href="{{ u }}">{{ u | replace('https://', '') | replace('http://', '') }}</a>{% endfor %}</dd></div>{% endif %}
+  </dl>
+  {% if ini.outputs %}
+  <div class="ini-outputs">
+    <h2 class="aiw-list-title">{{ _('Contribution to IHP-IX') }}</h2>
+    <ul>
+      {% for o in ini.outputs %}
+      <li><span class="ini-output-code">{{ o.code }}</span><span>{{ o.text }}</span></li>
+      {% endfor %}
+    </ul>
+  </div>
+  {% endif %}
+</div>

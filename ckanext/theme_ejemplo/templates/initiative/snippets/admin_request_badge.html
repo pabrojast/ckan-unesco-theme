@@ -1,0 +1,11 @@
+{# Initiative pages (added by Jorgen Van Der Biest). New file.
+   En la lista de solicitudes (admin): enlace a las respuestas si la solicitud
+   pide una página completa. #}
+{% set ini_page = h.theme_ejemplo_initiative_request_page(req.id) %}
+{% if ini_page %}
+<div class="request-message" style="display:flex; flex-wrap:wrap; align-items:center; gap:8px 16px;">
+  <span class="label label-info">{{ _('Full initiative page') }}</span>
+  <span>{{ ini_page.details.tagline }}</span>
+  <a href="{{ h.url_for('theme_ejemplo.initiative_request_answers', request_id=req.id) }}">{{ _('View the answers and colours') }} →</a>
+</div>
+{% endif %}
