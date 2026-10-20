@@ -5,10 +5,12 @@
 
    Look ("field report", after science sites on siteinspire such as the
    Natural History Museum of Denmark, Quanta Magazine and the Simons
-   Foundation): no boxes or rounded cards. Sections open with a number and a
-   label, items sit in columns divided by hairlines, corners are square.
-   Type: Source Serif 4 for headings, IBM Plex Sans for text, IBM Plex Mono
-   for labels and numbers; the hero title keeps Lexend. */
+   Foundation): no boxes or rounded cards. Sections open with a small label,
+   items sit in columns divided by hairlines, corners are square.
+   Type, after caladan.bio (also on siteinspire): headings in a regular-weight
+   grotesque, small labels and buttons in heavy capitals, IBM Plex Sans for
+   text. caladan.bio uses Area Normal (a paid font) for the first two; Albert
+   Sans is the closest free one. The hero title keeps Lexend. */
 
 .hv2 {
   --hv2-navy: #0B2A4A;
@@ -23,9 +25,8 @@
   --hv2-gold: #F2B01E;
   --hv2-wins: #37B7E7; /* the blue of the IHP-WINS logo */
   --hv2-title: 'Lexend', 'Segoe UI', system-ui, sans-serif;
-  --hv2-serif: 'Source Serif 4', Georgia, 'Times New Roman', serif;
+  --hv2-head: 'Albert Sans', 'Segoe UI', system-ui, sans-serif; /* headings and labels, after caladan.bio (Area Normal) */
   --hv2-body: 'IBM Plex Sans', 'Segoe UI', system-ui, sans-serif;
-  --hv2-mono: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
   --hv2-gutter: clamp(16px, 4.5vw, 88px);
   font-family: var(--hv2-body);
   font-size: 16px;
@@ -34,7 +35,7 @@
   background: #FFFFFF;
 }
 .hv2 *, .hv2 *::before, .hv2 *::after { box-sizing: border-box; }
-.hv2 h1, .hv2 h2, .hv2 h3, .hv2 h4 { margin: 0; padding: 0; font-family: var(--hv2-serif); font-weight: 600; letter-spacing: -.012em; text-wrap: balance; border: 0; }
+.hv2 h1, .hv2 h2, .hv2 h3, .hv2 h4 { margin: 0; padding: 0; font-family: var(--hv2-head); font-weight: 400; letter-spacing: -.01em; text-wrap: balance; border: 0; }
 /* :where() keeps link defaults at class strength, so component classes win */
 .hv2 :where(a) { color: var(--hv2-blue); text-decoration: none; }
 .hv2 :where(a):hover, .hv2 :where(a):focus { color: #004E8C; text-decoration: none; }
@@ -46,17 +47,17 @@
 .hv2-skip:focus { left: 8px; }
 
 /* type */
-.hv2-mono { font-family: var(--hv2-mono); font-variant-numeric: tabular-nums; }
-.hv2-lbl { font-family: var(--hv2-mono); font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: var(--hv2-quiet); }
+.hv2-mono { font-family: var(--hv2-body); font-variant-numeric: tabular-nums; }
+.hv2-lbl { font-family: var(--hv2-head); font-weight: 800; font-size: 12px; letter-spacing: .04em; text-transform: uppercase; color: var(--hv2-quiet); }
 .hv2-gold { color: var(--hv2-gold); }
-.hv2-h2 { font-size: clamp(30px, 2.9vw, 46px); line-height: 1.06; color: var(--hv2-ink); }
+.hv2-h2 { font-size: clamp(32px, 3.2vw, 50px); line-height: 1.1; color: var(--hv2-ink); }
 .hv2 .hv2-h3 { font-size: 25px; line-height: 1.15; color: var(--hv2-ink); }
 .hv2 .hv2-h3-s { font-size: 22px; }
 .hv2-lead { font-size: 17px; line-height: 1.6; color: var(--hv2-muted); max-width: 36em; text-wrap: pretty; }
 .hv2-muted { color: var(--hv2-muted); }
 .hv2-small { font-size: 14px; }
 .hv2-on-dark { color: #C9D8E6; }
-.hv2-date { flex: none; font-family: var(--hv2-mono); font-size: 13px; color: var(--hv2-quiet); font-variant-numeric: tabular-nums; }
+.hv2-date { flex: none; font-family: var(--hv2-body); font-size: 13px; color: var(--hv2-quiet); font-variant-numeric: tabular-nums; }
 .hv2-t { min-width: 0; }
 .hv2-arr { display: inline-flex; align-items: center; gap: 8px; font-weight: 600; color: var(--hv2-blue); }
 .hv2-arr > span { transition: transform .2s ease; }
@@ -89,9 +90,9 @@ a:hover .hv2-arr > span, a.hv2-arr:hover > span { transform: translateX(4px); }
 a.hv2-hub, a.hv2-item { display: flex; flex-direction: column; gap: 12px; color: var(--hv2-ink); transition: background .2s; }
 a.hv2-hub:hover, a.hv2-item:hover { background: var(--hv2-tint); color: var(--hv2-ink); }
 .hv2-hub .hv2-arr, .hv2-item .hv2-arr { margin-top: auto; }
-.hv2-hub-n { font-family: var(--hv2-serif); font-weight: 400; font-size: clamp(56px, 5.2vw, 84px); line-height: .9; letter-spacing: -.02em; font-variant-numeric: lining-nums tabular-nums; }
+.hv2-hub-n { font-family: var(--hv2-head); font-weight: 400; font-size: clamp(56px, 5.2vw, 84px); line-height: .9; letter-spacing: -.02em; font-variant-numeric: lining-nums tabular-nums; }
 .hv2-thumb { width: 100%; aspect-ratio: 16 / 10; object-fit: cover; display: block; margin-bottom: 4px; }
-.hv2-place { font-family: var(--hv2-serif); font-size: clamp(30px, 2.6vw, 42px); font-weight: 500; line-height: 1.05; letter-spacing: -.015em; color: var(--hv2-blue); }
+.hv2-place { font-family: var(--hv2-head); font-size: clamp(30px, 2.6vw, 42px); font-weight: 400; line-height: 1.05; letter-spacing: -.015em; color: var(--hv2-blue); }
 .hv2-list .hv2-lbl { padding-bottom: 8px; }
 .hv2-list .hv2-h3 { padding-bottom: 12px; }
 .hv2-trow { display: flex; justify-content: space-between; gap: 16px; padding: 12px 0; border-top: 1px solid var(--hv2-rule-soft); color: var(--hv2-ink); }
@@ -100,7 +101,7 @@ a.hv2-hub:hover, a.hv2-item:hover { background: var(--hv2-tint); color: var(--hv
 .hv2-empty { color: var(--hv2-muted); padding: 12px 0; border-top: 1px solid var(--hv2-rule-soft); }
 
 /* buttons: square */
-.hv2-btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 46px; padding: 0 22px; font-weight: 600; }
+.hv2-btn { display: inline-flex; align-items: center; justify-content: center; gap: 10px; min-height: 46px; padding: 0 22px; font-family: var(--hv2-head); font-weight: 800; font-size: 13px; letter-spacing: .04em; text-transform: uppercase; }
 .hv2-btn-gold, a.hv2-btn-gold:hover { background: var(--hv2-gold); color: var(--hv2-navy); }
 a.hv2-btn-gold:hover { background: #FFC53D; }
 a.hv2-btn-gold-line { background: transparent; color: var(--hv2-gold); box-shadow: inset 0 0 0 1.5px var(--hv2-gold); transition: background-color .2s; }
@@ -127,7 +128,7 @@ a.hv2-btn-white:hover { background: var(--hv2-ink); color: #FFFFFF; }
 .hv2-fade { animation: hv2-fadeup 1s .5s ease both; }
 @keyframes hv2-fadeup { from { transform: translateY(12px); opacity: .15; } to { transform: none; opacity: 1; } }
 .hv2-search { display: flex; flex-direction: column; gap: 8px; max-width: 760px; margin: 0; }
-.hv2-search label { font-family: var(--hv2-mono); font-weight: 400; font-size: 12px; letter-spacing: .08em; text-transform: uppercase; color: #FFFFFF; margin: 0; }
+.hv2-search label { font-family: var(--hv2-head); font-weight: 800; font-size: 12px; letter-spacing: .04em; text-transform: uppercase; color: #FFFFFF; margin: 0; }
 .hv2-search label::after { content: none !important; }
 .hv2-search-box { display: flex; align-items: stretch; background: #FFFFFF; }
 .hv2-search-box .fa { display: flex; align-items: center; padding-left: 16px; color: var(--hv2-quiet); font-size: 18px; }
@@ -136,7 +137,7 @@ a.hv2-btn-white:hover { background: var(--hv2-ink); color: #FFFFFF; }
 .hv2-search-box button:hover { background: var(--hv2-blue); }
 .hv2-hero-links { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 22px; font-size: 15px; }
 .hv2-hero-links a { color: #FFFFFF; }
-.hv2-hero-links strong { font-family: var(--hv2-mono); font-weight: 500; }
+.hv2-hero-links strong { font-weight: 600; font-variant-numeric: tabular-nums; }
 .hv2-sep { width: 1px; height: 18px; background: rgba(255, 255, 255, .45); }
 /* About IHP-WINS: a button and a panel straight on the video */
 .hv2-about-btn { display: inline-flex; align-items: center; gap: 8px; padding: 4px 0; border: 0; background: none; color: #FFFFFF; font: inherit; font-weight: 600; cursor: pointer; text-shadow: 0 1px 4px rgba(0, 0, 0, .45), 0 2px 18px rgba(0, 0, 0, .4); }
@@ -169,7 +170,7 @@ a.hv2-about-brochure:hover { background: rgba(255, 255, 255, .14); color: #FFFFF
 .hv2-gl { display: flex; flex-wrap: nowrap; white-space: nowrap; align-items: baseline; gap: 8px; padding: 18px 24px 18px 0; color: #FFFFFF; text-shadow: 0 1px 4px rgba(0, 0, 0, .45), 0 2px 18px rgba(0, 0, 0, .4); }
 a.hv2-gl:hover { color: #FFFFFF; }
 a.hv2-gl:hover .hv2-gl-l { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; }
-.hv2-gl-n { font-family: var(--hv2-serif); font-size: clamp(23px, 2vw, 32px); font-weight: 600; line-height: 1.05; font-variant-numeric: lining-nums tabular-nums; }
+.hv2-gl-n { font-family: var(--hv2-head); font-size: clamp(23px, 2vw, 32px); font-weight: 500; line-height: 1.05; font-variant-numeric: lining-nums tabular-nums; }
 .hv2-gl-l { font-weight: 500; font-size: clamp(13px, 1.02vw, 15px); color: #EEF5FB; }
 .hv2-vbtn { flex: none; cursor: pointer; width: 44px; height: 44px; display: inline-flex; align-items: center; justify-content: center; background: transparent; border: 1px solid rgba(255, 255, 255, .6); color: #FFFFFF; padding: 0; }
 .hv2-vbtn:hover { background: rgba(255, 255, 255, .18); }
@@ -183,7 +184,7 @@ a.hv2-snav::after { content: ""; position: absolute; left: 16px; right: 16px; bo
 a.hv2-snav:first-child::after { left: 0; }
 a.hv2-snav:hover, a.hv2-snav.is-on { color: var(--hv2-ink); }
 a.hv2-snav.is-on::after { transform: scaleY(1); }
-a.hv2-snav-cta { flex: none; align-self: center; margin-left: auto; background: var(--hv2-ink); color: #FFFFFF; font-weight: 600; font-size: 14px; padding: 10px 18px; }
+a.hv2-snav-cta { flex: none; align-self: center; margin-left: auto; background: var(--hv2-ink); color: #FFFFFF; font-family: var(--hv2-head); font-weight: 800; font-size: 12px; letter-spacing: .04em; text-transform: uppercase; padding: 12px 18px; }
 a.hv2-snav-cta:hover { background: var(--hv2-blue); color: #FFFFFF; }
 
 /* ── 01 network: contribute band ── */
@@ -191,7 +192,7 @@ a.hv2-snav-cta:hover { background: var(--hv2-blue); color: #FFFFFF; }
 .hv2-contrib-in { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; row-gap: 18px; align-items: center; padding-top: 34px; padding-bottom: 34px; }
 .hv2-contrib-txt { grid-column: 1 / span 7; display: flex; flex-direction: column; gap: 6px; }
 .hv2-contrib-txt .hv2-lbl { padding-bottom: 4px; }
-.hv2-contrib-h { font-family: var(--hv2-serif); font-size: 26px; font-weight: 600; line-height: 1.15; }
+.hv2-contrib-h { font-family: var(--hv2-head); font-size: 28px; font-weight: 400; line-height: 1.15; }
 .hv2-contrib-act { grid-column: 9 / span 4; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 16px; }
 
 /* ── 02 datasets ── */
@@ -206,7 +207,7 @@ a.hv2-panel:hover img { transform: scale(1.03); }
 .hv2-panel-scrim { position: absolute; inset: 0; }
 .hv2-panel-txt { position: relative; padding: 28px 32px; display: flex; flex-direction: column; gap: 10px; max-width: 72%; }
 .hv2-panel-txt .hv2-mono { font-size: 13px; color: #D6E9F8; }
-.hv2-panel-txt strong { font-family: var(--hv2-serif); font-size: clamp(26px, 2.3vw, 34px); font-weight: 600; line-height: 1.1; }
+.hv2-panel-txt strong { font-family: var(--hv2-head); font-size: clamp(28px, 2.5vw, 38px); font-weight: 400; line-height: 1.1; }
 .hv2-panel-txt .hv2-arr { color: #FFFFFF; }
 .hv2-explore { margin-top: 64px; border-top: 1px solid var(--hv2-ink); }
 .hv2-xhead-bar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: baseline; gap: 12px 24px; padding: 18px 0 22px; }
@@ -251,18 +252,19 @@ a.hv2-panel:hover img { transform: scale(1.03); }
 .hv2-wf-img { width: 100%; aspect-ratio: 1181 / 295; object-fit: cover; display: block; margin: 12px 0 8px; }
 .hv2-entry { display: flex; flex-direction: column; gap: 4px; padding: 14px 0; border-top: 1px solid var(--hv2-rule-soft); color: var(--hv2-ink); }
 .hv2-entry:hover { color: var(--hv2-blue); }
-.hv2-entry .hv2-t { font-family: var(--hv2-serif); font-weight: 500; font-size: 19px; line-height: 1.3; }
+.hv2-entry .hv2-t { font-family: var(--hv2-head); font-weight: 400; font-size: 19px; line-height: 1.3; }
 
 /* ── 06 learning: banner and a course ledger ── */
 .hv2-olbanner { position: relative; display: block; background: #3B8ED6; margin-bottom: 72px; }
 .hv2-olbanner img { width: 100%; height: clamp(140px, 17vw, 300px); object-fit: cover; object-position: right center; display: block; }
 .hv2-olbanner-cta { position: absolute; left: 0; right: 0; bottom: 22px; display: flex; justify-content: flex-end; }
 .hv2-ledger { border-top: 1px solid var(--hv2-ink); }
-.hv2-lhead, .hv2-course { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 2fr) minmax(0, 2fr) auto; gap: 24px; align-items: baseline; }
+.hv2-lhead, .hv2-course { display: grid; grid-template-columns: minmax(0, 6fr) minmax(0, 2fr) minmax(0, 2fr) 11rem; gap: 24px; align-items: baseline; }
+.hv2-lhead > :last-child, .hv2-course > :last-child { justify-self: end; }
 .hv2-lhead { padding: 10px 0; border-bottom: 1px solid var(--hv2-rule); }
 .hv2-course { padding: 20px 0; border-bottom: 1px solid var(--hv2-rule-soft); color: var(--hv2-ink); }
 .hv2-course:hover { color: var(--hv2-blue); }
-.hv2-course .hv2-t { font-family: var(--hv2-serif); font-weight: 500; font-size: 22px; line-height: 1.25; }
+.hv2-course .hv2-t { font-family: var(--hv2-head); font-weight: 400; font-size: 22px; line-height: 1.25; }
 .hv2-course-all, .hv2-course-all:hover { color: var(--hv2-blue); }
 
 /* ── 07 spotlight: the original slide deck, square controls ── */

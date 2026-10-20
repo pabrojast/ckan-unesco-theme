@@ -12,9 +12,9 @@
   previous home page is kept.
 
   Look ("field report"): sections are laid out with hairline rules and
-  columns instead of boxes, square corners, a serif for headings
-  (Source Serif 4), IBM Plex Sans for text and IBM Plex Mono for labels and
-  numbers. The hero title keeps Lexend.
+  columns instead of boxes, square corners. Type after caladan.bio: Albert
+  Sans for headings (regular weight) and for labels and buttons (heavy
+  capitals), IBM Plex Sans for text. The hero title keeps Lexend.
 
   All data comes from helpers the current home page already uses, plus
   h.home_v2_rapid_response() and h.home_v2_data_stories(). Styles are scoped
@@ -35,8 +35,8 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="{{ h.url_for_static('/css/home-v2.css') }}?v=20261020e">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@700&family=Albert+Sans:wght@400;500;800&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
+<link rel="stylesheet" href="{{ h.url_for_static('/css/home-v2.css') }}?v=20261020f">
 
 <div class="hv2" id="hv2">
 <a class="hv2-skip" href="#hv2-sections">{{ _('Skip to main content') }}</a>
@@ -554,4 +554,4 @@
 </div>{# /#hv2-sections #}
 </div>{# /.hv2 #}
 
-<script src="{{ h.url_for_static('/js/home-v2.js') }}?v=20261020e" defer></script>
+<script src="{{ h.url_for_static('/js/home-v2.js') }}?v=20261020f" defer></script>
