@@ -8,9 +8,9 @@ Added by Jorgen Van Der Biest. The IHP-WINS home page design. It keeps every lin
 
 ## Page order
 
-1. Hero: a looping clip (1:40 to 2:07) from the IHP 50th anniversary film, the UNESCO IHP logo, the headline, dataset search and counts. The site header floats over it as it did over the old hero. The pause button (in the counters ribbon) stops the video, and visitors with "reduce motion" see the still poster.
-   - About IHP-WINS (`#IHPWINS`) is a panel inside the hero, collapsed by default. The "About IHP-WINS" button sits under the dataset counts; it or a click on the title block opens the panel over the video, and the title moves up. Escape closes it. Links to `#IHPWINS` (section bar, first spotlight slide) open it and scroll to the top. Without JavaScript the panel is open.
-2. Counters: organizations, initiatives, Member States, datasets, documents, page views, downloads, as a ribbon along the bottom edge of the hero video (white type, thin white rules, no box), with the video pause button on its right. Two rows of four below 1280 px, two columns on phones.
+1. Hero: a looping clip (1:40 to 2:07) from the IHP 50th anniversary film, the UNESCO IHP logo, the headline, dataset search and counts. On screens with a mouse the site header is hidden and slides in when the mouse reaches the top edge of the window (see below); on touch screens it floats over the video as before. The pause button (in the counters ribbon) stops the video, and visitors with "reduce motion" see the still poster.
+   - About IHP-WINS (`#IHPWINS`) is a panel inside the hero, collapsed by default. The "About IHP-WINS" button sits in the row with the dataset and organization counts; it or a click on the title block opens the panel over the video, and the title moves up. Escape closes it. Links to `#IHPWINS` (section bar, first spotlight slide) open it and scroll to the top. Without JavaScript the panel is open.
+2. Counters: organizations, initiatives, Member States, datasets, documents, page views, downloads, as a ribbon along the bottom edge of the hero video (white type, a thin white line above, no dividers or boxes), with the video pause button on its right. Two rows of four below 1280 px, two columns on phones.
 3. Sticky section bar: About, Network, Datasets, Knowledge, Thematic viewers, Water Family, Learning, Spotlight, plus "Contribute data".
 4. Network: Member State, organization and initiative hubs, then a navy Contribute band with Log in (only when signed out), Register and IHP-IX progress.
 5. Datasets: Data Catalogue and Geospatial Viewer panels, Explore data (Recently added, Trending).
@@ -46,6 +46,8 @@ Changes to existing files, each marked "Home page v2 (added by Jorgen Van Der Bi
 - `templates/header.html`: the IHP-WINS logo next to the UNESCO logo, only on the home page.
 
 On the home page only, `home-v2.css` also restyles Pablo's header through `body:has(#hv2)` selectors (no change to `theme_ejemplo.css`): it stays transparent over the video instead of turning blue on hover, has a thin line under the top links with UNESCO on the left, a plain "Log in", the menu on one row from 1260 px, and square menu links that underline on hover, with Home marked by a bottom edge in the IHP-WINS logo blue (`#37B7E7`). The header only stays transparent at exactly `/`, as in Pablo's `header.html`; with a query string (for example `/?lang=fr`) it keeps its blue background.
+
+On screens with a mouse (`@media (hover: hover) and (pointer: fine)`) the header is fixed and hidden above the window. An invisible strip under it (the header's `::after`, reset from the white line `theme_ejemplo.css` draws there) catches the mouse at the top edge: 64 px while the header would sit over the video, 16 px further down so the sticky section bar stays usable. Hovering or tabbing into the header keeps it in. Below the video it gets the site's blue `#0077d4`. `home-v2.js` sets the two body classes for this (`hv2-head-over-hero`, `hv2-head-solid`). Touch screens keep the header as it was.
 
 ## Data
 

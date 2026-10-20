@@ -36,7 +36,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="{{ h.url_for_static('/css/home-v2.css') }}?v=20261020b">
+<link rel="stylesheet" href="{{ h.url_for_static('/css/home-v2.css') }}?v=20261020c">
 
 <div class="hv2" id="hv2">
 <a class="hv2-skip" href="#hv2-sections">{{ _('Skip to main content') }}</a>
@@ -73,13 +73,11 @@
       <a href="{{ h.url_for('dataset.search') }}"><strong>{{ h.SI_number_span(n_all) }}</strong> {{ _('dataset') if n_all == 1 else _('datasets') }}</a>
       <a href="{{ h.url_for('organization.index') }}"><strong>{{ h.SI_number_span(n_orgs) }}</strong> {{ _('organization') if n_orgs == 1 else _('organizations') }}</a>
       <span class="hv2-sep" aria-hidden="true"></span>
-      <a class="hv2-hero-cta" href="{{ h.url_for('dataset.search') }}">{{ _('Browse the data catalogue') }} &rarr;</a>
+      <button type="button" class="hv2-about-btn" id="hv2-about-btn" aria-expanded="false" aria-controls="IHPWINS"
+              data-label-open="{{ _('About IHP-WINS') }}" data-label-close="{{ _('Close') }}">
+        <span class="hv2-about-label">{{ _('About IHP-WINS') }}</span> <i class="fa fa-chevron-down" aria-hidden="true"></i>
+      </button>
     </div>
-
-    <button type="button" class="hv2-about-btn hv2-fade" id="hv2-about-btn" aria-expanded="false" aria-controls="IHPWINS"
-            data-label-open="{{ _('About IHP-WINS') }}" data-label-close="{{ _('Close') }}">
-      <span class="hv2-about-label">{{ _('About IHP-WINS') }}</span> <i class="fa fa-chevron-down" aria-hidden="true"></i>
-    </button>
 
     {# About IHP-WINS: collapsed by default, opens over the video (open without JavaScript) #}
     <noscript><style>.hv2-about-wrap { grid-template-rows: 1fr !important; opacity: 1 !important; margin: 0 !important; } .hv2-about-btn { display: none !important; }</style></noscript>
@@ -556,4 +554,4 @@
 </div>{# /#hv2-sections #}
 </div>{# /.hv2 #}
 
-<script src="{{ h.url_for_static('/js/home-v2.js') }}?v=20261020" defer></script>
+<script src="{{ h.url_for_static('/js/home-v2.js') }}?v=20261020c" defer></script>
