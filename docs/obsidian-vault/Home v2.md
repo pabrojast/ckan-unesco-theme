@@ -12,13 +12,22 @@ Added by Jorgen Van Der Biest. The IHP-WINS home page design. It keeps every lin
    - About IHP-WINS (`#IHPWINS`) is a panel inside the hero, collapsed by default. The "About IHP-WINS" button sits under the dataset counts; it or a click on the title block opens the panel over the video, and the title moves up. Escape closes it. Links to `#IHPWINS` (section bar, first spotlight slide) open it and scroll to the top. Without JavaScript the panel is open.
 2. Counters: organizations, initiatives, Member States, datasets, documents, page views, downloads, as a ribbon along the bottom edge of the hero video (white type, thin white rules, no box), with the video pause button on its right. Two rows of four below 1280 px, two columns on phones.
 3. Sticky section bar: About, Network, Datasets, Knowledge, Thematic viewers, Water Family, Learning, Spotlight, plus "Contribute data".
-4. Network: Member State, organization and initiative hubs, Register, IHP-IX.
-5. Datasets: Data Catalogue and Geospatial Viewer tiles, Explore data (Recently added, Trending).
-6. Knowledge: featured viewers, Rapid Response & Recovery, data stories, AI for Water Management, Open Source Tools.
-7. Thematic viewers: the six portals.
+4. Network: Member State, organization and initiative hubs, then a navy Contribute band with Log in (only when signed out), Register and IHP-IX progress.
+5. Datasets: Data Catalogue and Geospatial Viewer panels, Explore data (Recently added, Trending).
+6. Knowledge: featured viewers (with their own thumbnails) and All map rooms, then Rapid Response & Recovery, data stories, AI for Water Management, Open Source Tools.
+7. Thematic viewers: the six portals, as a full-width image strip on the navy band.
 8. Water Family: news, events, publications.
-9. Learning: IHP Open Learning and courses.
+9. Learning: IHP Open Learning banner, then the courses as a table (course, format, start, provider).
 10. Spotlight: the original five-slide deck.
+
+## Look ("field report")
+
+The page reads like a printed science report rather than a set of cards:
+
+- Type: Lexend 700 for the hero title only (as in the IHP-WINS logo), Source Serif 4 for section and item titles, IBM Plex Sans for text, IBM Plex Mono for small labels and numbers. All from Google Fonts, loaded in `home_v2.html`.
+- Square corners everywhere, no shadows. Items are separated by thin rules (`#C9D2DB`) and columns by vertical rules, not by boxes.
+- Section headers sit on a 12-column grid: number and label, title and lead stacked on the left, the section banner image on the right. Sections that follow a white section open without a top rule (`.hv2-shead-open`) and with less space above (`.hv2-sec-tight`).
+- Colours: navy `#0B2A4A` for the Contribute band, the Thematic band and the spotlight, the IHP-WINS blue `#37B7E7` for accents and gold `#F2B01E` for the Register and Open Learning calls to action.
 
 ## Files
 
@@ -36,7 +45,7 @@ Changes to existing files, each marked "Home page v2 (added by Jorgen Van Der Bi
 - `templates/home/index.html`: renders `home_v2.html` instead of `custom_layout.html`.
 - `templates/header.html`: the IHP-WINS logo next to the UNESCO logo, only on the home page.
 
-On the home page only, `home-v2.css` also restyles Pablo's header through `body:has(#hv2)` selectors (no change to `theme_ejemplo.css`): it stays transparent over the video instead of turning blue on hover, has a thin line under the top links with UNESCO on the left, a plain "Log in", the menu on one row from 1260 px, and rounded menu buttons with Home marked by a bottom edge in the IHP-WINS logo blue (`#37B7E7`). The header only stays transparent at exactly `/`, as in Pablo's `header.html`; with a query string (for example `/?lang=fr`) it keeps its blue background.
+On the home page only, `home-v2.css` also restyles Pablo's header through `body:has(#hv2)` selectors (no change to `theme_ejemplo.css`): it stays transparent over the video instead of turning blue on hover, has a thin line under the top links with UNESCO on the left, a plain "Log in", the menu on one row from 1260 px, and square menu links that underline on hover, with Home marked by a bottom edge in the IHP-WINS logo blue (`#37B7E7`). The header only stays transparent at exactly `/`, as in Pablo's `header.html`; with a query string (for example `/?lang=fr`) it keeps its blue background.
 
 ## Data
 
@@ -48,4 +57,4 @@ It uses the same helpers as the current home page: `theme_ejemplo_site_statistic
 
 - `theme_ejemplo.css` sets `p { color: #212529 !important }`, so the page uses `<div class="hv2-lead">` instead of `<p>` for running text.
 - The videos could also be served from blob storage instead of the repo: change the two `<source>` lines in `home_v2.html`.
-- Tested locally on CKAN 2.10.9 with ckanext-pages (RapidResponseAndRecovery) at 1440 px and 390 px.
+- Tested locally on CKAN 2.10.9 with ckanext-pages (RapidResponseAndRecovery) at 1440, 1100 and 390 px.
