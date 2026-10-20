@@ -200,6 +200,8 @@ a.hv2-snav-cta:hover { background: var(--hv2-blue); color: #FFFFFF; }
 a.hv2-panel:hover { color: #FFFFFF; }
 .hv2-panel img { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; object-fit: cover; object-position: 85% 45%; transition: transform .6s ease; }
 a.hv2-panel:hover img { transform: scale(1.03); }
+/* the globe sits at the right of its picture: keep it there, and on phones show more of the stars so the text stays clear */
+.hv2-panel-globe img { object-position: 100% 100%; }
 .hv2-panel + .hv2-panel { border-left: 1px solid #FFFFFF; }
 .hv2-panel-scrim { position: absolute; inset: 0; }
 .hv2-panel-txt { position: relative; padding: 28px 32px; display: flex; flex-direction: column; gap: 10px; max-width: 72%; }
@@ -354,11 +356,13 @@ a.hv2-panel:hover img { transform: scale(1.03); }
   .hv2-mx-t { padding: 14px 14px 20px; }
   .hv2-mx-sub { display: none; }
   .hv2-panel-txt { max-width: 100%; padding: 22px; }
+  .hv2-panel-globe img { object-position: 74% 100%; }
 }
 @media (prefers-reduced-motion: reduce) {
   .hv2-ln > span, .hv2-fade { animation: none; }
   .hv2-tabbtn.is-on .hv2-prog { animation: none; }
-  .hv2-slide, .hv2-panel img, a.hv2-snav::after, .hv2-about-wrap, .hv2-about-btn .fa, .hv2-hero-scrim::after, .hv2-arr > span, body:has(#hv2) header.masthead { transition: none !important; }
+  .hv2-slide, .hv2-panel img, a.hv2-snav::after, .hv2-about-wrap, .hv2-about-btn .fa, .hv2-hero-scrim::after, .hv2-arr > span { transition: none; }
+  body:has(#hv2) .masthead .masthead-top-bar { transition: none !important; }
 }
 
 /* Site header on the new home page: IHP-WINS logo beside the UNESCO logo.
@@ -379,30 +383,21 @@ a.hv2-panel:hover img { transform: scale(1.03); }
    theme_ejemplo.css are not changed. */
 body:has(#hv2) header.masthead:hover { background-color: transparent !important; }
 
-/* On screens with a mouse the header stays hidden above the window and slides
-   in when the mouse reaches the top edge (or keyboard focus enters it). The
-   ::after strip under the hidden header is what the mouse touches. home-v2.js
-   widens the strip while the header would sit over the video
-   (.hv2-head-over-hero) and gives the header a solid background below the
-   video (.hv2-head-solid). Touch screens keep the header as it is. */
-@media (hover: hover) and (pointer: fine) {
-  body:has(#hv2) header.masthead { position: fixed !important; top: 0; left: 0; right: 0; transform: translateY(-100%); transition: transform .3s ease, background-color .3s ease; }
-  /* (theme_ejemplo.css styles header::after as a centred white line; reset it) */
-  body:has(#hv2) header.masthead::after { content: ""; display: block; position: absolute; left: 0; right: 0; top: 100%; bottom: auto; width: auto; max-width: none; height: 16px; transform: none; background: none; opacity: 1; }
-  body:has(#hv2).hv2-head-over-hero header.masthead::after { height: 64px; }
-  body:has(#hv2) header.masthead:is(:hover, :focus-within) { transform: none; }
-  /* once the header is in, the strip shrinks back (after the slide) so it does not cover the page */
-  body:has(#hv2) header.masthead:is(:hover, :focus-within)::after { height: 16px; transition: height 0s .35s; }
-  body:has(#hv2).hv2-head-solid header.masthead, body:has(#hv2).hv2-head-solid header.masthead:hover { background-color: #0077d4 !important; }
+/* The top bar of the header (Register, Log in, IHP IX, language) stays hidden on
+   screens with a mouse and appears when the mouse is over it, at the top of the
+   page, or when keyboard focus enters it. The row with the logos and the menu
+   always shows. The UNESCO text link is left out on the home page. */
+body:has(#hv2) .masthead li.topmenu-unesco { display: none !important; }
+@media (min-width: 992px) and (hover: hover) and (pointer: fine) {
+  body:has(#hv2) .masthead .masthead-top-bar { opacity: 0; transform: translateY(-6px); transition: opacity .25s ease, transform .25s ease; }
+  body:has(#hv2) .masthead .masthead-top-bar:is(:hover, :focus-within) { opacity: 1; transform: none; }
 }
 body:has(#hv2) .masthead :focus-visible { outline: 2px solid #37B7E7; outline-offset: 2px; }
 @media (min-width: 992px) {
   body:has(#hv2) .masthead { padding: 0; }
   body:has(#hv2) .masthead .masthead-container { width: 100% !important; max-width: none !important; padding: 0 clamp(16px, 4.5vw, 88px) !important; }
   body:has(#hv2) .masthead .masthead-top-bar { padding: 6px 0 !important; border-bottom: 1px solid rgba(255, 255, 255, .25) !important; }
-  body:has(#hv2) .masthead .masthead-top-bar .masthead-topmenu ul { width: 100%; gap: 6px 14px !important; }
-  body:has(#hv2) .masthead .masthead-top-bar .masthead-topmenu li.topmenu-unesco { margin-right: auto !important; }
-  body:has(#hv2) .masthead .masthead-top-bar .masthead-topmenu li.topmenu-unesco a { font-weight: 600; letter-spacing: .1em; }
+  body:has(#hv2) .masthead .masthead-top-bar .masthead-topmenu ul { width: 100%; gap: 6px 14px !important; justify-content: flex-end !important; }
   body:has(#hv2) .masthead .masthead-top-bar .masthead-topmenu a { font-size: 13px; border-radius: 0 !important; }
   body:has(#hv2) .masthead .topmenu-login a { background-color: transparent !important; }
   body:has(#hv2) .masthead .topmenu-login a:hover { background-color: rgba(255, 255, 255, .14) !important; }

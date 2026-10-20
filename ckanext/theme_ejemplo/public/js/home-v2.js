@@ -1,7 +1,7 @@
 /* IHP-WINS home page v2 (redesign) - added by Jorgen Van Der Biest.
    Behaviour for templates/home/home_v2.html: hero video pause, the About
-   panel in the hero, the site header that slides in from the top, explore-data
-   tabs, the spotlight slide deck, and the sticky section bar.
+   panel in the hero, explore-data tabs, the spotlight slide deck, and the
+   sticky section bar.
    Without JavaScript the page still works: the About panel is open, both
    data panels show, the first slide shows, and the section links are normal
    anchors. */
@@ -190,26 +190,6 @@
     deck.addEventListener('focusout', function () { hovering = false; refreshPaused(); });
     show(0);
     refreshPaused();
-  }
-
-  /* ── Site header: on screens with a mouse it stays hidden until the mouse
-     reaches the top edge of the window (the hiding is in home-v2.css). While
-     the header would sit over the video the reveal strip is wider; below the
-     video the header gets a solid background so it stays readable. ── */
-  var header = document.querySelector('header.masthead');
-  if (header && hero) {
-    var headTicking = false;
-    var updateHeader = function () {
-      headTicking = false;
-      var overHero = hero.getBoundingClientRect().bottom > header.offsetHeight;
-      document.body.classList.toggle('hv2-head-over-hero', overHero);
-      document.body.classList.toggle('hv2-head-solid', !overHero);
-    };
-    window.addEventListener('scroll', function () {
-      if (!headTicking) { headTicking = true; window.requestAnimationFrame(updateHeader); }
-    }, { passive: true });
-    window.addEventListener('resize', updateHeader);
-    updateHeader();
   }
 
   /* ── Sticky section bar: underline the section in view ── */
