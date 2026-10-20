@@ -383,14 +383,19 @@ a.hv2-panel:hover img { transform: scale(1.03); }
    theme_ejemplo.css are not changed. */
 body:has(#hv2) header.masthead:hover { background-color: transparent !important; }
 
-/* The top bar of the header (Register, Log in, IHP IX, language) stays hidden on
-   screens with a mouse and appears when the mouse is over it, at the top of the
-   page, or when keyboard focus enters it. The row with the logos and the menu
-   always shows. The UNESCO text link is left out on the home page. */
+/* The top bar of the header (Register, Log in, IHP IX, language): on screens
+   with a mouse it folds away and the row with the logos and the menu moves up.
+   home-v2.js unfolds it (.hv2-topbar-open) when the mouse reaches the top edge
+   of the page and keeps it open while the mouse stays in the header; tabbing
+   into it also unfolds it. Without JavaScript any hover on the header unfolds
+   it. Touch screens keep it as it was. The UNESCO text link is left out on the
+   home page. */
 body:has(#hv2) .masthead li.topmenu-unesco { display: none !important; }
 @media (min-width: 992px) and (hover: hover) and (pointer: fine) {
-  body:has(#hv2) .masthead .masthead-top-bar { opacity: 0; transform: translateY(-6px); transition: opacity .25s ease, transform .25s ease; }
-  body:has(#hv2) .masthead .masthead-top-bar:is(:hover, :focus-within) { opacity: 1; transform: none; }
+  body:has(#hv2) .masthead .masthead-container .masthead-top-bar { min-height: 0 !important; max-height: 0; padding-top: 0 !important; padding-bottom: 0 !important; overflow: hidden; opacity: 0; border-bottom-color: transparent !important; transition: max-height .25s ease, padding .25s ease, opacity .2s ease, border-color .2s ease; }
+  body:has(#hv2).hv2-topbar-open .masthead .masthead-container .masthead-top-bar,
+  body:has(#hv2) .masthead .masthead-container .masthead-top-bar:focus-within,
+  body:has(#hv2:not(.hv2-js)) .masthead:hover .masthead-container .masthead-top-bar { max-height: 80px; padding-top: 6px !important; padding-bottom: 6px !important; overflow: visible; opacity: 1; border-bottom-color: rgba(255, 255, 255, .25) !important; }
 }
 body:has(#hv2) .masthead :focus-visible { outline: 2px solid #37B7E7; outline-offset: 2px; }
 @media (min-width: 992px) {

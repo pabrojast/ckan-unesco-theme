@@ -1,7 +1,7 @@
 /* IHP-WINS home page v2 (redesign) - added by Jorgen Van Der Biest.
    Behaviour for templates/home/home_v2.html: hero video pause, the About
-   panel in the hero, explore-data tabs, the spotlight slide deck, and the
-   sticky section bar.
+   panel in the hero, the header top bar, explore-data tabs, the spotlight
+   slide deck, and the sticky section bar.
    Without JavaScript the page still works: the About panel is open, both
    data panels show, the first slide shows, and the section links are normal
    anchors. */
@@ -190,6 +190,27 @@
     deck.addEventListener('focusout', function () { hovering = false; refreshPaused(); });
     show(0);
     refreshPaused();
+  }
+
+  /* ── Header top bar: home-v2.css folds it away on screens with a mouse.
+     It unfolds when the mouse reaches the top edge of the page (or keyboard
+     focus enters it) and stays open while the mouse is anywhere in the header,
+     so it does not fold away on the way down to the menu. ── */
+  var header = document.querySelector('header.masthead');
+  var topBar = header && header.querySelector('.masthead-top-bar');
+  if (topBar) {
+    var topBarOpen = false;
+    var setTopBar = function (open) {
+      if (open !== topBarOpen) { topBarOpen = open; document.body.classList.toggle('hv2-topbar-open', open); }
+    };
+    header.addEventListener('mousemove', function (e) { if (e.clientY <= 20) { setTopBar(true); } });
+    topBar.addEventListener('focusin', function () { setTopBar(true); });
+    header.addEventListener('mouseleave', function () {
+      if (!topBar.contains(document.activeElement)) { setTopBar(false); }
+    });
+    topBar.addEventListener('focusout', function (e) {
+      if (!topBar.contains(e.relatedTarget) && !header.matches(':hover')) { setTopBar(false); }
+    });
   }
 
   /* ── Sticky section bar: underline the section in view ── */
