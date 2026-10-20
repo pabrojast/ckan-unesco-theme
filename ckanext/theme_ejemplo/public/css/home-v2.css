@@ -106,8 +106,6 @@ a.hv2-hub:hover, a.hv2-item:hover { background: var(--hv2-tint); color: var(--hv
 a.hv2-btn-gold:hover { background: #FFC53D; }
 a.hv2-btn-gold-line { background: transparent; color: var(--hv2-gold); box-shadow: inset 0 0 0 1.5px var(--hv2-gold); transition: background-color .2s; }
 a.hv2-btn-gold-line:hover { background: rgba(242, 176, 30, .14); color: #FFC53D; }
-a.hv2-btn-white { flex: none; background: #FFFFFF; color: var(--hv2-ink); }
-a.hv2-btn-white:hover { background: var(--hv2-ink); color: #FFFFFF; }
 
 /* ── hero ── */
 .hv2-hero { position: relative; overflow: hidden; color: #FFFFFF; background: var(--hv2-navy); min-height: clamp(680px, 58vw, 940px); display: flex; flex-direction: column; }
@@ -267,33 +265,6 @@ a.hv2-panel:hover img { transform: scale(1.03); }
 .hv2-course .hv2-t { font-family: var(--hv2-head); font-weight: 400; font-size: 22px; line-height: 1.25; }
 .hv2-course-all, .hv2-course-all:hover { color: var(--hv2-blue); }
 
-/* ── 07 spotlight: the original slide deck, square controls ── */
-.hv2-spot { display: grid; grid-template-columns: minmax(0, 1fr) clamp(320px, 28vw, 460px); background: var(--hv2-cyan); color: #FFFFFF; scroll-margin-top: 4px; }
-.hv2-stage { display: grid; padding-left: var(--hv2-gutter); }
-.hv2-slide { grid-area: 1 / 1; opacity: 0; visibility: hidden; transition: opacity .7s ease, visibility .7s; }
-.hv2-slide.is-on { opacity: 1; visibility: visible; }
-.hv2-slide img { width: 100%; max-width: 1181px; aspect-ratio: 1181 / 295; object-fit: cover; display: block; }
-.hv2-slide-txt { padding: 22px clamp(16px, 3vw, 48px) 40px 0; display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 20px 40px; max-width: 1181px; }
-.hv2-slide-txt > .hv2-stack { flex: 1 1 420px; min-width: 0; gap: 10px; }
-.hv2 .hv2-slide-t { font-size: clamp(26px, 2.6vw, 38px); line-height: 1.1; color: #FFFFFF; }
-.hv2-slide-sub { font-size: 18px; color: #EAF7FD; }
-.hv2-tabs { background: #0A7FB0; display: flex; flex-direction: column; }
-.hv2-tabs-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 16px 26px; border-bottom: 1px solid rgba(255, 255, 255, .2); }
-.hv2-arrows { display: flex; gap: 8px; }
-.hv2-arrow { cursor: pointer; width: 42px; height: 42px; display: inline-flex; align-items: center; justify-content: center; border: 1px solid rgba(255, 255, 255, .6); background: transparent; color: #FFFFFF; padding: 0; }
-.hv2-arrow:hover { background: rgba(255, 255, 255, .16); }
-.hv2-tablist { display: flex; flex-direction: column; flex: 1; }
-.hv2-tabbtn { cursor: pointer; position: relative; display: flex; gap: 14px; align-items: flex-start; padding: 18px 26px; color: #E3F4FC; background: transparent; border: 0; border-top: 1px solid rgba(255, 255, 255, .2); text-align: left; flex: 1; }
-.hv2-tabbtn:first-child { border-top: 0; }
-.hv2-tabbtn:hover { background: rgba(255, 255, 255, .08); }
-.hv2-tabbtn.is-on { background: #FFFFFF; color: var(--hv2-ink); }
-.hv2-tabtxt { display: flex; flex-direction: column; gap: 2px; min-width: 0; white-space: normal; }
-.hv2-tabtxt strong { font-size: 16px; font-weight: 600; line-height: 1.25; }
-.hv2-tabtxt span { font-size: 13.5px; opacity: .9; line-height: 1.35; }
-.hv2-prog { position: absolute; left: 0; bottom: 0; height: 3px; width: 0; background: var(--hv2-wins); }
-.hv2-tabbtn.is-on .hv2-prog { animation: hv2-fill 7s linear forwards; }
-.hv2-spot.is-paused .hv2-prog { animation-play-state: paused; }
-@keyframes hv2-fill { from { width: 0; } to { width: 100%; } }
 
 /* ── responsive ── */
 @media (max-width: 1279px) {
@@ -318,12 +289,6 @@ a.hv2-panel:hover img { transform: scale(1.03); }
 @media (max-width: 900px) {
   .hv2-hero { min-height: 640px; }
   .hv2-hero-body { padding-top: 170px; }
-  .hv2-spot { grid-template-columns: minmax(0, 1fr); }
-  .hv2-stage { padding-left: 0; }
-  .hv2-slide-txt { padding-left: 16px; }
-  .hv2-tablist { flex-direction: row; overflow-x: auto; }
-  .hv2-tabbtn { flex: 0 0 230px; border-top: 0; border-left: 1px solid rgba(255, 255, 255, .2); }
-  .hv2-tabbtn:first-child { border-left: 0; }
   .hv2-c3, .hv2-duo, .hv2-split { grid-template-columns: minmax(0, 1fr); }
   .hv2-c3 > *, .hv2-c3 > *:first-child { border-left: 0; padding-left: 0; padding-right: 0; }
   .hv2-c3 > * + * { border-top: 1px solid var(--hv2-rule); }
@@ -362,8 +327,7 @@ a.hv2-panel:hover img { transform: scale(1.03); }
 }
 @media (prefers-reduced-motion: reduce) {
   .hv2-ln > span, .hv2-fade { animation: none; }
-  .hv2-tabbtn.is-on .hv2-prog { animation: none; }
-  .hv2-slide, .hv2-panel img, a.hv2-snav::after, .hv2-about-wrap, .hv2-about-btn .fa, .hv2-hero-scrim::after, .hv2-arr > span { transition: none; }
+  .hv2-panel img, a.hv2-snav::after, .hv2-about-wrap, .hv2-about-btn .fa, .hv2-hero-scrim::after, .hv2-arr > span { transition: none; }
   body:has(#hv2) .masthead .masthead-top-bar { transition: none !important; }
 }
 

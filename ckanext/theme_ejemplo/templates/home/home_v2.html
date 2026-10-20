@@ -6,10 +6,9 @@
   as it floated over the old hero.
 
   Order follows the platform's areas: hero (video + search, About panel,
-  counters ribbon), section bar, then numbered sections: 01 Network,
-  02 Datasets, 03 Knowledge, 04 Thematic viewers, 05 Water Family,
-  06 Learning, 07 Spotlight (the original slide deck). Every link of the
-  previous home page is kept.
+  counters ribbon), section bar, then Network, Datasets, Knowledge,
+  Thematic viewers, Water Family and Learning. The old Spotlight slide deck
+  was removed at Jorgen's request; its links are elsewhere on the page.
 
   Look ("field report"): sections are laid out with hairline rules and
   columns instead of boxes, square corners. Type after caladan.bio: Albert
@@ -36,7 +35,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@700&family=Albert+Sans:wght@400;500;800&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
-<link rel="stylesheet" href="{{ h.url_for_static('/css/home-v2.css') }}?v=20261020f">
+<link rel="stylesheet" href="{{ h.url_for_static('/css/home-v2.css') }}?v=20261020g">
 
 <div class="hv2" id="hv2">
 <a class="hv2-skip" href="#hv2-sections">{{ _('Skip to main content') }}</a>
@@ -139,7 +138,6 @@
     <a class="hv2-snav" href="#thematic">{{ _('Thematic viewers') }}</a>
     <a class="hv2-snav" href="#WaterFamilyEvents">{{ _('Water Family') }}</a>
     <a class="hv2-snav" href="#learning">{{ _('Learning') }}</a>
-    <a class="hv2-snav" href="#spotlight">{{ _('Spotlight') }}</a>
     <a class="hv2-snav-cta" href="{{ h.url_for('/colab') }}">{{ _('Contribute data') }}</a>
   </div>
 </nav>
@@ -507,51 +505,7 @@
   </div>
 </section>
 
-{# ═════════════ 07 SPOTLIGHT: the original slide deck ═════════════ #}
-{% set slides = [
-  {'short': 'IHP-WINS', 'title': _('IHP-WINS: Empowering Open Science & Data-Driven Water Governance'), 'sub': _("UNESCO's Water Information Network System for evidence-based decision making"), 'image': '/Landing_page/Content/01IHP-WEB.jpg', 'link': '#IHPWINS', 'link_text': _('Learn More')},
-  {'short': _('Citizen Science'), 'title': _('Citizen Science'), 'sub': _('Community-driven water monitoring and data collection'), 'image': '/Landing_page/Content/02IHP-CITIZEN.jpg', 'link': h.url_for('/citizen-science-portal'), 'link_text': _('IHP Citizen Science Portal')},
-  {'short': _('Internet of Things'), 'title': _('Internet of Things'), 'sub': _('Real-time water monitoring through connected sensors'), 'image': '/Landing_page/Content/03IHP-INTERNET.jpg', 'link': h.url_for('/iot-portal'), 'link_text': _('IHP IoT Portal')},
-  {'short': _('Open Learning'), 'title': _('Open Learning'), 'sub': _('Build capacity in water science and management'), 'image': '/Landing_page/Content/04IHP-OPEN.jpg', 'link': 'https://openlearning.unesco.org/program/intergovernmental-hydrological-programme-ihp/', 'link_text': _('IHP UNESCO Open Learning')},
-  {'short': _('News and Events'), 'title': _('UNESCO News and Events'), 'sub': _('Stay connected with the global water community'), 'image': '/Landing_page/Content/05IHP-NEWS.jpg', 'link': '#WaterFamilyEvents', 'link_text': _('View Events')},
-] %}
-<section class="hv2-spot" id="spotlight" aria-roledescription="carousel" aria-label="{{ _('Spotlight') }}" data-hv2-deck>
-  <div class="hv2-stage">
-    {% for s in slides %}
-      <div class="hv2-slide{% if loop.first %} is-on{% endif %}" data-hv2-slide="{{ loop.index0 }}" aria-hidden="{{ 'false' if loop.first else 'true' }}">
-        <img src="{{ h.url_for_static(s.image) }}" alt="">
-        <div class="hv2-slide-txt">
-          <div class="hv2-stack">
-            <span class="hv2-lbl" style="color:#E3F4FC">{{ _('Spotlight') }} {{ loop.index }} / {{ slides|length }}</span>
-            <h2 class="hv2-slide-t">{{ s.title }}</h2>
-            <div class="hv2-slide-sub">{{ s.sub }}</div>
-          </div>
-          <a class="hv2-btn hv2-btn-white" href="{{ s.link }}"{% if s.link.startswith('http') %} target="_blank" rel="noopener"{% endif %}>{{ s.link_text }} &rarr;</a>
-        </div>
-      </div>
-    {% endfor %}
-  </div>
-  <div class="hv2-tabs">
-    <div class="hv2-tabs-head">
-      <span class="hv2-lbl" style="color:#E3F4FC">{{ _('Spotlight') }}</span>
-      <span class="hv2-arrows">
-        <button type="button" class="hv2-arrow" data-hv2-prev aria-label="{{ _('Previous slide') }}"><i class="fa fa-chevron-left" aria-hidden="true"></i></button>
-        <button type="button" class="hv2-arrow" data-hv2-toggle aria-label="{{ _('Pause slideshow') }}" data-label-pause="{{ _('Pause slideshow') }}" data-label-play="{{ _('Play slideshow') }}"><i class="fa fa-pause" aria-hidden="true"></i></button>
-        <button type="button" class="hv2-arrow" data-hv2-next aria-label="{{ _('Next slide') }}"><i class="fa fa-chevron-right" aria-hidden="true"></i></button>
-      </span>
-    </div>
-    <div class="hv2-tablist" role="tablist" aria-label="{{ _('Spotlight slides') }}">
-      {% for s in slides %}
-        <button type="button" class="hv2-tabbtn{% if loop.first %} is-on{% endif %}" role="tab" aria-selected="{{ 'true' if loop.first else 'false' }}" data-hv2-goto="{{ loop.index0 }}">
-          <span class="hv2-tabtxt"><strong>{{ s.short }}</strong><span>{{ s.sub }}</span></span>
-          <span class="hv2-prog" aria-hidden="true"></span>
-        </button>
-      {% endfor %}
-    </div>
-  </div>
-</section>
-
 </div>{# /#hv2-sections #}
 </div>{# /.hv2 #}
 
-<script src="{{ h.url_for_static('/js/home-v2.js') }}?v=20261020f" defer></script>
+<script src="{{ h.url_for_static('/js/home-v2.js') }}?v=20261020g" defer></script>
