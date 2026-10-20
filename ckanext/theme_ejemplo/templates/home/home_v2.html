@@ -36,7 +36,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,500;8..60,600&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
-<link rel="stylesheet" href="{{ h.url_for_static('/css/home-v2.css') }}?v=20261020">
+<link rel="stylesheet" href="{{ h.url_for_static('/css/home-v2.css') }}?v=20261020b">
 
 <div class="hv2" id="hv2">
 <a class="hv2-skip" href="#hv2-sections">{{ _('Skip to main content') }}</a>
@@ -93,17 +93,14 @@
           </div>
           <div class="hv2-about-cols">
             <div class="hv2-about-col">
-              <span class="hv2-mono">01</span>
               <h3>{{ _('Data integration') }}</h3>
               <div>{{ _('Integrates water-related data from monitoring networks, research institutions and international organizations using standardized formats.') }}</div>
             </div>
             <div class="hv2-about-col">
-              <span class="hv2-mono">02</span>
               <h3>{{ _('International cooperation') }}</h3>
               <div>{{ _('Strengthens collaboration and knowledge exchange among water professionals at national, regional and global scales.') }}</div>
             </div>
             <div class="hv2-about-col">
-              <span class="hv2-mono">03</span>
               <h3>{{ _('Evidence-based decisions') }}</h3>
               <div>{{ _('Supports sustainable water management through tools for data visualization, analysis and informed decision-making.') }}</div>
             </div>
@@ -137,14 +134,14 @@
 {# ═════════════ SECTION BAR (sticky) ═════════════ #}
 <nav class="hv2-secnav" aria-label="{{ _('On this page') }}">
   <div class="hv2-wrap hv2-secnav-in">
-    <a class="hv2-snav" href="#IHPWINS"><span class="hv2-snav-no">00</span>{{ _('About') }}</a>
-    <a class="hv2-snav" href="#network"><span class="hv2-snav-no">01</span>{{ _('Network') }}</a>
-    <a class="hv2-snav" href="#datasets"><span class="hv2-snav-no">02</span>{{ _('Datasets') }}</a>
-    <a class="hv2-snav" href="#knowledge"><span class="hv2-snav-no">03</span>{{ _('Knowledge') }}</a>
-    <a class="hv2-snav" href="#thematic"><span class="hv2-snav-no">04</span>{{ _('Thematic viewers') }}</a>
-    <a class="hv2-snav" href="#WaterFamilyEvents"><span class="hv2-snav-no">05</span>{{ _('Water Family') }}</a>
-    <a class="hv2-snav" href="#learning"><span class="hv2-snav-no">06</span>{{ _('Learning') }}</a>
-    <a class="hv2-snav" href="#spotlight"><span class="hv2-snav-no">07</span>{{ _('Spotlight') }}</a>
+    <a class="hv2-snav" href="#IHPWINS">{{ _('About') }}</a>
+    <a class="hv2-snav" href="#network">{{ _('Network') }}</a>
+    <a class="hv2-snav" href="#datasets">{{ _('Datasets') }}</a>
+    <a class="hv2-snav" href="#knowledge">{{ _('Knowledge') }}</a>
+    <a class="hv2-snav" href="#thematic">{{ _('Thematic viewers') }}</a>
+    <a class="hv2-snav" href="#WaterFamilyEvents">{{ _('Water Family') }}</a>
+    <a class="hv2-snav" href="#learning">{{ _('Learning') }}</a>
+    <a class="hv2-snav" href="#spotlight">{{ _('Spotlight') }}</a>
     <a class="hv2-snav-cta" href="{{ h.url_for('/colab') }}">{{ _('Contribute data') }}</a>
   </div>
 </nav>
@@ -155,7 +152,7 @@
 <section class="hv2-sec hv2-sec-tight" id="network" style="padding-bottom: 0">
   <div class="hv2-wrap">
     <div class="hv2-shead hv2-shead-open">
-      <div class="hv2-sidx"><span class="hv2-no">01</span><span class="hv2-lbl">{{ _('The network') }}</span></div>
+      <div class="hv2-sidx"><span class="hv2-lbl">{{ _('The network') }}</span></div>
       <div class="hv2-stxt">
         <h2 class="hv2-h2">{{ _('Member States, organizations and initiatives share data in hubs') }}</h2>
         <div class="hv2-lead">{{ _('People join through their organization. Organizations contribute data, tools and expertise, and can work in several hubs at once. A record is published once and appears in every hub it belongs to.') }}</div>
@@ -213,7 +210,7 @@
 <section class="hv2-sec hv2-sec-tight" id="datasets">
   <div class="hv2-wrap">
     <div class="hv2-shead hv2-shead-open">
-      <div class="hv2-sidx"><span class="hv2-no">02</span><span class="hv2-lbl">{{ _('Datasets') }}</span></div>
+      <div class="hv2-sidx"><span class="hv2-lbl">{{ _('Datasets') }}</span></div>
       <div class="hv2-stxt">
         <h2 class="hv2-h2">{{ _('Data catalogue and geospatial viewer') }}</h2>
         <div class="hv2-lead">{{ _('Search the catalogue, preview and download open water data, then open any layer on the map.') }}</div>
@@ -318,7 +315,7 @@
 <section class="hv2-sec" id="knowledge" style="padding-top: 0; padding-bottom: 0">
   <div class="hv2-wrap">
     <div class="hv2-shead">
-      <div class="hv2-sidx"><span class="hv2-no">03</span><span class="hv2-lbl">{{ _('Knowledge') }}</span></div>
+      <div class="hv2-sidx"><span class="hv2-lbl">{{ _('Knowledge') }}</span></div>
       <div class="hv2-stxt">
         <h2 class="hv2-h2">{{ _('Featured viewers, map rooms and data stories') }}</h2>
         <div class="hv2-lead">{{ _("Interactive map viewers curated by UNESCO's Water Family, rapid response pages for water-related disasters, and data-driven narratives.") }}</div>
@@ -399,7 +396,7 @@
 <section class="hv2-sec hv2-dark" id="thematic" style="padding-top: 56px; padding-bottom: 0">
   <div class="hv2-wrap">
     <div class="hv2-shead hv2-shead-open">
-      <div class="hv2-sidx"><span class="hv2-no">04</span><span class="hv2-lbl">{{ _('Thematic viewers') }}</span></div>
+      <div class="hv2-sidx"><span class="hv2-lbl">{{ _('Thematic viewers') }}</span></div>
       <div class="hv2-stxt">
         <h2 class="hv2-h2">{{ _('Monitoring portals for floods, droughts, water quality and more') }}</h2>
         <div class="hv2-lead">{{ _('Early warning systems, citizen science, real-time sensors and partner databases, each in a dedicated viewer.') }}</div>
@@ -426,7 +423,7 @@
 <section class="hv2-sec hv2-sec-tight" id="WaterFamilyEvents">
   <div class="hv2-wrap">
     <div class="hv2-shead hv2-shead-open">
-      <div class="hv2-sidx"><span class="hv2-no">05</span><span class="hv2-lbl">{{ _('Water Family hub') }}</span></div>
+      <div class="hv2-sidx"><span class="hv2-lbl">{{ _('Water Family hub') }}</span></div>
       <div class="hv2-stxt">
         <h2 class="hv2-h2">{{ _('News, events and publications from the UNESCO Water Family') }}</h2>
         <a class="hv2-arr" href="{{ h.url_for('/water-family') }}">{{ _('Visit the community of practice') }} <span aria-hidden="true">&rarr;</span></a>
@@ -476,7 +473,7 @@
   </a>
   <div class="hv2-wrap">
     <div class="hv2-shead">
-      <div class="hv2-sidx"><span class="hv2-no">06</span><span class="hv2-lbl">{{ _('Capacity building') }}</span></div>
+      <div class="hv2-sidx"><span class="hv2-lbl">{{ _('Capacity building') }}</span></div>
       <div class="hv2-stxt">
         <h2 class="hv2-h2">{{ _('Build capacity in water science and management') }}</h2>
       </div>
@@ -527,7 +524,7 @@
         <img src="{{ h.url_for_static(s.image) }}" alt="">
         <div class="hv2-slide-txt">
           <div class="hv2-stack">
-            <span class="hv2-lbl" style="color:#E3F4FC">07 · {{ _('Spotlight') }} {{ loop.index }} / {{ slides|length }}</span>
+            <span class="hv2-lbl" style="color:#E3F4FC">{{ _('Spotlight') }} {{ loop.index }} / {{ slides|length }}</span>
             <h2 class="hv2-slide-t">{{ s.title }}</h2>
             <div class="hv2-slide-sub">{{ s.sub }}</div>
           </div>
@@ -548,7 +545,6 @@
     <div class="hv2-tablist" role="tablist" aria-label="{{ _('Spotlight slides') }}">
       {% for s in slides %}
         <button type="button" class="hv2-tabbtn{% if loop.first %} is-on{% endif %}" role="tab" aria-selected="{{ 'true' if loop.first else 'false' }}" data-hv2-goto="{{ loop.index0 }}">
-          <span class="hv2-mono hv2-tabno">{{ '%02d' % loop.index }}</span>
           <span class="hv2-tabtxt"><strong>{{ s.short }}</strong><span>{{ s.sub }}</span></span>
           <span class="hv2-prog" aria-hidden="true"></span>
         </button>

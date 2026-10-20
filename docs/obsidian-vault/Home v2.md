@@ -26,7 +26,7 @@ The page reads like a printed science report rather than a set of cards:
 
 - Type: Lexend 700 for the hero title only (as in the IHP-WINS logo), Source Serif 4 for section and item titles, IBM Plex Sans for text, IBM Plex Mono for small labels and numbers. All from Google Fonts, loaded in `home_v2.html`.
 - Square corners everywhere, no shadows. Items are separated by thin rules (`#C9D2DB`) and columns by vertical rules, not by boxes.
-- Section headers sit on a 12-column grid: number and label, title and lead stacked on the left, the section banner image on the right. Sections that follow a white section open without a top rule (`.hv2-shead-open`) and with less space above (`.hv2-sec-tight`).
+- Section headers sit on a 12-column grid: a small label, then title and lead stacked on the left, the section banner image on the right. Sections are not numbered. Sections that follow a white section open without a top rule (`.hv2-shead-open`) and with less space above (`.hv2-sec-tight`).
 - Colours: navy `#0B2A4A` for the Contribute band, the Thematic band and the spotlight, the IHP-WINS blue `#37B7E7` for accents and gold `#F2B01E` for the Register and Open Learning calls to action.
 
 ## Files
