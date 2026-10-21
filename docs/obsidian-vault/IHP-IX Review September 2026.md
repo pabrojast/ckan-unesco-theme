@@ -66,9 +66,9 @@ Entorno CKAN aislado en `127.0.0.1:5011`, DB/Redis/core Solr separados, cinco us
 
 - 146 pruebas puras pasan (incluyen límites numéricos, taxonomía, relaciones, importación y presentación).
 - 29 comprobaciones HTTP pasan: permisos, membresía, coedición, concurrencia, submit/reject/publish, caché/estadísticas, privacidad e importación idempotente.
-- Regresiones adicionales de recursos privados y un lote de dos filas con fallo en la segunda: rollback completo y reintento correcto.
-- Navegador real: incluye menú de administrador en árabe (etiquetas ocultas corregidas sin desplazamiento fuera de pantalla), guardar/reabrir, conflictos, historial, modal de publicación con archivo, editor de dataset y evento con retorno; escritorio y móvil 390×844 en EN/ES/FR/AR sin desbordamiento, árabe RTL.
+- 15 regresiones adicionales de recursos privados/geografía y 4 checks de un lote de dos filas con fallo en la segunda: rollback completo y reintento correcto.
+- 16 checks de navegador sobre la imagen final. Incluye menú de administrador en árabe (etiquetas ocultas corregidas sin desplazamiento fuera de pantalla), guardar/reabrir, conflictos, historial, modal de publicación con archivo, editor de dataset y evento con retorno; escritorio y móvil 390×844 en EN/ES/FR/AR sin desbordamiento, árabe RTL.
 - Catálogos ES/FR/AR compilados sin errores; nuevos textos de herramientas traducidos. El `.pot` incorpora los literales extraídos; esto no implica traducción completa de todos los textos históricos.
-- Capturas, PDFs y logs locales en `/tmp/ihpix-implementation-20261021/`; no se publican tokens ni datos privados en Git.
+- Capturas, PDFs y logs de aceptación conservados en `/home/pabrojast/backups/ckan-dev-ihpix-20261021/qa-evidence/` (privado); artefactos de trabajo en `/tmp/ihpix-implementation-20261021/`; no se publican tokens ni datos privados en Git.
 
 El detalle del despliegue y la preservación final está en [[Deployment#IHP-IX revisión de septiembre — DEV 2026-10-21]].

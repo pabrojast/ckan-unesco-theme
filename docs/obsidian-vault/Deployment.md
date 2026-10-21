@@ -268,3 +268,22 @@ Antes del rollout: respaldo PostgreSQL de todas las tablas `ihpix_*`, deployment
 La migración agrega seis columnas y cinco tablas; no reejecuta la normalización histórica. Conservar digest anterior para rollback de imagen; no eliminar las columnas/tablas nuevas ni restaurar un dump sobre escrituras posteriores sin evaluarlas. Después: esperar rollout, comparar huellas de las 745 actividades históricas, verificar 744 publicadas/1 pendiente, cuatro contenedores Ready, fuente y rutas públicas/autenticadas. Recomputar únicamente el resumen derivado por país.
 
 No se modifican los sidecars `c4w-archive`, `dashboard-build` o `dashboard-query`, ni configuración/imagen de producción. Evidencia funcional: [[IHP-IX Review September 2026]].
+
+### Evidencia de publicación y despliegue
+
+- Código funcional: `c0822793c33c78cfdf80d255939bcebae0d42182`; ajuste RTL y regresión de administrador: `99216c790381548bad7a60834c8a302b800e8a1c`. Ambos publicados en `origin/dev210`.
+- Imagen final: `pabrojast/ckan-base210@sha256:57d5c8146c84da57bd7340791f4e1c4446c87ded85328d53ffec73a92ba4895c` (tag `ihpix-review-99216c7-20261021`). La primera imagen de esta entrega fue `sha256:d9bd8cdc9b2aeefc9e55daa81c3b0ef68cb6edda201b80be90dd25b2b5839ca1`; el ajuste final cambia CSS y prueba de navegador.
+- Base anterior a la entrega: `sha256:ffef066904c4aa07753720cf6966b707257c5774ef4b5da8b46c284b17c2f54b`. Se preservaron exactamente los tres sidecars.
+- Respaldo: `/home/pabrojast/backups/ckan-dev-ihpix-20261021/ihpix-before-release.dump`, restaurado con éxito en PostgreSQL 17 aislado; 744 publicadas y 1 pendiente. `deployment-before-release.json` y `ihpix-before-fingerprint.json` conservan configuración y huellas. El archivo `.incomplete` de un intento anterior no se usa.
+- Comparación por ID/SHA-256: 745 actividades históricas, 34 espacios, 5 contribuciones y sus tablas de adjuntos/membresías idénticos antes/después. Se recalcularon 191 resúmenes derivados de países.
+- Fuente desplegada: 657 archivos del tema comparados con Git. Estadísticas coinciden con SQL independiente: 744 actividades publicadas, KPI2 120579, jóvenes 38069 y mujeres 39721.
+- QA del código: 146 tests puros, 29 checks HTTP principales, 15 de privacidad/geografía, 4 de rollback/importación y 16 de navegador sobre la imagen final; adicionalmente se verificó que ambas APIs rechazan borrar un reporte de espacio archivado sin perder adjuntos.
+- Subida real de publicación, adjuntar dataset y crear/adjuntar evento verificados en la copia local. Para probar almacenamiento LOCAL se instaló `lockfile==0.12.2` solo en el contenedor QA; DEV conserva su proveedor de almacenamiento configurado. El último archivo se escribió en almacenamiento aislado, eliminado al retirar QA. Tres cargas temporales del primer ensayo alcanzaron el proveedor heredado: se verificó su contenido y se eliminaron, comprobando su ausencia antes de continuar con LOCAL.
+- HTML/PDF: presentación 16:9 con 27 páginas para el ámbito general; tablas dentro de los límites. Narrativa A4 con márgenes y fuentes enlazadas. Navegador móvil EN/ES/FR/AR a 390×844 y caso admin árabe sin desbordamiento.
+- Publicación Git, imagen y rollout se verifican por separado. No se ejecutó el workflow manual histórico de CKAN 2.9 ni se desplegó producción.
+
+Los cinco contenedores QA, su red y el core Solr temporal se retiraron al terminar; el core Solr original quedó intacto. No se crearon reportes ni membresías de prueba en DEV. El único token temporal de lectura para el smoke se revoca al cerrar la verificación.
+
+Durante el cierre se inició otro despliegue de DEV con imagen `sha256:81bbac65adf5550e432be697de462372f3c71b2988935df48f96762a09d7dc25`. Se verificó que conserva exactamente los 657 archivos del tema y `.theme-revision=99216c7`; no se sobrescribió esa actualización concurrente.
+
+Cierre verificado: imagen integrada `81bbac65…`, pod `ckan-74478f6bd5-zdpbm`, cuatro contenedores Ready y cero reinicios; páginas nuevas, cinco ámbitos de progreso, workbook y navegador EN/ES/FR/AR (incluido admin RTL) aprobados. Huellas históricas idénticas también en esa imagen.
