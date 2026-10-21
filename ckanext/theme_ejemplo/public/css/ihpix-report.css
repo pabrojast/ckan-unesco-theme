@@ -9,6 +9,19 @@
  */
 
 /* Tokens del kit de formularios (ihpix-forms.css lee --ix-* en :root) */
+/* El left:-9999px heredado de CKAN ensancha el documento RTL en el menú admin.
+   Conservar las etiquetas para lectores de pantalla sin desplazarlas fuera. */
+html[dir="rtl"] .account-masthead .text {
+  left: auto !important;
+  right: auto !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
 :root {
   --ix-primary: #0069B4;
   --ix-primary-dark: #004E8C;

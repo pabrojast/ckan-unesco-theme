@@ -67,7 +67,7 @@ Entorno CKAN aislado en `127.0.0.1:5011`, DB/Redis/core Solr separados, cinco us
 - 146 pruebas puras pasan (incluyen límites numéricos, taxonomía, relaciones, importación y presentación).
 - 29 comprobaciones HTTP pasan: permisos, membresía, coedición, concurrencia, submit/reject/publish, caché/estadísticas, privacidad e importación idempotente.
 - Regresiones adicionales de recursos privados y un lote de dos filas con fallo en la segunda: rollback completo y reintento correcto.
-- Navegador real: guardar/reabrir, conflictos, historial, modal de publicación con archivo, editor de dataset y evento con retorno; escritorio y móvil 390×844 en EN/ES/FR/AR sin desbordamiento, árabe RTL.
+- Navegador real: incluye menú de administrador en árabe (etiquetas ocultas corregidas sin desplazamiento fuera de pantalla), guardar/reabrir, conflictos, historial, modal de publicación con archivo, editor de dataset y evento con retorno; escritorio y móvil 390×844 en EN/ES/FR/AR sin desbordamiento, árabe RTL.
 - Catálogos ES/FR/AR compilados sin errores; nuevos textos de herramientas traducidos. El `.pot` incorpora los literales extraídos; esto no implica traducción completa de todos los textos históricos.
 - Capturas, PDFs y logs locales en `/tmp/ihpix-implementation-20261021/`; no se publican tokens ni datos privados en Git.
 
