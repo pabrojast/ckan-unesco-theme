@@ -320,3 +320,7 @@ IHPIX_QA_TOKENS=/ruta/privada/tokens.json IHPIX_QA_OUTPUT=/tmp/ihpix-browser \
 Guarda capturas/PDF fuera de Git y elimina el reporte que crea al finalizar correctamente. `IHPIX_QA_BASE` permite otro puerto local; exige la misma instancia aislada del script HTTP. Los recorridos de archivos/eventos y Excel se validaron además con fixtures locales privados.
 
 Regresiones reproducibles adicionales: `scripts/ihpix_review_privacy.py` (15 checks; además exige `IHPIX_QA_FIXTURES` con `package`/`package_name` de un dataset privado del autor, inaccesible al colaborador) y `scripts/ihpix_review_rollback.py` (4 checks; archiva/restaura 1.10 para provocar fallo en la segunda fila). Ejecutarlas secuencialmente en la instancia aislada, con `IHPIX_QA_TOKENS` definido. No usan archivos reales de usuarios.
+
+## Control automático Theme checks
+
+`.github/workflows/theme-checks.yml` ejecuta las 146 regresiones puras IHP-IX, verifica el snapshot oficial y la sintaxis de los tres scripts del navegador. Corre al publicar `dev210`, en pull requests y manualmente, con Python 3.11, permisos de lectura y acciones fijadas por SHA. Su job se llama exactamente `Theme checks`, como el control requerido por GitHub. Complementa las pruebas HTTP/navegador contra CKAN real; no sustituye al workflow manual `Tests` de CKAN 2.9 ni despliega entornos.

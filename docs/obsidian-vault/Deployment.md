@@ -287,3 +287,5 @@ Los cinco contenedores QA, su red y el core Solr temporal se retiraron al termin
 Durante el cierre se inició otro despliegue de DEV con imagen `sha256:81bbac65adf5550e432be697de462372f3c71b2988935df48f96762a09d7dc25`. Se verificó que conserva exactamente los 657 archivos del tema y `.theme-revision=99216c7`; no se sobrescribió esa actualización concurrente.
 
 Cierre verificado: imagen integrada `81bbac65…`, pod `ckan-74478f6bd5-zdpbm`, cuatro contenedores Ready y cero reinicios; páginas nuevas, cinco ámbitos de progreso, workbook y navegador EN/ES/FR/AR (incluido admin RTL) aprobados. Huellas históricas idénticas también en esa imagen.
+
+La publicación reveló que la regla de GitHub exigía `Theme checks` pero solo existía el workflow manual `Tests`. Se añadió `.github/workflows/theme-checks.yml` con el nombre requerido para ejecutar automáticamente las regresiones puras, taxonomía y sintaxis de JavaScript. No tiene credenciales ni pasos de despliegue.
