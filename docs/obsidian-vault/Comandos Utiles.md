@@ -219,3 +219,9 @@ ckan -c /app/production.ini learning sync --due
 
 El comando anterior `openlearning sync --force` sigue funcionando cuando
 el plugin está habilitado y delega a su fuente IHP.
+
+## IHP-IX: taxonomía y aceptación de revisión
+
+`python3 scripts/build_ihpix_taxonomy_data.py --check` comprueba que los JSON generados coinciden con el snapshot oficial (34 Outputs/151 KA). Sin `--check` los regenera; `--seed` es la opción explícita para datos legados.
+
+`scripts/ihpix_review_acceptance.py` ejecuta aceptación HTTP solo en un CKAN local aislado: requisitos y variables en [[Testing#Aceptación IHP-IX de septiembre (2026-10-21)]].

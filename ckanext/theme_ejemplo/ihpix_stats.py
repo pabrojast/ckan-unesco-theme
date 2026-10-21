@@ -28,6 +28,7 @@ from collections import OrderedDict
 
 from ckanext.theme_ejemplo import ihpix_constants as C
 from ckanext.theme_ejemplo import ihpix_normalize as N
+from ckanext.theme_ejemplo import ihpix_relations as R
 
 SCOPES = ('overall', 'pa', 'output', 'flagship', 'ctwg')
 
@@ -116,6 +117,19 @@ def build_country_index(summaries, group_pairs=None):
     for alias, target in N.COUNTRY_NAME_ALIASES.items():
         if target and _key(target) in index:
             index.setdefault(_key(alias), index[_key(target)])
+    for country in R.countries():
+        name = country.get('country_title_en')
+        if not name:
+            continue
+        entry = index.get(_key(name), {'name': name, 'lat': None, 'lon': None, 'region': ''})
+        entry['regions'] = country.get('regional_group') or []
+        entry['electoral_group'] = country.get('electoral_group') or ''
+        entry['iso2'] = country.get('iso2')
+        for field in ('iso2', 'iso3', 'country_title_en', 'country_title_fr', 'country_title_es', 'country_title_ar'):
+            if country.get(field):
+                index[_key(country[field])] = entry
+                if C.slugify(country[field]):
+                    index[C.slugify(country[field])] = entry
     return index
 
 
@@ -170,6 +184,8 @@ def prepare_row(row, country_index=None):
 
     _add(row.get('country'), 'reporting')
     _add(row.get('supporting_member_state'), 'supporter')
+    for supporter in R.read_list(row.get('supporters_json')):
+        _add(supporter['country'], 'supporter')
     for item in N.split_legacy_multi(row.get('member_states')):
         _add(item, 'beneficiary')
     out['country'] = _resolve_country(row.get('country'), country_index)[0] or ''
@@ -184,9 +200,9 @@ def prepare_row(row, country_index=None):
 
 def _country_region(name, index):
     if not index:
-        return ''
+        return []
     entry = index.get(_key(name))
-    return entry.get('region', '') if entry else ''
+    return (entry.get('regions') or [entry.get('region', '')]) if entry else []
 
 
 def filter_rows(rows, scope='overall', value=None, filters=None, country_index=None):
@@ -200,9 +216,9 @@ def filter_rows(rows, scope='overall', value=None, filters=None, country_index=N
     inst_type = N.clean_text(filters.get('institution_type'))
     out = []
     for row in rows:
-        if scope == 'pa' and row['priority_area'] != value:
+        if scope == 'pa' and value not in (R.dimension_values(row, 'priority_area') or [row['priority_area']]):
             continue
-        if scope == 'output' and row['output'] != value:
+        if scope == 'output' and value not in R.dimension_values(row, 'output'):
             continue
         if scope == 'flagship' and value not in row['flagships']:
             continue
@@ -212,7 +228,7 @@ def filter_rows(rows, scope='overall', value=None, filters=None, country_index=N
             continue
         if region:
             declared = region in row['regions']
-            impacted = any(_country_region(n, country_index) == region
+            impacted = any(region in _country_region(n, country_index)
                            for n in row['impacted_member_states'])
             if not (declared or impacted):
                 continue
@@ -220,6 +236,7 @@ def filter_rows(rows, scope='overall', value=None, filters=None, country_index=N
             continue
         if inst_type and row['institution_type'] != inst_type:
             continue
+        row = dict(row, _scope=scope, _scope_value=value)
         out.append(row)
     return out
 
@@ -257,10 +274,12 @@ def _by_dimension(rows, dimension, labels, measures):
     u"""[{key, label, <medida>…}] sumando `measures` = {nombre: fn(row)}."""
     buckets = OrderedDict()
     for row in rows:
-        key = _dimension_key(row, dimension)
-        bucket = buckets.setdefault(key, dict((m, 0) for m in measures))
-        for name, fn in measures.items():
-            bucket[name] += fn(row)
+        keys = R.dimension_values(row, dimension, row.get('_scope'), row.get('_scope_value'))
+        fallback = UNSPECIFIED if row.get('_scope') in ('pa', 'output') else _dimension_key(row, dimension)
+        for key in keys or [fallback]:
+            bucket = buckets.setdefault(key, dict((m, 0) for m in measures))
+            for name, fn in measures.items():
+                bucket[name] += fn(row)
     result = []
     for key in _sorted_keys(buckets):
         item = {'key': key, 'label': _dimension_label(key, dimension, labels)}
@@ -315,8 +334,8 @@ def _by_output(rows, labels):
     actividades): [{key, label, pa, count}] con los filtros ya aplicados."""
     counts = {}
     for row in rows:
-        if row['output']:
-            counts[row['output']] = counts.get(row['output'], 0) + 1
+        for output in R.dimension_values(row, 'output', row.get('_scope'), row.get('_scope_value')):
+            counts[output] = counts.get(output, 0) + 1
     result = []
     for pa, pairs in C.OUTPUTS.items():
         for code, _ in pairs:
@@ -338,9 +357,9 @@ def _options(all_rows, labels, country_index, scope='overall', value=None):
     regions = []
     if country_index:
         for entry in country_index.values():
-            region = entry.get('region')
-            if region and region not in regions:
-                regions.append(region)
+            for region in entry.get('regions') or [entry.get('region')]:
+                if region and region not in regions:
+                    regions.append(region)
         regions.sort()
     if not regions:
         regions = [r for r in C.REGIONS if r != 'Global']
@@ -387,12 +406,12 @@ def _by_region(rows, country_index):
     for row in rows:
         touched = set()
         for name in row['impacted_member_states']:
-            region = _country_region(name, country_index)
-            if not region:
-                continue
-            bucket = regions.setdefault(region, {'countries': set(), 'activities': 0})
-            bucket['countries'].add(name)
-            touched.add(region)
+            for region in _country_region(name, country_index):
+                if not region:
+                    continue
+                bucket = regions.setdefault(region, {'countries': set(), 'activities': 0})
+                bucket['countries'].add(name)
+                touched.add(region)
         for region in touched:
             regions[region]['activities'] += 1
     result = [{'key': r, 'member_states': len(v['countries']), 'activities': v['activities']}
@@ -404,13 +423,14 @@ def _output_biennium_matrix(rows):
     cells = OrderedDict()
     bienniums = set()
     for row in rows:
-        if not row['output'] or not row['biennium']:
+        if not row['biennium']:
             continue
-        cell = cells.setdefault(row['output'], {'priority_area': row['priority_area'],
-                                                 'total': 0, 'by_biennium': OrderedDict()})
-        cell['by_biennium'][row['biennium']] = cell['by_biennium'].get(row['biennium'], 0) + 1
-        cell['total'] += 1
-        bienniums.add(row['biennium'])
+        for output in R.dimension_values(row, 'output', row.get('_scope'), row.get('_scope_value')):
+            cell = cells.setdefault(output, {'priority_area': C.priority_area_for_output(output),
+                                               'total': 0, 'by_biennium': OrderedDict()})
+            cell['by_biennium'][row['biennium']] = cell['by_biennium'].get(row['biennium'], 0) + 1
+            cell['total'] += 1
+            bienniums.add(row['biennium'])
     outputs = sorted(cells, key=natural_key)
     return {
         'bienniums': sorted(bienniums),

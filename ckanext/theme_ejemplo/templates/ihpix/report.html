@@ -81,7 +81,8 @@
     <div class="ihpix-report-head-text">
       <div class="ihpix-report-kicker">{{ _('IHP-IX (2022–2029) · Reporting on implemented activities') }}</div>
       <h1>{% if edit_mode %}{{ _('Edit the activity report') }}{% else %}{{ _('Report an implemented activity') }}{% endif %}</h1>
-      <p class="ihpix-report-lede">{{ _('The same seven sections as the official UNESCO form, about 10 minutes. Fields marked with * are required before you submit; everything else can wait.') }}</p>
+      <p class="ihpix-report-lede">{{ _('The form covers 7 sections aligned with the official UNESCO IHP-IX reporting guidelines') }}</p>
+      <p><small>{{ _('If you have multiple activities to report, you can use the multiple upload option.') }} <a href="{{ h.url_for('theme_ejemplo.ihpix_import') }}">{{ _('Import reports') }}</a></small></p>
     </div>
     <div class="ihpix-report-head-meta">
       <div class="ihpix-progress">
@@ -112,7 +113,7 @@
     <span class="ihpix-status-badge">{{ status_labels.get(activity.status, activity.status) }}</span>
     <span class="ihpix-status-text">
       {% if activity.status == 'draft' %}
-        {{ _('This is a draft. Only you can see it until you submit it for review.') }}
+        {{ _('This draft is visible to you and invited collaborators.') }}
       {% elif activity.status == 'rejected' %}
         {{ _('The reviewer returned this report. Update it and submit it again.') }}
         {% if activity.review_notes %}<blockquote>{{ activity.review_notes }}</blockquote>{% endif %}
@@ -151,6 +152,9 @@
   <form id="ihpix-report-form" class="ihpix-report-form ihpix-report-main{% if not can_edit %} is-readonly{% endif %}" novalidate>
     {{ h.csrf_input() }}
 
+    <input type="hidden" name="expected_revision" value="{{ activity.revision if activity else 0 }}">
+    <div id="ihpix-conflict" role="alert" hidden></div>
+    {% if activity %}<p><a href="{{ h.url_for('theme_ejemplo.ihpix_report_collaboration', id=activity.id) }}">{{ _('Collaborators and saved versions') }}</a></p>{% endif %}
     {# Resumen de errores tras un envío inválido #}
     <div class="ihpix-error-summary" id="ihpix-error-summary" role="alert" tabindex="-1">
       <h4>{{ _('Before you submit, review the following:') }}</h4>
@@ -202,6 +206,7 @@
         <div class="ihpix-report-field">
           <label class="ihpix-report-label" for="ihpix-field-partners">{{ qnum() }}{{ _('Were there any other partners involved in the activity?') }}</label>
           <span class="ihpix-report-help" id="ihpix-field-partners-help">{{ _('If so, their names. Leave empty if there were none.') }}</span>
+          <div data-partner-organizations></div><input type="hidden" name="partner_org_ids" value="[]">
           <textarea id="ihpix-field-partners" name="partners" class="ihpix-report-textarea" rows="2" maxlength="500" data-ihpix-counter placeholder="{{ _('One partner per line, or separated by commas') }}" aria-describedby="ihpix-field-partners-help"></textarea>
         </div>
 
@@ -209,7 +214,12 @@
           <div class="ihpix-report-field">
             <label class="ihpix-report-label" for="ihpix-field-institution">{{ qnum() }}{{ _('Name of the lead implementing institution') }} {{ req() }}</label>
             <span class="ihpix-report-help" id="ihpix-field-institution-help">{{ _("If you chose 'Other' above, include the type of institution here too.") }}</span>
-            <input type="text" id="ihpix-field-institution" name="institution" class="ihpix-report-input" required aria-describedby="ihpix-field-institution-help" maxlength="250" autocomplete="organization" {% if institution_suggestions %}list="ihpix-institution-suggestions"{% endif %}>
+            <label for="ihpix-institution-org">{{ _('Organization on IHP-WINS') }}</label>
+          <select id="ihpix-institution-org" name="institution_org_id" class="ihpix-report-select">
+            <option value="">{{ _('External institution / enter name below') }}</option>
+            {% for org in organizations %}<option value="{{ org.id }}">{{ org.title }}</option>{% endfor %}
+          </select>
+          <input type="text" id="ihpix-field-institution" name="institution" class="ihpix-report-input" required aria-describedby="ihpix-field-institution-help" maxlength="250" autocomplete="organization" {% if institution_suggestions %}list="ihpix-institution-suggestions"{% endif %}>
             {% if institution_suggestions %}
               <datalist id="ihpix-institution-suggestions">
                 {% for name in institution_suggestions %}<option value="{{ name }}"></option>{% endfor %}
@@ -219,7 +229,7 @@
           </div>
           <div class="ihpix-report-field">
             <label class="ihpix-report-label" for="ihpix-field-country">{{ _('Country of the institution') }} <span class="ihpix-optional">({{ _('optional') }})</span></label>
-            <span class="ihpix-report-help" id="ihpix-field-country-help">{{ _('Where the lead institution is based.') }}</span>
+            <span class="ihpix-report-help" id="ihpix-field-country-help">{{ _('Where the lead institution is based.') }}<span id="ihpix-country-metadata" aria-live="polite"></span></span>
             <select id="ihpix-field-country" name="country" class="ihpix-report-select" data-ihpix-combobox aria-describedby="ihpix-field-country-help">
               <option value="">{{ _('Select a country') }}</option>
               {% for code, name in member_states %}
@@ -291,14 +301,18 @@
           </fieldset>
           <div class="ihpix-conditional" data-conditional-on="has_member_state_support" data-show-when="yes">
             <div class="ihpix-report-field is-last">
-              <label class="ihpix-report-label" for="ihpix-field-supporting-ms">{{ _('Which Member State supported the implementation of the activity?') }}</label>
-              <span class="ihpix-report-help">{{ _('One Member State only.') }}</span>
+              <div data-legacy-supporter hidden><label class="ihpix-report-label" for="ihpix-field-supporting-ms">{{ _('Which Member State supported the implementation of the activity?') }}</label>
+              <span class="ihpix-report-help">{{ _('Previously reported country. Add further supporting countries and their roles below.') }}</span>
               <select id="ihpix-field-supporting-ms" name="supporting_member_state" class="ihpix-report-select" data-ihpix-combobox>
                 <option value="">{{ _('Select a Member State') }}</option>
                 {% for code, name in member_states %}
                   <option value="{{ code }}" data-search="{{ code }}">{{ _(name) }}</option>
                 {% endfor %}
               </select>
+              </div>
+            <div data-supporter-rows></div><input type="hidden" name="supporters_json" value="[]">
+            <button type="button" class="btn" data-supporter-add>{{ _('Add supporting country') }}</button>
+            <p class="ihpix-report-help">{{ _('Institution country, supporting countries and beneficiaries are recorded separately.') }}</p>
             </div>
           </div>
         </div>
@@ -378,6 +392,13 @@
           </div>
         </div>
 
+        <div id="ihpix-contributions-editor" class="ihpix-report-field">
+          <h4>{{ _('Additional contributions') }}</h4>
+          <p>{{ _('Add every related Priority Area, Output and key activity. Overall totals count this activity once; subtotals can overlap.') }}</p>
+          <input type="hidden" name="contributions_json" value="[]">
+          <div data-relation-rows="contributions_json"></div>
+          <button type="button" class="btn" data-relation-add="contributions_json">{{ _('Add contribution') }}</button>
+        </div>
         <div class="ihpix-report-field">
           <label class="ihpix-report-label" for="ihpix-field-link">{{ _('Link to the activity') }} <span class="ihpix-optional">({{ _('optional') }})</span></label>
           <span class="ihpix-report-help" id="ihpix-field-link-help">{{ _('A web page, report or video about the activity.') }}</span>
@@ -418,7 +439,10 @@
             <div class="ihpix-report-field is-last">
               <label class="ihpix-report-label" for="ihpix-field-synergies">{{ _('With which other priority areas, outputs or key activities?') }}</label>
               <span class="ihpix-report-help" id="ihpix-field-synergies-help">{{ _('Use the numbers of the Operational Implementation Plan, for example "Priority 3, Output 3.3, Key Activity 3.3.1".') }}</span>
-              <textarea id="ihpix-field-synergies" name="synergies" class="ihpix-report-textarea" rows="3" maxlength="1500" data-ihpix-markdown data-ihpix-counter aria-describedby="ihpix-field-synergies-help"></textarea>
+              <div data-relation-rows="synergies_json"></div>
+            <input type="hidden" name="synergies_json" value="[]">
+            <button type="button" class="btn" data-relation-add="synergies_json">{{ _('Add synergy') }}</button>
+            <textarea id="ihpix-field-synergies" name="synergies" class="ihpix-report-textarea" rows="3" maxlength="1500" data-ihpix-markdown data-ihpix-counter aria-describedby="ihpix-field-synergies-help"></textarea>
             </div>
           </div>
         </div>
@@ -507,7 +531,7 @@
             </fieldset>
             <div class="ihpix-report-field is-last">
               <label class="ihpix-report-label" for="ihpix-field-num-kp"><span class="ihpix-target">{{ _('Target 1a') }}</span>{{ _('How many knowledge products were generated?') }}</label>
-              <input type="number" id="ihpix-field-num-kp" name="num_knowledge_products" min="0" inputmode="numeric" class="ihpix-report-input is-number">
+              <input type="number" id="ihpix-field-num-kp" name="num_knowledge_products" min="0" max="2147483647" step="1" inputmode="numeric" class="ihpix-report-input is-number">
             </div>
           </div>
         </div>
@@ -533,7 +557,7 @@
             </fieldset>
             <div class="ihpix-report-field is-last">
               <label class="ihpix-report-label" for="ihpix-field-num-sp"><span class="ihpix-target">{{ _('Target 1b') }}</span>{{ _('How many scientific products were generated?') }}</label>
-              <input type="number" id="ihpix-field-num-sp" name="num_scientific_products" min="0" inputmode="numeric" class="ihpix-report-input is-number">
+              <input type="number" id="ihpix-field-num-sp" name="num_scientific_products" min="0" max="2147483647" step="1" inputmode="numeric" class="ihpix-report-input is-number">
             </div>
           </div>
         </div>
@@ -564,18 +588,18 @@
             <div class="ihpix-report-row ihpix-counts">
               <div class="ihpix-report-field">
                 <label class="ihpix-report-label" for="ihpix-field-sk-total"><span class="ihpix-target">{{ _('Target 2') }}</span>{{ _('How many key stakeholders improved their knowledge?') }}</label>
-                <input type="number" id="ihpix-field-sk-total" name="stakeholders_knowledge" min="0" inputmode="numeric" class="ihpix-report-input is-number">
+                <input type="number" id="ihpix-field-sk-total" name="stakeholders_knowledge" min="0" max="2147483647" step="1" inputmode="numeric" class="ihpix-report-input is-number">
               </div>
               <div class="ihpix-report-field">
                 <label class="ihpix-report-label" for="ihpix-field-sk-youth">{{ _('Of which youth (18–35 years old)') }}</label>
                 <span class="ihpix-report-help">{{ _('An estimate is fine.') }}</span>
-                <input type="number" id="ihpix-field-sk-youth" name="stakeholders_knowledge_youth" min="0" inputmode="numeric" class="ihpix-report-input is-number">
+                <input type="number" id="ihpix-field-sk-youth" name="stakeholders_knowledge_youth" min="0" max="2147483647" step="1" inputmode="numeric" class="ihpix-report-input is-number">
                 <div class="ihpix-report-error-text" role="alert" id="ihpix-error-sk-youth">{{ _('Cannot exceed the total number of stakeholders.') }}</div>
               </div>
               <div class="ihpix-report-field">
                 <label class="ihpix-report-label" for="ihpix-field-sk-female">{{ _('Of which female participants') }}</label>
                 <span class="ihpix-report-help">{{ _('An estimate is fine.') }}</span>
-                <input type="number" id="ihpix-field-sk-female" name="stakeholders_knowledge_female" min="0" inputmode="numeric" class="ihpix-report-input is-number">
+                <input type="number" id="ihpix-field-sk-female" name="stakeholders_knowledge_female" min="0" max="2147483647" step="1" inputmode="numeric" class="ihpix-report-input is-number">
                 <div class="ihpix-report-error-text" role="alert" id="ihpix-error-sk-female">{{ _('Cannot exceed the total number of stakeholders.') }}</div>
               </div>
             </div>
@@ -612,13 +636,9 @@
             </fieldset>
             <div class="ihpix-report-field">
               <label class="ihpix-report-label" for="ihpix-field-num-tr"><span class="ihpix-target">{{ _('Target 3') }}</span>{{ _('How many training materials were produced or how many training courses were implemented?') }}</label>
-              <input type="number" id="ihpix-field-num-tr" name="num_training_materials" min="0" inputmode="numeric" class="ihpix-report-input is-number">
+              <input type="number" id="ihpix-field-num-tr" name="num_training_materials" min="0" max="2147483647" step="1" inputmode="numeric" class="ihpix-report-input is-number">
             </div>
-            <div class="ihpix-report-field is-last ihpix-inline-actions">
-              <span class="ihpix-report-help" id="ihpix-kpi3-upload-help">{{ _('You can share the materials themselves: upload them as educational documents or attach an Open Learning course. They are listed in section VII.') }}</span>
-              <button type="button" class="ihpix-report-btn is-secondary" data-ihpix-publication-open data-document-type="educational_material" aria-describedby="ihpix-kpi3-upload-help">{{ _('Upload training material') }}</button>
-              <a class="ihpix-report-btn is-secondary" href="#section-7">{{ _('Attach a course') }}</a>
-            </div>
+
           </div>
         </div>
 
@@ -634,7 +654,7 @@
           <div class="ihpix-conditional" data-conditional-on="kpi_4_active" data-show-when="yes">
             <div class="ihpix-report-field is-last">
               <label class="ihpix-report-label" for="ihpix-field-num-curr"><span class="ihpix-target">{{ _('Target 4') }}</span>{{ _('How many educational curricula were produced or revised?') }}</label>
-              <input type="number" id="ihpix-field-num-curr" name="num_curricula" min="0" inputmode="numeric" class="ihpix-report-input is-number">
+              <input type="number" id="ihpix-field-num-curr" name="num_curricula" min="0" max="2147483647" step="1" inputmode="numeric" class="ihpix-report-input is-number">
             </div>
           </div>
         </div>
@@ -652,18 +672,18 @@
             <div class="ihpix-report-row ihpix-counts">
               <div class="ihpix-report-field">
                 <label class="ihpix-report-label" for="ihpix-field-sa-total"><span class="ihpix-target">{{ _('Target 5') }}</span>{{ _('How many key stakeholders have been reached by the awareness-raising activity?') }}</label>
-                <input type="number" id="ihpix-field-sa-total" name="stakeholders_awareness" min="0" inputmode="numeric" class="ihpix-report-input is-number">
+                <input type="number" id="ihpix-field-sa-total" name="stakeholders_awareness" min="0" max="2147483647" step="1" inputmode="numeric" class="ihpix-report-input is-number">
               </div>
               <div class="ihpix-report-field">
                 <label class="ihpix-report-label" for="ihpix-field-sa-youth">{{ _('Of which youth (18–35 years old)') }}</label>
                 <span class="ihpix-report-help">{{ _('An estimate is fine.') }}</span>
-                <input type="number" id="ihpix-field-sa-youth" name="stakeholders_awareness_youth" min="0" inputmode="numeric" class="ihpix-report-input is-number">
+                <input type="number" id="ihpix-field-sa-youth" name="stakeholders_awareness_youth" min="0" max="2147483647" step="1" inputmode="numeric" class="ihpix-report-input is-number">
                 <div class="ihpix-report-error-text" role="alert" id="ihpix-error-sa-youth">{{ _('Cannot exceed the total number of stakeholders.') }}</div>
               </div>
               <div class="ihpix-report-field">
                 <label class="ihpix-report-label" for="ihpix-field-sa-female">{{ _('Of which female participants') }}</label>
                 <span class="ihpix-report-help">{{ _('An estimate is fine.') }}</span>
-                <input type="number" id="ihpix-field-sa-female" name="stakeholders_awareness_female" min="0" inputmode="numeric" class="ihpix-report-input is-number">
+                <input type="number" id="ihpix-field-sa-female" name="stakeholders_awareness_female" min="0" max="2147483647" step="1" inputmode="numeric" class="ihpix-report-input is-number">
                 <div class="ihpix-report-error-text" role="alert" id="ihpix-error-sa-female">{{ _('Cannot exceed the total number of stakeholders.') }}</div>
               </div>
             </div>
@@ -682,7 +702,7 @@
           <div class="ihpix-conditional" data-conditional-on="kpi_6_active" data-show-when="yes">
             <div class="ihpix-report-field is-last">
               <label class="ihpix-report-label" for="ihpix-field-num-tb"><span class="ihpix-target">{{ _('Target 6') }}</span>{{ _('How many Member States were supported in improving their transboundary water systems?') }}</label>
-              <input type="number" id="ihpix-field-num-tb" name="num_transboundary_ms" min="0" inputmode="numeric" class="ihpix-report-input is-number">
+              <input type="number" id="ihpix-field-num-tb" name="num_transboundary_ms" min="0" max="2147483647" step="1" inputmode="numeric" class="ihpix-report-input is-number">
             </div>
           </div>
         </div>
@@ -719,7 +739,7 @@
             <div class="ihpix-report-field is-last">
               <label class="ihpix-report-label" for="ihpix-field-num-sg"><span class="ihpix-target">{{ _('Target 8') }}</span>{{ _('How many stakeholder groups benefited from the activity?') }}</label>
               <span class="ihpix-report-help">{{ _('Number of organizations, not of people.') }}</span>
-              <input type="number" id="ihpix-field-num-sg" name="num_stakeholder_groups" min="0" inputmode="numeric" class="ihpix-report-input is-number">
+              <input type="number" id="ihpix-field-num-sg" name="num_stakeholder_groups" min="0" max="2147483647" step="1" inputmode="numeric" class="ihpix-report-input is-number">
             </div>
           </div>
         </div>
@@ -797,6 +817,30 @@
     'initialData': form_initial or {},
     'userId': (c.userobj.id if c.userobj else ''),
     'keyActivities': key_activities_by_output or {},
+    'countries': country_metadata,
+    'language': h.lang(),
+    'relationStrings': {
+      'Priority Area': _('Priority Area'),
+      'Output': _('Output'),
+      'Key activity': _('Key activity'),
+      'Supporting country': _('Supporting country'),
+      'Financial': _('Financial'),
+      'In-kind': _('In-kind'),
+      'Hosting': _('Hosting'),
+      'Remove': _('Remove'),
+      'Partner organizations on IHP-WINS': _('Partner organizations on IHP-WINS'),
+      'A newer version was saved. Choose which changes to keep.': _('A newer version was saved. Choose which changes to keep.'),
+      'Your answer': _('Your answer'),
+      'Saved answer': _('Saved answer'),
+      'Choose an answer': _('Choose an answer'),
+      'Keep my answer': _('Keep my answer'),
+      'Use saved answer': _('Use saved answer'),
+      'Apply choices to my draft': _('Apply choices to my draft'),
+      'Choose an answer for each changed field.': _('Choose an answer for each changed field.'),
+      'Changes compared. Review your answers and save the draft.': _('Changes compared. Review your answers and save the draft.')
+    },
+    'organizations': organizations,
+    'reportId': activity.id if activity else '',
     'sections': {
       'section-1': _('General information'),
       'section-2': _('Priority area and output'),
@@ -837,6 +881,7 @@
     }
   } %}
   <script type="application/json" id="ihpix-report-config">{{ ihpix_report_config|tojson }}</script>
+  <script src="{{ h.url_for_static('/js/ihpix-relations.js') }}"></script>
   {% asset 'theme/ihpix-report-js' %}
 
 {% endif %}

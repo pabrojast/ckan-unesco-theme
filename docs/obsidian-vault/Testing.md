@@ -297,3 +297,26 @@ La validación en navegador cubre catálogo, edición, relaciones y tamaño móv
 ## Encabezado responsive (2026-10-01)
 
 Verificar inicio, catálogo y Rapid Response entre 320 y 1920 px, incluyendo 768/800/820/991/992/1024/1199/1366. En catálogo y Rapid Response, el ancho del documento debe coincidir con el viewport. En inicio, comparar además con la versión previa: la auditoría detectó desbordamiento preexistente fuera del encabezado (480 px de documento a 320 px), idéntico antes y después del parche. Comprobar el menú móvil abierto/cerrado, la navegación que pasa a varias líneas, el foco del buscador y su panel de sugerencias. Repetir con traducciones. La prueba del candidato debe cargar el CSS real del checkout en el orden de producción y repetirse con los assets de la imagen final y las URLs públicas. Ver [[Troubleshooting]].
+
+## Aceptación IHP-IX de septiembre (2026-10-21)
+
+```bash
+PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python3 -m pytest -q ckanext/theme_ejemplo/tests/test_ihpix_*.py
+python3 scripts/build_ihpix_taxonomy_data.py --check
+IHPIX_QA_TOKENS=/ruta/privada/tokens.json python3 scripts/ihpix_review_acceptance.py
+```
+
+El script HTTP exige localhost, cinco usuarios QA (`admin`, `author`, `collaborator`, `observer`, `outsider`) y tokens en JSON privado. El administrador QA es sysadmin; el espacio 1.10 debe existir, activo y sin lead. Usa copia aislada de DEV, registra baseline de publicados y elimina sus reportes al terminar. No apuntarlo a un port-forward de un entorno compartido: modifica membresías y estados de espacios durante las pruebas.
+
+Resultados: 146 tests puros, 29 checks HTTP y pruebas adicionales de privacidad, rollback y navegador. Matriz y límites de la evidencia en [[IHP-IX Review September 2026]]. Estas comprobaciones no equivalen a ejecutar todo el CI histórico de CKAN 2.9.
+
+El recorrido de navegador reproducible está en `scripts/playwright/ihpix_review.cjs` (Node + Playwright):
+
+```bash
+IHPIX_QA_TOKENS=/ruta/privada/tokens.json IHPIX_QA_OUTPUT=/tmp/ihpix-browser \
+  node scripts/playwright/ihpix_review.cjs
+```
+
+Guarda capturas/PDF fuera de Git y elimina el reporte que crea al finalizar correctamente. `IHPIX_QA_BASE` permite otro puerto local; exige la misma instancia aislada del script HTTP. Los recorridos de archivos/eventos y Excel se validaron además con fixtures locales privados.
+
+Regresiones reproducibles adicionales: `scripts/ihpix_review_privacy.py` (14 checks; además exige `IHPIX_QA_FIXTURES` con `package`/`package_name` de un dataset privado del autor, inaccesible al colaborador) y `scripts/ihpix_review_rollback.py` (4 checks; archiva/restaura 1.10 para provocar fallo en la segunda fila). Ejecutarlas secuencialmente en la instancia aislada, con `IHPIX_QA_TOKENS` definido. No usan archivos reales de usuarios.

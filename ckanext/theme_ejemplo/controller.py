@@ -212,8 +212,9 @@ def _ihpix_links_map(activities):
             IhpixActivityLink, init_ihpix_activity_links_db,
         )
         init_ihpix_activity_links_db()
-        return IhpixActivityLink.get_for_activities(
-            [a.get('id') for a in activities or []])
+        from ckanext.theme_ejemplo.ihpix_resource_access import filtered
+        links = IhpixActivityLink.get_for_activities([a.get('id') for a in activities or []])
+        return {key: filtered(value, c.userobj) for key, value in links.items()}
     except Exception as e:
         log.warning('IHP-IX: no se pudieron cargar los adjuntos: %s', e)
         return {}
@@ -1789,15 +1790,13 @@ class MyLogica():
                 offset = items_per_page * (page - 1)
 
                 try:
-                    # Buscar por título de organización (no slug) para mejor matching
-                    org_title = org.get('title', '')
-                    org_name = org.get('name', '')
+                    # Atribución verificada por ID, sin coincidencias de texto ambiguas.
                     results, total = IhpixActivity.get_published(
                         priority_area=pa_filter or None,
                         output=output_filter or None,
                         q_text=q or None,
                         biennium=biennium_filter or None,
-                        organization=org_title or org_name or None,
+                        organization=org['id'],
                         limit=items_per_page,
                         offset=offset,
                     )
@@ -4211,6 +4210,7 @@ class MyLogica():
 
         # Todos los campos del formulario de actividades IHP-IX
         _IHPIX_FORM_FIELDS = (
+            'expected_revision',
             'title', 'description', 'priority_area', 'output', 'country',
             'institution', 'link', 'image_url', 'status', 'reported_date',
             'contact_name', 'contact_email', 'reported_by',
@@ -4374,7 +4374,13 @@ class MyLogica():
             # Member states desde los grupos CKAN (hijos de `member-states`);
             # fallback a la lista ISO-2 si el portal aún no los tiene.
             ms_groups = get_member_states_for_select() or list(C.MEMBER_STATES)
+            from ckanext.theme_ejemplo import ihpix_relations as R
+            organizations = toolkit.get_action('organization_list')(
+                {'user': c.user or ''}, {'all_fields': True, 'limit': 1000})
             return dict(
+                organizations=[{'id': o['id'], 'title': o.get('title') or o['name']}
+                               for o in organizations],
+                country_metadata=R.countries(),
                 priority_areas=C.PRIORITY_AREAS,
                 outputs_by_pa=C.OUTPUTS,
                 biennia=C.BIENNIA,
@@ -4402,6 +4408,7 @@ class MyLogica():
             (fuente de verdad en servidor) y el envío vuelve a "mis reportes".
             """
             from ckanext.theme_ejemplo import ihpix_constants as C
+            from ckanext.theme_ejemplo.ihpix_service import RevisionConflict
             if not c.user:
                 return jsonify({'success': False,
                                 'error': _('You must be logged in')}), 403
@@ -4426,11 +4433,18 @@ class MyLogica():
                             'title': result.get('title', '')})
                 return jsonify({'success': True, 'message': msg,
                                 'data': result, 'next_url': next_url})
+            except RevisionConflict as e:
+                model.Session.rollback()
+                return jsonify({'success': False, 'code': 'revision_conflict',
+                                'current': e.current,
+                                'error': _('Another editor saved a newer version. Compare the changes before saving again.')}), 409
             except toolkit.ValidationError as e:
+                model.Session.rollback()
                 return jsonify({'success': False,
                                 'errors': e.error_dict,
                                 'error': _format_error_dict(e.error_dict)}), 400
             except toolkit.NotAuthorized:
+                model.Session.rollback()
                 return jsonify({'success': False,
                                 'error': _('Not authorized')}), 403
             except toolkit.ObjectNotFound:
@@ -4457,6 +4471,14 @@ class MyLogica():
                     'ihpix_report_submit', {})
 
             form_initial = {}
+            if c.userobj:
+                form_initial.update(focal_point_name=c.userobj.fullname or c.userobj.name,
+                                    contact_email=c.userobj.email or '')
+                orgs = toolkit.get_action('organization_list_for_user')(
+                    {'user': c.user}, {'id': c.userobj.id, 'permission': 'read'})
+                if len(orgs) == 1:
+                    form_initial.update(institution_org_id=orgs[0]['id'],
+                                        institution=orgs[0].get('title') or orgs[0]['name'])
             pa = request.args.get('pa', '').strip()
             output = request.args.get('output', '').strip()
             if output and not pa:

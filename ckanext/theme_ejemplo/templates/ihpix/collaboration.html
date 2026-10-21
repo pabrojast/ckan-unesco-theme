@@ -1,0 +1,30 @@
+{% extends 'ihpix/tools_base.html' %}
+{% macro item_fields(item, prefix) %}
+  <label for="{{ prefix }}-kind">{{ _('Type') }}</label>
+  <select name="kind" id="{{ prefix }}-kind"><option value="comment">{{ _('Comment') }}</option><option value="task"{% if item.kind == 'task' %} selected{% endif %}>{{ _('Task') }}</option></select>
+  <label for="{{ prefix }}-title">{{ _('Task title') }}</label><input name="title" id="{{ prefix }}-title" value="{{ item.title or '' }}" maxlength="300">
+  <label for="{{ prefix }}-body">{{ _('Description or comment') }}</label><textarea name="body" id="{{ prefix }}-body" rows="4" maxlength="10000" required>{{ item.body or '' }}</textarea>
+  <label for="{{ prefix }}-assignee">{{ _('Assigned to') }}</label><select name="assignee_id" id="{{ prefix }}-assignee"><option value="">—</option>{% for person in people if person.role != 'observer' %}<option value="{{ person.id }}"{% if person.id == item.assignee_id %} selected{% endif %}>{{ person.name }}</option>{% endfor %}</select>
+  <label for="{{ prefix }}-due">{{ _('Due date') }}</label><input type="date" id="{{ prefix }}-due" name="due_date" value="{{ item.due_date or '' }}">
+  <label for="{{ prefix }}-status">{{ _('Status') }}</label><select id="{{ prefix }}-status" name="status">{% for value, label in [('pending', _('Pending')), ('in_progress', _('In progress')), ('completed', _('Completed'))] %}<option value="{{ value }}"{% if item.status == value %} selected{% endif %}>{{ label }}</option>{% endfor %}</select>
+  <label for="{{ prefix }}-activity">{{ _('Related activity (optional)') }}</label><select id="{{ prefix }}-activity" name="activity_id"><option value="">—</option>{% for activity in activities %}<option value="{{ activity.id }}"{% if activity.id == item.activity_id %} selected{% endif %}>{{ activity.title }}</option>{% endfor %}</select>
+  <label for="{{ prefix }}-resource">{{ _('Attached resource (optional)') }}</label><select id="{{ prefix }}-resource" name="link_id"><option value="">—</option>{% for resource in resources %}<option value="{{ resource.id }}" data-activity="{{ resource.activity_id }}"{% if resource.id == item.link_id %} selected{% endif %}>{{ resource.title }}</option>{% endfor %}</select>
+{% endmacro %}
+{% block tools_content %}
+<h1>{{ workspace.output_code }} · {{ _('Workspace collaboration') }}</h1>
+<p><a href="{{ h.url_for('theme_ejemplo.ihpix_workspace_detail', code=workspace.output_code) }}">{{ workspace.title }}</a></p>
+{% if workspace.status == 'archived' %}<p role="status">{{ _('This workspace is archived and read-only.') }}</p>{% endif %}
+{% if result.can_write %}
+<details class="ix-tools-card"><summary>{{ _('Add a comment or task') }}</summary><form method="post">{{ h.csrf_input() }}{{ item_fields({}, 'new') }}<button class="btn btn-primary">{{ _('Save') }}</button></form></details>
+{% endif %}
+{% for item in result.results %}
+<article class="ix-tools-card" id="item-{{ item.id }}">
+  <h2>{{ item.title or _('Comment') }}</h2><p class="ix-preserve">{{ item.body }}</p>
+  <p>{{ item.status }}{% if item.due_date %} · {{ _('Due date') }}: {{ item.due_date }}{% endif %} · {{ item.updated_at }}</p>
+  {% if item.activity_id %}<a href="{{ item.activity_url }}">{{ item.activity_title }}</a>{% endif %}
+  {% if item.can_edit %}<details><summary>{{ _('Edit') }}</summary><form method="post">{{ h.csrf_input() }}<input type="hidden" name="id" value="{{ item.id }}"><input type="hidden" name="expected_revision" value="{{ item.revision }}">{{ item_fields(item, item.id) }}<button class="btn btn-primary">{{ _('Save') }}</button><button class="btn" name="delete" value="1">{{ _('Remove') }}</button></form></details>{% endif %}
+  {% if item.can_update_status and not item.can_edit %}<form method="post">{{ h.csrf_input() }}<input type="hidden" name="id" value="{{ item.id }}"><input type="hidden" name="expected_revision" value="{{ item.revision }}"><label for="status-{{ item.id }}">{{ _('Update task status') }}</label><select id="status-{{ item.id }}" name="status">{% for value, label in [('pending', _('Pending')), ('in_progress', _('In progress')), ('completed', _('Completed'))] %}<option value="{{ value }}"{% if item.status == value %} selected{% endif %}>{{ label }}</option>{% endfor %}</select><button class="btn btn-primary">{{ _('Save') }}</button></form>{% endif %}
+</article>
+{% else %}<p>{{ _('No comments or tasks yet.') }}</p>{% endfor %}
+<script>document.querySelectorAll('select[name=activity_id]').forEach(function(activity){var resource=activity.form.elements.link_id,options=Array.from(resource.options);function update(){var selected=resource.value;resource.replaceChildren();options.filter(function(x){return !x.value||x.dataset.activity===activity.value;}).forEach(function(x){resource.appendChild(x);});resource.value=Array.from(resource.options).some(function(x){return x.value===selected;})?selected:'';}activity.addEventListener('change',update);update();});</script>
+{% endblock %}

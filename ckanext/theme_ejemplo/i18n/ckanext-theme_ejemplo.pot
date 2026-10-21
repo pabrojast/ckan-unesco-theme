@@ -8487,3 +8487,3119 @@ msgstr ""
 msgid "Login"
 msgstr ""
 
+#: ckanext/theme_ejemplo/controller.py:4405
+msgid "Another editor saved a newer version. Compare the changes before saving again."
+msgstr ""
+
+#: ckanext/theme_ejemplo/controller.py:4814
+msgid "Flagship initiative not found"
+msgstr ""
+
+#: ckanext/theme_ejemplo/ihpix_i18n_strings.py:58
+msgid "Report or paper"
+msgstr ""
+
+#: ckanext/theme_ejemplo/ihpix_i18n_strings.py:59
+msgid "Statistic or data source"
+msgstr ""
+
+#: ckanext/theme_ejemplo/ihpix_i18n_strings.py:60
+msgid "Brochure"
+msgstr ""
+
+#: ckanext/theme_ejemplo/ihpix_i18n_strings.py:80
+msgid "Presentation"
+msgstr ""
+
+#: ckanext/theme_ejemplo/ihpix_i18n_strings.py:80
+msgid "Lecture"
+msgstr ""
+
+#: ckanext/theme_ejemplo/ihpix_i18n_strings.py:80
+msgid "Training video"
+msgstr ""
+
+#: ckanext/theme_ejemplo/ihpix_i18n_strings.py:81
+msgid "Module"
+msgstr ""
+
+#: ckanext/theme_ejemplo/ihpix_i18n_strings.py:81
+msgid "Handout"
+msgstr ""
+
+#: ckanext/theme_ejemplo/ihpix_i18n_strings.py:81
+msgid "Textbook"
+msgstr ""
+
+#: ckanext/theme_ejemplo/ihpix_i18n_strings.py:85
+#: ckanext/theme_ejemplo/ihpix_i18n_strings.py:107
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:612
+msgid "Training materials"
+msgstr ""
+
+#: ckanext/theme_ejemplo/ihpix_i18n_strings.py:85
+msgid "Training courses"
+msgstr ""
+
+#: ckanext/theme_ejemplo/ihpix_i18n_strings.py:89
+msgid "FRIEND-Water"
+msgstr ""
+
+#: ckanext/theme_ejemplo/ihpix_i18n_strings.py:89
+msgid "LaSII"
+msgstr ""
+
+#: ckanext/theme_ejemplo/ihpix_i18n_strings.py:89
+msgid "IAHR Label for Water Training and Education"
+msgstr ""
+
+#: ckanext/theme_ejemplo/ihpix_i18n_strings.py:105
+#: ckanext/theme_ejemplo/templates/ihpix/activity_detail.html:11
+#: ckanext/theme_ejemplo/templates/ihpix/narrative.html:21
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:285
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:475
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:542
+msgid "Scientific products"
+msgstr ""
+
+#: ckanext/theme_ejemplo/ihpix_i18n_strings.py:106
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:568
+msgid "Knowledge improvement"
+msgstr ""
+
+#: ckanext/theme_ejemplo/ihpix_i18n_strings.py:109
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:665
+msgid "Awareness raising"
+msgstr ""
+
+#: ckanext/theme_ejemplo/ihpix_i18n_strings.py:110
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:696
+msgid "Transboundary water systems"
+msgstr ""
+
+#: ckanext/theme_ejemplo/ihpix_i18n_strings.py:116
+msgid "How many knowledge/scientific products did the activities produce?"
+msgstr ""
+
+#: ckanext/theme_ejemplo/ihpix_i18n_strings.py:117
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:317
+msgid "How many key stakeholders had their knowledge improved?"
+msgstr ""
+
+#: ckanext/theme_ejemplo/ihpix_i18n_strings.py:118
+msgid "How much training material did the activities produce?"
+msgstr ""
+
+#: ckanext/theme_ejemplo/ihpix_i18n_strings.py:119
+msgid ""
+"How many curricula were produced/revised to include sustainable water "
+"management?"
+msgstr ""
+
+#: ckanext/theme_ejemplo/ihpix_i18n_strings.py:120
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:374
+msgid "How many key stakeholders have been informed?"
+msgstr ""
+
+#: ckanext/theme_ejemplo/ihpix_i18n_strings.py:121
+msgid ""
+"What number of member states were supported in improving their transboundary "
+"water systems management and governance?"
+msgstr ""
+
+#: ckanext/theme_ejemplo/ihpix_i18n_strings.py:122
+msgid ""
+"What number of member states and stakeholder groups have been "
+"supported/strengthened in their capacity?"
+msgstr ""
+
+#: ckanext/theme_ejemplo/ihpix_i18n_strings.py:128
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:543
+msgid "Did the activity generate scientific products?"
+msgstr ""
+
+#: ckanext/theme_ejemplo/ihpix_i18n_strings.py:129
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:569
+msgid "Did the activity improve knowledge of stakeholders?"
+msgstr ""
+
+#: ckanext/theme_ejemplo/ihpix_i18n_strings.py:130
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:613
+msgid ""
+"Did the activity produce any training materials or was a training course "
+"implemented?"
+msgstr ""
+
+#: ckanext/theme_ejemplo/ihpix_i18n_strings.py:133
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:697
+msgid ""
+"Did the activity support Member States in improving their transboundary water"
+" systems (surface water and groundwater) management and governance?"
+msgstr ""
+
+#: ckanext/theme_ejemplo/ihpix_i18n_strings.py:138
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:532
+msgid "How many knowledge products were generated?"
+msgstr ""
+
+#: ckanext/theme_ejemplo/ihpix_i18n_strings.py:139
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:558
+msgid "How many scientific products were generated?"
+msgstr ""
+
+#: ckanext/theme_ejemplo/ihpix_i18n_strings.py:140
+msgid ""
+"How many key stakeholders improved their knowledge as a result of the "
+"activity?"
+msgstr ""
+
+#: ckanext/theme_ejemplo/ihpix_i18n_strings.py:141
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:637
+msgid ""
+"How many training materials were produced or how many training courses were "
+"implemented?"
+msgstr ""
+
+#: ckanext/theme_ejemplo/ihpix_i18n_strings.py:142
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:655
+msgid "How many educational curricula were produced or revised?"
+msgstr ""
+
+#: ckanext/theme_ejemplo/ihpix_i18n_strings.py:143
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:673
+msgid "How many key stakeholders have been reached by the awareness-raising activity?"
+msgstr ""
+
+#: ckanext/theme_ejemplo/ihpix_i18n_strings.py:144
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:703
+msgid ""
+"How many Member States were supported in improving their transboundary water "
+"systems?"
+msgstr ""
+
+#: ckanext/theme_ejemplo/ihpix_i18n_strings.py:145
+msgid "What is the number of Stakeholder Groups that benefitted from the Activity?"
+msgstr ""
+
+#: ckanext/theme_ejemplo/ihpix_i18n_strings.py:150
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:64
+msgid "Overall"
+msgstr ""
+
+#: ckanext/theme_ejemplo/ihpix_i18n_strings.py:151
+msgid "Flagship Initiative"
+msgstr ""
+
+#: ckanext/theme_ejemplo/ihpix_i18n_strings.py:151
+msgid "Cross-cutting Working Group"
+msgstr ""
+
+#: ckanext/theme_ejemplo/ihpix_i18n_strings.py:152
+msgid "Unspecified"
+msgstr ""
+
+#: ckanext/theme_ejemplo/ihpix_i18n_strings.py:166
+msgid "Enter a whole number between 0 and 2147483647"
+msgstr ""
+
+#: ckanext/theme_ejemplo/ihpix_i18n_strings.py:183
+msgid "Key outputs and outcomes are required"
+msgstr ""
+
+#: ckanext/theme_ejemplo/ihpix_i18n_strings.py:184
+msgid "Priority Area is required"
+msgstr ""
+
+#: ckanext/theme_ejemplo/ihpix_i18n_strings.py:185
+msgid "Output is required"
+msgstr ""
+
+#: ckanext/theme_ejemplo/ihpix_i18n_strings.py:186
+msgid "Please answer yes or no"
+msgstr ""
+
+#: ckanext/theme_ejemplo/ihpix_i18n_strings.py:187
+msgid "Key activity {code} does not belong to output {output}"
+msgstr ""
+
+#: ckanext/theme_ejemplo/ihpix_i18n_strings.py:220
+msgid "Implementation overview"
+msgstr ""
+
+#: ckanext/theme_ejemplo/ihpix_i18n_strings.py:221
+msgid "Knowledge and scientific products"
+msgstr ""
+
+#: ckanext/theme_ejemplo/ihpix_i18n_strings.py:222
+msgid "Knowledge exchange"
+msgstr ""
+
+#: ckanext/theme_ejemplo/ihpix_i18n_strings.py:223
+msgid "Training and education"
+msgstr ""
+
+#: ckanext/theme_ejemplo/ihpix_i18n_strings.py:224
+msgid "Activities by scope"
+msgstr ""
+
+#: ckanext/theme_ejemplo/ihpix_i18n_strings.py:225
+msgid "Activities by Output"
+msgstr ""
+
+#: ckanext/theme_ejemplo/ihpix_i18n_strings.py:226
+msgid "Distinct countries"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:229
+msgid "Key Activity code"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:231
+msgid "e.g. 1.3.2 (Operational Implementation Plan)"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/hub_datasets_intro.html:5
+msgid "Tool catalogue · Pillar 1"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/hub_datasets_intro.html:6
+msgid "AI4Water Tool Database"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/hub_datasets_intro.html:7
+msgid ""
+"Open, documented AI tools and methods for water management, from flood and "
+"drought tools to day-to-day operational hydrology, with linked training "
+"resources."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/hub_datasets_intro.html:8
+msgid "Browse the tools"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/hub_datasets_intro.html:12
+msgid "Real-time data · Pillar 2"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/hub_datasets_intro.html:13
+msgid "IHP-WINS IoT Portal"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/hub_datasets_intro.html:14
+msgid ""
+"Live data from low-cost environmental monitoring networks, an open "
+"infrastructure to feed real-time observations into models and decision tools."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/hub_datasets_intro.html:15
+msgid "Open the portal"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/hub_documents_intro.html:4
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:260
+msgid "Cover of Applications of AI for water management"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/hub_documents_intro.html:6
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:262
+msgid "Flagship publication · UNESCO / Deltares 2025"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/hub_documents_intro.html:7
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:263
+msgid "Applications of AI"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/hub_documents_intro.html:7
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:31
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:263
+msgid "for water management"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/hub_documents_intro.html:8
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:264
+msgid ""
+"The state of the art of AI and machine learning across water resources, water"
+" risk, climate change adaptation and water quality, with a chapter on ethics "
+"and responsible AI. Open access under CC-BY-SA 3.0 IGO."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/hub_documents_intro.html:9
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:265
+msgid "Read on UNESDOC"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/hub_stories_intro.html:5
+msgid "Open call"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/hub_stories_intro.html:6
+msgid "Share your case study"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/hub_stories_intro.html:7
+msgid ""
+"Task Force members' applications feed this library and the course module on "
+"AI in water science and practice. All contributions are credited."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/hub_stories_intro.html:9
+msgid "Get involved"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:28
+msgid "IHP-IX Output 1.9 · Strategy & Task Force"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:30
+msgid "Artificial Intelligence"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:33
+msgid ""
+"Helping UNESCO Member States and the Water Family use AI responsibly for "
+"water security, climate resilience and evidence-based water governance, "
+"through open science, capacity development and international cooperation."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:35
+msgid "Join the Task Force"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:37
+msgid "Explore the AI4Water Tool Database"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:41
+msgid ""
+"Illustration of a human head whose brain is made of water waves, circuits and"
+" gears with water drops"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:47
+msgid "Key figures"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:49
+msgid "strategic pillars, from tools to policy"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:50
+msgid "Task Force work streams"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:51
+msgid "people in 100+ Member States reached by 2029 (target)"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:52
+msgid "IHP-IX outputs the Strategy contributes to"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:60
+msgid "Why it matters"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:61
+msgid "Water problems first, AI second"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:63
+msgid ""
+"Climate variability, growing demand, ageing infrastructure and data-scarce "
+"basins are outpacing conventional monitoring and modelling. AI, combined with"
+" Earth observation, monitoring networks, citizen science and real-time "
+"sensors, can help close that gap."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:64
+msgid ""
+"Realising it takes more than technology: trustworthy data, ethical "
+"safeguards, institutional readiness and the capacity of countries to develop "
+"and govern their own AI-based water systems. That is why the Strategy gives "
+"as much weight to data, governance and skills as to the tools themselves."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:67
+msgid "Theory of change"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:69
+msgid "IF"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:69
+msgid ""
+"Member States and the Water Family have trustworthy data, sound governance "
+"and ethics, and adequate institutional and technical capacity,"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:70
+msgid "THEN"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:70
+msgid ""
+"they can apply AI responsibly and effectively to strengthen water security, "
+"climate resilience and evidence-based decisions,"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:71
+msgid "SO THAT"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:71
+msgid ""
+"water is managed sustainably and equitably, in support of SDG 6 and IHP-IX, "
+"with no country left dependent on AI it cannot understand, govern or adapt."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:79
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:82
+msgid "Output 1.9"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:79
+msgid "Tool Development"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:80
+msgid ""
+"Develop, map and share open, validated AI tools and methods, with Category 2 "
+"Centres and Chairs as development hubs."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:81
+msgid "AI4Water Tool Database on IHP-WINS"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:81
+msgid "Tool and software development with the Water Family"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:81
+msgid "Open digital ecosystems and compute partnerships"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:82
+msgid "Pilot Implementation"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:83
+msgid ""
+"Test, validate and scale high-impact AI applications through co-developed, "
+"replicable pilots on real national and regional challenges."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:84
+msgid "Pilots co-developed with Member States"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:84
+msgid "Guidelines on safe and effective use of AI"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:84
+msgid "Mobilising financial and technical resources"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:85
+msgid "Output 2.6"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:85
+msgid "AI Literacy"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:86
+msgid ""
+"Build the knowledge and skills to develop, evaluate and apply AI responsibly,"
+" through inclusive, practice-oriented learning."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:87
+msgid "Open Learning Course and multilingual MOOCs"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:87
+msgid "Regional workshops and Training-of-Trainers"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:87
+msgid "Youth and early-career engagement"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:88
+msgid "Outputs 5.1 · 3.1"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:88
+msgid "AI Readiness and Policy"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:89
+msgid ""
+"Help Member States build the institutional, governance and policy foundations"
+" to adopt and scale AI on their own terms."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:90
+msgid "AI4Water Readiness Framework and national roadmaps"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:90
+msgid "AI4Water Policy screening tool"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:90
+msgid "Science-policy dialogue, aligned with UNESCO AI ethics"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:96
+msgid "Strategic pillars"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:97
+msgid "Four pillars, one shared impact"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:99
+msgid ""
+"Each pillar answers a need raised by the 2025 Water Family consultations and "
+"the Global Survey on AI and Machine Learning in the Water Community."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:121
+msgid "AI for Water Task Force"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:122
+msgid "How the work gets done"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:124
+msgid ""
+"The Task Force coordinates delivery across the Water Family. AI is "
+"mainstreamed into existing Flagship Initiatives (FRIEND-Water, IFI, IDI and "
+"IIWQ) rather than set up as a new one. Every member commits to at least one "
+"work stream."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:128
+msgid "Work stream 1"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:129
+msgid "Supporting the Strategy"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:130
+msgid ""
+"Feeds the four pillars: tool entries, pilot proposals, literacy activities "
+"and review of the Readiness Framework, plus joint case studies and papers."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:133
+msgid "Work stream 2"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:134
+msgid "Open Learning Course on AI"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:135
+msgid ""
+"A 10–15 hour online course on the IHP Open Learning Platform: introduction, "
+"techniques, water applications, and ethics and risks. English pilot first, "
+"Spanish to follow."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:136
+msgid "Lead:"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:139
+msgid "Work stream 3"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:140
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:158
+msgid "Outreach and communication"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:141
+msgid ""
+"A communication plan built around these pages, a regular webinar series on "
+"Member State experience, and news, briefs and brochures from members' "
+"results."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:144
+msgid "Work stream 4"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:145
+msgid "Partnerships and resources"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:146
+msgid ""
+"Finds collaborations and funding (development banks, climate funds, donors, "
+"in-kind computing) and helps partners prepare joint proposals that integrate "
+"AI."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:151
+msgid "First deliverables"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:154
+msgid "Deliverable"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:154
+msgid "Work stream"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:154
+msgid "Timing"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:156
+msgid "Annual plan of action, with work stream leads named"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:156
+msgid "Secretariat and co-chairs"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:156
+msgid "Within 2 months, then yearly"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:157
+msgid "Input to the Strategy's Implementation Plan"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:157
+msgid "All pillars"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:157
+msgid "Within 6 months"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:158
+msgid "Communication plan and outreach materials"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:158
+msgid "Plan within 6 months"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:159
+msgid "At least two joint outputs per year (case study, paper, webinar or event)"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:159
+msgid "Yearly"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:160
+msgid "Capacity building reaching 10,000 people in 100+ Member States"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:160
+msgid "AI Literacy and the course"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:160
+msgid "By 2029"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:170
+msgid "Latest from the initiative"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:176
+msgid "Latest news"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:177
+msgid "All news"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:188
+#: ckanext/theme_ejemplo/templates/ai_water_portal/news_events.html:20
+msgid "No news linked to this initiative yet."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:195
+#: ckanext/theme_ejemplo/templates/ai_water_portal/news_events.html:26
+#: ckanext/theme_ejemplo/templates/ai_water_portal/snippets/header.html:98
+msgid "All events"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:210
+#: ckanext/theme_ejemplo/templates/ai_water_portal/news_events.html:41
+msgid "No events linked to this initiative yet."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:217
+msgid "All datasets"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:227
+msgid "No datasets in this initiative yet."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:229
+msgid "Browse the AI4Water Tool Database"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:235
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:373
+msgid "All data stories"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:245
+msgid "No data stories linked to this initiative yet."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:257
+msgid "All documents"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:284
+msgid "Working on AI and water?"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:284
+msgid "Join the Task Force."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:285
+msgid ""
+"Membership runs for two years and is voluntary. Members serve in their expert"
+" capacity, with balance across regions, gender, disciplines and career "
+"stages. All contributions are credited."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/landing.html:286
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:127
+msgid "Express your interest"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:9
+msgid "Category 2 Centres and institutes"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:9
+msgid "Centres and institutes"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:10
+msgid "UNESCO Chairs"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:11
+msgid "Research and academia"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:12
+msgid "Member State institutions"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:13
+msgid "UN system initiatives"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:13
+msgid "UN system"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:17
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:73
+msgid "Course lead"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:17
+msgid "Spain"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:18
+msgid "Leads the Open Learning Course on AI for Water Management."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:19
+msgid "Knowledge partner"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:19
+msgid "Netherlands"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:20
+msgid ""
+"Co-published Applications of AI for water management (UNESCO/Deltares, 2025),"
+" the evidence base for the Strategy."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:21
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:23
+msgid "Coordination link"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:21
+msgid "Geneva, Switzerland"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:22
+msgid ""
+"The Task Force is IHP’s coordination point with AI for Good, the UN platform "
+"for AI and the SDGs."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:23
+msgid "UNESCO and ITU"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:24
+msgid "UN initiative on AI and climate, co-led by UNESCO and ITU."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:25
+msgid "Paris, France"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:26
+msgid ""
+"Supports the course module on ethics and risks, and Pillar 4 on readiness and"
+" policy."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:27
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:29
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:31
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:33
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:35
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:37
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:39
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:41
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:43
+msgid "Invited"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:27
+msgid "Ljubljana, Slovenia"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:28
+msgid ""
+"UNESCO Category 2 Centre on AI, named in the Strategy as a technical hub for "
+"AI tool development."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:29
+msgid "Trieste, Italy"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:30
+msgid ""
+"Partner on the IHP-WINS IoT Portal, with work on TinyML and low-cost "
+"monitoring for data-scarce contexts."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:31
+msgid "Beijing, China"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:32
+msgid ""
+"UNESCO Category 2 Centre, named in the Strategy for computational "
+"infrastructure partnerships."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:33
+msgid "Brazil"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:34
+msgid ""
+"UNESCO Category 2 Centre, named in the Strategy for digital ecosystems and "
+"computing."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:35
+msgid "Austin, United States"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:36
+msgid "UNESCO Chair working on open data, AI, water and cities."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:37
+msgid "Barcelona, Spain"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:38
+msgid "Perspective on sustainable and equitable outcomes of AI for water."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:39
+msgid "Birmingham, United Kingdom"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:40
+msgid "UNESCO Chair in the water sciences."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:41
+msgid "Yichang, China"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:42
+msgid "University partner on AI and hydrology."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:43
+msgid "Republic of Korea"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:44
+msgid "National committee and Output 1.9 contributor."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:52
+msgid "Coordination"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:53
+msgid "Who to contact"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:59
+msgid "Associate Project Officer, UNESCO-IHP"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:60
+msgid ""
+"Secretariat focal point for IHP-IX Output 1.9 on emerging technologies. "
+"Coordinates the Strategy, the Task Force and IHP-WINS."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:61
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:67
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:131
+msgid "Secretariat"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:65
+msgid "UNESCO-IHP"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:66
+msgid "Co-author of Applications of AI for water management (UNESCO/Deltares, 2025)."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:71
+msgid "Spanish National Research Council (CSIC)"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:72
+msgid ""
+"Leads the design and development of the Open Learning Course on AI for Water "
+"Management."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:77
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:132
+msgid "Co-chairs"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:77
+msgid "To be elected by the Task Force"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:78
+msgid ""
+"Two members, ideally from different regions, chair meetings with the "
+"Secretariat for two years."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:88
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:138
+msgid "Network"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:89
+msgid "Partner institutions"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:92
+msgid "Filter partners by type"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:124
+msgid "How the Task Force is organised"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:126
+msgid ""
+"The Task Force works mainly online, with plenary meetings at least twice a "
+"year and smaller work stream groups in between. Decisions are taken by "
+"consensus. Membership is voluntary and unpaid, and members' institutions "
+"cover their own costs."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:131
+msgid ""
+"UNESCO-IHP convenes meetings, aligns work with IHP-IX, coordinates the course"
+" and reports to the IHP Council."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:132
+msgid ""
+"Chair meetings, prepare the annual plan of action and represent the Task "
+"Force at events."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:133
+msgid "Work stream leads"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:133
+msgid ""
+"Lead a pillar or course component, coordinate contributors and report "
+"progress."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/partners_body.html:134
+msgid ""
+"Join meetings, contribute to at least one work stream, review drafts and "
+"share the work in their networks."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/snippets/credit.html:2
+msgid ""
+"Illustrations: Ana Carolina Landi / Diecut is Design, from Applications of AI"
+" for water management (UNESCO/Deltares, 2025)."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/snippets/header.html:29
+#: ckanext/theme_ejemplo/templates/ai_water_portal/snippets/header.html:61
+msgid "Partners & people"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/snippets/header.html:29
+msgid "The Water Family, working together"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/snippets/header.html:29
+msgid "Partners and people"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/snippets/header.html:30
+msgid ""
+"Illustration of a robotic hand and a human hand around a water drop holding "
+"the globe"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/snippets/header.html:31
+msgid ""
+"The Strategy is delivered by UNESCO Category 2 Centres, UNESCO Chairs, Member"
+" State institutions, research partners and UN initiatives, coordinated by the"
+" IHP Secretariat and the AI for Water Task Force."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/snippets/header.html:32
+#: ckanext/theme_ejemplo/templates/ai_water_portal/snippets/header.html:62
+#: ckanext/theme_ejemplo/templates/ai_water_portal/snippets/header.html:88
+msgid "Knowledge hub"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/snippets/header.html:32
+msgid "Data, stories and documents"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/snippets/header.html:33
+msgid ""
+"Illustration of a head scanned by a magnifying glass, surrounded by "
+"documents, data charts and water symbols"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/snippets/header.html:34
+msgid ""
+"Open datasets and tools, case studies from members' work, and the key "
+"documents behind IHP's work on AI for water."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/snippets/header.html:35
+#: ckanext/theme_ejemplo/templates/ai_water_portal/snippets/header.html:63
+#: ckanext/theme_ejemplo/templates/ai_water_portal/snippets/header.html:96
+#: ckanext/theme_ejemplo/templates/ai_water_portal/snippets/header.html:97
+msgid "News & events"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/snippets/header.html:35
+msgid "Updates"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/snippets/header.html:36
+msgid ""
+"Illustration of rain, a dam, crops, a water truck and energy, connected by "
+"data"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/snippets/header.html:37
+msgid ""
+"Task Force meetings, webinars, course sessions and the latest from IHP's work"
+" on AI for water."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/snippets/header.html:38
+msgid "About the initiative"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/snippets/header.html:39
+msgid "Illustration of scales balancing people, data and the globe"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/snippets/header.html:40
+msgid "IHP-IX reporting"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/snippets/header.html:41
+msgid "Illustration of a satellite above the globe, with sensors, data and people"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/snippets/header.html:47
+msgid "Breadcrumb"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/snippets/header.html:89
+msgid "Datasets & tools"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ai_water_portal/snippets/header.html:90
+msgid "Case studies"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:48
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:74
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:75
+msgid "About IHP-WINS"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:49
+msgid "UNESCO Intergovernmental Hydrological Programme"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:53
+msgid "Bridging the Water Data Knowledge Gap"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:70
+msgid "Browse the data catalogue"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:85
+msgid ""
+"The Intergovernmental Hydrological Programme's Water Information Network "
+"System (IHP-WINS) promotes the sharing of water-related data among countries,"
+" organizations and stakeholders as part of the UNESCO IHP mandate."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:86
+msgid "Access the brochure"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:91
+msgid "Data integration"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:92
+msgid ""
+"Integrates water-related data from monitoring networks, research institutions"
+" and international organizations using standardized formats."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:96
+msgid "International cooperation"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:97
+msgid ""
+"Strengthens collaboration and knowledge exchange among water professionals at"
+" national, regional and global scales."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:101
+msgid "Evidence-based decisions"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:102
+msgid ""
+"Supports sustainable water management through tools for data visualization, "
+"analysis and informed decision-making."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:111
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:112
+msgid "Pause background video"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:112
+msgid "Play background video"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:134
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:136
+msgid "On this page"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:141
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:400
+msgid "Thematic viewers"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:142
+msgid "Water Family"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:144
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:523
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:541
+msgid "Spotlight"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:145
+msgid "Contribute data"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:156
+msgid "The network"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:157
+msgid "Member States, organizations and initiatives share data in hubs"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:158
+msgid ""
+"People join through their organization. Organizations contribute data, tools "
+"and expertise, and can work in several hubs at once. A record is published "
+"once and appears in every hub it belongs to."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:164
+msgid "Member State hubs"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:165
+msgid "Where it applies"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:166
+msgid ""
+"Country-level data, governance and reporting: national datasets, policies and"
+" plans, dashboards and indicators."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:167
+msgid "Browse Member States"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:170
+msgid "Organization hubs"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:171
+msgid "Who provides knowledge"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:172
+msgid ""
+"Institutions contribute datasets, research and publications, tools and "
+"methods, and capacity building."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:176
+msgid "Initiative hubs"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:177
+msgid "What is being done"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:178
+msgid ""
+"Project and programme data, activities and results: case studies, pilot "
+"solutions and lessons learned."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:179
+msgid "Browse initiatives"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:182
+msgid "Contribute"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:183
+msgid "Share your organization's water data"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:184
+msgid "Register, join or create an organization, and publish to the hubs you work in."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:195
+msgid "IHP-IX progress"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:207
+msgid "Data catalogue and geospatial viewer"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:208
+msgid ""
+"Search the catalogue, preview and download open water data, then open any "
+"layer on the map."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:219
+msgid "documents"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:221
+msgid "Browse the catalogue"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:228
+msgid "Maps · layers · data stories"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:230
+msgid "Open the viewer"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:240
+msgid "Explore data"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:242
+msgid "Recently added"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:254
+msgid "New datasets"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:263
+msgid "New publications"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:290
+msgid "No view statistics yet"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:303
+msgid "No download statistics yet"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:320
+msgid "Featured viewers, map rooms and data stories"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:321
+msgid ""
+"Interactive map viewers curated by UNESCO's Water Family, rapid response "
+"pages for water-related disasters, and data-driven narratives."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:345
+msgid "All viewers"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:346
+msgid "Featured viewers and map rooms"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:347
+msgid ""
+"Browse every viewer by theme: floods and droughts, water quality, "
+"groundwater, climate, urban water, ecohydrology, citizen science and IoT."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:348
+msgid "View all"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:355
+msgid "Disaster response"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:356
+msgid "Rapid Response & Recovery"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:360
+msgid "No emergency response events published yet"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:362
+msgid "All emergency response events"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:366
+msgid "Articles and data stories"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:367
+msgid "Data-driven narratives"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:371
+msgid "No data stories published yet"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:377
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:381
+msgid "Tools"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:377
+msgid "AI tools and applications for water management."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:381
+msgid "Open source software from the water community."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:389
+msgid "Early warning"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:390
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:391
+msgid "IHP portal"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:392
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:393
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:394
+msgid "External"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:401
+msgid "Monitoring portals for floods, droughts, water quality and more"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:402
+msgid ""
+"Early warning systems, citizen science, real-time sensors and partner "
+"databases, each in a dedicated viewer."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:427
+msgid "Water Family hub"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:428
+msgid "News, events and publications from the UNESCO Water Family"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:429
+msgid "Visit the community of practice"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:480
+msgid "IHP Open Learning Environment"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:485
+msgid "Capacity building"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:501
+msgid "Go to course"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:507
+msgid "All courses"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:508
+msgid "Water courses from the IHP and partners"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:521
+msgid "News and Events"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:544
+msgid "Pause slideshow"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:544
+msgid "Play slideshow"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/home/home_v2.html:548
+msgid "Spotlight slides"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/activity_detail.html:7
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:139
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:845
+msgid "Priority area and output"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/activity_detail.html:8
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:463
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:824
+msgid "Key activity"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/activity_detail.html:9
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:142
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:848
+msgid "Key performance indicators"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/activity_detail.html:10
+#: ckanext/theme_ejemplo/templates/ihpix/narrative.html:20
+msgid "Indicator"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/activity_detail.html:10
+#: ckanext/theme_ejemplo/templates/ihpix/narrative.html:20
+#: ckanext/theme_ejemplo/templates/ihpix/presentation.html:10
+msgid "Reported total"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/activity_detail.html:11
+#: ckanext/theme_ejemplo/templates/ihpix/narrative.html:21
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:284
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:474
+msgid "Knowledge products"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/activity_detail.html:11
+#: ckanext/theme_ejemplo/templates/ihpix/narrative.html:21
+msgid "Stakeholders reached through knowledge exchange"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/activity_detail.html:11
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:593
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:677
+msgid "Of which youth (18–35 years old)"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/activity_detail.html:11
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:599
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:683
+msgid "Of which female participants"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/activity_detail.html:11
+#: ckanext/theme_ejemplo/templates/ihpix/narrative.html:21
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:349
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:488
+msgid "Training materials and courses"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/activity_detail.html:11
+#: ckanext/theme_ejemplo/templates/ihpix/narrative.html:21
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:489
+msgid "Curricula"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/activity_detail.html:11
+#: ckanext/theme_ejemplo/templates/ihpix/narrative.html:21
+msgid "Stakeholders reached through awareness activities"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/activity_detail.html:11
+#: ckanext/theme_ejemplo/templates/ihpix/narrative.html:21
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:397
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:493
+msgid "Member States supported in transboundary water management, as reported"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/activity_detail.html:11
+#: ckanext/theme_ejemplo/templates/ihpix/narrative.html:21
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:398
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:494
+msgid "Stakeholder groups with strengthened capacity"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/activity_detail.html:13
+#: ckanext/theme_ejemplo/templates/ihpix/narrative.html:19
+msgid "Countries recorded in reporting, support or beneficiary roles"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/activity_detail.html:14
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:230
+msgid "Country of the institution"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/activity_detail.html:14
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:825
+msgid "Supporting country"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/activity_detail.html:14
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:479
+msgid "Which Member States benefited from the implemented activity?"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/activity_detail.html:15
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:144
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:850
+#: ckanext/theme_ejemplo/templates/ihpix/snippets/report_links_section.html:75
+msgid "Publications, events and data"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/activity_detail.html:16
+#: ckanext/theme_ejemplo/templates/ihpix/report_collaboration.html:14
+msgid "Version"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/collaboration.html:4
+msgid "Task"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/collaboration.html:5
+msgid "Task title"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/collaboration.html:6
+msgid "Description or comment"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/collaboration.html:7
+msgid "Assigned to"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/collaboration.html:8
+#: ckanext/theme_ejemplo/templates/ihpix/collaboration.html:23
+msgid "Due date"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/collaboration.html:9
+#: ckanext/theme_ejemplo/templates/ihpix/collaboration.html:26
+msgid "In progress"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/collaboration.html:9
+#: ckanext/theme_ejemplo/templates/ihpix/collaboration.html:26
+msgid "Completed"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/collaboration.html:10
+msgid "Related activity (optional)"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/collaboration.html:11
+msgid "Attached resource (optional)"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/collaboration.html:14
+msgid "Workspace collaboration"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/collaboration.html:16
+msgid "This workspace is archived and read-only."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/collaboration.html:18
+msgid "Add a comment or task"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/collaboration.html:26
+msgid "Update task status"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/collaboration.html:28
+msgid "No comments or tasks yet."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/import.html:3
+msgid "Import IHP-IX reports"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/import.html:4
+msgid ""
+"Upload a completed workbook, review validation results, then create drafts. "
+"Each draft can be completed and submitted separately."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/import.html:5
+msgid "Download XLSX template"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/import.html:6
+msgid "Completed XLSX workbook (up to 5 MB)"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/import.html:6
+msgid "Validate and preview"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/import.html:8
+msgid "Drafts created"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/import.html:11
+msgid "Invalid values: correct before importing"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/import.html:11
+msgid "Incomplete for submission: can be saved as drafts"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/import.html:15
+msgid "Confirm and create drafts"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/index.html:12
+msgid "IHP-IX reporting tools"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/index.html:12
+#: ckanext/theme_ejemplo/templates/ihpix/index.html:671
+#: ckanext/theme_ejemplo/templates/ihpix/index.html:871
+#: ckanext/theme_ejemplo/templates/ihpix/index.html:923
+#: ckanext/theme_ejemplo/templates/ihpix/output_detail.html:49
+#: ckanext/theme_ejemplo/templates/ihpix/priority_area.html:33
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:15
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:19
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:37
+msgid "Implementation progress"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/index.html:12
+#: ckanext/theme_ejemplo/templates/ihpix/tools_base.html:9
+msgid "Import reports"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/index.html:12
+#: ckanext/theme_ejemplo/templates/ihpix/narrative.html:3
+#: ckanext/theme_ejemplo/templates/ihpix/narrative.html:9
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:41
+#: ckanext/theme_ejemplo/templates/ihpix/tools_base.html:10
+msgid "Generate report"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/index.html:12
+#: ckanext/theme_ejemplo/templates/ihpix/notifications.html:3
+#: ckanext/theme_ejemplo/templates/ihpix/tools_base.html:11
+msgid "Notifications"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/index.html:872
+msgid ""
+"Track the IHP-IX key performance indicators by priority area, output, "
+"flagship initiative and working group."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/index.html:874
+msgid "Open the progress dashboards"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/narrative.html:4
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:62
+msgid "Scope"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/narrative.html:4
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:65
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:72
+msgid "Priority area"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/narrative.html:5
+msgid "Select scope"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/narrative.html:9
+#: ckanext/theme_ejemplo/templates/ihpix/narrative.html:14
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:44
+msgid "All bienniums"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/narrative.html:14
+msgid "IHP-IX implementation report"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/narrative.html:14
+#: ckanext/theme_ejemplo/templates/ihpix/presentation.html:11
+msgid "Generated"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/narrative.html:15
+msgid ""
+"This report uses published activity records. Review the narrative and its "
+"sources before sharing. Subtotals across multiple Priority Areas or Outputs "
+"can overlap; the overall activity count is unique."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/narrative.html:16
+msgid ""
+"Only verified organization links are included. Historical free-text "
+"institution names require reconciliation before they can be attributed to "
+"this organization."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/narrative.html:16
+msgid "Unlinked published records across the portal"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/narrative.html:19
+msgid "Published activities in the selected scope"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/narrative.html:19
+msgid "Participating institutions"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/narrative.html:22
+msgid "Reported results and sources"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/narrative.html:24
+msgid "No published activities match these filters. No results have been inferred."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/narrative.html:25
+#: ckanext/theme_ejemplo/templates/ihpix/presentation.html:6
+msgid "Print / Save as PDF"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/notifications.html:4
+msgid "Mark as read"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/notifications.html:4
+msgid "No notifications yet."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/presentation.html:6
+msgid "Presentation controls"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/presentation.html:9
+msgid "All bienniums and regions"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/presentation.html:10
+msgid "Indicator / scope"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/presentation.html:11
+msgid ""
+"Published records only. An activity counts once in the overall total and in "
+"each linked scope. Subtotals may overlap. Youth and female participants may "
+"overlap."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:13
+msgid "Scientific research"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:13
+msgid "Water education"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:13
+msgid "Data-knowledge gap"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:13
+msgid "Water management"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:13
+msgid "Water governance"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:36
+msgid "Intergovernmental Hydrological Programme · Phase IX, 2022–2029"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:40
+msgid "Presentation / PDF"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:51
+msgid "All regions"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:57
+msgid "Download data"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:67
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:94
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:138
+msgid "Flagship initiative"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:68
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:142
+msgid "Cross-cutting working group"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:115
+msgid "Activities count once overall and in each linked scope. Subtotals can overlap."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:118
+msgid "Activities by output"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:120
+msgid "Activities across outputs"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:121
+msgid "Each segment is one output. Select one to open its dashboard."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:136
+msgid ""
+"Activities, outputs and key performance indicators reported under this "
+"Priority Area of the IHP-IX Strategic Plan."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:140
+msgid ""
+"Activities can be reported under several Flagship Initiatives, so totals "
+"across initiatives may overlap."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:144
+msgid ""
+"Activities can contribute to several cross-cutting working groups, so totals "
+"across groups may overlap."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:168
+msgid "Dashboard sections"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:170
+msgid "Who is benefiting"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:172
+msgid "What was produced"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:173
+msgid "Stakeholders reached"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:175
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:280
+msgid "KPI 1 · Knowledge generation"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:176
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:316
+msgid "KPI 2 · Knowledge improvement"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:177
+msgid "KPI 3 and 4 · Training and curricula"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:178
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:373
+msgid "KPI 5 · Awareness raising"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:179
+msgid "KPI 6 and 8 · Member States and stakeholder groups supported"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:189
+msgid "Who is benefiting from the activities under output {code}?"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:189
+msgid "Who is benefiting from the activities?"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:192
+msgid "Activities reported"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:193
+msgid "Member States impacted"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:194
+msgid "Institutions reporting"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:196
+msgid "Reports pending review"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:202
+msgid "Reported activities per output"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:202
+msgid "Reported activities per key activity"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:202
+msgid "Reported activities per priority area"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:203
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:210
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:218
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:227
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:234
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:251
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:270
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:290
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:298
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:306
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:328
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:335
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:356
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:363
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:384
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:404
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:411
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:452
+msgid "Show as table"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:209
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:467
+msgid "Member States impacted per region"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:217
+msgid "Activity impact map"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:218
+msgid "Circle size: activities benefiting the Member State"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:226
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:472
+msgid "Activities per biennium"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:233
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:471
+msgid "Institutions with most activities"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:245
+msgid "KPI 1, 3 and 4"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:246
+msgid "What did the activities produce or revise under output {code}?"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:250
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:289
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:499
+msgid "Products per key activity"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:256
+msgid "Key activities of this output"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:264
+msgid "KPI 2 and 5"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:265
+msgid "How many stakeholders have been reached under output {code}?"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:269
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:500
+msgid "Stakeholders reached per key activity"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:281
+msgid "How many knowledge and scientific products did the activities produce?"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:289
+msgid "Products per output"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:289
+msgid "Products per priority area"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:297
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:478
+msgid "Knowledge products per type"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:301
+msgid "An activity that reports several types counts its products under each of them."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:305
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:479
+msgid "Scientific products per type"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:320
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:481
+msgid "Individuals with improved knowledge"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:321
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:378
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:484
+msgid "women"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:322
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:379
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:486
+msgid "youth, 18–35"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:327
+msgid "Stakeholders with improved knowledge, by output"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:327
+msgid "Stakeholders with improved knowledge, by key activity"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:327
+msgid "Stakeholders with improved knowledge, by priority area"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:334
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:483
+msgid "Individuals per knowledge generating activity"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:345
+msgid "KPI 3 · Training materials"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:345
+msgid "KPI 4 · Educational curricula"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:346
+msgid "How much training material and how many curricula did the activities produce?"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:350
+msgid "Curricula produced or revised"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:355
+msgid "Training materials and curricula per output"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:355
+msgid "Training materials and curricula per key activity"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:355
+msgid "Training materials and curricula per priority area"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:362
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:491
+msgid "Training material per type"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:377
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:482
+msgid "Individuals reached"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:383
+msgid "Stakeholders with raised awareness, by output"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:383
+msgid "Stakeholders with raised awareness, by key activity"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:383
+msgid "Stakeholders with raised awareness, by priority area"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:393
+msgid "KPI 6 · Transboundary water systems"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:393
+msgid "KPI 8 · Capacity support and strengthening"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:394
+msgid "Which Member States and stakeholder groups were supported?"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:403
+msgid "Member States of the activities improving transboundary water systems"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:410
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:495
+msgid "Stakeholder groups by type"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:451
+msgid "No activities match this selection yet."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:453
+msgid "Show as chart"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:454
+msgid "Updating…"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:455
+msgid "The data could not be updated. Reload the page to try again."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:456
+msgid "Category"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:459
+msgid "Activities per"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:460
+msgid "activities across"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:464
+msgid "priority area"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:473
+msgid "Names without a known Member State"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:476
+msgid "Products"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:477
+msgid "Products per"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:480
+msgid "Individuals"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:485
+msgid "youth"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:487
+msgid "per"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:490
+msgid "Materials"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:492
+msgid "Training materials and curricula per"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:497
+msgid "Knowledge improved"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:498
+msgid "Awareness raised"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html:502
+msgid "Not specified"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:14
+msgid "Edit IHP-IX activity report"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:14
+msgid "Report an IHP-IX activity"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:18
+msgid "Edit report"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:42
+msgid "required"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:48
+msgid "Please answer yes or no."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:58
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:82
+msgid "IHP-IX (2022–2029) · Reporting on implemented activities"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:59
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:83
+msgid "Report an implemented activity"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:63
+msgid "Sign in to report an activity"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:64
+msgid ""
+"Reports are linked to your IHP-WINS account so you can save drafts and come "
+"back later."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:65
+msgid "Sign in to continue"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:72
+msgid "Report submitted"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:73
+msgid ""
+"Thank you. The IHP Secretariat reviews every report before it is published. "
+"You will receive an email when it is published or returned with comments."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:75
+msgid "Go to my reports"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:76
+msgid "Report another activity"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:83
+msgid "Edit the activity report"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:84
+msgid ""
+"The form covers 7 sections aligned with the official UNESCO IHP-IX reporting "
+"guidelines"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:138
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:167
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:844
+msgid "General information"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:140
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:846
+msgid "Cross-cutting groups"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:141
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:456
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:847
+msgid "Region of implementation"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:145
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:772
+msgid "Review and submit"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:148
+msgid "Changes are kept on the server when you save the draft."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:148
+msgid ""
+"Your answers are kept in this browser as you type. You can leave and come "
+"back later."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:156
+msgid "Collaborators and saved versions"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:159
+msgid "Before you submit, review the following:"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:169
+msgid "The activity, who implemented it and when."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:180
+msgid "Email address of the focal point"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:181
+msgid "We use it only for questions about this report."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:188
+msgid "Who was the lead implementing institution?"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:189
+msgid ""
+"Choose the category that best represents the institution mainly responsible "
+"(one choice only)."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:199
+msgid "Please specify the type of institution"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:206
+msgid "Were there any other partners involved in the activity?"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:207
+msgid "If so, their names. Leave empty if there were none."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:214
+msgid "Name of the lead implementing institution"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:215
+msgid "If you chose 'Other' above, include the type of institution here too."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:216
+msgid "Organization on IHP-WINS"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:218
+msgid "External institution / enter name below"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:230
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:276
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:389
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:402
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:758
+msgid "optional"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:231
+msgid "Where the lead institution is based."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:243
+msgid "A descriptive title that captures the nature of the activity."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:250
+msgid "Main objectives and methods, in plain terms. 250 characters maximum."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:253
+msgid "A short description is required."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:257
+msgid "Key outputs and outcomes of the implemented activity"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:258
+msgid ""
+"What was developed, produced or implemented, and what changed as a result for"
+" the targeted public. 250 characters maximum."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:261
+msgid "Key outputs and outcomes are required."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:266
+msgid "In which biennium was the activity implemented?"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:281
+msgid "Add a start date"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:290
+msgid ""
+"Did the UNESCO Secretariat (Headquarters or Field Offices) participate in the"
+" implementation?"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:303
+msgid "Which Member State supported the implementation of the activity?"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:304
+msgid ""
+"Previously reported country. Add further supporting countries and their roles"
+" below."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:313
+msgid "Add supporting country"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:314
+msgid ""
+"Institution country, supporting countries and beneficiaries are recorded "
+"separately."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:326
+msgid "Under which Flagship Initiatives was the activity implemented?"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:327
+msgid "Select every initiative involved."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:344
+msgid "Contribution to the IHP-IX priority areas"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:346
+msgid ""
+"The priority area, output and key activity of the Operational Implementation "
+"Plan that the activity contributes to. Synergies with other priority areas go"
+" in section III."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:350
+msgid "Which priority area does this activity contribute to?"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:351
+msgid "The main priority area."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:353
+msgid "Select a priority area"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:362
+msgid "Which output does the activity contribute to?"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:363
+msgid "The most relevant output. The list follows the priority area chosen above."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:365
+msgid "Select an output"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:372
+msgid "Please select an output."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:376
+msgid "Which key activity does the activity contribute to?"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:377
+msgid ""
+"Key activities of the Operational Implementation Plan for the output chosen "
+"above."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:379
+msgid "Select a key activity"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:386
+msgid ""
+"The list of key activities for this output is pending confirmation. Describe "
+"the key activity below."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:387
+msgid "This key activity does not belong to the selected output."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:389
+msgid "How does the activity contribute to this key activity?"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:390
+msgid "e.g. Strengthened the regional network of…"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:395
+msgid "Additional contributions"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:396
+msgid ""
+"Add every related Priority Area, Output and key activity. Overall totals "
+"count this activity once; subtotals can overlap."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:399
+msgid "Add contribution"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:402
+msgid "Link to the activity"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:403
+msgid "A web page, report or video about the activity."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:415
+msgid "Contribution to the cross-cutting working groups"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:417
+msgid ""
+"Links with the three cross-cutting working groups, and synergies with other "
+"priority areas, outputs or key activities."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:422
+msgid "Which cross-cutting working groups does this activity contribute to?"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:423
+msgid "Select all that apply, or none."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:434
+msgid ""
+"Does the implemented activity have synergies with other priority areas, "
+"outputs or key activities?"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:439
+msgid "With which other priority areas, outputs or key activities?"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:440
+msgid ""
+"Use the numbers of the Operational Implementation Plan, for example "
+"\"Priority 3, Output 3.3, Key Activity 3.3.1\"."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:443
+msgid "Add synergy"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:458
+msgid ""
+"The regions and Member States that benefited from the activity. This feeds "
+"the geographical distribution in the IHP-IX reporting."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:463
+msgid "Did your activity benefit any Member States or specific regions?"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:469
+msgid "In which regions was the activity implemented?"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:470
+msgid ""
+"Select every region involved. If the activity targets all regions, select "
+"Global."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:480
+msgid ""
+"Search and tick every Member State that benefited. Selected states appear as "
+"removable tags."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:503
+msgid "Contribution to the IHP-IX key performance indicators and targets"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:505
+msgid ""
+"Answer yes or no for each indicator. A yes opens the questions needed for the"
+" IHP-IX targets. Counts are numbers of products, people or groups, not copies"
+" distributed."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:514
+msgid "Books, reports, assessments, statistics, tools, methodologies and similar."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:520
+msgid "What type of knowledge products was created, improved or disseminated?"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:527
+msgid "Please indicate what 'Other' type of knowledge product was created"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:532
+msgid "Target 1a"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:544
+msgid ""
+"Peer-reviewed articles, patents, scientific journal editions or conference "
+"proceedings."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:550
+msgid "What type of scientific products was created?"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:558
+msgid "Target 1b"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:570
+msgid ""
+"Capacity building, trainings, seminars or conferences that actively involved "
+"stakeholders."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:576
+msgid "What type of knowledge generating activity was implemented?"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:583
+msgid ""
+"Please indicate what 'Other' type of knowledge generating activity was "
+"organized"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:589
+msgid "Target 2"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:589
+msgid "How many key stakeholders improved their knowledge?"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:594
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:600
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:678
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:684
+msgid "An estimate is fine."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:614
+msgid "Physical or online training materials and courses."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:620
+msgid ""
+"What type of training materials were produced or training course was "
+"implemented?"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:632
+msgid "Please indicate what 'Other' type of training material or course was produced"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:637
+msgid "Target 3"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:655
+msgid "Target 4"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:673
+msgid "Target 5"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:703
+msgid "Target 6"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:714
+msgid ""
+"Did the activity strengthen the capacity of certain stakeholder groups (river"
+" basin groups, communities, sectors)?"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:720
+msgid "What type of stakeholder groups were targeted by the implemented activity?"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:730
+msgid "Please indicate what 'Other' stakeholder group was targeted"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:735
+msgid "Name of the stakeholder groups that benefited"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:735
+msgid "if possible"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:739
+msgid "Target 8"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:739
+msgid "How many stakeholder groups benefited from the activity?"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:740
+msgid "Number of organizations, not of people."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:755
+msgid ""
+"Anything relevant that the previous questions did not cover, including "
+"comments on the reporting process."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:758
+msgid "Do you have any relevant notes to add to your submission?"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:759
+msgid "Markdown is supported (bold, lists, links)."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:774
+msgid "Check each section below. Submit when nothing required is missing."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:779
+msgid "Required answered"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:779
+msgid "Action"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:784
+msgid ""
+"After submitting, the IHP Secretariat reviews the report before it is "
+"published. You can still open it from My reports until then, and you will get"
+" an email with the outcome."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:826
+msgid "Financial"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:827
+msgid "In-kind"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:828
+msgid "Hosting"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:830
+msgid "Partner organizations on IHP-WINS"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:831
+msgid "A newer version was saved. Choose which changes to keep."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:832
+msgid "Your answer"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:833
+msgid "Saved answer"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:834
+msgid "Choose an answer"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:835
+msgid "Keep my answer"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:836
+msgid "Use saved answer"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:837
+msgid "Apply choices to my draft"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:838
+msgid "Choose an answer for each changed field."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:839
+msgid "Changes compared. Review your answers and save the draft."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:867
+msgid "Complete"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:868
+msgid "Missing"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:869
+msgid "Optional"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:870
+msgid "with answers"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:871
+msgid "not filled"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:873
+msgid "Fix"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:875
+msgid "Everything required is answered. You can submit the report."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:876
+msgid "One required answer is missing. Fix it and submit."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:877
+msgid "{n} required answers are missing. Fix them and submit."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html:879
+msgid "yes or no"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report_collaboration.html:3
+msgid "Report collaboration"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report_collaboration.html:4
+msgid "Open report"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report_collaboration.html:5
+msgid ""
+"Collaborators can save draft changes. The author submits the report for "
+"review. Membership changes immediately affect editing access."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report_collaboration.html:7
+msgid "Invite an active workspace contributor"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report_collaboration.html:9
+msgid "Invite"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report_collaboration.html:11
+msgid "Revoked"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report_collaboration.html:12
+msgid "Revoke access"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report_collaboration.html:13
+msgid "Saved versions"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report_collaboration.html:14
+msgid "The next save will record the first version."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/tool_error.html:3
+msgid "Please correct these fields"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/tool_error.html:5
+msgid "Back to your answers"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/tools_base.html:6
+msgid "IHP-IX tools"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/workspace_detail.html:54
+msgid "No lead assigned. Site administrators handle membership requests."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/workspace_detail.html:102
+msgid "Comments and tasks"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/snippets/publication_modal.html:328
+msgid "Publication created. Save the report to keep this attachment."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/snippets/report_links_section.html:92
+msgid "Upload scientific publication"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/snippets/report_links_section.html:104
+msgid ""
+"Publications are attached immediately. Before opening a dataset or event "
+"editor, save your draft. The resource page offers “Attach this resource and "
+"return”."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/snippets/resource_return.html:4
+msgid ""
+"Your IHP-IX draft is saved. Finish creating the resource, then attach it and "
+"return to your report."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/snippets/resource_return.html:5
+msgid "Return to report"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/snippets/resource_return.html:6
+msgid "Attach this resource and return"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/user/dashboard.html:9
+#: ckanext/theme_ejemplo/templates/user/read_base.html:9
+msgid "My images"
+msgstr ""
+
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "If you have multiple activities to report, you can use the multiple upload option."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "This draft is visible to you and invited collaborators."
+msgstr ""

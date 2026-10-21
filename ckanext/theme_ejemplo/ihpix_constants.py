@@ -153,12 +153,9 @@ def output_label(code):
 
 # ─── Key Activities (Section II) ─────────────────────────────────────────
 #
-# El Operational Implementation Plan define key activities bajo cada
-# Output ("1.3.2. Research and …"). La lista oficial no está en el repo:
-# `data/ihpix_key_activities.json` se deriva de los reportes heredados con
-# `scripts/build_ihpix_taxonomy_data.py` (inferencia; ver vault IHP-IX) y
-# se sobreescribe sin tocar código cuando llegue la lista oficial.
-# Formato: {"1.3": [{"code": "1.3.2", "title": "…"}, …]}.
+# Preguntas públicas del formulario oficial UNESCO, snapshot 2026-10-21:
+# 151 actividades clave / 34 Outputs. El generador conserva la procedencia
+# y permite verificar los JSON sin depender de reportes de participantes.
 KEY_ACTIVITIES_FILE = os.path.join(os.path.dirname(__file__), 'data',
                                    'ihpix_key_activities.json')
 # '1.3.2' o '1.3.2. Texto…', pero no '1.3.2.1'
@@ -267,10 +264,12 @@ REGIONS = (
 # etiqueta de presentación cuando difiere ("FRIEND-Water", "LaSII").
 
 FLAGSHIPS = (
+    'CRIDA',
     'FRIEND',
     'GRAPHIC',
     'G-WADI',
     'HELP',
+    'IAHR Label',
     'IDI',
     'IFI',
     'IIWQ',
@@ -285,11 +284,13 @@ FLAGSHIPS = (
     'WAMU-NET',
     'WHYMAP',
     'WLRI',
+    'Youth4Water',
 )
 
 FLAGSHIP_LABELS = {
     'FRIEND': 'FRIEND-Water',
     'LASII': 'LaSII',
+    'IAHR Label': 'IAHR Label for Water Training and Education',
 }
 
 

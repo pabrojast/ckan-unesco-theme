@@ -819,7 +819,7 @@
         <button type="button" class="ihpact-modal-close" id="ihpact-modal-close" aria-label="{{ _('Close') }}">&times;</button>
       </div>
       <div class="ihpact-modal-body">
-        <input type="hidden" id="ihpact-edit-id" />
+        <input type="hidden" id="ihpact-edit-id" /><input type="hidden" id="ihpact-edit-revision" />
         <div id="ihpact-edit-loading" class="text-center" style="padding:40px; display:none;">
           <i class="fa fa-spinner fa-spin fa-3x"></i>
           <p style="margin-top:12px;">{{ _('Loading activity data...') }}</p>
@@ -1440,6 +1440,8 @@ fieldset.ixf-fieldset legend.ihpact-group-label { font-size: inherit; border: 0;
   /* ── Collect FormData from all fields ── */
   function collectFormData(prefix) {
     var fd = new FormData();
+    var revision = document.getElementById(prefix + '-revision');
+    if (revision) fd.append('expected_revision', revision.value);
     TEXT_FIELDS.forEach(function(f) {
       var el = document.getElementById(prefix + '-' + f);
       if (el) fd.append(idToName(f), el.value || '');
@@ -1470,6 +1472,7 @@ fieldset.ixf-fieldset legend.ihpact-group-label { font-size: inherit; border: 0;
   function populateEditForm(data) {
     var p = 'ihpact-edit';
     document.getElementById(p + '-id').value = data.id || '';
+    document.getElementById(p + '-revision').value = data.revision || 0;
 
     TEXT_FIELDS.forEach(function(f) {
       var el = document.getElementById(p + '-' + f);

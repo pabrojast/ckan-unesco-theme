@@ -162,3 +162,7 @@ Instalar `extensions/ckanext-learning` desde el repositorio Docker y utilizar
 las versiones compatibles de este tema y SchemingDCAT. No añade una librería
 de grafos: el diagrama de relaciones es SVG. Para tests aislados se requieren
 pytest, WebTest y lockfile (driver LOCAL). Ver [[Variables de Entorno]] y [[Testing]].
+
+## Dependencia XLSX de IHP-IX
+
+La revisión de 2026-10-21 requiere `openpyxl>=3.1.5,<4` (incluida en `requirements.txt`; imagen de DEV fijada en 3.1.5). No requiere Excel ni LibreOffice en el servidor. PDFs narrativos y presentaciones se imprimen desde el navegador. Para QA aislado se deben reemplazar también SMTP y almacenamiento remoto por servicios locales antes de subir archivos.

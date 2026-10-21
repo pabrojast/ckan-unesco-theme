@@ -667,3 +667,16 @@ La cabecera muestra la sección como **Learning**, con el título completo en el
 Con learning activo, la navegación usa una distribución adaptable: una fila en
 escritorio amplio, dos en tablet y menú desplegable con desplazamiento en móvil.
 Los enlaces no se ocultan para hacer espacio y el buscador conserva su ancho disponible.
+
+## Servicios IHP-IX de revisión (2026-10-21)
+
+- `ihpix_relations.py`: relaciones múltiples, países UNESCO y ámbitos sin duplicados.
+- `ihpix_service.py`: guardado compartido, permisos, estados y revisión optimista.
+- `ihpix_store.py`: tablas aditivas y snapshots transaccionales.
+- `ihpix_resource_access.py`: visibilidad real de paquetes, eventos y cursos.
+- `ihpix_collaboration.py`: acciones `ihpix_workspace_item_list/save`, `ihpix_report_collaboration_show`, `ihpix_report_collaborator_update`, `ihpix_notification_list/read`.
+- `ihpix_bulk.py`: XLSX versionado y validación pura; `ihpix_reporting.py`: acciones `ihpix_import_preview/show/create`, `ihpix_narrative_data`.
+- `ihpix_views.py`: vistas sobre el blueprint existente `theme_ejemplo`; servicios/API y HTML comparten reglas.
+- `ihpix_presentation.py`: diapositivas paginadas desde las estadísticas del dashboard.
+
+Las nuevas acciones registran auth correspondiente en `auth.py`; la comprobación por recurso también se aplica dentro del servicio. Detalle y matriz de requisitos: [[IHP-IX Review September 2026]].

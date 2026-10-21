@@ -1061,7 +1061,7 @@ class IhpixActivity(model.DomainObject):
     @classmethod
     def get_by_priority_area(cls, priority_area, status=None, limit=None):
         q = meta.Session.query(cls).filter(
-            cls.priority_area == priority_area
+            cls._association_filter('priority_area', priority_area)
         )
         if status:
             q = q.filter(cls.status == status)
@@ -1069,6 +1069,34 @@ class IhpixActivity(model.DomainObject):
         if limit:
             q = q.limit(limit)
         return q.all()
+
+    @classmethod
+    def _association_filter(cls, field, value):
+        from sqlalchemy import cast, func, or_, and_
+        from sqlalchemy.dialects.postgresql import JSONB
+        relations = cast(func.coalesce(func.nullif(cls.contributions_json, ''), '[]'), JSONB)
+        return or_(relations.contains([{field: value}]),
+                   and_(relations == [], getattr(cls, field) == value))
+
+    @classmethod
+    def _geographic_ids(cls, country=None, region=None):
+        """La misma semántica de países/roles/regiones que el panel de progreso."""
+        from flask import g, has_request_context
+        from ckanext.theme_ejemplo import ihpix_stats as stats
+        from ckanext.theme_ejemplo.actions import _ihpix_country_index
+        key = (country or '', region or '')
+        cache = getattr(g, '_ihpix_geography', {}) if has_request_context() else {}
+        if key not in cache:
+            fields = ('id', 'country', 'member_states', 'supporting_member_state',
+                      'supporters_json', 'regions')
+            rows = meta.Session.query(*(getattr(cls, f) for f in fields)).all()
+            index = _ihpix_country_index()
+            prepared = [stats.prepare_row(dict(zip(fields, row)), index) for row in rows]
+            cache[key] = [row['id'] for row in stats.filter_rows(prepared,
+                filters={'country': country, 'region': region}, country_index=index)]
+            if has_request_context():
+                g._ihpix_geography = cache
+        return cache[key]
 
     @classmethod
     def get_filtered(cls, status=None, priority_area=None, output=None,
@@ -1081,38 +1109,20 @@ class IhpixActivity(model.DomainObject):
         if status:
             q = q.filter(cls.status == status)
         if priority_area:
-            q = q.filter(cls.priority_area == priority_area)
+            q = q.filter(cls._association_filter('priority_area', priority_area))
         if output:
-            q = q.filter(cls.output == output)
+            q = q.filter(cls._association_filter('output', output))
         if biennium:
             q = q.filter(cls.biennium == biennium)
-        if country:
-            country_pattern = u'%' + country + u'%'
-            q = q.filter(
-                (cls.country == country) |
-                (cls.member_states.ilike(country_pattern)) |
-                (cls.supporting_member_state == country)
-            )
+        if country or region:
+            q = q.filter(cls.id.in_(cls._geographic_ids(country, region)))
         if organization:
-            # Búsqueda flexible: el título de la org puede diferir del nombre
-            # almacenado en institution/partners. Se generan variantes para
-            # maximizar coincidencias (ej: "WWF India" vs "World Wide Fund for Nature (WWF)")
-            org_variants = cls._build_org_search_variants(organization)
-            from sqlalchemy import or_
-            org_conditions = []
-            for variant in org_variants:
-                pattern = u'%' + variant + u'%'
-                org_conditions.extend([
-                    cls.institution.ilike(pattern),
-                    cls.partners.ilike(pattern),
-                    cls.country.ilike(pattern),
-                    cls.member_states.ilike(pattern),
-                    cls.supporting_member_state.ilike(pattern),
-                ])
-            if org_conditions:
-                q = q.filter(or_(*org_conditions))
-        if region:
-            q = q.filter(cls.regions.ilike(u'%' + region + u'%'))
+            from sqlalchemy import cast, func, or_
+            from sqlalchemy.dialects.postgresql import JSONB
+            org = model.Group.get(organization)
+            org_id = org.id if org and org.is_organization else organization
+            partners = cast(func.coalesce(func.nullif(cls.partner_org_ids, ''), '[]'), JSONB)
+            q = q.filter(or_(cls.institution_org_id == org_id, partners.contains([org_id])))
         if flagship:
             q = q.filter(cls.flagships.ilike(u'%' + flagship + u'%'))
         if ctwg:
@@ -1151,19 +1161,18 @@ class IhpixActivity(model.DomainObject):
         filters = filters or {}
         pa = filters.get('priority_area')
         if pa:
-            q = q.filter(cls.priority_area == pa)
+            q = q.filter(cls._association_filter('priority_area', pa))
         bi = filters.get('biennium')
         if bi:
             q = q.filter(cls.biennium == bi)
-        country = filters.get('country')
-        if country:
-            q = q.filter(cls.country == country)
+        country, region = filters.get('country'), filters.get('region')
+        if country or region:
+            q = q.filter(cls.id.in_(cls._geographic_ids(country, region)))
         output = filters.get('output')
         if output:
-            q = q.filter(cls.output == output)
-        region = filters.get('region')
-        if region:
-            q = q.filter(cls.regions.ilike(u'%' + region + u'%'))
+            q = q.filter(cls._association_filter('output', output))
+        if filters.get('ctwg'):
+            q = q.filter(cls.cross_cutting_wg.ilike('%' + filters['ctwg'] + '%'))
         flagship = filters.get('flagship')
         if flagship:
             q = q.filter(cls.flagships.ilike(u'%' + flagship + u'%'))
@@ -1210,11 +1219,20 @@ class IhpixActivity(model.DomainObject):
         q = q.group_by(cls.reported_by)
         total = q.count()
         rows = q.order_by(func.count(cls.id).desc()).offset(offset).limit(limit).all()
+        from ckanext.theme_ejemplo import ihpix_relations as R
+        coverage = {r.reported_by: {'priority_area': set(), 'output': set()} for r in rows}
+        if coverage:
+            reports = cls._apply_stat_filters(meta.Session.query(cls).filter(
+                cls.status == cls.STATUS_PUBLISHED, cls.reported_by.in_(coverage)), filters)
+            for report in reports:
+                for dimension in ('priority_area', 'output'):
+                    coverage[report.reported_by][dimension].update(
+                        R.dimension_values(report.as_dict(), dimension))
         return [{
             'reported_by': r.reported_by,
             'count': r.count,
-            'pa_count': r.pa_count,
-            'output_count': r.output_count,
+            'pa_count': len(coverage[r.reported_by]['priority_area']),
+            'output_count': len(coverage[r.reported_by]['output']),
             'last_at': r.last_at.isoformat() if r.last_at else None,
         } for r in rows], total
 
@@ -1234,23 +1252,24 @@ class IhpixActivity(model.DomainObject):
     @classmethod
     def get_output_biennium_matrix(cls, filters=None):
         """Actividades publicadas por Output × biennium (heatmap del dashboard)."""
-        from sqlalchemy import func
-        q = meta.Session.query(
-            cls.priority_area, cls.output, cls.biennium, func.count(cls.id)
-        ).filter(
-            cls.status == cls.STATUS_PUBLISHED,
-            cls.output != u'', cls.output != None,  # noqa: E711
-            cls.biennium != u'', cls.biennium != None  # noqa: E711
-        )
-        q = cls._apply_stat_filters(q, filters)
-        rows = q.group_by(cls.priority_area, cls.output, cls.biennium).all()
-        cells = {}
-        bienniums = set()
-        for pa, output, biennium, n in rows:
-            cells.setdefault(output, {'priority_area': pa, 'total': 0, 'by_biennium': {}})
-            cells[output]['by_biennium'][biennium] = n
-            cells[output]['total'] += n
-            bienniums.add(biennium)
+        from ckanext.theme_ejemplo import ihpix_relations as R
+        q = cls._apply_stat_filters(meta.Session.query(cls).filter(
+            cls.status == cls.STATUS_PUBLISHED), filters)
+        cells, bienniums = {}, set()
+        for activity in q.all():
+            biennium = activity.biennium
+            if not biennium:
+                continue
+            for output in R.dimension_values(activity.as_dict(), 'output'):
+                if (filters or {}).get('output') and output != filters['output']:
+                    continue
+                pa = 'PA' + output.split('.')[0]
+                if (filters or {}).get('priority_area') and pa != filters['priority_area']:
+                    continue
+                cell = cells.setdefault(output, {'priority_area': pa, 'total': 0, 'by_biennium': {}})
+                cell['by_biennium'][biennium] = cell['by_biennium'].get(biennium, 0) + 1
+                cell['total'] += 1
+                bienniums.add(biennium)
 
         def _sort_key(code):
             try:
@@ -1267,19 +1286,20 @@ class IhpixActivity(model.DomainObject):
     @classmethod
     def get_country_counts(cls, filters=None):
         """{country: {'total': n, 'pa1_count': n, ...}} de actividades publicadas."""
-        from sqlalchemy import func
-        q = meta.Session.query(cls.country, cls.priority_area, func.count(cls.id)).filter(
-            cls.status == cls.STATUS_PUBLISHED,
-            cls.country != u'', cls.country != None  # noqa: E711
-        )
-        q = cls._apply_stat_filters(q, filters).group_by(cls.country, cls.priority_area)
-        out = {}
-        for country, pa, n in q.all():
-            d = out.setdefault(country, {'total': 0, 'pa1_count': 0, 'pa2_count': 0,
-                                         'pa3_count': 0, 'pa4_count': 0, 'pa5_count': 0})
-            d['total'] += n
-            if pa in VALID_PRIORITY_AREAS:
-                d[pa.lower() + '_count'] += n
+        from ckanext.theme_ejemplo import ihpix_relations as R, ihpix_stats as stats
+        from ckanext.theme_ejemplo.actions import _ihpix_country_index
+        q = cls._apply_stat_filters(meta.Session.query(cls).filter(
+            cls.status == cls.STATUS_PUBLISHED), filters)
+        out, index = {}, _ihpix_country_index()
+        for activity in q.all():
+            row = stats.prepare_row(activity.as_dict(), index)
+            for country in row['impacted_member_states']:
+                d = out.setdefault(country, {'total': 0, 'pa1_count': 0, 'pa2_count': 0,
+                                             'pa3_count': 0, 'pa4_count': 0, 'pa5_count': 0})
+                d['total'] += 1
+                for pa in R.dimension_values(row, 'priority_area'):
+                    if pa in VALID_PRIORITY_AREAS:
+                        d[pa.lower() + '_count'] += 1
         return out
 
     @staticmethod
@@ -1337,7 +1357,7 @@ class IhpixActivity(model.DomainObject):
         if status:
             q = q.filter(cls.status == status)
         if priority_area:
-            q = q.filter(cls.priority_area == priority_area)
+            q = q.filter(cls._association_filter('priority_area', priority_area))
         total = q.count()
         results = q.order_by(cls.created_at.desc()).offset(offset).limit(limit).all()
         return results, total
@@ -1410,20 +1430,11 @@ class IhpixActivity(model.DomainObject):
     @classmethod
     def get_facets(cls):
         """Return facet counts for priority_area and output (published only)."""
-        from sqlalchemy import func
-        pa_facets = meta.Session.query(
-            cls.priority_area, func.count(cls.id)
-        ).filter(
-            cls.status == cls.STATUS_PUBLISHED
-        ).group_by(cls.priority_area).all()
-
-        output_facets = meta.Session.query(
-            cls.output, func.count(cls.id)
-        ).filter(
-            cls.status == cls.STATUS_PUBLISHED,
-            cls.output != u'',
-            cls.output != None  # noqa: E711
-        ).group_by(cls.output).all()
+        from collections import Counter
+        from ckanext.theme_ejemplo import ihpix_relations as R
+        rows = [a.as_dict() for a in meta.Session.query(cls).filter(cls.status == cls.STATUS_PUBLISHED)]
+        pa_facets = Counter(v for row in rows for v in R.dimension_values(row, 'priority_area')).items()
+        output_facets = Counter(v for row in rows for v in R.dimension_values(row, 'output')).items()
 
         return {
             'ihpix_priority_area': {
@@ -1450,37 +1461,12 @@ class IhpixActivity(model.DomainObject):
         filters = filters or {}
 
         def _apply(q):
-            """Aplica filtros comunes a una query."""
-            pa = filters.get('priority_area')
-            if pa:
-                q = q.filter(cls.priority_area == pa)
-            bi = filters.get('biennium')
-            if bi:
-                q = q.filter(cls.biennium == bi)
-            country = filters.get('country')
-            if country:
-                q = q.filter(cls.country == country)
-            output = filters.get('output')
-            if output:
-                q = q.filter(cls.output == output)
-            region = filters.get('region')
-            if region:
-                q = q.filter(cls.regions.ilike(u'%' + region + u'%'))
-            return q
+            return cls._apply_stat_filters(q, filters)
 
         base = _apply(meta.Session.query(cls).filter(
             cls.status == cls.STATUS_PUBLISHED
         ))
         total = base.count()
-
-        countries_q = _apply(meta.Session.query(
-            func.count(distinct(cls.country))
-        ).filter(
-            cls.status == cls.STATUS_PUBLISHED,
-            cls.country != u'',
-            cls.country != None  # noqa: E711
-        ))
-        countries = countries_q.scalar() or 0
 
         institutions_q = _apply(meta.Session.query(
             func.count(distinct(cls.institution))
@@ -1495,23 +1481,12 @@ class IhpixActivity(model.DomainObject):
             cls.status == cls.STATUS_PENDING
         ).count()
 
-        pa_q = _apply(meta.Session.query(
-            cls.priority_area, func.count(cls.id)
-        ).filter(
-            cls.status == cls.STATUS_PUBLISHED
-        ))
-        pa_counts = pa_q.group_by(cls.priority_area).all()
-
-        output_q = _apply(meta.Session.query(
-            cls.output, func.count(cls.id)
-        ).filter(
-            cls.status == cls.STATUS_PUBLISHED,
-            cls.output != u'',
-            cls.output != None  # noqa: E711
-        ))
-        output_counts = output_q.group_by(cls.output).order_by(
-            func.count(cls.id).desc()
-        ).all()
+        from collections import Counter
+        from ckanext.theme_ejemplo import ihpix_relations as R
+        scoped_rows = [a.as_dict() for a in base.all()]
+        countries = len(cls.get_country_counts(filters))
+        pa_counts = Counter(v for row in scoped_rows for v in R.dimension_values(row, 'priority_area')).items()
+        output_counts = Counter(v for row in scoped_rows for v in R.dimension_values(row, 'output')).items()
 
         # Métricas de impacto agregadas
         def _sum(col):
@@ -1547,13 +1522,7 @@ class IhpixActivity(model.DomainObject):
             cls.biennium != None  # noqa: E711
         ).order_by(cls.biennium).all()
 
-        all_countries = meta.Session.query(
-            distinct(cls.country)
-        ).filter(
-            cls.status == cls.STATUS_PUBLISHED,
-            cls.country != u'',
-            cls.country != None  # noqa: E711
-        ).order_by(cls.country).all()
+        all_countries = sorted(cls.get_country_counts())
 
         return {
             'total_activities': total,
@@ -1578,7 +1547,7 @@ class IhpixActivity(model.DomainObject):
             'links_by_type': IhpixActivityLink.count_by_type(filters=filters),
             'filter_options': {
                 'bienniums': [b[0] for b in all_bienniums],
-                'countries': [c[0] for c in all_countries],
+                'countries': all_countries,
                 'priority_areas': ['PA1', 'PA2', 'PA3', 'PA4', 'PA5'],
             },
         }
@@ -1604,36 +1573,19 @@ class IhpixActivity(model.DomainObject):
 
     @classmethod
     def get_country_stats(cls, filters=None, limit=20):
-        """Top countries by activity count."""
-        from sqlalchemy import func
-        filters = filters or {}
-        q = meta.Session.query(
-            cls.country, func.count(cls.id).label('count')
-        ).filter(
-            cls.status == cls.STATUS_PUBLISHED,
-            cls.country != u'',
-            cls.country != None  # noqa: E711
-        )
-        pa = filters.get('priority_area')
-        if pa:
-            q = q.filter(cls.priority_area == pa)
-        bi = filters.get('biennium')
-        if bi:
-            q = q.filter(cls.biennium == bi)
-        output = filters.get('output')
-        if output:
-            q = q.filter(cls.output == output)
-        region = filters.get('region')
-        if region:
-            q = q.filter(cls.regions.ilike(u'%' + region + u'%'))
-        q = q.group_by(cls.country).order_by(func.count(cls.id).desc())
+        """Países de los tres roles, con los mismos filtros del dashboard."""
+        counts = cls.get_country_counts(filters)
+        countries = sorted(counts, key=lambda name: (-counts[name]['total'], name))
         if limit:
-            q = q.limit(limit)
-        return [{'name': r.country, 'count': r.count} for r in q.all()]
+            countries = countries[:limit]
+        return [{'name': name, 'count': counts[name]['total']} for name in countries]
 
     def as_dict(self):
         return {
             'id': self.id,
+            **{key: getattr(self, key, None) for key in (
+                'contributions_json', 'synergies_json', 'supporters_json',
+                'institution_org_id', 'partner_org_ids', 'revision')},
             'title': self.title,
             'description': self.description,
             'priority_area': self.priority_area,
@@ -1691,19 +1643,19 @@ class IhpixActivity(model.DomainObject):
             'original_timestamp': self.original_timestamp or u'',
             'original_id': self.original_id or u'',
             # Gates Y/N del PDF 2026 (booleanos explícitos)
-            'unesco_secretariat_participation': bool(self.unesco_secretariat_participation),
-            'has_member_state_support': bool(self.has_member_state_support),
-            'has_flagship': bool(self.has_flagship),
-            'has_synergies': bool(self.has_synergies),
-            'regions_benefit': bool(self.regions_benefit),
-            'kpi_1a_active': bool(self.kpi_1a_active),
-            'kpi_1b_active': bool(self.kpi_1b_active),
-            'kpi_2_active': bool(self.kpi_2_active),
-            'kpi_3_active': bool(self.kpi_3_active),
-            'kpi_4_active': bool(self.kpi_4_active),
-            'kpi_5_active': bool(self.kpi_5_active),
-            'kpi_6_active': bool(self.kpi_6_active),
-            'kpi_8_active': bool(self.kpi_8_active),
+            'unesco_secretariat_participation': self.unesco_secretariat_participation,
+            'has_member_state_support': self.has_member_state_support,
+            'has_flagship': self.has_flagship,
+            'has_synergies': self.has_synergies,
+            'regions_benefit': self.regions_benefit,
+            'kpi_1a_active': self.kpi_1a_active,
+            'kpi_1b_active': self.kpi_1b_active,
+            'kpi_2_active': self.kpi_2_active,
+            'kpi_3_active': self.kpi_3_active,
+            'kpi_4_active': self.kpi_4_active,
+            'kpi_5_active': self.kpi_5_active,
+            'kpi_6_active': self.kpi_6_active,
+            'kpi_8_active': self.kpi_8_active,
             'additional_notes': self.additional_notes or u'',
             'key_activity_code': getattr(self, 'key_activity_code', u'') or u'',
             'training_type_other': getattr(self, 'training_type_other', u'') or u'',
@@ -1792,23 +1744,29 @@ def define_ihpix_activity_table():
         # PDF 2026 conditional gates — Section I / V
         Column('focal_point_name', UnicodeText, default=u''),
         Column('institution_type_other', UnicodeText, default=u''),
-        Column('unesco_secretariat_participation', Boolean, default=False),
-        Column('has_member_state_support', Boolean, default=False),
-        Column('has_flagship', Boolean, default=False),
-        Column('has_synergies', Boolean, default=False),
-        Column('regions_benefit', Boolean, default=False),
-        Column('kpi_1a_active', Boolean, default=False),
-        Column('kpi_1b_active', Boolean, default=False),
-        Column('kpi_2_active', Boolean, default=False),
-        Column('kpi_3_active', Boolean, default=False),
-        Column('kpi_4_active', Boolean, default=False),
-        Column('kpi_5_active', Boolean, default=False),
-        Column('kpi_6_active', Boolean, default=False),
-        Column('kpi_8_active', Boolean, default=False),
+        Column('unesco_secretariat_participation', Boolean, default=None),
+        Column('has_member_state_support', Boolean, default=None),
+        Column('has_flagship', Boolean, default=None),
+        Column('has_synergies', Boolean, default=None),
+        Column('regions_benefit', Boolean, default=None),
+        Column('kpi_1a_active', Boolean, default=None),
+        Column('kpi_1b_active', Boolean, default=None),
+        Column('kpi_2_active', Boolean, default=None),
+        Column('kpi_3_active', Boolean, default=None),
+        Column('kpi_4_active', Boolean, default=None),
+        Column('kpi_5_active', Boolean, default=None),
+        Column('kpi_6_active', Boolean, default=None),
+        Column('kpi_8_active', Boolean, default=None),
         Column('additional_notes', UnicodeText, default=u''),
         Column('original_timestamp', UnicodeText, default=u''),
         Column('original_id', UnicodeText, default=u''),
         Column('submitted_at', DateTime, nullable=True),
+        Column('contributions_json', UnicodeText, default='[]'),
+        Column('synergies_json', UnicodeText, default='[]'),
+        Column('supporters_json', UnicodeText, default='[]'),
+        Column('institution_org_id', UnicodeText, default=''),
+        Column('partner_org_ids', UnicodeText, default='[]'),
+        Column('revision', Integer, nullable=False, default=0, server_default='0'),
         # Key activity oficial, 'Other' del KPI 3 y marca de normalización
         # de valores heredados (2026-10)
         Column('key_activity_code', UnicodeText, default=u''),
@@ -1844,6 +1802,13 @@ def init_ihpix_activities_db():
 # instancias nuevas ya las traen desde `define_ihpix_activity_table`; las
 # existentes las reciben con ADD COLUMN IF NOT EXISTS (idempotente).
 _IHPIX_ACTIVITY_ADDED_COLUMNS = (
+    ('revision', 'INTEGER NOT NULL DEFAULT 0'),
+    ('contributions_json', "TEXT DEFAULT '[]'"),
+    ('synergies_json', "TEXT DEFAULT '[]'"),
+    ('supporters_json', "TEXT DEFAULT '[]'"),
+    ('institution_org_id', "TEXT DEFAULT ''"),
+    ('partner_org_ids', "TEXT DEFAULT '[]'"),
+
     ('contact_name', "TEXT DEFAULT ''"),
     ('contact_email', "TEXT DEFAULT ''"),
     ('start_date', 'DATE'),
@@ -1920,8 +1885,8 @@ def _migrate_ihpix_activities(inspector):
 
     Idempotente: ADD COLUMN / CREATE INDEX IF NOT EXISTS dentro de una
     transacción explícita (`engine.begin()`), válido en SQLAlchemy 1.3 y 1.4+.
-    La normalización de `reported_by` sólo corre cuando hubo columnas que
-    añadir (es decir, una vez por despliegue), no en cada request.
+    La normalización de datos legados sólo corre al incorporar su marcador
+    específico, nunca por agregar columnas de funcionalidades posteriores.
     """
     from sqlalchemy import text as sa_text
     existing = {col['name'] for col in inspector.get_columns('ihpix_activity')}
@@ -1935,13 +1900,16 @@ def _migrate_ihpix_activities(inspector):
                     'ADD COLUMN IF NOT EXISTS %s %s' % (name, ddl)))
                 log.info(u'ihpix_activity: columna %s añadida', name)
             for idx_name, col in _IHPIX_ACTIVITY_INDEXES:
+                # IF NOT EXISTS también toma un bloqueo; evitar DDL en guardados.
+                if idx_name in {index['name'] for index in inspector.get_indexes('ihpix_activity')}:
+                    continue
                 conn.execute(sa_text(
                     'CREATE INDEX IF NOT EXISTS %s ON ihpix_activity (%s)'
                     % (idx_name, col)))
     except Exception as e:
         log.warning(u'ihpix_activity: no se pudo migrar el esquema: %s', e)
         return
-    if missing:
+    if any(name == 'legacy_normalized_at' for name, _ddl in missing):
         _migrate_ihpix_reported_by()
         _normalize_ihpix_legacy_values()
 
@@ -2123,21 +2091,7 @@ class IhpixActivityLink(model.DomainObject):
             q = meta.Session.query(cls.link_type, func.count(cls.id)).join(
                 IhpixActivity, IhpixActivity.id == cls.activity_id
             ).filter(IhpixActivity.status == status)
-            pa = filters.get('priority_area')
-            if pa:
-                q = q.filter(IhpixActivity.priority_area == pa)
-            bi = filters.get('biennium')
-            if bi:
-                q = q.filter(IhpixActivity.biennium == bi)
-            country = filters.get('country')
-            if country:
-                q = q.filter(IhpixActivity.country == country)
-            output = filters.get('output')
-            if output:
-                q = q.filter(IhpixActivity.output == output)
-            region = filters.get('region')
-            if region:
-                q = q.filter(IhpixActivity.regions.ilike(u'%' + region + u'%'))
+            q = IhpixActivity._apply_stat_filters(q, filters)
             for link_type, n in q.group_by(cls.link_type).all():
                 counts[link_type] = n
                 counts['total'] += n
@@ -2237,6 +2191,8 @@ def init_ihpix_activity_links_db():
                     'ADD COLUMN IF NOT EXISTS %s %s' % (name, ddl)))
                 log.info(u'ihpix_activity_link: columna %s añadida', name)
             for idx_name, cols in _IHPIX_LINK_INDEXES:
+                if idx_name in {index['name'] for index in inspector.get_indexes('ihpix_activity_link')}:
+                    continue
                 conn.execute(sa_text(
                     'CREATE INDEX IF NOT EXISTS %s ON ihpix_activity_link (%s)'
                     % (idx_name, cols)))
@@ -2466,8 +2422,9 @@ class IhpixContribution(model.DomainObject):
         return {wg_id: ts for wg_id, ts in q.all()}
 
     @classmethod
-    def exists(cls, user_id, kind, activity_id=u'', link_id=u''):
-        q = meta.Session.query(cls).filter(cls.user_id == user_id, cls.kind == kind)
+    def exists(cls, user_id, kind, activity_id=u'', link_id=u'', working_group_id=u''):
+        q = meta.Session.query(cls).filter(cls.user_id == user_id,
+            cls.working_group_id == working_group_id, cls.kind == kind)
         if activity_id:
             q = q.filter(cls.activity_id == activity_id)
         if link_id:
@@ -2594,6 +2551,8 @@ def init_ihpix_working_groups_db():
                                 'ALTER TABLE %s ADD COLUMN IF NOT EXISTS %s %s'
                                 % (table_name, name, ddl)))
                 for table_name, idx_name, cols, unique in _IHPIX_WG_INDEXES:
+                    if idx_name in {index['name'] for index in inspector.get_indexes(table_name)}:
+                        continue
                     conn.execute(sa_text(
                         'CREATE %sINDEX IF NOT EXISTS %s ON %s (%s)'
                         % ('UNIQUE ' if unique else '', idx_name, table_name, cols)))
@@ -2750,34 +2709,36 @@ class IhpixCountrySummary(model.DomainObject):
         target = _norm(country) if country else None
         q = meta.Session.query(IhpixActivity).filter(
             IhpixActivity.status == IhpixActivity.STATUS_PUBLISHED)
-        if target:
-            q = q.filter(IhpixActivity.country.in_([country, target]))
+        from ckanext.theme_ejemplo import ihpix_relations as R, ihpix_stats as stats
+        index = stats.build_country_index([cs.as_dict() for cs in cls.get_all()])
         agg = {}
         for a in q.all():
-            name = _norm(a.country)
-            if not name:
-                continue
-            d = agg.setdefault(name, {
-                'total': 0, 'pa': [0] * 6, 'tb': [0] * 6, 'sup': [0] * 6,
-                'flagships': {}, 'pa_outputs': {},
-            })
-            d['total'] += 1
-            pa_num = 0
-            if a.priority_area in VALID_PRIORITY_AREAS:
-                pa_num = int(a.priority_area[-1])
-            d['pa'][pa_num] += 1
-            if a.kpi_6_active or (a.num_transboundary_ms or 0) > 0:
-                d['tb'][0] += 1
-                d['tb'][pa_num] += 1
-            if a.supporting_member_state:
-                d['sup'][0] += 1
-                d['sup'][pa_num] += 1
-            for flagship in as_list(a.flagships):
-                d['flagships'][flagship] = d['flagships'].get(flagship, 0) + 1
-            if a.output and pa_num:
-                key = 'pa%d_outputs' % pa_num
-                bucket = d['pa_outputs'].setdefault(key, {})
-                bucket[a.output] = bucket.get(a.output, 0) + 1
+            row = stats.prepare_row(a.as_dict(), index)
+            pa_numbers = {int(pa[2:]) for pa in R.dimension_values(row, 'priority_area') if pa in VALID_PRIORITY_AREAS}
+            for name in row['impacted_member_states']:
+                if target and name != target:
+                    continue
+                d = agg.setdefault(name, {
+                    'total': 0, 'pa': [0] * 6, 'tb': [0] * 6, 'sup': [0] * 6,
+                    'flagships': {}, 'pa_outputs': {},
+                })
+                d['total'] += 1
+                for number in pa_numbers:
+                    d['pa'][number] += 1
+                if row['kpi_6_active']:
+                    d['tb'][0] += 1
+                    for number in pa_numbers:
+                        d['tb'][number] += 1
+                if 'supporter' in row['impacted_roles'].get(name, ()):
+                    d['sup'][0] += 1
+                    for number in pa_numbers:
+                        d['sup'][number] += 1
+                for flagship in row['flagships']:
+                    d['flagships'][flagship] = d['flagships'].get(flagship, 0) + 1
+                for output in R.dimension_values(row, 'output'):
+                    key = 'pa%s_outputs' % output.split('.')[0]
+                    bucket = d['pa_outputs'].setdefault(key, {})
+                    bucket[output] = bucket.get(output, 0) + 1
 
         existing = {cs.country: cs for cs in cls.get_all()}
         now = datetime.datetime.utcnow()
@@ -2811,6 +2772,8 @@ class IhpixCountrySummary(model.DomainObject):
                         setattr(cs, 'supporting_pa%d' % i, 0)
                     cs.transboundary_all = 0
                     cs.supporting_all = 0
+                    cs.flagship_data = '{}'
+                    cs.pa_output_data = '{}'
                     cs.updated_at = now
                     updated += 1
 

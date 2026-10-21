@@ -18,7 +18,7 @@ Hub de la implementación del **reporting y gestión del conocimiento IHP-IX** e
 
 ## Módulos
 
-- `ihpix_constants.py` — taxonomías oficiales (5 PA, 34 Outputs, 18 flagships, KPIs…), títulos de Output desde `data/ihpix_output_titles.json` y key activities desde `data/ihpix_key_activities.json` (ambos generados del Excel con `scripts/build_ihpix_taxonomy_data.py`).
+- `ihpix_constants.py` — taxonomías oficiales (5 PA, 34 Outputs, 21 flagships, KPIs…), títulos de Output desde `data/ihpix_output_titles.json` y key activities desde `data/ihpix_key_activities.json` (generados del snapshot oficial con `scripts/build_ihpix_taxonomy_data.py`).
 - `ihpix_forms.py`, `ihpix_links.py`, `ihpix_workspaces.py`, `ihpix_publications.py`, `ihpix_normalize.py` (alias y puertas de los datos heredados), `ihpix_stats.py` (agregación de los dashboards de progreso) — módulos **puros** con la lógica de validación/reglas; testeados sin CKAN.
 - Puentes al ecosistema (2026-09-24): modal "Upload a publication" (crea datasets `documents` y los adjunta), tipo de adjunto `course` + propuesta de cursos Open Learning, "Add a dataset" prellenado → [[Flujos Importantes#7.1 Adjuntos (Sección VII)]].
 - `ihpix_i18n_strings.py` — literales de taxonomías para Babel; los templates traducen valores con `h.ihpix_t`.
@@ -34,6 +34,10 @@ Hub de la implementación del **reporting y gestión del conocimiento IHP-IX** e
 
 - `ckan ihpix seed-data`, `ckan ihpix recompute-summary`, `ckan ihpix seed-workspaces`, `ckan ihpix normalize-legacy` → [[Comandos Utiles#IHP-IX: Ingesta de datos]].
 - Tests puros: `PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python3 -m pytest -q ckanext/theme_ejemplo/tests/test_ihpix_*.py` → [[Testing]].
+
+## Revisión de septiembre implementada (2026-10-21)
+
+Ver [[IHP-IX Review September 2026]] para formulario, relaciones múltiples, colaboración, XLSX, narrativas, presentaciones y evidencia. El estado de despliegue actualizado está en [[Deployment]]. Las notas anteriores se conservan como historial.
 
 ## Estado en dev (2026-10-11): ciclo 3 verificado sin desplegar
 

@@ -23,6 +23,7 @@ Bienvenido a la documentación interna de **ckanext-theme-ejemplo**, la extensi�
 - [[Open Learning]] — Caché curada de cursos UNESCO Open Learning
 - [[Busqueda]] — Motores de búsqueda por superficie y sugerencias mientras se escribe
 - [[Biblioteca de Imagenes]] — Imagenes reutilizables para stories
+- [[IHP-IX Review September 2026]] — Matriz de correcciones y evidencia de aceptación
 - [[IHP-IX]] — Reporting IHP-IX: formulario, adjuntos, páginas navegables y working groups
 
 ### Operación

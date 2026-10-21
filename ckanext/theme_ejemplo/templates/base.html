@@ -29,6 +29,7 @@
 {% endblock %}
 
 {% block scripts %}
+  {% snippet 'ihpix/snippets/resource_return.html' %}
   {% asset 'theme/ckan-bs5-compat-js' %}
   {{ super() }}
   {% asset 'theme/theme-ejemplo-runtime-js' %}

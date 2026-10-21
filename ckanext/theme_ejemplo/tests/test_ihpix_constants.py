@@ -54,8 +54,9 @@ def test_i18n_strings_cover_taxonomies():
     assert {k['target'] for k in C.KPIS.values()} == set(S.KPI_TARGETS)
 
 
-def test_flagships_are_the_18_of_the_progress_page():
-    assert len(C.FLAGSHIPS) == 18
+def test_flagships_include_review_additions_and_preserve_existing_codes():
+    assert len(C.FLAGSHIPS) == 21
+    assert {'CRIDA', 'Youth4Water', 'IAHR Label'} <= set(C.FLAGSHIPS)
     # Orden alfabético de la página oficial (GRAPHIC antes que G-WADI)
     assert list(C.FLAGSHIPS) == sorted(C.FLAGSHIPS, key=lambda s: s.replace('-', '').lower())
     for extra in ('IWRM', 'JIIHP', 'UWMP'):

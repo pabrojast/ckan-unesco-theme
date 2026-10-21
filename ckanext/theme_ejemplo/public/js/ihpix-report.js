@@ -440,8 +440,49 @@
       return true;
     }
 
+    function conflictText(value) {return (CONFIG.relationStrings || {})[value] || value;}
+    function showConflict(current) {
+      var box = document.getElementById('ihpix-conflict');
+      var local = collectFormData();
+      box.replaceChildren(); box.hidden = false;
+      var heading = document.createElement('h3');
+      heading.textContent = conflictText('A newer version was saved. Choose which changes to keep.');
+      box.appendChild(heading);
+      var choices = [];
+      Object.keys(local).forEach(function (field) {
+        if (field === 'expected_revision' || field === '_csrf_token' || current[field] === undefined) return;
+        var remote = current[field];
+        if (Array.isArray(remote) && !Array.isArray(local[field])) remote = JSON.stringify(remote);
+        if (JSON.stringify(remote) === JSON.stringify(local[field]) || String(remote) === String(local[field])) return;
+        var row = document.createElement('div'), title = document.createElement('strong');
+        var input = form.elements[field];
+        var label = input && input.id ? form.querySelector('label[for="' + input.id + '"]') : null;
+        title.textContent = label ? label.textContent.trim() : field.replace(/_/g, ' '); row.appendChild(title);
+        var details = document.createElement('pre');
+        details.textContent = conflictText('Your answer') + ': ' + JSON.stringify(local[field]) + '\n' + conflictText('Saved answer') + ': ' + JSON.stringify(remote);
+        row.appendChild(details);
+        var select = document.createElement('select'); select.setAttribute('aria-label', field);
+        [['',conflictText('Choose an answer')],['local',conflictText('Keep my answer')],['server',conflictText('Use saved answer')]].forEach(function (pair) {
+          var option = document.createElement('option'); option.value = pair[0]; option.textContent = pair[1]; select.appendChild(option);
+        });
+        row.appendChild(select); box.appendChild(row); choices.push({field:field, select:select});
+      });
+      var apply = document.createElement('button'); apply.type = 'button'; apply.className = 'btn btn-primary';
+      apply.textContent = conflictText('Apply choices to my draft'); box.appendChild(apply);
+      apply.onclick = function () {
+        if (choices.some(function (x) {return !x.select.value;})) {showToast(conflictText('Choose an answer for each changed field.'), 'error'); return;}
+        var resolved = Object.assign({}, local);
+        choices.forEach(function (x) {if (x.select.value === 'server') resolved[x.field] = current[x.field];});
+        resolved.expected_revision = current.expected_revision;
+        restoreFormData(resolved); refreshDerivedUI(); applyRestoredSelects(resolved);
+        box.hidden = true; persistDraft();
+        showToast(conflictText('Changes compared. Review your answers and save the draft.'), 'success');
+      };
+      box.scrollIntoView({block:'center'});
+    }
+
     /* ── Submit ────────────────────────────────────────────────── */
-    function submitForm(asDraft) {
+    function submitForm(asDraft, afterSave) {
       if (!validateForm(asDraft)) {
         showToast(S.fixHighlighted, 'error');
         return;
@@ -450,10 +491,11 @@
       btn.classList.add('ihpix-report-loading');
       btn.disabled = true;
 
+      if (window.IhpixRelations) window.IhpixRelations.sync();
       var formData = new FormData(form);
       if (asDraft) formData.append('save_as_draft', '1');
 
-      fetch(FORM_ACTION_URL, {
+      return fetch(FORM_ACTION_URL, {
         method: 'POST',
         body: formData,
         headers: { 'X-Requested-With': 'XMLHttpRequest' }
@@ -473,8 +515,10 @@
           showToast(msg, 'success');
           // El servidor pasa a ser la fuente de verdad: el borrador local sobra
           clearDraft();
+          if (form.elements.expected_revision && result.data.data) form.elements.expected_revision.value = result.data.data.revision;
           if (errorSummary) errorSummary.classList.remove('show');
           if (restoreBanner) restoreBanner.classList.remove('show');
+          if (afterSave) { return afterSave(result.data.data); }
           if (asDraft && EDIT_MODE) {
             // Seguimos en el mismo borrador; sólo actualizamos el indicador
             setAutosaveStatus('server');
@@ -490,6 +534,7 @@
           successState.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'start' });
           form.reset();
         } else {
+          if (result.data.code === 'revision_conflict') showConflict(result.data.current);
           var err = result.data.error || result.data.message || S.genericError;
           showToast(err, 'error');
           if (result.data.errors) highlightServerErrors(result.data.errors);
@@ -507,6 +552,19 @@
       submitForm(false);
     });
     draftBtn.addEventListener('click', function() { submitForm(true); });
+    form.querySelectorAll('[data-ihpix-resource-start]').forEach(function (link) {
+      link.addEventListener('click', function (event) {
+        event.preventDefault();
+        submitForm(true, function (saved) {
+          var data = new FormData(); data.append('kind', link.dataset.ihpixResourceStart);
+          if (form.elements._csrf_token) data.append('_csrf_token', form.elements._csrf_token.value);
+          return fetch('/ihpix/report/' + saved.id + '/resource-start', {method:'POST', body:data})
+            .then(function (response) {if (!response.ok) throw new Error('Resource editor unavailable'); return response.json();})
+            .then(function (result) {window.location.href = result.url;});
+        });
+      });
+    });
+
 
     /* Allow resetting to submit another report */
     window.ihpixReportReset = function() {
@@ -753,7 +811,7 @@
     /* ── Autoguardado local (sobrevive recargas y cierres) ──────── */
     var USER_ID = CONFIG.userId || '';
     var LEGACY_SAVE_KEY = 'ihpix-report-draft-v1';
-    var SAVE_KEY = 'ihpix-report-draft-v2:' + USER_ID;
+    var SAVE_KEY = 'ihpix-report-draft-v3:' + USER_ID + ':' + (CONFIG.reportId || 'new');
     var saveTimer = null;
     var storageOk = (function() {
       try {
@@ -777,10 +835,12 @@
     }
 
     function collectFormData() {
+      if (window.IhpixRelations) window.IhpixRelations.sync();
       var data = {};
       form.querySelectorAll('input, select, textarea').forEach(function(el) {
         if (!el.name || el.type === 'file' || el.type === 'submit' || el.type === 'button') return;
         if (el.type === 'radio') {
+          if (!Object.prototype.hasOwnProperty.call(data, el.name)) data[el.name] = '';
           if (el.checked) data[el.name] = el.value;
         } else if (el.type === 'checkbox') {
           if (!data[el.name]) data[el.name] = [];
@@ -804,7 +864,7 @@
             el.checked = Array.isArray(value) && value.indexOf(el.value) !== -1;
           } else if (el.id !== 'ihpix-field-output' && el.id !== 'ihpix-field-key-activity-code') {
             // Output y key activity se aplican tras filtrar (ver applyRestoredSelects)
-            el.value = (value == null) ? '' : value;
+            el.value = (value == null) ? '' : (Array.isArray(value) ? JSON.stringify(value) : value);
           }
         });
       });
@@ -816,6 +876,7 @@
       if (kaSelect) filterKeyActivities();
       // Sección VII: vuelve a pintar los adjuntos desde el hidden restaurado
       if (window.ihpixLinks) window.ihpixLinks.reload();
+      if (window.IhpixRelations) window.IhpixRelations.reload();
       form.querySelectorAll('[data-counter]').forEach(function(ta) {
         ta.dispatchEvent(new Event('input', { bubbles: true }));
       });
@@ -876,13 +937,8 @@
     }
 
     function initAutosave() {
-      if (EDIT_MODE) {
-        // En edición la base de datos es la única fuente de verdad: nada de
-        // localStorage, que podría pisar el borrador guardado en servidor.
-        applyInitialData();
-        if (autosaveStatus) autosaveStatus.style.display = 'none';
-        return;
-      }
+      applyInitialData();
+      if (READ_ONLY) { return; }
       if (!storageOk) {
         if (autosaveStatus) autosaveStatus.style.display = 'none';
         applyInitialData();
@@ -913,9 +969,7 @@
           }
         } catch (e) {}
       }
-      // El prefill de la URL (p. ej. "Report for this output") manda sobre
-      // el borrador local sólo en los campos que trae.
-      applyInitialData();
+      // Las respuestas locales y su revisión prevalecen sobre el servidor/perfil.
       // Los listeners se conectan tras restaurar para no reguardar al cargar.
       form.addEventListener('input', scheduleAutosave);
       form.addEventListener('change', scheduleAutosave);
@@ -929,6 +983,7 @@
         if (restoreBanner) restoreBanner.classList.remove('show');
         refreshDerivedUI();
         clearDraft();
+        applyInitialData();
         showToast(S.draftDiscarded, 'success');
       });
     }

@@ -104,7 +104,7 @@ def can_manage(workspace, user_id, membership=None, is_sysadmin=False):
         return True
     if not user_id:
         return False
-    if _get(workspace, 'lead_user_id') == user_id:
+    if _get(workspace, 'lead_user_id') == user_id and not membership:
         return True
     return is_lead(membership)
 

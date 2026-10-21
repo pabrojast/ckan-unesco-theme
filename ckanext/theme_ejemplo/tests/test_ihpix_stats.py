@@ -104,7 +104,7 @@ def test_overall_totals_union_of_country_fields(rows, index):
     regions = {r['key']: r for r in ov['by_region']}
     # Kenya (filas a y c); la fila e reporta desde 'Atlantis' (sin región)
     assert regions['Africa'] == {'key': 'Africa', 'member_states': 1, 'activities': 2}
-    assert regions['Asia and the Pacific']['member_states'] == 1
+    assert regions['Asia and the Pacific']['member_states'] == 2  # UNESCO incluye Türkiye en ambas regiones
     # Mapa: sólo países con coordenadas; Kenya acumula roles
     points = {p['country']: p for p in ov['map']}
     assert points['Kenya']['activities'] == 2 and points['Kenya']['as_reporting'] == 2
@@ -216,7 +216,7 @@ def test_filters_by_biennium_region_and_country(rows, index):
     # Región: declarada en `regions` o inferida del país impactado
     asia = S.compute_progress_stats(rows, 'overall', filters={'region': 'Asia and the Pacific'},
                                     country_index=index)
-    assert asia['overview']['activities'] == 1          # fila a vía Republic of Korea
+    assert asia['overview']['activities'] == 2          # Republic of Korea y Türkiye (catálogo UNESCO)
     africa = S.compute_progress_stats(rows, 'overall', filters={'region': 'Africa'},
                                       country_index=index)
     assert africa['overview']['activities'] == 2       # a (declarada y Kenya) y c (Kenya)

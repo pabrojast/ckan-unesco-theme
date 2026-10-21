@@ -37,6 +37,8 @@
           <h1 class="ixg-title">{{ _('Implementation progress') }}</h1>
         </div>
         <div class="ixg-head-tools">
+          <a class="ixg-btn" href="{{ h.url_for('theme_ejemplo.ihpix_presentation', scope=scope, value=scope_value or '', **filters) }}">{{ _('Presentation / PDF') }}</a>
+          <a class="ixg-btn" href="{{ h.url_for('theme_ejemplo.ihpix_narrative', scope=scope if scope in ['pa', 'output'] else 'pa', value=scope_value if scope in ['pa', 'output'] else 'PA1', biennium=filters.biennium or '') }}">{{ _('Generate report') }}</a>
           <label for="ixg-filter-biennium">{{ _('Biennium') }}</label>
           <select id="ixg-filter-biennium" class="ixg-select">
             <option value="">{{ _('All bienniums') }}</option>
@@ -110,7 +112,7 @@
     </div>
   </header>
 
-  <div class="ixg-body">
+  <div class="ixg-body"><p>{{ _("Activities count once overall and in each linked scope. Subtotals can overlap.") }}</p>
 
     {% if scope == 'overall' %}
       <section id="ixg-strip" class="ixg-strip" aria-label="{{ _('Activities by output') }}">

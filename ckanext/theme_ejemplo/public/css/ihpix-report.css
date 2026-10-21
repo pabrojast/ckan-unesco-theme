@@ -348,7 +348,7 @@ fieldset.ihpix-report-field-error .ihpix-yesno { border-color: var(--ixr-danger)
   .ihpix-report-actions { margin-top: 4px; width: 100%; }
 }
 @media (max-width: 600px) {
-  .ihpix-report-page { font-size: 16px; }
+  .ihpix-report-page { font-size: 16px; padding-inline: 12px; }
   .ihpix-report-input, .ihpix-report-select, .ihpix-report-textarea { font-size: 16px; min-height: 46px; }
   .ihpix-report-section-header, .ihpix-report-section-intro { padding-left: 16px; padding-right: 16px; }
   .ihpix-report-section-body { padding: 18px 16px 22px; gap: 22px; }
@@ -371,3 +371,10 @@ fieldset.ihpix-report-field-error .ihpix-yesno { border-color: var(--ixr-danger)
   .ihpix-form-sticky, .ihpix-report-actions, .ihpix-backtotop, .ihpix-report-toast-container { display: none !important; }
   .ihpix-conditional.show { border-inline-start-color: #999; }
 }
+
+/* Relaciones: selectores largos y países en pantallas estrechas / RTL. */
+.ihpix-relation-row {padding:1rem; margin-block:1rem; border:1px solid #cbd5e1; min-width:0;}
+.ihpix-relation-row label {display:block; margin-block:.5rem;}
+.ihpix-relation-row select {width:100%; max-width:100%;}
+#ihpix-conflict {padding:1rem; background:#fff3cd; overflow-wrap:anywhere;}
+#ihpix-conflict pre {white-space:pre-wrap; max-height:24rem; overflow:auto;}

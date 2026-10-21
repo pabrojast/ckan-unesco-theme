@@ -1,0 +1,18 @@
+{% extends 'ihpix/tools_base.html' %}
+{% block tools_content %}
+<h1>{{ _('Import IHP-IX reports') }}</h1>
+<p>{{ _('Upload a completed workbook, review validation results, then create drafts. Each draft can be completed and submitted separately.') }}</p>
+<p><a class="btn" href="{{ h.url_for('theme_ejemplo.ihpix_import_template') }}">{{ _('Download XLSX template') }}</a></p>
+<form method="post" enctype="multipart/form-data" class="ix-tools-card">{{ h.csrf_input() }}<label for="workbook">{{ _('Completed XLSX workbook (up to 5 MB)') }}</label><input type="file" id="workbook" name="workbook" accept=".xlsx" required><button class="btn btn-primary">{{ _('Validate and preview') }}</button></form>
+{% if batch %}
+  {% if batch.status == 'created' %}<h2>{{ _('Drafts created') }}</h2><ul>{% for item in batch.created %}<li><a href="{{ h.url_for('theme_ejemplo.ihpix_report_edit', id=item.id) }}">{{ item.ref }} · {{ item.title }}</a></li>{% endfor %}</ul>
+  {% else %}
+    <h2>{{ _('Preview') }} · {{ batch.preview.rows|length }} {{ _('activities') }}</h2>
+    {% for category, label in [('errors', _('Invalid values: correct before importing')), ('warnings', _('Incomplete for submission: can be saved as drafts'))] %}
+      {% if batch.preview[category] %}<details open class="ix-tools-card"><summary>{{ label }} ({{ batch.preview[category]|length }})</summary><ul>{% for error in batch.preview[category] %}<li>{{ error.sheet }}!{{ error.cell }} · {{ error.field }}: {{ error.message }}</li>{% endfor %}</ul></details>{% endif %}
+    {% endfor %}
+    {% for item in batch.preview.rows %}<details class="ix-tools-card"><summary>{{ item.ref }} · {{ item.data.title }}</summary><dl>{% for field, value in item.data.items() if value and field != 'save_as_draft' %}<dt>{{ field }}</dt><dd>{{ value }}</dd>{% endfor %}</dl></details>{% endfor %}
+    {% if not batch.preview.errors %}<form method="post">{{ h.csrf_input() }}<input type="hidden" name="id" value="{{ batch.id }}"><button class="btn btn-primary" name="confirm" value="1">{{ _('Confirm and create drafts') }}</button></form>{% endif %}
+  {% endif %}
+{% endif %}
+{% endblock %}

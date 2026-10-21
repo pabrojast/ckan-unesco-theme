@@ -251,3 +251,9 @@ revisión, conectores y relaciones. El tema conserva adaptadores de compatibilid
 con Open Learning y sus vistas usan los paquetes publicados. La tabla antigua
 permanece intacta. El catálogo dataset y las pestañas de organizaciones/grupos
 excluyen documentos y formación según su contexto. Ver [[Open Learning]].
+
+## Modelo de revisión IHP-IX (2026-10-21)
+
+Migración aditiva de `ihpix_activity`: `contributions_json`, `synergies_json`, `supporters_json`, `institution_org_id`, `partner_org_ids`, `revision`. Los campos escalares históricos se conservan para compatibilidad. Cinco tablas nuevas en `ihpix_store.py`: `ihpix_report_revision` (actividad/versión únicos), `ihpix_report_collaborator` (actividad/usuario únicos), `ihpix_workspace_item`, `ihpix_notification`, `ihpix_import_batch` (usuario/digest únicos). No se reescriben filas históricas al agregar estas columnas.
+
+`ihpix_service.py` concentra validación, autorización, bloqueo de fila y snapshot dentro de la misma transacción. Los nuevos servicios usan SQLAlchemy Core sobre la Session CKAN. El bootstrap de tablas se serializa mediante advisory lock; no se ejecuta DDL dentro del guardado del reporte. La caché de estadísticas incorpora conteo, fecha máxima y suma de revisiones para invalidar también entre workers. Ver [[IHP-IX Review September 2026]].

@@ -1,0 +1,16 @@
+{% extends "page.html" %}
+{% block page_header %}{% endblock %}
+{% block content %}
+<div class="main"><div class="container ix-tools">
+  <link rel="stylesheet" href="{{ h.url_for_static('/css/ihpix-tools.css') }}">
+  <nav class="ix-tools-nav" aria-label="{{ _('IHP-IX tools') }}">
+    <a href="{{ h.url_for('theme_ejemplo.ihpix') }}">IHP-IX</a>
+    <a href="{{ h.url_for('theme_ejemplo.ihpix_report') }}">{{ _('Report an activity') }}</a>
+    <a href="{{ h.url_for('theme_ejemplo.ihpix_import') }}">{{ _('Import reports') }}</a>
+    <a href="{{ h.url_for('theme_ejemplo.ihpix_narrative') }}">{{ _('Generate report') }}</a>
+    <a href="{{ h.url_for('theme_ejemplo.ihpix_notifications') }}">{{ _('Notifications') }}</a>
+  </nav>
+  {% block tools_content %}{% endblock %}
+</div></div>
+{% endblock %}
+{% block secondary %}{% endblock %}

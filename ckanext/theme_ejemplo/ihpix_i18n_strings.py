@@ -86,7 +86,7 @@ TRAINING_TYPE_GROUPS = [
 ]
 
 FLAGSHIP_LABELS = [
-    _('FRIEND-Water'), _('LaSII'),
+    _('FRIEND-Water'), _('LaSII'), _('IAHR Label for Water Training and Education'),
 ]
 
 STAKEHOLDER_GROUP_TYPES = [
@@ -163,6 +163,7 @@ REPORT_STATUS_LABELS = [
 
 # Mensajes de validación de ihpix_forms.MESSAGES e ihpix_links.MESSAGES
 VALIDATION_MESSAGES = [
+    _('Enter a whole number between 0 and 2147483647'),
     _('Title is required'),
     _('Focal point name is required'),
     _('Focal point email is required'),
@@ -212,4 +213,15 @@ LINK_AND_LEDGER_LABELS = [
     _('Course'),
     _('Publication uploaded to IHP-WINS'),
     _('Course proposed for the catalogue'),
+]
+
+# Etiquetas dinámicas de las presentaciones verificables.
+PRESENTATION_LABELS = [
+    _('Implementation overview'),
+    _('Knowledge and scientific products'),
+    _('Knowledge exchange'),
+    _('Training and education'),
+    _('Activities by scope'),
+    _('Activities by Output'),
+    _('Distinct countries'),
 ]

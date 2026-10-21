@@ -1,346 +1,4 @@
 {
-  "1.1": [
-    {
-      "code": "1.1.1",
-      "title": "Coordination of UNESCO scientific efforts on Unsolved Problems in Hydrology, including hydrogeology/geo hydrology, in partnership with IAHS, IAH and other water related scientific associations, including organization of the capitalisation of knowledge, results and experience available in the UNESCO Water Family, incl. the Flagships, into published syntheses"
-    },
-    {
-      "code": "1.1.2",
-      "title": "Establishment and maintenance of an exchange scheme among UNESCO water family and partners for research on Unsolved Problems and New, Emerging Topics i n Hydrology"
-    },
-    {
-      "code": "1.1.3",
-      "title": "Exploration of the emerging research challenges and periodic review of unresolved problems in hydrology, in cooperation with Hydrological Divisions of International Geophysical Organisations (e. AGU, EGU) in partnership with IAHS and IAH"
-    },
-    {
-      "code": "1.1.4",
-      "title": "Establishment and implementation of UNESCO Biennial Award for Ph.D. studies and Biennial Conference series on Unsolved Problems and New, Emerging Topics in Hydrology, in partnership with IAHS, IAH, IAHR and other relevant organizations, such as WMO"
-    }
-  ],
-  "1.2": [
-    {
-      "code": "1.2.1",
-      "title": "Development and operationalization of a world leading network/hub for transdisciplinary ecohydrological research, education and dialogue on ecohydrology and nature-based solutions for enhancement of WBRS+CE catchment sustainability potential (biodiversity, resilience to anthropogenic climate change, ecosystem services and culture and education) and promotion of Ecohydrology Web Platform (http://ecohydrology ihp.org/demosites/)"
-    },
-    {
-      "code": "1.2.2",
-      "title": "Expansion of UNESCO ecohydrology sites to demonstrate ecohydrology and nature based solutions as the sustainable way of water resources management, including in urban areas, in partnership with IAHS IAHR and ISEH"
-    },
-    {
-      "code": "1.2.4",
-      "title": "Application of the ecohydrology approach within UNESCO water related designated sites including biosphere reserves, geoparcs and natural heritage sites for sustainability and resilience; publishing, sharing and promotion of the research and innovation at UNESCO designated sites through articles, case studies and a compendium of case studies"
-    },
-    {
-      "code": "1.2.5",
-      "title": "Investigation on how the catchment/river basin based ecohydrology concept/nature based solutions can be extrapolated to large scale applications (continental/global scale)"
-    },
-    {
-      "code": "1.2.6",
-      "title": "Scientific support, capacity building, and promotion for coordinated implementation of ecohydrology principles including ecohydrological multidimensional enhancement of catchment sustainability potential WBSR+CE UNSC SEEA ecosystem valuation, IUCN NBS Global Standard, FAO/TNC and World Bank guidelines"
-    }
-  ],
-  "1.3": [
-    {
-      "code": "1.3.1",
-      "title": "Synthesis on uncertainties in the whole modelling chain (climate, hydrology, water use); Organization of the capitalization of knowledge, results and experience available in the UNESCO Water Family, including the Flagships"
-    },
-    {
-      "code": "1.3.2",
-      "title": "Research and preparation of state-of-the-art publications on uncertainty in climatic scenarios, hydrological projections and water use scenarios and intersectoral consultations among research teams (including publication and dissemination of Water Outlook)"
-    },
-    {
-      "code": "1.3.3",
-      "title": "Regional and national intersectoral dialogue and capacity building for adaptive water management in the face of uncertainty"
-    },
-    {
-      "code": "1.3.5",
-      "title": "Implementation of pilot projects on, and promotion of, Climate Risk Informed Decision Analysis (CRIDA) and other bottom-up approaches that include hydro climatic and non-climatic uncertainties integrated in hydrological projections and water use in different regions and across various spatial and time scales"
-    },
-    {
-      "code": "1.3.6",
-      "title": "Contribution to exploration of a new generations of hydroclimatic scenarios (including hydrochemistry, hydroecology) and projections of water demands, via modelling time variable hydroclimatic systems considering the many nonlinear and feedback/forward loops"
-    }
-  ],
-  "1.4": [
-    {
-      "code": "1.4.1",
-      "title": "Preparation and dissemination of state of the art (best practices) publications on new business models, the role of water utilities, broadening engagement and partnerships, disclosure practices, and infrastructure in accelerating the circular economy transition of the water sector, as well as other industry sectors"
-    },
-    {
-      "code": "1.4.3",
-      "title": "Intersectoral dialogue among public, private and civil water stakeholders for promoting the circular economy transition of the water sector and of other industry sectors and expansion of good practices"
-    }
-  ],
-  "1.5": [
-    {
-      "code": "1.5.1",
-      "title": "Contribution to research, knowledge generation and dissemination on socio-hydrology, including socio hydrogeology, as a follow up of the Panta Rhei decade and previous IHP initiatives in partnership with IAHS"
-    },
-    {
-      "code": "1.5.2",
-      "title": "Formulation and initiation of a socio-hydrology scientific dialogue among natural and social sciences researchers (including hydrological, ecohydrological, hydrogeological, social, and climate scientists and agronomists) and local communities/stakeholders (human water models, case studies)"
-    },
-    {
-      "code": "1.5.3",
-      "title": "Conducting and supporting scientific research to assess the interaction between humans, environment and water, in line with socio-hydrology within an urban rural setting and develop adaptive pathways, scenarios and strategies for water management"
-    },
-    {
-      "code": "1.5.4",
-      "title": "Conducting an assessment and preparing a synthesis report on the socio-hydrology related knowledge within the UNESCO Water Family, including the Flagships"
-    }
-  ],
-  "1.6": [
-    {
-      "code": "1.6.1",
-      "title": "Research and knowledge generation on the scientific advances in addressing and timely forecasting of water related disasters, such as (flash) floods, (flash) droughts and rainfall induced landslides; and on additional impact of synchronous and/or cascading water related hazards, in partnership with EGU, AGU, IAHS ISEH and ICL - International Consortium on Landslides and IPL - International Programme on Landslides including good practices and lessons learned"
-    },
-    {
-      "code": "1.6.2",
-      "title": "Science policy dialogue and capacity building on water management that considers wet and dry extremes (floods and drought), including symposia, workshops, and sessions in related events/fora"
-    },
-    {
-      "code": "1.6.3",
-      "title": "Assessment of impact of past projects, review of lessons learned, and formulation and implementation of new projects at country level or/and basin level in different regions in addressing water related disasters (through deployment of EWS, flood and drought hazard mapping, risk mapping and building capacity) and investigations and publications on why droughts/floods in some catchments are more sensitive to land use/cover and geomorphic change than in others, in partnership with IAHS"
-    },
-    {
-      "code": "1.6.4",
-      "title": "Development of online synthesis systems to strengthen water related disaster resilience and sustainability with functions for users to make maximum use of climate change projection and early warning and share good practices and success/failure stories in each mother tongue"
-    },
-    {
-      "code": "1.6.5",
-      "title": "Synthesis and publications on knowledge, methodologies and tools on drought/floods; organization of the capitalization of knowledge, results and experience available in the UNESCO Water Family, including the Flagships"
-    }
-  ],
-  "1.7": [
-    {
-      "code": "1.7.1",
-      "title": "Scientific studies, thematic workshops, and science-based support to policy makers and managers on \"Water in the Anthropocene\" (e.g. Water Management in Coastal Areas; Water and Land Management in Low Lying River Deltas; Aqui fer Systems; Water management in Urban Environments; Management of Hydrosphere-Cryosphere-Climate Change Nexus)"
-    },
-    {
-      "code": "1.7.2",
-      "title": "Status Reports on (up to 300) large rivers, coordinated by the World's Large Rivers Initiative WLRI, UNESCO Chair on Integrated River Research and Management, in partnership with other UN Organizations and other members and partners of water family; dissemination in related events"
-    },
-    {
-      "code": "1.7.3",
-      "title": "Continued work on the assessments, case studies and associated education and capacity building on snow glaciers and water resources; sediment monitoring; magnitud e and risks linked to land subsidence from global to local level; coastal aquifers, considering the conservation of ecosystem services and multiple risks, including pollution and saltwater intrusion, with specific emphasis on small island developing states"
-    },
-    {
-      "code": "1.7.4",
-      "title": "Development and compilation of the assessments and reports, training material on state of the art and case studies/best practices; and building capacity at country level"
-    }
-  ],
-  "1.8": [
-    {
-      "code": "1.8.1",
-      "title": "Thematic assessments of water quality at the basin, city, national, regional and global scales to identify key water quality and pollution challenges"
-    },
-    {
-      "code": "1.8.2",
-      "title": "Promotion of innovative tools and policies and capacity building for water quality management and pollution control, by identifying and disseminating innovative, best technological solutions, nature-based solutions and policies for different stakeholders"
-    },
-    {
-      "code": "1.8.3",
-      "title": "Development of science-based decision-making guidance on ecohydrological and ecosystem-based approaches to water quality management, with reference to nature-based and hybrid grey green solutions and cross-cutting outputs"
-    },
-    {
-      "code": "1.8.4",
-      "title": "Knowledge generation and science-based advice for decision-making, including through conferences and science-policy briefs, on the impact of global change, and climate change, on water quality in river, lake and reservoir basins, groundwater and coastal areas, in cooperation with UNEP and other partners"
-    }
-  ],
-  "1.9": [
-    {
-      "code": "1.9.1",
-      "title": "Facilitation of the development, and promotion, of tools and methodologies based on earth observations, Artificial Intelligence (AI) Machine Learning (ML) and Internet of Things (IoT) for water resources assessment and monitoring and promote use of software applications such as rainwater harvesting, observation and as well as flood and drought monitoring"
-    },
-    {
-      "code": "1.9.2",
-      "title": "Pilot projects and programs, including publications addressing guidelines on the effective and safe use of new technologies to examine applicability to country conditions to adoption/upscaling and to produce recommendations in cooperation with WMO and other partners, as appropriate"
-    },
-    {
-      "code": "1.9.3",
-      "title": "Joint development of scientific activity and capacity building program with AMCOW and NEPAD Water CoE on technologies and innovation to support African Water Vision 2025 and Agenda 2063"
-    },
-    {
-      "code": "1.9.4",
-      "title": "Use of Earth observations, satellite remote sensing and UAV technologies, for freshwater quality monitoring by developing and applying the UNESCO Global Water Quality Portal to basins around the world in different regions, in cooperation with UNEP, the World Water Quality Alliance and other partners, as appropriate and including the development of new systems"
-    },
-    {
-      "code": "1.9.5",
-      "title": "Development and sharing of new knowledge on Smart Water Management systems"
-    }
-  ],
-  "1.10": [
-    {
-      "code": "1.10.1",
-      "title": "Citizen science pilot studies in different regions for water resources monitoring and crowdsourced assessments by local stakeholders, including validation of data quality to ensure adequate accuracy"
-    },
-    {
-      "code": "1.10.2",
-      "title": "Country and community level projects integrating indigenous knowledge in water and land management, through citizen and open science methodologies to build water resilience"
-    },
-    {
-      "code": "1.10.3",
-      "title": "Collaboration with AMCOW and/or NEPAD Water CoE to pilot crowdsourced/citizen science-based project monitoring water quality towards improved water management, involving, among other collaborators, the Citizens AND HYdrology (CANDHY) Working Group on water towards improved water management)"
-    },
-    {
-      "code": "1.10.4",
-      "title": "Continued Research and Development and capacity building work, including development of a citizen science toolbox, its promotion through training programmes and in cooperation with non-governmental organizations as catalysts"
-    }
-  ],
-  "2.1": [
-    {
-      "code": "2.1.1",
-      "title": "Country level awareness raising using special days and observances such as World Water Day World Wetlands Day and World Toilet Day, engaging mass media specialists for proper messaging towards target audiences; possibly a dedicated prize (if sponsored by a Member State), among others"
-    },
-    {
-      "code": "2.1.2",
-      "title": "Capacity building of educators and policy makers on country level including through workshops, webinars and online distant learning methods, e.g. Massive Open Online Courses (on various water related topics with cross cutting emphasis on youth, women and indigenous communities (also see output 2.3)"
-    },
-    {
-      "code": "2.1.3",
-      "title": "Mainstreaming water's importance in broader awareness raising events (such as sustainable development, environment, climate change, desertification, cities, responses to public health issues, pandemics etc., at global, regional and national levels"
-    },
-    {
-      "code": "2.1.4",
-      "title": "Use of networks and partnerships to increase coverage in mass media and social media, including cooperation with journalists on water topics, using easy-to-understand facts, statistics, infographics, and video clips by public figures, also making use of the Global Water Museums Network (WAMU-NET)"
-    },
-    {
-      "code": "2.1.5",
-      "title": "Capacity building of young generation through mass media using easily digestible information on extreme water-related hazards and related technical and ecohydrological solutions"
-    }
-  ],
-  "2.2": [
-    {
-      "code": "2.2.1",
-      "title": "Facilitation of collaboration between scientists and educators from various disciplines, through adoption of methodologies, use of existing or platforms and processes, and incorporating the diversity and inclusion of local contexts, all through participatory holistic practices, involving UNESCO Water Family, water centers of excellence, Pan African Virtual and E-University (PAVEU) and other partners"
-    },
-    {
-      "code": "2.2.3",
-      "title": "Collaborative scientific study examining gaps and opportunities in participatory, transdisciplinary and holistic research and education in water sciences, as necessity towards raising the consciousness of finite resources and tipping points"
-    },
-    {
-      "code": "2.2.4",
-      "title": "Elaboration of formal, non-formal and informal education at all levels towards a better understanding of the importance of water for livelihoods and communities, through the mobilization of WAMU-NET and others, and implementation of Transformative Experience in informal science learning programs"
-    }
-  ],
-  "2.3": [
-    {
-      "code": "2.3.1",
-      "title": "Compilation, harmonization, and dissemination, including to university libraries and for early, primary, and secondary education of UNESCO Water Family-based training materials and others related to importance of the interactions of water in lives, communities and ecosystem processes"
-    },
-    {
-      "code": "2.3.2",
-      "title": "Development of a series of modules, using the available new technologies and innovative learning processes, based on the existing material and developing new learning material and tools catering to the priorities and needs of the Member States and partners, including the development of a multilingual glossary on water, Case Studies in Socio-Hydrology; Compendium of Case Studies; and custom-made module together with, and for use by, Pan African Virtual and E-University (PAVEU)"
-    },
-    {
-      "code": "2.3.3",
-      "title": "Initiation of a \"Guest lecturer on demand series\" for promotion of water security concepts in tertiary education, made available to Member States and stakeholder institutions"
-    },
-    {
-      "code": "2.3.4",
-      "title": "Preparation, dissemination and use in capacity building of joint training material on floods, droughts and climate resilient water management and other water-induced disasters, such as landslides bridging disaster risk reduction, climate resilience and water management"
-    }
-  ],
-  "2.4": [
-    {
-      "code": "2.4.1",
-      "title": "Production and dissemination of toolkits and e-learning modules including \"Water science for policy\"(similar to the current UNESCO Inclusive Policy Lab content but specific to water) for early to mid-career scientists; \"Evidence-based water policy-making\" for middle to upper level civil servants, managers, professionals, and advisers; and \"Water education for inclusive outcomes and sustainable development\", translating scientific information for educators and skilled professionals and technicians in tertiary and vocational education"
-    },
-    {
-      "code": "2.4.2",
-      "title": "Capacity building modules, training material, and communications tools on ensuring stakeholder trust and engagement in water management"
-    },
-    {
-      "code": "2.4.3",
-      "title": "Establishment of a Community of Practice for scientists, policy- and decision-makers to ensure more efficient knowledge and information sharing and facilitate exchanges"
-    },
-    {
-      "code": "2.4.4",
-      "title": "Integration/synthesis of e-learning on water topics (e.g. in UNESCO Open Learning, Open Water Network and others)"
-    }
-  ],
-  "2.5": [
-    {
-      "code": "2.5.2",
-      "title": "Development of methodology and practical guide for the identification of capacity gaps and needs in the tertiary and vocational education agents (professionals, teachers, technicians etc.), prepared by core group of UNESCO Water Family members, and intersectoral dialogue and consultation at country level to identify and address the gaps and needs, including training of trainers, and country level implementation of toolkits and e-learning modules. (Refer to output 2.4.)"
-    },
-    {
-      "code": "2.5.3",
-      "title": "Capacity building to bridge education policy gaps in water and sustainable development by equipping professionals and technicians with relevant tools and knowledge"
-    },
-    {
-      "code": "2.5.4",
-      "title": "Establishment of a UNESCO water family educational platform open to the Member States and partners to enhance learning opportunities and sharing of good practices and lessons learned, also valorizing Ecohydrology Demosites, MAB Biosphere Reserves and other UNESCO designated sites"
-    }
-  ],
-  "2.6": [
-    {
-      "code": "2.6.1",
-      "title": "Coordination of the UN Water initiative to building capacity to accelerate SDG 6, with UN DESA as co-lead"
-    },
-    {
-      "code": "2.6.2",
-      "title": "Building capacity to mainstream research recommendations and relevant technology including nature-based solutions/ecohydrology in decision making for middle/ upper-level civil servants, water managers, and professionals"
-    },
-    {
-      "code": "2.6.3",
-      "title": "Science policy dialogue in countries and regions, including through workshops to science policy gaps and to strengthen institutional capacities in water and sustainable development"
-    },
-    {
-      "code": "2.6.4",
-      "title": "Capacity building, including refresher, hands on workshops, to showcase the effective use of new technologies, data and information, good practices and to jointly assess applicability opportunities and barriers, including support to facilitators who assist stakeholders to apply science and technology effectively, protect their lives and assets, and continue their livelihoods and businesses by making maximum use of the online synthesis systems"
-    }
-  ],
-  "3.1": [
-    {
-      "code": "3.1.1",
-      "title": "Synthesis on measurements and data, including a synthesis paper; organization of the capitalization of knowledge, results and experience available in the UNESCO Water Family, including the Flagships"
-    },
-    {
-      "code": "3.1.2",
-      "title": "Establishing an International Open Water Symposium to advance data related scientific research and its applications, including, inter alia, cloud-computing for remote sensing applications, big data and spatial data infrastructures to support integrated watershed management; publication and dissemination of the scientific papers presented and developing a dedicated special issue in a peer-reviewed scientific journal"
-    },
-    {
-      "code": "3.1.3",
-      "title": "Compilation and harmonization of knowledge products across sources and custodians of data and monitoring systems from collection, validation, analysis, assessment and reporting perspectives, in partnership with WMO; and engagement with the scientific community on the associated needs and the-state-of-the-art to stimulate research and enhance data services"
-    },
-    {
-      "code": "3.1.4",
-      "title": "Scientific examination of existing and emerging standards and protocols and preparation of a compendium of methods, standards, and recommended practice, in collaboration with WMO"
-    },
-    {
-      "code": "3.1.5",
-      "title": "Investigations on how to extract information from available data on human and water systems in order to inform the building process of socio hydrological models and conceptualizations in partnership with IAHS"
-    }
-  ],
-  "3.2": [
-    {
-      "code": "3.2.1",
-      "title": "Design, expansion and harmonization of experimental basins including through regional and global networks and twinning new ones with the existing basins, with the possibility of establishing a global network of experimental basins, considering existing IHP initiatives and others; and support and assistance for the inclusion of targeted aquifer systems"
-    },
-    {
-      "code": "3.2.4",
-      "title": "Maintenance, consolidation and expansion of existing hydrological networks network data (GRDC, FRIEND-Water databases eco-hydrology demosites)"
-    }
-  ],
-  "3.3": [
-    {
-      "code": "3.3.1",
-      "title": "Enhancement of the capabilities and user friendliness of IHP-WINS, including the extension of IHP-WINS with new members, new data and new contributions from members"
-    },
-    {
-      "code": "3.3.2",
-      "title": "Facilitation and support for enhanced access to validated data, metadata and information, and coordinated access across the major water and related data bases, including the population and promotion of databases and platforms to make groundwater related data accessible to multiple stakeholders and improvement of the capabilities of the global MAR portal hosted by UNESCO-IGRAC"
-    },
-    {
-      "code": "3.3.3",
-      "title": "Participation in and support to coordination of water data services, including with UN-Water, FAO, UNEP, UNICEF, WMO, WHO, GEO, other agencies, programmes, partners and water operators"
-    },
-    {
-      "code": "3.3.4",
-      "title": "Scientific data comparison and cross validation across domains and facilitation for use by the scientific community to enhance compatibility and harmonization across disciplines and teams"
-    }
-  ],
   "3.4": [
     {
       "code": "3.4.1",
@@ -348,107 +6,55 @@
     },
     {
       "code": "3.4.2",
-      "title": "Capacity development of stakeholders in public and private sectors, and civil society in hydrological data collection, validation, interpretation and sharing as well as data entry, storage and subsequent access processes"
+      "title": "Capacity development of stakeholders in public and private sectors, and civil society in hydrological data collection, validation, interpretation and sharing as well as data entry, storage and subsequent access processes."
     },
     {
       "code": "3.4.3",
-      "title": "Development and sharing of data analysis methods including information fusion, data integration, assimilation, and visualization, e.g. through mobilization of UNESCO city networks like MAWAC"
+      "title": "Development and sharing of data analysis methods including information fusion, data integration, assimilation, and visualization, e.g. through mobilization of UNESCO city networks like MAWAC."
     },
     {
       "code": "3.4.4",
-      "title": "Enhancement, especially, of ground network observation and satellite observation capacity and integrated water cycle observation capacity; and improvement of data integration and analysis capacity, e.g. through actions including trainings programmes, summer schools, and other means"
+      "title": "Enhancement, especially, of ground network observation and satellite observation capacity and integrated water cycle observation capacity; and improvement of data integration and analysis capacity, e.g. through actions including trainings programmes, summer schools, and other means."
     }
   ],
-  "4.1": [
+  "2.5": [
     {
-      "code": "4.1.1",
-      "title": "Conducting and sharing scientific research in inclusive and participatory water management with gender emphasis and engagement of youth, local and indigenous communities, e.g. in selected demonstration sites (such as Ecohydrology demosites, CRIDA applications and UNESCO designated sites); studies and country level pilots including stock take on stakeholder participation in water management at all levels, and a country pilot showcasing modalities and benefits of engagement"
+      "code": "2.5.1",
+      "title": "Full development and promotion of the new water education indicator and web-based observatory for SDG 6."
     },
     {
-      "code": "4.1.2",
-      "title": "Development and dissemination of best practices and innovative solutions to engage communities, youth, women, indigenous groups and national minorities in water management, including through country level, regional and global dialogues, at all levels and across sectors"
+      "code": "2.5.2",
+      "title": "Development of methodology and practical guide for the identification of capacity gaps and needs in the tertiary and vocational education agents (professionals, teachers, technicians etc.), prepared by core group of UNESCO Water Family members, and intersectoral dialogue and consultation at country level to identify and address the gaps and needs, including training of trainers, and country level implementation of toolkits and e-learning modules. (Refer to output 2.4.)."
     },
     {
-      "code": "4.1.4",
-      "title": "Capacity building on (i) ensuring stakeholder trust and engagement in water management, and (ii) water education for inclusive outcomes and sustainable development"
+      "code": "2.5.3",
+      "title": "Capacity building to bridge education policy gaps in water and sustainable development by equipping professionals and technicians with relevant tools and knowledge."
+    },
+    {
+      "code": "2.5.4",
+      "title": "Establishment of a UNESCO water family educational platform open to the Member States and partners to enhance learning opportunities and sharing of good practices and lessons learned, also valorizing Ecohydrology Demosites, MAB Biosphere Reserves and other UNESCO designated sites."
+    },
+    {
+      "code": "2.5.5",
+      "title": "Expanding and upscaling the NEPAD/EU Human Capacity Development project in Africa in partnership with EU Joint Research Centre (JRC) and AMCOW."
     }
   ],
-  "4.2": [
+  "2.2": [
     {
-      "code": "4.2.1",
-      "title": "Identification, sharing, publishing and building capacity on good inclusive practices in upstream-downstream river uses for hydropower, irrigation, navigation, fishery, leisure activities, water supply and water related risk management"
+      "code": "2.2.1",
+      "title": "Facilitation of collaboration between scientists and educators from various disciplines, through adoption of methodologies, use of existing or platforms and processes, and incorporating the diversity and inclusion of local contexts, all through participatory holistic practices, involving UNESCO Water Family, water centers of excellence, Pan African Virtual and E-University (PAVEU) and other partners."
     },
     {
-      "code": "4.2.2",
-      "title": "Research projects, incorporating among others Water Cycle Management (WCM) and Integrated River Research and Management (IWRM) and ecohydrology methods to enhance the sustainability potential WBSR+CE river and its catchment, examine the upstream downstream effects of river uses and their interactions including with aquifers and, where appropriate, in a transboundary context to balance competing objectives and manage water related environmental risks minimize ecological consequences and improve biodiversity"
+      "code": "2.2.2",
+      "title": "Virtual thematic sessions for early-career researchers on participatory, transdisciplinary and holistic research collaboration, held by UNESCO Water Family members."
     },
     {
-      "code": "4.2.3",
-      "title": "Assessment, in selected basins, of the impacts of groundwater overextraction and contamination on the upstream-downstream dynamics, with focus on river baseflow and groundwater dependent ecosystems"
+      "code": "2.2.3",
+      "title": "Collaborative scientific study examining gaps and opportunities in participatory, transdisciplinary and holistic research and education in water sciences, as necessity towards raising the consciousness of finite resources and tipping points."
     },
     {
-      "code": "4.2.4",
-      "title": "Implementation of Flood and Drought Early Warning Systems (FEWS, DEWS) to monitor and forecast floods and droughts in different river basins and to inform river management decisions. [Ref. to 1.6]"
-    }
-  ],
-  "4.3": [
-    {
-      "code": "4.3.1",
-      "title": "Research projects, including collaborative actions (private sector, NGOs, civil society) and compilation of the state of the art in NCRWs and circular economies to improve WCM and to enhance efficiency and effectiveness of public and private investments, also in urban and peri-urban settlements, and also in alignment with MAWAC (Megacities, Water & Climate)"
-    },
-    {
-      "code": "4.3.2",
-      "title": "Support to knowledge and policy development towards sustained implementation and maintenance of Managed Aquifer Recharge in targeted aquifers, and its inclusion in IWRM planning"
-    },
-    {
-      "code": "4.3.3",
-      "title": "Promotion of NCRWs for better WCM through training sessions and events at regional and global water events, COPs and other fora to mainstream it in broader contexts"
-    },
-    {
-      "code": "4.3.4",
-      "title": "Dissemination and raising awareness and capacity in nature-based solutions; best practices and public acceptance on safe reuse of wastewater, including community engagements; engagement of young professionals to enhance human capacities in MAR, NCWRs and WCM"
-    }
-  ],
-  "4.4": [
-    {
-      "code": "4.4.1",
-      "title": "Intersectoral science policy dialogue and knowledge generation on integrative nexus and source to sea approaches and cooperation opportunities across sectors including transboundary surface and groundwater resources and ecosystems; case studies, good practices"
-    },
-    {
-      "code": "4.4.2",
-      "title": "Promotion of source-to-sea and nexus approaches in water quality, quantity, ecosystems and biodiversity and resilience interlinkages; development of science-based guidance"
-    },
-    {
-      "code": "4.4.3",
-      "title": "Research on synergies and tradeoffs among the societal goals related to water management (e.g. water-environment-energy-food-health); and compilation and dissemination, including through conferences/symposia/workshops, of best nexus practices, including wastewater reuse and byproducts (nutrients, energy) in a circular economy context"
-    }
-  ],
-  "4.5": [
-    {
-      "code": "4.5.1",
-      "title": "Research, knowledge generation, and dissemination, including sessions in international fora and dedicated events, on emerging pollutants, their fate and transport in surface and groundwater systems including the unsaturated zone linked to human health, considering among others antibiotics and antibiotic resistance and pharmaceuticals in freshwater systems and their impacts on ecosystems, as well as on solutions for pollution prevention, control and mitigation"
-    },
-    {
-      "code": "4.5.2",
-      "title": "Knowledge generation and research on global change impacts on water quality (e.g. linking to relevant projects)"
-    },
-    {
-      "code": "4.5.3",
-      "title": "Dissemination of the state of the art and experience sharing in SARS-CoV-2 in water and wastewater systems with case studies, best management practices, and policy guidance"
-    },
-    {
-      "code": "4.5.5",
-      "title": "Identification and promotion of best practices and appropriate solutions Including ecohydrological nature-based solutions to reduce surface and groundwater pollution; a compendium of such solutions and technologies"
-    }
-  ],
-  "4.6": [
-    {
-      "code": "4.6.1",
-      "title": "Support to Member States in assessing environmental flows and ecosystem services to inform their IWRM practices and to improve their monitoring and achievement of SDG 6"
-    },
-    {
-      "code": "4.6.2",
-      "title": "Development/dissemination of case studies from current ecohydrology sites to improve the understanding of water ecosystem human interactions and highlight ecohydrology-NBS synergies"
+      "code": "2.2.4",
+      "title": "Elaboration of formal, non-formal and informal education at all levels towards a better understanding of the importance of water for livelihoods and communities, through the mobilization of WAMU-NET and others, and implementation of Transformative Experience in informal science learning programs."
     }
   ],
   "4.7": [
@@ -457,126 +63,612 @@
       "title": "Assessment of snow, glaciers permafrost and surface and groundwater resources in selected regions; supported by compilation of an inventory of mountain related water hazards Early Warning Systems, including for Glacial Lake Outburst Floods (GLOFS)"
     },
     {
+      "code": "4.7.2",
+      "title": "Identification of capacity needs in the respective regions and recommendations to inform decision making to reduce vulnerabilities from glacier lake outburst under climate change scenarios/projections."
+    },
+    {
       "code": "4.7.3",
-      "title": "Focused research and knowledge generation and dissemination, including International symposium on the scientific understanding on current and future water availability and the risks from highly glacierized basins; IHP position paper to guide forthcoming research"
+      "title": "Focused research and knowledge generation and dissemination, including International symposium on the scientific understanding on current and future water availability and the risks from highly glacierized basins; IHP position paper to guide forthcoming research."
+    },
+    {
+      "code": "4.7.4",
+      "title": "Capacity building to support cryosphere system assessments and vulnerability reduction."
+    },
+    {
+      "code": "4.7.5",
+      "title": "Facilitating and supporting of glacier and snow monitoring systems in coordination with World Glacier Monitoring Systems (WGMS) including possibility of web based data bank to support assessment and sharing methods to monitor changes."
     }
   ],
-  "4.8": [
+  "1.7": [
     {
-      "code": "4.8.1",
-      "title": "Cross-sectoral dialogue and research on methodologies and tools in mainstreaming global changes within water management, under recent assessments on climate change, including floods and drought, loss of biodiversity, degradation and desertification, and pollution"
+      "code": "1.7.1",
+      "title": "Scientific studies, thematic workshops, and science-based support to policy makers and managers on “Water in the Anthropocene” (e.g. Water Management in Coastal Areas; Water and Land Management in Low Lying River Deltas; Aqui fer Systems; Water management in Urban Environments; Management of Hydrosphere-Cryosphere-Climate Change Nexus)."
     },
     {
-      "code": "4.8.3",
-      "title": "Scientific studies on the implications of the global changes on water resources and the role of water management in response to global changes, including spatial-temporal optimization considering global change, in support of adaptive decision-making"
+      "code": "1.7.2",
+      "title": "Status Reports on (up to 300) large rivers, coordinated by the World’s Large Rivers Initiative WLRI, UNESCO Chair on Integrated River Research and Management, in partnership with other UN Organizations and other members and partners of water family; dissemination in related events."
     },
     {
-      "code": "4.8.4",
-      "title": "Raising awareness and building capacity of the professionals, decision-makers and communities in the use of methodologies and tools to inform planning and management of water under global changes"
+      "code": "1.7.3",
+      "title": "Continued work on the assessments, case studies and associated education and capacity building on snow glaciers and water resources; sediment monitoring; magnitud e and risks linked to land subsidence from global to local level; coastal aquifers, considering the conservation of ecosystem services and multiple risks, including pollution and saltwater intrusion, with specific emphasis on small island developing states."
     },
     {
-      "code": "4.8.5",
-      "title": "Support and facilitation of the development and use of methodologies and tools in mainstreaming global changes, including within urban water management (e.g. extended application of City Blueprint Framework) and for climate change (e.g. CRIDA); raising awareness towards sustainable water consumption under uncertainty and global changes"
+      "code": "1.7.4",
+      "title": "Development and compilation of the assessments and reports, training material on state of the art and case studies/best practices; and building capacity at country level."
+    },
+    {
+      "code": "1.7.5",
+      "title": "Research on rain on snow events including how/when they produce exceptional runoff, in partnership with IAHS."
+    }
+  ],
+  "1.9": [
+    {
+      "code": "1.9.1",
+      "title": "Facilitation of the development, and promotion, of tools and methodologies based on earth observations, Artificial Intelligence (AI) Machine Learning (ML) and Internet of Things (IoT) for water resources assessment and monitoring and promote use of software applications such as rainwater harvesting, observation and as well as flood and drought monitoring."
+    },
+    {
+      "code": "1.9.2",
+      "title": "Pilot projects and programs, including publications addressing guidelines on the effective and safe use of new technologies to examine applicability to country conditions to adoption/upscaling and to produce recommendations in cooperation with WMO and other partners, as appropriate."
+    },
+    {
+      "code": "1.9.3",
+      "title": "Joint development of scientific activity and capacity building program with AMCOW and NEPAD Water CoE on technologies and innovation to support African Water Vision 2025 and Agenda 2063."
+    },
+    {
+      "code": "1.9.4",
+      "title": "Use of Earth observations, satellite remote sensing and UAV technologies, for freshwater quality monitoring by developing and applying the UNESCO Global Water Quality Portal to basins around the world in different regions, in cooperation with UNEP, the World Water Quality Alliance and other partners, as appropriate and including the development of new systems."
+    },
+    {
+      "code": "1.9.5",
+      "title": "Development and sharing of new knowledge on Smart Water Management systems."
+    }
+  ],
+  "2.6": [
+    {
+      "code": "2.6.1",
+      "title": "Coordination of the UN Water initiative to building capacity to accelerate SDG 6, with UN DESA as co-lead."
+    },
+    {
+      "code": "2.6.2",
+      "title": "Building capacity to mainstream research recommendations and relevant technology including nature-based solutions/ecohydrology in decision making for middle/ upper-level civil servants, water managers, and professionals."
+    },
+    {
+      "code": "2.6.3",
+      "title": "Science policy dialogue in countries and regions, including through workshops to science policy gaps and to strengthen institutional capacities in water and sustainable development."
+    },
+    {
+      "code": "2.6.4",
+      "title": "Capacity building, including refresher, hands on workshops, to showcase the effective use of new technologies, data and information, good practices and to jointly assess applicability opportunities and barriers, including support to facilitators who assist stakeholders to apply science and technology effectively, protect their lives and assets, and continue their livelihoods and businesses by making maximum use of the online synthesis systems."
+    }
+  ],
+  "3.1": [
+    {
+      "code": "3.1.1",
+      "title": "Synthesis on measurements and data, including a synthesis paper; organization of the capitalization of knowledge, results and experience available in the UNESCO Water Family, including the Flagships."
+    },
+    {
+      "code": "3.1.2",
+      "title": "Establishing an International Open Water Symposium to advance data related scientific research and its applications, including, inter alia, cloud-computing for remote sensing applications, big data and spatial data infrastructures to support integrated watershed management; publication and dissemination of the scientific papers presented and developing a dedicated special issue in a peer-reviewed scientific journal."
+    },
+    {
+      "code": "3.1.3",
+      "title": "Compilation and harmonization of knowledge products across sources and custodians of data and monitoring systems from collection, validation, analysis, assessment and reporting perspectives, in partnership with WMO; and engagement with the scientific community on the associated needs and the-state-of-the-art to stimulate research and enhance data services."
+    },
+    {
+      "code": "3.1.4",
+      "title": "Scientific examination of existing and emerging standards and protocols and preparation of a compendium of methods, standards, and recommended practice, in collaboration with WMO."
+    },
+    {
+      "code": "3.1.5",
+      "title": "Investigations on how to extract information from available data on human and water systems in order to inform the building process of socio hydrological models and conceptualizations in partnership with IAHS."
+    }
+  ],
+  "2.3": [
+    {
+      "code": "2.3.1",
+      "title": "Compilation, harmonization, and dissemination, including to university libraries and for early, primary, and secondary education of UNESCO Water Family-based training materials and others related to importance of the interactions of water in lives, communities and ecosystem processes."
+    },
+    {
+      "code": "2.3.2",
+      "title": "Development of a series of modules, using the available new technologies and innovative learning processes, based on the existing material and developing new learning material and tools catering to the priorities and needs of the Member States and partners, including the development of a multilingual glossary on water, Case Studies in Socio-Hydrology; Compendium of Case Studies; and custom-made module together with, and for use by, Pan African Virtual and E-University (PAVEU)."
+    },
+    {
+      "code": "2.3.3",
+      "title": "Initiation of a “Guest lecturer on demand series” for promotion of water security concepts in tertiary education, made available to Member States and stakeholder institutions."
+    },
+    {
+      "code": "2.3.4",
+      "title": "Preparation, dissemination and use in capacity building of joint training material on floods, droughts and climate resilient water management and other water-induced disasters, such as landslides bridging disaster risk reduction, climate resilience and water management."
+    }
+  ],
+  "1.1": [
+    {
+      "code": "1.1.1",
+      "title": "Coordination of UNESCO scientific efforts on Unsolved Problems in Hydrology, including hydrogeology/geo hydrology, in partnership with IAHS, IAH and other water related scientific associations, including o rganization of the capitalisation of knowledge, res ults and experience available in the UNESCO Water Family, incl. the Flagships, into published syntheses."
+    },
+    {
+      "code": "1.1.2",
+      "title": "Establishment and maintenance of an exchange scheme among UNESCO water family and partners for research on Unsolved Problems and New, Emerging Topics i n Hydrology."
+    },
+    {
+      "code": "1.1.3",
+      "title": "Exploration of the emerging research challenges and periodic review of unresolved problems in hydrology, in cooperation with Hydrological Divisions of International Geophysical Organisations (e. AGU, EGU) in partnership with IAHS and IAH."
+    },
+    {
+      "code": "1.1.4",
+      "title": "Establishment and implementation of UNESCO Biennial Award for Ph.D. studies and Biennial Conference series on Unsolved Problems and New, Emerging Topics in Hydrology, in partnership with IAHS, IAH, IAHR and other relevant organizations, such as WMO."
+    }
+  ],
+  "4.2": [
+    {
+      "code": "4.2.1",
+      "title": "Identification, sharing, publishing and building capacity on good inclusive practices in upstream-downstream river uses for hydropower, irrigation, navigation, fishery, leisure activities, water supply and water related risk management."
+    },
+    {
+      "code": "4.2.2",
+      "title": "Research projects, incorporating among others Water Cycle Management (WCM) and Integrated River Research and Management (IWRM) and ecohydrology methods to enhance the sustainability potential WBSR+CE river and its catchment, examine the upstream downstream effects of river uses and their interactions including with aquifers and, where appropriate, in a transboundary context to balance competing objectives and manage water related environmental risks minimize ecological consequences and improve biodiversity."
+    },
+    {
+      "code": "4.2.3",
+      "title": "Assessment, in selected basins, of the impacts of groundwater overextraction and contamination on the upstream-downstream dynamics, with focus on river baseflow and groundwater dependent ecosystems."
+    },
+    {
+      "code": "4.2.4",
+      "title": "Implementation of Flood and Drought Early Warning Systems (FEWS, DEWS) to monitor and forecast floods and droughts in different river basins and to inform river management decisions. [Ref. to 1.6]"
+    }
+  ],
+  "1.6": [
+    {
+      "code": "1.6.1",
+      "title": "Research and knowledge generation on the scientific advances in addressing and timely forecasting of water related disasters, such as (flash) floods, (flash) droughts and rainfall induced landslides; and on additional impact of synchronous and/or cascading water related hazards, in partnership with EGU, AGU, IAHS ISEH and ICL - International Consortium on Landslides and IPL - International Programme on Landslides including good practices and lessons learned."
+    },
+    {
+      "code": "1.6.2",
+      "title": "Science policy dialogue and capacity building on water management that considers wet and dry extremes (floods and drought), including symposia, workshops, and sessions in related events/fora."
+    },
+    {
+      "code": "1.6.3",
+      "title": "Assessment of impact of past projects, review of lessons learned, and formulation and implementation of new projects at country level or/and basin level in different regions in addressing water related disasters (through deployment of EWS, flood and drought hazard mapping, risk mapping and building capacity) and investigations and publications on why droughts/floods in some catchments are more sensitive to land use/cover and geomorphic change than in others, in partnership with IAHS."
+    },
+    {
+      "code": "1.6.4",
+      "title": "Development of online synthesis systems to strengthen water related disaster resilience and sustainability with functions for users to make maximum use of climate change projection and early warning and share good practices and success/failure stories in each mother tongue."
+    },
+    {
+      "code": "1.6.5",
+      "title": "Synthesis and publications on knowledge, methodologies and tools on drought/floods; organization of the capitalization of knowledge, results and experience available in the UNESCO Water Family, including the Flagships."
     }
   ],
   "4.9": [
     {
       "code": "4.9.1",
-      "title": "Capacity building in transboundary cooperation to support the technical and political actors in implementing integrated water resources management at all levels in transboundary settings, and experience sharing and dialogue to connect transboundary water actors through multi track and multisectoral approaches, to enhance mutual trust and mutual understanding"
+      "title": "Capacity building in transboundary cooperation to support the technical and political actors in implementing integrated water resources management at all levels in transboundary settings, and experience sharing and dialogue to connect transboundary water actors through multi track and multisectoral approaches, to enhance mutual trust and mutual understanding."
     },
     {
       "code": "4.9.2",
-      "title": "Capacity building for promotion of SDG 6.5 targets and for proper monitoring and reporting of the SDG 6.5.2 indicator"
+      "title": "Capacity building for promotion of SDG 6.5 targets and for proper monitoring and reporting of the SDG 6.5.2 indicator."
     },
     {
       "code": "4.9.3",
-      "title": "Global reporting on the SDG 6.5.2 indicator to UNSD Database (2023, 2026, 2029); Periodic progress reports on transboundary water cooperation status and SDG indicator, for UN Water, with UNECE"
+      "title": "Global reporting on the SDG 6.5.2 indicator to UNSD Database (2023, 2026, 2029); Periodic progress reports on transboundary water cooperation status and SDG indicator, for UN-Water, with UNECE."
+    },
+    {
+      "code": "4.9.4",
+      "title": "Continued collaboration on promotion of transboundary cooperation; publication and promotion of the UN-Water policy brief on transboundary cooperation, with UNECE and contributions from the UNESCO Water Family."
     },
     {
       "code": "4.9.5",
-      "title": "Providing support and capacity building to countries, including through knowledge generation, compilation and publication of state and trends on water cooperation, including recommendations, guidelines, and good practices and using monitoring and using integrated water resources management through transboundary cooperation, when applicable, as a basis to foster cooperation"
+      "title": "Providing support and capacity building to countries, including through knowledge generation, compilation and publication of state and trends on wat er cooperation, including recommendations, guidelines, and good practices and using monitoring and using integrated water resources management through transboundary cooperation, when applicable, as a basis to foster cooperation."
+    }
+  ],
+  "4.5": [
+    {
+      "code": "4.5.1",
+      "title": "Research, knowledge generation, and dissemination, including sessions in international fora and dedicated events, on emerging pollutants, their fate and transport in surface and groundwater systems including the unsaturated zone linked to human health, considering among others antibiotics and antibiotic resistance and pharmaceuticals in freshwater systems and their impacts on ecosystems, as well as on solutions for pollution prevention, control and mitigation."
+    },
+    {
+      "code": "4.5.2",
+      "title": "Knowledge generation and research on global change impacts on water quality (e.g. linking to relevant projects)."
+    },
+    {
+      "code": "4.5.3",
+      "title": "Dissemination of the state of the art and experience sharing in SARS-CoV-2 in water and wastewater systems with case studies, best management practices, and policy guidance."
+    },
+    {
+      "code": "4.5.4",
+      "title": "Knowledge and evidence generation and dissemination on microplastics in freshwater; raising stakeholder engagement and scientific awareness, including projects, roundtables and meetings, such as the International Conference on Microplastics in Freshwater at UNESCO."
+    },
+    {
+      "code": "4.5.5",
+      "title": "Identification and promotion of best practices and appropriate solutions Including ecohydrological nature-based solutions to reduce surface and groundwater pollution; a compendium of such solutions and technologies."
     }
   ],
   "5.1": [
     {
       "code": "5.1.1",
-      "title": "Organizing, co-organizing sessions in intergovernmental meetings, UN platforms and processes, and major international and regional events with relevant tailored messages and science-based governance recommendations"
+      "title": "Organizing, co-organizing sessions in intergovernmental meetings, UN platforms and processes, and major international and regional events with relevant tailored messages and science-based governance recommendations."
     },
     {
       "code": "5.1.2",
-      "title": "Active participation and engagement in international and regional campaigns/processes to promote the role of science-based water governance in resilience against global changes"
+      "title": "Active participation and engagement in international and regional campaigns/processes to promote the role of science-based water governance in resilience against global changes."
     },
     {
       "code": "5.1.3",
-      "title": "Sharing with the decision makers the benefits of science-based water governance by developing the link with experiment al research basins, ecohydrology demosites, engaging with the UNESCO Water Family and enhancing the understanding of the consequences of such governance"
+      "title": "Sharing with the decision makers the benefits of science-based water governance by developing the link with experiment al research basins, ecohydrology demosites, engaging with the UNESCO Water Family and enhancing the understanding of the consequences of such governance."
     },
     {
       "code": "5.1.4",
-      "title": "Engagement with public decision-makers in development planning, pandemic and disaster response, and climate change adaptation/mitigation to provide science-based water input"
+      "title": "Engagement with public decision-makers in development planning, pandemic and disaster response, and climate change adaptation/mitigation to provide science-based water input."
+    }
+  ],
+  "3.3": [
+    {
+      "code": "3.3.1",
+      "title": "Enhancement of the capabilities and user friendliness of IHP-WINS, including the extension of IHP-WINS with new members, new data and new contributions from members."
+    },
+    {
+      "code": "3.3.2",
+      "title": "Facilitation and support for enhanced access to validated data, metadata and information, and coordinated access across the major water and related data bases, including the population and promotion of databases and platforms to make groundwater related data accessible to multiple stakeholders and improvement of the capabilities of the global MAR portal hosted by UNESCO-IGRAC."
+    },
+    {
+      "code": "3.3.3",
+      "title": "Participation in and support to coordination of water data services, including with UN-Water, FAO, UNEP, UNICEF, WMO, WHO, GEO, other agencies, programmes, partners and water operators."
+    },
+    {
+      "code": "3.3.4",
+      "title": "Scientific data comparison and cross validation across domains and facilitation for use by the scientific community to enhance compatibility and harmonization across disciplines and teams."
+    }
+  ],
+  "1.3": [
+    {
+      "code": "1.3.1",
+      "title": "Synthesis on uncertainties in the whole modelling chain (climate, hydrology, water use); Organization of the capitalization of knowledge, results and experience available in the UNESCO Water Family, including the Flagships."
+    },
+    {
+      "code": "1.3.2",
+      "title": "Research and preparation of state-of-the-art publications on uncertainty in climatic scenarios, hydrological projections and water use scenarios and intersectoral consultations among research teams (including publication and dissemination of Water Outlook)."
+    },
+    {
+      "code": "1.3.3",
+      "title": "Regional and national intersectoral dialogue and capacity building for adaptive water management in the face of uncertainty."
+    },
+    {
+      "code": "1.3.4",
+      "title": "Research on groundwater conceptualization and evaluation in continental and large scale models, in partnership with IAH, IAHS and international professional organizations (EGU, AGU)."
+    },
+    {
+      "code": "1.3.5",
+      "title": "Implementation of pilot projects on, and promotion of, Climate Risk Informed Decision Analysis (CRIDA) and other bottom-up approaches that include hydro climatic and non-climatic uncertainties integrated in hydrological projections and water use in different regions and across various spatial and time scales."
+    },
+    {
+      "code": "1.3.6",
+      "title": "Contribution to exploration of a new generations of hydroclimatic scenarios (including hydrochemistry, hydroecology) and projections of water demands, via modelling time variable hydroclimatic systems considering the many nonlinear and feedback/forward loops."
     }
   ],
   "5.2": [
     {
       "code": "5.2.1",
-      "title": "Publication and dissemination of case studies on science-informed water governance for management of surface and groundwater, in IWRM context and for climate change adaptation, also linking with experimental research basins and the UNESCO Water Family"
+      "title": "Publication and dissemination of case studies on science-informed water governance for management of surface and groundwater, in IWRM context and for climate change adaptation, also linking with experimental research basins and the UNESCO Water Family."
     },
     {
       "code": "5.2.2",
-      "title": "State-of-the-art research and publications on the instruments of water governance, both surface and groundwater, for increased climate resilience and IWRM implementation"
+      "title": "State-of-the-art research and publications on the instruments of water governance, both surface and groundwater, for increased climate resilience and IWRM implementation."
     },
     {
       "code": "5.2.3",
-      "title": "Coordinated implementation of a set of urban water management actions and solutions, including the establishment of the Megacities Alliance for Water and Climate (MAWAC) and its cooperation platform based on IHP-WINS"
+      "title": "Coordinated implementation of a set of urban water management actions and solutions, including the establishment of the Megacities Alliance for Water and Climate (MAWAC) and its cooperation platform based on IHP-WINS."
     },
     {
       "code": "5.2.4",
-      "title": "Capacity development of stakeholders in implementing sound and adaptive, context specific and location-based water governance in local, national and transboundary water resources with focus on climate change and water related disasters"
+      "title": "Capacity development of stakeholders in implementing sound and adaptive, context specific and location-based water governance in local, national and transboundary water resources with focus on climate change and water related disasters."
+    }
+  ],
+  "1.10": [
+    {
+      "code": "1.10.1",
+      "title": "Citizen science pilot studies in different regions for water resources monitoring and crowdsourced assessments by local stakeholders, including validation of data quality to ensure adequate accuracy."
+    },
+    {
+      "code": "1.10.2",
+      "title": "Country and community level projects integrating indigenous knowledge in water and land management, through citizen and open science methodologies to build water resilience."
+    },
+    {
+      "code": "1.10.3",
+      "title": "Collaboration with AMCOW and/or NEPAD Water CoE to pilot crowdsourced/citizen science-based project monitoring water quality towards improved water management, involving, among other collaborators, the Citizens AND HYdrology (CANDHY) Working Group on water towards improved water management)."
+    },
+    {
+      "code": "1.10.4",
+      "title": "Continued Research and Development and capacity building work, including development of a citizen science toolbox, its promotion through training programmes and in cooperation with non-governmental organizations as catalysts."
+    }
+  ],
+  "4.8": [
+    {
+      "code": "4.8.1",
+      "title": "Cross-sectoral dialogue and research on methodologies and tools in mainstreaming global changes within water management, under recent assessments on climate change, including floods and drought, loss of biodiversity, degradation and desertification, and pollution."
+    },
+    {
+      "code": "4.8.2",
+      "title": "Promotion of bottom-up approaches to address hydro-climatic modelling uncertainty and improve water management and planning, tailored to local needs."
+    },
+    {
+      "code": "4.8.3",
+      "title": "Scientific studies on the implications of the global changes on water resources and the role of water management in response to global changes, including spatial-temporal optimization considering global change, in support of adaptive decision-making."
+    },
+    {
+      "code": "4.8.4",
+      "title": "Raising awareness and building capacity of the professionals, decision-makers and communities in the use of methodologies and tools to inform planning and management of water under global changes."
+    },
+    {
+      "code": "4.8.5",
+      "title": "Support and facilitation of the development and use of methodologies and tools in mainstreaming global changes, including within urban water management (e.g. extended application of City Blueprint Framework) and for climate change (e.g. CRIDA); raising awareness towards sustainable water consumption under uncertainty and global changes."
+    }
+  ],
+  "1.4": [
+    {
+      "code": "1.4.1",
+      "title": "Preparation and dissemination of state of the art (best practices) publications on new business models, the role of water utilities, broadening engagement and partnerships, disclosure practices, and infrastructure in accelerating the circular economy transition of the water sector, as well as other industry sectors"
+    },
+    {
+      "code": "1.4.2",
+      "title": "Identification of way forward and paradigm shifts of water reuse within a circular economy using ecohydrology demosites both in agricultu ral and urban settings to explore new water business models; publication and dissemination of reports and papers"
+    },
+    {
+      "code": "1.4.3",
+      "title": "Intersectoral dialogue among public, private and civil water stakeholders for promoting the circular economy transition of the water sector an d of other industry sectors and expansion of good practices"
+    },
+    {
+      "code": "1.4.4",
+      "title": "Engagement through dialogue, publications, and events highlighting the opportunities for the corporate world, finance and investment sector and presenting best industry examples"
+    }
+  ],
+  "3.2": [
+    {
+      "code": "3.2.1",
+      "title": "Design, expansion and harmonization of experimental basins including through regional and global networks and twinning new ones with the existing basins, with the possibility of establishing a global network of experimental basins, considering existing IHP initiatives and others; and support and assistance for the inclusion of targeted aquifer systems."
+    },
+    {
+      "code": "3.2.2",
+      "title": "Establishment of an intercomparison programme to develop standardized datasets and a glossary used among the basins."
+    },
+    {
+      "code": "3.2.3",
+      "title": "Inter-basin dialogue activities by bringing together existing experimental and non-experimental basins and data networks on collaborative learning opportunities and involving non-experimental basins’ data to share major outcomes in support of holistic water management."
+    },
+    {
+      "code": "3.2.4",
+      "title": "Maintenance, consolidation and expansion of existing hydrological networks network data (GRDC, FRIEND-Water databases eco-hydrology demosites)"
+    }
+  ],
+  "1.2": [
+    {
+      "code": "1.2.1",
+      "title": "Development and operationalization of a world leading network/hub for transdisciplinary ecohydrological research, education and dialogue on ecohydrology and nature-based solutions for enhancement of WBRS+CE catchment sustainability potential (biodiversity, resilience to anthropogenic climate change, ecosystem services and culture and education) and promotion of Ecohydrology Web Platform (http://ecohydrology ihp.org/demosites/)."
+    },
+    {
+      "code": "1.2.2",
+      "title": "Expansion of UNES CO ecohydrology sites to demonstrate ecohydrology and nature based solutions as the sustainable way of water resources management, including in urban areas, in partnership with IAHS IAHR and ISEH"
+    },
+    {
+      "code": "1.2.3",
+      "title": "Co design, standardization and consolidation of protocols of demo sites selection and monitoring to enable knowledge assimilation in partnership with IAHS and other data related organizations (e. ERB); dissemination of progress on protocol standardization / site designation, meta analysis of demo s ites (such as through (co)convening sessions, e.g. in IAHS, IUGG, IWRM conferences)"
+    },
+    {
+      "code": "1.2.4",
+      "title": "Application of the ecohydrology approach within UNESCO water related designated sites including biosphere reserves, geoparcs and natural heritage sites for sustainability and resilience; p ublishing, sharing and promotion of the research and innovation at UNESCO designated sites through articles, case studies and a compendium of case studies."
+    },
+    {
+      "code": "1.2.5",
+      "title": "Investigation on how the catchment/river basin based ecohydrology concept/nature based solutions can be extrapolated to large scale applications (continental/global scale)."
+    },
+    {
+      "code": "1.2.6",
+      "title": "Scientific support, capacity building, and promotion for coordinated implementation of ecohydrology principles including e cohydrological multidimensional enhancement of catchment sustainability potential WBSR+CE UNSC SEEA ecosystem valuation, IUCN NBS Global Standard, FAO/TNC and World Bank guidelines."
+    }
+  ],
+  "2.4": [
+    {
+      "code": "2.4.1",
+      "title": "Production and dissemination of toolkits and e-learning modules including “Water science for policy”(similar to the current UNESCO Inclusive Policy Lab content but specific to water) for early to mid-career scientists; “Evidence-based water policy-making” for middle to upper level civil servants, managers, professionals, and advisers; and “Water education for inclusive outcomes and sustainable development”, translating scientific information for educators and skilled professionals and technicians in tertiary and vocational education."
+    },
+    {
+      "code": "2.4.2",
+      "title": "Capacity building modules, training material, and communications tools on ensuring stakeholder trust and engagement in water management."
+    },
+    {
+      "code": "2.4.3",
+      "title": "Establishment of a Community of Practice for scientists, policy- and decision-makers to ensure more efficient knowledge and information sharing and facilitate exchanges."
+    },
+    {
+      "code": "2.4.4",
+      "title": "Integration/synthesis of e-learning on water topics (e.g. in UNESCO Open Learning, Open Water Network and others)."
+    }
+  ],
+  "4.4": [
+    {
+      "code": "4.4.1",
+      "title": "Intersectoral science policy dialogue and knowledge generation on integrative nexus and source to sea approaches and cooperation opportunities across sectors including transboundary surface and groundwater resources and ecosystems; case studies, good practices."
+    },
+    {
+      "code": "4.4.2",
+      "title": "Promotion of source-to-sea and nexus approaches in water quality, quantity, ecosystems and biodiversity and resilience interlinkages; development of science-based guidance."
+    },
+    {
+      "code": "4.4.3",
+      "title": "Research on synergies and tradeoffs among the societal goals related to water management (e.g. water-environment-energy-food-health); and compilation and dissemination, including through conferences/symposia/workshops, of best nexus practices, including wastewater reuse and byproducts (nutrients, energy) in a circular economy context."
+    },
+    {
+      "code": "4.4.4",
+      "title": "Development, consolidation and sharing of knowledge for implementation of source to sea and nexus approaches in urban settings and in aquifers, and on the source-to-sea approach to reduce land and water pollution including plastic/microplastic pollution for freshwater and oceans’ health."
+    }
+  ],
+  "4.6": [
+    {
+      "code": "4.6.1",
+      "title": "Support to Member States in assessing environmental flows and ecosystem services to inform their IWRM practices and to improve their monitoring and achievement of SDG 6."
+    },
+    {
+      "code": "4.6.2",
+      "title": "Development/dissemination of case studies from current ecohydrology sites to improve the understanding of water ecosystem human interactions and highlight ecohydrology-NBS synergies."
+    },
+    {
+      "code": "4.6.3",
+      "title": "Establishment and management of an internet-based platform on assessment of ecosystem services and environment flow s through a category II center or international research institute."
+    },
+    {
+      "code": "4.6.4",
+      "title": "Facilitation of scientific research on the relationships between ecosystem processes to better manage catchment landscapes and maintaining ecosystem health in an IWRM context."
+    }
+  ],
+  "2.1": [
+    {
+      "code": "2.1.1",
+      "title": "Country level awareness raising using special days and observances such as World Water Day World Wetlands Day and World Toilet Day, engaging mass media specialists for proper messaging towards target audiences; possibly a dedicated prize (if sponsored by a Member State), among others."
+    },
+    {
+      "code": "2.1.2",
+      "title": "Capacity building of educators and policy makers on country level including through workshops, webinars and online distant learning methods, e.g. Massive Open Online Courses (on various water related topics with cross cutting emphasis on youth, women and indigenous communities (also see output 2.3)."
+    },
+    {
+      "code": "2.1.3",
+      "title": "Mainstreaming water’s importance in broader awareness raising events (such as sustainable development, environment, climate change, desertification, cities, responses to public health issues, pandemics etc., at global, regional and national levels."
+    },
+    {
+      "code": "2.1.4",
+      "title": "Use of networks and partnerships to increase coverage in mass media and social media, including cooperation with journalists on water topics, using easy-to-understand facts, statistics, infographics, and video clips by public figures, also making use of the Global Water Museums Network (WAMU-NET)."
+    },
+    {
+      "code": "2.1.5",
+      "title": "Capacity building of young generation through mass media using easily digestible information on extreme water-related hazards and related technical and ecohydrological solutions."
+    }
+  ],
+  "4.3": [
+    {
+      "code": "4.3.1",
+      "title": "Research projects, including collaborative actions (private sector, NGOs, civil society) and compilation of the state of the art in NCRWs and circular economies to improve WCM and to enhance efficiency and effectiveness of public and private investments, also in urban and peri-urban settlements, and also in alignment with MAWAC (Megacities, Water & Climate)."
+    },
+    {
+      "code": "4.3.2",
+      "title": "Support to knowledge and policy development towards sustained implementation and maintenance of Managed Aquifer Recharge in targeted aquifers, and its inclusion in IWRM planning."
+    },
+    {
+      "code": "4.3.3",
+      "title": "Promotion of NCRWs for better WCM through training sessions and events at regional and global wat er events, COPs and other fora to mainstream it in broader contexts."
+    },
+    {
+      "code": "4.3.4",
+      "title": "Dissemination and raising awareness and capacity in nature-based solutions; best practices and public acceptance on safe reuse of wastewater, including community engagements; engagement of young professionals to enhance human capacities in MAR, NCWRs and WCM."
+    }
+  ],
+  "4.1": [
+    {
+      "code": "4.1.1",
+      "title": "Conducting and sharing scientific research in inclusive and participatory water management with gender emphasis and engagement of youth, local and indigenous communities, e.g. in selected demonstration sites (such as Ecohydrology demosites, CRIDA applications and UNESCO designated sites); studies and country level pilots including stock take on stakeholder participation in water management at all levels, and a country pilot showcasing modalities and benefits of engagement."
+    },
+    {
+      "code": "4.1.2",
+      "title": "Development and dissemination of best practices and innovative solutions to engage communities, youth, women, indigenous groups and national minorities in water management, including through country level, regional and global dialogues, at all levels and across sectors."
+    },
+    {
+      "code": "4.1.3",
+      "title": "Organization of the first ever IHP Youth Forum as a preparatory event of the tenth World Water Forum in 2024; publication and dissemination of its outcomes."
+    },
+    {
+      "code": "4.1.4",
+      "title": "Capacity building on (i) ensuring stakeholder trust and engagement in water management, and (ii) water education for inclusive outcomes and sustainable development."
     }
   ],
   "5.3": [
     {
       "code": "5.3.1",
-      "title": "Development and pilot implementation of vulnerability assessment framework for hydro climatic hazards and practices, towards and in NDCs and NAPs, establishing links to open data when appropriate, on climate change (e.g. linking to ISIMIP, ISIPedia and Climate Services such as COPERNICUS) towards climate adaptive paths, especially in SIDS"
+      "title": "Development and pilot implementation of vulnerability assessment framework for hydro climatic hazards and practices, towards and in NDCs and NAPs, establishing links to open data when appropriate, on climate change (e.g. linking to ISIMIP, ISIPedia and Climate Services such as COPERNICUS) towards climate adaptive paths, especially in SIDS."
     },
     {
       "code": "5.3.2",
-      "title": "Establishment, in close cooperation with UNFCCC, of a service for coordinated support to Member States on education and capacity development into NDCs and NAPs with a view to mobilizing public/private funds and investments"
+      "title": "Establishment, in close cooperation with UNFCCC, of a service for coordinated support to Member States on education and capacity development into NDCs and NAPs with a view to mobilizing public/private funds and investments."
     },
     {
       "code": "5.3.3",
-      "title": "Development of a science-based framework and guidelines for the assessment and inclusion of surface and groundwater related and ecohydrology related contents in NDCs and NAPs"
+      "title": "Development of a science-based framework and guidelines for the assessment and inclusion of surface and groundwater related and ecohydrology related content s in NDCs and NAPs."
     },
     {
       "code": "5.3.4",
-      "title": "Joint assessment of selected NDCs and NAPs with country partners and recommendations to incorporate water related content in adaptation and mitigation components"
+      "title": "Joint assessment of selected NDCs and NAPs with country partners and recommendations to incorporate water related content in adaptation and mitigation components."
     }
   ],
   "5.4": [
     {
       "code": "5.4.1",
-      "title": "Supporting and facilitating the research on novel approaches to adaptive water management, including adaptive urban water management; dissemination of the research results; training and refresher programs for related public officials, water managers, professionals and water operators"
+      "title": "Supporting and facilitating the research on novel approaches to adaptive water management, including adaptive urban water management; dissemination of the research results; training and refresher programs for related public officials, water managers, professionals and water operators."
+    },
+    {
+      "code": "5.4.2",
+      "title": "Development and pilot implementation of guidelines for incorporating science-based tools and methodologies into the principles of good groundwater governance and adapt them to local contexts and pro mote the principles of good groundwater governance through the organization of the Groundwater Summit (Dec. 2022)."
     },
     {
       "code": "5.4.3",
-      "title": "Science-policy dialogue (including citizen science) in support of Member States to incorporate in their policies and practices, sound water governance and adaptive water management approaches"
+      "title": "Science-policy dialogue (including citizen science) in support of Member States to incorporate in their policies and practices, sound water governance and adaptive water management approaches."
     },
     {
       "code": "5.4.4",
-      "title": "Collaboration with regional centers of expertise on the development and implementation of projects and activities, e.g. with AMCOW and/or NEPAD Water Centers of Excellence, in novel approaches in adaptive water management"
+      "title": "Collaboration with regional centers of expertise on the development and implementation of projects and activities, e.g. with AMCOW and/or NEPAD Water Centers of Excellence, in novel approaches in adaptive water management."
+    }
+  ],
+  "1.5": [
+    {
+      "code": "1.5.1",
+      "title": "Contribution to research, knowledge generation and dissemination on socio-hydrology, including socio hydrogeology, as a follow up of the Panta Rhei decade and previous IHP initiatives in partnership with IAHS."
+    },
+    {
+      "code": "1.5.2",
+      "title": "Formulation and initiation of a socio-hydrology scientific dialogue among natural and social sciences researchers (including hydrological, ecohydrological, hydrogeological, social, and climate scientists and agronomists) and local communities/stakeholders (human water models, case studies)."
+    },
+    {
+      "code": "1.5.3",
+      "title": "Conducting and supporting scientific research to assess the interaction between humans, environment and water, in line with socio-hydrology within an urban rural setting and develop adaptive pathways, scenarios and strategies for water management."
+    },
+    {
+      "code": "1.5.4",
+      "title": "Conducting an assessment and preparing a synthesis report on the socio-hydrology related knowledge within the UNESCO Water Family, including the Flagships."
+    },
+    {
+      "code": "1.5.5",
+      "title": "Research on role of water in migration, urbanisation and the dynamics of human civilisations, in partnerships with IAHS."
+    }
+  ],
+  "1.8": [
+    {
+      "code": "1.8.1",
+      "title": "Thematic assessments of water quality at the basin, city, national, regional and global scales to identify key water quality and pollution challenges."
+    },
+    {
+      "code": "1.8.2",
+      "title": "Promotion of innovative tools and policies and capacity building for water quality management and pollution control, by identifying and disseminating innovative, best technological solutions, nature-based solutions and policies for different stakeholders."
+    },
+    {
+      "code": "1.8.3",
+      "title": "Development of science-based decision-making guidance on ecohydrological and ecosystem-based approaches to water quality management, with reference to nature-based and hybrid grey green solutions and cross-cutting outputs."
+    },
+    {
+      "code": "1.8.4",
+      "title": "Knowledge generation and science-based advice for decision-making, including through conferences and science-policy briefs, on the impact of global change, and climate change, on water quality in river, lake and reservoir basins, groundwater and coastal areas, in cooperation with UNEP and other partners."
     }
   ],
   "5.5": [
     {
       "code": "5.5.1",
-      "title": "Engagement with the science community and decision makers for state-of-the-art research, publications and capacity building on new and emerging frameworks and tools to support water governance and build resilience, including support to accelerate the Agenda 2063 of the African Union"
+      "title": "Engagement with the science community and decision makers for state-of-the-art research, publications and capacity building on new and emerging frameworks and tools to support water governance and build resilience, including support to accelerate the Agenda 2063 of the African Union."
     },
     {
       "code": "5.5.2",
-      "title": "Development and implementation of up scalable multi-purpose projects to strengthen water governance, build resilience across sectors, and encourage positive behavior change"
+      "title": "Development and implementation of up scalable multi-purpose projects to strengthen water governance, build resilience across sectors, and encourage positive behavior change."
+    },
+    {
+      "code": "5.5.3",
+      "title": "Collaboration with strategic regional frameworks, such as but not limited to, strategic cooperation with relevant regional frameworks, including AMCOW and NEPAD Water CoE on water governance and achievement of Agenda 2063 targets for an evidence-informed change."
     },
     {
       "code": "5.5.4",
-      "title": "Development and implementation of projects to strengthen efficiency, effectiveness, and stakeholder confidence and engagement, around frameworks and objectives such as IWRM, nexus, source-to-sea, resilience to shocks, disasters, and climate change"
+      "title": "Development and implementation of projects to strengthen efficiency, effectiveness, and stakeholder confidence and engagement, around frameworks and objectives such as IWRM, nexus, source-to-sea, resilience to shocks, disasters, and climate change."
     }
   ]
 }

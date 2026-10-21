@@ -9,6 +9,8 @@
 {% block page_header %}{% endblock %}
 
 {% block content %}
+<nav class="container" aria-label="{{ _('IHP-IX reporting tools') }}" style="display:flex;flex-wrap:wrap;gap:1rem;padding-block:1rem"><a href="{{ h.url_for('theme_ejemplo.ihpix_progress') }}">{{ _('Implementation progress') }}</a><a href="{{ h.url_for('theme_ejemplo.ihpix_import') }}">{{ _('Import reports') }}</a><a href="{{ h.url_for('theme_ejemplo.ihpix_narrative') }}">{{ _('Generate report') }}</a><a href="{{ h.url_for('theme_ejemplo.ihpix_notifications') }}">{{ _('Notifications') }}</a></nav>
+
 <div class="main">
 <div class="container">
 {% if c.userobj %}

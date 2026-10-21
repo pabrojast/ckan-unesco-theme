@@ -1,0 +1,27 @@
+{% extends 'ihpix/tools_base.html' %}
+{% block tools_content %}
+<div class="ix-no-print"><h1>{{ _('Generate report') }}</h1>
+<form method="get" class="ix-tools-card"><label for="report-scope">{{ _('Scope') }}</label><select id="report-scope" name="scope"><option value="pa">{{ _('Priority area') }}</option><option value="output">{{ _('Output') }}</option><option value="organization">{{ _('Organization') }}</option></select>
+<label for="report-value">{{ _('Select scope') }}</label><select id="report-value" name="value" required>
+{% for code, title in priority_areas.items() %}<option data-scope="pa" value="{{ code }}">{{ code }} · {{ title }}</option>{% endfor %}
+{% for code, title in outputs.items() %}<option data-scope="output" value="{{ code }}">{{ code }} · {{ title }}</option>{% endfor %}
+{% for org in organizations %}<option data-scope="organization" value="{{ org.id }}">{{ org.title or org.name }}</option>{% endfor %}</select>
+<label for="report-biennium">{{ _('Biennium') }}</label><select id="report-biennium" name="biennium"><option value="">{{ _('All bienniums') }}</option>{% for b in biennia %}<option value="{{ b }}"{% if report and report.biennium == b %} selected{% endif %}>{{ b }}</option>{% endfor %}</select><button class="btn btn-primary">{{ _('Generate report') }}</button></form>
+<script> (function(){var scope=document.getElementById('report-scope'), value=document.getElementById('report-value'), options=Array.from(value.options);function update(){value.replaceChildren();options.filter(function(x){return x.dataset.scope===scope.value;}).forEach(function(x){value.appendChild(x);});}scope.value={{ (report.scope if report else 'pa')|tojson }};scope.onchange=update;update();{% if report %}value.value={{ report.value|tojson }};{% endif %}}());</script>
+</div>
+{% if report %}
+<article class="ix-narrative">
+<h1>{{ report.title }}</h1><p>{{ _('IHP-IX implementation report') }} · {{ report.biennium or _('All bienniums') }}</p><p>{{ _('Generated') }}: {{ report.generated_at }}</p>
+<p>{{ _('This report uses published activity records. Review the narrative and its sources before sharing. Subtotals across multiple Priority Areas or Outputs can overlap; the overall activity count is unique.') }}</p>
+{% if report.scope == 'organization' %}<p>{{ _('Only verified organization links are included. Historical free-text institution names require reconciliation before they can be attributed to this organization.') }} {{ _('Unlinked published records across the portal') }}: {{ report.unlinked_legacy }}.</p>{% endif %}
+{% set s = report.stats %}
+{% if report.sources %}
+<p>{{ _('Published activities in the selected scope') }}: <strong>{{ s.overview.activities }}</strong>. {{ _('Participating institutions') }}: {{ s.overview.institutions }}. {{ _('Countries recorded in reporting, support or beneficiary roles') }}: {{ s.overview.member_states_impacted }}.</p>
+<table class="table"><thead><tr><th>{{ _('Indicator') }}</th><th>{{ _('Reported total') }}</th></tr></thead><tbody>
+{% for label, value in [(_('Knowledge products'),s.kpi_1.knowledge_products),(_('Scientific products'),s.kpi_1.scientific_products),(_('Stakeholders reached through knowledge exchange'),s.kpi_2.individuals),(_('Training materials and courses'),s.kpi_3.materials),(_('Curricula'),s.kpi_4.curricula),(_('Stakeholders reached through awareness activities'),s.kpi_5.individuals),(_('Member States supported in transboundary water management, as reported'),s.kpi_6.member_states_reported),(_('Stakeholder groups with strengthened capacity'),s.kpi_8.stakeholder_groups)] %}<tr><td>{{ label }}</td><td>{{ value }}</td></tr>{% endfor %}</tbody></table>
+<h2>{{ _('Reported results and sources') }}</h2>
+{% for item in report.sources %}<section class="ix-narrative-source"><h3><a href="{{ h.url_for('theme_ejemplo.ihpix_activity_detail', id=item.id, qualified=True) }}">{{ loop.index }}. {{ item.title }}</a></h3><p>{{ _('Institution') }}: {{ item.institution }} · {{ _('Outputs') }}: {{ item.outputs|join(', ') }}</p><p>{{ item.description }}</p><p>{{ item.outcomes }}</p></section>{% endfor %}
+{% else %}<p>{{ _('No published activities match these filters. No results have been inferred.') }}</p>{% endif %}
+</article><button class="btn btn-primary ix-no-print" type="button" onclick="window.print()">{{ _('Print / Save as PDF') }}</button>
+{% endif %}
+{% endblock %}

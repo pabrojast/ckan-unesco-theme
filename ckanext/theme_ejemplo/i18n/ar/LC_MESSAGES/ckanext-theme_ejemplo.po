@@ -8912,3 +8912,524 @@ msgstr "موارد التعلّم"
 #~ "A growing global hub for water knowledge — real-time figures from our "
 #~ "network."
 #~ msgstr "مركز عالمي متنامٍ للمعرفة المائية — أرقام فورية من شبكتنا."
+
+
+#: IHP-IX review September 2026
+msgid "The form covers 7 sections aligned with the official UNESCO IHP-IX reporting guidelines"
+msgstr "يتألف النموذج من 7 أقسام تتوافق مع إرشادات اليونسكو الرسمية لإعداد تقارير المرحلة التاسعة من البرنامج الهيدرولوجي الدولي"
+
+#: IHP-IX review September 2026
+msgid "Additional contributions"
+msgstr "مساهمات إضافية"
+
+#: IHP-IX review September 2026
+msgid "Add contribution"
+msgstr "إضافة مساهمة"
+
+#: IHP-IX review September 2026
+msgid "Add synergy"
+msgstr "إضافة تآزر"
+
+#: IHP-IX review September 2026
+msgid "Add supporting country"
+msgstr "إضافة دولة داعمة"
+
+#: IHP-IX review September 2026
+msgid "Supporting country"
+msgstr "الدولة الداعمة"
+
+#: IHP-IX review September 2026
+msgid "Financial"
+msgstr "مالي"
+
+#: IHP-IX review September 2026
+msgid "In-kind"
+msgstr "عيني"
+
+#: IHP-IX review September 2026
+msgid "Hosting"
+msgstr "استضافة"
+
+#: IHP-IX review September 2026
+msgid "Partner organizations on IHP-WINS"
+msgstr "المنظمات الشريكة على IHP-WINS"
+
+#: IHP-IX review September 2026
+msgid "Organization on IHP-WINS"
+msgstr "المنظمة على IHP-WINS"
+
+#: IHP-IX review September 2026
+msgid "External institution / enter name below"
+msgstr "مؤسسة خارجية / أدخل الاسم أدناه"
+
+#: IHP-IX review September 2026
+msgid "Institution country, supporting countries and beneficiaries are recorded separately."
+msgstr "يُسجَّل بلد المؤسسة والدول الداعمة والمستفيدون بصورة منفصلة."
+
+#: IHP-IX review September 2026
+msgid "Previously reported country. Add further supporting countries and their roles below."
+msgstr "الدولة المُبلَّغ عنها سابقًا. أضف أدناه دولًا داعمة أخرى وأدوارها."
+
+#: IHP-IX review September 2026
+msgid "Add every related Priority Area, Output and key activity. Overall totals count this activity once; subtotals can overlap."
+msgstr "أضف كل مجال أولوية ومخرج ونشاط رئيسي ذي صلة. يُحتسب النشاط مرة واحدة في الإجمالي العام؛ وقد تتداخل المجاميع الفرعية."
+
+#: IHP-IX review September 2026
+msgid "A newer version was saved. Choose which changes to keep."
+msgstr "حُفظت نسخة أحدث. اختر التغييرات التي تريد الاحتفاظ بها."
+
+#: IHP-IX review September 2026
+msgid "Your answer"
+msgstr "إجابتك"
+
+#: IHP-IX review September 2026
+msgid "Saved answer"
+msgstr "الإجابة المحفوظة"
+
+#: IHP-IX review September 2026
+msgid "Choose an answer"
+msgstr "اختر إجابة"
+
+#: IHP-IX review September 2026
+msgid "Keep my answer"
+msgstr "الاحتفاظ بإجابتي"
+
+#: IHP-IX review September 2026
+msgid "Use saved answer"
+msgstr "استخدام الإجابة المحفوظة"
+
+#: IHP-IX review September 2026
+msgid "Apply choices to my draft"
+msgstr "تطبيق الاختيارات على مسودتي"
+
+#: IHP-IX review September 2026
+msgid "Choose an answer for each changed field."
+msgstr "اختر إجابة لكل حقل تم تغييره."
+
+#: IHP-IX review September 2026
+msgid "Changes compared. Review your answers and save the draft."
+msgstr "تمت مقارنة التغييرات. راجع إجاباتك واحفظ المسودة."
+
+#: IHP-IX review September 2026
+msgid "Collaborators and saved versions"
+msgstr "المتعاونون والنسخ المحفوظة"
+
+#: IHP-IX review September 2026
+msgid "Report collaboration"
+msgstr "التعاون في إعداد التقرير"
+
+#: IHP-IX review September 2026
+msgid "Collaborators can save draft changes. The author submits the report for review. Membership changes immediately affect editing access."
+msgstr "يمكن للمتعاونين حفظ تعديلات المسودة. يرسل المؤلف التقرير للمراجعة. تؤثر تغييرات العضوية فورًا في صلاحية التحرير."
+
+#: IHP-IX review September 2026
+msgid "Invite an active workspace contributor"
+msgstr "دعوة مساهم نشط في مساحة العمل"
+
+#: IHP-IX review September 2026
+msgid "Invite"
+msgstr "دعوة"
+
+#: IHP-IX review September 2026
+msgid "Revoke access"
+msgstr "إلغاء الوصول"
+
+#: IHP-IX review September 2026
+msgid "Revoked"
+msgstr "ملغى"
+
+#: IHP-IX review September 2026
+msgid "Saved versions"
+msgstr "النسخ المحفوظة"
+
+#: IHP-IX review September 2026
+msgid "Version"
+msgstr "النسخة"
+
+#: IHP-IX review September 2026
+msgid "The next save will record the first version."
+msgstr "سيُنشئ الحفظ التالي النسخة الأولى."
+
+#: IHP-IX review September 2026
+msgid "Workspace collaboration"
+msgstr "التعاون في مساحة العمل"
+
+#: IHP-IX review September 2026
+msgid "Comments and tasks"
+msgstr "التعليقات والمهام"
+
+#: IHP-IX review September 2026
+msgid "Add a comment or task"
+msgstr "إضافة تعليق أو مهمة"
+
+#: IHP-IX review September 2026
+msgid "Task"
+msgstr "مهمة"
+
+#: IHP-IX review September 2026
+msgid "Task title"
+msgstr "عنوان المهمة"
+
+#: IHP-IX review September 2026
+msgid "Description or comment"
+msgstr "الوصف أو التعليق"
+
+#: IHP-IX review September 2026
+msgid "Assigned to"
+msgstr "مُسنَدة إلى"
+
+#: IHP-IX review September 2026
+msgid "Due date"
+msgstr "تاريخ الاستحقاق"
+
+#: IHP-IX review September 2026
+msgid "In progress"
+msgstr "قيد التنفيذ"
+
+#: IHP-IX review September 2026
+msgid "Completed"
+msgstr "مكتملة"
+
+#: IHP-IX review September 2026
+msgid "Related activity (optional)"
+msgstr "النشاط المرتبط (اختياري)"
+
+#: IHP-IX review September 2026
+msgid "Attached resource (optional)"
+msgstr "المورد المرفق (اختياري)"
+
+#: IHP-IX review September 2026
+msgid "Update task status"
+msgstr "تحديث حالة المهمة"
+
+#: IHP-IX review September 2026
+msgid "No comments or tasks yet."
+msgstr "لا توجد تعليقات أو مهام بعد."
+
+#: IHP-IX review September 2026
+msgid "This workspace is archived and read-only."
+msgstr "مساحة العمل هذه مؤرشفة ومتاحة للقراءة فقط."
+
+#: IHP-IX review September 2026
+msgid "No lead assigned. Site administrators handle membership requests."
+msgstr "لم يُعيَّن مسؤول. يتولى مسؤولو الموقع معالجة طلبات العضوية."
+
+#: IHP-IX review September 2026
+msgid "Notifications"
+msgstr "الإشعارات"
+
+#: IHP-IX review September 2026
+msgid "No notifications yet."
+msgstr "لا توجد إشعارات بعد."
+
+#: IHP-IX review September 2026
+msgid "Mark as read"
+msgstr "وضع علامة مقروء"
+
+#: IHP-IX review September 2026
+msgid "Import IHP-IX reports"
+msgstr "استيراد تقارير المرحلة التاسعة"
+
+#: IHP-IX review September 2026
+msgid "Import reports"
+msgstr "استيراد التقارير"
+
+#: IHP-IX review September 2026
+msgid "Download XLSX template"
+msgstr "تنزيل قالب XLSX"
+
+#: IHP-IX review September 2026
+msgid "Completed XLSX workbook (up to 5 MB)"
+msgstr "ملف XLSX مكتمل (حتى 5 ميغابايت)"
+
+#: IHP-IX review September 2026
+msgid "Validate and preview"
+msgstr "التحقق والمعاينة"
+
+#: IHP-IX review September 2026
+msgid "Invalid values: correct before importing"
+msgstr "قيم غير صالحة: صححها قبل الاستيراد"
+
+#: IHP-IX review September 2026
+msgid "Incomplete for submission: can be saved as drafts"
+msgstr "غير مكتمل للإرسال: يمكن حفظه كمسودة"
+
+#: IHP-IX review September 2026
+msgid "Confirm and create drafts"
+msgstr "التأكيد وإنشاء المسودات"
+
+#: IHP-IX review September 2026
+msgid "Drafts created"
+msgstr "المسودات التي تم إنشاؤها"
+
+#: IHP-IX review September 2026
+msgid "Upload a completed workbook, review validation results, then create drafts. Each draft can be completed and submitted separately."
+msgstr "ارفع الملف المكتمل، وراجع نتائج التحقق، ثم أنشئ المسودات. يمكن إكمال كل مسودة وإرسالها على حدة."
+
+#: IHP-IX review September 2026
+msgid "Generate report"
+msgstr "إنشاء تقرير"
+
+#: IHP-IX review September 2026
+msgid "Generated"
+msgstr "تاريخ الإنشاء"
+
+#: IHP-IX review September 2026
+msgid "Scope"
+msgstr "النطاق"
+
+#: IHP-IX review September 2026
+msgid "Select scope"
+msgstr "اختيار النطاق"
+
+#: IHP-IX review September 2026
+msgid "All bienniums"
+msgstr "جميع الفترات الثنائية"
+
+#: IHP-IX review September 2026
+msgid "All bienniums and regions"
+msgstr "جميع الفترات الثنائية والمناطق"
+
+#: IHP-IX review September 2026
+msgid "IHP-IX implementation report"
+msgstr "تقرير تنفيذ المرحلة التاسعة"
+
+#: IHP-IX review September 2026
+msgid "Published activities in the selected scope"
+msgstr "الأنشطة المنشورة ضمن النطاق المحدد"
+
+#: IHP-IX review September 2026
+msgid "Participating institutions"
+msgstr "المؤسسات المشاركة"
+
+#: IHP-IX review September 2026
+msgid "Countries recorded in reporting, support or beneficiary roles"
+msgstr "الدول المسجلة بوصفها جهات مُبلِّغة أو داعمة أو مستفيدة"
+
+#: IHP-IX review September 2026
+msgid "Reported total"
+msgstr "الإجمالي المُبلَّغ عنه"
+
+#: IHP-IX review September 2026
+msgid "Reported results and sources"
+msgstr "النتائج المُبلَّغ عنها والمصادر"
+
+#: IHP-IX review September 2026
+msgid "Only verified organization links are included. Historical free-text institution names require reconciliation before they can be attributed to this organization."
+msgstr "لا تُدرج إلا الروابط الموثَّقة بالمنظمات. يجب مطابقة أسماء المؤسسات التاريخية المدخلة كنص حر قبل نسبتها إلى هذه المنظمة."
+
+#: IHP-IX review September 2026
+msgid "Unlinked published records across the portal"
+msgstr "السجلات المنشورة غير المرتبطة في البوابة"
+
+#: IHP-IX review September 2026
+msgid "No published activities match these filters. No results have been inferred."
+msgstr "لا توجد أنشطة منشورة تطابق هذه المرشحات. لم تُستنتج أي نتائج."
+
+#: IHP-IX review September 2026
+msgid "This report uses published activity records. Review the narrative and its sources before sharing. Subtotals across multiple Priority Areas or Outputs can overlap; the overall activity count is unique."
+msgstr "يستخدم هذا التقرير سجلات الأنشطة المنشورة. راجع النص ومصادره قبل المشاركة. قد تتداخل المجاميع الفرعية للمجالات أو المخرجات؛ ويُحتسب كل نشاط مرة واحدة في الإجمالي العام."
+
+#: IHP-IX review September 2026
+msgid "Presentation / PDF"
+msgstr "عرض تقديمي / PDF"
+
+#: IHP-IX review September 2026
+msgid "Presentation controls"
+msgstr "عناصر التحكم في العرض"
+
+#: IHP-IX review September 2026
+msgid "Print / Save as PDF"
+msgstr "طباعة / حفظ بصيغة PDF"
+
+#: IHP-IX review September 2026
+msgid "Indicator / scope"
+msgstr "المؤشر / النطاق"
+
+#: IHP-IX review September 2026
+msgid "Published records only. An activity counts once in the overall total and in each linked scope. Subtotals may overlap. Youth and female participants may overlap."
+msgstr "السجلات المنشورة فقط. يُحتسب النشاط مرة واحدة في الإجمالي العام وفي كل نطاق مرتبط. قد تتداخل المجاميع الفرعية، كما قد تتداخل فئتا الشباب والنساء."
+
+#: IHP-IX review September 2026
+msgid "Implementation overview"
+msgstr "نظرة عامة على التنفيذ"
+
+#: IHP-IX review September 2026
+msgid "Knowledge and scientific products"
+msgstr "منتجات المعرفة والمنتجات العلمية"
+
+#: IHP-IX review September 2026
+msgid "Knowledge exchange"
+msgstr "تبادل المعرفة"
+
+#: IHP-IX review September 2026
+msgid "Training and education"
+msgstr "التدريب والتعليم"
+
+#: IHP-IX review September 2026
+msgid "Activities by scope"
+msgstr "الأنشطة حسب النطاق"
+
+#: IHP-IX review September 2026
+msgid "Activities by Output"
+msgstr "الأنشطة حسب المخرج"
+
+#: IHP-IX review September 2026
+msgid "Knowledge products"
+msgstr "منتجات المعرفة"
+
+#: IHP-IX review September 2026
+msgid "Scientific products"
+msgstr "المنتجات العلمية"
+
+#: IHP-IX review September 2026
+msgid "Training materials and courses"
+msgstr "مواد التدريب ودوراته"
+
+#: IHP-IX review September 2026
+msgid "Curricula"
+msgstr "المناهج الدراسية"
+
+#: IHP-IX review September 2026
+msgid "Stakeholders reached through knowledge exchange"
+msgstr "أصحاب المصلحة الذين شملهم تبادل المعرفة"
+
+#: IHP-IX review September 2026
+msgid "Stakeholders reached through awareness activities"
+msgstr "أصحاب المصلحة الذين شملتهم أنشطة التوعية"
+
+#: IHP-IX review September 2026
+msgid "Awareness raising"
+msgstr "التوعية"
+
+#: IHP-IX review September 2026
+msgid "No data"
+msgstr "لا توجد بيانات"
+
+#: IHP-IX review September 2026
+msgid "Your IHP-IX draft is saved. Finish creating the resource, then attach it and return to your report."
+msgstr "حُفظت مسودة تقريرك. أكمل إنشاء المورد، ثم أرفقه وعُد إلى التقرير."
+
+#: IHP-IX review September 2026
+msgid "Attach this resource and return"
+msgstr "إرفاق هذا المورد والعودة"
+
+#: IHP-IX review September 2026
+msgid "Return to report"
+msgstr "العودة إلى التقرير"
+
+#: IHP-IX review September 2026
+msgid "Publication created. Save the report to keep this attachment."
+msgstr "أُنشئ المنشور. احفظ التقرير للاحتفاظ بهذا المرفق."
+
+#: IHP-IX review September 2026
+msgid "Save the report to keep its attachments. Before opening a dataset or event editor, your draft is saved automatically. Use “Attach this resource and return” on the resource page."
+msgstr "احفظ التقرير للاحتفاظ بمرفقاته. تُحفظ المسودة تلقائيًا قبل فتح محرر البيانات أو الأحداث. استخدم «إرفاق هذا المورد والعودة» في صفحة المورد."
+
+#: IHP-IX review September 2026
+msgid "Upload scientific publication"
+msgstr "رفع منشور علمي"
+
+#: IHP-IX review September 2026
+msgid "IHP-IX reporting tools"
+msgstr "أدوات إعداد تقارير المرحلة التاسعة"
+
+#: IHP-IX review September 2026
+msgid "IHP-IX tools"
+msgstr "أدوات المرحلة التاسعة"
+
+#: IHP-IX review September 2026
+msgid "Open report"
+msgstr "فتح التقرير"
+
+#: IHP-IX review September 2026
+msgid "General information"
+msgstr "معلومات عامة"
+
+#: IHP-IX review September 2026
+msgid "Priority area and output"
+msgstr "مجال الأولوية والمخرج"
+
+#: IHP-IX review September 2026
+msgid "Cross-cutting groups"
+msgstr "المجموعات الشاملة"
+
+#: IHP-IX review September 2026
+msgid "Region of implementation"
+msgstr "منطقة التنفيذ"
+
+#: IHP-IX review September 2026
+msgid "Key performance indicators"
+msgstr "مؤشرات الأداء الرئيسية"
+
+#: IHP-IX review September 2026
+msgid "Review and submit"
+msgstr "المراجعة والإرسال"
+
+#: IHP-IX review September 2026
+msgid "Publications, events and data"
+msgstr "المنشورات والأحداث والبيانات"
+
+#: IHP-IX review September 2026
+msgid "Report an implemented activity"
+msgstr "الإبلاغ عن نشاط منفَّذ"
+
+#: IHP-IX review September 2026
+msgid "The activity, who implemented it and when."
+msgstr "النشاط والجهة التي نفذته وموعد تنفيذه."
+
+#: IHP-IX review September 2026
+msgid "Required answered"
+msgstr "الحقول المطلوبة المكتملة"
+
+#: IHP-IX review September 2026
+msgid "{n} required answers are missing. Fix them and submit."
+msgstr "تنقص {n} إجابات مطلوبة. أكملها ثم أرسل التقرير."
+
+#: IHP-IX review September 2026
+msgid "One required answer is missing. Fix it and submit."
+msgstr "تنقص إجابة واحدة مطلوبة. أكملها ثم أرسل التقرير."
+
+#: IHP-IX review September 2026
+msgid "Everything required is answered. You can submit the report."
+msgstr "اكتملت جميع الإجابات المطلوبة. يمكنك إرسال التقرير."
+
+#: IHP-IX review September 2026
+msgid "Enter a whole number between 0 and 2147483647"
+msgstr "أدخل عددًا صحيحًا بين 0 و2147483647"
+
+#: ckanext/theme_ejemplo/ihpix_presentation.py
+msgid "Transboundary water systems"
+msgstr "النظم المائية العابرة للحدود"
+
+#: ckanext/theme_ejemplo/ihpix_presentation.py
+msgid "Stakeholder groups with strengthened capacity"
+msgstr "مجموعات أصحاب المصلحة التي تعززت قدراتها"
+
+#: ckanext/theme_ejemplo/ihpix_presentation.py
+msgid "Activities reported"
+msgstr "الأنشطة المُبلَّغ عنها"
+
+#: ckanext/theme_ejemplo/ihpix_presentation.py
+msgid "Member States supported in transboundary water management, as reported"
+msgstr "الدول الأعضاء المدعومة في إدارة المياه العابرة للحدود حسب التقارير"
+
+#: ckanext/theme_ejemplo/ihpix_presentation.py
+msgid "Distinct countries"
+msgstr "الدول المختلفة"
+
+#: ckanext/theme_ejemplo/ihpix_presentation.py
+msgid "Stakeholder groups"
+msgstr "مجموعات أصحاب المصلحة"
+
+#: ckanext/theme_ejemplo/ihpix_presentation.py
+msgid "Youth / female (%)"
+msgstr "الشباب / النساء (%)"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "If you have multiple activities to report, you can use the multiple upload option."
+msgstr "إذا كانت لديك أنشطة متعددة للإبلاغ عنها، يمكنك استخدام خيار الرفع المتعدد."
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "This draft is visible to you and invited collaborators."
+msgstr "هذه المسودة مرئية لك وللمتعاونين المدعوين."

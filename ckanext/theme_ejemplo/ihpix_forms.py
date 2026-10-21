@@ -24,6 +24,7 @@ from collections import OrderedDict
 
 from ckanext.theme_ejemplo import ihpix_constants as C
 from ckanext.theme_ejemplo import ihpix_normalize as N
+from ckanext.theme_ejemplo import ihpix_relations as R
 
 # Longitud máxima de los textos cortos del PDF (descripción y outcomes)
 SHORT_TEXT_MAX = 250
@@ -73,6 +74,7 @@ MESSAGES = OrderedDict([
     ('date_invalid', 'Invalid date format. Use YYYY-MM-DD'),
     ('end_before_start', 'The completion date cannot be earlier than the start date'),
     ('part_exceeds_total', 'Cannot exceed the total number of stakeholders'),
+    ('integer_invalid', 'Enter a whole number between 0 and 2147483647'),
 ])
 
 # Campos obligatorios sólo al enviar a revisión (un borrador sólo exige
@@ -125,6 +127,7 @@ TEXT_FIELDS = (
     'training_type_other',
     'stakeholder_group_type_other', 'stakeholder_group_name',
     'additional_notes',
+    'institution_org_id',
 )
 
 # Multi-selects: nombre → vocabulario permitido (None = sin filtro)
@@ -193,6 +196,7 @@ GATE_RESETS = OrderedDict([
 SINGLE_FORM_FIELDS = (
     ('title', 'priority_area', 'contact_name', 'save_as_draft')
     + TEXT_FIELDS + INT_FIELDS + BOOL_FIELDS + FORM_DATE_FIELDS
+    + R.JSON_FIELDS + ('expected_revision',)
 )
 MULTI_FORM_FIELDS = tuple(MULTI_FIELDS.keys())
 
@@ -242,7 +246,7 @@ def _json_list(value, allowed=None, field=None):
 
     Con vocabulario, los valores pasan por los alias de `ihpix_normalize`
     (así una fila heredada editada desde el admin conserva 'Report' como
-    'Report or paper'); lo que no se reconoce se descarta, como antes.
+    'Report or paper'); los valores desconocidos se rechazan al validar.
     """
     if allowed is not None and field:
         items, _unknown = N.normalize_multi(field, value, allowed)
@@ -263,10 +267,14 @@ def _gate_answered(value):
 
 
 def _int(value):
-    try:
-        return max(0, int(value or 0))
-    except (TypeError, ValueError):
+    if value is None or value == '':
         return 0
+    if isinstance(value, bool) or not re.fullmatch(r'[0-9]+', str(value).strip()):
+        raise ValueError('Invalid integer')
+    value = int(str(value).strip())
+    if value > 2147483647:
+        raise ValueError('Integer exceeds database limit')
+    return value
 
 
 def _date(value):
@@ -288,6 +296,15 @@ def validate_report_payload(data_dict, is_draft):
     """
     errors = OrderedDict()
     details = OrderedDict()
+
+    # La primera asociación mantiene las columnas históricas del API.
+    # Las demás se conservan completas y se incluyen en todos los filtros.
+    relation_values, relation_errors = R.validate(data_dict)
+    errors.update(relation_errors)
+    data_dict = dict(data_dict)
+    contributions = R.read_list(relation_values.get('contributions_json'))
+    if contributions:
+        data_dict.update(contributions[0])
 
     def add(fname, key, **params):
         if fname in errors:
@@ -315,6 +332,16 @@ def validate_report_payload(data_dict, is_draft):
     contact_email = _text(data_dict, 'contact_email')
     link = _text(data_dict, 'link')
     key_activity_code = _text(data_dict, 'key_activity_code')
+    for field, allowed in MULTI_FIELDS.items():
+        if allowed is not None:
+            _, unknown = N.normalize_multi(field, data_dict.get(field), allowed)
+            if unknown:
+                add(field, 'choice_invalid', choices=', '.join(allowed))
+    for gate in BOOL_FIELDS:
+        if data_dict.get(gate) not in (None, '') and not _gate_answered(data_dict[gate]):
+            add(gate, 'gate_required')
+    if contact_email and not EMAIL_RE.match(contact_email):
+        add('contact_email', 'email_invalid')
 
     if not is_draft:
         for fname, key in REQUIRED_FOR_SUBMISSION.items():
@@ -337,10 +364,9 @@ def validate_report_payload(data_dict, is_draft):
         add('biennium', 'choice_invalid', choices=', '.join(C.BIENNIA))
     if inst_type and not C.is_valid_institution_type(inst_type):
         add('institution_type', 'institution_type_invalid')
-    if (output and priority_area in C.PRIORITY_AREAS
-            and not C.is_valid_output_for_pa(priority_area, output)):
+    if output and not C.is_valid_output_for_pa(priority_area, output):
         add('output', 'output_not_in_pa', output=output, pa=priority_area)
-    if key_activity_code and output and not C.is_valid_key_activity(output, key_activity_code):
+    if key_activity_code and not C.is_valid_key_activity(output, key_activity_code):
         add('key_activity_code', 'key_activity_invalid',
             code=key_activity_code, output=output)
     if link and not URL_RE.match(link):
@@ -360,11 +386,18 @@ def validate_report_payload(data_dict, is_draft):
             and dates['end_date'] < dates['start_date']:
         add('end_date', 'end_before_start')
 
-    # Jóvenes / mujeres no pueden superar el total (solo con el gate activo)
+    numbers = {}
+    for field in INT_FIELDS:
+        try:
+            numbers[field] = _int(data_dict.get(field))
+        except (ValueError, TypeError):
+            add(field, 'integer_invalid')
+
+    # Jóvenes / mujeres pueden solaparse, pero cada subconjunto <= total.
     for part, total, gate in STAKEHOLDER_RATIOS:
         if not C.normalize_bool(data_dict.get(gate)):
             continue
-        if _int(data_dict.get(part)) > _int(data_dict.get(total)):
+        if numbers.get(part, 0) > numbers.get(total, 0):
             add(part, 'part_exceeds_total')
 
     if errors:
@@ -389,15 +422,21 @@ def validate_report_payload(data_dict, is_draft):
     for field, allowed in MULTI_FIELDS.items():
         values[field] = _json_list(data_dict.get(field), allowed, field)
     for field in INT_FIELDS:
-        values[field] = _int(data_dict.get(field))
+        values[field] = numbers[field]
     for field in BOOL_FIELDS:
-        values[field] = C.normalize_bool(data_dict.get(field))
+        values[field] = (C.normalize_bool(data_dict.get(field))
+                         if _gate_answered(data_dict.get(field)) else None)
+    values.update(relation_values)
     values.update(dates)
 
     # Gate en "no" → sus hijos vuelven al valor neutro
     for gate, resets in GATE_RESETS.items():
-        if not values[gate]:
+        if values[gate] is False:
             values.update(resets)
+    if values['has_member_state_support'] is False:
+        values['supporters_json'] = '[]'
+    if values['has_synergies'] is False:
+        values['synergies_json'] = '[]'
 
     return values
 
@@ -414,6 +453,8 @@ def activity_to_form_dict(activity_dict):
     for key, value in activity_dict.items():
         if key in BOOL_FIELDS:
             form[key] = '' if value is None else ('yes' if value else 'no')
+        elif key in R.JSON_FIELDS:
+            form[key] = R.read_list(value)
         elif key in MULTI_FIELDS:
             form[key] = as_list(value)
         elif value is None:

@@ -88,18 +88,20 @@
 
         {# Puentes al ecosistema: crear el contenido en IHP-WINS desde aquí #}
         <div class="ihpix-lw-bridges">
+          <button type="button" class="ihpix-report-btn is-secondary" data-ihpix-publication-open data-document-type="educational_material">{{ _('Upload training material') }}</button>
+          <button type="button" class="ihpix-report-btn is-secondary" data-ihpix-publication-open data-document-type="scientific_paper">{{ _('Upload scientific publication') }}</button>
           <button type="button" class="ihpix-report-btn is-primary" data-ihpix-publication-open>
             <i class="fa fa-cloud-upload" aria-hidden="true"></i> {{ _('Upload a publication') }}
           </button>
-          <a class="ihpix-report-btn is-secondary" id="ihpix-lw-dataset-link" target="_blank" rel="noopener"
+          <a class="ihpix-report-btn is-secondary" id="ihpix-lw-dataset-link" data-ihpix-resource-start="dataset" target="_blank" rel="noopener"
              href="{{ pub.dataset_new_url or '/dataset/new' }}?tag_string=ihp-ix{% if pub.output_code %},ihp-ix-output-{{ pub.output_code }}{% endif %}{% if pub.orgs and pub.orgs|length == 1 %}&owner_org={{ pub.orgs[0].id }}{% endif %}"
              data-base-url="{{ pub.dataset_new_url or '/dataset/new' }}"{% if pub.orgs and pub.orgs|length == 1 %} data-owner-org="{{ pub.orgs[0].id }}"{% endif %}>
             <i class="fa fa-database" aria-hidden="true"></i> {{ _('Add a dataset') }}
           </a>
-          <a class="ihpix-report-btn is-secondary" href="{{ h.ihpix_pages_url('pages.water_events_new', '/water-events_edit') }}" target="_blank" rel="noopener">
+          <a class="ihpix-report-btn is-secondary" data-ihpix-resource-start="event" href="{{ h.ihpix_pages_url('pages.water_events_new', '/water-events_edit') }}" target="_blank" rel="noopener">
             <i class="fa fa-calendar-plus-o" aria-hidden="true"></i> {{ _('Create an event') }}
           </a>
-          <p class="ihpix-lw-bridges-help">{{ _('Publications are created right here and attached at once. Datasets and events open their own form in a new tab; when you are done, come back and use “Refresh search”.') }}</p>
+          <p class="ihpix-lw-bridges-help">{{ _('Publications are attached immediately. Before opening a dataset or event editor, save your draft. The resource page offers “Attach this resource and return”.') }}</p>
         </div>
 
         <div class="ihpix-report-row">

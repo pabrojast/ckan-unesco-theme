@@ -1863,7 +1863,8 @@ def ihpix_activity_show(context, data_dict):
         raise toolkit.ObjectNotFound('IHP-IX activity not found')
 
     result = activity.as_dict()
-    result['links'] = _ihpix_links_for(activity.id)
+    from ckanext.theme_ejemplo.ihpix_resource_access import filtered
+    result['links'] = filtered(_ihpix_links_for(activity.id), _ihpix_user_obj(context))
     return result
 
 
@@ -1929,113 +1930,23 @@ _IHPIX_DATE_FIELDS = ('start_date', 'end_date', 'reported_date')
 
 
 def ihpix_activity_create(context, data_dict):
-    """Create a new IHP-IX activity. Sysadmin only."""
     toolkit.check_access('ihpix_activity_create', context, data_dict)
-    init_ihpix_activities_db()
-
-    title = toolkit.get_or_bust(data_dict, 'title')
-    priority_area = toolkit.get_or_bust(data_dict, 'priority_area')
-    if priority_area not in VALID_PRIORITY_AREAS:
-        raise toolkit.ValidationError(
-            {'priority_area': 'Must be one of: {}'.format(
-                ', '.join(VALID_PRIORITY_AREAS))}
-        )
-
-    status = data_dict.get('status', 'published')
-    if status not in IhpixActivity.VALID_STATUSES:
-        raise toolkit.ValidationError(
-            {'status': 'Must be one of: {}'.format(
-                ', '.join(IhpixActivity.VALID_STATUSES))}
-        )
-
-    user_obj = context.get('auth_user_obj')
-    reported_by = data_dict.get('reported_by', '')
-    if not reported_by and user_obj:
-        reported_by = user_obj.id
-
-    # Construir kwargs para todos los campos del modelo
-    kwargs = {
-        'title': title,
-        'priority_area': priority_area,
-        'status': status,
-        'reported_by': reported_by,
-    }
-
-    for field in _IHPIX_TEXT_FIELDS:
-        kwargs[field] = data_dict.get(field, u'')
-
-    for field in _IHPIX_INT_FIELDS:
-        kwargs[field] = _parse_int_field(data_dict, field, 0)
-
-    for field in _IHPIX_BOOL_FIELDS:
-        kwargs[field] = C.normalize_bool(data_dict.get(field))
-
-    for field in _IHPIX_DATE_FIELDS:
-        kwargs[field] = _parse_date_field(data_dict, field)
-
-    activity = IhpixActivity(**kwargs)
-    model.Session.add(activity)
+    from ckanext.theme_ejemplo import ihpix_service as service
+    activity = service.save_admin(context, data_dict)
     model.Session.commit()
+    _ihpix_after_activity_change()
     return activity.as_dict()
 
 
 def ihpix_activity_update(context, data_dict):
-    """Update an IHP-IX activity. Sysadmin only."""
     toolkit.check_access('ihpix_activity_update', context, data_dict)
-    init_ihpix_activities_db()
-
-    activity_id = toolkit.get_or_bust(data_dict, 'id')
-    activity = IhpixActivity.get(activity_id)
-    if not activity:
-        raise toolkit.ObjectNotFound('IHP-IX activity not found')
-
-    # Campos de texto simples
-    for field in _IHPIX_TEXT_FIELDS + ('title', 'reported_by'):
-        if field in data_dict:
-            setattr(activity, field, data_dict[field])
-
-    if 'priority_area' in data_dict:
-        pa = data_dict['priority_area']
-        if pa not in VALID_PRIORITY_AREAS:
-            raise toolkit.ValidationError(
-                {'priority_area': 'Must be one of: {}'.format(
-                    ', '.join(VALID_PRIORITY_AREAS))}
-            )
-        activity.priority_area = pa
-
-    if 'status' in data_dict:
-        status = data_dict['status']
-        if status not in IhpixActivity.VALID_STATUSES:
-            raise toolkit.ValidationError(
-                {'status': 'Must be one of: {}'.format(
-                    ', '.join(IhpixActivity.VALID_STATUSES))}
-            )
-        activity.status = status
-
-    # Campos de fecha
-    for field in _IHPIX_DATE_FIELDS:
-        if field in data_dict:
-            setattr(activity, field, _parse_date_field(data_dict, field))
-
-    # Campos numéricos
-    for field in _IHPIX_INT_FIELDS:
-        if field in data_dict:
-            setattr(activity, field, _parse_int_field(data_dict, field, 0))
-
-    # Gates Y/N
-    for field in _IHPIX_BOOL_FIELDS:
-        if field in data_dict:
-            setattr(activity, field, C.normalize_bool(data_dict[field]))
-
-    if 'links_json' in data_dict:
-        _sync_activity_links(activity, data_dict.get('links_json'),
-                             context.get('auth_user_obj'))
-
-    activity.updated_at = _dt.datetime.utcnow()
+    from ckanext.theme_ejemplo import ihpix_service as service
+    activity = service.save_admin(context, data_dict, _ihpix_get_report_or_404(data_dict))
     model.Session.commit()
-    _ihpix_invalidate_stats_cache()
+    _ihpix_after_activity_change()
     result = activity.as_dict()
-    result['links'] = _ihpix_links_for(activity.id)
+    from ckanext.theme_ejemplo.ihpix_resource_access import filtered
+    result['links'] = filtered(_ihpix_links_for(activity.id), _ihpix_user_obj(context))
     return result
 
 
@@ -2051,9 +1962,11 @@ def ihpix_activity_delete(context, data_dict):
 
     init_ihpix_activity_links_db()
     IhpixActivityLink.delete_for_activity(activity.id)
+    from ckanext.theme_ejemplo.ihpix_service import check_workspaces
+    check_workspaces(activity.as_dict())
     model.Session.delete(activity)
     model.Session.commit()
-    _ihpix_invalidate_stats_cache()
+    _ihpix_after_activity_change()
     return {'success': True}
 
 
@@ -2157,10 +2070,17 @@ def _sync_activity_links(activity, links_payload, user_obj):
         except ihpix_links.LinkValidationError as e:
             for key, msg in _ihpix_translate_errors(e).items():
                 errors['links[{}].{}'.format(idx, key)] = msg
+    from ckanext.theme_ejemplo.ihpix_resource_access import visible
+    for index, item in enumerate(validated):
+        if not visible(item, user_obj):
+            errors['links[{}]'.format(index)] = 'Choose an accessible resource'
     if errors:
         raise toolkit.ValidationError(errors)
 
     existing = {link.id: link for link in IhpixActivityLink.get_by_activity(activity.id)}
+    for values in validated:
+        if values['id'] in existing and not visible(existing[values['id']].as_dict(), user_obj):
+            raise toolkit.NotAuthorized('No access to this attachment')
     keep = set()
     seen_keys = set()
     created = []
@@ -2185,16 +2105,18 @@ def _sync_activity_links(activity, links_payload, user_obj):
         link.display_order = order
         keep.add(link.id)
     for link_id, link in existing.items():
-        if link_id not in keep:
+        if link_id not in keep and visible(link.as_dict(), user_obj):
             model.Session.delete(link)
     if created and user_obj:
         try:
-            wg = _ihpix_wg_for_activity(activity)
+            from ckanext.theme_ejemplo.ihpix_service import active_workspaces
+            workspaces = active_workspaces(activity) or [None]
             for link in created:
-                _ihpix_record_contribution(
-                    user_obj.id, 'link_added',
-                    working_group_id=wg.id if wg else u'',
-                    activity_id=activity.id, link_id=link.id)
+                for wg in workspaces:
+                    _ihpix_record_contribution(
+                        user_obj.id, 'link_added',
+                        working_group_id=wg.id if wg else u'',
+                        activity_id=activity.id, link_id=link.id)
         except Exception as e:
             log.warning('IHP-IX ledger (links): %s', e)
     return created
@@ -2218,7 +2140,7 @@ def _ihpix_record_contribution(user_id, kind, working_group_id=u'',
         return None
     init_ihpix_working_groups_db()
     if dedupe and (activity_id or link_id) and IhpixContribution.exists(
-            user_id, kind, activity_id, link_id):
+            user_id, kind, activity_id, link_id, working_group_id):
         return None
     row = IhpixContribution(
         user_id=user_id, kind=kind, working_group_id=working_group_id or u'',
@@ -2259,37 +2181,25 @@ def _ihpix_ensure_contributor(wg, user_id, invited_by=u'system'):
 
 
 def _ihpix_ledger_on_submit(activity):
-    """Reporte enviado a revisión → 'report_submitted' en su workspace."""
-    try:
-        wg = _ihpix_wg_for_activity(activity)
-        _ihpix_record_contribution(
-            activity.reported_by, 'report_submitted',
-            working_group_id=wg.id if wg else u'', activity_id=activity.id)
-    except Exception as e:
-        log.warning('IHP-IX ledger (submit): %s', e)
+    from ckanext.theme_ejemplo import ihpix_service as service
+    for wg in service.active_workspaces(activity):
+        _ihpix_record_contribution(activity.reported_by, 'report_submitted',
+                                   working_group_id=wg.id, activity_id=activity.id)
 
 
 def _ihpix_ledger_on_publish(activity):
-    """Reporte publicado → 'report_published' y, si la config lo permite,
-    el reportante pasa a ser contributor activo del workspace del Output."""
-    try:
-        wg = _ihpix_wg_for_activity(activity)
-        _ihpix_record_contribution(
-            activity.reported_by, 'report_published',
-            working_group_id=wg.id if wg else u'', activity_id=activity.id)
-        if wg and activity.reported_by and _ihpix_wg_config_bool(
-                'ihpix_wg_auto_contributor', True):
+    from ckanext.theme_ejemplo import ihpix_service as service
+    for wg in service.active_workspaces(activity):
+        _ihpix_record_contribution(activity.reported_by, 'report_published',
+                                   working_group_id=wg.id, activity_id=activity.id)
+        if activity.reported_by and _ihpix_wg_config_bool('ihpix_wg_auto_contributor', True):
             if model.User.get(activity.reported_by) is None:
-                return  # filas del seed sin usuario real
-            membership, activated = _ihpix_ensure_contributor(
-                wg, activity.reported_by, invited_by=u'system')
+                continue
+            membership, activated = _ihpix_ensure_contributor(wg, activity.reported_by, invited_by='system')
             if activated:
-                _ihpix_record_contribution(
-                    activity.reported_by, 'member_joined',
-                    working_group_id=wg.id, meta={'auto': True}, dedupe=False)
+                _ihpix_record_contribution(activity.reported_by, 'member_joined',
+                                           working_group_id=wg.id, meta={'auto': True}, dedupe=False)
                 _ihpix_notify_wg_member(membership, wg, 'auto_joined')
-    except Exception as e:
-        log.warning('IHP-IX ledger (publish): %s', e)
 
 
 def _ihpix_wg_leads(wg):
@@ -2305,6 +2215,8 @@ def _ihpix_wg_leads(wg):
         user = model.User.get(user_id)
         if user and user.email:
             users.append(user)
+    if not users:
+        users = model.Session.query(model.User).filter_by(sysadmin=True, state='active').all()
     return users
 
 
@@ -2425,83 +2337,27 @@ def _ihpix_notify_reporter(activity, action):
 
 
 def ihpix_report_submit(context, data_dict):
-    """Crea un reporte IHP-IX (PDF 2026) desde el formulario.
-
-    - `save_as_draft=1` → status=draft (sólo exige título).
-    - Si no → status=pending (validación completa) y entra en la cola de
-      revisión.
-
-    La validación vive en `ihpix_forms.validate_report_payload`; aquí sólo
-    se persiste. `reported_by` guarda el **id** del usuario.
-    """
     toolkit.check_access('ihpix_report_submit', context, data_dict)
-    init_ihpix_activities_db()
-
-    is_draft = C.normalize_bool(data_dict.get('save_as_draft'))
-    values = _ihpix_validate(data_dict, is_draft)
-    user_obj = _ihpix_user_obj(context)
-
-    activity = IhpixActivity(title=values['title'],
-                             priority_area=values['priority_area'])
-    _apply_report_values(activity, values)
-    activity.status = IhpixActivity.STATUS_DRAFT
-    activity.reported_by = user_obj.id if user_obj else context.get('user', u'')
-    if not is_draft:
-        _ihpix_mark_submitted(activity)
-
-    model.Session.add(activity)
-    if 'links_json' in data_dict:
-        _sync_activity_links(activity, data_dict.get('links_json'), user_obj)
-    if not is_draft:
-        _ihpix_ledger_on_submit(activity)
+    from ckanext.theme_ejemplo import ihpix_service as service
+    activity = service.save(context, data_dict)
     model.Session.commit()
-    if not is_draft:
-        _invalidate_approvals_cache()
+    _invalidate_approvals_cache()
     result = activity.as_dict()
-    result['links'] = _ihpix_links_for(activity.id)
+    from ckanext.theme_ejemplo.ihpix_resource_access import filtered
+    result['links'] = filtered(_ihpix_links_for(activity.id), _ihpix_user_obj(context))
     return result
 
 
 def ihpix_report_update(context, data_dict):
-    """Edita un reporte y, opcionalmente, lo (re)envía a revisión.
-
-    Recibe el payload *completo* del formulario (igual que submit) más `id`.
-    - Propietario: sólo si el reporte está en `draft` o `rejected`.
-    - Sysadmin: cualquier estado; un reporte `published` se corrige sin
-      volver a la cola.
-    - `save_as_draft=1` → draft; si no → pending.
-    """
     toolkit.check_access('ihpix_report_update', context, data_dict)
-    init_ihpix_activities_db()
-
-    activity = _ihpix_get_report_or_404(data_dict)
-    user_obj = _ihpix_user_obj(context)
-    is_sysadmin = bool(user_obj and user_obj.sysadmin)
-    if (not is_sysadmin
-            and activity.status not in ihpix_forms.OWNER_EDITABLE_STATUSES):
-        raise toolkit.ValidationError(
-            {'status': 'Only draft or rejected reports can be edited'})
-
-    is_draft = C.normalize_bool(data_dict.get('save_as_draft'))
-    values = _ihpix_validate(data_dict, is_draft)
-    _apply_report_values(activity, values)
-
-    if is_draft:
-        activity.status = IhpixActivity.STATUS_DRAFT
-    elif is_sysadmin and activity.status == IhpixActivity.STATUS_PUBLISHED:
-        pass  # corrección editorial: sigue publicado
-    else:
-        _ihpix_mark_submitted(activity)
-
-    if 'links_json' in data_dict:
-        _sync_activity_links(activity, data_dict.get('links_json'), user_obj)
-    if activity.status == IhpixActivity.STATUS_PENDING:
-        _ihpix_ledger_on_submit(activity)
+    from ckanext.theme_ejemplo import ihpix_service as service
+    activity = service.save(context, data_dict, _ihpix_get_report_or_404(data_dict))
     model.Session.commit()
-    if activity.status == IhpixActivity.STATUS_PENDING:
-        _invalidate_approvals_cache()
+    _invalidate_approvals_cache()
+    _ihpix_after_activity_change()
     result = activity.as_dict()
-    result['links'] = _ihpix_links_for(activity.id)
+    from ckanext.theme_ejemplo.ihpix_resource_access import filtered
+    result['links'] = filtered(_ihpix_links_for(activity.id), _ihpix_user_obj(context))
     return result
 
 
@@ -2518,7 +2374,8 @@ def ihpix_report_show(context, data_dict):
     activity = _ihpix_get_report_or_404(data_dict)
     result = activity.as_dict()
     result['form'] = ihpix_forms.activity_to_form_dict(result)
-    result['links'] = _ihpix_links_for(activity.id)
+    from ckanext.theme_ejemplo.ihpix_resource_access import filtered
+    result['links'] = filtered(_ihpix_links_for(activity.id), _ihpix_user_obj(context))
     from ckanext.theme_ejemplo.helpers import get_ihpix_reporter
     result['reporter'] = get_ihpix_reporter(activity.reported_by)
     result['can_edit'] = bool(
@@ -2542,8 +2399,11 @@ def ihpix_report_delete(context, data_dict):
     activity_id = activity.id
     init_ihpix_activity_links_db()
     IhpixActivityLink.delete_for_activity(activity_id)
+    from ckanext.theme_ejemplo.ihpix_service import check_workspaces
+    check_workspaces(activity.as_dict())
     model.Session.delete(activity)
     model.Session.commit()
+    _ihpix_after_activity_change()
     return {'success': True, 'id': activity_id}
 
 
@@ -2581,63 +2441,53 @@ def ihpix_activity_link_list(context, data_dict):
     activity = IhpixActivity.get(activity_id)
     if not activity:
         raise toolkit.ObjectNotFound('IHP-IX activity not found')
-    results = _ihpix_links_for(activity.id)
+    from ckanext.theme_ejemplo.ihpix_resource_access import filtered
+    results = filtered(_ihpix_links_for(activity.id), _ihpix_user_obj(context))
     return {'results': results, 'count': len(results)}
 
 
-def ihpix_activity_link_create(context, data_dict):
-    """Añade un adjunto a una actividad propia (o cualquiera, sysadmin)."""
-    toolkit.check_access('ihpix_activity_link_create', context, data_dict)
-    init_ihpix_activity_links_db()
-    activity_id = toolkit.get_or_bust(data_dict, 'activity_id')
-    activity = IhpixActivity.get(activity_id)
-    if not activity:
-        raise toolkit.ObjectNotFound('IHP-IX activity not found')
-    try:
-        values = ihpix_links.validate_link(data_dict)
-    except ihpix_links.LinkValidationError as e:
-        raise toolkit.ValidationError(_ihpix_translate_errors(e))
-
-    existing = [l.as_dict() for l in IhpixActivityLink.get_by_activity(activity.id)]
-    key = ihpix_links.dedupe_key(values)
-    for link in existing:
-        if ihpix_links.dedupe_key(link) == key:
-            raise toolkit.ValidationError(
-                {'target_id': 'This item is already attached to the activity'})
-
-    user_obj = _ihpix_user_obj(context)
-    link = IhpixActivityLink(
-        activity_id=activity.id,
-        link_type=values['link_type'],
-        title=values['title'],
-        target_kind=values['target_kind'],
-        target_id=values['target_id'],
-        url=values['url'],
-        description=values['description'],
-        event_date=values['event_date'],
-        added_by=(user_obj.id if user_obj else u''),
-        display_order=len(existing),
-    )
-    model.Session.add(link)
-    activity.updated_at = _dt.datetime.utcnow()
+def _ihpix_save_link_change(context, activity, links, expected):
+    from ckanext.theme_ejemplo import ihpix_service as service
+    values = ihpix_forms.activity_to_form_dict(activity.as_dict())
+    values.update(links_json=links, expected_revision=expected, save_as_draft='1')
+    actor = _ihpix_user_obj(context)
+    if actor.sysadmin:
+        saved = service.save_admin(context, values, activity)
+    else:
+        saved = service.save(context, values, activity)
     model.Session.commit()
-    return link.as_dict()
+    _ihpix_after_activity_change()
+    return saved
+
+
+def ihpix_activity_link_create(context, data_dict):
+    toolkit.check_access('ihpix_activity_link_create', context, data_dict)
+    activity = _ihpix_get_report_or_404({'id': toolkit.get_or_bust(data_dict, 'activity_id')})
+    try:
+        link = ihpix_links.validate_link(data_dict)
+    except ihpix_links.LinkValidationError as exc:
+        raise toolkit.ValidationError(_ihpix_translate_errors(exc))
+    from ckanext.theme_ejemplo.ihpix_resource_access import filtered
+    links = filtered(_ihpix_links_for(activity.id), _ihpix_user_obj(context))
+    saved = _ihpix_save_link_change(context, activity, links + [link], data_dict.get('expected_revision'))
+    for item in _ihpix_links_for(saved.id):
+        if ihpix_links.dedupe_key(item) == ihpix_links.dedupe_key(link):
+            item['revision'] = saved.revision
+            return item
 
 
 def ihpix_activity_link_delete(context, data_dict):
-    """Quita un adjunto (propietario de la actividad o sysadmin)."""
     toolkit.check_access('ihpix_activity_link_delete', context, data_dict)
-    init_ihpix_activity_links_db()
-    link_id = toolkit.get_or_bust(data_dict, 'id')
-    link = IhpixActivityLink.get(link_id)
+    link = IhpixActivityLink.get(toolkit.get_or_bust(data_dict, 'id'))
     if not link:
         raise toolkit.ObjectNotFound('IHP-IX attachment not found')
-    activity = IhpixActivity.get(link.activity_id)
-    model.Session.delete(link)
-    if activity:
-        activity.updated_at = _dt.datetime.utcnow()
-    model.Session.commit()
-    return {'success': True, 'id': link_id}
+    from ckanext.theme_ejemplo.ihpix_resource_access import visible, filtered
+    if not visible(link.as_dict(), _ihpix_user_obj(context)):
+        raise toolkit.NotAuthorized('No access to this attachment')
+    activity = _ihpix_get_report_or_404({'id': link.activity_id})
+    links = [item for item in filtered(_ihpix_links_for(activity.id), _ihpix_user_obj(context)) if item['id'] != link.id]
+    saved = _ihpix_save_link_change(context, activity, links, data_dict.get('expected_revision'))
+    return {'success': True, 'id': data_dict['id'], 'revision': saved.revision}
 
 
 def _search_water_events(q, limit):
@@ -3080,7 +2930,7 @@ def ihpix_publication_create(context, data_dict):
     if activity is not None:
         try:
             attached = toolkit.get_action('ihpix_activity_link_create')(
-                dict(context), dict(link_item, activity_id=activity.id))
+                dict(context), dict(link_item, activity_id=activity.id, expected_revision=activity.revision))
         except toolkit.ValidationError as e:
             warnings.append(_format_validation_error_text(e))
 
@@ -3407,6 +3257,10 @@ def ihpix_working_group_join(context, data_dict):
         model.Session.add(membership)
     if status == W.MEMBER_ACTIVE:
         _ihpix_record_contribution(user_obj.id, 'member_joined', working_group_id=wg.id, dedupe=False)
+    if status == W.MEMBER_PENDING:
+        from ckanext.theme_ejemplo import ihpix_store as store
+        for lead in _ihpix_wg_leads(wg):
+            store.notify(lead.id, 'New workspace membership request', '/ihpix/workspaces/' + wg.output_code + '/members')
     model.Session.commit()
     _ihpix_invalidate_wg_approvals(wg)
     if status == W.MEMBER_PENDING:
@@ -3460,6 +3314,9 @@ def ihpix_working_group_member_process(context, data_dict):
     membership.status = new_status
     membership.role = new_role
     membership.updated_at = now
+    if wg.lead_user_id == membership.user_id and (
+            new_status != W.MEMBER_ACTIVE or new_role != W.ROLE_LEAD):
+        wg.lead_user_id = u''
     if new_status == W.MEMBER_ACTIVE and not was_active:
         membership.joined_at = now
         _ihpix_record_contribution(membership.user_id, 'member_joined',
@@ -3512,18 +3369,45 @@ def ihpix_contribution_list(context, data_dict):
     limit = min(_parse_int_field(data_dict, 'limit', 30), 100)
     offset = max(_parse_int_field(data_dict, 'offset', 0), 0)
 
-    wg_value = (data_dict.get('working_group_id') or u'').strip()
+    from sqlalchemy import or_, and_
+    from ckanext.theme_ejemplo.ihpix_service import can_read
+    actor = _ihpix_user_obj(context)
+    visible_ids = [a.id for a in model.Session.query(IhpixActivity).all() if can_read(a, actor)]
+    query = model.Session.query(IhpixContribution).filter(or_(
+        IhpixContribution.activity_id.in_(visible_ids),
+        and_(IhpixContribution.activity_id == '', or_(
+            IhpixContribution.kind == 'member_joined', IhpixContribution.user_id == actor.id))))
+    wg_value = (data_dict.get('working_group_id') or '').strip()
     if wg_value:
         wg = IhpixWorkingGroup.get_by_id_or_output(wg_value)
         if not wg:
             raise toolkit.ObjectNotFound('IHP-IX working group not found')
-        rows, total = IhpixContribution.get_for_group(wg.id, kind=kind, limit=limit, offset=offset)
+        query = query.filter(IhpixContribution.working_group_id == wg.id)
     else:
-        user_value = (data_dict.get('user_id') or u'').strip()
-        user = model.User.get(user_value) if user_value else _ihpix_user_obj(context)
-        if not user:
+        person = model.User.get(data_dict['user_id']) if data_dict.get('user_id') else actor
+        if not person:
             raise toolkit.ObjectNotFound('User not found')
-        rows, total = IhpixContribution.get_for_user(user.id, kind=kind, limit=limit, offset=offset)
+        query = query.filter(IhpixContribution.user_id == person.id)
+    if kind:
+        query = query.filter(IhpixContribution.kind == kind)
+    from ckanext.theme_ejemplo.ihpix_resource_access import visible
+    visible_links = [link.id for link in model.Session.query(IhpixActivityLink).all()
+                     if visible(link.as_dict(), actor)]
+    query = query.filter(or_(IhpixContribution.link_id == '',
+                            IhpixContribution.link_id.is_(None),
+                            IhpixContribution.link_id.in_(visible_links)))
+    hidden_publications = []
+    for contribution in query.filter(IhpixContribution.kind == 'publication_created').all():
+        try:
+            package_id = json.loads(contribution.meta or '{}').get('package_id')
+        except (ValueError, TypeError):
+            package_id = None
+        if not package_id or not visible({'target_kind': 'package', 'target_id': package_id}, actor):
+            hidden_publications.append(contribution.id)
+    if hidden_publications:
+        query = query.filter(~IhpixContribution.id.in_(hidden_publications))
+    total = query.count()
+    rows = query.order_by(IhpixContribution.created_at.desc()).offset(offset).limit(max(0, limit)).all()
 
     activity_ids = {r.activity_id for r in rows if r.activity_id}
     wg_ids = {r.working_group_id for r in rows if r.working_group_id}
@@ -3537,6 +3421,11 @@ def ihpix_contribution_list(context, data_dict):
             workspaces[g.id] = {'id': g.id, 'output_code': g.output_code, 'title': g.title}
     results = []
     for r in rows:
+        if r.link_id:
+            from ckanext.theme_ejemplo.ihpix_resource_access import visible
+            link = IhpixActivityLink.get(r.link_id)
+            if not link or not visible(link.as_dict(), actor):
+                continue
         d = r.as_dict()
         # `meta` viaja como JSON en BD; los templates lo leen como dict
         try:
@@ -3569,6 +3458,11 @@ def ihpix_report_review(context, data_dict):
     init_ihpix_activities_db()
 
     activity = _ihpix_get_report_or_404(data_dict)
+    activity = model.Session.query(IhpixActivity).filter_by(id=activity.id).with_for_update().populate_existing().one()
+    from ckanext.theme_ejemplo.ihpix_service import check_workspaces
+    check_workspaces(activity.as_dict())
+    from ckanext.theme_ejemplo import ihpix_store as store
+    store.ensure_baseline(activity, _ihpix_links_for(activity.id))
     action = (data_dict.get('action') or u'').strip().lower()
     if action not in _IHPIX_REVIEW_TRANSITIONS:
         raise toolkit.ValidationError(
@@ -3595,12 +3489,13 @@ def ihpix_report_review(context, data_dict):
 
     if action == 'approve':
         _ihpix_ledger_on_publish(activity)
+    from ckanext.theme_ejemplo import ihpix_store as store
+    store.snapshot(activity, _ihpix_user_obj(context).id, _ihpix_links_for(activity.id))
     model.Session.commit()
     _invalidate_approvals_cache()
     _ihpix_invalidate_stats_cache()
     _ihpix_notify_reporter(activity, action)
-    if action == 'approve':
-        _ihpix_recompute_country_after_approve(activity)
+    _ihpix_after_activity_change()
     return activity.as_dict()
 
 
@@ -3687,6 +3582,26 @@ def _ihpix_cached(slot, ttl, builder):
     value = builder()
     _IHPIX_STATS_CACHE[slot] = (now + ttl, value)
     return value
+
+
+def _ihpix_check_stats_version():
+    from sqlalchemy import func
+    fingerprint = model.Session.query(func.count(IhpixActivity.id),
+        func.max(IhpixActivity.updated_at), func.sum(IhpixActivity.revision)).first()
+    version = tuple(fingerprint)
+    if _IHPIX_STATS_CACHE.get('version') != version:
+        _ihpix_invalidate_stats_cache()
+        _IHPIX_STATS_CACHE['version'] = version
+
+
+def _ihpix_after_activity_change():
+    from flask import g, has_request_context
+    if has_request_context():
+        g.pop('_ihpix_geography', None)
+    _ihpix_invalidate_stats_cache()
+    # Recalcular todos los países también limpia los países que quedan vacíos.
+    init_ihpix_country_summary_db()
+    IhpixCountrySummary.recompute_from_activities(resolve_name=ihpix_country_name)
 
 
 def _ihpix_published_rows():
@@ -3785,6 +3700,7 @@ def ihpix_progress_stats(context, data_dict):
         if val:
             filters[key] = val
 
+    _ihpix_check_stats_version()
     cache_key = (scope, value, tuple(sorted(filters.items())))
     now = _time.time()
     cached = _IHPIX_STATS_CACHE['results'].get(cache_key)
@@ -4075,7 +3991,7 @@ def ihpix_geojson(context, data_dict):
 
     region = (data_dict.get('region') or u'').strip() or None
     live_filters = {}
-    for key in ('priority_area', 'biennium', 'output', 'flagship'):
+    for key in ('priority_area', 'biennium', 'output', 'flagship', 'country', 'region'):
         val = (data_dict.get(key) or u'').strip()
         if val:
             live_filters[key] = val
@@ -4089,7 +4005,7 @@ def ihpix_geojson(context, data_dict):
         live_filters['region'] = region
     counts = IhpixActivity.get_country_counts(live_filters)
     features = []
-    for cs in IhpixCountrySummary.get_all(region=region):
+    for cs in IhpixCountrySummary.get_all():
         live = counts.get(cs.country)
         if not live or not (cs.latitude and cs.longitude):
             continue

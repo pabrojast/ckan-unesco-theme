@@ -827,3 +827,19 @@ mantienen el login CKAN. Fuera de Citizen Science se mantiene el login general.
 El fallback conserva compatibilidad con versiones anteriores de csunesco o
 instancias sin ese plugin. La URL de app procede de la configuración de
 csunesco, sin crear una segunda configuración del tema.
+
+## IHP-IX: colaboración, importación y salida (2026-10-21)
+
+| Ruta nueva | Flujo |
+|---|---|
+| `/ihpix/workspaces/<code>/collaboration` | Miembro activo lee comentarios/tareas; contributor/lead escribe |
+| `/ihpix/report/<id>/collaboration` | Autor invita/revoca; autor/colaborador consulta versiones autorizadas |
+| `/ihpix/notifications` | Notificaciones privadas del usuario y marcar leídas |
+| `/ihpix/import/template.xlsx`, `/ihpix/import` | Descargar → cargar → validar/preview → confirmar → borradores |
+| `/ihpix/reports/generate` | Organización/PA/Output + bienio → informe con fuentes publicadas |
+| `/ihpix/presentation` | Mismos filtros del dashboard → diapositivas 16:9 → PDF |
+| `/ihpix/activities/<id>` | Detalle verificable de una actividad publicada y adjuntos visibles |
+| `/ihpix/report/<id>/resource-start` | POST tras guardar borrador; destino dataset/evento nativo |
+| `/ihpix/resource-return/attach` | POST desde recurso: autoriza, adjunta y vuelve a VII |
+
+El banner de retorno se asocia en sesión al usuario y reporte. Los editores nativos conservan su flujo; no necesitan `came_from`. Al guardar en el modal de publicación se crea el documento; guardar el reporte conserva la asociación. Ver [[IHP-IX Review September 2026]].

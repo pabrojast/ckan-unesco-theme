@@ -9214,3 +9214,524 @@ msgstr "Ressources d’apprentissage"
 #~ msgstr ""
 #~ "Un pôle mondial croissant pour la connaissance de l'eau — chiffres en temps "
 #~ "réel de notre réseau."
+
+
+#: IHP-IX review September 2026
+msgid "The form covers 7 sections aligned with the official UNESCO IHP-IX reporting guidelines"
+msgstr "Le formulaire comporte 7 sections conformes aux directives officielles de l’UNESCO pour les rapports du PHI-IX"
+
+#: IHP-IX review September 2026
+msgid "Additional contributions"
+msgstr "Contributions supplémentaires"
+
+#: IHP-IX review September 2026
+msgid "Add contribution"
+msgstr "Ajouter une contribution"
+
+#: IHP-IX review September 2026
+msgid "Add synergy"
+msgstr "Ajouter une synergie"
+
+#: IHP-IX review September 2026
+msgid "Add supporting country"
+msgstr "Ajouter un pays de soutien"
+
+#: IHP-IX review September 2026
+msgid "Supporting country"
+msgstr "Pays de soutien"
+
+#: IHP-IX review September 2026
+msgid "Financial"
+msgstr "Financier"
+
+#: IHP-IX review September 2026
+msgid "In-kind"
+msgstr "En nature"
+
+#: IHP-IX review September 2026
+msgid "Hosting"
+msgstr "Accueil"
+
+#: IHP-IX review September 2026
+msgid "Partner organizations on IHP-WINS"
+msgstr "Organisations partenaires sur IHP-WINS"
+
+#: IHP-IX review September 2026
+msgid "Organization on IHP-WINS"
+msgstr "Organisation sur IHP-WINS"
+
+#: IHP-IX review September 2026
+msgid "External institution / enter name below"
+msgstr "Institution externe / saisir le nom ci-dessous"
+
+#: IHP-IX review September 2026
+msgid "Institution country, supporting countries and beneficiaries are recorded separately."
+msgstr "Le pays de l’institution, les pays de soutien et les bénéficiaires sont enregistrés séparément."
+
+#: IHP-IX review September 2026
+msgid "Previously reported country. Add further supporting countries and their roles below."
+msgstr "Pays déclaré précédemment. Ajoutez ci-dessous d’autres pays de soutien et leurs rôles."
+
+#: IHP-IX review September 2026
+msgid "Add every related Priority Area, Output and key activity. Overall totals count this activity once; subtotals can overlap."
+msgstr "Ajoutez chaque domaine prioritaire, produit et activité clé associés. Le total général compte cette activité une seule fois ; les sous-totaux peuvent se chevaucher."
+
+#: IHP-IX review September 2026
+msgid "A newer version was saved. Choose which changes to keep."
+msgstr "Une version plus récente a été enregistrée. Choisissez les modifications à conserver."
+
+#: IHP-IX review September 2026
+msgid "Your answer"
+msgstr "Votre réponse"
+
+#: IHP-IX review September 2026
+msgid "Saved answer"
+msgstr "Réponse enregistrée"
+
+#: IHP-IX review September 2026
+msgid "Choose an answer"
+msgstr "Choisissez une réponse"
+
+#: IHP-IX review September 2026
+msgid "Keep my answer"
+msgstr "Conserver ma réponse"
+
+#: IHP-IX review September 2026
+msgid "Use saved answer"
+msgstr "Utiliser la réponse enregistrée"
+
+#: IHP-IX review September 2026
+msgid "Apply choices to my draft"
+msgstr "Appliquer les choix à mon brouillon"
+
+#: IHP-IX review September 2026
+msgid "Choose an answer for each changed field."
+msgstr "Choisissez une réponse pour chaque champ modifié."
+
+#: IHP-IX review September 2026
+msgid "Changes compared. Review your answers and save the draft."
+msgstr "Modifications comparées. Vérifiez vos réponses et enregistrez le brouillon."
+
+#: IHP-IX review September 2026
+msgid "Collaborators and saved versions"
+msgstr "Collaborateurs et versions enregistrées"
+
+#: IHP-IX review September 2026
+msgid "Report collaboration"
+msgstr "Collaboration sur le rapport"
+
+#: IHP-IX review September 2026
+msgid "Collaborators can save draft changes. The author submits the report for review. Membership changes immediately affect editing access."
+msgstr "Les collaborateurs peuvent enregistrer les modifications du brouillon. L’auteur soumet le rapport pour examen. Les changements d’adhésion modifient immédiatement les droits d’édition."
+
+#: IHP-IX review September 2026
+msgid "Invite an active workspace contributor"
+msgstr "Inviter un contributeur actif de l’espace de travail"
+
+#: IHP-IX review September 2026
+msgid "Invite"
+msgstr "Inviter"
+
+#: IHP-IX review September 2026
+msgid "Revoke access"
+msgstr "Révoquer l’accès"
+
+#: IHP-IX review September 2026
+msgid "Revoked"
+msgstr "Révoqué"
+
+#: IHP-IX review September 2026
+msgid "Saved versions"
+msgstr "Versions enregistrées"
+
+#: IHP-IX review September 2026
+msgid "Version"
+msgstr "Version"
+
+#: IHP-IX review September 2026
+msgid "The next save will record the first version."
+msgstr "Le prochain enregistrement créera la première version."
+
+#: IHP-IX review September 2026
+msgid "Workspace collaboration"
+msgstr "Collaboration dans l’espace de travail"
+
+#: IHP-IX review September 2026
+msgid "Comments and tasks"
+msgstr "Commentaires et tâches"
+
+#: IHP-IX review September 2026
+msgid "Add a comment or task"
+msgstr "Ajouter un commentaire ou une tâche"
+
+#: IHP-IX review September 2026
+msgid "Task"
+msgstr "Tâche"
+
+#: IHP-IX review September 2026
+msgid "Task title"
+msgstr "Titre de la tâche"
+
+#: IHP-IX review September 2026
+msgid "Description or comment"
+msgstr "Description ou commentaire"
+
+#: IHP-IX review September 2026
+msgid "Assigned to"
+msgstr "Attribuée à"
+
+#: IHP-IX review September 2026
+msgid "Due date"
+msgstr "Date d’échéance"
+
+#: IHP-IX review September 2026
+msgid "In progress"
+msgstr "En cours"
+
+#: IHP-IX review September 2026
+msgid "Completed"
+msgstr "Terminée"
+
+#: IHP-IX review September 2026
+msgid "Related activity (optional)"
+msgstr "Activité associée (facultatif)"
+
+#: IHP-IX review September 2026
+msgid "Attached resource (optional)"
+msgstr "Ressource jointe (facultatif)"
+
+#: IHP-IX review September 2026
+msgid "Update task status"
+msgstr "Mettre à jour l’état de la tâche"
+
+#: IHP-IX review September 2026
+msgid "No comments or tasks yet."
+msgstr "Aucun commentaire ni aucune tâche pour le moment."
+
+#: IHP-IX review September 2026
+msgid "This workspace is archived and read-only."
+msgstr "Cet espace est archivé et accessible en lecture seule."
+
+#: IHP-IX review September 2026
+msgid "No lead assigned. Site administrators handle membership requests."
+msgstr "Aucun responsable n’est désigné. Les administrateurs du site traitent les demandes d’adhésion."
+
+#: IHP-IX review September 2026
+msgid "Notifications"
+msgstr "Notifications"
+
+#: IHP-IX review September 2026
+msgid "No notifications yet."
+msgstr "Aucune notification pour le moment."
+
+#: IHP-IX review September 2026
+msgid "Mark as read"
+msgstr "Marquer comme lue"
+
+#: IHP-IX review September 2026
+msgid "Import IHP-IX reports"
+msgstr "Importer des rapports du PHI-IX"
+
+#: IHP-IX review September 2026
+msgid "Import reports"
+msgstr "Importer des rapports"
+
+#: IHP-IX review September 2026
+msgid "Download XLSX template"
+msgstr "Télécharger le modèle XLSX"
+
+#: IHP-IX review September 2026
+msgid "Completed XLSX workbook (up to 5 MB)"
+msgstr "Classeur XLSX rempli (jusqu’à 5 Mo)"
+
+#: IHP-IX review September 2026
+msgid "Validate and preview"
+msgstr "Valider et prévisualiser"
+
+#: IHP-IX review September 2026
+msgid "Invalid values: correct before importing"
+msgstr "Valeurs invalides : corriger avant l’importation"
+
+#: IHP-IX review September 2026
+msgid "Incomplete for submission: can be saved as drafts"
+msgstr "Incomplet pour la soumission : peut être enregistré en brouillon"
+
+#: IHP-IX review September 2026
+msgid "Confirm and create drafts"
+msgstr "Confirmer et créer les brouillons"
+
+#: IHP-IX review September 2026
+msgid "Drafts created"
+msgstr "Brouillons créés"
+
+#: IHP-IX review September 2026
+msgid "Upload a completed workbook, review validation results, then create drafts. Each draft can be completed and submitted separately."
+msgstr "Importez le classeur rempli, vérifiez les résultats de validation, puis créez les brouillons. Chaque brouillon peut être complété et soumis séparément."
+
+#: IHP-IX review September 2026
+msgid "Generate report"
+msgstr "Générer un rapport"
+
+#: IHP-IX review September 2026
+msgid "Generated"
+msgstr "Généré"
+
+#: IHP-IX review September 2026
+msgid "Scope"
+msgstr "Périmètre"
+
+#: IHP-IX review September 2026
+msgid "Select scope"
+msgstr "Sélectionner le périmètre"
+
+#: IHP-IX review September 2026
+msgid "All bienniums"
+msgstr "Toutes les périodes biennales"
+
+#: IHP-IX review September 2026
+msgid "All bienniums and regions"
+msgstr "Toutes les périodes biennales et régions"
+
+#: IHP-IX review September 2026
+msgid "IHP-IX implementation report"
+msgstr "Rapport de mise en œuvre du PHI-IX"
+
+#: IHP-IX review September 2026
+msgid "Published activities in the selected scope"
+msgstr "Activités publiées dans le périmètre sélectionné"
+
+#: IHP-IX review September 2026
+msgid "Participating institutions"
+msgstr "Institutions participantes"
+
+#: IHP-IX review September 2026
+msgid "Countries recorded in reporting, support or beneficiary roles"
+msgstr "Pays enregistrés comme déclarants, soutiens ou bénéficiaires"
+
+#: IHP-IX review September 2026
+msgid "Reported total"
+msgstr "Total déclaré"
+
+#: IHP-IX review September 2026
+msgid "Reported results and sources"
+msgstr "Résultats déclarés et sources"
+
+#: IHP-IX review September 2026
+msgid "Only verified organization links are included. Historical free-text institution names require reconciliation before they can be attributed to this organization."
+msgstr "Seuls les liens vérifiés avec les organisations sont inclus. Les anciens noms d’institutions en texte libre doivent être rapprochés avant de pouvoir être attribués à cette organisation."
+
+#: IHP-IX review September 2026
+msgid "Unlinked published records across the portal"
+msgstr "Enregistrements publiés sans lien dans l’ensemble du portail"
+
+#: IHP-IX review September 2026
+msgid "No published activities match these filters. No results have been inferred."
+msgstr "Aucune activité publiée ne correspond à ces filtres. Aucun résultat n’a été déduit."
+
+#: IHP-IX review September 2026
+msgid "This report uses published activity records. Review the narrative and its sources before sharing. Subtotals across multiple Priority Areas or Outputs can overlap; the overall activity count is unique."
+msgstr "Ce rapport utilise les activités publiées. Vérifiez le texte et ses sources avant de le partager. Les sous-totaux des domaines ou produits peuvent se chevaucher ; le total général compte chaque activité une seule fois."
+
+#: IHP-IX review September 2026
+msgid "Presentation / PDF"
+msgstr "Présentation / PDF"
+
+#: IHP-IX review September 2026
+msgid "Presentation controls"
+msgstr "Commandes de présentation"
+
+#: IHP-IX review September 2026
+msgid "Print / Save as PDF"
+msgstr "Imprimer / Enregistrer en PDF"
+
+#: IHP-IX review September 2026
+msgid "Indicator / scope"
+msgstr "Indicateur / périmètre"
+
+#: IHP-IX review September 2026
+msgid "Published records only. An activity counts once in the overall total and in each linked scope. Subtotals may overlap. Youth and female participants may overlap."
+msgstr "Enregistrements publiés uniquement. Une activité compte une fois dans le total général et dans chaque périmètre associé. Les sous-totaux peuvent se chevaucher, tout comme les catégories des jeunes et des femmes."
+
+#: IHP-IX review September 2026
+msgid "Implementation overview"
+msgstr "Vue d’ensemble de la mise en œuvre"
+
+#: IHP-IX review September 2026
+msgid "Knowledge and scientific products"
+msgstr "Produits de connaissance et scientifiques"
+
+#: IHP-IX review September 2026
+msgid "Knowledge exchange"
+msgstr "Échange de connaissances"
+
+#: IHP-IX review September 2026
+msgid "Training and education"
+msgstr "Formation et éducation"
+
+#: IHP-IX review September 2026
+msgid "Activities by scope"
+msgstr "Activités par périmètre"
+
+#: IHP-IX review September 2026
+msgid "Activities by Output"
+msgstr "Activités par produit"
+
+#: IHP-IX review September 2026
+msgid "Knowledge products"
+msgstr "Produits de connaissance"
+
+#: IHP-IX review September 2026
+msgid "Scientific products"
+msgstr "Produits scientifiques"
+
+#: IHP-IX review September 2026
+msgid "Training materials and courses"
+msgstr "Supports et cours de formation"
+
+#: IHP-IX review September 2026
+msgid "Curricula"
+msgstr "Programmes d’études"
+
+#: IHP-IX review September 2026
+msgid "Stakeholders reached through knowledge exchange"
+msgstr "Parties prenantes touchées par l’échange de connaissances"
+
+#: IHP-IX review September 2026
+msgid "Stakeholders reached through awareness activities"
+msgstr "Parties prenantes touchées par les activités de sensibilisation"
+
+#: IHP-IX review September 2026
+msgid "Awareness raising"
+msgstr "Sensibilisation"
+
+#: IHP-IX review September 2026
+msgid "No data"
+msgstr "Aucune donnée"
+
+#: IHP-IX review September 2026
+msgid "Your IHP-IX draft is saved. Finish creating the resource, then attach it and return to your report."
+msgstr "Votre brouillon du PHI-IX est enregistré. Terminez la création de la ressource, joignez-la et revenez au rapport."
+
+#: IHP-IX review September 2026
+msgid "Attach this resource and return"
+msgstr "Joindre cette ressource et revenir"
+
+#: IHP-IX review September 2026
+msgid "Return to report"
+msgstr "Revenir au rapport"
+
+#: IHP-IX review September 2026
+msgid "Publication created. Save the report to keep this attachment."
+msgstr "Publication créée. Enregistrez le rapport pour conserver cette pièce jointe."
+
+#: IHP-IX review September 2026
+msgid "Save the report to keep its attachments. Before opening a dataset or event editor, your draft is saved automatically. Use “Attach this resource and return” on the resource page."
+msgstr "Enregistrez le rapport pour conserver ses pièces jointes. Avant l’ouverture de l’éditeur de données ou d’événements, le brouillon est enregistré automatiquement. Utilisez « Joindre cette ressource et revenir » sur la page de la ressource."
+
+#: IHP-IX review September 2026
+msgid "Upload scientific publication"
+msgstr "Importer une publication scientifique"
+
+#: IHP-IX review September 2026
+msgid "IHP-IX reporting tools"
+msgstr "Outils de rapport du PHI-IX"
+
+#: IHP-IX review September 2026
+msgid "IHP-IX tools"
+msgstr "Outils du PHI-IX"
+
+#: IHP-IX review September 2026
+msgid "Open report"
+msgstr "Ouvrir le rapport"
+
+#: IHP-IX review September 2026
+msgid "General information"
+msgstr "Informations générales"
+
+#: IHP-IX review September 2026
+msgid "Priority area and output"
+msgstr "Domaine prioritaire et produit"
+
+#: IHP-IX review September 2026
+msgid "Cross-cutting groups"
+msgstr "Groupes transversaux"
+
+#: IHP-IX review September 2026
+msgid "Region of implementation"
+msgstr "Région de mise en œuvre"
+
+#: IHP-IX review September 2026
+msgid "Key performance indicators"
+msgstr "Indicateurs clés de performance"
+
+#: IHP-IX review September 2026
+msgid "Review and submit"
+msgstr "Vérifier et soumettre"
+
+#: IHP-IX review September 2026
+msgid "Publications, events and data"
+msgstr "Publications, événements et données"
+
+#: IHP-IX review September 2026
+msgid "Report an implemented activity"
+msgstr "Déclarer une activité mise en œuvre"
+
+#: IHP-IX review September 2026
+msgid "The activity, who implemented it and when."
+msgstr "L’activité, qui l’a mise en œuvre et quand."
+
+#: IHP-IX review September 2026
+msgid "Required answered"
+msgstr "Champs obligatoires remplis"
+
+#: IHP-IX review September 2026
+msgid "{n} required answers are missing. Fix them and submit."
+msgstr "Il manque {n} réponses obligatoires. Complétez-les et soumettez le rapport."
+
+#: IHP-IX review September 2026
+msgid "One required answer is missing. Fix it and submit."
+msgstr "Il manque une réponse obligatoire. Complétez-la et soumettez le rapport."
+
+#: IHP-IX review September 2026
+msgid "Everything required is answered. You can submit the report."
+msgstr "Tous les champs obligatoires sont remplis. Vous pouvez soumettre le rapport."
+
+#: IHP-IX review September 2026
+msgid "Enter a whole number between 0 and 2147483647"
+msgstr "Saisissez un nombre entier entre 0 et 2147483647"
+
+#: ckanext/theme_ejemplo/ihpix_presentation.py
+msgid "Transboundary water systems"
+msgstr "Systèmes hydriques transfrontaliers"
+
+#: ckanext/theme_ejemplo/ihpix_presentation.py
+msgid "Stakeholder groups with strengthened capacity"
+msgstr "Groupes de parties prenantes aux capacités renforcées"
+
+#: ckanext/theme_ejemplo/ihpix_presentation.py
+msgid "Activities reported"
+msgstr "Activités déclarées"
+
+#: ckanext/theme_ejemplo/ihpix_presentation.py
+msgid "Member States supported in transboundary water management, as reported"
+msgstr "États membres soutenus dans la gestion des eaux transfrontalières, selon les déclarations"
+
+#: ckanext/theme_ejemplo/ihpix_presentation.py
+msgid "Distinct countries"
+msgstr "Pays distincts"
+
+#: ckanext/theme_ejemplo/ihpix_presentation.py
+msgid "Stakeholder groups"
+msgstr "Groupes de parties prenantes"
+
+#: ckanext/theme_ejemplo/ihpix_presentation.py
+msgid "Youth / female (%)"
+msgstr "Jeunes / femmes (%)"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "If you have multiple activities to report, you can use the multiple upload option."
+msgstr "Si vous avez plusieurs activités à déclarer, vous pouvez utiliser l’importation multiple."
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "This draft is visible to you and invited collaborators."
+msgstr "Ce brouillon est visible pour vous et les collaborateurs invités."

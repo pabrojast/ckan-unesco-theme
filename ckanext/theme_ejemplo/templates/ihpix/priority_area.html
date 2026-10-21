@@ -29,6 +29,7 @@
       <a class="ixp-btn ixp-btn-ghost" href="{{ h.url_for('/ihpix/outputs', pa=pa) }}">
         <i class="fa fa-list-alt"></i> {{ _('Open in explorer') }}
       </a>
+      <a class="ixp-btn ixp-btn-ghost" href="{{ h.url_for('theme_ejemplo.ihpix_narrative', scope='pa', value=pa) }}">{{ _('Generate report') }}</a>
       <a class="ixp-btn ixp-btn-ghost" href="{{ h.url_for('theme_ejemplo.ihpix_progress_pa', value=pa) }}">
         <i class="fa fa-bar-chart"></i> {{ _('Implementation progress') }}
       </a>

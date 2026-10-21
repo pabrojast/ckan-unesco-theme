@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="{{ h.lang() }}" dir="{{ 'rtl' if h.lang() == 'ar' else 'ltr' }}">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>IHP-IX · {{ stats.scope.label }}</title>
+<link rel="stylesheet" href="{{ h.url_for_static('/css/ihpix-presentation.css') }}"></head>
+<body>
+<nav class="ix-slide-controls" aria-label="{{ _('Presentation controls') }}"><a href="{{ back }}">{{ _('Dashboard') }}</a><button type="button" id="previous">{{ _('Previous') }}</button><span id="page-count" aria-live="polite"></span><button type="button" id="next">{{ _('Next') }}</button><button type="button" onclick="window.print()">{{ _('Print / Save as PDF') }}</button></nav>
+<main id="slides">
+{% for slide in slides %}<article class="ix-slide"{% if not loop.first %} hidden{% endif %} aria-label="{{ _(slide.title) }}">
+<header><p>IHP-IX · {{ stats.scope.label }}</p><h1>{{ _(slide.title) }}</h1><p class="filters">{% for key, value in filters.items() %}{{ key }}: {{ value }}{% if not loop.last %} · {% endif %}{% else %}{{ _('All bienniums and regions') }}{% endfor %}</p></header>
+<table><thead><tr><th>{{ _('Indicator / scope') }}</th><th>{{ _('Reported total') }}</th></tr></thead><tbody>{% for label, value in slide.rows %}<tr><td>{{ h.ihpix_t(label) }}</td><td>{{ value }}</td></tr>{% endfor %}</tbody></table>
+<footer><p>{{ _('Published records only. An activity counts once in the overall total and in each linked scope. Subtotals may overlap. Youth and female participants may overlap.') }}</p><p>{{ _('Generated') }}: {{ stats.generated_at }} · {{ loop.index }}/{{ slides|length }}</p><p>{{ source_url }}</p></footer>
+</article>{% endfor %}
+</main><script src="{{ h.url_for_static('/js/ihpix-presentation.js') }}"></script>
+</body></html>

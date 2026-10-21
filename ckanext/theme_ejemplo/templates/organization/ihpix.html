@@ -504,6 +504,7 @@
   <div class="gix-info-bar">
     <h3><i class="fa fa-flask"></i> {{ _('IHP-IX Activities') }} — {{ group_dict.display_name }}</h3>
     <div class="gix-info-right">
+      <a class="gix-link-btn" href="{{ h.url_for('theme_ejemplo.ihpix_narrative', scope='organization', value=group_dict.id) }}">{{ _('Generate report') }}</a>
       <span class="gix-count-pill">
         <i class="fa fa-bar-chart"></i> {{ total }} {{ _('activities') }}
       </span>

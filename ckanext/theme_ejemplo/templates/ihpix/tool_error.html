@@ -1,0 +1,6 @@
+{% extends 'ihpix/tools_base.html' %}
+{% block tools_content %}
+<h1>{{ _('Please correct these fields') }}</h1>
+<ul role="alert">{% for field, error in errors.items() %}<li><strong>{{ field }}:</strong> {{ error }}</li>{% endfor %}</ul>
+<button class="btn" type="button" onclick="history.back()">{{ _('Back to your answers') }}</button>
+{% endblock %}

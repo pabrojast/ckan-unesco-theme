@@ -247,3 +247,24 @@ configuración y volúmenes. La guía y el rollback están en
 La rama `production` del repositorio Docker usa ahora `THEME_REF=dev210` para
 futuras construcciones, en lugar del commit fijo `c7a1a54`. Publicar esa referencia
 no despliega producción. Ver [[Busqueda]] y [[Testing#Búsqueda por abstract]].
+
+## IHP-IX revisión de septiembre — DEV 2026-10-21
+
+Destino exclusivo `kubectl --context default -n ckan`, deployment `ckan`, contenedor `ckan`. La imagen se construye sobre el digest **vigente** de DEV con `scripts/docker/Dockerfile.ihpix-dev`, conservando las otras extensiones. Exportar solamente el commit revisado a `theme/` del contexto, sin cambios locales ajenos:
+
+```bash
+THEME_REVISION=$(git rev-parse HEAD)
+BUILD_DIR=$(mktemp -d /tmp/ihpix-build.XXXXXX)
+mkdir "$BUILD_DIR/theme"
+git archive "$THEME_REVISION" | tar -x -C "$BUILD_DIR/theme"
+cp scripts/docker/Dockerfile.ihpix-dev "$BUILD_DIR/Dockerfile"
+BASE_IMAGE=$(kubectl --context default -n ckan get deploy ckan -o jsonpath='{.spec.template.spec.containers[?(@.name=="ckan")].image}')
+docker build --build-arg BASE_IMAGE="$BASE_IMAGE" --build-arg THEME_REVISION="$THEME_REVISION" \
+  -t "pabrojast/ckan-base210:ihpix-review-${THEME_REVISION:0:7}" "$BUILD_DIR"
+```
+
+Antes del rollout: respaldo PostgreSQL de todas las tablas `ihpix_*`, deployment JSON y huellas por ID de actividades/adjuntos/espacios/membresías/contribuciones. Validar el dump y la imagen final en CKAN aislado; publicar la imagen, obtener su digest y actualizar **solo** el contenedor web. Reconsultar el digest base justo antes: si cambió, reconstruir sobre el nuevo. No reutilizar un respaldo marcado `.incomplete`.
+
+La migración agrega seis columnas y cinco tablas; no reejecuta la normalización histórica. Conservar digest anterior para rollback de imagen; no eliminar las columnas/tablas nuevas ni restaurar un dump sobre escrituras posteriores sin evaluarlas. Después: esperar rollout, comparar huellas de las 745 actividades históricas, verificar 744 publicadas/1 pendiente, cuatro contenedores Ready, fuente y rutas públicas/autenticadas. Recomputar únicamente el resumen derivado por país.
+
+No se modifican los sidecars `c4w-archive`, `dashboard-build` o `dashboard-query`, ni configuración/imagen de producción. Evidencia funcional: [[IHP-IX Review September 2026]].

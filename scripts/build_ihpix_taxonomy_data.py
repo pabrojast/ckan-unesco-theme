@@ -1,28 +1,10 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""Genera los ficheros de taxonomía IHP-IX derivados del seed Excel.
+"""Genera taxonomías desde las preguntas públicas oficiales UNESCO (2026-10-21).
 
-Lee `ckanext/theme_ejemplo/data/ihpix_seed_data.json` (exportación del
-Excel `All_Priority_Areas_Reporting.xlsx` de Microsoft Forms) y escribe:
-
-- `data/ihpix_output_titles.json`   {"1.1": "International scientific …"}
-- `data/ihpix_key_activities.json`  {"1.1": [{"code": "1.1.1", "title": "…"}]}
-
-Los títulos salen de `output_full` y las key activities de `key_activity`
-(que en los reportes heredados llevan el código oficial del Operational
-Implementation Plan: "1.3.2. Research and …"). Se deduplica por código y
-se elige el texto más frecuente; los artefactos de extracción del PDF
-("UNES CO", "impr oving") se corrigen con un diccionario cerrado.
-
-> Inferencia: la lista oficial del OIP no está en el repo (DOC-008). Estos
-> ficheros cubren lo que se ha reportado; los outputs cuyas key activities
-> nunca se reportaron quedan incompletos hasta recibir la lista oficial.
-
-Uso:
-    python3 -I scripts/build_ihpix_taxonomy_data.py [--seed RUTA] [--check]
-
-`--check` no escribe: compara con los ficheros existentes y sale con 1 si
-difieren (útil en CI).
+El snapshot sólo contiene preguntas/opciones, nunca respuestas personales.
+--check verifica que los artefactos reproducibles coinciden. --seed permite
+consultar el origen heredado, sin sustituir la fuente oficial por defecto.
 """
 from __future__ import unicode_literals
 
@@ -153,19 +135,34 @@ def dump(path, data):
 
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__.split('\n')[0])
-    parser.add_argument('--seed', default=SEED_FILE)
+    parser.add_argument('--seed', default=None)
     parser.add_argument('--check', action='store_true',
                         help='No escribe; sale con 1 si los ficheros difieren')
     args = parser.parse_args(argv)
 
-    with io.open(args.seed, encoding='utf-8') as fh:
-        seed = json.load(fh)
-    activities = seed.get('activities', [])
-
-    outputs = {
-        OUTPUT_TITLES_FILE: build_output_titles(activities),
-        KEY_ACTIVITIES_FILE: build_key_activities(activities),
-    }
+    if args.seed:
+        with io.open(args.seed, encoding='utf-8') as fh:
+            activities = json.load(fh).get('activities', [])
+        titles, kas = build_output_titles(activities), build_key_activities(activities)
+    else:
+        with io.open(os.path.join(DATA_DIR, 'ihpix_official_taxonomy_source.json'), encoding='utf-8') as fh:
+            questions = json.load(fh)['questions']
+        titles, kas = {}, {}
+        for question in questions:
+            match = re.search(r'Key Activity under Output (\d+\.\d+)', question['title'])
+            if match:
+                items = []
+                for choice in question['choices']:
+                    code, title = CODE_RE.match(choice).groups()
+                    items.append({'code': code, 'title': WS_RE.sub(' ', title).strip()})
+                kas[match.group(1)] = items
+            elif 'Under the framework of Priority Area' in question['title']:
+                for choice in question['choices']:
+                    code, title = OUTPUT_PREFIX_RE.match(choice).groups()
+                    titles[code] = WS_RE.sub(' ', title).strip()
+        assert len(titles) == len(kas) == 34
+        assert sum(map(len, kas.values())) == 151
+    outputs = {OUTPUT_TITLES_FILE: titles, KEY_ACTIVITIES_FILE: kas}
     changed = False
     for path, data in outputs.items():
         text = dump(path, data)

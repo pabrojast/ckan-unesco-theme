@@ -477,6 +477,8 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
             membership_model.init_ihpix_working_groups_db()
             # Create ihpix_country_summary table if needed
             membership_model.init_ihpix_country_summary_db()
+            from ckanext.theme_ejemplo import ihpix_store
+            ihpix_store.init_db()
             # Create initiative_request table if needed
             membership_model.init_initiative_requests_db()
             # Create open_learning_course table if needed
@@ -1334,10 +1336,14 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 methods=['GET']
             )
 
+            from ckanext.theme_ejemplo import ihpix_views
+            ihpix_views.register(blueprint)
             return blueprint
         
         def get_helpers(self):
+            from ckanext.theme_ejemplo import ihpix_views
             helpers_map = {
+                 'ihpix_pending_resource': ihpix_views.pending_resource,
                  'get_latest_courses': self.get_latest_courses,
                  'get_featured_datasets': self.get_featured_datasets,
                  'get_organization_image_by_name': self.get_organization_image_by_name,
@@ -1417,7 +1423,10 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
 
         # IActions
         def get_actions(self):
+            from ckanext.theme_ejemplo import ihpix_collaboration, ihpix_reporting
             return {
+                **ihpix_collaboration.ACTIONS,
+                **ihpix_reporting.ACTIONS,
                 'user_show': custom_actions.user_show,
                 'user_update': custom_actions.user_update,
                 'people_list': custom_actions.people_list,
@@ -1510,7 +1519,9 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
 
         # IAuthFunctions
         def get_auth_functions(self):
+            from ckanext.theme_ejemplo import ihpix_collaboration, ihpix_reporting
             return {
+                **{name: custom_auth._logged_in_only for name in dict(ihpix_collaboration.ACTIONS, **ihpix_reporting.ACTIONS)},
                 'membership_request_create': custom_auth.membership_request_create,
                 'membership_request_list': custom_auth.membership_request_list,
                 'membership_request_process': custom_auth.membership_request_process,
