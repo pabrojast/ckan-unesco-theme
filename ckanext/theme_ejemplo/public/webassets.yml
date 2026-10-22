@@ -64,3 +64,10 @@ ihpix-progress-css:
   filters: cssrewrite,cssmin
   contents:
     - css/ihpix-progress.css
+
+# Lista de reportes en el perfil de usuario.
+ihpix-profile-css:
+  output: theme/ihpix-profile.css
+  filters: cssrewrite,cssmin
+  contents:
+    - css/ihpix-profile.css

@@ -4442,7 +4442,7 @@ class MyLogica():
                 model.Session.rollback()
                 return jsonify({'success': False,
                                 'errors': e.error_dict,
-                                'error': _format_error_dict(e.error_dict)}), 400
+                                'error': _('Please fix the highlighted fields.')}), 400
             except toolkit.NotAuthorized:
                 model.Session.rollback()
                 return jsonify({'success': False,
@@ -4452,7 +4452,8 @@ class MyLogica():
                                 'error': _('Report not found')}), 404
             except Exception as e:
                 log.error('Error saving IHP-IX report: %s', e)
-                return jsonify({'success': False, 'error': str(e)}), 500
+                return jsonify({'success': False,
+                                'error': _('An error occurred. Please try again.')}), 500
 
         @staticmethod
         def ihpix_report():

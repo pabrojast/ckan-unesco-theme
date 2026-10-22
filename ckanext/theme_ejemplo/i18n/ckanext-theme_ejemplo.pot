@@ -11603,3 +11603,57 @@ msgstr ""
 #: ckanext/theme_ejemplo/templates/ihpix/report.html
 msgid "This draft is visible to you and invited collaborators."
 msgstr ""
+
+msgid "Additional contribution {n}"
+msgstr ""
+
+msgid "Synergy {n}"
+msgstr ""
+
+msgid "Supporting country {n}"
+msgstr ""
+
+msgid "Select an option"
+msgstr ""
+
+msgid "Key activity (optional)"
+msgstr ""
+
+msgid "Select an output first"
+msgstr ""
+
+msgid "Select a priority area first"
+msgstr ""
+
+msgid "Type of support (select all that apply)"
+msgstr ""
+
+msgid "Choose a supporting country."
+msgstr ""
+
+msgid "Choose at least one type of support."
+msgstr ""
+
+msgid "Choose a priority area."
+msgstr ""
+
+msgid "Choose an output for this priority area."
+msgstr ""
+
+msgid "Choose a key activity from the selected output."
+msgstr ""
+
+msgid "Please review the selected entries."
+msgstr ""
+
+msgid "Filter reports by status"
+msgstr ""
+
+msgid "No reports with this status."
+msgstr ""
+
+msgid "View all reports"
+msgstr ""
+
+msgid "Review notes"
+msgstr ""

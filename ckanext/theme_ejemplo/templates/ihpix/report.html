@@ -311,7 +311,7 @@
               </select>
               </div>
             <div data-supporter-rows></div><input type="hidden" name="supporters_json" value="[]">
-            <button type="button" class="btn" data-supporter-add>{{ _('Add supporting country') }}</button>
+            <button type="button" class="ihpix-report-btn is-secondary is-add" data-supporter-add><i class="fa fa-plus" aria-hidden="true"></i> {{ _('Add supporting country') }}</button>
             <p class="ihpix-report-help">{{ _('Institution country, supporting countries and beneficiaries are recorded separately.') }}</p>
             </div>
           </div>
@@ -394,10 +394,10 @@
 
         <div id="ihpix-contributions-editor" class="ihpix-report-field">
           <h4>{{ _('Additional contributions') }}</h4>
-          <p>{{ _('Add every related Priority Area, Output and key activity. Overall totals count this activity once; subtotals can overlap.') }}</p>
+          <p class="ihpix-report-help">{{ _('Add every related Priority Area, Output and key activity. Overall totals count this activity once; subtotals can overlap.') }}</p>
           <input type="hidden" name="contributions_json" value="[]">
           <div data-relation-rows="contributions_json"></div>
-          <button type="button" class="btn" data-relation-add="contributions_json">{{ _('Add contribution') }}</button>
+          <button type="button" class="ihpix-report-btn is-secondary is-add" data-relation-add="contributions_json"><i class="fa fa-plus" aria-hidden="true"></i> {{ _('Add contribution') }}</button>
         </div>
         <div class="ihpix-report-field">
           <label class="ihpix-report-label" for="ihpix-field-link">{{ _('Link to the activity') }} <span class="ihpix-optional">({{ _('optional') }})</span></label>
@@ -441,7 +441,7 @@
               <span class="ihpix-report-help" id="ihpix-field-synergies-help">{{ _('Use the numbers of the Operational Implementation Plan, for example "Priority 3, Output 3.3, Key Activity 3.3.1".') }}</span>
               <div data-relation-rows="synergies_json"></div>
             <input type="hidden" name="synergies_json" value="[]">
-            <button type="button" class="btn" data-relation-add="synergies_json">{{ _('Add synergy') }}</button>
+            <button type="button" class="ihpix-report-btn is-secondary is-add" data-relation-add="synergies_json"><i class="fa fa-plus" aria-hidden="true"></i> {{ _('Add synergy') }}</button>
             <textarea id="ihpix-field-synergies" name="synergies" class="ihpix-report-textarea" rows="3" maxlength="1500" data-ihpix-markdown data-ihpix-counter aria-describedby="ihpix-field-synergies-help"></textarea>
             </div>
           </div>
@@ -820,6 +820,25 @@
     'countries': country_metadata,
     'language': h.lang(),
     'relationStrings': {
+      'Additional contribution {n}': _('Additional contribution {n}'),
+      'Synergy {n}': _('Synergy {n}'),
+      'Supporting country {n}': _('Supporting country {n}'),
+      'Select an option': _('Select an option'),
+      'Select a priority area': _('Select a priority area'),
+      'Select an output': _('Select an output'),
+      'Select a key activity': _('Select a key activity'),
+      'Select a country': _('Select a country'),
+      'Key activity (optional)': _('Key activity (optional)'),
+      'Select an output first': _('Select an output first'),
+      'Select a priority area first': _('Select a priority area first'),
+      'Type of support (select all that apply)': _('Type of support (select all that apply)'),
+      'Choose a supporting country.': _('Choose a supporting country.'),
+      'Choose at least one type of support.': _('Choose at least one type of support.'),
+      'Choose a priority area.': _('Choose a priority area.'),
+      'Choose an output for this priority area.': _('Choose an output for this priority area.'),
+      'Choose a key activity from the selected output.': _('Choose a key activity from the selected output.'),
+      'Please review the selected entries.': _('Please review the selected entries.'),
+      'Review and submit': _('Review and submit'),
       'Priority Area': _('Priority Area'),
       'Output': _('Output'),
       'Key activity': _('Key activity'),

@@ -299,7 +299,7 @@
         var box = document.getElementById(fieldId);
         if (box) { l = box.querySelector('legend .ihpix-report-label') || box.querySelector('legend'); }
       }
-      if (!l) return fieldId;
+      if (!l) return conflictText('Review and submit');
       var clone = l.cloneNode(true);
       clone.querySelectorAll('.ixf-sr-only, .ihpix-report-help, .kpi-id').forEach(function (n) { n.parentNode.removeChild(n); });
       return clone.textContent.replace(/\*/g, '').replace(/\s+/g, ' ').trim();
@@ -318,7 +318,9 @@
           var f = document.getElementById(it.fieldId);
           if (f) {
             f.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'center' });
-            setTimeout(function() { try { f.focus(); } catch (err) {} }, 350);
+            var component = window.IhpixForms && window.IhpixForms.get(f);
+            var target = (component && component.focusTarget) || f.querySelector('input:not([type="hidden"]), select, textarea, button') || f;
+            setTimeout(function() { try { target.focus(); } catch (err) {} }, 350);
           }
         });
         li.appendChild(a);
@@ -332,6 +334,10 @@
       clearFieldErrors();
       var failed = [];
       Object.keys(errors).forEach(function(name) {
+        var msg = errors[name];
+        if (Array.isArray(msg)) msg = msg.join(', ');
+        var relation = window.IhpixRelations && window.IhpixRelations.serverError(name, String(msg));
+        if (relation) {failed.push(relation); return;}
         var cfg = null;
         REQUIRED_FIELDS.forEach(function(c) { if (c.name === name) cfg = c; });
         var inp = form.querySelector('[name="' + name + '"]');
@@ -342,9 +348,8 @@
           var box = inp.closest ? inp.closest('.ihpix-report-field') : null;
           (box || inp).classList.add('ihpix-report-field-error');
         }
-        var msg = errors[name];
-        if (Array.isArray(msg)) msg = msg.join(', ');
-        var label = fieldId ? labelTextFor(fieldId) : name;
+        var label = fieldId ? labelTextFor(fieldId) : conflictText('Review and submit');
+        if (!fieldId) fieldId = 'ihpix-review-summary';
         failed.push({ fieldId: fieldId, label: label + ': ' + msg });
       });
       updateSectionStatus();
@@ -429,6 +434,7 @@
         }
       }
       failed = failed.concat(validateExtras());
+      if (window.IhpixRelations) failed = failed.concat(window.IhpixRelations.validate());
       updateSectionStatus();
       if (failed.length) {
         buildErrorSummary(failed);
@@ -535,7 +541,7 @@
           form.reset();
         } else {
           if (result.data.code === 'revision_conflict') showConflict(result.data.current);
-          var err = result.data.error || result.data.message || S.genericError;
+          var err = result.data.errors ? S.fixHighlighted : (result.data.error || result.data.message || S.genericError);
           showToast(err, 'error');
           if (result.data.errors) highlightServerErrors(result.data.errors);
         }
@@ -772,11 +778,19 @@
     /* ── Validación en vivo al salir de cada campo obligatorio ──── */
     // Oculta el resumen de errores cuando ya no queda ningún campo inválido.
     function syncErrorSummary() {
+      if (errorSummary) errorSummary.querySelectorAll('a').forEach(function (link) {
+        var id = link.getAttribute('href').slice(1);
+        if (id.indexOf('ihpix-relation-field-') !== 0) return;
+        var field = document.getElementById(id);
+        if (!field || !field.classList.contains('ihpix-report-field-error')) link.parentNode.remove();
+      });
       if (errorSummary && errorSummary.classList.contains('show') &&
           !form.querySelector('.ihpix-report-field-error')) {
         errorSummary.classList.remove('show');
       }
     }
+    form.addEventListener('change', function () {syncErrorSummary(); updateSectionStatus();});
+    form.addEventListener('input', function () {syncErrorSummary(); updateSectionStatus();});
     REQUIRED_FIELDS.forEach(function(c) {
       if (c.radio) {
         form.querySelectorAll('[name="' + c.name + '"]').forEach(function (r) {

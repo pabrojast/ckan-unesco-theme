@@ -72,3 +72,17 @@ Entorno CKAN aislado en `127.0.0.1:5011`, DB/Redis/core Solr separados, cinco us
 - Capturas, PDFs y logs de aceptación conservados en `/home/pabrojast/backups/ckan-dev-ihpix-20261021/qa-evidence/` (privado); artefactos de trabajo en `/tmp/ihpix-implementation-20261021/`; no se publican tokens ni datos privados en Git.
 
 El detalle del despliegue y la preservación final está en [[Deployment#IHP-IX revisión de septiembre — DEV 2026-10-21]].
+
+## Ajustes de usabilidad — 2026-10-22
+
+Correcciones a partir de las cinco capturas de uso en DEV:
+
+- Contribuciones, sinergias y países de apoyo usan fichas numeradas, botones con borde/icono y foco visible. Los selectores dependientes explican qué elegir primero; los Outputs incluyen su título. Añadir/quitar activa el guardado local y conserva el foco de teclado.
+- Los combobox locales mantienen los slugs como términos de búsqueda sin mostrarlos como etiquetas secundarias. `data-description` permite una descripción visible explícita; los buscadores remotos de usuarios conservan sus identificadores para distinguir personas.
+- Los errores de relaciones muestran la ficha y la corrección necesaria, con mensaje junto al campo y enlace desde el resumen. Se validan antes de enviar y se traducen también los errores estructurados del servidor. Los avisos de guardado no muestran claves JSON ni excepciones internas.
+- La pestaña del perfil muestra tarjetas con título, estado, metadatos, acciones y observaciones completas. Los filtros conservan contadores/estado activo; los estados no se parten en letras y el listado vacío distingue un filtro sin resultados. Confirmar/cancelar el borrado funciona con el atributo HTML corregido.
+- Estilos de escritorio/móvil y RTL, incluida la barra CKAN de administrador. Catálogos ES/FR/AR actualizados y compilados.
+
+Verificación: 146 pruebas puras, taxonomía 34 Outputs/151 KA, sintaxis JS y 34 comprobaciones de navegador en CKAN local con DB/Redis aislados y datos QA. Se cubren guardado real, recuperación de filas, errores cliente/servidor, foco, países del formulario/modal, cancelación y confirmación de borrado, filtros, escritorio y móvil EN/ES/FR/AR, administrador árabe y ausencia de excepciones JS.
+
+Regresión de navegador: `scripts/playwright/ihpix_ux.cjs`, con `IHPIX_QA_BASE` limitado a localhost, `IHPIX_QA_TOKENS` (author/admin) e `IHPIX_QA_OUTPUT`. Requiere el usuario aislado `ihpix-ux-author`, una organización administrada por él, un grupo país Afghanistan hijo de `member-states` y reportes QA pending/published/rejected; crea y elimina su propio borrador. Nunca ejecutar contra la base real.

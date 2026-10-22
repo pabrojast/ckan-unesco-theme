@@ -9433,3 +9433,69 @@ msgstr "إذا كانت لديك أنشطة متعددة للإبلاغ عنها
 #: ckanext/theme_ejemplo/templates/ihpix/report.html
 msgid "This draft is visible to you and invited collaborators."
 msgstr "هذه المسودة مرئية لك وللمتعاونين المدعوين."
+
+msgid "Additional contribution {n}"
+msgstr "مساهمة إضافية {n}"
+
+msgid "Synergy {n}"
+msgstr "تآزر {n}"
+
+msgid "Supporting country {n}"
+msgstr "الدولة الداعمة {n}"
+
+msgid "Select an option"
+msgstr "اختر خيارًا"
+
+msgid "Key activity (optional)"
+msgstr "النشاط الرئيسي (اختياري)"
+
+msgid "Select an output first"
+msgstr "اختر نتيجة أولًا"
+
+msgid "Select a priority area first"
+msgstr "اختر مجالًا ذا أولوية أولًا"
+
+msgid "Type of support (select all that apply)"
+msgstr "نوع الدعم (اختر كل ما ينطبق)"
+
+msgid "Choose a supporting country."
+msgstr "اختر دولة داعمة."
+
+msgid "Choose at least one type of support."
+msgstr "اختر نوعًا واحدًا على الأقل من الدعم."
+
+msgid "Choose a priority area."
+msgstr "اختر مجالًا ذا أولوية."
+
+msgid "Choose an output for this priority area."
+msgstr "اختر نتيجة لهذا المجال ذي الأولوية."
+
+msgid "Choose a key activity from the selected output."
+msgstr "اختر نشاطًا رئيسيًا من النتيجة المحددة."
+
+msgid "Please review the selected entries."
+msgstr "يرجى مراجعة الخيارات المحددة."
+
+msgid "Filter reports by status"
+msgstr "تصفية التقارير حسب الحالة"
+
+msgid "Not specified"
+msgstr "غير محدد"
+
+msgid "No reports with this status."
+msgstr "لا توجد تقارير بهذه الحالة."
+
+msgid "View all reports"
+msgstr "عرض جميع التقارير"
+
+msgid "Select a priority area"
+msgstr "اختر مجالًا ذا أولوية"
+
+msgid "Select an output"
+msgstr "اختر نتيجة"
+
+msgid "Select a key activity"
+msgstr "اختر نشاطًا رئيسيًا"
+
+msgid "Review notes"
+msgstr "ملاحظات المراجعة"

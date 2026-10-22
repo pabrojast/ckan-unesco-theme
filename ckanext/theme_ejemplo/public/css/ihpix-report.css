@@ -386,8 +386,21 @@ fieldset.ihpix-report-field-error .ihpix-yesno { border-color: var(--ixr-danger)
 }
 
 /* Relaciones: selectores largos y países en pantallas estrechas / RTL. */
-.ihpix-relation-row {padding:1rem; margin-block:1rem; border:1px solid #cbd5e1; min-width:0;}
-.ihpix-relation-row label {display:block; margin-block:.5rem;}
-.ihpix-relation-row select {width:100%; max-width:100%;}
+.ihpix-relation-row {padding:1rem; margin-block:1.25rem; border:1px solid var(--ixr-control); border-radius:10px; background:var(--ixr-paper); min-width:0;}
+.ihpix-relation-row .ihpix-relation-title {float:none; width:auto; padding-inline:.4rem; margin:0; border:0; font-size:15px; font-weight:700; color:var(--ixr-ink);}
+.ihpix-relation-row label {display:block; margin-block:0 1rem; font-size:14px; font-weight:600;}
+.ihpix-relation-row select {width:100%; max-width:100%; margin-block-start:.35rem; background-color:var(--ixr-surface); font-weight:400;}
+.ihpix-relation-row select:disabled {background-color:#eef2f6; color:#57677a; cursor:not-allowed;}
+.ihpix-relation-actions {display:flex; justify-content:flex-end; padding-block-start:.75rem; border-block-start:1px solid var(--ixr-control);}
+.ihpix-report-btn.is-remove {background:#fff; color:#a32920; border-color:#d5a5a0; font-weight:600;}
+.ihpix-report-btn.is-remove:hover {background:#fff1f0; border-color:#a32920;}
+.ihpix-report-btn:focus-visible {outline:3px solid #0068b5; outline-offset:3px;}
+.ihpix-report-btn.is-add {margin-block:.25rem 1rem; min-height:44px; border-color:#0068b5; color:#005b9e; font-weight:600;}
+.ihpix-relation-actions .ihpix-report-btn {min-height:44px;}
+.ihpix-relation-roles {display:flex; flex-wrap:wrap; gap:.6rem 1.2rem; margin-block:.5rem 1rem;}
+.ihpix-relation-roles p {flex-basis:100%; margin:0; font-size:14px; font-weight:600;}
+.ihpix-relation-roles label {display:inline-flex; align-items:center; gap:.4rem; margin:0; min-height:36px; font-weight:400; cursor:pointer;}
+.ihpix-relation-roles input {margin:0;}
+.ihpix-relation-row .ihpix-report-field-error {outline:2px solid var(--ixr-danger); outline-offset:2px;}
 #ihpix-conflict {padding:1rem; background:#fff3cd; overflow-wrap:anywhere;}
 #ihpix-conflict pre {white-space:pre-wrap; max-height:24rem; overflow:auto;}

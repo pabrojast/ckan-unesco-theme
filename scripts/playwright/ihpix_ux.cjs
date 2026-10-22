@@ -1,0 +1,133 @@
+// QA de usabilidad: ejecutar sólo contra CKAN local con usuarios aislados.
+const {chromium} = require('playwright');
+const fs = require('fs');
+const assert = require('assert/strict');
+const base = process.env.IHPIX_QA_BASE || 'http://127.0.0.1:5011';
+const dir = process.env.IHPIX_QA_OUTPUT;
+assert(['127.0.0.1', 'localhost'].includes(new URL(base).hostname));
+assert(dir && process.env.IHPIX_QA_TOKENS);
+const tokens = JSON.parse(fs.readFileSync(process.env.IHPIX_QA_TOKENS));
+fs.mkdirSync(dir, {recursive:true});
+let passed = 0;
+function ok(name, value = true) {assert(value, name); console.log('PASS', ++passed, name);}
+(async () => {
+  const browser = await chromium.launch();
+  const context = await browser.newContext({viewport:{width:1440,height:1000}});
+  await context.route(base + '/**', r => r.continue({headers:{...r.request().headers(), Authorization:tokens.author}}));
+  const page = await context.newPage();
+  page.setDefaultTimeout(15000);
+  const errors = []; page.on('pageerror', e => errors.push(e.message));
+  let id;
+  try {
+    await page.goto(base + '/ihpix/report');
+    await page.locator('#ihpix-report-form').waitFor();
+    const countryInput = page.locator('#ihpix-field-country').locator('..').locator('.ixf-combobox-input');
+    await countryInput.fill('afghanistan');
+    await page.locator('.ixf-option[role=option]').first().waitFor();
+    ok('Country menu shows names without slugs', await page.locator('.ixf-option small').count() === 0);
+    await page.locator('.ixf-option[role=option]').first().click();
+    ok('Country search still selects the stored value', !!await page.locator('#ihpix-field-country').inputValue());
+    await page.locator('#ihpix-field-title').fill('QA UX ' + Date.now());
+    await page.locator('#ihpix-field-priority-area').selectOption('PA1');
+    await page.locator('#ihpix-field-output').selectOption('1.10');
+    const add = page.locator('[data-relation-add=contributions_json]');
+    await add.click();
+    const row = page.locator('[data-relation-rows=contributions_json] fieldset').first();
+    ok('Added row has a numbered heading and keyboard focus', (await row.locator('legend').innerText()) === 'Additional contribution 1' && await row.locator('select').first().evaluate(e => e === document.activeElement));
+    ok('Dependent outputs are disabled until a priority is chosen', await row.locator('select').nth(1).isDisabled());
+    ok('Add/remove controls have visible borders and touch targets', await add.evaluate(e => getComputedStyle(e).borderTopStyle === 'solid' && e.getBoundingClientRect().height >= 44) && await row.locator('button').evaluate(e => getComputedStyle(e).borderTopStyle === 'solid' && e.getBoundingClientRect().height >= 44));
+    await page.locator('#ihpix-report-draft-btn').click();
+    await page.locator('#ihpix-error-summary.show').waitFor();
+    ok('Blank contribution reports a plain-language error', (await page.locator('#ihpix-error-summary').innerText()).includes('Additional contribution 1: Choose a priority area.') && !(await page.locator('.ixf-toasts').innerText()).includes('_json'));
+    await page.locator('#ihpix-error-summary a').click();
+    await page.waitForTimeout(400);
+    ok('Error link focuses the matching field', await row.locator('select').first().evaluate(e => e === document.activeElement));
+    await row.locator('select').nth(0).selectOption('PA2');
+    await page.locator('#ihpix-report-draft-btn').click();
+    ok('Incomplete contribution asks for its output', (await page.locator('#ihpix-error-summary').innerText()).includes('Choose an output for this priority area.'));
+    await row.locator('select').nth(1).selectOption('2.1');
+    ok('Output choices include descriptive titles', (await row.locator('select').nth(1).locator('option:checked').innerText()).length > 8);
+    await row.locator('select').nth(2).selectOption('2.1.1');
+    // Simula un rechazo del servidor con el formato anterior para verificar el fallback de la UI.
+    await page.route('**/ihpix/report', async route => {
+      if (route.request().method() !== 'POST') return route.fallback();
+      await route.fulfill({status:400,contentType:'application/json',body:JSON.stringify({success:false,errors:{'contributions_json.2':'Select an Output belonging to its Priority Area'},error:'contributions_json.2: Select an Output belonging to its Priority Area'})});
+    });
+    await page.locator('#ihpix-report-draft-btn').click();
+    await page.waitForTimeout(250);
+    ok('Server validation hides technical keys in summary and toast', !(await page.locator('#ihpix-error-summary').innerText()).includes('_json') && !(await page.locator('.ixf-toasts').innerText()).includes('_json'));
+    await page.locator('#ihpix-error-summary a').click();
+    await page.waitForTimeout(400);
+    ok('Server error focuses the output selector', await row.locator('select').nth(1).evaluate(e => e === document.activeElement));
+    await page.unroute('**/ihpix/report');
+    await page.locator('[name=has_member_state_support][value=yes]').check();
+    await page.locator('[data-supporter-add]').click();
+    await page.locator('[data-supporter-rows] select').selectOption('EG');
+    await page.locator('#ihpix-report-draft-btn').click();
+    ok('Supporter error explains the missing support type', (await page.locator('#ihpix-error-summary').innerText()).includes('Choose at least one type of support.'));
+    await page.locator('[data-supporter-rows] input[value=hosting]').check();
+    await add.click();
+    await page.waitForTimeout(1100);
+    await page.reload();
+    ok('New empty rows survive browser autosave', await page.locator('[data-relation-rows=contributions_json] fieldset').count() === 2);
+    await page.locator('[data-relation-rows=contributions_json] fieldset').last().locator('button').click();
+    await page.locator('#ihpix-report-draft-btn').click();
+    await page.waitForURL(/\/ihpix\/report\/[^/]+\/edit/);
+    id = page.url().split('/').slice(-2)[0];
+    ok('Valid draft saves with its contribution and supporter', await page.locator('[data-relation-rows=contributions_json] fieldset').count() === 1 && await page.locator('[data-supporter-rows] select').inputValue() === 'EG');
+    await page.locator('[data-document-type=scientific_paper]').first().click();
+    await page.locator('#ihpix-publication-modal details summary').click();
+    const memberState = page.locator('#ihpix-pub-field-ms').locator('..').locator('.ixf-combobox-input');
+    await memberState.fill('afghanistan');
+    ok('Publication country menu also hides slugs', await page.locator('#ihpix-publication-modal .ixf-option small').count() === 0);
+    await page.locator('#ihpix-publication-modal [data-ihpix-modal-close]').first().click();
+    await page.locator('#ihpix-contributions-editor').screenshot({path:dir+'/contributions-desktop.png'});
+    await page.goto(base + '/user/ihpix-ux-author/ihpix');
+    if (await page.locator('.ihpix-my-reports').count() === 0) throw new Error('Check user IHP-IX route');
+    ok('Profile filters show counts and current status', await page.locator('.ihpix-my-tabs [aria-current=page] .ihpix-my-count').count() === 1);
+    const draftCard = page.locator('.ihpix-my-card').filter({has:page.locator('a[href*="' + id + '/edit"]')});
+    ok('Draft status remains on one line', await draftCard.locator('.ihpix-status-pill').evaluate(e => e.offsetHeight < 40 && getComputedStyle(e).whiteSpace === 'nowrap'));
+    await page.locator('.ihpix-my-reports').screenshot({path:dir+'/profile-desktop.png'});
+    page.once('dialog', d => d.dismiss());
+    await draftCard.locator('button[type=submit]').click();
+    ok('Cancelling deletion preserves the report', await draftCard.count() === 1);
+    for (const lang of ['en','es','fr','ar']) {
+      await page.setViewportSize({width:390,height:844});
+      await page.goto(base + '/' + lang + '/user/ihpix-ux-author/ihpix');
+      ok('Profile mobile ' + lang + ' has no overflow', await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1));
+      await page.locator('.ihpix-my-reports').screenshot({path:dir+'/profile-'+lang+'.png'});
+      await page.goto(base + '/' + lang + '/ihpix/report');
+      await page.locator('#ihpix-field-title').fill('QA mobile');
+      await page.locator('[data-relation-add=contributions_json]').click();
+      await page.locator('#ihpix-report-draft-btn').click();
+      ok('Form mobile ' + lang + ' has no overflow or technical errors', await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1) && !(await page.locator('#ihpix-error-summary').innerText()).includes('_json'));
+      if (lang !== 'en') ok('Relation errors translated in '+lang, !(await page.locator('#ihpix-error-summary').innerText()).includes('Choose a priority area.'));
+      await page.locator('#ihpix-contributions-editor').screenshot({path:dir+'/contributions-'+lang+'.png'});
+      await page.evaluate(() => localStorage.clear());
+    }
+    const admin = await browser.newContext({viewport:{width:390,height:844}});
+    await admin.route(base + '/**', r => r.continue({headers:{...r.request().headers(),Authorization:tokens.admin}}));
+    const adminPage = await admin.newPage();
+    await adminPage.goto(base+'/ar/user/ihpix-ux-author/ihpix');
+    ok('Arabic admin profile fits mobile viewport', await adminPage.evaluate(() => document.documentElement.scrollWidth <= innerWidth+1));
+    await admin.close();
+    await page.goto(base+'/user/ihpix-ux-author/ihpix?status=draft');
+    ok('Status filter shows only draft reports', await page.locator('.ihpix-my-card').count() === 1);
+    page.once('dialog', d => d.accept());
+    await page.locator('.ihpix-my-card button[type=submit]').click();
+    await page.waitForURL(url => !url.pathname.includes('/delete'));
+    await page.waitForTimeout(500);
+    ok('Confirmed deletion removes only the QA draft', await page.locator('a[href*="'+id+'/edit"]').count() === 0);
+    id = null;
+    await page.goto(base+'/user/ihpix-ux-author/ihpix?status=draft');
+    ok('Empty filtered list explains the selected status', (await page.locator('.ihpix-my-empty').innerText()).includes('No reports with this status.'));
+    ok('No JavaScript exceptions', errors.length === 0);
+    console.log('Completed', passed, 'UX checks');
+  } finally {
+    if (id) {
+      const response = await context.request.post(base + '/api/3/action/ihpix_report_delete', {headers:{Authorization:tokens.author},data:{id}});
+      assert((await response.json()).success, 'Clean up only the QA draft');
+    }
+    await browser.close();
+  }
+})().catch(e => {console.error(e); process.exitCode = 1;});

@@ -9702,3 +9702,69 @@ msgstr "Si tiene varias actividades que reportar, puede usar la opción de carga
 #: ckanext/theme_ejemplo/templates/ihpix/report.html
 msgid "This draft is visible to you and invited collaborators."
 msgstr "Este borrador es visible para usted y los colaboradores invitados."
+
+msgid "Additional contribution {n}"
+msgstr "Contribución adicional {n}"
+
+msgid "Synergy {n}"
+msgstr "Sinergia {n}"
+
+msgid "Supporting country {n}"
+msgstr "País de apoyo {n}"
+
+msgid "Select an option"
+msgstr "Selecciona una opción"
+
+msgid "Key activity (optional)"
+msgstr "Actividad clave (opcional)"
+
+msgid "Select an output first"
+msgstr "Selecciona primero un resultado"
+
+msgid "Select a priority area first"
+msgstr "Selecciona primero un área prioritaria"
+
+msgid "Type of support (select all that apply)"
+msgstr "Tipo de apoyo (selecciona todos los que correspondan)"
+
+msgid "Choose a supporting country."
+msgstr "Selecciona un país de apoyo."
+
+msgid "Choose at least one type of support."
+msgstr "Selecciona al menos un tipo de apoyo."
+
+msgid "Choose a priority area."
+msgstr "Selecciona un área prioritaria."
+
+msgid "Choose an output for this priority area."
+msgstr "Selecciona un resultado de esta área prioritaria."
+
+msgid "Choose a key activity from the selected output."
+msgstr "Selecciona una actividad clave del resultado elegido."
+
+msgid "Please review the selected entries."
+msgstr "Revisa las opciones seleccionadas."
+
+msgid "Filter reports by status"
+msgstr "Filtrar reportes por estado"
+
+msgid "Not specified"
+msgstr "Sin especificar"
+
+msgid "No reports with this status."
+msgstr "No hay reportes con este estado."
+
+msgid "View all reports"
+msgstr "Ver todos los reportes"
+
+msgid "Select a priority area"
+msgstr "Selecciona un área prioritaria"
+
+msgid "Select an output"
+msgstr "Selecciona un resultado"
+
+msgid "Select a key activity"
+msgstr "Selecciona una actividad clave"
+
+msgid "Review notes"
+msgstr "Observaciones de revisión"
