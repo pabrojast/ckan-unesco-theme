@@ -289,3 +289,12 @@ Durante el cierre se inició otro despliegue de DEV con imagen `sha256:81bbac65a
 Cierre verificado: imagen integrada `81bbac65…`, pod `ckan-74478f6bd5-zdpbm`, cuatro contenedores Ready y cero reinicios; páginas nuevas, cinco ámbitos de progreso, workbook y navegador EN/ES/FR/AR (incluido admin RTL) aprobados. Huellas históricas idénticas también en esa imagen.
 
 La publicación reveló que la regla de GitHub exigía `Theme checks` pero solo existía el workflow manual `Tests`. Se añadió `.github/workflows/theme-checks.yml` con el nombre requerido para ejecutar automáticamente las regresiones puras, taxonomía y sintaxis de JavaScript. No tiene credenciales ni pasos de despliegue.
+
+## IHP-IX usabilidad — DEV 2026-10-22
+
+- Código publicado en `dev210`: `587775fde02476cd332325ed28f70ce2375794b0`. Botones/fichas de relaciones, países sin slugs visibles, mensajes de error comprensibles y perfil de reportes adaptable. Ver [[IHP-IX Review September 2026#Ajustes de usabilidad — 2026-10-22]].
+- CI `Theme checks` correcto: [ejecución 39779275016](https://github.com/pabrojast/ckan-unesco-theme/actions/runs/39779275016), 146 pruebas puras, taxonomía y sintaxis JS. La imagen final pasó 34 comprobaciones de navegador en CKAN aislado.
+- Imagen base: digest DEV vigente `sha256:81bbac65adf5550e432be697de462372f3c71b2988935df48f96762a09d7dc25`, conservando las otras extensiones. Construcción desde `git archive`, sin los cambios locales ajenos de iniciativas.
+- Imagen desplegada en `default/ckan`: `pabrojast/ckan-base210@sha256:9f37b8a9b75b323737ace3183f46849f6cf881bded1241c0e96620c270a34265` (tag `ihpix-ux-587775f-20261022`). Rollout completado; pod `ckan-7d7785dcf4-5q9cj`, 4/4 Ready y cero reinicios. Los tres sidecars mantienen sus imágenes anteriores.
+- Los 657 archivos de la extensión en el pod coinciden con la exportación Git. Respaldo `ihpix-before.dump` restaurado en PostgreSQL 17 aislado: 746 reportes. Huellas completas antes/después idénticas para reportes (744 published, 1 pending, 1 draft), adjuntos, 34 grupos de trabajo, membresías y 5 contribuciones; el borrador `TEST` conserva su contenido y fecha.
+- Respaldo y evidencia privada en `/home/pabrojast/backups/ckan-dev-ihpix-ux-20261022/`. No se ejecutaron migraciones de contenido ni cambios en producción.
