@@ -680,3 +680,7 @@ Los enlaces no se ocultan para hacer espacio y el buscador conserva su ancho dis
 - `ihpix_presentation.py`: diapositivas paginadas desde las estadísticas del dashboard.
 
 Las nuevas acciones registran auth correspondiente en `auth.py`; la comprobación por recurso también se aplica dentro del servicio. Detalle y matriz de requisitos: [[IHP-IX Review September 2026]].
+
+## Progress y países (2026-10-22)
+
+La vista Progress conecta `country` con el parámetro existente de estadísticas. Las narrativas añaden `overall`, `flagship`, `ctwg`, `country` y `region`. La paleta se centraliza en `PA_COLORS`/`PA_DARK_COLORS`, expuestas por `get_ihpix_taxonomies`. Ver [[IHP-IX Progress UX October 2026]].

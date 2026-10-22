@@ -901,17 +901,34 @@
       updateProgress();
     }
 
+    var navigationSnapshot = null;
+
     function persistDraft() {
-      if (!storageOk) return;
+      if (!storageOk) return false;
       try {
         localStorage.setItem(SAVE_KEY, JSON.stringify({
           savedAt: Date.now(),
           data: collectFormData()
         }));
+        navigationSnapshot = JSON.stringify(collectFormData());
         setAutosaveStatus('saved');
+        return true;
       } catch (e) {
         setAutosaveStatus('');
+        return false;
       }
+    }
+
+    var draftsLink = document.getElementById('ihpix-my-drafts');
+    if (draftsLink) {
+      draftsLink.addEventListener('click', function (event) {
+        if (READ_ONLY || JSON.stringify(collectFormData()) === navigationSnapshot) return;
+        if (saveTimer) clearTimeout(saveTimer);
+        if (!persistDraft()) {
+          event.preventDefault();
+          window.alert(S.draftNavigationError || 'Your latest answers could not be saved in this browser. Save as draft before leaving this form.');
+        }
+      });
     }
 
     function scheduleAutosave() {
@@ -1018,6 +1035,7 @@
 
     /* ── Arranque ───────────────────────────────────────────────── */
     initAutosave();
+    navigationSnapshot = JSON.stringify(collectFormData());
     updateProgress();
     if (READ_ONLY) {
       // Pendiente/publicado para su autor: se puede consultar, no editar

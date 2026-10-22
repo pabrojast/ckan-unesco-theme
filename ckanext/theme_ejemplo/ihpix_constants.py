@@ -20,9 +20,16 @@ from __future__ import unicode_literals
 
 import io
 import json
+
 import os
 import re
 from collections import OrderedDict
+
+# Paleta compartida: los tonos oscuros son para texto y fondos con texto blanco.
+PA_COLORS = {'PA1': '#0069B4', 'PA2': '#D97706', 'PA3': '#7C3AED',
+             'PA4': '#059669', 'PA5': '#DC2626'}
+PA_DARK_COLORS = {'PA1': '#004E8C', 'PA2': '#92400E', 'PA3': '#5B21B6',
+                  'PA4': '#065F46', 'PA5': '#991B1B'}
 
 
 # ─── Priority Areas (Section II) ─────────────────────────────────────────

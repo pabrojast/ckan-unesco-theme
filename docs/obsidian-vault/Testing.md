@@ -324,3 +324,7 @@ Regresiones reproducibles adicionales: `scripts/ihpix_review_privacy.py` (15 che
 ## Control automático Theme checks
 
 `.github/workflows/theme-checks.yml` ejecuta las 146 regresiones puras IHP-IX, verifica el snapshot oficial y la sintaxis de los tres scripts del navegador. Corre al publicar `dev210`, en pull requests y manualmente, con Python 3.11, permisos de lectura y acciones fijadas por SHA. Su job se llama exactamente `Theme checks`, como el control requerido por GitHub. Complementa las pruebas HTTP/navegador contra CKAN real; no sustituye al workflow manual `Tests` de CKAN 2.9 ni despliega entornos.
+
+## Progress IHP-IX: países y navegación
+
+`scripts/playwright/ihpix_progress_filters.cjs` prueba selección geográfica, coherencia de exportaciones, recuperación ante fallos, borradores y 80 combinaciones de página/idioma/viewport. La fixture aislada y las variables de ejecución se documentan en [[IHP-IX Progress UX October 2026]]. La suite pura incluye una regresión para impedir que un alias vacío resuelva a un país con nombre no latino.

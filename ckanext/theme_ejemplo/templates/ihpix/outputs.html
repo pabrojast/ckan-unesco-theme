@@ -1,4 +1,5 @@
 {% extends "page.html" %}
+{% from 'ihpix/snippets/country_options.html' import country_options with context %}
 {% import 'ihpix/snippets/activity_links.html' as links_ui with context %}
 {% import 'ihpix/snippets/forms_assets.html' as forms_ui with context %}
 
@@ -314,11 +315,11 @@
     width: 4px;
     flex-shrink: 0;
   }
-  .ox-card-accent[data-pa="PA1"] { background: #0069B4 !important; }
-  .ox-card-accent[data-pa="PA2"] { background: #0891B2 !important; }
-  .ox-card-accent[data-pa="PA3"] { background: #059669 !important; }
-  .ox-card-accent[data-pa="PA4"] { background: #D97706 !important; }
-  .ox-card-accent[data-pa="PA5"] { background: #DC2626 !important; }
+  .ox-card-accent[data-pa="PA1"] { background: {{ h.get_ihpix_taxonomies().pa_colors['PA1'] }} !important; }
+  .ox-card-accent[data-pa="PA2"] { background: {{ h.get_ihpix_taxonomies().pa_colors['PA2'] }} !important; }
+  .ox-card-accent[data-pa="PA3"] { background: {{ h.get_ihpix_taxonomies().pa_colors['PA3'] }} !important; }
+  .ox-card-accent[data-pa="PA4"] { background: {{ h.get_ihpix_taxonomies().pa_colors['PA4'] }} !important; }
+  .ox-card-accent[data-pa="PA5"] { background: {{ h.get_ihpix_taxonomies().pa_colors['PA5'] }} !important; }
   .ox-card-body {
     flex: 1;
     padding: 22px 24px;
@@ -383,11 +384,11 @@
     letter-spacing: 0.01em;
   }
   .ox-tag--pa { color: #fff !important; }
-  .ox-tag--pa[data-pa="PA1"] { background: #0069B4 !important; }
-  .ox-tag--pa[data-pa="PA2"] { background: #0891B2 !important; }
-  .ox-tag--pa[data-pa="PA3"] { background: #059669 !important; }
-  .ox-tag--pa[data-pa="PA4"] { background: #D97706 !important; }
-  .ox-tag--pa[data-pa="PA5"] { background: #DC2626 !important; }
+  .ox-tag--pa[data-pa="PA1"] { background: {{ h.get_ihpix_taxonomies().pa_dark_colors['PA1'] }} !important; }
+  .ox-tag--pa[data-pa="PA2"] { background: {{ h.get_ihpix_taxonomies().pa_dark_colors['PA2'] }} !important; }
+  .ox-tag--pa[data-pa="PA3"] { background: {{ h.get_ihpix_taxonomies().pa_dark_colors['PA3'] }} !important; }
+  .ox-tag--pa[data-pa="PA4"] { background: {{ h.get_ihpix_taxonomies().pa_dark_colors['PA4'] }} !important; }
+  .ox-tag--pa[data-pa="PA5"] { background: {{ h.get_ihpix_taxonomies().pa_dark_colors['PA5'] }} !important; }
   .ox-tag--output { background: var(--ox-primary-light) !important; color: var(--ox-primary) !important; }
   .ox-tag--biennium { background: #F0FDF4 !important; color: var(--ox-success) !important; }
   .ox-tag--status { background: transparent !important; color: var(--ox-success) !important; border: 1px solid #A7F3D0 !important; }
@@ -624,6 +625,11 @@
     .ox-card-date { align-self: flex-start; }
     .ox-pagination { gap: 4px; margin-top: 28px; }
   }
+  .ox-wrap .ox-header .ox-header-sub {color: #fff !important;}
+  .ox-fg {min-width: 0;}
+  .ox-fg .ixf-combobox {width: 100%;}
+  .ox-filter-actions {align-self: end;}
+[dir="rtl"] .account-masthead .text {position: absolute !important; width: 1px !important; height: 1px !important; margin: -1px !important; overflow: hidden !important; clip: rect(0,0,0,0) !important; clip-path: inset(50%) !important; white-space: nowrap !important; left: auto !important; right: auto !important;}
 </style>
 
 <div class="ox-wrap">
@@ -718,10 +724,10 @@
 
         <div class="ox-fg">
           <label for="ihpix-out-country">{{ _('Country') }}</label>
-          <input type="text" name="country" id="ihpix-out-country"
-                 class="ox-input"
-                 placeholder="{{ _('e.g. France') }}"
-                 value="{{ country_filter if country_filter is defined else '' }}">
+          <select name="country" id="ihpix-out-country" class="ox-select" data-ihpix-combobox>
+            <option value="">{{ _('All countries') }}</option>
+            {{ country_options(country_filter) }}
+          </select>
         </div>
 
         <div class="ox-filter-actions">
@@ -795,7 +801,7 @@
     {% for activity in activities %}
       {% set pa = activity.priority_area or '' %}
       <div class="ox-card">
-        <div class="ox-card-accent" data-pa="{{ pa }}" style="background: {{ {'PA1':'#0069B4','PA2':'#0891B2','PA3':'#059669','PA4':'#D97706','PA5':'#DC2626'}.get(pa, '#E2E8F0') }};"></div>
+        <div class="ox-card-accent" data-pa="{{ pa }}" style="background: {{ h.get_ihpix_taxonomies().pa_colors.get(pa, '#E2E8F0') }};"></div>
         <div class="ox-card-body">
           <div class="ox-card-top">
             <h4 class="ox-card-title">
@@ -1231,4 +1237,9 @@
 
 </div>{# /.container #}
 </div>{# /.main #}
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+{{ forms_ui.forms_scripts() }}
 {% endblock %}

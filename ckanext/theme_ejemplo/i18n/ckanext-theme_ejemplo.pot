@@ -11657,3 +11657,59 @@ msgstr ""
 
 msgid "Review notes"
 msgstr ""
+
+msgid "All countries"
+msgstr ""
+
+msgid "Clear country filter"
+msgstr ""
+
+msgid ""
+"Showing activities linked to this country through reporting, support or "
+"beneficiaries. Totals describe these activities, not results allocated to "
+"this country alone."
+msgstr ""
+
+msgid "The update failed. The previous results are still displayed."
+msgstr ""
+
+msgid "Pending review · all reports"
+msgstr ""
+
+msgid "Select a country to filter all charts. Circle size: linked activities."
+msgstr ""
+
+msgid "Filter by this country"
+msgstr ""
+
+msgid "Other markers show countries linked to the selected activities."
+msgstr ""
+
+msgid "Selected country"
+msgstr ""
+
+msgid "Overall implementation progress"
+msgstr ""
+
+msgid "Choose a valid reporting scope"
+msgstr ""
+
+msgid "All activities"
+msgstr ""
+
+msgid "My drafts"
+msgstr ""
+
+msgid ""
+"Your latest answers could not be saved in this browser. Save as draft before "
+"leaving this form."
+msgstr ""
+
+msgid "View activity"
+msgstr ""
+
+msgid "Filter activities"
+msgstr ""
+
+msgid "No locations are available on this map for the selected activities."
+msgstr ""

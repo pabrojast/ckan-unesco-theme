@@ -235,11 +235,11 @@
   }
   .gix-card:hover { box-shadow: var(--ox-shadow-hover); transform: translateY(-1px); }
   .gix-card-accent { width: 4px; flex-shrink: 0; }
-  .gix-card-accent[data-pa="PA1"] { background: #0069B4; }
-  .gix-card-accent[data-pa="PA2"] { background: #0891B2; }
-  .gix-card-accent[data-pa="PA3"] { background: #059669; }
-  .gix-card-accent[data-pa="PA4"] { background: #D97706; }
-  .gix-card-accent[data-pa="PA5"] { background: #DC2626; }
+  .gix-card-accent[data-pa="PA1"] { background: {{ h.get_ihpix_taxonomies().pa_colors['PA1'] }}; }
+  .gix-card-accent[data-pa="PA2"] { background: {{ h.get_ihpix_taxonomies().pa_colors['PA2'] }}; }
+  .gix-card-accent[data-pa="PA3"] { background: {{ h.get_ihpix_taxonomies().pa_colors['PA3'] }}; }
+  .gix-card-accent[data-pa="PA4"] { background: {{ h.get_ihpix_taxonomies().pa_colors['PA4'] }}; }
+  .gix-card-accent[data-pa="PA5"] { background: {{ h.get_ihpix_taxonomies().pa_colors['PA5'] }}; }
   .gix-card-body { flex: 1; padding: 18px 20px; min-width: 0; }
   .gix-card-top {
     display: flex;
@@ -287,11 +287,11 @@
     line-height: 1.5;
   }
   .gix-tag--pa { color: #fff; }
-  .gix-tag--pa[data-pa="PA1"] { background: #0069B4; }
-  .gix-tag--pa[data-pa="PA2"] { background: #0891B2; }
-  .gix-tag--pa[data-pa="PA3"] { background: #059669; }
-  .gix-tag--pa[data-pa="PA4"] { background: #D97706; }
-  .gix-tag--pa[data-pa="PA5"] { background: #DC2626; }
+  .gix-tag--pa[data-pa="PA1"] { background: {{ h.get_ihpix_taxonomies().pa_dark_colors['PA1'] }}; }
+  .gix-tag--pa[data-pa="PA2"] { background: {{ h.get_ihpix_taxonomies().pa_dark_colors['PA2'] }}; }
+  .gix-tag--pa[data-pa="PA3"] { background: {{ h.get_ihpix_taxonomies().pa_dark_colors['PA3'] }}; }
+  .gix-tag--pa[data-pa="PA4"] { background: {{ h.get_ihpix_taxonomies().pa_dark_colors['PA4'] }}; }
+  .gix-tag--pa[data-pa="PA5"] { background: {{ h.get_ihpix_taxonomies().pa_dark_colors['PA5'] }}; }
   .gix-tag--output { background: var(--ox-primary-light); color: var(--ox-primary); }
   .gix-tag--biennium { background: #F0FDF4; color: var(--ox-success); }
   .gix-tag--status { background: transparent; color: var(--ox-success); border: 1px solid #A7F3D0; }
@@ -628,7 +628,7 @@
     {% for activity in activities %}
       {% set pa = activity.priority_area or '' %}
       <div class="gix-card">
-        <div class="gix-card-accent" data-pa="{{ pa }}" style="background: {{ {'PA1':'#0069B4','PA2':'#0891B2','PA3':'#059669','PA4':'#D97706','PA5':'#DC2626'}.get(pa, '#E2E8F0') }};"></div>
+        <div class="gix-card-accent" data-pa="{{ pa }}" style="background: {{ h.get_ihpix_taxonomies().pa_colors.get(pa, '#E2E8F0') }};"></div>
         <div class="gix-card-body">
           <div class="gix-card-top">
             <h4 class="gix-card-title">

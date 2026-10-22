@@ -9499,3 +9499,61 @@ msgstr "اختر نشاطًا رئيسيًا"
 
 msgid "Review notes"
 msgstr "ملاحظات المراجعة"
+
+msgid "All countries"
+msgstr "جميع الدول"
+
+msgid "Clear country filter"
+msgstr "إزالة تصفية الدولة"
+
+msgid ""
+"Showing activities linked to this country through reporting, support or "
+"beneficiaries. Totals describe these activities, not results allocated to "
+"this country alone."
+msgstr ""
+"تُعرض الأنشطة المرتبطة بهذه الدولة من خلال الجهات المبلغة أو الدعم أو "
+"المستفيدين. تصف الإجماليات هذه الأنشطة، وليست نتائج مخصصة لهذه الدولة وحدها."
+
+msgid "The update failed. The previous results are still displayed."
+msgstr "تعذر التحديث. لا تزال النتائج السابقة معروضة."
+
+msgid "Pending review · all reports"
+msgstr "بانتظار المراجعة · جميع التقارير"
+
+msgid "Select a country to filter all charts. Circle size: linked activities."
+msgstr "اختر دولة لتصفية جميع الرسوم البيانية. حجم الدائرة: الأنشطة المرتبطة."
+
+msgid "Filter by this country"
+msgstr "التصفية حسب هذه الدولة"
+
+msgid "Other markers show countries linked to the selected activities."
+msgstr "تُظهر العلامات الأخرى الدول المرتبطة بالأنشطة المحددة."
+
+msgid "Selected country"
+msgstr "الدولة المحددة"
+
+msgid "Overall implementation progress"
+msgstr "التقدم العام في التنفيذ"
+
+msgid "Choose a valid reporting scope"
+msgstr "اختر نطاقًا صالحًا للتقرير"
+
+msgid "All activities"
+msgstr "جميع الأنشطة"
+
+msgid "My drafts"
+msgstr "مسوداتي"
+
+msgid ""
+"Your latest answers could not be saved in this browser. Save as draft before "
+"leaving this form."
+msgstr "تعذر حفظ أحدث إجاباتك في هذا المتصفح. احفظ مسودة قبل مغادرة هذا النموذج."
+
+msgid "View activity"
+msgstr "عرض النشاط"
+
+msgid "Filter activities"
+msgstr "تصفية الأنشطة"
+
+msgid "No locations are available on this map for the selected activities."
+msgstr "لا تتوفر مواقع على هذه الخريطة للأنشطة المحددة."

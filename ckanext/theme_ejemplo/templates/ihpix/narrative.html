@@ -1,17 +1,27 @@
 {% extends 'ihpix/tools_base.html' %}
 {% block tools_content %}
+{% from 'ihpix/snippets/country_options.html' import country_options with context %}
+{% import 'ihpix/snippets/forms_assets.html' as forms_ui with context %}
+{% set tax = h.get_ihpix_taxonomies() %}
+{{ forms_ui.forms_styles() }}{{ forms_ui.forms_scripts() }}
 <div class="ix-no-print"><h1>{{ _('Generate report') }}</h1>
-<form method="get" class="ix-tools-card"><label for="report-scope">{{ _('Scope') }}</label><select id="report-scope" name="scope"><option value="pa">{{ _('Priority area') }}</option><option value="output">{{ _('Output') }}</option><option value="organization">{{ _('Organization') }}</option></select>
-<label for="report-value">{{ _('Select scope') }}</label><select id="report-value" name="value" required>
+<form method="get" class="ix-tools-card"><label for="report-scope">{{ _('Scope') }}</label><select id="report-scope" name="scope"><option value="overall">{{ _('Overall') }}</option><option value="flagship">{{ _('Flagship initiative') }}</option><option value="ctwg">{{ _('Cross-cutting working group') }}</option><option value="pa">{{ _('Priority area') }}</option><option value="output">{{ _('Output') }}</option><option value="organization">{{ _('Organization') }}</option></select>
+<label for="report-value">{{ _('Select scope') }}</label><select id="report-value" name="value">
+<option data-scope="overall" value="">{{ _('All activities') }}</option>
+{% for item in tax.flagships %}<option data-scope="flagship" value="{{ item }}">{{ h.ihpix_flagship_label(item) }}</option>{% endfor %}
+{% for item in tax.cross_cutting_wgs %}<option data-scope="ctwg" value="{{ item }}">{{ h.ihpix_t(item) }}</option>{% endfor %}
 {% for code, title in priority_areas.items() %}<option data-scope="pa" value="{{ code }}">{{ code }} · {{ title }}</option>{% endfor %}
 {% for code, title in outputs.items() %}<option data-scope="output" value="{{ code }}">{{ code }} · {{ title }}</option>{% endfor %}
 {% for org in organizations %}<option data-scope="organization" value="{{ org.id }}">{{ org.title or org.name }}</option>{% endfor %}</select>
-<label for="report-biennium">{{ _('Biennium') }}</label><select id="report-biennium" name="biennium"><option value="">{{ _('All bienniums') }}</option>{% for b in biennia %}<option value="{{ b }}"{% if report and report.biennium == b %} selected{% endif %}>{{ b }}</option>{% endfor %}</select><button class="btn btn-primary">{{ _('Generate report') }}</button></form>
+<label for="report-biennium">{{ _('Biennium') }}</label><select id="report-biennium" name="biennium"><option value="">{{ _('All bienniums') }}</option>{% for b in biennia %}<option value="{{ b }}"{% if report and report.biennium == b %} selected{% endif %}>{{ b }}</option>{% endfor %}</select><label for="report-region">{{ _('Region') }}</label><select id="report-region" name="region"><option value="">{{ _('All regions') }}</option>{% for region in tax.regions %}<option value="{{ region }}"{% if report and report.filters.region == region %} selected{% endif %}>{{ h.ihpix_t(region) }}</option>{% endfor %}</select>
+<label for="report-country">{{ _('Country') }}</label><select id="report-country" name="country" data-ihpix-combobox><option value="">{{ _('All countries') }}</option>{{ country_options(report.filters.country if report else '') }}</select>
+<button class="btn btn-primary">{{ _('Generate report') }}</button></form>
 <script> (function(){var scope=document.getElementById('report-scope'), value=document.getElementById('report-value'), options=Array.from(value.options);function update(){value.replaceChildren();options.filter(function(x){return x.dataset.scope===scope.value;}).forEach(function(x){value.appendChild(x);});}scope.value={{ (report.scope if report else 'pa')|tojson }};scope.onchange=update;update();{% if report %}value.value={{ report.value|tojson }};{% endif %}}());</script>
 </div>
 {% if report %}
 <article class="ix-narrative">
-<h1>{{ report.title }}</h1><p>{{ _('IHP-IX implementation report') }} · {{ report.biennium or _('All bienniums') }}</p><p>{{ _('Generated') }}: {{ report.generated_at }}</p>
+{% if report.filters.country %}<p>{{ _('Showing activities linked to this country through reporting, support or beneficiaries. Totals describe these activities, not results allocated to this country alone.') }}</p>{% endif %}
+<h1>{{ report.title }}</h1><p>{{ _('IHP-IX implementation report') }} · {{ report.biennium or _('All bienniums') }}</p><p>{{ _('Region') }}: {{ h.ihpix_t(report.filters.region) if report.filters.region else _('All regions') }} · {{ _('Country') }}: {{ h.get_member_state_title(report.filters.country) if report.filters.country else _('All countries') }}</p><p>{{ _('Generated') }}: {{ report.generated_at }}</p>
 <p>{{ _('This report uses published activity records. Review the narrative and its sources before sharing. Subtotals across multiple Priority Areas or Outputs can overlap; the overall activity count is unique.') }}</p>
 {% if report.scope == 'organization' %}<p>{{ _('Only verified organization links are included. Historical free-text institution names require reconciliation before they can be attributed to this organization.') }} {{ _('Unlinked published records across the portal') }}: {{ report.unlinked_legacy }}.</p>{% endif %}
 {% set s = report.stats %}

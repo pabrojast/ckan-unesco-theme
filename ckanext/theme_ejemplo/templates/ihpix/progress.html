@@ -1,4 +1,6 @@
 {% extends "page.html" %}
+{% import 'ihpix/snippets/forms_assets.html' as forms_ui with context %}
+{% from 'ihpix/snippets/country_options.html' import country_options with context %}
 {#
   Dashboards de progreso IHP-IX: réplica web de los Power BI oficiales
   ("IHP-IX Implementation Progress"). Una plantilla para los cinco ámbitos
@@ -26,7 +28,9 @@
 <div class="main">
 <div class="container ixg">
 <link rel="stylesheet" href="{{ h.url_for_static('/vendor/leaflet/leaflet.css') }}" />
+{{ forms_ui.forms_styles() }}
 {% asset 'theme/ihpix-progress-css' %}
+<style>.ixg { {% for pa, color in h.get_ihpix_taxonomies().pa_colors.items() %}--ixg-{{ pa|lower }}: {{ color }};{% endfor %} }</style>
 <div class="ixg-page">
 
   <header class="ixg-head">
@@ -37,42 +41,58 @@
           <h1 class="ixg-title">{{ _('Implementation progress') }}</h1>
         </div>
         <div class="ixg-head-tools">
-          <a class="ixg-btn" href="{{ h.url_for('theme_ejemplo.ihpix_presentation', scope=scope, value=scope_value or '', **filters) }}">{{ _('Presentation / PDF') }}</a>
-          <a class="ixg-btn" href="{{ h.url_for('theme_ejemplo.ihpix_narrative', scope=scope if scope in ['pa', 'output'] else 'pa', value=scope_value if scope in ['pa', 'output'] else 'PA1', biennium=filters.biennium or '') }}">{{ _('Generate report') }}</a>
-          <label for="ixg-filter-biennium">{{ _('Biennium') }}</label>
-          <select id="ixg-filter-biennium" class="ixg-select">
-            <option value="">{{ _('All bienniums') }}</option>
-            {% for b in opts.biennia or [] %}
-              <option value="{{ b }}"{% if filters.biennium == b %} selected{% endif %}>{{ b }}</option>
-            {% endfor %}
-          </select>
-          <label for="ixg-filter-region">{{ _('Region') }}</label>
-          <select id="ixg-filter-region" class="ixg-select">
-            <option value="">{{ _('All regions') }}</option>
-            {% for r in opts.regions or [] %}
-              <option value="{{ r }}"{% if filters.region == r %} selected{% endif %}>{{ h.ihpix_t(r) }}</option>
-            {% endfor %}
-          </select>
-          <a id="ixg-download" class="ixg-btn" href="{{ h.url_for('/api/3/action/ihpix_progress_stats', scope=scope, value=scope_value or None, biennium=filters.biennium or None, region=filters.region or None) }}" download="ihpix-progress-{{ scope }}{% if scope_value %}-{{ scope_value|lower|replace(' ', '-') }}{% endif %}.json">
+          <a id="ixg-presentation" class="ixg-btn" href="{{ h.url_for('theme_ejemplo.ihpix_presentation', scope=scope, value=scope_value or '', **filters) }}">{{ _('Presentation / PDF') }}</a>
+          <a id="ixg-narrative" class="ixg-btn" href="{{ h.url_for('theme_ejemplo.ihpix_narrative', scope=scope, value=scope_value or '', **filters) }}">{{ _('Generate report') }}</a>
+          <a id="ixg-download" class="ixg-btn" href="{{ h.url_for('/api/3/action/ihpix_progress_stats', scope=scope, value=scope_value or None, biennium=filters.biennium or None, region=filters.region or None, country=filters.country or None) }}" download="ihpix-progress-{{ scope }}{% if scope_value %}-{{ scope_value|lower|replace(' ', '-') }}{% endif %}.json">
             <i class="fa fa-download" aria-hidden="true"></i> {{ _('Download data') }}
           </a>
         </div>
       </div>
 
+      <div class="ixg-filters" aria-label="{{ _('Filter activities') }}">
+          <div class="ixg-filter"><label for="ixg-filter-biennium">{{ _('Biennium') }}</label>
+          <select id="ixg-filter-biennium" class="ixg-select">
+            <option value="">{{ _('All bienniums') }}</option>
+            {% for b in opts.biennia or [] %}
+              <option value="{{ b }}"{% if filters.biennium == b %} selected{% endif %}>{{ b }}</option>
+            {% endfor %}
+          </select></div>
+          <div class="ixg-filter"><label for="ixg-filter-region">{{ _('Region') }}</label>
+          <select id="ixg-filter-region" class="ixg-select">
+            <option value="">{{ _('All regions') }}</option>
+            {% for r in opts.regions or [] %}
+              <option value="{{ r }}"{% if filters.region == r %} selected{% endif %}>{{ h.ihpix_t(r) }}</option>
+            {% endfor %}
+          </select></div>
+        <div class="ixg-filter ixg-filter--country"><label for="ixg-filter-country">{{ _('Country') }}</label>
+          <select id="ixg-filter-country" class="ixg-select" data-ihpix-combobox>
+            <option value="">{{ _('All countries') }}</option>{{ country_options(filters.country) }}
+          </select>
+        </div>
+      </div>
+      <div class="ixg-selection" id="ixg-selection" hidden>
+        <strong id="ixg-selected-country"></strong>
+        <button class="ixg-btn" type="button" id="ixg-clear-country">{{ _('Clear country filter') }}</button>
+        <span>{{ _('Showing activities linked to this country through reporting, support or beneficiaries. Totals describe these activities, not results allocated to this country alone.') }}</span>
+      </div>
+      <div id="ixg-load-error" class="ixg-load-error" role="alert" hidden>
+        <span>{{ _('The update failed. The previous results are still displayed.') }}</span>
+        <button type="button" class="ixg-btn" id="ixg-retry">{{ _('Try again') }}</button>
+      </div>
       <nav class="ixg-scope" aria-label="{{ _('Scope') }}">
         <ul class="ixg-scope-tabs">
-          <li><a href="{{ h.url_for('theme_ejemplo.ihpix_progress') }}"{% if scope == 'overall' %} aria-current="page"{% endif %}>{{ _('Overall') }}</a></li>
-          <li><a href="{{ h.url_for('theme_ejemplo.ihpix_progress_pa', value=(scope_pa or 'PA1')) }}"{% if scope == 'pa' %} aria-current="page"{% endif %}>{{ _('Priority area') }}</a></li>
-          <li><a href="{{ h.url_for('theme_ejemplo.ihpix_progress_output', value=(scope_value if scope == 'output' else '1.1')) }}"{% if scope == 'output' %} aria-current="page"{% endif %}>{{ _('Output') }}</a></li>
-          <li><a href="{{ h.url_for('theme_ejemplo.ihpix_progress_flagship', value=((opts.flagships or [{'slug': 'friend'}])[0].slug if scope != 'flagship' else scope_slug)) }}"{% if scope == 'flagship' %} aria-current="page"{% endif %}>{{ _('Flagship initiative') }}</a></li>
-          <li><a href="{{ h.url_for('theme_ejemplo.ihpix_progress_ctwg', value=((opts.ctwgs or [{'slug': 'ecohydrology-and-water-quality'}])[0].slug if scope != 'ctwg' else scope_slug)) }}"{% if scope == 'ctwg' %} aria-current="page"{% endif %}>{{ _('Cross-cutting working group') }}</a></li>
+          <li><a href="{{ h.url_for('theme_ejemplo.ihpix_progress', **filters) }}"{% if scope == 'overall' %} aria-current="page"{% endif %}>{{ _('Overall') }}</a></li>
+          <li><a href="{{ h.url_for('theme_ejemplo.ihpix_progress_pa', value=(scope_pa or 'PA1'), **filters) }}"{% if scope == 'pa' %} aria-current="page"{% endif %}>{{ _('Priority area') }}</a></li>
+          <li><a href="{{ h.url_for('theme_ejemplo.ihpix_progress_output', value=(scope_value if scope == 'output' else '1.1'), **filters) }}"{% if scope == 'output' %} aria-current="page"{% endif %}>{{ _('Output') }}</a></li>
+          <li><a href="{{ h.url_for('theme_ejemplo.ihpix_progress_flagship', value=((opts.flagships or [{'slug': 'friend'}])[0].slug if scope != 'flagship' else scope_slug), **filters) }}"{% if scope == 'flagship' %} aria-current="page"{% endif %}>{{ _('Flagship initiative') }}</a></li>
+          <li><a href="{{ h.url_for('theme_ejemplo.ihpix_progress_ctwg', value=((opts.ctwgs or [{'slug': 'ecohydrology-and-water-quality'}])[0].slug if scope != 'ctwg' else scope_slug), **filters) }}"{% if scope == 'ctwg' %} aria-current="page"{% endif %}>{{ _('Cross-cutting working group') }}</a></li>
         </ul>
         {% if scope == 'pa' %}
           <div class="ixg-scope-pick">
             <label for="ixg-pick">{{ _('Priority area') }}</label>
             <select id="ixg-pick" class="ixg-select" data-ixg-scope-select>
               {% for pa in opts.priority_areas or [] %}
-                <option data-url="{{ h.url_for('theme_ejemplo.ihpix_progress_pa', value=pa.code) }}"{% if pa.code == scope_value %} selected{% endif %}>{{ pa.code }} · {{ h.ihpix_t(pa.label) }}</option>
+                <option data-url="{{ h.url_for('theme_ejemplo.ihpix_progress_pa', value=pa.code, **filters) }}"{% if pa.code == scope_value %} selected{% endif %}>{{ pa.code }} · {{ h.ihpix_t(pa.label) }}</option>
               {% endfor %}
             </select>
           </div>
@@ -83,7 +103,7 @@
               {% for pa in opts.priority_areas or [] %}
                 <optgroup label="{{ pa.code }} · {{ h.ihpix_t(pa.label) }}">
                   {% for o in (opts.outputs_by_pa or {}).get(pa.code, []) %}
-                    <option data-url="{{ h.url_for('theme_ejemplo.ihpix_progress_output', value=o.code) }}"{% if o.code == scope_value %} selected{% endif %}>{{ o.code }}{% if o.label %} · {{ o.label|truncate(90) }}{% endif %}</option>
+                    <option data-url="{{ h.url_for('theme_ejemplo.ihpix_progress_output', value=o.code, **filters) }}"{% if o.code == scope_value %} selected{% endif %}>{{ o.code }}{% if o.label %} · {{ o.label }}{% endif %}</option>
                   {% endfor %}
                 </optgroup>
               {% endfor %}
@@ -94,7 +114,7 @@
             <label for="ixg-pick">{{ _('Flagship initiative') }}</label>
             <select id="ixg-pick" class="ixg-select" data-ixg-scope-select>
               {% for f in opts.flagships or [] %}
-                <option data-url="{{ h.url_for('theme_ejemplo.ihpix_progress_flagship', value=f.slug) }}"{% if f.code == scope_value %} selected{% endif %}>{{ f.label or f.code }}</option>
+                <option data-url="{{ h.url_for('theme_ejemplo.ihpix_progress_flagship', value=f.slug, **filters) }}"{% if f.code == scope_value %} selected{% endif %}>{{ f.label or f.code }}</option>
               {% endfor %}
             </select>
           </div>
@@ -103,7 +123,7 @@
             <label for="ixg-pick">{{ _('Working group') }}</label>
             <select id="ixg-pick" class="ixg-select" data-ixg-scope-select>
               {% for w in opts.ctwgs or [] %}
-                <option data-url="{{ h.url_for('theme_ejemplo.ihpix_progress_ctwg', value=w.slug) }}"{% if w.name == scope_value %} selected{% endif %}>{{ h.ihpix_t(w.name) }}</option>
+                <option data-url="{{ h.url_for('theme_ejemplo.ihpix_progress_ctwg', value=w.slug, **filters) }}"{% if w.name == scope_value %} selected{% endif %}>{{ h.ihpix_t(w.name) }}</option>
               {% endfor %}
             </select>
           </div>
@@ -112,7 +132,7 @@
     </div>
   </header>
 
-  <div class="ixg-body"><p>{{ _("Activities count once overall and in each linked scope. Subtotals can overlap.") }}</p>
+  <div class="ixg-body"><p class="ixg-note">{{ _("Activities count once overall and in each linked scope. Subtotals can overlap.") }}</p>
 
     {% if scope == 'overall' %}
       <section id="ixg-strip" class="ixg-strip" aria-label="{{ _('Activities by output') }}">
@@ -193,7 +213,7 @@
             <div class="ixg-tile"><div class="ixg-tile-n" id="ixg-tile-ms">{{ ov.member_states_impacted|default('–', true) }}</div><div class="ixg-tile-l">{{ _('Member States impacted') }}</div></div>
             <div class="ixg-tile"><div class="ixg-tile-n" id="ixg-tile-institutions">{{ ov.institutions|default('–', true) }}</div><div class="ixg-tile-l">{{ _('Institutions reporting') }}</div></div>
             {% if is_sysadmin %}
-            <div class="ixg-tile"><div class="ixg-tile-n" id="ixg-tile-pending">{{ ov.pending|default('–', true) }}</div><div class="ixg-tile-l"><a href="{{ h.url_for('/ckan-admin/ihpix/reports', status='pending') }}">{{ _('Reports pending review') }}</a></div></div>
+            <div class="ixg-tile"><div class="ixg-tile-n" id="ixg-tile-pending">{{ ov.pending|default('–', true) }}</div><div class="ixg-tile-l"><a href="{{ h.url_for('/ckan-admin/ihpix/reports', status='pending') }}">{{ _('Pending review · all reports') }}</a></div></div>
             {% endif %}
           </div>
           <div class="ixg-grid ixg-grid--2">
@@ -215,7 +235,7 @@
           <figure class="ixg-fig" id="ixg-fig-map">
             <figcaption>
               <span class="ixg-fig-title">{{ _('Activity impact map') }}</span>
-              <span class="ixg-fig-tools"><span class="ixg-fig-sub">{{ _('Circle size: activities benefiting the Member State') }}</span><button type="button" class="ixg-linkbtn" data-ixg-toggle-table aria-expanded="false">{{ _('Show as table') }}</button></span>
+              <span class="ixg-fig-tools"><span class="ixg-fig-sub">{{ _('Select a country to filter all charts. Circle size: linked activities.') }}</span><button type="button" class="ixg-linkbtn" data-ixg-toggle-table aria-expanded="false">{{ _('Show as table') }}</button></span>
             </figcaption>
             <div class="ixg-plot ixg-plot--map is-tall"></div>
           </figure>
@@ -436,7 +456,7 @@
   'priorityAreas': opts.priority_areas or [],
   'outputsByPa': opts.outputs_by_pa or {},
   'paShort': pa_short,
-  'paColors': {'PA1': '#0069B4', 'PA2': '#0891B2', 'PA3': '#059669', 'PA4': '#D97706', 'PA5': '#DC2626'},
+  'paColors': taxonomies.pa_colors,
   'categorical': ['#0069B4', '#D97706', '#7C3AED', '#059669', '#DC2626', '#0891B2', '#DB2777', '#4D7C0F'],
   'neutral': '#94A3B8',
   'action': '#0069B4', 'deep': '#004E8C', 'ink': '#0B2A4A', 'ink2': '#5B6B7F', 'ruleSoft': '#E6EEF6',
@@ -449,6 +469,10 @@
   },
   'strings': {
     'noData': _('No activities match this selection yet.'),
+    'noMapData': _('No locations are available on this map for the selected activities.'),
+    'selectCountry': _('Filter by this country'),
+    'relatedCountries': _('Other markers show countries linked to the selected activities.'),
+    'selectedCountry': _('Selected country'),
     'showTable': _('Show as table'),
     'showChart': _('Show as chart'),
     'loading': _('Updating…'),
@@ -511,5 +535,6 @@
   {{ super() }}
   <script src="{{ h.url_for_static('/vendor/chartjs/chart.umd.min.js') }}"></script>
   <script src="{{ h.url_for_static('/vendor/leaflet/leaflet.js') }}"></script>
+  {{ forms_ui.forms_scripts() }}
   {% asset 'theme/ihpix-progress-js' %}
 {% endblock %}

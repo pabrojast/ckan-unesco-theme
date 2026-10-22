@@ -154,3 +154,12 @@ def test_xlsx_malformed_xml_is_a_validation_error():
                             else source.read(item.filename))
     with pytest.raises(ValueError, match='valid XLSX'):
         B.parse(raw.getvalue())
+
+
+def test_empty_country_never_resolves_to_a_country_with_non_latin_name():
+    # Algunos títulos árabes producen un slug vacío; no deben registrar ese alias.
+    for value in (None, '', '   '):
+        assert R.country_metadata(value) is None
+    assert '' not in R.country_index()
+    assert R.country_metadata('CL')['country_title_en'] == 'Chile'
+    assert R.country_metadata('مصر')['country_title_en'] == 'Egypt'

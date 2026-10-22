@@ -127,8 +127,19 @@ def ihpix_narrative_data(context, data):
     biennium = str(data.get('biennium') or '').strip()
     if biennium and biennium not in C.BIENNIA:
         raise tk.ValidationError({'biennium': 'Select a reporting biennium'})
-    filters = {'status': 'published', 'biennium': biennium, 'limit': None}
-    if scope == 'pa' and value in C.PRIORITY_AREAS:
+    geography = {key: str(data.get(key) or '').strip() for key in ('country', 'region')}
+    filters = dict(status='published', biennium=biennium, limit=None, **geography)
+    from ckanext.theme_ejemplo.actions import _ihpix_resolve_scope_value
+    if scope == 'overall':
+        value = ''
+        title = tk._('Overall implementation progress')
+    elif scope in ('flagship', 'ctwg'):
+        value = _ihpix_resolve_scope_value(scope, value)
+        if value is None:
+            raise tk.ValidationError({'value': tk._('Choose a valid reporting scope')})
+        filters[scope] = value
+        title = C.flagship_label(value) if scope == 'flagship' else value
+    elif scope == 'pa' and value in C.PRIORITY_AREAS:
         filters['priority_area'] = value
         title = value + ' · ' + C.PRIORITY_AREAS[value]
     elif scope == 'output' and value in C.all_output_codes():
@@ -143,10 +154,20 @@ def ihpix_narrative_data(context, data):
     else:
         raise tk.ValidationError({'scope': 'Choose an organization, Priority Area or Output'})
     rows, total = IhpixActivity.get_filtered(**filters)
-    from ckanext.theme_ejemplo.ihpix_stats import compute_progress_stats
+    from ckanext.theme_ejemplo.ihpix_stats import compute_progress_stats, prepare_row, filter_rows
     from ckanext.theme_ejemplo.actions import _ihpix_country_index
-    stats = compute_progress_stats([a.as_dict() for a in rows], country_index=_ihpix_country_index())
+    index = _ihpix_country_index()
+    stat_scope = scope if scope != 'organization' else 'overall'
+    stat_filters = dict(geography, biennium=biennium)
+    # Una sola selección para indicadores y fuentes; evita coincidencias parciales de SQL.
+    selected = filter_rows([prepare_row(a.as_dict(), index) for a in rows],
+                          stat_scope, value, stat_filters, index)
+    selected_ids = {a['id'] for a in selected}
+    rows = [a for a in rows if a.id in selected_ids]
+    stats = compute_progress_stats([a.as_dict() for a in rows], scope=stat_scope,
+        value=value, filters=stat_filters, country_index=index)
     return {'title': title, 'scope': scope, 'value': value, 'biennium': biennium,
+            'filters': stat_filters,
             'generated_at': stats['generated_at'], 'stats': stats,
             'sources': [{'id': a.id, 'title': a.title, 'description': a.description,
                          'outcomes': a.outcomes, 'institution': a.institution,

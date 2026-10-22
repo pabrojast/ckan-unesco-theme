@@ -65,12 +65,15 @@ def country_index():
             value = row.get(field)
             if value:
                 result[value.casefold()] = row
-                result[C.slugify(value)] = row
+                slug = C.slugify(value)
+                if slug:
+                    result[slug] = row
     return result
 
 
 def country_metadata(value):
-    return country_index().get(str(value or '').strip().casefold())
+    key = str(value or '').strip().casefold()
+    return country_index().get(key) if key else None
 
 
 def validate(data):

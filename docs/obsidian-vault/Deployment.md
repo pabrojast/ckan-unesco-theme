@@ -298,3 +298,7 @@ La publicación reveló que la regla de GitHub exigía `Theme checks` pero solo 
 - Imagen desplegada en `default/ckan`: `pabrojast/ckan-base210@sha256:9f37b8a9b75b323737ace3183f46849f6cf881bded1241c0e96620c270a34265` (tag `ihpix-ux-587775f-20261022`). Rollout completado; pod `ckan-7d7785dcf4-5q9cj`, 4/4 Ready y cero reinicios. Los tres sidecars mantienen sus imágenes anteriores.
 - Los 657 archivos de la extensión en el pod coinciden con la exportación Git. Respaldo `ihpix-before.dump` restaurado en PostgreSQL 17 aislado: 746 reportes. Huellas completas antes/después idénticas para reportes (744 published, 1 pending, 1 draft), adjuntos, 34 grupos de trabajo, membresías y 5 contribuciones; el borrador `TEST` conserva su contenido y fecha.
 - Respaldo y evidencia privada en `/home/pabrojast/backups/ckan-dev-ihpix-ux-20261022/`. No se ejecutaron migraciones de contenido ni cambios en producción.
+
+## Comprobación adicional de Progress (2026-10-22)
+
+El workflow vigente `.github/workflows/theme-checks.yml` ejecuta también `node --check` sobre `ihpix-progress.js`, además de las regresiones IHP-IX y la taxonomía. El procedimiento de esta mejora en DEV se documenta en [[IHP-IX Progress UX October 2026]].

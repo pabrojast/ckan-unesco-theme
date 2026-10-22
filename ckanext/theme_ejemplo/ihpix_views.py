@@ -104,7 +104,7 @@ def bulk_import():
 
 @signed_in
 def narrative():
-    data = R.ihpix_narrative_data(context(), dict(request.args)) if request.args.get('value') else None
+    data = R.ihpix_narrative_data(context(), dict(request.args)) if request.args.get('scope') or request.args.get('value') else None
     organizations = tk.get_action('organization_list')(context(), {'all_fields': True, 'limit': 1000})
     return render_template('ihpix/narrative.html', report=data, organizations=organizations,
                            priority_areas=K.PRIORITY_AREAS, outputs=K.load_output_titles(), biennia=K.BIENNIA)
@@ -131,7 +131,13 @@ def presentation():
     data = dict(request.args)
     stats = tk.get_action('ihpix_progress_stats')(context(), data)
     filters = {key: data[key] for key in ('biennium', 'region', 'country', 'institution_type') if data.get(key)}
-    back = tk.url_for('theme_ejemplo.ihpix_progress')
+    scope = stats['scope']['kind']
+    value = stats['scope'].get('value') or ''
+    if scope == 'overall':
+        back = tk.url_for('theme_ejemplo.ihpix_progress', **filters)
+    else:
+        back = tk.url_for('theme_ejemplo.ihpix_progress_' + scope,
+            value=K.slugify(value) if scope in ('flagship', 'ctwg') else value, **filters)
     return render_template('ihpix/presentation.html', stats=stats, slides=slides(stats),
                            filters=filters, back=back, source_url=request.url)
 

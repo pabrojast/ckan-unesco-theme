@@ -31,6 +31,7 @@ jobs:
         run: python scripts/build_ihpix_taxonomy_data.py --check
       - name: Browser script syntax
         run: |
+          node --check ckanext/theme_ejemplo/public/js/ihpix-progress.js
           node --check ckanext/theme_ejemplo/public/js/ihpix-report.js
           node --check ckanext/theme_ejemplo/public/js/ihpix-relations.js
           node --check ckanext/theme_ejemplo/public/js/ihpix-presentation.js

@@ -928,7 +928,11 @@ def get_ihpix_taxonomies():
     """Vocabularios oficiales IHP-IX para los templates (única fuente:
     `ihpix_constants`; evita listas hardcodeadas que se desincronizan)."""
     from ckanext.theme_ejemplo import ihpix_constants as C
+    from ckanext.theme_ejemplo import ihpix_relations as R
     return {
+        'pa_colors': C.PA_COLORS,
+        'pa_dark_colors': C.PA_DARK_COLORS,
+        'countries': R.countries(),
         'priority_areas': C.PRIORITY_AREAS,
         'outputs_by_pa': C.OUTPUTS,
         'output_codes': C.all_output_codes(),

@@ -9801,3 +9801,68 @@ msgstr "Sélectionnez une activité clé"
 
 msgid "Review notes"
 msgstr "Commentaires de révision"
+
+msgid "All countries"
+msgstr "Tous les pays"
+
+msgid "Clear country filter"
+msgstr "Retirer le filtre de pays"
+
+msgid ""
+"Showing activities linked to this country through reporting, support or "
+"beneficiaries. Totals describe these activities, not results allocated to "
+"this country alone."
+msgstr ""
+"Activités liées à ce pays par la déclaration, le soutien ou les "
+"bénéficiaires. Les totaux concernent ces activités et ne sont pas attribués "
+"exclusivement à ce pays."
+
+msgid "The update failed. The previous results are still displayed."
+msgstr "La mise à jour a échoué. Les résultats précédents restent affichés."
+
+msgid "Pending review · all reports"
+msgstr "À examiner · tous les rapports"
+
+msgid "Select a country to filter all charts. Circle size: linked activities."
+msgstr ""
+"Sélectionnez un pays pour filtrer tous les graphiques. Taille du cercle : "
+"activités liées."
+
+msgid "Filter by this country"
+msgstr "Filtrer par ce pays"
+
+msgid "Other markers show countries linked to the selected activities."
+msgstr "Les autres marqueurs indiquent les pays liés aux activités sélectionnées."
+
+msgid "Selected country"
+msgstr "Pays sélectionné"
+
+msgid "Overall implementation progress"
+msgstr "Progrès globaux de mise en œuvre"
+
+msgid "Choose a valid reporting scope"
+msgstr "Sélectionnez un périmètre de rapport valide"
+
+msgid "All activities"
+msgstr "Toutes les activités"
+
+msgid "My drafts"
+msgstr "Mes brouillons"
+
+msgid ""
+"Your latest answers could not be saved in this browser. Save as draft before "
+"leaving this form."
+msgstr ""
+"Vos dernières réponses n’ont pas pu être enregistrées dans ce navigateur. "
+"Enregistrez un brouillon avant de quitter ce formulaire."
+
+msgid "View activity"
+msgstr "Voir l’activité"
+
+msgid "Filter activities"
+msgstr "Filtrer les activités"
+
+msgid "No locations are available on this map for the selected activities."
+msgstr ""
+"Aucune localisation n’est disponible sur cette carte pour les activités "
+"sélectionnées."

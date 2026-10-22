@@ -20,7 +20,6 @@
   --ixg-warn: #B3650F;
   --ixg-danger: #B42318;
   --ixg-radius: 6px;
-  --ixg-pa1: #0069B4; --ixg-pa2: #0891B2; --ixg-pa3: #059669; --ixg-pa4: #D97706; --ixg-pa5: #DC2626;
   color: var(--ixg-ink);
   font-size: 15px;
   line-height: 1.5;
@@ -35,13 +34,13 @@
 
 /* El contenedor de CKAN: ocupamos todo el ancho de la página */
 .wrapper .primary.ixg-primary { width: 100%; float: none; }
-.ixg-page { background: var(--ixg-paper); margin: 0 -15px; padding: 0 15px 40px; }
+.ixg-page { background: var(--ixg-paper); margin: 0; padding: 0 15px 40px; }
 
 /* ── Cabecera ─────────────────────────────────────────────────── */
 .ixg-head {
   background: var(--ixg-surface);
   border-bottom: 1px solid var(--ixg-rule);
-  margin: 0 -15px;
+  margin: 0;
   padding: 20px 32px 0;
 }
 .ixg-head-inner { max-width: 1216px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px; }
@@ -237,3 +236,53 @@
   .ixg-head-tools, .ixg-index, .ixg-fig-tools { display: none !important; }
   .ixg-page { background: #fff; }
 }
+
+/* Filtros conectados al mapa y jerarquía visual del panel. */
+.ixg [hidden] {display: none !important;}
+.ixg .ixg-btn--primary, .ixg .ixg-btn--primary:visited,
+.ixg .ixg-btn--primary:hover, .ixg .ixg-btn--primary:focus {color: #fff;}
+.ixg .ixg-note {font-size: 14px !important; color: var(--ixg-ink-2) !important; line-height: 1.55 !important;}
+.ixg-head {padding-top: 28px;}
+.ixg-head-inner {gap: 20px;}
+.ixg-filters {display: grid; grid-template-columns: minmax(160px, .7fr) minmax(230px, 1fr) minmax(240px, 1fr); gap: 16px; padding: 18px; border: 1px solid var(--ixg-rule); border-radius: 10px; background: var(--ixg-paper);}
+.ixg-filter {min-width: 0; display: flex; flex-direction: column; gap: 6px;}
+.ixg-filter label {font-size: 13px; font-weight: 600; margin: 0;}
+.ixg-filter .ixg-select, .ixg-filter .ixf-combobox {width: 100%;}
+.ixg-selection {display: flex; align-items: center; flex-wrap: wrap; gap: 12px; padding: 14px 18px; border-inline-start: 4px solid var(--ixg-action); background: var(--ixg-paper); border-radius: 6px;}
+.ixg-selection > span {flex-basis: 100%; font-size: 14px; color: var(--ixg-ink-2);}
+.ixg-load-error {padding: 16px; background: #fff4e5; border: 1px solid #92400E; border-radius: 6px; display: flex; align-items: center; flex-wrap: wrap; gap: 12px;}
+.ixg-strip {padding: 20px; border: 1px solid var(--ixg-rule); border-radius: 10px; background: #fff; gap: 16px;}
+.ixg-strip-legend {display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px;}
+.ixg-strip-legend a {padding: 10px; background: var(--ixg-paper); border-radius: 6px; align-items: start; font-size: 13px; line-height: 1.5;}
+.ixg-strip-legend a + a {margin: 0;}
+.ixg-strip-legend .ixg-swatch {margin-top: 5px;}
+.ixg-strip-legend .ixg-strip-legend-text {display: block; flex: 1; overflow-wrap: anywhere;}
+.ixg-legend-name {align-items: start; line-height: 1.5;}
+.ixg-legend-name .ixg-swatch {margin-top: 5px;}
+.ixg-legend-name span:last-child {white-space: normal; overflow: visible; overflow-wrap: anywhere;}
+.ixg-legend li {padding-block: 5px; border-bottom: 1px solid var(--ixg-rule-soft);}
+.ixg-legend li:last-child {border-bottom: 0;}
+.ixg-fig {border-radius: 10px; padding: 22px;}
+.ixg-fig-title {line-height: 1.5;}
+.ixg-index {min-width: 0;}
+.ixg-activity {padding: 20px 0; gap: 10px;}
+.ixg-activity-title {font-size: 16px; line-height: 1.5;}
+.ixg-scope-banner p {font-size: 16px !important; color: var(--ixg-ink-2) !important;}
+.ixg-plot--map path[data-country] {cursor: pointer;}
+.ixg .leaflet-control-attribution {font-size: 10px;}
+.ixg-table th, .ixg-table td {text-align: start;}
+.ixg-table .ixg-linkbtn {font-size: inherit; min-height: 32px; text-align: start;}
+@media (max-width: 1100px) {
+  .ixg-strip-legend {grid-template-columns: repeat(3, minmax(0, 1fr));}
+}
+@media (max-width: 700px) {
+  .ixg-filters {grid-template-columns: minmax(0, 1fr); padding: 14px;}
+  .ixg-strip-legend {grid-template-columns: repeat(2, minmax(0, 1fr));}
+  .ixg-grid, .ixg-grid--2, .ixg-grid--3 {grid-template-columns: minmax(0, 1fr);}
+  .ixg-head {padding-inline: 16px;}
+  .ixg-fig, .ixg-strip {padding: 16px;}
+  .ixg-scope-pick {flex-direction: column; align-items: stretch; width: 100%;}
+  .ixg-plot--donut {gap: 16px; justify-content: center;}
+}
+/* El menú administrativo heredado coloca texto fuera de pantalla en RTL. */
+[dir="rtl"] .account-masthead .text {position: absolute !important; width: 1px !important; height: 1px !important; padding: 0 !important; margin: -1px !important; overflow: hidden !important; clip: rect(0,0,0,0) !important; clip-path: inset(50%) !important; white-space: nowrap !important; border: 0 !important; left: auto !important; right: auto !important;}

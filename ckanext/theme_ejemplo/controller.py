@@ -4858,7 +4858,12 @@ class MyLogica():
             filters = {
                 'biennium': (request.args.get('biennium') or '').strip(),
                 'region': (request.args.get('region') or '').strip(),
+                'country': (request.args.get('country') or '').strip(),
             }
+            from ckanext.theme_ejemplo import ihpix_relations as R
+            selected_country = R.country_metadata(filters['country'])
+            if selected_country:
+                filters['country'] = selected_country['country_title_en']
             context = {'user': c.user, 'model': model}
             try:
                 stats = toolkit.get_action('ihpix_progress_stats')(context, {
@@ -4866,6 +4871,7 @@ class MyLogica():
                     'value': resolved,
                     'biennium': filters['biennium'],
                     'region': filters['region'],
+                    'country': filters['country'],
                 })
             except Exception as e:
                 log.error('Error al calcular el progreso IHP-IX (%s/%s): %s',

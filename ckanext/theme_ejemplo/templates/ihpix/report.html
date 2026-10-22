@@ -85,6 +85,7 @@
       <p><small>{{ _('If you have multiple activities to report, you can use the multiple upload option.') }} <a href="{{ h.url_for('theme_ejemplo.ihpix_import') }}">{{ _('Import reports') }}</a></small></p>
     </div>
     <div class="ihpix-report-head-meta">
+      <a id="ihpix-my-drafts" class="ihpix-report-btn is-secondary" href="{{ h.url_for('theme_ejemplo.user_ihpix', id=c.user, status='draft') }}"><i class="fa fa-folder-open" aria-hidden="true"></i> {{ _('My drafts') }}</a>
       <div class="ihpix-progress">
         <span class="ihpix-progress-text" id="ihpix-progress-text">0 / 23 {{ _('required fields completed') }}</span>
         <div class="ihpix-progress-bar" id="ihpix-progressbar" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-label="{{ _('Form completion') }}">
@@ -870,6 +871,7 @@
       'section-7': _('Publications, events and data')
     },
     'strings': {
+    'draftNavigationError': _('Your latest answers could not be saved in this browser. Save as draft before leaving this form.'),
       'dismissNotification': _('Dismiss notification'),
       'fixHighlighted': _('Please fix the highlighted fields.'),
       'draftSaved': _('Draft saved.'),

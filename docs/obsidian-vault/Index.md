@@ -56,3 +56,5 @@ Bienvenido a la documentación interna de **ckanext-theme-ejemplo**, la extensi�
 - Las reglas operativas para **Claude Code** están en `CLAUDE.md` (raíz del repo).
 - Las reglas operativas para **Codex** están en `AGENTS.md` (raíz del repo).
 - Esta vault es la **fuente de verdad humana**. Los archivos de agentes deben referenciarla, no duplicarla.
+
+- [[IHP-IX Progress UX October 2026]] — filtros geográficos, diseño y pruebas de Progress.

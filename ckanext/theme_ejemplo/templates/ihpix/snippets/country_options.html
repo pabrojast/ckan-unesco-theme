@@ -1,0 +1,13 @@
+{% macro country_options(selected='') %}
+  {% set countries = h.get_ihpix_taxonomies().countries %}
+  {% set field = 'country_title_' ~ h.lang() %}
+  {% set found = namespace(value=false) %}
+  {% for country in countries|sort(attribute=field if h.lang() in ['en', 'es', 'fr', 'ar'] else 'country_title_en') %}
+    {% set aliases = [country.iso2, country.iso3, country.country_title_en, country.country_title_es, country.country_title_fr, country.country_title_ar] %}
+    {% set active = selected and selected|lower in aliases|map('lower')|list %}
+    {% if active %}{% set found.value = true %}{% endif %}
+    <option value="{{ country.country_title_en }}" data-search="{{ aliases|join(' ') }}"{% if active %} selected{% endif %}>{{ country.get(field) or country.country_title_en }}</option>
+  {% endfor %}
+  {# Mantiene enlaces heredados sin convertir un filtro desconocido en todos los países. #}
+  {% if selected and not found.value %}<option value="{{ selected }}" selected>{{ h.get_member_state_title(selected) }}</option>{% endif %}
+{% endmacro %}

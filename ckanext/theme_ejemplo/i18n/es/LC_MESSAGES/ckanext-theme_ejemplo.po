@@ -9768,3 +9768,70 @@ msgstr "Selecciona una actividad clave"
 
 msgid "Review notes"
 msgstr "Observaciones de revisión"
+
+msgid "All countries"
+msgstr "Todos los países"
+
+msgid "Clear country filter"
+msgstr "Quitar filtro de país"
+
+msgid ""
+"Showing activities linked to this country through reporting, support or "
+"beneficiaries. Totals describe these activities, not results allocated to "
+"this country alone."
+msgstr ""
+"Se muestran actividades vinculadas a este país por la institución que "
+"reporta, el apoyo o los beneficiarios. Las cifras corresponden a esas "
+"actividades, no exclusivamente a este país."
+
+msgid "The update failed. The previous results are still displayed."
+msgstr "No se pudo actualizar. Se siguen mostrando los resultados anteriores."
+
+msgid "Pending review · all reports"
+msgstr "Pendientes de revisión · todos los reportes"
+
+msgid "Select a country to filter all charts. Circle size: linked activities."
+msgstr ""
+"Selecciona un país para filtrar todos los gráficos. Tamaño del círculo: "
+"actividades vinculadas."
+
+msgid "Filter by this country"
+msgstr "Filtrar por este país"
+
+msgid "Other markers show countries linked to the selected activities."
+msgstr ""
+"Los otros marcadores muestran países vinculados a las actividades "
+"seleccionadas."
+
+msgid "Selected country"
+msgstr "País seleccionado"
+
+msgid "Overall implementation progress"
+msgstr "Progreso general de implementación"
+
+msgid "Choose a valid reporting scope"
+msgstr "Selecciona un ámbito válido para el informe"
+
+msgid "All activities"
+msgstr "Todas las actividades"
+
+msgid "My drafts"
+msgstr "Mis borradores"
+
+msgid ""
+"Your latest answers could not be saved in this browser. Save as draft before "
+"leaving this form."
+msgstr ""
+"No se pudieron guardar tus últimas respuestas en este navegador. Guarda un "
+"borrador antes de salir del formulario."
+
+msgid "View activity"
+msgstr "Ver actividad"
+
+msgid "Filter activities"
+msgstr "Filtrar actividades"
+
+msgid "No locations are available on this map for the selected activities."
+msgstr ""
+"No hay ubicaciones disponibles en este mapa para las actividades "
+"seleccionadas."

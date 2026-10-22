@@ -843,3 +843,7 @@ csunesco, sin crear una segunda configuración del tema.
 | `/ihpix/resource-return/attach` | POST desde recurso: autoriza, adjunta y vuelve a VII |
 
 El banner de retorno se asocia en sesión al usuario y reporte. Los editores nativos conservan su flujo; no necesitan `came_from`. Al guardar en el modal de publicación se crea el documento; guardar el reporte conserva la asociación. Ver [[IHP-IX Review September 2026]].
+
+## Filtro geográfico IHP-IX y acceso a borradores
+
+Mapa, tabla o buscador → país seleccionado → gráficos y enlaces sincronizados → JSON/presentación/narrativa con el mismo ámbito y filtros. My drafts guarda primero los cambios pendientes en el navegador y abre el perfil filtrado a borradores. Detalles: [[IHP-IX Progress UX October 2026]].
