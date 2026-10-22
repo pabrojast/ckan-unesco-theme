@@ -25,3 +25,13 @@ Los alias vacíos no se registran en `ihpix_relations.country_index`: algunos t�
 - La prueba cubre mapa/tabla/teclado, roles de países, alias ISO, restauración, ámbitos, respuestas desordenadas, error/reintento, filtros vacíos, JSON/presentaciones/narrativas, países en el explorador, borradores y almacenamiento fallido. Revisa cinco páginas en EN/ES/FR/AR a 1440/768/390/320 px, con sesión de administrador.
 
 No requiere migraciones ni proveedores de mapas nuevos. El despliegue se limita a DEV, conservando las otras extensiones de su imagen vigente. La copia previa se restaura en una base aislada y se contrastan huellas de datos antes y después.
+
+## Evidencia de entrega — 2026-10-22
+
+Código: `bd3bf16ac74919bc1241405c7f53d65863ec8c16`. Suite pura: **147 pruebas**. Imagen candidata: **138 comprobaciones de navegador**, incluidos los cuatro idiomas y las anchuras documentadas. [Theme checks aprobado](https://github.com/pabrojast/ckan-unesco-theme/actions/runs/39796770852).
+
+DEV: `pabrojast/ckan-base210@sha256:524e8bd7d90a91f79c8c464fdd18843ee0e4bf7ddd96ea7084a245e767910237`, pod `ckan-565fb576b-vt8mn`, 4/4 Ready y cero reinicios. Los 26 archivos modificados de la extensión coinciden por SHA-256 con el commit. Se conservaron las imágenes de los tres contenedores auxiliares y las demás extensiones de la imagen base vigente. No se desplegó en producción.
+
+La comprobación funcional en `data.dev-wins.com` encontró **42 actividades vinculadas a Chile**, coincidentes entre gráficos, descarga y fuentes narrativas; también verificó presentación/regreso, búsqueda de países y enlace a borradores. Las capturas y resultados del recorrido visual están en `output/playwright/ihpix-progress-20261022-live/`.
+
+Backup restaurado con 746 reportes. Huellas completas antes/después idénticas: 746 reportes (744 publicados, 1 pendiente, 1 borrador), 34 workspaces, 5 contribuciones, 0 vínculos y 0 membresías. Evidencia operativa privada: `/home/pabrojast/backups/ckan-dev-ihpix-progress-20261022/`; pruebas y logs en `qa-evidence/`.
