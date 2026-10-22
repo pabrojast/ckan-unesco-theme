@@ -35,3 +35,11 @@ DEV: `pabrojast/ckan-base210@sha256:524e8bd7d90a91f79c8c464fdd18843ee0e4bf7ddd96
 La comprobación funcional en `data.dev-wins.com` encontró **42 actividades vinculadas a Chile**, coincidentes entre gráficos, descarga y fuentes narrativas; también verificó presentación/regreso, búsqueda de países y enlace a borradores. Las capturas y resultados del recorrido visual están en `output/playwright/ihpix-progress-20261022-live/`.
 
 Backup restaurado con 746 reportes. Huellas completas antes/después idénticas: 746 reportes (744 publicados, 1 pendiente, 1 borrador), 34 workspaces, 5 contribuciones, 0 vínculos y 0 membresías. Evidencia operativa privada: `/home/pabrojast/backups/ckan-dev-ihpix-progress-20261022/`; pruebas y logs en `qa-evidence/`.
+
+### Ajuste final de selectores
+
+La revisión móvil detectó que el input del combobox heredaba la flecha de fondo del select además de su botón propio; en árabe aparecían en extremos opuestos. `505a183bc4060b56f90cfccc22458ae703185d10` elimina ese fondo únicamente en el input del combobox. [Theme checks aprobado](https://github.com/pabrojast/ckan-unesco-theme/actions/runs/39800112437).
+
+Imagen final de DEV: `pabrojast/ckan-base210@sha256:94547fbb3344ae58a5a5bebf60c462f903553c042cd5352f24b6cb5f5dc81e1c`, pod `ckan-8bf96d45b-bz9km`, 4/4 Ready y cero reinicios. Los 27 archivos comprobados coinciden por SHA-256 con el código publicado; las imágenes auxiliares y las huellas completas de datos siguen iguales. Esta imagen sustituye a la indicada arriba e incorpora el mismo cambio funcional.
+
+El recorrido en DEV completó **108 comprobaciones funcionales y visuales** sobre el cambio principal, más **13 comprobaciones** del ajuste final de selectores en Progress, explorador y formulario, en EN/ES/FR/AR a 390 px. No hubo excepciones JavaScript. El token temporal de verificación fue revocado y una petición protegida confirmó HTTP 403; los contenedores y credenciales de las pruebas aisladas se retiraron.
