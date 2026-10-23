@@ -37,6 +37,22 @@
 
 ---
 
+## Plantillas de Dataset extent
+
+- `templates/spatial/snippets/dataset_map_base.html`: override del mapa de
+  extensión; copia la configuración de `h.get_common_map_config()` y limita
+  `maxZoom` a 8 sólo para `USGS.USImagery`, respetando límites inferiores y
+  convirtiendo valores de configuración de texto a entero. Conserva los assets
+  y el módulo JavaScript de `ckanext-spatial`.
+- `templates/schemingdcat/snippets/schemingdcat_dataset_map_base.html`: delega en
+  la plantilla anterior para compartir el comportamiento en el contenido
+  principal y la barra lateral.
+
+No modifica la configuración global del mapa ni el buscador espacial. Ver
+[[Flujos Importantes#Mapa de extensión del dataset]].
+
+---
+
 ## controller.py (~3,960 líneas)
 
 **Rol**: Todas las funciones de vista Flask.
@@ -684,6 +700,26 @@ Las nuevas acciones registran auth correspondiente en `auth.py`; la comprobació
 ## Progress y países (2026-10-22)
 
 La vista Progress conecta `country` con el parámetro existente de estadísticas. Las narrativas añaden `overall`, `flagship`, `ctwg`, `country` y `region`. La paleta se centraliza en `PA_COLORS`/`PA_DARK_COLORS`, expuestas por `get_ihpix_taxonomies`. Ver [[IHP-IX Progress UX October 2026]].
+
+## resource_styles.py — estilos SLD asociados
+
+Política compartida `is_sld_resource`/`sld_sql` por formato, MIME SLD o extensión
+(case-insensitive, sin query/fragment y con extensión URL codificada). No se
+clasifica todo XML como SLD. `present_resources` es puro: deriva asociaciones
+desde `resource_view.config.style` de vistas Terria del mismo dataset, por URL
+exacta o UUID de ruta CKAN (también URLs históricas), sin mutar recursos.
+
+`helpers.resource_presentation` consulta vistas en lote sobre un paquete ya
+autorizado. Agrupa antes de buscar y paginar; admite `mode=grouped|all`, mantiene
+el orden, deduplica estilos por padre y expande coincidencias en estilos. Ante
+fallo de lectura conserva la lista plana. Se usa en el primer HTML y en
+`/dataset/<id>/resources_ajax`, que conserva sus campos y añade `mode`,
+`resource_count` y `style_count`; `total` cuenta filas de la vista seleccionada.
+
+El tracking omite SLD en escritura, lectura y rankings (antes del LIMIT). El
+flush filtra también los pendientes antiguos y reconstruye `total_downloads`
+a partir de contadores elegibles. Conserva el histórico por recurso y todas
+las visitas. El fallback `tracking_raw` excluye por URL y metadatos del recurso.
 
 ## Importación IHP-IX guiada v2 (2026-10-23)
 

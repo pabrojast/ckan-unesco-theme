@@ -1351,6 +1351,8 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                  'theme_ejemplo_get_featured_viewers': helpers.get_featured_viewers,
                  'theme_ejemplo_featured_viewers_available': helpers.featured_viewers_available,
                  'theme_ejemplo_get_paged_resources': helpers.get_paged_resources,
+                 'theme_ejemplo_resource_presentation': helpers.resource_presentation,
+                 'theme_ejemplo_is_sld': helpers.is_sld_resource,
                  'theme_ejemplo_markdown_excerpt': helpers.markdown_excerpt,
                  'theme_ejemplo_site_statistics': self.get_site_statistics_cached,
                  'get_member_states_groups_list': self.get_member_states_groups_list,

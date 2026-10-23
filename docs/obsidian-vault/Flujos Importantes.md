@@ -28,6 +28,22 @@ apilan. Se mantienen las opciones de orden y el envío de búsqueda existentes.
 
 ---
 
+## Mapa de extensión del dataset
+
+“Dataset extent” usa la plantilla compartida del tema para las vistas de
+`spatial` y `schemingdcat`. Con el proveedor `USGS.USImagery`, la configuración
+enviada a Leaflet limita `maxZoom` a 8, o conserva un límite configurado inferior.
+El límite se aplica antes del encuadre inicial, también para puntos y polígonos
+pequeños; al alcanzarlo se deshabilita el control de acercamiento.
+
+El 2026-10-23 se comprobó en el dataset `tana-river-time-series-satellite-altimetry`
+que las imágenes de USGS cargaban en zoom 8 y devolvían HTTP 404 desde zoom 9.
+El límite es una medida conservadora para ese proveedor, no una garantía de
+cobertura mundial. Los demás proveedores y el buscador espacial conservan su
+configuración. Ver [[Modulos#Plantillas de Dataset extent]].
+
+---
+
 ## 1. Indexación de datasets (Pipeline espacial)
 
 **Trigger**: CKAN indexa un dataset en Solr
@@ -847,6 +863,25 @@ El banner de retorno se asocia en sesión al usuario y reporte. Los editores nat
 ## Filtro geográfico IHP-IX y acceso a borradores
 
 Mapa, tabla o buscador → país seleccionado → gráficos y enlaces sincronizados → JSON/presentación/narrativa con el mismo ámbito y filtros. My drafts guarda primero los cambios pendientes en el navegador y abre el perfil filtrado a borradores. Detalles: [[IHP-IX Progress UX October 2026]].
+
+## Recursos y estilos de visualización
+
+La lista pública agrupa los SLD usados por las vistas Terria debajo del recurso
+principal. Un estilo aparece en cada recurso que lo usa, sin duplicar el archivo.
+Varios estilos se presentan en un desplegable con los nombres de las vistas;
+los no asociados siguen como archivos independientes «Estilo cartográfico».
+«Mostrar todos los archivos» recupera la lista plana; edición e histórico
+conservan todos los recursos. Buscar un estilo o filtrar SLD muestra su padre
+como contexto y expande los estilos coincidentes. Se agrupa antes de paginar.
+
+Los enlaces conservan UUID, URL y permisos del recurso SLD, incluidos permisos
+de descarga propios. La asociación sólo afecta la presentación, no el estilo
+aplicado por Terria ni las respuestas de `package_show`.
+
+Todos los SLD, manuales o automáticos, asociados o independientes, quedan fuera
+de totales y rankings de descargas. No muestran insignias de descarga. El
+histórico original por recurso queda conservado; el total del sitio se
+reconcilia por suma de recursos elegibles, sin descontar repetidamente.
 
 ## Importación Excel IHP-IX: preparar, revisar y crear (2026-10-23)
 

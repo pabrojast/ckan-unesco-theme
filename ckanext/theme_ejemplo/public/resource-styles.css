@@ -1,0 +1,41 @@
+/* Los estilos acompañan al recurso sin competir con sus acciones principales. */
+.resources-header { margin-block-end: 16px; }
+.resources-header h2 { margin-block-end: 6px; }
+.resources-summary, .resource-style-views { color: #596a78; font-size: 13px; }
+.resources-search-row { display: flex; flex-wrap: wrap; gap: 12px; margin-block: 12px; }
+.resources-search-box { flex: 1 1 220px; min-width: 0; }
+.resources-format-filter { flex: 0 1 180px; min-width: 0; }
+.resources-all-files { display: inline-flex; gap: 8px; align-items: center; cursor: pointer; font-weight: normal; }
+.resources-all-files input { margin: 0; }
+.resources-status { margin-block: 8px; color: #596a78; }
+#resources-list.is-loading { opacity: .55; }
+#resources-list > .resource-item { display: flow-root; }
+.resource-styles { clear: both; padding-block-start: 12px; }
+.resource-style { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 20px; padding: 12px 16px; border-inline-start: 3px solid #c7dce9; background: #f4f8fb; border-radius: 4px; }
+.resource-style + .resource-style { margin-block-start: 8px; }
+.resource-style-copy { flex: 1 1 240px; min-width: 0; display: flex; flex-direction: column; gap: 3px; overflow-wrap: anywhere; }
+.resource-style-label { color: #526574; font-size: 12px; }
+.resource-style-format { margin-inline-start: 6px; font-size: 10px; border: 1px solid #c7dce9; border-radius: 3px; padding: 1px 4px; }
+.resource-style-name { font-size: 14px; }
+.resource-style-actions { display: flex; flex-wrap: wrap; gap: 8px 16px; font-size: 13px; }
+.resource-styles summary { cursor: pointer; color: #17688e; padding: 8px 0; }
+.resource-styles summary:focus-visible, .resource-style a:focus-visible { outline: 2px solid #17688e; outline-offset: 3px; }
+.resource-style-kind { margin: 4px 0; color: #596a78; font-size: 13px; }
+.resources-pagination .pagination { display: flex; flex-wrap: wrap; justify-content: center; gap: 4px; padding: 0; list-style: none; }
+.resources-pagination button { border: 1px solid #d4dfe5; border-radius: 4px; background: #fff; color: #17688e; min-width: 36px; min-height: 36px; }
+.resources-pagination button[aria-current="page"] { background: #17688e; color: #fff; }
+.resources-pagination button:disabled { opacity: .5; }
+@media (max-width: 480px) { .resource-style { padding: 10px; } .resources-format-filter { flex: 1 1 100%; } }
+/* Compatibilidad con la cuadrícula y reglas !important del tema CKAN. */
+#dataset-resources .resources-toolbar label::after { content: none !important; }
+#dataset-resources .sr-only { position: absolute !important; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+#dataset-resources #resources-list > .resource-item { grid-template-columns: auto minmax(0, 1fr) auto !important; }
+#dataset-resources .resource-item .resource-title-row .format-label { grid-row: 1 !important; align-self: start !important; }
+#dataset-resources .resource-item .resource-title-row .heading { overflow-wrap: anywhere; min-width: 0; }
+#dataset-resources .resource-item > .btn-group { grid-row: 1 !important; align-self: start !important; }
+#dataset-resources .resource-styles, #dataset-resources .resource-style-kind { grid-column: 2 / -1 !important; grid-row: 3 !important; min-width: 0; }
+@media (max-width: 600px) {
+  #dataset-resources #resources-list > .resource-item { grid-template-columns: auto minmax(0, 1fr) !important; }
+  #dataset-resources .resource-item > .btn-group { grid-column: 1 / -1 !important; grid-row: 3 !important; justify-self: start !important; }
+  #dataset-resources .resource-styles, #dataset-resources .resource-style-kind { grid-column: 1 / -1 !important; grid-row: 4 !important; }
+}
