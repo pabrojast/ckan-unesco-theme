@@ -32,17 +32,20 @@ for locale in ("en", "es", "fr", "ar"):
         for row in book["_IHP_META"].iter_rows(min_row=5, max_row=14)
         if row[0].value == "Activities"
     )
-    book[name]["B5"] = book[name]["B5"].value + " (preview)"
+    book[name]["A5"] = book[name]["A5"].value + " (preview)"
     output = io.BytesIO()
     book.save(output)
     (root / (locale + "-review.xlsx")).write_bytes(output.getvalue())
 book = load_workbook(root / "en-example.xlsx")
-book["Indicators"]["D5"] = -1
+fields = [cell.value for cell in book["Activities"][1]]
+invalid_cell = book["Activities"].cell(5, fields.index("num_knowledge_products") + 1)
+invalid_cell.value = -1
+(root / "invalid-cell.txt").write_text(invalid_cell.coordinate)
 output = io.BytesIO()
 book.save(output)
 (root / "invalid.xlsx").write_bytes(output.getvalue())
 book = load_workbook(io.BytesIO(B.template()))
-book["Activities"]["B5"] = "Minimal imported draft"
+book["Activities"]["A5"] = "Minimal imported draft"
 output = io.BytesIO()
 book.save(output)
 (root / "minimal.xlsx").write_bytes(output.getvalue())
@@ -51,6 +54,11 @@ book["Activities"].append(["Legacy1", "Legacy draft"])
 output = io.BytesIO()
 book.save(output)
 (root / "legacy.xlsx").write_bytes(output.getvalue())
+book = load_workbook(io.BytesIO(B.template_v2()))
+book["Activities"]["B5"] = "Draft from the previous guided template"
+output = io.BytesIO()
+book.save(output)
+(root / "legacy-v2.xlsx").write_bytes(output.getvalue())
 expected = [
     F.validate_report_payload(row["data"], True)
     for row in B.parse((root / "en-example.xlsx").read_bytes())["rows"]
@@ -62,9 +70,13 @@ print("Isolated fixtures ready")
 
 book = load_workbook(io.BytesIO(B.template()))
 for row, output in [(5, "1.1"), (6, "1.10")]:
-    book["Activities"].cell(row, 2, "Rollback activity " + output)
-    book["Activities"].cell(row, 7, "PA1")
-    book["Activities"].cell(row, 8, output)
+    fields = [cell.value for cell in book["Activities"][1]]
+    for field, value in {
+        "title": "Rollback activity " + output,
+        "priority_area": "PA1",
+        "output": output,
+    }.items():
+        book["Activities"].cell(row, fields.index(field) + 1, value)
 raw = io.BytesIO()
 book.save(raw)
 (root / "rollback.xlsx").write_bytes(raw.getvalue())

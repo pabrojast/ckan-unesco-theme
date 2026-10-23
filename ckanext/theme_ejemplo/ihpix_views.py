@@ -87,7 +87,7 @@ def _import_download(example=False):
         if org:
             organizations.append({'id':org.id,'name':org.name,'title':org.display_name})
     raw = B.template(organizations, defaults=defaults, locale=lang(), example=example)
-    filename = 'ihpix-example-v2.xlsx' if example else 'ihpix-import-v2.xlsx'
+    filename = 'ihpix-example-v3.xlsx' if example else 'ihpix-import-v3.xlsx'
     return Response(raw, mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                     headers={'Content-Disposition': 'attachment; filename=' + filename, 'Cache-Control':'private, no-store'})
 

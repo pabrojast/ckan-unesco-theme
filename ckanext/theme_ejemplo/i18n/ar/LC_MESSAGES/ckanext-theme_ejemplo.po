@@ -10188,3 +10188,120 @@ msgstr "مستخدم في"
 
 msgid "Archived workspaces are read-only"
 msgstr "لا يمكن تعديل مجموعات العمل المؤرشفة."
+
+msgid "Quick guide"
+msgstr "دليل سريع"
+
+msgid "Reporting details"
+msgstr "بيانات التقرير"
+
+msgid ""
+"One activity per row. Enter its details and indicators on this sheet. "
+"Leave unanswered fields blank."
+msgstr ""
+"نشاط واحد في كل صف. أدخل بياناته ومؤشراته في هذه الورقة. اترك الحقول التي"
+" لم تُجب عنها فارغة."
+
+msgid ""
+"Optional. Choose the activity by its title. Use this sheet only for "
+"additional contributions, support, organizations or resources."
+msgstr ""
+"اختياري. اختر النشاط حسب عنوانه. استخدم هذه الورقة فقط للمساهمات أو الدعم"
+" أو المنظمات أو الموارد الإضافية."
+
+msgid "Leave unanswered fields blank. You can complete them in the draft."
+msgstr "اترك الحقول التي لم تُجب عنها فارغة. يمكنك إكمالها في المسودة."
+
+msgid ""
+"Fill in Activities: one activity per row, including its reporting details"
+" and indicators."
+msgstr "أكمل ورقة الأنشطة: نشاط واحد في كل صف، مع بيانات التقرير ومؤشراته."
+
+msgid ""
+"Start with the activity title. Continue to the right and leave any "
+"unanswered fields blank."
+msgstr "ابدأ بعنوان النشاط. تابع عبر الأعمدة واترك الحقول التي لم تُجب عنها فارغة."
+
+msgid ""
+"Use the dropdowns when available. No formulas or reference codes are "
+"needed."
+msgstr "استخدم القوائم المنسدلة عندما تكون متاحة. لا تحتاج إلى صيغ أو رموز مرجعية."
+
+msgid ""
+"Repeat the contact and institution details for each activity. You can "
+"copy them from the previous row."
+msgstr "كرر بيانات الاتصال والمؤسسة لكل نشاط. يمكنك نسخها من الصف السابق."
+
+msgid ""
+"The other sheets are optional. Use them only when an activity has "
+"additional contributions, support, partner organizations or resources."
+msgstr ""
+"الأوراق الأخرى اختيارية. استخدمها فقط إذا كان للنشاط مساهمات أو دعم أو "
+"منظمات شريكة أو موارد إضافية."
+
+msgid ""
+"On an optional sheet, choose the activity title from the dropdown. Use "
+"distinct titles when adding these details."
+msgstr ""
+"في الورقة الاختيارية، اختر عنوان النشاط من القائمة المنسدلة. استخدم "
+"عناوين مختلفة عند إضافة هذه التفاصيل."
+
+msgid ""
+"Upload the workbook, review the results and create drafts. Nothing is "
+"submitted automatically."
+msgstr "ارفع الملف وراجع النتائج وأنشئ المسودات. لا يُرسل أي شيء تلقائيًا."
+
+msgid ""
+"The completed example is a separate file. Use the empty template for your"
+" real activities."
+msgstr "المثال المكتمل ملف منفصل. استخدم القالب الفارغ لأنشطتك الفعلية."
+
+msgid "Choose the activity title from Activities."
+msgstr "اختر عنوان النشاط من ورقة الأنشطة."
+
+msgid "Choose an activity title that appears exactly once in Activities"
+msgstr "اختر عنوان نشاط يظهر مرة واحدة فقط في ورقة الأنشطة"
+
+msgid "Extra contributions"
+msgstr "مساهمات إضافية"
+
+msgid "Extra Member State support"
+msgstr "دعم إضافي من الدول الأعضاء"
+
+msgid "Extra partner organizations"
+msgstr "منظمات شريكة إضافية"
+
+msgid "Extra resources"
+msgstr "موارد إضافية"
+
+msgid ""
+"Complete one activity per row on the Activities sheet, including its "
+"reporting details and indicators."
+msgstr "أكمل نشاطًا واحدًا في كل صف في ورقة الأنشطة، مع بيانات التقرير ومؤشراته."
+
+msgid ""
+"All activity fields are together on one sheet, grouped from left to "
+"right. Only the title is needed to create a draft."
+msgstr ""
+"جميع حقول النشاط موجودة في ورقة واحدة ومقسمة إلى مجموعات. لا تحتاج إلا "
+"إلى العنوان لإنشاء مسودة."
+
+msgid "Open Activities and enter one activity per row."
+msgstr "افتح ورقة الأنشطة وأدخل نشاطًا واحدًا في كل صف."
+
+msgid ""
+"Continue along the same row to add contact details, countries and "
+"indicators. Leave unanswered fields blank."
+msgstr ""
+"تابع في الصف نفسه لإضافة بيانات الاتصال والبلدان والمؤشرات. اترك الحقول "
+"التي لم تُجب عنها فارغة."
+
+msgid ""
+"Use the extra sheets only for additional contributions, support, partner "
+"organizations or resources. Choose the activity by its title."
+msgstr ""
+"استخدم الأوراق الإضافية فقط لإضافة مساهمات أو دعم أو منظمات شريكة أو "
+"موارد أخرى. اختر النشاط حسب عنوانه."
+
+msgid "Activity"
+msgstr "النشاط"

@@ -1,6 +1,20 @@
 # IHP-IX: importación Excel guiada (octubre de 2026)
 
-## Uso
+## Formato plano actual (IHP-IX/3)
+
+La descarga predeterminada abre **Actividades**, con una actividad por fila. Sus 62 campos editables reúnen datos generales, contacto/institución, alcance e indicadores en bloques horizontales con colores. El identificador técnico se genera al importar: el usuario no introduce ni conserva códigos A001. Se pueden copiar y ordenar filas completas. Los datos de contacto se repiten explícitamente en cada fila; no hay valores heredados ocultos ni datos del perfil que deban borrarse de la plantilla vacía.
+
+Las hojas separadas Instituciones, Participación y alcance e Indicadores se integraron en Actividades. Cuatro hojas adicionales conservan las relaciones múltiples (contribuciones/sinergias, apoyo, organizaciones y recursos); se usan solo cuando corresponda y vinculan la actividad por su **título**, elegido en una lista. Un título inexistente o ambiguo bloquea esos detalles para evitar asignaciones incorrectas. Las filas sin estos detalles pueden tener títulos repetidos.
+
+El libro incluye una guía breve y listas de referencia de consulta. Las listas desplegables, las fechas y los límites numéricos permanecen; los campos multivalor permiten elegir una opción y también escribir varias separadas por punto y coma. No hay fórmulas que el usuario deba escribir. Los indicadores comparten la fila de su actividad y la vista previa señala su celda real.
+
+Las descargas se llaman `ihpix-import-v3.xlsx` e `ihpix-example-v3.xlsx`. El ejemplo sigue conteniendo tres actividades ficticias completas con exactamente los mismos datos de v2. Se conservan los lectores de IHP-IX/1 y /2, sus vistas previas existentes y la creación transaccional e idempotente de borradores.
+
+`ihpix_bulk_flat.py` define la disposición v3; el generador y el lector compartidos reciben el esquema de la versión. Los nombres de hoja e identificadores técnicos siguen en metadatos ocultos. El flujo web indica completar Actividades y usar extras solo cuando hacen falta.
+
+Validación v3: 192 pruebas puras IHP-IX y 93 comprobaciones de navegador, incluida creación real de borradores y cargas v1/v2/v3. La vuelta por LibreOffice conserva íntegros los ejemplos y las 58 reglas de validación en EN/ES/FR/AR.
+
+## Formato anterior (IHP-IX/2)
 
 `/ihpix/import` ofrece dos descargas distintas: plantilla vacía y ejemplo completo. El flujo es preparar → subir → revisar → crear borradores. Subir un archivo no publica ni envía actividades a revisión. «Mis borradores» abre el perfil con `status=draft`.
 

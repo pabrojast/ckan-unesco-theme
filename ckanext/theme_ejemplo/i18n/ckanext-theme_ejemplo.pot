@@ -12299,3 +12299,106 @@ msgstr ""
 
 msgid "Archived workspaces are read-only"
 msgstr ""
+
+msgid "Quick guide"
+msgstr ""
+
+msgid "Reporting details"
+msgstr ""
+
+msgid ""
+"One activity per row. Enter its details and indicators on this sheet. "
+"Leave unanswered fields blank."
+msgstr ""
+
+msgid ""
+"Optional. Choose the activity by its title. Use this sheet only for "
+"additional contributions, support, organizations or resources."
+msgstr ""
+
+msgid "Leave unanswered fields blank. You can complete them in the draft."
+msgstr ""
+
+msgid ""
+"Fill in Activities: one activity per row, including its reporting details"
+" and indicators."
+msgstr ""
+
+msgid ""
+"Start with the activity title. Continue to the right and leave any "
+"unanswered fields blank."
+msgstr ""
+
+msgid ""
+"Use the dropdowns when available. No formulas or reference codes are "
+"needed."
+msgstr ""
+
+msgid ""
+"Repeat the contact and institution details for each activity. You can "
+"copy them from the previous row."
+msgstr ""
+
+msgid ""
+"The other sheets are optional. Use them only when an activity has "
+"additional contributions, support, partner organizations or resources."
+msgstr ""
+
+msgid ""
+"On an optional sheet, choose the activity title from the dropdown. Use "
+"distinct titles when adding these details."
+msgstr ""
+
+msgid ""
+"Upload the workbook, review the results and create drafts. Nothing is "
+"submitted automatically."
+msgstr ""
+
+msgid ""
+"The completed example is a separate file. Use the empty template for your"
+" real activities."
+msgstr ""
+
+msgid "Choose the activity title from Activities."
+msgstr ""
+
+msgid "Choose an activity title that appears exactly once in Activities"
+msgstr ""
+
+msgid "Extra contributions"
+msgstr ""
+
+msgid "Extra Member State support"
+msgstr ""
+
+msgid "Extra partner organizations"
+msgstr ""
+
+msgid "Extra resources"
+msgstr ""
+
+msgid ""
+"Complete one activity per row on the Activities sheet, including its "
+"reporting details and indicators."
+msgstr ""
+
+msgid ""
+"All activity fields are together on one sheet, grouped from left to "
+"right. Only the title is needed to create a draft."
+msgstr ""
+
+msgid "Open Activities and enter one activity per row."
+msgstr ""
+
+msgid ""
+"Continue along the same row to add contact details, countries and "
+"indicators. Leave unanswered fields blank."
+msgstr ""
+
+msgid ""
+"Use the extra sheets only for additional contributions, support, partner "
+"organizations or resources. Choose the activity by its title."
+msgstr ""
+
+msgid "Activity"
+msgstr ""
