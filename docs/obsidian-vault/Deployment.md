@@ -310,7 +310,9 @@ contexto `patch/` contiene exclusivamente los archivos `ckanext/` del diff de
 esta entrega y los nuevos; conserva ajustes ajenos de la imagen base. La marca
 `.theme-sld-revision` identifica el commit del parche. El Docker clásico puede
 rechazar esta base por profundidad de capas: usar Buildx con driver
-`docker-container` y snapshotter `native`, exportando directamente al registro.
+`docker-container`, exportando directamente al registro. `COPY --link` agrega
+el parche sin desempaquetar la base; incluir `patch/.theme-sld-revision` con el
+commit exportado. Compilar y probar la fuente antes de construir la imagen.
 
 Antes del rollout, respaldar Deployment, CronJob `pageviews-flush`, contadores
 PostgreSQL y pendientes Redis; registrar el digest base y huellas de archivos

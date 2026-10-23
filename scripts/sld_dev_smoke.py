@@ -7,12 +7,18 @@ from ckan.cli import load_config
 from ckan.config.middleware import make_app
 
 config = load_config('/srv/app/production.ini')
-config['ckanext.theme_ejemplo.pageviews_enabled'] = False
+config['ckanext.theme_ejemplo.pageviews_enabled'] = True
+config['ckanext.theme_ejemplo.pageviews_bot_filter'] = True
 config['ckanext.theme_ejemplo.anon_cache_enabled'] = False
 from werkzeug.test import Client
 from werkzeug.wrappers import Response
 app = make_app(config)
-client = Client(app, Response)
+class ReadOnlyClient(Client):
+    def get(self, *args, **kwargs):
+        kwargs.setdefault('headers', {})['User-Agent'] = 'CKAN-SLD-QA python-requests'
+        return super().get(*args, **kwargs)
+
+client = ReadOnlyClient(app, Response)
 from ckanext.theme_ejemplo.resource_styles import is_sld_resource
 from ckan.plugins import toolkit
 import ckan.model as model

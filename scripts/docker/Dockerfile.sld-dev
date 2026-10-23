@@ -1,11 +1,11 @@
-# El contexto patch/ contiene sólo los archivos revisados de esta entrega.
+# syntax=docker/dockerfile:1
+# El contexto patch/ contiene sólo los archivos revisados y .theme-sld-revision.
 # Conservar la imagen vigente de DEV y cualquier ajuste ajeno al parche.
 ARG BASE_IMAGE
 FROM ${BASE_IMAGE}
 ARG THEME_REVISION
-USER root
-COPY patch/ /app/src/ckanext-theme-ejemplo/
-RUN python3 -m compileall -q /app/src/ckanext-theme-ejemplo/ckanext/theme_ejemplo \
-    && printf '%s\n' "$THEME_REVISION" > /app/src/ckanext-theme-ejemplo/.theme-sld-revision
+# --link agrega una capa sin desempaquetar las numerosas capas de la base.
+# La compilación y las pruebas se ejecutan antes, con la misma fuente exportada.
+COPY --link patch/ /app/src/ckanext-theme-ejemplo/
 LABEL io.ihpwins.theme-sld-revision=$THEME_REVISION
 USER ckan
