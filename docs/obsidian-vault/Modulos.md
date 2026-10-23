@@ -720,3 +720,7 @@ El tracking omite SLD en escritura, lectura y rankings (antes del LIMIT). El
 flush filtra también los pendientes antiguos y reconstruye `total_downloads`
 a partir de contadores elegibles. Conserva el histórico por recurso y todas
 las visitas. El fallback `tracking_raw` excluye por URL y metadatos del recurso.
+
+## Importación IHP-IX guiada v2 (2026-10-23)
+
+`ihpix_bulk_schema.py`, `ihpix_bulk_workbook.py` y `ihpix_bulk_display.py` separan estructura del libro, adaptación al esquema original y presentación legible. `ihpix_bulk.py` mantiene lectura v1/v2 y validación compartida; las acciones `ihpix_import_preview/show/create` conservan sus claves y añaden metadatos de origen. `ihpix_views.py` agrega GET autenticado `/ihpix/import/example.xlsx`; la descarga de plantilla existente entrega v2. No hay cambios de DB ni dependencias nuevas. Ver [[IHP-IX Bulk Import UX October 2026]].

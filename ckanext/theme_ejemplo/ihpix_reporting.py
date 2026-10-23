@@ -50,14 +50,16 @@ def ihpix_import_preview(context, data):
         if org and org.is_organization and org.state == 'active' and not item['data'].get('institution'):
             item['data']['institution'] = org.display_name
             preview['warnings'] = [warning for warning in preview['warnings'] if not (
-                warning['sheet'] == 'Activities' and warning['row'] == item['row']
+                warning.get('ref') == item['ref']
                 and warning['field'] == 'institution')]
         from ckanext.theme_ejemplo.ihpix_resource_access import visible
         for link, number in zip(item['data'].get('links_json', []), item['resource_rows']):
             if not visible(link, actor):
-                preview['errors'].append({'sheet': 'Resources', 'row': number,
-                    'cell': 'D' + str(number), 'field': 'target_id',
-                    'message': 'Choose an existing resource you can access'})
+                index = item['resource_rows'].index(number)
+                origin = item.get('relation_sources', {}).get('links_json', [{}] * len(item['resource_rows']))[index].get('target_id',
+                    {'sheet':'Resources','row':number,'cell':'D'+str(number)})
+                preview['errors'].append(dict(origin, ref=item['ref'], field='target_id',
+                    message='Choose an existing resource you can access'))
         from openpyxl.utils import get_column_letter
         org_cells = [(item['data'].get('institution_org_id'), 'Activities', item['row'],
                       'institution_org_id', get_column_letter(B.FIELDS.index('institution_org_id') + 1))]
@@ -68,9 +70,12 @@ def ihpix_import_preview(context, data):
                 continue
             org = model.Group.get(org_id)
             if not org or not org.is_organization or org.state != 'active' or org.id != org_id:
-                preview['errors'].append({'sheet': sheet, 'row': number,
-                    'cell': column + str(number), 'field': field,
-                    'message': 'Select an active IHP-WINS organization'})
+                origin = item.get('sources', {}).get(field, {'sheet':sheet,'row':number,'cell':column+str(number)})
+                if sheet == 'Partners':
+                    index = item['partner_rows'].index(number)
+                    origin = item.get('relation_sources', {}).get('partner_org_ids', [{}] * len(item['partner_rows']))[index].get(field, origin)
+                preview['errors'].append(dict(origin, ref=item['ref'], field=field,
+                    message='Select an active IHP-WINS organization'))
     batch_id = S.uid()
     model.Session.execute(S.imports.insert().values(id=batch_id, user_id=actor.id,
         digest=digest, payload=json.dumps(preview), result='[]', status='preview', created_at=S.now()))
@@ -108,6 +113,9 @@ def ihpix_import_create(context, data):
     try:
         for item in payload['rows']:
             data = dict(item['data'], save_as_draft='1')
+            conflicts = B.contradictions(data)
+            if conflicts:
+                raise tk.ValidationError(conflicts)
             activity = V.save(context, data)
             result.append({'ref': item['ref'], 'id': activity.id, 'title': activity.title})
         model.Session.execute(S.imports.update().where(S.imports.c.id == batch.id)

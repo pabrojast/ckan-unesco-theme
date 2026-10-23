@@ -77,29 +77,85 @@ def notifications():
     return render_template('ihpix/notifications.html', result=C.ihpix_notification_list(context(), {}))
 
 
+def _import_download(example=False):
+    from ckan.lib.helpers import lang
+    organizations = tk.get_action('organization_list')(context(), {'all_fields': True, 'limit': 1000})
+    defaults=R.defaults_for(c.userobj)
+    org_id=defaults.get('institution_org_id')
+    if org_id and org_id not in {org['id'] for org in organizations}:
+        org=model.Group.get(org_id)
+        if org:
+            organizations.append({'id':org.id,'name':org.name,'title':org.display_name})
+    raw = B.template(organizations, defaults=defaults, locale=lang(), example=example)
+    filename = 'ihpix-example-v2.xlsx' if example else 'ihpix-import-v2.xlsx'
+    return Response(raw, mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                    headers={'Content-Disposition': 'attachment; filename=' + filename, 'Cache-Control':'private, no-store'})
+
+
 @signed_in
 def import_template():
-    organizations = tk.get_action('organization_list')(context(), {'all_fields': True, 'limit': 1000})
-    return Response(B.template(organizations), mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                    headers={'Content-Disposition': 'attachment; filename=ihpix-import-v1.xlsx'})
+    return _import_download()
+
+
+@signed_in
+def import_example():
+    return _import_download(example=True)
 
 
 @signed_in
 def bulk_import():
-    batch = None
+    from ckan.lib.helpers import lang
+    from ckanext.theme_ejemplo.ihpix_bulk_display import present
+    batch, upload_error, status = None, None, 200
+    confirm_error = False
     if request.method == 'POST':
-        if request.form.get('confirm'):
-            R.ihpix_import_create(context(), dict(request.form))
-            return redirect(tk.url_for('theme_ejemplo.ihpix_import', id=request.form['id']))
-        upload = request.files.get('workbook')
-        if not upload:
-            raise tk.ValidationError({'workbook': 'Choose an XLSX workbook'})
-        raw = upload.read(5 * 1024 * 1024 + 1)
-        batch = R.ihpix_import_preview(context(), {'workbook': base64.b64encode(raw).decode('ascii')})
-        return redirect(tk.url_for('theme_ejemplo.ihpix_import', id=batch['id']))
-    if request.args.get('id'):
+        try:
+            if request.form.get('confirm'):
+                R.ihpix_import_create(context(), dict(request.form))
+                return redirect(tk.url_for('theme_ejemplo.ihpix_import', id=request.form['id']))
+            upload = request.files.get('workbook')
+            if not upload or not upload.filename:
+                raise tk.ValidationError({'workbook': 'Choose an XLSX workbook'})
+            raw = upload.read(5 * 1024 * 1024 + 1)
+            batch = R.ihpix_import_preview(context(), {'workbook': base64.b64encode(raw).decode('ascii')})
+            return redirect(tk.url_for('theme_ejemplo.ihpix_import', id=batch['id']))
+        except (tk.ValidationError, tk.NotAuthorized, tk.ObjectNotFound) as exc:
+            model.Session.rollback()
+            confirming = bool(request.form.get('confirm') and request.form.get('id'))
+            if not isinstance(exc, tk.ValidationError) and not confirming:
+                raise
+            if confirming:
+                # Volver a autorizar el lote antes de mostrar su contenido tras un fallo.
+                batch = R.ihpix_import_show(context(), {'id': request.form['id']})
+                confirm_error = True
+            def readable(message):
+                message=str(message)
+                if ': ' in message:
+                    prefix,value=message.split(': ',1)
+                    return tk._(prefix+': ')+value
+                return tk._(message)
+            if isinstance(exc, tk.ValidationError):
+                upload_error = [readable(message) for value in exc.error_dict.values()
+                                for message in (value if isinstance(value, list) else [value])]
+                status = 400
+            else:
+                upload_error = [readable(exc)]
+                status = 403 if isinstance(exc, tk.NotAuthorized) else 404
+    if request.method == 'GET' and request.args.get('id'):
         batch = R.ihpix_import_show(context(), {'id': request.args['id']})
-    return render_template('ihpix/import.html', batch=batch)
+    display = None
+    if batch:
+        organizations = tk.get_action('organization_list')(context(), {'all_fields': True, 'limit': 1000})
+        ids={item['data'].get('institution_org_id') for item in batch['preview']['rows']}
+        ids.update(org for item in batch['preview']['rows'] for org in item['data'].get('partner_org_ids', []))
+        known={org['id'] for org in organizations}
+        for org_id in ids-known-{None,''}:
+            org=model.Group.get(org_id)
+            if org and org.is_organization and org.state=='active':
+                organizations.append({'id':org.id,'name':org.name,'title':org.display_name})
+        display = present(batch, lang(), organizations, request.args.get('page', '1'))
+    return render_template('ihpix/import.html', batch=batch, preview=display, upload_error=upload_error, confirm_error=confirm_error,
+        drafts_url=tk.url_for('theme_ejemplo.user_ihpix', id=c.userobj.name, status='draft')), status
 
 
 @signed_in
@@ -201,6 +257,7 @@ def register(blueprint):
         ('/ihpix/report/<id>/collaboration', 'ihpix_report_collaboration', report_collaboration, ['GET', 'POST']),
         ('/ihpix/notifications', 'ihpix_notifications', notifications, ['GET', 'POST']),
         ('/ihpix/import/template.xlsx', 'ihpix_import_template', import_template, ['GET']),
+        ('/ihpix/import/example.xlsx', 'ihpix_import_example', import_example, ['GET']),
         ('/ihpix/import', 'ihpix_import', bulk_import, ['GET', 'POST']),
         ('/ihpix/reports/generate', 'ihpix_narrative', narrative, ['GET']),
         ('/ihpix/activities/<id>', 'ihpix_activity_detail', activity, ['GET']),

@@ -882,3 +882,7 @@ Todos los SLD, manuales o automáticos, asociados o independientes, quedan fuera
 de totales y rankings de descargas. No muestran insignias de descarga. El
 histórico original por recurso queda conservado; el total del sitio se
 reconcilia por suma de recursos elegibles, sin descontar repetidamente.
+
+## Importación Excel IHP-IX: preparar, revisar y crear (2026-10-23)
+
+`/ihpix/import` ofrece la plantilla v2 en `/ihpix/import/template.xlsx` y un ejemplo completo separado en `/ihpix/import/example.xlsx`; ambas rutas requieren autenticación. Los datos compartidos se completan una vez, Actividades tiene 11 columnas y los detalles se distribuyen en hojas opcionales. El servidor acepta también v1. La vista previa distingue errores de valores y respuestas pendientes para envío; conserva todos los campos y permite crear borradores tras confirmación explícita. Un fallo transaccional mantiene el lote sin crear y permite reintentar. Ver [[IHP-IX Bulk Import UX October 2026]].
