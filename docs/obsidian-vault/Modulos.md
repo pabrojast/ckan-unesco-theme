@@ -634,3 +634,11 @@ La cabecera muestra la sección como **Learning**, con el título completo en el
 Con learning activo, la navegación usa una distribución adaptable: una fila en
 escritorio amplio, dos en tablet y menú desplegable con desplazamiento en móvil.
 Los enlaces no se ocultan para hacer espacio y el buscador conserva su ancho disponible.
+
+## Carga de imágenes de la portada
+
+`templates/home/snippets/slideshow.html` carga inicialmente solo el primer fondo.
+Los demás fondos se solicitan al mostrar su diapositiva. La rotación automática
+espera al evento `load` y se pausa cuando el carrusel sale de la pantalla o
+la pestaña queda oculta. Conserva los controles manuales, la pausa por foco/hover
+y la preferencia de movimiento reducido. El primer fondo funciona sin JavaScript.

@@ -40,7 +40,7 @@
   <div class="slideshow-wrapper">
     {% for item in slideshow_items %}
       <div class="slide {% if loop.first %}slide-active{% endif %}" data-index="{{ loop.index0 }}">
-        <div class="slide-image" style="background-image: url('{{ item.image }}');">
+        <div class="slide-image" {% if loop.first %}style="background-image: url('{{ item.image }}');"{% else %}data-slide-src="{{ item.image }}"{% endif %}>
           <div class="slide-content">
             <span class="slide-tag">{{ _('UNESCO IHP') }}</span>
             <h2>{{ item.title }}</h2>
@@ -83,6 +83,8 @@
     const SLIDE_DURATION = 6000;
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
     let slideInterval = null;
+    let pageLoaded = document.readyState === 'complete';
+    let inViewport = !('IntersectionObserver' in window);
 
     if (!container || !totalSlides) return;
 
@@ -108,6 +110,13 @@
     function showSlide(n) {
       const prevSlide = currentSlide;
       currentSlide = (n + totalSlides) % totalSlides;
+
+      // Descargar cada fondo al mostrarlo; la primera imagen funciona sin JS.
+      const image = slides[currentSlide].querySelector('[data-slide-src]');
+      if (image) {
+        image.style.backgroundImage = 'url(' + JSON.stringify(image.dataset.slideSrc) + ')';
+        image.removeAttribute('data-slide-src');
+      }
 
       slides.forEach((slide, i) => {
         slide.classList.remove('slide-active', 'slide-exit');
@@ -139,7 +148,10 @@
     }
 
     function startAuto() {
-      if (slideInterval !== null || reduceMotion.matches || totalSlides < 2) return;
+      // La rotación no compite con la carga inicial ni descarga fuera de vista.
+      if (slideInterval !== null || reduceMotion.matches || totalSlides < 2
+          || !pageLoaded || !inViewport || document.hidden
+          || container.matches(':hover') || container.contains(document.activeElement)) return;
       slideInterval = setInterval(() => showSlide(currentSlide + 1), SLIDE_DURATION);
       runProgress();
     }
@@ -153,6 +165,21 @@
 
     showSlide(0);
     startAuto();
+
+    window.addEventListener('load', () => {
+      pageLoaded = true;
+      startAuto();
+    }, {once: true});
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) stopAuto(); else startAuto();
+    });
+    if ('IntersectionObserver' in window) {
+      const observer = new IntersectionObserver((entries) => {
+        inViewport = entries[0].isIntersecting;
+        if (inViewport) startAuto(); else stopAuto();
+      });
+      observer.observe(container);
+    }
 
     // Pausa en hover y mientras el foco esté dentro del carrusel
     container.addEventListener('mouseenter', stopAuto);
