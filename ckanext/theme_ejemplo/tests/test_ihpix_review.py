@@ -12,7 +12,7 @@ from ckanext.theme_ejemplo.ihpix_presentation import slides
 
 
 def workbook(rows, relations=None):
-    book = load_workbook(io.BytesIO(B.template()))
+    book = load_workbook(io.BytesIO(B.template_v1()))
     for data in rows:
         book['Activities'].append([data.get(key, '') for key in B.FIELDS])
     for name, records in (relations or {}).items():
@@ -148,7 +148,7 @@ def test_import_external_institution_does_not_inherit_verified_profile_id():
 
 def test_xlsx_malformed_xml_is_a_validation_error():
     raw = io.BytesIO()
-    with zipfile.ZipFile(io.BytesIO(B.template())) as source, zipfile.ZipFile(raw, 'w') as target:
+    with zipfile.ZipFile(io.BytesIO(B.template_v1())) as source, zipfile.ZipFile(raw, 'w') as target:
         for item in source.infolist():
             target.writestr(item, b'<worksheet>broken' if item.filename == 'xl/worksheets/sheet2.xml'
                             else source.read(item.filename))

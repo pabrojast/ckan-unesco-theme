@@ -53,3 +53,4 @@ jobs:
           node --check ckanext/theme_ejemplo/public/js/ihpix-report.js
           node --check ckanext/theme_ejemplo/public/js/ihpix-relations.js
           node --check ckanext/theme_ejemplo/public/js/ihpix-presentation.js
+          node --check scripts/playwright/ihpix_bulk.cjs

@@ -1,18 +1,44 @@
 {% extends 'ihpix/tools_base.html' %}
+{% macro issues(items) %}
+<ul class="ix-import-issues">
+{% for issue in items %}<li><strong>{{ issue.label }}</strong>: {{ issue.text }}<small>{{ issue.sheet }} · {% if issue.missing_row %}{{ _('Add a row for activity') }} {{ issue.ref }}{% if issue.indicator %} · {{ _('Indicator') }} {{ issue.indicator }}{% endif %}{% else %}{{ _('Cell') }} {{ issue.cell }}{% endif %}</small></li>{% endfor %}
+</ul>
+{% endmacro %}
 {% block tools_content %}
-<h1>{{ _('Import IHP-IX reports') }}</h1>
-<p>{{ _('Upload a completed workbook, review validation results, then create drafts. Each draft can be completed and submitted separately.') }}</p>
-<p><a class="btn" href="{{ h.url_for('theme_ejemplo.ihpix_import_template') }}">{{ _('Download XLSX template') }}</a></p>
-<form method="post" enctype="multipart/form-data" class="ix-tools-card">{{ h.csrf_input() }}<label for="workbook">{{ _('Completed XLSX workbook (up to 5 MB)') }}</label><input type="file" id="workbook" name="workbook" accept=".xlsx" required><button class="btn btn-primary">{{ _('Validate and preview') }}</button></form>
-{% if batch %}
-  {% if batch.status == 'created' %}<h2>{{ _('Drafts created') }}</h2><ul>{% for item in batch.created %}<li><a href="{{ h.url_for('theme_ejemplo.ihpix_report_edit', id=item.id) }}">{{ item.ref }} · {{ item.title }}</a></li>{% endfor %}</ul>
+<link rel="stylesheet" href="{{ h.url_for_static('/css/ihpix-import.css') }}">
+<div class="ix-import">
+  <header class="ix-import-header"><div><p class="ix-import-eyebrow">IHP-IX · {{ _('Multiple activities') }}</p><h1>{{ _('Import activities from Excel') }}</h1><p>{{ _('Fill in your institution details once, add your activities and complete only the sections you need.') }}</p></div><a class="btn ix-import-secondary" href="{{ drafts_url }}"><i class="fa fa-folder-open" aria-hidden="true"></i> {{ _('My drafts') }}</a></header>
+  <ol class="ix-import-steps" aria-label="{{ _('Import steps') }}">
+    {% for label in [_('Prepare the file'), _('Upload'), _('Review'), _('Create drafts')] %}<li{% if (not batch and loop.index == 1) or (batch and batch.status != 'created' and loop.index == 3) or (batch and batch.status == 'created' and loop.index == 4) %} aria-current="step"{% endif %}><span>{{ loop.index }}</span>{{ label }}</li>{% endfor %}
+  </ol>
+  {% if upload_error %}<div class="ix-import-alert is-error" role="alert"><h2>{{ _('Drafts could not be created') if confirm_error else _('The file could not be processed') }}</h2><ul>{% for message in upload_error %}<li>{{ message }}</li>{% endfor %}</ul><p>{{ _('Correct the file and upload it again. No drafts were created.') }}</p></div>{% endif %}
+  {% if batch and batch.status == 'created' %}
+    <section class="ix-import-alert is-success"><h2><i class="fa fa-check-circle" aria-hidden="true"></i> {{ _('Drafts created') }} · {{ batch.created|length }}</h2><p>{{ _('Your activities are saved. Open each draft to complete it and submit it for review.') }}</p><a class="btn btn-primary" href="{{ drafts_url }}">{{ _('Open my drafts') }}</a><ul class="ix-import-created">{% for item in batch.created %}<li><a href="{{ h.url_for('theme_ejemplo.ihpix_report_edit', id=item.id) }}">{{ item.ref }} · {{ item.title }}</a></li>{% endfor %}</ul><a href="{{ h.url_for('theme_ejemplo.ihpix_import') }}">{{ _('Import another file') }}</a></section>
   {% else %}
-    <h2>{{ _('Preview') }} · {{ batch.preview.rows|length }} {{ _('activities') }}</h2>
-    {% for category, label in [('errors', _('Invalid values: correct before importing')), ('warnings', _('Incomplete for submission: can be saved as drafts'))] %}
-      {% if batch.preview[category] %}<details open class="ix-tools-card"><summary>{{ label }} ({{ batch.preview[category]|length }})</summary><ul>{% for error in batch.preview[category] %}<li>{{ error.sheet }}!{{ error.cell }} · {{ error.field }}: {{ error.message }}</li>{% endfor %}</ul></details>{% endif %}
-    {% endfor %}
-    {% for item in batch.preview.rows %}<details class="ix-tools-card"><summary>{{ item.ref }} · {{ item.data.title }}</summary><dl>{% for field, value in item.data.items() if value and field != 'save_as_draft' %}<dt>{{ field }}</dt><dd>{{ value }}</dd>{% endfor %}</dl></details>{% endfor %}
-    {% if not batch.preview.errors %}<form method="post">{{ h.csrf_input() }}<input type="hidden" name="id" value="{{ batch.id }}"><button class="btn btn-primary" name="confirm" value="1">{{ _('Confirm and create drafts') }}</button></form>{% endif %}
+  <section class="ix-import-prepare" aria-label="{{ _('Prepare the file') }}">
+    <article class="ix-import-card"><span class="ix-import-icon"><i class="fa fa-file-excel" aria-hidden="true"></i></span><h2>{{ _('Start with the empty template') }}</h2><p>{{ _('Start here contains the common details. Activities has 11 columns. The other sheets are optional and organized by topic.') }}</p><a class="btn btn-primary" href="{{ h.url_for('theme_ejemplo.ihpix_import_template') }}">{{ _('Download empty template') }}</a></article>
+    <article class="ix-import-card"><span class="ix-import-icon"><i class="fa fa-lightbulb" aria-hidden="true"></i></span><h2>{{ _('See a completed example') }}</h2><p>{{ _('Three fictional activities show a basic report, training indicators and cooperation involving several countries and resources.') }}</p><a class="btn ix-import-secondary" href="{{ h.url_for('theme_ejemplo.ihpix_import_example') }}">{{ _('Download completed example') }}</a></article>
+  </section>
+  <details class="ix-import-guide"><summary>{{ _('How to fill in the workbook') }}</summary><ol><li>{{ _('Complete Start here once with your contact, institution and biennium.') }}</li><li>{{ _('In Activities, enter one activity per row. Keep the prepared references: A001, A002…') }}</li><li>{{ _('Use the same reference to add indicators, support, contributions or resources on the optional sheets.') }}</li><li>{{ _('Use the dropdowns. For multiple choices, separate values with ;. Leave unanswered questions blank.') }}</li></ol><p>{{ _('Only the title is required to create a draft. You can complete other required answers before submitting it for review.') }}</p><p>{{ _('Previously downloaded IHP-IX templates are also accepted.') }}</p></details>
+  <form method="post" enctype="multipart/form-data" class="ix-import-upload" id="ix-import-upload">{{ h.csrf_input() }}<div><label for="workbook">{{ _('Upload your completed workbook') }}</label><p id="workbook-help">{{ _('XLSX · Up to 5 MB · Up to 2,000 activities') }}</p><input type="file" id="workbook" name="workbook" accept=".xlsx,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" aria-describedby="workbook-help" required></div><button class="btn btn-primary" type="submit">{{ _('Validate and preview') }}</button><small>{{ _('Uploading checks the file. Drafts are created only after your confirmation.') }}</small></form>
+  {% if batch %}
+  <section class="ix-import-review" aria-labelledby="ix-import-review-title">
+    <h2 id="ix-import-review-title">{{ _('Review your activities') }}</h2>
+    {% if preview.example %}<p class="ix-import-alert">{{ _('This file contains fictional examples. Any drafts you create from it will also be examples.') }}</p>{% endif %}
+    <div class="ix-import-counts"><div><strong>{{ batch.preview.rows|length }}</strong>{{ _('Activities in this file') }}</div><div class="{% if preview.errors %}has-errors{% endif %}"><strong>{{ preview.errors|length }}</strong>{{ _('Errors to correct') }}</div><div><strong>{{ preview.incomplete }}</strong>{{ _('Activities to complete before submission') }}</div></div>
+    {% if preview.errors %}<div class="ix-import-alert is-error" role="alert"><h3>{{ _('Correct these values before creating drafts') }}</h3><p>{{ _('Use the worksheet and cell shown below, save your Excel file and upload it again.') }} <a href="#ix-import-upload">{{ _('Upload corrected file') }}</a></p>{% if preview.general_errors %}{{ issues(preview.general_errors) }}{% endif %}</div>{% else %}<p class="ix-import-alert is-success">{{ _('The file can be imported. Missing answers can be completed in the drafts before submission.') }}</p>{% endif %}
+    {% if preview.general_warnings %}<details class="ix-import-pending"><summary>{{ _('Complete before submission') }}</summary>{{ issues(preview.general_warnings) }}</details>{% endif %}
+    {% if preview.common %}<details class="ix-import-card"><summary>{{ _('Shared reporting details') }}</summary><p>{{ _('These values apply unless the activity has an exception.') }}</p><dl class="ix-import-values">{% for field in preview.common %}<div><dt>{{ field.label }}</dt><dd>{{ field.value }}</dd></div>{% endfor %}</dl></details>{% endif %}
+    {% for item in preview.rows %}
+    <article class="ix-import-activity" id="activity-{{ loop.index }}"><header><div><span class="ix-import-ref">{{ item.ref }}</span><h3>{{ item.data.title or _('Untitled activity') }}</h3></div><span class="ix-import-status{% if item.errors %} is-error{% endif %}">{{ _('Needs correction') if item.errors else _('Can create draft') }}</span></header>
+      {% if item.errors %}<div class="ix-import-alert is-error">{{ issues(item.errors) }}</div>{% endif %}
+      {% if item.warnings %}<details class="ix-import-pending"><summary>{{ _('Complete before submission') }} · {{ item.warnings|length }}</summary>{{ issues(item.warnings) }}</details>{% endif %}
+      <details><summary>{{ _('View activity details') }}</summary>{% for section in item.sections %}<h4>{{ section.title }}</h4><dl class="ix-import-values">{% for field in section.fields %}<div><dt>{{ field.label }}</dt><dd>{{ field.value }}{% if field.source %}<small>{{ field.source.sheet }} · {{ field.source.cell }}</small>{% endif %}</dd></div>{% endfor %}</dl>{% endfor %}</details>
+    </article>{% endfor %}
+    {% if preview.pages > 1 %}<nav class="ix-import-pagination" aria-label="{{ _('Preview pages') }}">{% if preview.page > 1 %}<a class="btn ix-import-secondary" href="{{ h.url_for('theme_ejemplo.ihpix_import', id=batch.id, page=preview.page-1) }}#ix-import-review-title">{{ _('Previous') }}</a>{% endif %}<span>{{ preview.page }} / {{ preview.pages }}</span>{% if preview.page < preview.pages %}<a class="btn ix-import-secondary" href="{{ h.url_for('theme_ejemplo.ihpix_import', id=batch.id, page=preview.page+1) }}#ix-import-review-title">{{ _('Next') }}</a>{% endif %}</nav>{% endif %}
+    {% if not preview.errors %}<form method="post" class="ix-import-confirm">{{ h.csrf_input() }}<input type="hidden" name="id" value="{{ batch.id }}"><p>{{ _('Nothing will be published or submitted automatically.') }}</p><button class="btn btn-primary" type="submit" name="confirm" value="1">{{ _('Create drafts') }} ({{ batch.preview.rows|length }})</button></form>{% endif %}
+  </section>
   {% endif %}
-{% endif %}
+  {% endif %}
+</div>
 {% endblock %}

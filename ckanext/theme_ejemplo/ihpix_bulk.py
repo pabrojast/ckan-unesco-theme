@@ -3,6 +3,7 @@
 import datetime
 import io
 import json
+import re
 import zipfile
 from xml.etree.ElementTree import ParseError
 
@@ -26,7 +27,7 @@ SHEETS = {
 }
 
 
-def template(organizations=()):
+def template_v1(organizations=()):
     workbook = Workbook()
     instructions = workbook.active
     instructions.title = 'Instructions'
@@ -100,11 +101,51 @@ def _parse(raw, defaults=None):
         with zipfile.ZipFile(io.BytesIO(raw)) as archive:
             if sum(info.file_size for info in archive.infolist()) > 30 * 1024 * 1024:
                 raise ValueError('Expanded workbook exceeds 30 MB')
+            # No confiar en <dimension>: algunos escritores omiten filas pobladas.
+            # Acotar las coordenadas reales antes de que openpyxl construya filas.
+            from openpyxl.xml.functions import iterparse
+            from openpyxl.utils.cell import column_index_from_string
+            for name in archive.namelist():
+                if not re.fullmatch(r'xl/worksheets/sheet[0-9]+\.xml', name):
+                    continue
+                with archive.open(name) as stream:
+                    previous_row, current_row, previous_column = 0, None, 0
+                    for event, element in iterparse(stream, events=('start', 'end')):
+                        tag = element.tag.rsplit('}', 1)[-1]
+                        if event == 'start' and tag == 'row':
+                            current_row = int(element.get('r', str(previous_row + 1)))
+                            if current_row <= previous_row:
+                                raise ValueError('Worksheet structure changed; download the current template')
+                            if current_row > MAX_ROWS * 8 + 4:
+                                raise ValueError('Worksheet dimensions exceed template limits')
+                            previous_row, previous_column = current_row, 0
+                        if event == 'start' and tag == 'c':
+                            address = re.fullmatch(r'([A-Z]{1,3})([0-9]+)', element.get('r', ''))
+                            if not address or column_index_from_string(address[1]) > len(FIELDS) or int(address[2]) > MAX_ROWS * 8 + 4:
+                                raise ValueError('Worksheet dimensions exceed template limits')
+                            column = column_index_from_string(address[1])
+                            if int(address[2]) != current_row or column <= previous_column:
+                                raise ValueError('Worksheet structure changed; download the current template')
+                            previous_column = column
+                        if event == 'end':
+                            if tag == 'row':
+                                current_row = None
+                            element.clear()
         workbook = load_workbook(io.BytesIO(raw), read_only=True, data_only=False, keep_links=False)
+        for sheet in workbook:
+            sheet.reset_dimensions()
+            sheet.calculate_dimension(force=True)
     except (zipfile.BadZipFile, KeyError, OSError, ParseError, SyntaxError,
             RuntimeError, NotImplementedError) as exc:
         raise ValueError('Upload a valid XLSX workbook') from exc
+    if '_IHP_META' in workbook:
+        try:
+            from ckanext.theme_ejemplo.ihpix_bulk_workbook import parse_v2
+            return parse_v2(workbook)
+        finally:
+            workbook.close()
     if 'Instructions' not in workbook or workbook['Instructions']['B1'].value != VERSION:
+        workbook.close()
         raise ValueError('Unsupported template version; download the current template')
     def error(sheet, row, field, message, target=errors):
         headers = SHEETS[sheet]
@@ -140,71 +181,121 @@ def _parse(raw, defaults=None):
                         value = int(value)
                     values[field] = '' if value is None else str(value).strip()
                 records[name].append((number, values))
-        for number, data in records['Activities']:
-            ref = data.pop('row_ref')
-            if not ref or ref in activities:
-                error('Activities', number, 'row_ref', 'Use a unique, nonempty row reference')
-                continue
-            for field, value in (defaults or {}).items():
-                if field in ('institution', 'institution_org_id'):
-                    continue
-                if not data.get(field):
-                    data[field] = value
-            # No atribuir una institución externa al perfil por completar sólo el ID.
-            if not data.get('institution') and not data.get('institution_org_id'):
-                for field in ('institution', 'institution_org_id'):
-                    data[field] = (defaults or {}).get(field, '')
-            for field in F.MULTI_FORM_FIELDS:
-                data[field] = [v.strip() for v in data[field].split(';') if v.strip()]
-            activities[ref] = {'row': number, 'data': data, 'resource_rows': [], 'partner_rows': []}
-        for name, field in [('Contributions','contributions_json'), ('Synergies','synergies_json'),
-                            ('Supporters','supporters_json'), ('Partners','partner_org_ids'), ('Resources','links_json')]:
-            for number, entry in records[name]:
-                ref = entry.pop('row_ref')
-                if ref not in activities:
-                    error(name, number, 'row_ref', 'No matching activity row')
-                    continue
-                if name == 'Supporters':
-                    entry['types'] = [v.strip() for v in entry['types'].split(';') if v.strip()]
-                if name == 'Partners':
-                    activities[ref]['partner_rows'].append(number)
-                    entry = entry['organization_id']
-                if name == 'Resources':
-                    activities[ref]['resource_rows'].append(number)
-                    try:
-                        L.validate_link(entry)
-                    except L.LinkValidationError as exc:
-                        for key, message in exc.errors.items():
-                            error(name, number, key, message)
-                else:
-                    _, invalid = R.validate({field: [entry]})
-                    invalid_field = 'row_ref'
-                    if name in ('Contributions', 'Synergies'):
-                        invalid_field = ('priority_area' if entry['priority_area'] not in C.PRIORITY_AREAS else
-                            'output' if not C.is_valid_output_for_pa(entry['priority_area'], entry['output']) else 'key_activity_code')
-                    elif name == 'Supporters':
-                        invalid_field = 'country' if not R.country_metadata(entry['country']) else 'types'
-                    elif name == 'Partners':
-                        invalid_field = 'organization_id'
-                    for message in invalid.values():
-                        error(name, number, invalid_field, message)
-                activities[ref]['data'].setdefault(field, []).append(entry)
-        for ref, item in activities.items():
-            data, row = item['data'], item['row']
-            try:
-                F.validate_report_payload(data, True)
-            except F.ReportValidationError as exc:
-                for key, message in exc.errors.items():
-                    error('Activities', row, key, message)
-            try:
-                F.validate_report_payload(data, False)
-            except F.ReportValidationError as exc:
-                for key, message in exc.errors.items():
-                    error('Activities', row, key, message, warnings)
-            data['save_as_draft'] = '1'
-        if not activities:
-            errors.append({'sheet': 'Activities', 'row': 2, 'cell': 'A2', 'field': 'row_ref', 'message': 'Add at least one activity'})
-        return {'version': VERSION, 'rows': [{'ref': ref, **item} for ref, item in activities.items()],
-                'errors': errors, 'warnings': warnings}
+        return validate_records(records, defaults, initial_errors=errors)
     finally:
         workbook.close()
+
+def validate_records(records, defaults=None, sources=None, version=VERSION, initial_errors=None):
+    errors, warnings, activities = list(initial_errors or []), [], {}
+    sources = dict(sources or {})
+    original_records = {name: [(row, dict(data)) for row, data in entries] for name, entries in records.items()}
+    def location(sheet, row, field):
+        from openpyxl.utils import get_column_letter
+        headers = SHEETS[sheet]
+        fallback = {'sheet': sheet, 'row': row,
+                    'cell': get_column_letter(headers.index(field) + 1) + str(row) if field in headers else str(row)}
+        return (sources or {}).get((sheet, row, field), fallback)
+    def error(sheet, row, field, message, target=errors):
+        target.append(dict(location(sheet, row, field), field=field, message=message,
+                           _sheet=sheet, _row=row))
+    for number, data in records['Activities']:
+        ref = data.pop('row_ref')
+        if not ref or ref in activities:
+            error('Activities', number, 'row_ref', 'Use a unique, nonempty row reference')
+            continue
+        for field, value in (defaults or {}).items():
+            if field in ('institution', 'institution_org_id'):
+                continue
+            if not data.get(field):
+                data[field] = value
+        # No atribuir una institución externa al perfil por completar sólo el ID.
+        if not data.get('institution') and not data.get('institution_org_id'):
+            for field in ('institution', 'institution_org_id'):
+                data[field] = (defaults or {}).get(field, '')
+        for field in F.MULTI_FORM_FIELDS:
+            data[field] = [v.strip() for v in data[field].split(';') if v.strip()]
+        activities[ref] = {'row': number, 'data': data, 'resource_rows': [], 'partner_rows': [],
+                           'sources': {field: location('Activities', number, field) for field in FIELDS}}
+    invalid_relations = set()
+    for name, field in [('Contributions','contributions_json'), ('Synergies','synergies_json'),
+                        ('Supporters','supporters_json'), ('Partners','partner_org_ids'), ('Resources','links_json')]:
+        for number, entry in records[name]:
+            ref = entry.pop('row_ref')
+            if ref not in activities:
+                error(name, number, 'row_ref', 'No matching activity row')
+                continue
+            if name == 'Supporters':
+                entry['types'] = [v.strip() for v in entry['types'].split(';') if v.strip()]
+            if name == 'Partners':
+                activities[ref]['partner_rows'].append(number)
+                entry = entry['organization_id']
+            if name == 'Resources':
+                activities[ref]['resource_rows'].append(number)
+                try:
+                    L.validate_link(entry)
+                except L.LinkValidationError as exc:
+                    for key, message in exc.errors.items():
+                        error(name, number, key, message)
+            else:
+                _, invalid = R.validate({field: [entry]})
+                invalid_field = 'row_ref'
+                if name in ('Contributions', 'Synergies'):
+                    invalid_field = ('priority_area' if entry['priority_area'] not in C.PRIORITY_AREAS else
+                        'output' if not C.is_valid_output_for_pa(entry['priority_area'], entry['output']) else 'key_activity_code')
+                elif name == 'Supporters':
+                    invalid_field = 'country' if not R.country_metadata(entry['country']) else 'types'
+                elif name == 'Partners':
+                    invalid_field = 'organization_id'
+                if invalid:
+                    invalid_relations.add((ref, field))
+                for message in invalid.values():
+                    error(name, number, invalid_field, message)
+            sources.setdefault(('Activities', activities[ref]['row'], field), location(name, number, 'row_ref'))
+            activities[ref]['sources'].setdefault(field, location(name, number, 'row_ref'))
+            activities[ref]['data'].setdefault(field, []).append(entry)
+            activities[ref].setdefault('relation_sources', {}).setdefault(field, []).append(
+                {key: location(name, number, key) for key in SHEETS[name]})
+    for ref, item in activities.items():
+        data, row = item['data'], item['row']
+        for key, message in contradictions(data).items():
+            error('Activities', row, key, message)
+        invalid_fields = set()
+        try:
+            F.validate_report_payload(data, True)
+        except F.ReportValidationError as exc:
+            invalid_fields.update(exc.errors)
+            for key, message in exc.errors.items():
+                if (ref, key.split('.')[0]) not in invalid_relations:
+                    error('Activities', row, key, message)
+        try:
+            F.validate_report_payload(data, False)
+        except F.ReportValidationError as exc:
+            for key, message in exc.errors.items():
+                if key not in invalid_fields:
+                    error('Activities', row, key, message, warnings)
+        data['save_as_draft'] = '1'
+    if not activities:
+        errors.append({'sheet': 'Activities', 'row': 2, 'cell': 'A2', 'field': 'row_ref', 'message': 'Add at least one activity'})
+    refs = {(sheet, row): entry.get('row_ref', '') for sheet, entries in original_records.items() for row, entry in entries}
+    for issue in errors + warnings:
+        issue.setdefault('ref', refs.get((issue.pop('_sheet', ''), issue.pop('_row', 0)), ''))
+    return {'version': version, 'rows': [{'ref': ref, **item} for ref, item in activities.items()],
+            'errors': errors, 'warnings': warnings}
+
+
+def contradictions(data):
+    """No dejar que un No explícito borre datos proporcionados en el Excel."""
+    errors = {}
+    extra = {'has_member_state_support': ('supporters_json',), 'has_synergies': ('synergies_json',)}
+    for gate, children in F.GATE_RESETS.items():
+        if F._gate_answered(data.get(gate)) and not C.normalize_bool(data[gate]):
+            for field in tuple(children) + extra.get(gate, ()):
+                value = data.get(field)
+                if value not in (None, '', 0, '0', [], '[]'):
+                    errors[field] = 'This answer contains data, but its Yes/No question is No. Correct the question or clear this answer.'
+    return errors
+
+
+def template(organizations=(), defaults=None, locale='en', example=False):
+    from ckanext.theme_ejemplo.ihpix_bulk_workbook import build
+    return build(organizations, defaults, locale, example)

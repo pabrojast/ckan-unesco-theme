@@ -357,3 +357,7 @@ las claves de caché anónima del tema. No tocar producción.
   Artefactos locales en `output/sld-validation/` y `output/playwright/sld-*.png`.
 - Se retiraron las dos bases de prueba y su red, y el builder temporal. No se
   borraron recursos, vistas ni históricos de tracking. Producción no se modificó.
+
+## Verificación de importación IHP-IX (2026-10-23)
+
+`Theme checks` incluye la sintaxis de `scripts/playwright/ihpix_bulk.cjs` además de las regresiones puras. El recorrido que crea borradores y comprueba rollback debe ejecutarse únicamente en CKAN aislado; ver [[Testing]] y [[IHP-IX Bulk Import UX October 2026]].

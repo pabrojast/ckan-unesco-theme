@@ -9867,6 +9867,627 @@ msgstr ""
 "Aucune localisation n’est disponible sur cette carte pour les activités "
 "sélectionnées."
 
+msgid "1. Fill in the common reporting details"
+msgstr "1. Renseignez les informations communes"
+
+msgid "2. Enter activities, then add details only where needed"
+msgstr "2. Saisissez les activités, puis les détails nécessaires"
+
+msgid "3. Upload this workbook, review the results and confirm creation of drafts."
+msgstr ""
+"3. Importez ce fichier, vérifiez les résultats et confirmez la création des "
+"brouillons."
+
+msgid "Activities in this file"
+msgstr "Activités dans ce fichier"
+
+msgid "Activities to complete before submission"
+msgstr "Activités à compléter avant soumission"
+
+msgid "Activity reference"
+msgstr "Référence de l’activité"
+
+msgid "Add at least one activity"
+msgstr "Ajoutez au moins une activité"
+
+msgid "Additional contribution"
+msgstr "Contribution supplémentaire"
+
+msgid "Additional details"
+msgstr "Détails supplémentaires"
+
+msgid "Available choice"
+msgstr "Choix disponible"
+
+msgid "Beneficiary Member States"
+msgstr "États membres bénéficiaires"
+
+msgid "Beneficiary regions"
+msgstr "Régions bénéficiaires"
+
+msgid "Brief description"
+msgstr "Brève description"
+
+msgid "Can create draft"
+msgstr "Brouillon prêt à être créé"
+
+msgid "Cell"
+msgstr "Cellule"
+
+msgid "Check this value"
+msgstr "Vérifiez cette valeur"
+
+msgid "Choose Additional contribution or Synergy"
+msgstr "Choisissez Contribution supplémentaire ou Synergie"
+
+msgid "Choose a value from Reference lists."
+msgstr "Choisissez une valeur dans les listes de référence."
+
+msgid ""
+"Choose a value from the list. The Output must belong to its Priority Area, "
+"and the key activity to its Output."
+msgstr ""
+"Choisissez une valeur dans la liste. Le résultat doit appartenir à son "
+"domaine prioritaire, et l’activité clé à son résultat."
+
+msgid "Choose an available option or enter a valid number."
+msgstr "Choisissez une option disponible ou saisissez un nombre valide."
+
+msgid "Choose an indicator from the list"
+msgstr "Choisissez un indicateur dans la liste"
+
+msgid ""
+"Choose this code from the dropdown; codes must be text to preserve their "
+"digits."
+msgstr ""
+"Choisissez ce code dans la liste ; il doit être au format texte pour "
+"conserver ses chiffres."
+
+msgid "Column headers do not match template: "
+msgstr "Les en-têtes ne correspondent pas au modèle : "
+
+msgid "Column structure changed: "
+msgstr "La structure des colonnes a changé : "
+
+msgid "Complete Start here once with your contact, institution and biennium."
+msgstr ""
+"Renseignez une seule fois la feuille Commencer ici avec le contact, "
+"l’institution et la période biennale."
+
+msgid "Complete before submission"
+msgstr "À compléter avant soumission"
+
+msgid "Complete the primary classification before adding contributions"
+msgstr "Complétez la classification principale avant d’ajouter des contributions"
+
+msgid "Completion date"
+msgstr "Date de fin"
+
+msgid "Contribution to the key activity"
+msgstr "Contribution à l’activité clé"
+
+msgid "Contributions and synergies"
+msgstr "Contributions et synergies"
+
+msgid "Correct the file and upload it again. No drafts were created."
+msgstr "Corrigez le fichier et importez-le à nouveau. Aucun brouillon n’a été créé."
+
+msgid "Correct these values before creating drafts"
+msgstr "Corrigez ces valeurs avant de créer les brouillons"
+
+msgid "Create drafts"
+msgstr "Créer les brouillons"
+
+msgid "Cross-cutting working groups"
+msgstr "Groupes de travail transversaux"
+
+msgid "Dataset or document"
+msgstr "Jeu de données ou document"
+
+msgid "Describe Other"
+msgstr "Précisez Autre"
+
+msgid "Describe the synergies"
+msgstr "Décrivez les synergies"
+
+msgid "Did countries or regions benefit?"
+msgstr "Des pays ou régions ont-ils bénéficié de l’activité ?"
+
+msgid "Download completed example"
+msgstr "Télécharger l’exemple rempli"
+
+msgid "Download empty template"
+msgstr "Télécharger le modèle vide"
+
+msgid "Email address of the focal point"
+msgstr "Adresse électronique du point focal"
+
+msgid "Enter a whole number from 0 to 2147483647. Leave blank if unanswered."
+msgstr ""
+"Saisissez un entier de 0 à 2147483647. Laissez vide si vous n’avez pas de "
+"réponse."
+
+msgid "Errors to correct"
+msgstr "Erreurs à corriger"
+
+msgid "Event date"
+msgstr "Date de l’événement"
+
+msgid "Event page"
+msgstr "Page d’événement"
+
+msgid "Example publication"
+msgstr "Publication d’exemple"
+
+msgid "Example results only. Replace these with the results of your activity."
+msgstr "Résultats fictifs. Remplacez-les par ceux de votre activité."
+
+msgid "Example workshop"
+msgstr "Atelier d’exemple"
+
+msgid "Existing resource identifier"
+msgstr "Identifiant de la ressource existante"
+
+msgid "Existing resource source"
+msgstr "Source de la ressource existante"
+
+msgid "Expanded workbook exceeds 30 MB"
+msgstr "Le fichier décompressé dépasse 30 Mo"
+
+msgid "Explain how the activity contributed to the selected key activity."
+msgstr "Expliquez la contribution à l’activité clé sélectionnée."
+
+msgid "External link"
+msgstr "Lien externe"
+
+msgid "Fictional activity for learning how to complete this workbook."
+msgstr "Activité fictive pour apprendre à remplir ce fichier."
+
+msgid "Fictional example. Do not submit as a real activity."
+msgstr "Exemple fictif. Ne pas soumettre comme activité réelle."
+
+msgid "Fictional resource used to illustrate an external link."
+msgstr "Ressource fictive illustrant un lien externe."
+
+msgid "Field"
+msgstr "Champ"
+
+msgid "Files and publications can also be added after creating the drafts."
+msgstr ""
+"Vous pouvez aussi ajouter des fichiers et publications après la création des "
+"brouillons."
+
+msgid ""
+"Fill in your institution details once, add your activities and complete only "
+"the sections you need."
+msgstr ""
+"Renseignez votre institution une seule fois, ajoutez vos activités et "
+"complétez uniquement les sections nécessaires."
+
+msgid "Financial support"
+msgstr "Soutien financier"
+
+msgid "Flagship initiatives"
+msgstr "Initiatives phares"
+
+msgid ""
+"For multiple choices, separate names with ;. See Reference lists. Example: "
+"Chile; Kenya."
+msgstr ""
+"Pour plusieurs choix, séparez les noms par ;. Consultez les listes de "
+"référence. Exemple : Chili; Kenya."
+
+msgid "Formulas are not allowed; paste values"
+msgstr "Les formules ne sont pas autorisées ; collez les valeurs"
+
+msgid "Help"
+msgstr "Aide"
+
+msgid "Hosting support"
+msgstr "Soutien à l’accueil"
+
+msgid "How to fill in the workbook"
+msgstr "Comment remplir le fichier"
+
+msgid "IHP-IX · Import activities"
+msgstr "PHI-IX · Importer des activités"
+
+msgid "IHP-WINS organization"
+msgstr "Organisation IHP-WINS"
+
+msgid "Import activities from Excel"
+msgstr "Importer des activités depuis Excel"
+
+msgid "Import another file"
+msgstr "Importer un autre fichier"
+
+msgid "Import steps"
+msgstr "Étapes d’importation"
+
+msgid ""
+"In Activities, enter one activity per row. Keep the prepared references: "
+"A001, A002…"
+msgstr ""
+"Dans Activités, saisissez une activité par ligne. Conservez les références "
+"préparées : A001, A002…"
+
+msgid "In-kind support"
+msgstr "Soutien en nature"
+
+msgid "Indicator"
+msgstr "Indicateur"
+
+msgid "Indicators"
+msgstr "Indicateurs"
+
+msgid "Institution category"
+msgstr "Catégorie d’institution"
+
+msgid "Institution name"
+msgstr "Nom de l’institution"
+
+msgid "Key activity"
+msgstr "Activité clé"
+
+msgid "Knowledge improvement"
+msgstr "Amélioration des connaissances"
+
+msgid "Leave blank if unanswered."
+msgstr "Laissez vide si vous n’avez pas de réponse."
+
+msgid "Link to the activity"
+msgstr "Lien vers l’activité"
+
+msgid "Linked to a flagship initiative?"
+msgstr "Liée à une initiative phare ?"
+
+msgid "Maximum characters:"
+msgstr "Nombre maximal de caractères :"
+
+msgid "Missing worksheet: "
+msgstr "Feuille manquante : "
+
+msgid "Multiple activities"
+msgstr "Plusieurs activités"
+
+msgid "Names of stakeholder groups"
+msgstr "Noms des groupes de parties prenantes"
+
+msgid "Needs correction"
+msgstr "Correction nécessaire"
+
+msgid "No matching activity row"
+msgstr "Aucune activité ne correspond à cette référence"
+
+msgid "Nothing will be published or submitted automatically."
+msgstr "Aucune publication ni soumission automatique."
+
+msgid "Of which female participants"
+msgstr "Dont participantes"
+
+msgid "Of which youth (18–35 years old)"
+msgstr "Dont jeunes de 18 à 35 ans"
+
+msgid ""
+"Only the activity title is required to create a draft. Other required answers"
+" can be completed before submission."
+msgstr ""
+"Seul le titre est requis pour créer un brouillon. Les autres réponses "
+"obligatoires peuvent être complétées avant soumission."
+
+msgid ""
+"Only the title is required to create a draft. You can complete other required"
+" answers before submitting it for review."
+msgstr ""
+"Seul le titre est requis pour créer un brouillon. Vous pouvez compléter les "
+"autres réponses obligatoires avant de le soumettre à examen."
+
+msgid "Open my drafts"
+msgstr "Ouvrir mes brouillons"
+
+msgid ""
+"Optional. Select the activity reference from Activities. Leave unanswered "
+"questions blank; No is an explicit answer."
+msgstr ""
+"Facultatif. Sélectionnez la référence dans Activités. Laissez les questions "
+"sans réponse vides ; Non est une réponse explicite."
+
+msgid "Optional: complete only when relevant."
+msgstr "Facultatif : à compléter uniquement si pertinent."
+
+msgid "Other institution category"
+msgstr "Autre catégorie d’institution"
+
+msgid "Other partners"
+msgstr "Autres partenaires"
+
+msgid "Participation and scope"
+msgstr "Participation et portée"
+
+msgid "Partner organization"
+msgstr "Organisation partenaire"
+
+msgid "Prepare the file"
+msgstr "Préparer le fichier"
+
+msgid "Preview pages"
+msgstr "Pages d’aperçu"
+
+msgid "Previously downloaded IHP-IX templates are also accepted."
+msgstr "Les modèles PHI-IX téléchargés précédemment sont également acceptés."
+
+msgid "Primary supporting Member State"
+msgstr "Principal État membre apportant un soutien"
+
+msgid "Publications and resources"
+msgstr "Publications et ressources"
+
+msgid "Reference lists"
+msgstr "Listes de référence"
+
+msgid "Relationship"
+msgstr "Relation"
+
+msgid "Resource type"
+msgstr "Type de ressource"
+
+msgid "Review your activities"
+msgstr "Vérifiez vos activités"
+
+msgid "See a completed example"
+msgstr "Consultez un exemple rempli"
+
+msgid "Shared reporting details"
+msgstr "Informations communes du rapport"
+
+msgid "Shared value"
+msgstr "Valeur commune"
+
+msgid "Stakeholder groups supported"
+msgstr "Groupes de parties prenantes soutenus"
+
+msgid "Start here"
+msgstr "Commencer ici"
+
+msgid ""
+"Start here contains the common details. Activities has 11 columns. The other "
+"sheets are optional and organized by topic."
+msgstr ""
+"Commencer ici contient les informations communes. Activités comporte 11 "
+"colonnes. Les autres feuilles sont facultatives et organisées par thème."
+
+msgid "Start here: one activity per row."
+msgstr "Commencez ici : une activité par ligne."
+
+msgid ""
+"Start with Activities. Complete the other sheets only when relevant. One "
+"activity per row; keep its reference when adding details on another sheet."
+msgstr ""
+"Commencez par Activités. Complétez les autres feuilles uniquement si "
+"nécessaire. Une activité par ligne ; conservez sa référence pour ajouter des "
+"détails ailleurs."
+
+msgid "Start with the empty template"
+msgstr "Commencez avec le modèle vide"
+
+msgid "Synergy"
+msgstr "Synergie"
+
+msgid ""
+"The example contains fictional activities. Use the empty template for real "
+"reports."
+msgstr ""
+"L’exemple contient des activités fictives. Utilisez le modèle vide pour les "
+"rapports réels."
+
+msgid ""
+"The file can be imported. Missing answers can be completed in the drafts "
+"before submission."
+msgstr ""
+"Le fichier peut être importé. Les réponses manquantes peuvent être complétées"
+" dans les brouillons avant soumission."
+
+msgid "The file could not be processed"
+msgstr "Le fichier n’a pas pu être traité"
+
+msgid "These values apply unless the activity has an exception."
+msgstr "Ces valeurs s’appliquent sauf exception pour une activité."
+
+msgid ""
+"This answer contains data, but its Yes/No question is No. Correct the "
+"question or clear this answer."
+msgstr ""
+"Cette réponse contient des données, mais la question Oui/Non indique Non. "
+"Corrigez la question ou effacez cette réponse."
+
+msgid "This field does not apply to the selected indicator"
+msgstr "Ce champ ne s’applique pas à l’indicateur sélectionné"
+
+msgid ""
+"This file contains fictional examples. Any drafts you create from it will "
+"also be examples."
+msgstr ""
+"Ce fichier contient des exemples fictifs. Les brouillons créés à partir de ce"
+" fichier seront aussi des exemples."
+
+msgid ""
+"Three fictional activities show a basic report, training indicators and "
+"cooperation involving several countries and resources."
+msgstr ""
+"Trois activités fictives illustrent un rapport simple, des indicateurs de "
+"formation et une coopération entre plusieurs pays avec des ressources."
+
+msgid "Transboundary Member States supported"
+msgstr "États membres soutenus pour les eaux transfrontalières"
+
+msgid "Types (separate with ;)"
+msgstr "Types (séparer par ;)"
+
+msgid "Unrecognized worksheet; move report data into the template sheets"
+msgstr "Feuille non reconnue ; déplacez les données vers les feuilles du modèle"
+
+msgid "Unsupported template version; download the current template"
+msgstr "Version du modèle non prise en charge ; téléchargez le modèle actuel"
+
+msgid "Untitled activity"
+msgstr "Activité sans titre"
+
+msgid "Upload"
+msgstr "Importer"
+
+msgid "Upload a valid XLSX workbook"
+msgstr "Importez un fichier XLSX valide"
+
+msgid "Upload corrected file"
+msgstr "Importer le fichier corrigé"
+
+msgid "Upload your completed workbook"
+msgstr "Importez votre fichier rempli"
+
+msgid "Uploading checks the file. Drafts are created only after your confirmation."
+msgstr ""
+"L’importation vérifie le fichier. Les brouillons ne sont créés qu’après votre"
+" confirmation."
+
+msgid "Use ISO dates YYYY-MM-DD and nonnegative whole numbers up to 2147483647."
+msgstr ""
+"Utilisez des dates ISO AAAA-MM-JJ et des entiers positifs ou nuls jusqu’à "
+"2147483647."
+
+msgid "Use YYYY-MM-DD, for example 2026-09-15."
+msgstr "Utilisez AAAA-MM-JJ, par exemple 2026-09-15."
+
+msgid "Use a unique, nonempty row reference"
+msgstr "Utilisez une référence unique et non vide"
+
+msgid "Use only one row per activity in this section (one per indicator)."
+msgstr "Utilisez une seule ligne par activité dans cette section (une par indicateur)."
+
+msgid "Use row_ref on relation sheets to link multiple entries to an activity."
+msgstr ""
+"Utilisez row_ref dans les feuilles liées pour associer plusieurs entrées à "
+"une activité."
+
+msgid ""
+"Use the dropdowns. For multiple choices, separate values with ;. Leave "
+"unanswered questions blank."
+msgstr ""
+"Utilisez les listes déroulantes. Pour plusieurs choix, séparez les valeurs "
+"par ;. Laissez les questions sans réponse vides."
+
+msgid "Use the same activity reference on every sheet, for example A001."
+msgstr "Utilisez la même référence d’activité dans chaque feuille, par exemple A001."
+
+msgid ""
+"Use the same reference to add indicators, support, contributions or resources"
+" on the optional sheets."
+msgstr ""
+"Utilisez la même référence pour ajouter indicateurs, soutiens, contributions "
+"ou ressources dans les feuilles facultatives."
+
+msgid ""
+"Use the worksheet and cell shown below, save your Excel file and upload it "
+"again."
+msgstr ""
+"Utilisez la feuille et la cellule indiquées ci-dessous, enregistrez le "
+"fichier Excel et importez-le à nouveau."
+
+msgid "Use yes/no for gates. Empty answers remain unanswered."
+msgstr "Utilisez yes/no pour les questions. Les cellules vides restent sans réponse."
+
+msgid "Used for every activity unless an exception is entered in Institutions."
+msgstr "Utilisé pour toutes les activités sauf exception dans Institutions."
+
+msgid "View activity details"
+msgstr "Voir les détails de l’activité"
+
+msgid "Was there Member State support?"
+msgstr "Y a-t-il eu un soutien d’États membres ?"
+
+msgid "Web address"
+msgstr "Adresse web"
+
+msgid "Were there synergies?"
+msgstr "Y a-t-il eu des synergies ?"
+
+msgid "Workbook exceeds 5 MB"
+msgstr "Le fichier dépasse 5 Mo"
+
+msgid "Workbook metadata is invalid"
+msgstr "Les métadonnées du fichier sont invalides"
+
+msgid "Workbook reference lists are missing"
+msgstr "Les listes de référence du fichier sont manquantes"
+
+msgid "Workbook reference lists exceed template limits"
+msgstr "Les listes de référence dépassent les limites du modèle"
+
+msgid "Worksheet dimensions exceed template limits: "
+msgstr "Les dimensions de la feuille dépassent les limites : "
+
+msgid "Worksheet structure changed; download the current template"
+msgstr "La structure des feuilles a changé ; téléchargez le modèle actuel"
+
+msgid "XLSX · Up to 5 MB · Up to 2,000 activities"
+msgstr "XLSX · Jusqu’à 5 Mo · Jusqu’à 2 000 activités"
+
+msgid "Yes or no"
+msgstr "Oui ou non"
+
+msgid ""
+"Your activities are saved. Open each draft to complete it and submit it for "
+"review."
+msgstr ""
+"Vos activités sont enregistrées. Ouvrez chaque brouillon pour le compléter et"
+" le soumettre à examen."
+
+msgid "[EXAMPLE]"
+msgstr "[EXEMPLE]"
+
+msgid "River monitoring study"
+msgstr "Étude de suivi des rivières"
+
+msgid "Water management training"
+msgstr "Formation à la gestion de l’eau"
+
+msgid "Regional water cooperation"
+msgstr "Coopération régionale sur l’eau"
+
+msgid "Example Water Institute"
+msgstr "Institut de l’eau fictif"
+
+msgid "Example coordinator"
+msgstr "Coordination fictive"
+
+msgid "Add a row for activity"
+msgstr "Ajoutez une ligne pour l’activité"
+
+msgid "Drafts could not be created"
+msgstr "Les brouillons n’ont pas pu être créés"
+
+msgid "Resource title"
+msgstr "Titre de la ressource"
+
+msgid "Resource description"
+msgstr "Description de la ressource"
+
+msgid ""
+"Common reporting rows changed; keep the field labels in their original "
+"positions"
+msgstr ""
+"Les lignes des informations communes ont changé ; conservez les libellés "
+"à leur position initiale"
+
+msgid "Worksheet dimensions exceed template limits"
+msgstr "Les dimensions de la feuille dépassent les limites du modèle"
+
+msgid ""
+"Official classification titles are kept in their original language when "
+"no translation is available."
+msgstr ""
+"Les intitulés officiels de la classification restent dans leur langue "
+"d’origine lorsqu’aucune traduction n’est disponible."
+
 #: ckanext/theme_ejemplo/templates/package/snippets/resource_style.html
 msgid "Visualization style"
 msgstr "Style de visualisation"
@@ -9906,3 +10527,6 @@ msgstr "ressources"
 #: ckanext/theme_ejemplo/templates/package/snippets/resource_style.html
 msgid "Used in"
 msgstr "Utilisé dans"
+
+msgid "Archived workspaces are read-only"
+msgstr "Les groupes de travail archivés ne peuvent plus être modifiés."
