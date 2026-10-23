@@ -5878,11 +5878,11 @@ msgstr ""
 
 #: ckanext/theme_ejemplo/templates/package/snippets/resources_list.html:39
 msgid "Search resources by name or description…"
-msgstr ""
+msgstr "البحث عن الموارد حسب الاسم أو الوصف…"
 
 #: ckanext/theme_ejemplo/templates/package/snippets/resources_list.html:47
 msgid "All formats"
-msgstr ""
+msgstr "جميع الصيغ"
 
 #: ckanext/theme_ejemplo/templates/package/snippets/resources_list.html:72
 msgid "Resource pages"
