@@ -684,6 +684,10 @@ Con learning activo, la navegación usa una distribución adaptable: una fila en
 escritorio amplio, dos en tablet y menú desplegable con desplazamiento en móvil.
 Los enlaces no se ocultan para hacer espacio y el buscador conserva su ancho disponible.
 
+## Lector de contenido de iniciativas
+
+El helper `_get_pages_by_initiative` de `controller.py` reutiliza el lector público de `ckanext-pages`, evitando una segunda implementación de comparación JSON y visibilidad. Se conserva el resultado esperado por las pestañas de grupo y el portal AI Water. Si Pages no está disponible, devuelve la lista vacía y registra el error. Ver [[Flujos Importantes]].
+
 ## Servicios IHP-IX de revisión (2026-10-21)
 
 - `ihpix_relations.py`: relaciones múltiples, países UNESCO y ámbitos sin duplicados.

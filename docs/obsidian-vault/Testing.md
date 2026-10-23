@@ -298,6 +298,18 @@ La validación en navegador cubre catálogo, edición, relaciones y tamaño móv
 
 Verificar inicio, catálogo y Rapid Response entre 320 y 1920 px, incluyendo 768/800/820/991/992/1024/1199/1366. En catálogo y Rapid Response, el ancho del documento debe coincidir con el viewport. En inicio, comparar además con la versión previa: la auditoría detectó desbordamiento preexistente fuera del encabezado (480 px de documento a 320 px), idéntico antes y después del parche. Comprobar el menú móvil abierto/cerrado, la navegación que pasa a varias líneas, el foco del buscador y su panel de sugerencias. Repetir con traducciones. La prueba del candidato debe cargar el CSS real del checkout en el orden de producción y repetirse con los assets de la imagen final y las URLs públicas. Ver [[Troubleshooting]].
 
+## Asociaciones de Water Family
+
+`ckanext/theme_ejemplo/tests/test_initiative_pages.py` comprueba la integración del lector con `ckanext-pages`: News y Events con JSON histórico y exclusión de contenido privado, borrador, pendiente o rechazado; también verifica el contexto `c.group_dict` requerido por el menú de Pages en ambas pestañas. Requiere Pages instalado y PostgreSQL, Solr y Redis de pruebas aislados; el fixture reinicia la base y migra Pages.
+
+```bash
+pytest --ckan-ini=test.ini -q ckanext/theme_ejemplo/tests/test_initiative_pages.py
+```
+
+La suite de formularios y API está en `ckanext-pages/ckanext/pages/tests/test_water_family_initiatives.py`. Estos cambios deben entregarse junto con el helper actualizado de Pages; la validación local no implica despliegue.
+
+Validación local del 2026-10-09: 4 pruebas del tema y 9 de Pages aprobadas. Playwright verificó las pestañas reales de iniciativas después de publicar y quitar asociaciones en News/Events, con el tema completo y el menú de Pages activos. Evidencia en `ckanext-pages/output/playwright/water-family-initiatives/`; producción permanece sin desplegar.
+
 ## Aceptación IHP-IX de septiembre (2026-10-21)
 
 ```bash
