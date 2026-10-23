@@ -37,6 +37,22 @@
 
 ---
 
+## Plantillas de Dataset extent
+
+- `templates/spatial/snippets/dataset_map_base.html`: override del mapa de
+  extensión; copia la configuración de `h.get_common_map_config()` y limita
+  `maxZoom` a 8 sólo para `USGS.USImagery`, respetando límites inferiores y
+  convirtiendo valores de configuración de texto a entero. Conserva los assets
+  y el módulo JavaScript de `ckanext-spatial`.
+- `templates/schemingdcat/snippets/schemingdcat_dataset_map_base.html`: delega en
+  la plantilla anterior para compartir el comportamiento en el contenido
+  principal y la barra lateral.
+
+No modifica la configuración global del mapa ni el buscador espacial. Ver
+[[Flujos Importantes#Mapa de extensión del dataset]].
+
+---
+
 ## controller.py (~3,960 líneas)
 
 **Rol**: Todas las funciones de vista Flask.
