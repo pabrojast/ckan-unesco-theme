@@ -16,6 +16,21 @@ jobs:
     timeout-minutes: 10
     env:
       PYTEST_DISABLE_PLUGIN_AUTOLOAD: '1'
+      SLD_TEST_DATABASE_URL: postgresql://postgres:sld-local-test@localhost:5432/sld_test
+      SLD_TEST_REDIS_URL: redis://localhost:6379/0
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_PASSWORD: sld-local-test
+          POSTGRES_DB: sld_test
+        ports: ['5432:5432']
+        options: >-
+          --health-cmd pg_isready --health-interval 5s
+          --health-timeout 5s --health-retries 10
+      redis:
+        image: redis:7-alpine
+        ports: ['6379:6379']
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -24,13 +39,16 @@ jobs:
         with:
           python-version: '3.11'
       - name: Install pure-test dependencies
-        run: python -m pip install 'pytest>=8,<9' 'setuptools<81' 'openpyxl==3.1.5' 'Jinja2>=3.1,<4'
+        run: python -m pip install 'pytest>=8,<9' 'setuptools<81' 'openpyxl==3.1.5' 'Jinja2>=3.1,<4' 'SQLAlchemy<2' psycopg2-binary redis flask
       - name: IHP-IX regression suite
         run: python -m pytest -q ckanext/theme_ejemplo/tests/test_ihpix_*.py
+      - name: Resource styles and tracking regressions
+        run: python -m pytest -q ckanext/theme_ejemplo/tests/test_resource_styles.py ckanext/theme_ejemplo/tests/test_pageview_tracking.py ckanext/theme_ejemplo/tests/test_sld_tracking_db.py
       - name: Official taxonomy snapshot
         run: python scripts/build_ihpix_taxonomy_data.py --check
       - name: Browser script syntax
         run: |
+          node --check ckanext/theme_ejemplo/public/resource-list.js
           node --check ckanext/theme_ejemplo/public/js/ihpix-progress.js
           node --check ckanext/theme_ejemplo/public/js/ihpix-report.js
           node --check ckanext/theme_ejemplo/public/js/ihpix-relations.js

@@ -5878,11 +5878,11 @@ msgstr ""
 
 #: ckanext/theme_ejemplo/templates/package/snippets/resources_list.html:39
 msgid "Search resources by name or description…"
-msgstr ""
+msgstr "البحث عن الموارد حسب الاسم أو الوصف…"
 
 #: ckanext/theme_ejemplo/templates/package/snippets/resources_list.html:47
 msgid "All formats"
-msgstr ""
+msgstr "جميع الصيغ"
 
 #: ckanext/theme_ejemplo/templates/package/snippets/resources_list.html:72
 msgid "Resource pages"
@@ -9557,3 +9557,43 @@ msgstr "تصفية الأنشطة"
 
 msgid "No locations are available on this map for the selected activities."
 msgstr "لا تتوفر مواقع على هذه الخريطة للأنشطة المحددة."
+
+#: ckanext/theme_ejemplo/templates/package/snippets/resource_style.html
+msgid "Visualization style"
+msgstr "نمط العرض"
+
+#: ckanext/theme_ejemplo/templates/package/snippets/resource_style.html
+msgid "Visualization styles"
+msgstr "أنماط العرض"
+
+#: ckanext/theme_ejemplo/templates/package/snippets/resource_style.html
+msgid "Cartographic style"
+msgstr "نمط الخرائط"
+
+#: ckanext/theme_ejemplo/templates/package/snippets/resource_style.html
+msgid "Download style"
+msgstr "تنزيل النمط"
+
+#: ckanext/theme_ejemplo/templates/package/snippets/resource_style.html
+msgid "Show all files"
+msgstr "عرض جميع الملفات"
+
+#: ckanext/theme_ejemplo/templates/package/snippets/resource_style.html
+msgid "Style files"
+msgstr "ملفات الأنماط"
+
+#: ckanext/theme_ejemplo/templates/package/snippets/resource_style.html
+msgid "Resources could not be loaded. Please try again."
+msgstr "تعذر تحميل الموارد. يرجى المحاولة مرة أخرى."
+
+#: ckanext/theme_ejemplo/templates/package/snippets/resource_style.html
+msgid "Results"
+msgstr "النتائج"
+
+#: ckanext/theme_ejemplo/templates/package/snippets/resource_style.html
+msgid "resources"
+msgstr "موارد"
+
+#: ckanext/theme_ejemplo/templates/package/snippets/resource_style.html
+msgid "Used in"
+msgstr "مستخدم في"

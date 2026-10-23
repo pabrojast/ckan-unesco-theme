@@ -376,6 +376,8 @@ def pageviews_flush():
     if status == 'locked':
         click.echo('Otro flush está en curso; se omite esta corrida.')
         return
+    if status != 'ok':
+        raise click.ClickException('No se pudo consolidar: {}'.format(status))
     click.echo(
         'Flush pageviews: {datasets_updated} datasets, '
         '{resources_updated} resources, +{views_added} vistas, '
@@ -396,6 +398,21 @@ def pageviews_status():
                'días: {pending_days}'.format(**s))
     click.echo('Totales en DB -> page_views: {}, downloads: {}'.format(
         s['total_page_views'], s['total_downloads']))
+
+
+@pageviews.command(name='reconcile-downloads')
+@click.option('--apply', 'apply_changes', is_flag=True,
+              help='Guardar el total corregido; por defecto sólo simula.')
+@click.option('--backup', type=click.Path(dir_okay=False),
+              help='Archivo JSON nuevo obligatorio al aplicar.')
+def pageviews_reconcile_downloads(apply_changes, backup):
+    """Excluir SLD del agregado sin borrar el histórico de recursos."""
+    from ckanext.theme_ejemplo.pageview_tracking import reconcile_downloads
+    try:
+        result = reconcile_downloads(apply=apply_changes, backup=backup)
+    except Exception as error:
+        raise click.ClickException(str(error))
+    click.echo(json.dumps(result, indent=2))
 
 
 @click.group()
