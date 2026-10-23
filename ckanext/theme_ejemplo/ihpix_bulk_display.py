@@ -99,7 +99,11 @@ def present(batch, locale="en", organizations=(), page=1):
                     break
         return dict(
             issue,
-            label=S.label(issue["field"].split(".")[0], tr),
+            label=(
+                tr("Activity title")
+                if preview.get("version") == "IHP-IX/3" and issue["field"] == "row_ref"
+                else S.label(issue["field"].split(".")[0], tr)
+            ),
             text=issue_text(issue),
         )
 
@@ -149,6 +153,7 @@ def present(batch, locale="en", organizations=(), page=1):
     known = {r["ref"] for r in preview["rows"]}
     return {
         "rows": rows,
+        "flat": preview.get("version") == "IHP-IX/3",
         "errors": errors,
         "warnings": warnings,
         "general_errors": [e for e in errors if e.get("ref") not in known],

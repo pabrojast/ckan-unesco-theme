@@ -20,10 +20,10 @@ function ok(name,value=true){assert(value,name);checks.push(name);console.log('P
   ok('Two distinct workbook downloads',await page.locator('a[href$="template.xlsx"]').count()===1&&await page.locator('a[href$="example.xlsx"]').count()===1);
   ok('Draft navigation uses the profile draft filter',(await page.locator('.ix-import-header a').getAttribute('href')).includes('status=draft'));
   const downloadPromise=page.waitForEvent('download');await page.locator('a[href$="template.xlsx"]').click();const download=await downloadPromise;
-  await download.saveAs(path.join(out,'downloaded-template.xlsx'));ok('Template downloads as v2 XLSX',download.suggestedFilename()==='ihpix-import-v2.xlsx');
+  await download.saveAs(path.join(out,'downloaded-template.xlsx'));ok('Template downloads as flat v3 XLSX',download.suggestedFilename()==='ihpix-import-v3.xlsx');
   await page.screenshot({path:path.join(out,'prepare-desktop.png'),fullPage:true});
   const invalid=await upload('invalid.xlsx');
-  ok('Invalid number points to actual cell D5',(await page.locator('.ix-import-review').innerText()).includes('D5'));
+  ok('Invalid number points to actual flat cell',(await page.locator('.ix-import-review').innerText()).includes(fs.readFileSync(path.join(root,'invalid-cell.txt'),'utf8')));
   ok('Technical field names are absent',!(await page.locator('.ix-import-review').innerText()).includes('num_knowledge_products'));
   ok('Invalid file cannot be confirmed',await page.locator('[name=confirm]').count()===0);
   ok('API also rejects invalid import',!(await api('ihpix_import_create',{id:invalid,confirm:true})).success);
@@ -60,6 +60,7 @@ function ok(name,value=true){assert(value,name);checks.push(name);console.log('P
   ok('Pending answers are collapsed initially',await page.locator('.ix-import-pending').getAttribute('open')===null);
   await page.locator('[name=confirm]').click();await page.waitForSelector('.ix-import-created');ok('Minimal draft is created',await page.locator('.ix-import-created a').count()===1);
   await page.goto(base+'/ihpix/import');await upload('legacy.xlsx');await page.locator('[name=confirm]').click();await page.waitForSelector('.ix-import-created');ok('Legacy v1 workbook still imports');
+  await page.goto(base+'/ihpix/import');await upload('legacy-v2.xlsx');await page.locator('[name=confirm]').click();await page.waitForSelector('.ix-import-created');ok('Previous guided v2 workbook still imports');
   await page.goto(base+'/ihpix/import');await page.locator('#workbook').setInputFiles({name:'broken.xlsx',mimeType:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',buffer:Buffer.from('not a workbook')});await page.locator('#ix-import-upload button').click();await page.waitForSelector('[role=alert]');ok('Broken file has an inline error and retry form',await page.locator('#ix-import-upload').count()===1);
   await page.goto(base+'/ihpix/import');const rollback=await upload('rollback.xlsx');
   try{

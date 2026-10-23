@@ -15,7 +15,7 @@ from ckanext.theme_ejemplo.ihpix_bulk_display import present
 
 @lru_cache(maxsize=None)
 def template(locale="en", example=False):
-    return B.template(locale=locale, example=example)
+    return B.template_v2(locale=locale, example=example)
 
 
 def edited(changes, locale="en", example=False):

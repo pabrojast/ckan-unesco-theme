@@ -109,7 +109,7 @@ def field_help(field, tr, section=None):
         return tr(MULTI_HELP)
     if field in ("start_date", "end_date", "event_date"):
         return tr(DATE_HELP)
-    if field in ("quantity", "youth", "female"):
+    if field in ("quantity", "youth", "female") or field in F.INT_FIELDS:
         return tr(NUMBER_HELP)
     if field in ("priority_area", "output", "key_activity_code"):
         return tr(CODE_HELP)
@@ -253,7 +253,9 @@ def example_records(tr):
     return base, records
 
 
-def build(organizations=(), defaults=None, locale="en", example=False):
+def build(organizations=(), defaults=None, locale="en", example=False, schema=S):
+    S = schema
+    flat = getattr(S, "FLAT", False)
     from ckanext.theme_ejemplo.ihpix_bulk import MAX_ROWS
 
     locale = locale if locale in ("en", "es", "fr", "ar") else "en"
@@ -315,7 +317,7 @@ def build(organizations=(), defaults=None, locale="en", example=False):
                 cell
             )
             rule = DataValidation(type="custom", formula1=formula, allow_blank=True)
-        elif field in ("quantity", "youth", "female"):
+        elif field in ("quantity", "youth", "female") or field in F.INT_FIELDS:
             rule = DataValidation(
                 type="whole",
                 operator="between",
@@ -324,7 +326,9 @@ def build(organizations=(), defaults=None, locale="en", example=False):
                 allow_blank=True,
             )
         elif (
-            category in ranges and field not in F.MULTI_FORM_FIELDS and field != "types"
+            category in ranges
+            and (flat or field not in F.MULTI_FORM_FIELDS)
+            and field != "types"
         ):
             rule = DataValidation(
                 type="list", formula1=ranges[category], allow_blank=True
@@ -334,7 +338,7 @@ def build(organizations=(), defaults=None, locale="en", example=False):
                 type="list", formula1="ihp_activity_refs", allow_blank=True
             )
         if rule:
-            rule.showErrorMessage = True
+            rule.showErrorMessage = not (flat and field in F.MULTI_FORM_FIELDS)
             rule.errorTitle = tr("Check this value")
             rule.error = tr(
                 DATE_HELP
@@ -342,8 +346,16 @@ def build(organizations=(), defaults=None, locale="en", example=False):
                 else "Choose an available option or enter a valid number."
             )
             rule.showInputMessage = True
-            rule.promptTitle = S.label(field, tr)[:32]
-            rule.prompt = field_help(field, tr)[:255]
+            rule.promptTitle = (
+                tr("Activity title")
+                if flat and field == "row_ref"
+                else S.label(field, tr)
+            )[:32]
+            rule.prompt = (
+                tr("Choose the activity title from Activities.")
+                if flat and field == "row_ref"
+                else field_help(field, tr)
+            )[:255]
             sheet.add_data_validation(rule)
             rule.add(address)
 
@@ -366,6 +378,21 @@ def build(organizations=(), defaults=None, locale="en", example=False):
     example_data = {}
     if example:
         base, example_data = example_records(tr)
+        if flat:
+            combined = {
+                entry["row_ref"]: dict(base, **entry)
+                for entry in example_data["Activities"]
+            }
+            for key in ("Institutions", "Scope"):
+                for entry in example_data[key]:
+                    combined[entry["row_ref"]].update(entry)
+            for entry in example_data["Indicators"]:
+                for column, field in S.INDICATORS[entry["indicator"]].items():
+                    combined[entry["row_ref"]][field] = entry.get(column, "")
+            for key in ("Contributions", "Supporters", "Partners", "Resources"):
+                for entry in example_data[key]:
+                    entry["row_ref"] = combined[entry["row_ref"]]["title"]
+            example_data["Activities"] = list(combined.values())
     for row, field in enumerate(S.COMMON, 7):
         start.cell(row, 1, S.label(field, tr))
         start.cell(row, 2, display(field, base.get(field, "")))
@@ -445,7 +472,15 @@ def build(organizations=(), defaults=None, locale="en", example=False):
         sheet.merge_cells(
             start_row=2, start_column=1, end_row=2, end_column=len(fields)
         )
-        sheet.cell(3, 1, tr(GUIDE if key == "Activities" else OPTIONAL_GUIDE))
+        sheet.cell(
+            3,
+            1,
+            tr(
+                (S.GUIDE if key == "Activities" else S.EXTRA_GUIDE)
+                if flat
+                else (GUIDE if key == "Activities" else OPTIONAL_GUIDE)
+            ),
+        )
         sheet.merge_cells(
             start_row=3, start_column=1, end_row=3, end_column=len(fields)
         )
@@ -459,15 +494,30 @@ def build(organizations=(), defaults=None, locale="en", example=False):
                 if key == "Resources" and field in ("title", "description")
                 else field
             )
-            cell = sheet.cell(4, col, S.label(visible_field, tr))
-            cell.comment = Comment(field_help(field, tr, key), "IHP-IX")
+            heading = S.label(visible_field, tr)
+            if flat and field == "row_ref":
+                heading = tr("Activity title")
+            if flat and key == "Activities":
+                for mapping in S.INDICATORS.values():
+                    for short, actual in mapping.items():
+                        if actual == field:
+                            heading = tr(S.LABELS[short])
+            cell = sheet.cell(4, col, heading)
+            cell.comment = Comment(
+                (
+                    tr("Choose the activity title from Activities.")
+                    if flat and field == "row_ref"
+                    else field_help(field, tr, key)
+                ),
+                "IHP-IX",
+            )
             cell.fill = PatternFill("solid", fgColor=blue)
             cell.font = Font(name="Calibri", bold=True, color="FFFFFF")
             cell.alignment = Alignment(wrap_text=True, vertical="center")
             letter = get_column_letter(col)
             sheet.column_dimensions[letter].number_format = (
                 "0"
-                if field in ("quantity", "youth", "female")
+                if field in ("quantity", "youth", "female") or field in F.INT_FIELDS
                 else (
                     "yyyy-mm-dd"
                     if field in ("start_date", "end_date", "event_date")
@@ -489,7 +539,7 @@ def build(organizations=(), defaults=None, locale="en", example=False):
                 c = sheet.cell(row, col)
                 c.number_format = (
                     "0"
-                    if field in ("quantity", "youth", "female")
+                    if field in ("quantity", "youth", "female") or field in F.INT_FIELDS
                     else (
                         "yyyy-mm-dd"
                         if field in ("start_date", "end_date", "event_date")
@@ -504,7 +554,7 @@ def build(organizations=(), defaults=None, locale="en", example=False):
                 54 if key in ("Activities", "Scope", "Resources") else 36
             )
         sheet.auto_filter.ref = "A4:" + get_column_letter(len(fields)) + str(limit + 4)
-        if key == "Activities":
+        if key == "Activities" and not flat:
             for i in range(MAX_ROWS):
                 sheet.cell(i + 5, 1, "A%03d" % (i + 1))
         if key == "Resources":
@@ -587,14 +637,18 @@ def build(organizations=(), defaults=None, locale="en", example=False):
             sheet.cell(
                 2 if sheet.title in [names[k] for k in S.SHEETS] else 1, 1
             ).font = Font(name="Calibri", size=18, bold=True, color=blue)
-    # Abrir siempre la guía, no las hojas técnicas.
-    book.active = book.index(start)
+    # Abrir una hoja útil: Actividades en el formato plano, la guía en v2.
+    if flat:
+        _format_flat(book, names, S, tr)
+    book.active = book.index(book[names["Activities"]] if flat else start)
     buffer = io.BytesIO()
     book.save(buffer)
     return buffer.getvalue()
 
 
-def parse_v2(book):
+def parse_v2(book, schema=S):
+    S = schema
+    flat = getattr(S, "FLAT", False)
     from ckanext.theme_ejemplo import ihpix_bulk as B
 
     meta = book["_IHP_META"]
@@ -633,6 +687,8 @@ def parse_v2(book):
     data_by_ref = {}
 
     def source(key, row, field):
+        if flat and key == "Activities" and field == "row_ref":
+            field = "title"
         col = list(S.SHEETS[key]).index(field) + 1
         return {
             "sheet": names[key],
@@ -721,6 +777,8 @@ def parse_v2(book):
             }
             if not any(val for field, val in entry.items() if field != "row_ref"):
                 continue
+            if flat and key == "Activities":
+                entry["row_ref"] = "A%03d" % (row - S.DATA_ROW + 1)
             for field, cell in zip(fields, cells):
                 if cell.data_type == "f":
                     error(
@@ -780,7 +838,7 @@ def parse_v2(book):
                             }
                         )
                         break
-        for code, mapping in S.INDICATORS.items():
+        for code, mapping in S.INDICATORS.items() if not flat else ():
             for column, field in mapping.items():
                 sources["Activities", row, field] = {
                     "sheet": names["Indicators"],
@@ -791,7 +849,7 @@ def parse_v2(book):
                 }
     seen = set()
     for key in ("Institutions", "Scope", "Indicators"):
-        for row, entry in raw[key]:
+        for row, entry in raw.get(key, []):
             ref = entry["row_ref"]
             if ref not in data_by_ref:
                 error(key, row, "row_ref", "No matching activity row", ref)
@@ -846,6 +904,25 @@ def parse_v2(book):
                     if val or field not in common:
                         data[field] = val
                         sources["Activities", main_row, field] = source(key, row, field)
+    if flat:
+        titles = {}
+        for ref, (_, data) in data_by_ref.items():
+            titles.setdefault(data["title"], []).append(ref)
+        for key in ("Contributions", "Supporters", "Partners", "Resources"):
+            valid = []
+            for row, entry in raw[key]:
+                matches = titles.get(entry["row_ref"], [])
+                if len(matches) != 1:
+                    error(
+                        key,
+                        row,
+                        "row_ref",
+                        "Choose an activity title that appears exactly once in Activities",
+                    )
+                    continue
+                entry["row_ref"] = matches[0]
+                valid.append((row, entry))
+            raw[key] = valid
     # La clasificación principal se inserta primero y nunca la sustituye un aporte secundario.
     for ref, (row, data) in data_by_ref.items():
         if data["output"]:
@@ -924,3 +1001,107 @@ def parse_v2(book):
                 issue["field"] = "title"
     result.update(locale=locale, example=meta["B3"].value is True, common=common)
     return result
+
+
+def _format_flat(book, names, schema, tr):
+    """Guía breve y bloques horizontales; sin referencias que el usuario deba mantener."""
+    from openpyxl.utils import get_column_letter
+
+    main = book[names["Activities"]]
+    book.move_sheet(main, offset=-book.index(main))
+    for area in list(main.merged_cells.ranges):
+        main.unmerge_cells(str(area))
+    for row in (2, 3):
+        for cell in main[row]:
+            cell.value = None
+    colors = ("005A96", "17606D", "335D82")
+    column = 1
+    for index, (title, fields) in enumerate(schema.GROUPS):
+        end = column + len(fields) - 1
+        main.merge_cells(start_row=2, start_column=column, end_row=2, end_column=end)
+        cell = main.cell(2, column, tr(title))
+        cell.fill = PatternFill("solid", fgColor=colors[index % len(colors)])
+        cell.font = Font(name="Calibri", bold=True, color="FFFFFF", size=13)
+        cell.alignment = Alignment(wrap_text=True, vertical="center")
+        main.merge_cells(start_row=3, start_column=column, end_row=3, end_column=end)
+        cell = main.cell(
+            3,
+            column,
+            (
+                tr(schema.GUIDE)
+                if index == 0
+                else tr(
+                    "Leave unanswered fields blank. You can complete them in the draft."
+                )
+            ),
+        )
+        cell.alignment = Alignment(wrap_text=True, vertical="center")
+        for position in range(column, end + 1):
+            main.cell(4, position).fill = PatternFill(
+                "solid", fgColor=colors[index % len(colors)]
+            )
+        column = end + 1
+    main.row_dimensions[2].height = 40
+    main.row_dimensions[3].height = 36
+    main.row_dimensions[4].height = 66
+    main.freeze_panes = "B5"
+    main.sheet_view.zoomScale = 85
+    for col, field in enumerate(schema.SHEETS["Activities"], 1):
+        if field in F.INT_FIELDS or field in F.BOOL_FIELDS:
+            main.column_dimensions[get_column_letter(col)].width = 19
+        elif field in ("start_date", "end_date"):
+            main.column_dimensions[get_column_letter(col)].width = 18
+    main.page_setup.fitToWidth = 0
+    main.print_title_rows = "2:4"
+    main.print_title_cols = "A:A"
+    guide = book[names["Start"]]
+    guide.freeze_panes = None
+    for area in list(guide.merged_cells.ranges):
+        guide.unmerge_cells(str(area))
+    guide.delete_rows(1, guide.max_row)
+    texts = [
+        tr("Quick guide"),
+        tr(
+            "Fill in Activities: one activity per row, including its reporting details and indicators."
+        ),
+        tr(
+            "Start with the activity title. Continue to the right and leave any unanswered fields blank."
+        ),
+        tr(
+            "Use the dropdowns when available. No formulas or reference codes are needed."
+        ),
+        tr(
+            "Repeat the contact and institution details for each activity. You can copy them from the previous row."
+        ),
+        tr(
+            "The other sheets are optional. Use them only when an activity has additional contributions, support, partner organizations or resources."
+        ),
+        tr(
+            "On an optional sheet, choose the activity title from the dropdown. Use distinct titles when adding these details."
+        ),
+        tr(
+            "Upload the workbook, review the results and create drafts. Nothing is submitted automatically."
+        ),
+        tr(
+            "The completed example is a separate file. Use the empty template for your real activities."
+        ),
+    ]
+    for row, text in enumerate(texts, 1):
+        guide.cell(row, 1, text)
+        guide.merge_cells(start_row=row, start_column=1, end_row=row, end_column=4)
+        guide.cell(row, 1).alignment = Alignment(wrap_text=True, vertical="center")
+        guide.row_dimensions[row].height = 42
+    guide["A1"].font = Font(name="Calibri", size=18, bold=True, color="005A96")
+    for row, (title, fields) in enumerate(schema.GROUPS, 11):
+        column = schema.SHEETS["Activities"].index(fields[0]) + 1
+        guide.cell(row, 1, tr(title))
+        guide.cell(row, 1).hyperlink = (
+            "#"
+            + quote_sheetname(names["Activities"])
+            + "!"
+            + get_column_letter(column)
+            + "5"
+        )
+        guide.cell(row, 1).style = "Hyperlink"
+        guide.row_dimensions[row].height = 26
+    guide.print_area = "A1:D" + str(guide.max_row)

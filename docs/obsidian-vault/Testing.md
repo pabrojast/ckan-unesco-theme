@@ -389,3 +389,7 @@ IHPIX_QA_FILES=/ruta/spreadsheets IHPIX_QA_TOKENS=/ruta/privada/tokens.json \
 ```
 
 `IHPIX_QA_BASE` admite otro puerto local (por defecto 5013). El JSON de tokens contiene `author`, `other` y `admin`; nunca se versiona. Se guardan resultados incluso si una comprobación falla. Las pruebas comparan valores persistidos, owner-only, idempotencia, rollback y retry, v1/v2, ejemplos/minimal/errores y cuatro idiomas entre 320 y 1440 px. La evidencia y las limitaciones de traducción oficial están en [[IHP-IX Bulk Import UX October 2026]].
+
+## Regresiones del Excel plano v3
+
+`test_ihpix_bulk_flat.py` compara los valores completos de los ejemplos v2/v3 en cuatro idiomas, prueba copiar y ordenar filas sin códigos, preserva asociaciones por título, rechaza títulos ambiguos/desconocidos y comprueba errores en celdas planas, cero/No y listas nativas. La prueba de navegador de bulk incluye ahora una carga v2 además de v1 y v3. La fixture obtiene las columnas de los encabezados estables para evitar depender de su posición visual.

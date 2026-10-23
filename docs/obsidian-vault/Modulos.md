@@ -728,3 +728,7 @@ las visitas. El fallback `tracking_raw` excluye por URL y metadatos del recurso.
 ## Importación IHP-IX guiada v2 (2026-10-23)
 
 `ihpix_bulk_schema.py`, `ihpix_bulk_workbook.py` y `ihpix_bulk_display.py` separan estructura del libro, adaptación al esquema original y presentación legible. `ihpix_bulk.py` mantiene lectura v1/v2 y validación compartida; las acciones `ihpix_import_preview/show/create` conservan sus claves y añaden metadatos de origen. `ihpix_views.py` agrega GET autenticado `/ihpix/import/example.xlsx`; la descarga de plantilla existente entrega v2. No hay cambios de DB ni dependencias nuevas. Ver [[IHP-IX Bulk Import UX October 2026]].
+
+## Excel IHP-IX plano v3
+
+`ihpix_bulk_flat.py` reúne los campos editables en Actividades, genera referencias al importar y vincula detalles adicionales por título unívoco. El generador/lector compartido mantiene v1/v2. El formato v3 no requiere nuevas rutas, dependencias ni tablas. Ver [[IHP-IX Bulk Import UX October 2026]].

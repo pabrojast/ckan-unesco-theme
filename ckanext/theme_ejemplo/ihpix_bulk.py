@@ -141,6 +141,9 @@ def _parse(raw, defaults=None):
     if '_IHP_META' in workbook:
         try:
             from ckanext.theme_ejemplo.ihpix_bulk_workbook import parse_v2
+            if workbook["_IHP_META"]["B1"].value == "IHP-IX/3":
+                from ckanext.theme_ejemplo import ihpix_bulk_flat
+                return parse_v2(workbook, schema=ihpix_bulk_flat)
             return parse_v2(workbook)
         finally:
             workbook.close()
@@ -296,6 +299,12 @@ def contradictions(data):
     return errors
 
 
-def template(organizations=(), defaults=None, locale='en', example=False):
+def template_v2(organizations=(), defaults=None, locale='en', example=False):
     from ckanext.theme_ejemplo.ihpix_bulk_workbook import build
     return build(organizations, defaults, locale, example)
+
+
+def template(organizations=(), defaults=None, locale='en', example=False):
+    from ckanext.theme_ejemplo import ihpix_bulk_flat
+    from ckanext.theme_ejemplo.ihpix_bulk_workbook import build
+    return build(organizations, defaults, locale, example, schema=ihpix_bulk_flat)
