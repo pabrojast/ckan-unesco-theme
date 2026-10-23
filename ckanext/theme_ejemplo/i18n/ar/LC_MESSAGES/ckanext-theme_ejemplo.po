@@ -1148,7 +1148,7 @@ msgstr ""
 #: ckanext/theme_ejemplo/templates/admin/portal_cards.html:238
 #: ckanext/theme_ejemplo/templates/macros/form/image_upload.html:18
 msgid "Image URL"
-msgstr ""
+msgstr "رابط الصورة"
 
 #: ckanext/theme_ejemplo/templates/admin/featured_publications.html:246
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:162
@@ -5878,11 +5878,11 @@ msgstr ""
 
 #: ckanext/theme_ejemplo/templates/package/snippets/resources_list.html:39
 msgid "Search resources by name or description…"
-msgstr ""
+msgstr "البحث عن الموارد حسب الاسم أو الوصف…"
 
 #: ckanext/theme_ejemplo/templates/package/snippets/resources_list.html:47
 msgid "All formats"
-msgstr ""
+msgstr "جميع الصيغ"
 
 #: ckanext/theme_ejemplo/templates/package/snippets/resources_list.html:72
 msgid "Resource pages"
@@ -9557,3 +9557,634 @@ msgstr "تصفية الأنشطة"
 
 msgid "No locations are available on this map for the selected activities."
 msgstr "لا تتوفر مواقع على هذه الخريطة للأنشطة المحددة."
+
+msgid "1. Fill in the common reporting details"
+msgstr "1. أدخل بيانات التقارير المشتركة"
+
+msgid "2. Enter activities, then add details only where needed"
+msgstr "2. أدخل الأنشطة ثم أضف التفاصيل اللازمة فقط"
+
+msgid "3. Upload this workbook, review the results and confirm creation of drafts."
+msgstr "3. ارفع هذا الملف وراجع النتائج ثم أكد إنشاء المسودات."
+
+msgid "Activities in this file"
+msgstr "الأنشطة في هذا الملف"
+
+msgid "Activities to complete before submission"
+msgstr "أنشطة يجب استكمالها قبل الإرسال"
+
+msgid "Activity reference"
+msgstr "مرجع النشاط"
+
+msgid "Add at least one activity"
+msgstr "أضف نشاطًا واحدًا على الأقل"
+
+msgid "Additional contribution"
+msgstr "مساهمة إضافية"
+
+msgid "Additional details"
+msgstr "تفاصيل إضافية"
+
+msgid "Available choice"
+msgstr "الخيار المتاح"
+
+msgid "Beneficiary Member States"
+msgstr "الدول الأعضاء المستفيدة"
+
+msgid "Beneficiary regions"
+msgstr "المناطق المستفيدة"
+
+msgid "Brief description"
+msgstr "وصف موجز"
+
+msgid "Can create draft"
+msgstr "يمكن إنشاء مسودة"
+
+msgid "Cell"
+msgstr "الخلية"
+
+msgid "Check this value"
+msgstr "راجع هذه القيمة"
+
+msgid "Choose Additional contribution or Synergy"
+msgstr "اختر مساهمة إضافية أو تآزرًا"
+
+msgid "Choose a value from Reference lists."
+msgstr "اختر قيمة من القوائم المرجعية."
+
+msgid ""
+"Choose a value from the list. The Output must belong to its Priority Area, "
+"and the key activity to its Output."
+msgstr ""
+"اختر قيمة من القائمة. يجب أن يتبع الناتج مجاله ذا الأولوية وأن يتبع النشاط "
+"الرئيسي ناتجه."
+
+msgid "Choose an available option or enter a valid number."
+msgstr "اختر خيارًا متاحًا أو أدخل رقمًا صالحًا."
+
+msgid "Choose an indicator from the list"
+msgstr "اختر مؤشرًا من القائمة"
+
+msgid ""
+"Choose this code from the dropdown; codes must be text to preserve their "
+"digits."
+msgstr "اختر هذا الرمز من القائمة؛ يجب أن يكون نصًا للحفاظ على أرقامه."
+
+msgid "Column headers do not match template: "
+msgstr "العناوين لا تطابق القالب: "
+
+msgid "Column structure changed: "
+msgstr "تغير هيكل الأعمدة: "
+
+msgid "Complete Start here once with your contact, institution and biennium."
+msgstr "أكمل ورقة ابدأ هنا مرة واحدة ببيانات الاتصال والمؤسسة وفترة السنتين."
+
+msgid "Complete before submission"
+msgstr "يجب الاستكمال قبل الإرسال"
+
+msgid "Complete the primary classification before adding contributions"
+msgstr "أكمل التصنيف الرئيسي قبل إضافة المساهمات"
+
+msgid "Completion date"
+msgstr "تاريخ الانتهاء"
+
+msgid "Contribution to the key activity"
+msgstr "المساهمة في النشاط الرئيسي"
+
+msgid "Contributions and synergies"
+msgstr "المساهمات وأوجه التآزر"
+
+msgid "Correct the file and upload it again. No drafts were created."
+msgstr "صحح الملف وارفعه مجددًا. لم يتم إنشاء مسودات."
+
+msgid "Correct these values before creating drafts"
+msgstr "صحح هذه القيم قبل إنشاء المسودات"
+
+msgid "Create drafts"
+msgstr "إنشاء المسودات"
+
+msgid "Cross-cutting working groups"
+msgstr "مجموعات العمل الشاملة"
+
+msgid "Dataset or document"
+msgstr "مجموعة بيانات أو وثيقة"
+
+msgid "Describe Other"
+msgstr "وضح خيار آخر"
+
+msgid "Describe the synergies"
+msgstr "صف أوجه التآزر"
+
+msgid "Did countries or regions benefit?"
+msgstr "هل استفادت دول أو مناطق؟"
+
+msgid "Download completed example"
+msgstr "تنزيل مثال مكتمل"
+
+msgid "Download empty template"
+msgstr "تنزيل قالب فارغ"
+
+msgid "Email address of the focal point"
+msgstr "البريد الإلكتروني لجهة الاتصال"
+
+msgid "Enter a whole number from 0 to 2147483647. Leave blank if unanswered."
+msgstr "أدخل عددًا صحيحًا من 0 إلى 2147483647. اتركه فارغًا إذا لم تجب."
+
+msgid "Errors to correct"
+msgstr "أخطاء يجب تصحيحها"
+
+msgid "Event date"
+msgstr "تاريخ الفعالية"
+
+msgid "Event page"
+msgstr "صفحة الفعالية"
+
+msgid "Example publication"
+msgstr "منشور توضيحي"
+
+msgid "Example results only. Replace these with the results of your activity."
+msgstr "نتائج توضيحية فقط. استبدلها بنتائج نشاطك."
+
+msgid "Example workshop"
+msgstr "ورشة عمل توضيحية"
+
+msgid "Existing resource identifier"
+msgstr "معرّف المورد الموجود"
+
+msgid "Existing resource source"
+msgstr "مصدر المورد الموجود"
+
+msgid "Expanded workbook exceeds 30 MB"
+msgstr "يتجاوز حجم الملف بعد فك الضغط 30 ميغابايت"
+
+msgid "Explain how the activity contributed to the selected key activity."
+msgstr "اشرح كيف ساهم النشاط في النشاط الرئيسي المحدد."
+
+msgid "External link"
+msgstr "رابط خارجي"
+
+msgid "Fictional activity for learning how to complete this workbook."
+msgstr "نشاط افتراضي لتعلم كيفية إكمال هذا الملف."
+
+msgid "Fictional example. Do not submit as a real activity."
+msgstr "مثال افتراضي. لا ترسله بوصفه نشاطًا حقيقيًا."
+
+msgid "Fictional resource used to illustrate an external link."
+msgstr "مورد افتراضي لتوضيح رابط خارجي."
+
+msgid "Field"
+msgstr "الحقل"
+
+msgid "Files and publications can also be added after creating the drafts."
+msgstr "يمكنك أيضًا إضافة الملفات والمنشورات بعد إنشاء المسودات."
+
+msgid ""
+"Fill in your institution details once, add your activities and complete only "
+"the sections you need."
+msgstr "أدخل بيانات مؤسستك مرة واحدة وأضف أنشطتك وأكمل الأقسام التي تحتاجها فقط."
+
+msgid "Financial support"
+msgstr "دعم مالي"
+
+msgid "Flagship initiatives"
+msgstr "المبادرات الرائدة"
+
+msgid ""
+"For multiple choices, separate names with ;. See Reference lists. Example: "
+"Chile; Kenya."
+msgstr ""
+"للخيارات المتعددة، افصل الأسماء بالرمز ;. راجع القوائم المرجعية. مثال: شيلي; "
+"كينيا."
+
+msgid "Formulas are not allowed; paste values"
+msgstr "الصيغ غير مسموحة؛ الصق القيم"
+
+msgid "Help"
+msgstr "المساعدة"
+
+msgid "Hosting support"
+msgstr "دعم الاستضافة"
+
+msgid "How to fill in the workbook"
+msgstr "كيفية إكمال الملف"
+
+msgid "IHP-IX · Import activities"
+msgstr "المرحلة التاسعة · استيراد الأنشطة"
+
+msgid "IHP-WINS organization"
+msgstr "منظمة في IHP-WINS"
+
+msgid "Import activities from Excel"
+msgstr "استيراد الأنشطة من Excel"
+
+msgid "Import another file"
+msgstr "استيراد ملف آخر"
+
+msgid "Import steps"
+msgstr "خطوات الاستيراد"
+
+msgid ""
+"In Activities, enter one activity per row. Keep the prepared references: "
+"A001, A002…"
+msgstr ""
+"في ورقة الأنشطة، أدخل نشاطًا واحدًا في كل صف واحتفظ بالمراجع المعدة: A001، "
+"A002…"
+
+msgid "In-kind support"
+msgstr "دعم عيني"
+
+msgid "Indicator"
+msgstr "المؤشر"
+
+msgid "Indicators"
+msgstr "المؤشرات"
+
+msgid "Institution category"
+msgstr "فئة المؤسسة"
+
+msgid "Institution name"
+msgstr "اسم المؤسسة"
+
+msgid "Key activity"
+msgstr "النشاط الرئيسي"
+
+msgid "Knowledge improvement"
+msgstr "تحسين المعرفة"
+
+msgid "Leave blank if unanswered."
+msgstr "اتركه فارغًا إذا لم تجب."
+
+msgid "Link to the activity"
+msgstr "رابط النشاط"
+
+msgid "Linked to a flagship initiative?"
+msgstr "هل يرتبط بمبادرة رائدة؟"
+
+msgid "Maximum characters:"
+msgstr "الحد الأقصى للأحرف:"
+
+msgid "Missing worksheet: "
+msgstr "الورقة مفقودة: "
+
+msgid "Multiple activities"
+msgstr "أنشطة متعددة"
+
+msgid "Names of stakeholder groups"
+msgstr "أسماء مجموعات أصحاب المصلحة"
+
+msgid "Needs correction"
+msgstr "يحتاج إلى تصحيح"
+
+msgid "No matching activity row"
+msgstr "لا يوجد نشاط بهذا المرجع"
+
+msgid "Nothing will be published or submitted automatically."
+msgstr "لن يتم نشر أو إرسال أي شيء تلقائيًا."
+
+msgid "Of which female participants"
+msgstr "من بينهم الإناث"
+
+msgid "Of which youth (18–35 years old)"
+msgstr "من بينهم الشباب من 18 إلى 35 عامًا"
+
+msgid ""
+"Only the activity title is required to create a draft. Other required answers"
+" can be completed before submission."
+msgstr ""
+"عنوان النشاط وحده مطلوب لإنشاء مسودة. يمكن إكمال الإجابات المطلوبة الأخرى قبل"
+" الإرسال."
+
+msgid ""
+"Only the title is required to create a draft. You can complete other required"
+" answers before submitting it for review."
+msgstr ""
+"العنوان وحده مطلوب لإنشاء مسودة. يمكنك إكمال الإجابات المطلوبة الأخرى قبل "
+"إرسالها للمراجعة."
+
+msgid "Open my drafts"
+msgstr "فتح مسوداتي"
+
+msgid ""
+"Optional. Select the activity reference from Activities. Leave unanswered "
+"questions blank; No is an explicit answer."
+msgstr ""
+"اختياري. اختر مرجع النشاط من ورقة الأنشطة. اترك الأسئلة غير المجابة فارغة؛ لا"
+" إجابة صريحة."
+
+msgid "Optional: complete only when relevant."
+msgstr "اختياري: أكمل عند الحاجة فقط."
+
+msgid "Other institution category"
+msgstr "فئة أخرى للمؤسسة"
+
+msgid "Other partners"
+msgstr "شركاء آخرون"
+
+msgid "Participation and scope"
+msgstr "المشاركة والنطاق"
+
+msgid "Partner organization"
+msgstr "المنظمة الشريكة"
+
+msgid "Prepare the file"
+msgstr "إعداد الملف"
+
+msgid "Preview pages"
+msgstr "صفحات المعاينة"
+
+msgid "Previously downloaded IHP-IX templates are also accepted."
+msgstr "تُقبل أيضًا قوالب المرحلة التاسعة التي نُزلت سابقًا."
+
+msgid "Primary supporting Member State"
+msgstr "الدولة العضو الداعمة الرئيسية"
+
+msgid "Publications and resources"
+msgstr "المنشورات والموارد"
+
+msgid "Reference lists"
+msgstr "القوائم المرجعية"
+
+msgid "Relationship"
+msgstr "العلاقة"
+
+msgid "Resource type"
+msgstr "نوع المورد"
+
+msgid "Review your activities"
+msgstr "راجع أنشطتك"
+
+msgid "See a completed example"
+msgstr "اطلع على مثال مكتمل"
+
+msgid "Shared reporting details"
+msgstr "بيانات التقرير المشتركة"
+
+msgid "Shared value"
+msgstr "القيمة المشتركة"
+
+msgid "Stakeholder groups supported"
+msgstr "مجموعات أصحاب المصلحة المدعومة"
+
+msgid "Start here"
+msgstr "ابدأ هنا"
+
+msgid ""
+"Start here contains the common details. Activities has 11 columns. The other "
+"sheets are optional and organized by topic."
+msgstr ""
+"تحتوي ابدأ هنا على البيانات المشتركة. تتضمن الأنشطة 11 عمودًا. الأوراق الأخرى"
+" اختيارية ومنظمة حسب الموضوع."
+
+msgid "Start here: one activity per row."
+msgstr "ابدأ هنا: نشاط واحد لكل صف."
+
+msgid ""
+"Start with Activities. Complete the other sheets only when relevant. One "
+"activity per row; keep its reference when adding details on another sheet."
+msgstr ""
+"ابدأ بورقة الأنشطة. أكمل الأوراق الأخرى عند الحاجة فقط. نشاط واحد في كل صف؛ "
+"استخدم مرجعه لإضافة التفاصيل في ورقة أخرى."
+
+msgid "Start with the empty template"
+msgstr "ابدأ بالقالب الفارغ"
+
+msgid "Synergy"
+msgstr "تآزر"
+
+msgid ""
+"The example contains fictional activities. Use the empty template for real "
+"reports."
+msgstr "يحتوي المثال على أنشطة افتراضية. استخدم القالب الفارغ للتقارير الحقيقية."
+
+msgid ""
+"The file can be imported. Missing answers can be completed in the drafts "
+"before submission."
+msgstr "يمكن استيراد الملف. يمكنك إكمال الإجابات الناقصة في المسودات قبل الإرسال."
+
+msgid "The file could not be processed"
+msgstr "تعذر معالجة الملف"
+
+msgid "These values apply unless the activity has an exception."
+msgstr "تُطبق هذه القيم ما لم يكن للنشاط استثناء."
+
+msgid ""
+"This answer contains data, but its Yes/No question is No. Correct the "
+"question or clear this answer."
+msgstr ""
+"تحتوي هذه الإجابة على بيانات لكن سؤال نعم/لا إجابته لا. صحح السؤال أو امسح "
+"هذه الإجابة."
+
+msgid "This field does not apply to the selected indicator"
+msgstr "لا ينطبق هذا الحقل على المؤشر المحدد"
+
+msgid ""
+"This file contains fictional examples. Any drafts you create from it will "
+"also be examples."
+msgstr "يحتوي هذا الملف على أمثلة افتراضية. ستكون المسودات المنشأة منه أمثلة أيضًا."
+
+msgid ""
+"Three fictional activities show a basic report, training indicators and "
+"cooperation involving several countries and resources."
+msgstr ""
+"توضح ثلاثة أنشطة افتراضية تقريرًا أساسيًا ومؤشرات تدريب وتعاونًا بين دول "
+"متعددة مع موارد."
+
+msgid "Transboundary Member States supported"
+msgstr "الدول الأعضاء المدعومة بشأن المياه العابرة للحدود"
+
+msgid "Types (separate with ;)"
+msgstr "الأنواع (افصل بالرمز ;)"
+
+msgid "Unrecognized worksheet; move report data into the template sheets"
+msgstr "ورقة غير معروفة؛ انقل البيانات إلى أوراق القالب"
+
+msgid "Unsupported template version; download the current template"
+msgstr "إصدار القالب غير مدعوم؛ نزّل القالب الحالي"
+
+msgid "Untitled activity"
+msgstr "نشاط بلا عنوان"
+
+msgid "Upload"
+msgstr "رفع"
+
+msgid "Upload a valid XLSX workbook"
+msgstr "ارفع ملف XLSX صالحًا"
+
+msgid "Upload corrected file"
+msgstr "رفع الملف المصحح"
+
+msgid "Upload your completed workbook"
+msgstr "ارفع الملف المكتمل"
+
+msgid "Uploading checks the file. Drafts are created only after your confirmation."
+msgstr "يُفحص الملف عند رفعه. لا تُنشأ المسودات إلا بعد تأكيدك."
+
+msgid "Use ISO dates YYYY-MM-DD and nonnegative whole numbers up to 2147483647."
+msgstr "استخدم تواريخ ISO بصيغة YYYY-MM-DD وأعدادًا صحيحة غير سالبة حتى 2147483647."
+
+msgid "Use YYYY-MM-DD, for example 2026-09-15."
+msgstr "استخدم YYYY-MM-DD، مثل 2026-09-15."
+
+msgid "Use a unique, nonempty row reference"
+msgstr "استخدم مرجعًا فريدًا وغير فارغ"
+
+msgid "Use only one row per activity in this section (one per indicator)."
+msgstr "استخدم صفًا واحدًا لكل نشاط في هذا القسم (صفًا لكل مؤشر)."
+
+msgid "Use row_ref on relation sheets to link multiple entries to an activity."
+msgstr "استخدم row_ref في الأوراق المرتبطة لربط إدخالات متعددة بنشاط واحد."
+
+msgid ""
+"Use the dropdowns. For multiple choices, separate values with ;. Leave "
+"unanswered questions blank."
+msgstr ""
+"استخدم القوائم المنسدلة. للخيارات المتعددة، افصل القيم بالرمز ;. اترك الأسئلة"
+" غير المجابة فارغة."
+
+msgid "Use the same activity reference on every sheet, for example A001."
+msgstr "استخدم مرجع النشاط نفسه في جميع الأوراق، مثل A001."
+
+msgid ""
+"Use the same reference to add indicators, support, contributions or resources"
+" on the optional sheets."
+msgstr ""
+"استخدم المرجع نفسه لإضافة المؤشرات أو الدعم أو المساهمات أو الموارد في "
+"الأوراق الاختيارية."
+
+msgid ""
+"Use the worksheet and cell shown below, save your Excel file and upload it "
+"again."
+msgstr "استخدم الورقة والخلية الموضحتين أدناه، ثم احفظ ملف Excel وارفعه مجددًا."
+
+msgid "Use yes/no for gates. Empty answers remain unanswered."
+msgstr "استخدم yes/no للأسئلة. تبقى الخلايا الفارغة بلا إجابة."
+
+msgid "Used for every activity unless an exception is entered in Institutions."
+msgstr "يُستخدم لجميع الأنشطة ما لم تحدد استثناءً في ورقة المؤسسات."
+
+msgid "View activity details"
+msgstr "عرض تفاصيل النشاط"
+
+msgid "Was there Member State support?"
+msgstr "هل قدمت دول أعضاء دعمًا؟"
+
+msgid "Web address"
+msgstr "عنوان الويب"
+
+msgid "Were there synergies?"
+msgstr "هل وُجدت أوجه تآزر؟"
+
+msgid "Workbook exceeds 5 MB"
+msgstr "يتجاوز حجم الملف 5 ميغابايت"
+
+msgid "Workbook metadata is invalid"
+msgstr "بيانات الملف الوصفية غير صالحة"
+
+msgid "Workbook reference lists are missing"
+msgstr "القوائم المرجعية للملف مفقودة"
+
+msgid "Workbook reference lists exceed template limits"
+msgstr "تتجاوز القوائم المرجعية حدود القالب"
+
+msgid "Worksheet dimensions exceed template limits: "
+msgstr "تتجاوز أبعاد الورقة الحدود: "
+
+msgid "Worksheet structure changed; download the current template"
+msgstr "تغير هيكل الأوراق؛ نزّل القالب الحالي"
+
+msgid "XLSX · Up to 5 MB · Up to 2,000 activities"
+msgstr "XLSX · حتى 5 ميغابايت · حتى 2000 نشاط"
+
+msgid "Yes or no"
+msgstr "نعم أو لا"
+
+msgid ""
+"Your activities are saved. Open each draft to complete it and submit it for "
+"review."
+msgstr "تم حفظ أنشطتك. افتح كل مسودة لإكمالها وإرسالها للمراجعة."
+
+msgid "[EXAMPLE]"
+msgstr "[مثال]"
+
+msgid "River monitoring study"
+msgstr "دراسة لرصد الأنهار"
+
+msgid "Water management training"
+msgstr "تدريب على إدارة المياه"
+
+msgid "Regional water cooperation"
+msgstr "تعاون إقليمي في مجال المياه"
+
+msgid "Example Water Institute"
+msgstr "معهد مياه افتراضي"
+
+msgid "Example coordinator"
+msgstr "منسق افتراضي"
+
+msgid "Add a row for activity"
+msgstr "أضف صفًا للنشاط"
+
+msgid "Drafts could not be created"
+msgstr "تعذر إنشاء المسودات"
+
+msgid "Resource title"
+msgstr "عنوان المورد"
+
+msgid "Resource description"
+msgstr "وصف المورد"
+
+msgid ""
+"Common reporting rows changed; keep the field labels in their original "
+"positions"
+msgstr "تغيرت صفوف البيانات المشتركة؛ احتفظ بتسميات الحقول في مواضعها الأصلية"
+
+msgid "Worksheet dimensions exceed template limits"
+msgstr "تتجاوز أبعاد الورقة حدود القالب"
+
+msgid ""
+"Official classification titles are kept in their original language when "
+"no translation is available."
+msgstr "تُحفظ عناوين التصنيف الرسمية بلغتها الأصلية عندما لا تتوفر ترجمة."
+
+#: ckanext/theme_ejemplo/templates/package/snippets/resource_style.html
+msgid "Visualization style"
+msgstr "نمط العرض"
+
+#: ckanext/theme_ejemplo/templates/package/snippets/resource_style.html
+msgid "Visualization styles"
+msgstr "أنماط العرض"
+
+#: ckanext/theme_ejemplo/templates/package/snippets/resource_style.html
+msgid "Cartographic style"
+msgstr "نمط الخرائط"
+
+#: ckanext/theme_ejemplo/templates/package/snippets/resource_style.html
+msgid "Download style"
+msgstr "تنزيل النمط"
+
+#: ckanext/theme_ejemplo/templates/package/snippets/resource_style.html
+msgid "Show all files"
+msgstr "عرض جميع الملفات"
+
+#: ckanext/theme_ejemplo/templates/package/snippets/resource_style.html
+msgid "Style files"
+msgstr "ملفات الأنماط"
+
+#: ckanext/theme_ejemplo/templates/package/snippets/resource_style.html
+msgid "Resources could not be loaded. Please try again."
+msgstr "تعذر تحميل الموارد. يرجى المحاولة مرة أخرى."
+
+#: ckanext/theme_ejemplo/templates/package/snippets/resource_style.html
+msgid "Results"
+msgstr "النتائج"
+
+#: ckanext/theme_ejemplo/templates/package/snippets/resource_style.html
+msgid "resources"
+msgstr "موارد"
+
+#: ckanext/theme_ejemplo/templates/package/snippets/resource_style.html
+msgid "Used in"
+msgstr "مستخدم في"
+
+msgid "Archived workspaces are read-only"
+msgstr "لا يمكن تعديل مجموعات العمل المؤرشفة."

@@ -11713,3 +11713,589 @@ msgstr ""
 
 msgid "No locations are available on this map for the selected activities."
 msgstr ""
+
+msgid "1. Fill in the common reporting details"
+msgstr ""
+
+msgid "2. Enter activities, then add details only where needed"
+msgstr ""
+
+msgid "3. Upload this workbook, review the results and confirm creation of drafts."
+msgstr ""
+
+msgid "Activities in this file"
+msgstr ""
+
+msgid "Activities to complete before submission"
+msgstr ""
+
+msgid "Activity reference"
+msgstr ""
+
+msgid "Add at least one activity"
+msgstr ""
+
+msgid "Additional contribution"
+msgstr ""
+
+msgid "Additional details"
+msgstr ""
+
+msgid "Available choice"
+msgstr ""
+
+msgid "Beneficiary Member States"
+msgstr ""
+
+msgid "Beneficiary regions"
+msgstr ""
+
+msgid "Brief description"
+msgstr ""
+
+msgid "Can create draft"
+msgstr ""
+
+msgid "Cell"
+msgstr ""
+
+msgid "Check this value"
+msgstr ""
+
+msgid "Choose Additional contribution or Synergy"
+msgstr ""
+
+msgid "Choose a value from Reference lists."
+msgstr ""
+
+msgid ""
+"Choose a value from the list. The Output must belong to its Priority Area, "
+"and the key activity to its Output."
+msgstr ""
+
+msgid "Choose an available option or enter a valid number."
+msgstr ""
+
+msgid "Choose an indicator from the list"
+msgstr ""
+
+msgid ""
+"Choose this code from the dropdown; codes must be text to preserve their "
+"digits."
+msgstr ""
+
+msgid "Column headers do not match template: "
+msgstr ""
+
+msgid "Column structure changed: "
+msgstr ""
+
+msgid "Complete Start here once with your contact, institution and biennium."
+msgstr ""
+
+msgid "Complete before submission"
+msgstr ""
+
+msgid "Complete the primary classification before adding contributions"
+msgstr ""
+
+msgid "Completion date"
+msgstr ""
+
+msgid "Contribution to the key activity"
+msgstr ""
+
+msgid "Contributions and synergies"
+msgstr ""
+
+msgid "Correct the file and upload it again. No drafts were created."
+msgstr ""
+
+msgid "Correct these values before creating drafts"
+msgstr ""
+
+msgid "Create drafts"
+msgstr ""
+
+msgid "Cross-cutting working groups"
+msgstr ""
+
+msgid "Dataset or document"
+msgstr ""
+
+msgid "Describe Other"
+msgstr ""
+
+msgid "Describe the synergies"
+msgstr ""
+
+msgid "Did countries or regions benefit?"
+msgstr ""
+
+msgid "Download completed example"
+msgstr ""
+
+msgid "Download empty template"
+msgstr ""
+
+msgid "Enter a whole number from 0 to 2147483647. Leave blank if unanswered."
+msgstr ""
+
+msgid "Errors to correct"
+msgstr ""
+
+msgid "Event date"
+msgstr ""
+
+msgid "Event page"
+msgstr ""
+
+msgid "Example publication"
+msgstr ""
+
+msgid "Example results only. Replace these with the results of your activity."
+msgstr ""
+
+msgid "Example workshop"
+msgstr ""
+
+msgid "Existing resource identifier"
+msgstr ""
+
+msgid "Existing resource source"
+msgstr ""
+
+msgid "Expanded workbook exceeds 30 MB"
+msgstr ""
+
+msgid "Explain how the activity contributed to the selected key activity."
+msgstr ""
+
+msgid "External link"
+msgstr ""
+
+msgid "Fictional activity for learning how to complete this workbook."
+msgstr ""
+
+msgid "Fictional example. Do not submit as a real activity."
+msgstr ""
+
+msgid "Fictional resource used to illustrate an external link."
+msgstr ""
+
+msgid "Field"
+msgstr ""
+
+msgid "Files and publications can also be added after creating the drafts."
+msgstr ""
+
+msgid ""
+"Fill in your institution details once, add your activities and complete only "
+"the sections you need."
+msgstr ""
+
+msgid "Financial support"
+msgstr ""
+
+msgid "Flagship initiatives"
+msgstr ""
+
+msgid ""
+"For multiple choices, separate names with ;. See Reference lists. Example: "
+"Chile; Kenya."
+msgstr ""
+
+msgid "Formulas are not allowed; paste values"
+msgstr ""
+
+msgid "Help"
+msgstr ""
+
+msgid "Hosting support"
+msgstr ""
+
+msgid "How to fill in the workbook"
+msgstr ""
+
+msgid "IHP-IX · Import activities"
+msgstr ""
+
+msgid "IHP-WINS organization"
+msgstr ""
+
+msgid "Import activities from Excel"
+msgstr ""
+
+msgid "Import another file"
+msgstr ""
+
+msgid "Import steps"
+msgstr ""
+
+msgid ""
+"In Activities, enter one activity per row. Keep the prepared references: "
+"A001, A002…"
+msgstr ""
+
+msgid "In-kind support"
+msgstr ""
+
+msgid "Indicators"
+msgstr ""
+
+msgid "Institution category"
+msgstr ""
+
+msgid "Institution name"
+msgstr ""
+
+msgid "Leave blank if unanswered."
+msgstr ""
+
+msgid "Linked to a flagship initiative?"
+msgstr ""
+
+msgid "Maximum characters:"
+msgstr ""
+
+msgid "Missing worksheet: "
+msgstr ""
+
+msgid "Multiple activities"
+msgstr ""
+
+msgid "Names of stakeholder groups"
+msgstr ""
+
+msgid "Needs correction"
+msgstr ""
+
+msgid "No matching activity row"
+msgstr ""
+
+msgid "Nothing will be published or submitted automatically."
+msgstr ""
+
+msgid ""
+"Only the activity title is required to create a draft. Other required answers"
+" can be completed before submission."
+msgstr ""
+
+msgid ""
+"Only the title is required to create a draft. You can complete other required"
+" answers before submitting it for review."
+msgstr ""
+
+msgid "Open my drafts"
+msgstr ""
+
+msgid ""
+"Optional. Select the activity reference from Activities. Leave unanswered "
+"questions blank; No is an explicit answer."
+msgstr ""
+
+msgid "Optional: complete only when relevant."
+msgstr ""
+
+msgid "Other institution category"
+msgstr ""
+
+msgid "Other partners"
+msgstr ""
+
+msgid "Participation and scope"
+msgstr ""
+
+msgid "Partner organization"
+msgstr ""
+
+msgid "Prepare the file"
+msgstr ""
+
+msgid "Preview pages"
+msgstr ""
+
+msgid "Previously downloaded IHP-IX templates are also accepted."
+msgstr ""
+
+msgid "Primary supporting Member State"
+msgstr ""
+
+msgid "Publications and resources"
+msgstr ""
+
+msgid "Reference lists"
+msgstr ""
+
+msgid "Relationship"
+msgstr ""
+
+msgid "Resource type"
+msgstr ""
+
+msgid "Review your activities"
+msgstr ""
+
+msgid "See a completed example"
+msgstr ""
+
+msgid "Shared reporting details"
+msgstr ""
+
+msgid "Shared value"
+msgstr ""
+
+msgid "Stakeholder groups supported"
+msgstr ""
+
+msgid "Start here"
+msgstr ""
+
+msgid ""
+"Start here contains the common details. Activities has 11 columns. The other "
+"sheets are optional and organized by topic."
+msgstr ""
+
+msgid "Start here: one activity per row."
+msgstr ""
+
+msgid ""
+"Start with Activities. Complete the other sheets only when relevant. One "
+"activity per row; keep its reference when adding details on another sheet."
+msgstr ""
+
+msgid "Start with the empty template"
+msgstr ""
+
+msgid "Synergy"
+msgstr ""
+
+msgid ""
+"The example contains fictional activities. Use the empty template for real "
+"reports."
+msgstr ""
+
+msgid ""
+"The file can be imported. Missing answers can be completed in the drafts "
+"before submission."
+msgstr ""
+
+msgid "The file could not be processed"
+msgstr ""
+
+msgid "These values apply unless the activity has an exception."
+msgstr ""
+
+msgid ""
+"This answer contains data, but its Yes/No question is No. Correct the "
+"question or clear this answer."
+msgstr ""
+
+msgid "This field does not apply to the selected indicator"
+msgstr ""
+
+msgid ""
+"This file contains fictional examples. Any drafts you create from it will "
+"also be examples."
+msgstr ""
+
+msgid ""
+"Three fictional activities show a basic report, training indicators and "
+"cooperation involving several countries and resources."
+msgstr ""
+
+msgid "Transboundary Member States supported"
+msgstr ""
+
+msgid "Types (separate with ;)"
+msgstr ""
+
+msgid "Unrecognized worksheet; move report data into the template sheets"
+msgstr ""
+
+msgid "Unsupported template version; download the current template"
+msgstr ""
+
+msgid "Untitled activity"
+msgstr ""
+
+msgid "Upload"
+msgstr ""
+
+msgid "Upload a valid XLSX workbook"
+msgstr ""
+
+msgid "Upload corrected file"
+msgstr ""
+
+msgid "Upload your completed workbook"
+msgstr ""
+
+msgid "Uploading checks the file. Drafts are created only after your confirmation."
+msgstr ""
+
+msgid "Use ISO dates YYYY-MM-DD and nonnegative whole numbers up to 2147483647."
+msgstr ""
+
+msgid "Use YYYY-MM-DD, for example 2026-09-15."
+msgstr ""
+
+msgid "Use a unique, nonempty row reference"
+msgstr ""
+
+msgid "Use only one row per activity in this section (one per indicator)."
+msgstr ""
+
+msgid "Use row_ref on relation sheets to link multiple entries to an activity."
+msgstr ""
+
+msgid ""
+"Use the dropdowns. For multiple choices, separate values with ;. Leave "
+"unanswered questions blank."
+msgstr ""
+
+msgid "Use the same activity reference on every sheet, for example A001."
+msgstr ""
+
+msgid ""
+"Use the same reference to add indicators, support, contributions or resources"
+" on the optional sheets."
+msgstr ""
+
+msgid ""
+"Use the worksheet and cell shown below, save your Excel file and upload it "
+"again."
+msgstr ""
+
+msgid "Use yes/no for gates. Empty answers remain unanswered."
+msgstr ""
+
+msgid "Used for every activity unless an exception is entered in Institutions."
+msgstr ""
+
+msgid "View activity details"
+msgstr ""
+
+msgid "Was there Member State support?"
+msgstr ""
+
+msgid "Web address"
+msgstr ""
+
+msgid "Were there synergies?"
+msgstr ""
+
+msgid "Workbook exceeds 5 MB"
+msgstr ""
+
+msgid "Workbook metadata is invalid"
+msgstr ""
+
+msgid "Workbook reference lists are missing"
+msgstr ""
+
+msgid "Workbook reference lists exceed template limits"
+msgstr ""
+
+msgid "Worksheet dimensions exceed template limits: "
+msgstr ""
+
+msgid "Worksheet structure changed; download the current template"
+msgstr ""
+
+msgid "XLSX · Up to 5 MB · Up to 2,000 activities"
+msgstr ""
+
+msgid "Yes or no"
+msgstr ""
+
+msgid ""
+"Your activities are saved. Open each draft to complete it and submit it for "
+"review."
+msgstr ""
+
+msgid "[EXAMPLE]"
+msgstr ""
+
+msgid "River monitoring study"
+msgstr ""
+
+msgid "Water management training"
+msgstr ""
+
+msgid "Regional water cooperation"
+msgstr ""
+
+msgid "Example Water Institute"
+msgstr ""
+
+msgid "Example coordinator"
+msgstr ""
+
+msgid "Add a row for activity"
+msgstr ""
+
+msgid "Drafts could not be created"
+msgstr ""
+
+msgid "Resource title"
+msgstr ""
+
+msgid "Resource description"
+msgstr ""
+
+msgid ""
+"Common reporting rows changed; keep the field labels in their original "
+"positions"
+msgstr ""
+
+msgid "Worksheet dimensions exceed template limits"
+msgstr ""
+
+msgid ""
+"Official classification titles are kept in their original language when "
+"no translation is available."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/package/snippets/resource_style.html
+msgid "Visualization style"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/package/snippets/resource_style.html
+msgid "Visualization styles"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/package/snippets/resource_style.html
+msgid "Cartographic style"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/package/snippets/resource_style.html
+msgid "Download style"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/package/snippets/resource_style.html
+msgid "Show all files"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/package/snippets/resource_style.html
+msgid "Style files"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/package/snippets/resource_style.html
+msgid "Resources could not be loaded. Please try again."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/package/snippets/resource_style.html
+msgid "Results"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/package/snippets/resource_style.html
+msgid "resources"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/package/snippets/resource_style.html
+msgid "Used in"
+msgstr ""
+
+msgid "Archived workspaces are read-only"
+msgstr ""

@@ -684,3 +684,7 @@ Las nuevas acciones registran auth correspondiente en `auth.py`; la comprobació
 ## Progress y países (2026-10-22)
 
 La vista Progress conecta `country` con el parámetro existente de estadísticas. Las narrativas añaden `overall`, `flagship`, `ctwg`, `country` y `region`. La paleta se centraliza en `PA_COLORS`/`PA_DARK_COLORS`, expuestas por `get_ihpix_taxonomies`. Ver [[IHP-IX Progress UX October 2026]].
+
+## Importación IHP-IX guiada v2 (2026-10-23)
+
+`ihpix_bulk_schema.py`, `ihpix_bulk_workbook.py` y `ihpix_bulk_display.py` separan estructura del libro, adaptación al esquema original y presentación legible. `ihpix_bulk.py` mantiene lectura v1/v2 y validación compartida; las acciones `ihpix_import_preview/show/create` conservan sus claves y añaden metadatos de origen. `ihpix_views.py` agrega GET autenticado `/ihpix/import/example.xlsx`; la descarga de plantilla existente entrega v2. No hay cambios de DB ni dependencias nuevas. Ver [[IHP-IX Bulk Import UX October 2026]].

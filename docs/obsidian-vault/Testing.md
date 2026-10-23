@@ -328,3 +328,17 @@ Regresiones reproducibles adicionales: `scripts/ihpix_review_privacy.py` (15 che
 ## Progress IHP-IX: países y navegación
 
 `scripts/playwright/ihpix_progress_filters.cjs` prueba selección geográfica, coherencia de exportaciones, recuperación ante fallos, borradores y 80 combinaciones de página/idioma/viewport. La fixture aislada y las variables de ejecución se documentan en [[IHP-IX Progress UX October 2026]]. La suite pura incluye una regresión para impedir que un alias vacío resuelva a un país con nombre no latino.
+
+## Importación guiada IHP-IX v2 (2026-10-23)
+
+La suite pura suma 178 pruebas. `test_ihpix_bulk_v2.py` cubre mapeo completo, datos compartidos, indicadores, relaciones, archivos alterados, coordenadas XML reales, traducciones y compatibilidad. No requiere CKAN ni Babel; usa los catálogos MO incluidos.
+
+`scripts/playwright/ihpix_bulk.cjs` requiere un CKAN local **desechable**: usa autor, usuario ajeno y admin, y archiva/restaura temporalmente el workspace 1.10 para comprobar rollback. No ejecutarlo mediante port-forward contra un entorno compartido. `scripts/playwright/fixtures/ihpix_bulk.py` genera fixtures y vacía únicamente las tablas de reportes/importaciones de la base local `ihpix_bulk`; exige `/qa/app.ini` y el host `ihpix-bulk-db`. Los usuarios y tokens se preparan separadamente en esa instancia.
+
+```bash
+PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python3 -m pytest -q ckanext/theme_ejemplo/tests/test_ihpix_*.py
+IHPIX_QA_FILES=/ruta/spreadsheets IHPIX_QA_TOKENS=/ruta/privada/tokens.json \
+  IHPIX_QA_OUTPUT=/tmp/ihpix-bulk-browser node scripts/playwright/ihpix_bulk.cjs
+```
+
+`IHPIX_QA_BASE` admite otro puerto local (por defecto 5013). El JSON de tokens contiene `author`, `other` y `admin`; nunca se versiona. Se guardan resultados incluso si una comprobación falla. Las pruebas comparan valores persistidos, owner-only, idempotencia, rollback y retry, v1/v2, ejemplos/minimal/errores y cuatro idiomas entre 320 y 1440 px. La evidencia y las limitaciones de traducción oficial están en [[IHP-IX Bulk Import UX October 2026]].

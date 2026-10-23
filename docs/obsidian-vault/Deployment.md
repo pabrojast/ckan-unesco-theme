@@ -302,3 +302,7 @@ La publicación reveló que la regla de GitHub exigía `Theme checks` pero solo 
 ## Comprobación adicional de Progress (2026-10-22)
 
 El workflow vigente `.github/workflows/theme-checks.yml` ejecuta también `node --check` sobre `ihpix-progress.js`, además de las regresiones IHP-IX y la taxonomía. El procedimiento de esta mejora en DEV se documenta en [[IHP-IX Progress UX October 2026]].
+
+## Verificación de importación IHP-IX (2026-10-23)
+
+`Theme checks` incluye la sintaxis de `scripts/playwright/ihpix_bulk.cjs` además de las regresiones puras. El recorrido que crea borradores y comprueba rollback debe ejecutarse únicamente en CKAN aislado; ver [[Testing]] y [[IHP-IX Bulk Import UX October 2026]].

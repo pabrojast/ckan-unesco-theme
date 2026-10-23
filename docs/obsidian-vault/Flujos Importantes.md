@@ -847,3 +847,7 @@ El banner de retorno se asocia en sesión al usuario y reporte. Los editores nat
 ## Filtro geográfico IHP-IX y acceso a borradores
 
 Mapa, tabla o buscador → país seleccionado → gráficos y enlaces sincronizados → JSON/presentación/narrativa con el mismo ámbito y filtros. My drafts guarda primero los cambios pendientes en el navegador y abre el perfil filtrado a borradores. Detalles: [[IHP-IX Progress UX October 2026]].
+
+## Importación Excel IHP-IX: preparar, revisar y crear (2026-10-23)
+
+`/ihpix/import` ofrece la plantilla v2 en `/ihpix/import/template.xlsx` y un ejemplo completo separado en `/ihpix/import/example.xlsx`; ambas rutas requieren autenticación. Los datos compartidos se completan una vez, Actividades tiene 11 columnas y los detalles se distribuyen en hojas opcionales. El servidor acepta también v1. La vista previa distingue errores de valores y respuestas pendientes para envío; conserva todos los campos y permite crear borradores tras confirmación explícita. Un fallo transaccional mantiene el lote sin crear y permite reintentar. Ver [[IHP-IX Bulk Import UX October 2026]].

@@ -58,3 +58,5 @@ Bienvenido a la documentación interna de **ckanext-theme-ejemplo**, la extensi�
 - Esta vault es la **fuente de verdad humana**. Los archivos de agentes deben referenciarla, no duplicarla.
 
 - [[IHP-IX Progress UX October 2026]] — filtros geográficos, diseño y pruebas de Progress.
+
+- [[IHP-IX Bulk Import UX October 2026]] — plantilla Excel guiada, ejemplos y flujo de importación.
