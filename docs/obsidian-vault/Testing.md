@@ -348,3 +348,18 @@ El workflow `Theme checks` incorpora estos tests con PostgreSQL 17/Redis 7 y
 valida sintaxis de `resource-list.js`. Validar además en navegador escritorio y
 móvil: estilos compartidos/independientes, búsqueda, cambio de modo, paginación,
 permisos, enlaces de descarga y ausencia de insignias SLD/desbordamiento.
+
+## Dataset extent: límite de zoom USGS (2026-10-23)
+
+- 32 comprobaciones de renderizado con las extensiones Jinja de CKAN 2.10:
+  ambas plantillas, ramas de versión 2.9/2.10, límites numéricos y de texto,
+  conservación de límites inferiores, assets y configuración compartida.
+- Playwright verificó escritorio (1280×900) y móvil (390×844): controles,
+  teclado, rueda, doble clic y pinza; el zoom queda en 8, el botón «+» se
+  deshabilita y no se solicitan imágenes USGS superiores a 8. También se
+  comprobaron puntos, polígonos pequeños, límite 6 y otro proveedor.
+- La prueba sustituyó únicamente el fragmento HTML en el navegador por la
+  salida de las plantillas locales, usando los assets reales del portal.
+  No equivale a un despliegue ni a la suite completa de integración CKAN.
+- Las 26 pruebas existentes de `test_license_history_template.py` pasaron.
+  Evidencia local: `output/playwright/extent-fix-20261023/`.

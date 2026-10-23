@@ -28,6 +28,22 @@ apilan. Se mantienen las opciones de orden y el envío de búsqueda existentes.
 
 ---
 
+## Mapa de extensión del dataset
+
+“Dataset extent” usa la plantilla compartida del tema para las vistas de
+`spatial` y `schemingdcat`. Con el proveedor `USGS.USImagery`, la configuración
+enviada a Leaflet limita `maxZoom` a 8, o conserva un límite configurado inferior.
+El límite se aplica antes del encuadre inicial, también para puntos y polígonos
+pequeños; al alcanzarlo se deshabilita el control de acercamiento.
+
+El 2026-10-23 se comprobó en el dataset `tana-river-time-series-satellite-altimetry`
+que las imágenes de USGS cargaban en zoom 8 y devolvían HTTP 404 desde zoom 9.
+El límite es una medida conservadora para ese proveedor, no una garantía de
+cobertura mundial. Los demás proveedores y el buscador espacial conservan su
+configuración. Ver [[Modulos#Plantillas de Dataset extent]].
+
+---
+
 ## 1. Indexación de datasets (Pipeline espacial)
 
 **Trigger**: CKAN indexa un dataset en Solr
