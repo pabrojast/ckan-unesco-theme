@@ -242,51 +242,13 @@ def get_all_groups_cached(sort_by=None):
         return []
 
 def _get_pages_by_initiative(initiative_name, page_type=None):
-    """Query pages associated with an initiative via the initiative_groups extras field."""
+    """Reutiliza la lectura pública de asociaciones de ckanext-pages."""
     try:
-        from ckanext.pages.db import Page
-        search_pattern = '"%s"' % initiative_name
-        query = model.Session.query(Page).filter(
-            Page.extras.like('%' + search_pattern + '%')
-        )
-        if page_type:
-            query = query.filter(Page.page_type == page_type)
-        else:
-            query = query.filter(
-                Page.page_type.in_(['water-news', 'water-events', 'water-publications'])
-            )
-        query = query.order_by(Page.created.desc())
-        results = []
-        for pg in query.all():
-            extras = {}
-            if pg.extras:
-                try:
-                    extras = json.loads(pg.extras)
-                except (ValueError, TypeError):
-                    pass
-            initiative_groups = extras.get('initiative_groups', '[]')
-            if isinstance(initiative_groups, str):
-                try:
-                    initiative_groups = json.loads(initiative_groups)
-                except (ValueError, TypeError):
-                    initiative_groups = []
-            names = [g.get('name', '') if isinstance(g, dict) else str(g)
-                     for g in initiative_groups]
-            if initiative_name not in names:
-                continue
-            page_dict = {
-                'title': pg.title,
-                'name': pg.name,
-                'content': pg.content,
-                'publish_date': pg.publish_date.isoformat() if pg.publish_date else None,
-                'created': pg.created.isoformat() if pg.created else None,
-                'page_type': pg.page_type,
-            }
-            page_dict.update(extras)
-            results.append(page_dict)
-        return results
+        from ckanext.pages.plugin import get_pages_by_initiative
+        return get_pages_by_initiative(initiative_name, page_type=page_type)
     except Exception as e:
-        log.warning(f"_get_pages_by_initiative error: {e}")
+        log.warning("Error al consultar contenido de la iniciativa %s: %s",
+                    initiative_name, e)
         return []
 
 
@@ -1914,6 +1876,8 @@ class MyLogica():
                 group = toolkit.get_action('group_show')(
                     context, {'id': name}
                 )
+                # El override de navegación de Pages también usa c.group_dict.
+                c.group_dict = group
 
                 news = []
                 try:
@@ -1940,6 +1904,7 @@ class MyLogica():
                 group = toolkit.get_action('group_show')(
                     context, {'id': name}
                 )
+                c.group_dict = group
 
                 events = []
                 try:

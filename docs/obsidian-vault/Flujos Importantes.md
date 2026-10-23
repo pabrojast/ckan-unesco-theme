@@ -844,6 +844,10 @@ El fallback conserva compatibilidad con versiones anteriores de csunesco o
 instancias sin ese plugin. La URL de app procede de la configuración de
 csunesco, sin crear una segunda configuración del tema.
 
+## News y Events de iniciativas
+
+`controller._get_pages_by_initiative` delega en `ckanext.pages.plugin.get_pages_by_initiative`. La selección se hace en los formularios Water Family junto a organización y puede incluir varias iniciativas. Las pestañas muestran únicamente entradas públicas aprobadas; el lector admite asociaciones antiguas serializadas como JSON y conserva el orden descendente de creación. No se cambian rutas ni permisos de edición. Las vistas News y Events también fijan `c.group_dict`: el menú de Pages lo necesita cuando `ckanext.pages.group` está activo; sin él, las pestañas fallan con 500 aunque la asociación esté guardada.
+
 ## IHP-IX: colaboración, importación y salida (2026-10-21)
 
 | Ruta nueva | Flujo |
