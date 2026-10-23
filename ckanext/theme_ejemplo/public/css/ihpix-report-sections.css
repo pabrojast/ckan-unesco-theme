@@ -1,0 +1,64 @@
+/*
+ * Informe narrativo y diapositivas IHP-IX (templates/ihpix/narrative.html,
+ * templates/ihpix/presentation.html, snippets/report_section.html).
+ *
+ * Tokens --ix-* con los mismos valores que los dashboards (--ixg-*): tinta
+ * navy, azul UNESCO, papel azul muy claro, bordes 1 px, radio 6 px y sin
+ * sombras. Fichas (tiles), figuras SVG y tablas accesibles compartidas.
+ */
+.ix-doc {
+  --ix-ink: #0B2A4A;
+  --ix-ink-2: #5B6B7F;
+  --ix-action: #0069B4;
+  --ix-deep: #004E8C;
+  --ix-paper: #F4F8FC;
+  --ix-surface: #FFFFFF;
+  --ix-rule: #D5E0EC;
+  --ix-rule-soft: #E6EEF6;
+  --ix-tint: #E3EEF9;
+  --ix-radius: 6px;
+  color: var(--ix-ink);
+  font-family: Arial, Helvetica, sans-serif;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+.ix-doc *, .ix-doc *::before, .ix-doc *::after { box-sizing: border-box; }
+.ix-doc a { color: var(--ix-action); }
+.ix-doc a:hover { color: var(--ix-deep); }
+.ix-doc :focus-visible { outline: 2px solid var(--ix-action); outline-offset: 2px; }
+.ix-doc h1, .ix-doc h2, .ix-doc h3, .ix-doc h4 { color: var(--ix-ink); }
+.ix-kicker { font-size: 13px; color: var(--ix-ink-2); margin: 0 0 2px; }
+.ix-num { font-variant-numeric: tabular-nums; }
+
+/* ── Fichas KPI ─────────────────────────────────────────────── */
+.ix-tiles { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); margin: 12px 0 16px; }
+.ix-tile { background: var(--ix-surface); border: 1px solid var(--ix-rule); border-radius: var(--ix-radius); padding: 14px 16px; break-inside: avoid; min-width: 0; }
+.ix-tile-n { font-size: 30px; font-weight: 700; line-height: 1.1; letter-spacing: -0.02em; overflow-wrap: anywhere; }
+.ix-tile-l { font-size: 13px; color: var(--ix-ink-2); margin-top: 4px; }
+
+/* ── Figuras SVG ────────────────────────────────────────────── */
+.ix-fig { margin: 0; background: var(--ix-surface); border: 1px solid var(--ix-rule); border-radius: var(--ix-radius); padding: 16px; break-inside: avoid; min-width: 0; }
+.ix-fig figcaption { font-weight: 600; font-size: 14px; margin-bottom: 10px; }
+.ix-plot svg { width: 100%; height: auto; display: block; }
+.ix-fig-table { margin-top: 10px; font-size: 13px; }
+.ix-fig-table summary { cursor: pointer; color: var(--ix-action); font-size: 13px; list-style: none; display: inline-block; }
+.ix-fig-table summary::-webkit-details-marker { display: none; }
+.ix-fig-table summary::before { content: '\25B8\00a0'; }
+.ix-fig-table[open] summary::before { content: '\25BE\00a0'; }
+.ix-fig-table[open] summary { margin-bottom: 6px; }
+
+/* ── Tablas accesibles ──────────────────────────────────────── */
+.ix-table-wrap { overflow-x: auto; }
+.ix-table { width: 100%; border-collapse: collapse; font-size: 13.5px; }
+.ix-table caption { text-align: start; font-weight: 600; padding: 0 0 6px; }
+.ix-table th, .ix-table td { text-align: start; padding: 7px 10px; border-top: 1px solid var(--ix-rule-soft); vertical-align: top; }
+.ix-table th { color: var(--ix-ink-2); font-weight: 600; border-top: 0; }
+.ix-table thead { display: table-header-group; }
+.ix-table td.ix-num, .ix-table th.ix-num { text-align: end; white-space: nowrap; }
+.ix-table tr { break-inside: avoid; }
+
+@media print {
+  .ix-tile, .ix-fig { border-color: #B9C6D4; }
+  .ix-fig-table summary { display: none; }
+  .ix-table { font-size: 10pt; }
+}

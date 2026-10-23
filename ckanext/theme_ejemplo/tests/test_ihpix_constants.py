@@ -156,7 +156,8 @@ def test_ihpix_snippet_modules_have_no_live_top_level_code():
                       extensions=['jinja2.ext.i18n', 'jinja2.ext.do', CkanTags])
     env.install_null_translations()
     for name in ('ihpix/snippets/publication_modal.html', 'ihpix/snippets/forms_assets.html',
-                 'ihpix/snippets/activity_links.html', 'ihpix/snippets/page_styles.html'):
+                 'ihpix/snippets/activity_links.html', 'ihpix/snippets/page_styles.html',
+                 'ihpix/snippets/report_section.html'):
         module = env.get_template(name).module  # evalúa el nivel superior
         assert any(not n.startswith('_') for n in dir(module)), name
 

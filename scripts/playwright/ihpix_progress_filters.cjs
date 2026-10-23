@@ -73,6 +73,14 @@ function ok(name, value=true) {assert(value,name);console.log('PASS',++checks,na
    ok('Narrative '+scope+' restores selectors',await page.locator('#report-scope').inputValue()===scope && await page.locator('#report-country').inputValue()==='Chile');
   }
   await go('/ihpix/reports/generate?scope=overall&country=Kenya&biennium=2022-2023');ok('Empty narrative has no inferred sources',await page.locator('.ix-narrative-source').count()===0);
+  // Gráficos SVG en servidor y secciones seleccionables (ihpix_report_sections)
+  await go('/ihpix/reports/generate?scope=overall&country=Chile');
+  ok('Narrative renders server-side SVG charts',await page.locator('.ix-doc svg[role=img]').count()>0 && await page.locator('.ix-doc-section:not(.ix-doc-appendix)').count()===12);
+  await go('/ihpix/reports/generate?'+new URLSearchParams({scope:'pa',value:'PA1',country:'Chile',sections_given:'1',sections:'kpi_1'}));
+  ok('Narrative honours the section selection without the appendix',await page.locator('.ix-doc-section:not(.ix-doc-appendix)').count()===1 && await page.locator('.ix-narrative-source').count()===0 && await page.locator('#section-kpi_1 svg[role=img]').count()>0);
+  ok('Section checkboxes reflect the selection',await page.locator('.ix-sections-grid input:checked').count()===1 && !(await page.locator('input[name=sources]').isChecked()));
+  await go('/ihpix/presentation?scope=pa&value=PA1&country=Chile&sections=overview&sections=kpi_1');
+  ok('Presentation slides carry SVG charts and the section filter',await page.locator('.ix-slide svg[role=img]').count()>0 && (await page.locator('#page-count').innerText()).trim().endsWith('/ 2'));
   await go('/ihpix/outputs?pa=PA1&region=Latin+America+and+the+Caribbean');
   const explorer=page.locator('#ihpix-out-country').locator('..').locator('.ixf-combobox-input');await explorer.fill('Chil');await page.locator('.ixf-option').first().click();await page.locator('.ox-filter-actions button[type=submit]').click();
   ok('Explorer applies autocomplete while preserving filters',new URL(page.url()).searchParams.get('country')==='Chile' && new URL(page.url()).searchParams.get('pa')==='PA1');

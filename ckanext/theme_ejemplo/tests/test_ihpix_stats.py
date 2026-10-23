@@ -110,6 +110,16 @@ def test_overall_totals_union_of_country_fields(rows, index):
     assert points['Kenya']['activities'] == 2 and points['Kenya']['as_reporting'] == 2
     assert points['Republic of Korea']['as_beneficiary'] == 1
     assert 'Atlantis' not in points
+    # Países por rol: incluye los que no tienen coordenadas ni resolución
+    countries = {c['country']: c for c in ov['countries']}
+    assert countries['Kenya']['activities'] == 2 and countries['Kenya']['as_reporting'] == 2
+    assert countries['Republic of Korea']['as_beneficiary'] == 1
+    assert countries['Palestine']['as_supporter'] == 1 and countries['Palestine']['region'] == 'Arab States'
+    assert countries['Atlantis'] == {'country': 'Atlantis', 'region': '', 'activities': 1,
+                                     'as_reporting': 1, 'as_beneficiary': 0, 'as_supporter': 0,
+                                     'resolved': False}
+    assert ov['countries'][0]['country'] == 'Kenya'  # ordenado por actividades
+    assert {c['country'] for c in stats['kpi_6']['countries']} == {'Kenya', 'Palestine'}
     assert [b['key'] for b in ov['by_biennium']] == ['2022-2023', '2024-2025']
     assert 'output_biennium_matrix' in ov
     assert ov['output_biennium_matrix']['outputs'] == ['1.3', '1.6', '2.1']

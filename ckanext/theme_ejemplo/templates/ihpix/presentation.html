@@ -1,13 +1,24 @@
 <!doctype html>
 <html lang="{{ h.lang() }}" dir="{{ 'rtl' if h.lang() == 'ar' else 'ltr' }}">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>IHP-IX · {{ stats.scope.label }}</title>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>IHP-IX · {{ scope_title }}</title>
+<link rel="stylesheet" href="{{ h.url_for_static('/css/ihpix-report-sections.css') }}">
 <link rel="stylesheet" href="{{ h.url_for_static('/css/ihpix-presentation.css') }}"></head>
 <body>
+{% import 'ihpix/snippets/report_section.html' as rs with context %}
+{#
+  Diapositivas 16:9 (1280×720) construidas por ihpix_presentation.slides sobre
+  el registro de secciones: una por figura (gráfico SVG + ≤ 4 filas). La
+  impresión muestra todas las páginas; ihpix-presentation.js navega.
+#}
 <nav class="ix-slide-controls" aria-label="{{ _('Presentation controls') }}"><a href="{{ back }}">{{ _('Dashboard') }}</a><button type="button" id="previous">{{ _('Previous') }}</button><span id="page-count" aria-live="polite"></span><button type="button" id="next">{{ _('Next') }}</button><button type="button" onclick="window.print()">{{ _('Print / Save as PDF') }}</button></nav>
 <main id="slides">
-{% for slide in slides %}<article class="ix-slide"{% if not loop.first %} hidden{% endif %} aria-label="{{ _(slide.title) }}">
-<header><p>IHP-IX · {{ stats.scope.label }}</p><h1>{{ _(slide.title) }}</h1><p class="filters">{% for key, value in filters.items() %}{{ key }}: {{ value }}{% if not loop.last %} · {% endif %}{% else %}{{ _('All bienniums and regions') }}{% endfor %}</p></header>
-<table><thead><tr><th>{{ _('Indicator / scope') }}</th><th>{{ _('Reported total') }}</th></tr></thead><tbody>{% for label, value in slide.rows %}<tr><td>{{ h.ihpix_t(label) }}</td><td>{{ value }}</td></tr>{% endfor %}</tbody></table>
+{% for slide in slides %}<article class="ix-slide ix-doc"{% if not loop.first %} hidden{% endif %} aria-label="{{ slide.title }}{% if slide.subtitle %} · {{ slide.subtitle }}{% endif %}">
+<header class="ix-slide-head"><div class="ix-slide-titles"><p class="ix-kicker">IHP-IX · {{ scope_title }}{% if slide.kicker %} · {{ slide.kicker }}{% endif %}</p><h1>{{ slide.title }}</h1>{% if slide.subtitle and slide.subtitle != slide.title %}<h2 class="ix-slide-sub">{{ slide.subtitle }}</h2>{% endif %}</div><p class="filters">{% for key, value in filters.items() %}{{ filter_labels.get(key, key) }}: {{ h.get_member_state_title(value) if key == 'country' else (h.ihpix_t(value) if key in ('region', 'institution_type') else value) }}{% if not loop.last %} · {% endif %}{% else %}{{ _('All bienniums and regions') }}{% endfor %}</p></header>
+<div class="ix-slide-body{% if not slide.figure %} ix-slide-body--rows{% elif not slide.rows %} ix-slide-body--single{% endif %}">
+{% if slide.figure %}<div class="ix-slide-fig">{{ rs.figure(slide.figure, toggle=false, with_table=false) }}</div>{% endif %}
+{% if slide.rows and not slide.figure %}<div class="ix-slide-tiles">{% for label, value in slide.rows %}<div class="ix-slide-tile"><div class="ix-slide-tile-n">{{ h.localised_number(value) if value is number else value }}</div><div class="ix-slide-tile-l">{{ label }}</div></div>{% endfor %}</div>
+{% elif slide.rows %}<table class="ix-slide-rows"><thead><tr><th>{{ _('Indicator / scope') }}</th><th class="ix-num">{{ _('Reported total') }}</th></tr></thead><tbody>{% for label, value in slide.rows %}<tr><td>{{ label }}</td><td class="ix-num">{{ h.localised_number(value) if value is number else value }}</td></tr>{% endfor %}</tbody></table>{% endif %}
+</div>
 <footer><p>{{ _('Published records only. An activity counts once in the overall total and in each linked scope. Subtotals may overlap. Youth and female participants may overlap.') }}</p><p>{{ _('Generated') }}: {{ stats.generated_at }} · {{ loop.index }}/{{ slides|length }}</p><p>{{ source_url }}</p></footer>
 </article>{% endfor %}
 </main><script src="{{ h.url_for_static('/js/ihpix-presentation.js') }}"></script>

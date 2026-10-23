@@ -10305,3 +10305,339 @@ msgstr ""
 
 msgid "Activity"
 msgstr "النشاط"
+
+#: IHP-IX reports October 2026
+msgid "* Not matched to a UNESCO Member State record."
+msgstr "* لا يطابق سجلاً لدولة عضو في اليونسكو."
+
+#: IHP-IX reports October 2026
+msgid "A country counts in every role it holds: reporting institution, supporting Member State or beneficiary. Totals describe whole activities, not results allocated per country."
+msgstr "تُحتسب الدولة في كل دور تؤديه: المؤسسة المُبلِّغة أو الدولة العضو الداعمة أو المستفيدة. تصف المجاميع الأنشطة الكاملة، لا النتائج الموزعة على كل دولة."
+
+#: IHP-IX reports October 2026
+msgid "Activities by key activity"
+msgstr "الأنشطة حسب النشاط الرئيسي"
+
+#: IHP-IX reports October 2026
+msgid "Activities by priority area"
+msgstr "الأنشطة حسب مجال الأولوية"
+
+#: IHP-IX reports October 2026
+msgid "Activities per Output"
+msgstr "الأنشطة حسب المخرج"
+
+#: IHP-IX reports October 2026
+msgid "Activities per biennium"
+msgstr "الأنشطة حسب فترة السنتين"
+
+#: IHP-IX reports October 2026
+msgid "Activities per region"
+msgstr "الأنشطة حسب المنطقة"
+
+#: IHP-IX reports October 2026
+msgid "Activities with a reported biennium: {n}."
+msgstr "الأنشطة ذات فترة سنتين مُبلَّغ عنها: {n}."
+
+#: IHP-IX reports October 2026
+msgid "Activities with curricula"
+msgstr "أنشطة ذات مناهج دراسية"
+
+#: IHP-IX reports October 2026
+msgid "Activities with training materials"
+msgstr "أنشطة ذات مواد تدريبية"
+
+#: IHP-IX reports October 2026
+msgid "Activities without a biennium: {n}."
+msgstr "أنشطة بدون فترة سنتين: {n}."
+
+#: IHP-IX reports October 2026
+msgid "Activities: {n}"
+msgstr "الأنشطة: {n}"
+
+#: IHP-IX reports October 2026
+msgid "All regions"
+msgstr "جميع المناطق"
+
+#: IHP-IX reports October 2026
+msgid "An activity counts once in the overall total and in each linked scope. Subtotals may overlap."
+msgstr "يُحتسب كل نشاط مرة واحدة في الإجمالي العام ومرة في كل نطاق مرتبط. قد تتداخل المجاميع الفرعية."
+
+#: IHP-IX reports October 2026
+msgid "An activity with several product types adds its count under each type."
+msgstr "النشاط الذي يتضمن عدة أنواع من المنتجات يُضيف عدده تحت كل نوع."
+
+#: IHP-IX reports October 2026
+msgid "Appendix: list of source activities"
+msgstr "الملحق: قائمة الأنشطة المصدر"
+
+#: IHP-IX reports October 2026
+msgid "Appendix: source activities"
+msgstr "الملحق: الأنشطة المصدر"
+
+#: IHP-IX reports October 2026
+msgid "Beneficiary"
+msgstr "مستفيد"
+
+#: IHP-IX reports October 2026
+msgid "Contents"
+msgstr "المحتويات"
+
+#: IHP-IX reports October 2026
+msgid "Countries across reporting, supporter and beneficiary roles"
+msgstr "الدول في أدوار الإبلاغ والدعم والاستفادة"
+
+#: IHP-IX reports October 2026
+msgid "Cross-cutting working group"
+msgstr "مجموعة عمل شاملة"
+
+#: IHP-IX reports October 2026
+msgid "Data-knowledge gap"
+msgstr "فجوة البيانات والمعرفة"
+
+#: IHP-IX reports October 2026
+msgid "Female participants"
+msgstr "المشاركات من النساء"
+
+#: IHP-IX reports October 2026
+msgid "Flagship initiative"
+msgstr "مبادرة رائدة"
+
+#: IHP-IX reports October 2026
+msgid "Group"
+msgstr "الفئة"
+
+#: IHP-IX reports October 2026
+msgid "Include descriptions and outcomes"
+msgstr "تضمين الأوصاف والنتائج"
+
+#: IHP-IX reports October 2026
+msgid "Individuals"
+msgstr "الأفراد"
+
+#: IHP-IX reports October 2026
+msgid "Individuals by activity type"
+msgstr "الأفراد حسب نوع النشاط"
+
+#: IHP-IX reports October 2026
+msgid "Individuals per {dimension}"
+msgstr "الأفراد حسب {dimension}"
+
+#: IHP-IX reports October 2026
+msgid "Individuals reached per {dimension}"
+msgstr "الأفراد الذين تم الوصول إليهم حسب {dimension}"
+
+#: IHP-IX reports October 2026
+msgid "Institution names as reported; the same institution may appear under several spellings."
+msgstr "أسماء المؤسسات كما وردت في التقارير؛ قد تظهر المؤسسة نفسها بعدة صيغ كتابية."
+
+#: IHP-IX reports October 2026
+msgid "Institution type"
+msgstr "نوع المؤسسة"
+
+#: IHP-IX reports October 2026
+msgid "Institutions with most activities"
+msgstr "المؤسسات الأكثر نشاطاً"
+
+#: IHP-IX reports October 2026
+msgid "Intergovernmental Hydrological Programme · Phase IX, 2022–2029"
+msgstr "البرنامج الهيدرولوجي الدولي الحكومي · المرحلة التاسعة، 2022–2029"
+
+#: IHP-IX reports October 2026
+msgid "KPI 1"
+msgstr "مؤشر الأداء 1"
+
+#: IHP-IX reports October 2026
+msgid "KPI 2"
+msgstr "مؤشر الأداء 2"
+
+#: IHP-IX reports October 2026
+msgid "KPI 3 and 4"
+msgstr "مؤشرا الأداء 3 و4"
+
+#: IHP-IX reports October 2026
+msgid "KPI 5"
+msgstr "مؤشر الأداء 5"
+
+#: IHP-IX reports October 2026
+msgid "KPI 6"
+msgstr "مؤشر الأداء 6"
+
+#: IHP-IX reports October 2026
+msgid "KPI 8"
+msgstr "مؤشر الأداء 8"
+
+#: IHP-IX reports October 2026
+msgid "Knowledge products by type"
+msgstr "منتجات المعرفة حسب النوع"
+
+#: IHP-IX reports October 2026
+msgid "Knowledge products: {k}. Scientific products: {s}. Contributing activities: {a}."
+msgstr "منتجات المعرفة: {k}. المنتجات العلمية: {s}. الأنشطة المساهمة: {a}."
+
+#: IHP-IX reports October 2026
+msgid "Largest share: {label} ({n})."
+msgstr "الحصة الأكبر: {label} ({n})."
+
+#: IHP-IX reports October 2026
+msgid "Materials"
+msgstr "المواد"
+
+#: IHP-IX reports October 2026
+msgid "Materials and curricula per {dimension}"
+msgstr "المواد والمناهج الدراسية حسب {dimension}"
+
+#: IHP-IX reports October 2026
+msgid "Member States impacted"
+msgstr "الدول الأعضاء المتأثرة"
+
+#: IHP-IX reports October 2026
+msgid "Member States impacted: {n}, across {regions} regions."
+msgstr "الدول الأعضاء المتأثرة: {n}، في {regions} من المناطق."
+
+#: IHP-IX reports October 2026
+msgid "Member States supported in transboundary water management, as reported: {n}, across {d} distinct countries and {a} activities."
+msgstr "الدول الأعضاء المدعومة في إدارة المياه العابرة للحدود حسب التقارير: {n}، في {d} من الدول المختلفة و{a} من الأنشطة."
+
+#: IHP-IX reports October 2026
+msgid "Member States supported per {dimension}"
+msgstr "الدول الأعضاء المدعومة حسب {dimension}"
+
+#: IHP-IX reports October 2026
+msgid "Member States supported, as reported"
+msgstr "الدول الأعضاء المدعومة حسب التقارير"
+
+#: IHP-IX reports October 2026
+msgid "Member States: {n}"
+msgstr "الدول الأعضاء: {n}"
+
+#: IHP-IX reports October 2026
+msgid "Outputs with reported activity"
+msgstr "المخرجات ذات أنشطة مُبلَّغ عنها"
+
+#: IHP-IX reports October 2026
+msgid "Overall"
+msgstr "عام"
+
+#: IHP-IX reports October 2026
+msgid "Priority area"
+msgstr "مجال الأولوية"
+
+#: IHP-IX reports October 2026
+msgid "Products"
+msgstr "المنتجات"
+
+#: IHP-IX reports October 2026
+msgid "Products and individuals are summed from the activity records linked to each scope."
+msgstr "تُجمع المنتجات والأفراد من سجلات الأنشطة المرتبطة بكل نطاق."
+
+#: IHP-IX reports October 2026
+msgid "Products per {dimension}"
+msgstr "المنتجات حسب {dimension}"
+
+#: IHP-IX reports October 2026
+msgid "Published activities in the selected scope: {n}. Participating institutions: {institutions}. Member States recorded in reporting, support or beneficiary roles: {countries}."
+msgstr "الأنشطة المنشورة في النطاق المحدد: {n}. المؤسسات المشاركة: {institutions}. الدول الأعضاء المسجلة في أدوار الإبلاغ أو الدعم أو الاستفادة: {countries}."
+
+#: IHP-IX reports October 2026
+msgid "Published records only. Open each activity to verify its figures."
+msgstr "السجلات المنشورة فقط. افتح كل نشاط للتحقق من أرقامه."
+
+#: IHP-IX reports October 2026
+msgid "Reported counts come from each activity; distinct countries are the union of the countries linked to those activities."
+msgstr "تأتي الأعداد المُبلَّغ عنها من كل نشاط؛ والدول المختلفة هي اتحاد الدول المرتبطة بتلك الأنشطة."
+
+#: IHP-IX reports October 2026
+msgid "Reporting"
+msgstr "مُبلِّغ"
+
+#: IHP-IX reports October 2026
+msgid "Scientific products by type"
+msgstr "المنتجات العلمية حسب النوع"
+
+#: IHP-IX reports October 2026
+msgid "Scientific research"
+msgstr "البحث العلمي"
+
+#: IHP-IX reports October 2026
+msgid "Sections"
+msgstr "الأقسام"
+
+#: IHP-IX reports October 2026
+msgid "Select all"
+msgstr "تحديد الكل"
+
+#: IHP-IX reports October 2026
+msgid "Select none"
+msgstr "إلغاء تحديد الكل"
+
+#: IHP-IX reports October 2026
+msgid "Show as table"
+msgstr "عرض كجدول"
+
+#: IHP-IX reports October 2026
+msgid "Source activities listed: {n}."
+msgstr "الأنشطة المصدر المدرجة: {n}."
+
+#: IHP-IX reports October 2026
+msgid "Stakeholder groups by type"
+msgstr "مجموعات أصحاب المصلحة حسب النوع"
+
+#: IHP-IX reports October 2026
+msgid "Stakeholder groups per {dimension}"
+msgstr "مجموعات أصحاب المصلحة حسب {dimension}"
+
+#: IHP-IX reports October 2026
+msgid "Stakeholder groups with strengthened capacity: {n}, across {d} distinct countries."
+msgstr "مجموعات أصحاب المصلحة ذات القدرات المعزَّزة: {n}، في {d} من الدول المختلفة."
+
+#: IHP-IX reports October 2026
+msgid "Supporter"
+msgstr "داعم"
+
+#: IHP-IX reports October 2026
+msgid "Training materials and courses: {m}. Curricula: {c}."
+msgstr "مواد التدريب ودوراته: {m}. المناهج الدراسية: {c}."
+
+#: IHP-IX reports October 2026
+msgid "Training materials by type"
+msgstr "مواد التدريب حسب النوع"
+
+#: IHP-IX reports October 2026
+msgid "Water education"
+msgstr "التعليم المائي"
+
+#: IHP-IX reports October 2026
+msgid "Water governance"
+msgstr "حوكمة المياه"
+
+#: IHP-IX reports October 2026
+msgid "Water management"
+msgstr "إدارة المياه"
+
+#: IHP-IX reports October 2026
+msgid "What was produced and who was reached"
+msgstr "ما تم إنتاجه ومن تم الوصول إليه"
+
+#: IHP-IX reports October 2026
+msgid "Where the activities take place"
+msgstr "أين تُنفَّذ الأنشطة"
+
+#: IHP-IX reports October 2026
+msgid "Youth (18–35)"
+msgstr "الشباب (18–35)"
+
+#: IHP-IX reports October 2026
+msgid "Youth and female participants may overlap."
+msgstr "قد يتداخل المشاركون من الشباب والنساء."
+
+#: IHP-IX reports October 2026
+msgid "Youth and female participation (%)"
+msgstr "مشاركة الشباب والنساء (%)"
+
+#: IHP-IX reports October 2026
+msgid "{n} more in the table"
+msgstr "{n} إضافية في الجدول"
+
+#: IHP-IX reports October 2026
+msgid "{reached}: {n}. Youth: {youth}%. Female participants: {female}%. Contributing activities: {a}."
+msgstr "{reached}: {n}. الشباب: {youth}%. النساء: {female}%. الأنشطة المساهمة: {a}."

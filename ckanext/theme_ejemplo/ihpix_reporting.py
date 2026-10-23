@@ -133,6 +133,9 @@ def ihpix_narrative_data(context, data):
     scope = data.get('scope', 'pa')
     value = str(data.get('value') or '').strip()
     biennium = str(data.get('biennium') or '').strip()
+    # Compatibles con la API: por defecto se devuelven las fuentes completas.
+    include_sources = tk.asbool(data.get('include_sources', True))
+    sources_detail = tk.asbool(data.get('sources_detail', True))
     if biennium and biennium not in C.BIENNIA:
         raise tk.ValidationError({'biennium': 'Select a reporting biennium'})
     geography = {key: str(data.get(key) or '').strip() for key in ('country', 'region')}
@@ -174,12 +177,20 @@ def ihpix_narrative_data(context, data):
     rows = [a for a in rows if a.id in selected_ids]
     stats = compute_progress_stats([a.as_dict() for a in rows], scope=stat_scope,
         value=value, filters=stat_filters, country_index=index)
+    sources = []
+    if include_sources:
+        for a in rows:
+            item = {'id': a.id, 'title': a.title, 'institution': a.institution,
+                    'outputs': R.dimension_values(a.as_dict(), 'output'),
+                    'biennium': a.biennium or '', 'priority_area': a.priority_area or ''}
+            if sources_detail:
+                item.update(description=a.description, outcomes=a.outcomes)
+            sources.append(item)
     return {'title': title, 'scope': scope, 'value': value, 'biennium': biennium,
-            'filters': stat_filters,
+            'filters': stat_filters, 'scope_label': stats['scope']['label'],
+            'include_sources': include_sources, 'sources_detail': sources_detail,
             'generated_at': stats['generated_at'], 'stats': stats,
-            'sources': [{'id': a.id, 'title': a.title, 'description': a.description,
-                         'outcomes': a.outcomes, 'institution': a.institution,
-                         'outputs': R.dimension_values(a.as_dict(), 'output')} for a in rows],
+            'sources': sources,
             'unlinked_legacy': (model.Session.query(IhpixActivity).filter(
                 IhpixActivity.status == 'published',
                 (IhpixActivity.institution_org_id == '') | IhpixActivity.institution_org_id.is_(None)).count()

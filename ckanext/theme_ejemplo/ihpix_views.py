@@ -158,12 +158,42 @@ def bulk_import():
         drafts_url=tk.url_for('theme_ejemplo.user_ihpix', id=c.userobj.name, status='draft')), status
 
 
+# El anexo de fuentes va marcado por defecto (informe verificable); el detalle
+# (descripción y resultados de cada actividad) sólo si se pide.
+DEFAULT_SOURCES = True
+
+
+def _number_formatter():
+    try:
+        return tk.h.localised_number
+    except AttributeError:  # pragma: no cover - helpers sin registrar en tests
+        return None
+
+
 @signed_in
 def narrative():
-    data = R.ihpix_narrative_data(context(), dict(request.args)) if request.args.get('scope') or request.args.get('value') else None
+    from ckanext.theme_ejemplo import ihpix_report_sections as SEC
+    args = request.args
+    # `dict(request.args)` aplana los multivalor: las secciones se leen aparte.
+    given = 'sections_given' in args
+    requested = args.getlist('sections') if given else None
+    include_sources = (args.get('sources') == '1') if given else DEFAULT_SOURCES
+    sources_detail = args.get('sources_detail') == '1'
+    data, sections = None, []
+    if args.get('scope') or args.get('value'):
+        params = dict(args, include_sources=include_sources, sources_detail=sources_detail)
+        data = R.ihpix_narrative_data(context(), params)
+        options = {'sections': requested, 'layout': 'document', 'include_sources': include_sources,
+                   'sources_detail': sources_detail, 'format_number': _number_formatter()}
+        sections = SEC.build_sections(data['stats'], tk._, options, sources=data['sources'])
+        SEC.render_figures(sections, 'document', tk._, _number_formatter())
     organizations = tk.get_action('organization_list')(context(), {'all_fields': True, 'limit': 1000})
-    return render_template('ihpix/narrative.html', report=data, organizations=organizations,
-                           priority_areas=K.PRIORITY_AREAS, outputs=K.load_output_titles(), biennia=K.BIENNIA)
+    return render_template('ihpix/narrative.html', report=data, sections=sections,
+                           selected=SEC.selected_ids(requested), section_choices=SEC.section_choices(tk._),
+                           include_sources=include_sources, sources_detail=sources_detail,
+                           appendix=next((s for s in sections if s['appendix']), None),
+                           organizations=organizations, priority_areas=K.PRIORITY_AREAS,
+                           outputs=K.load_output_titles(), biennia=K.BIENNIA)
 
 
 def activity(id):
@@ -183,8 +213,9 @@ def activity(id):
 
 @signed_in
 def presentation():
-    from ckanext.theme_ejemplo.ihpix_presentation import slides
+    from ckanext.theme_ejemplo.ihpix_presentation import slides, scope_title
     data = dict(request.args)
+    requested = request.args.getlist('sections') or None
     stats = tk.get_action('ihpix_progress_stats')(context(), data)
     filters = {key: data[key] for key in ('biennium', 'region', 'country', 'institution_type') if data.get(key)}
     scope = stats['scope']['kind']
@@ -194,8 +225,12 @@ def presentation():
     else:
         back = tk.url_for('theme_ejemplo.ihpix_progress_' + scope,
             value=K.slugify(value) if scope in ('flagship', 'ctwg') else value, **filters)
-    return render_template('ihpix/presentation.html', stats=stats, slides=slides(stats),
-                           filters=filters, back=back, source_url=request.url)
+    filter_labels = {'biennium': tk._('Biennium'), 'region': tk._('Region'),
+                     'country': tk._('Country'), 'institution_type': tk._('Institution type')}
+    return render_template('ihpix/presentation.html', stats=stats,
+                           slides=slides(stats, tk._, sections=requested, formatter=_number_formatter()),
+                           scope_title=scope_title(stats, tk._), filters=filters,
+                           filter_labels=filter_labels, back=back, source_url=request.url)
 
 
 def pending_resource():

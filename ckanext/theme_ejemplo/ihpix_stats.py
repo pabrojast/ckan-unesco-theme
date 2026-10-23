@@ -399,6 +399,33 @@ def _map_points(rows, country_index):
     return sorted(points.values(), key=lambda p: (-p['activities'], p['country']))
 
 
+def _countries_by_role(rows, country_index):
+    u"""[{country, region, activities, as_reporting, as_beneficiary,
+    as_supporter, resolved}] para *todo* país impactado, tenga o no
+    coordenadas (el mapa los omite; el informe narrativo no puede)."""
+    countries = OrderedDict()
+    for row in rows:
+        for name in row['impacted_member_states']:
+            entry = country_index.get(_key(name)) if country_index else None
+            regions = _country_region(name, country_index)
+            item = countries.setdefault(name, {
+                'country': entry['name'] if entry else name,
+                'region': regions[0] if regions else '',
+                'activities': 0, 'as_reporting': 0, 'as_beneficiary': 0,
+                'as_supporter': 0,
+                'resolved': name not in row['unresolved_member_states'],
+            })
+            item['activities'] += 1
+            roles = row['impacted_roles'].get(name, ())
+            if 'reporting' in roles:
+                item['as_reporting'] += 1
+            if 'beneficiary' in roles:
+                item['as_beneficiary'] += 1
+            if 'supporter' in roles:
+                item['as_supporter'] += 1
+    return sorted(countries.values(), key=lambda c: (-c['activities'], c['country']))
+
+
 def _by_region(rows, country_index):
     u"""[{key, member_states, activities}] según la región del país impactado
     (índice `IhpixCountrySummary.region`, las 5 regiones UNESCO)."""
@@ -490,6 +517,7 @@ def compute_progress_stats(rows, scope='overall', value=None, filters=None,
                              sorted(_count_by(scoped, lambda r: r['regions']).items(),
                                     key=lambda x: (-x[1], x[0]))],
         'map': _map_points(scoped, country_index),
+        'countries': _countries_by_role(scoped, country_index),
         'unresolved_member_states': sorted(unresolved),
         'by_biennium': [{'key': k, 'count': v} for k, v in
                         sorted(_count_by(scoped, lambda r: [r['biennium']]).items())],
@@ -569,6 +597,7 @@ def compute_progress_stats(rows, scope='overall', value=None, filters=None,
         'by_dimension': _by_dimension(scoped, dimension, labels, {
             'member_states': lambda r: r['num_transboundary_ms'] if r['kpi_6_active'] else 0}),
         'map': _map_points(k6, country_index),
+        'countries': _countries_by_role(k6, country_index),
     }
 
     k8 = [r for r in scoped if r['kpi_8_active']]

@@ -1,0 +1,29 @@
+{#
+  Macros compartidas por el informe narrativo (ihpix/narrative.html) y las
+  diapositivas (ihpix/presentation.html). Las secciones llegan construidas
+  por ihpix_report_sections.build_sections + render_figures. Sólo macros:
+  nada de código vivo a nivel superior (test_ihpix_constants lo comprueba).
+#}
+
+{% macro tiles(items) %}
+{% if items %}<div class="ix-tiles">{% for tile in items %}<div class="ix-tile"><div class="ix-tile-n">{{ tile.value }}</div><div class="ix-tile-l">{{ tile.label }}</div></div>{% endfor %}</div>{% endif %}
+{% endmacro %}
+
+{% macro table(data, caption=None) %}
+{% if data and data.rows %}<div class="ix-table-wrap"><table class="ix-table">{% if caption %}<caption>{{ caption }}</caption>{% endif %}<thead><tr>{% for column in data.columns %}<th{% if loop.index0 in data.numeric %} class="ix-num"{% endif %}>{{ column }}</th>{% endfor %}</tr></thead><tbody>{% for row in data.rows %}<tr>{% for cell in row %}<td{% if loop.index0 in data.numeric %} class="ix-num"{% endif %}>{{ h.localised_number(cell) if cell is number else cell }}</td>{% endfor %}</tr>{% endfor %}</tbody></table></div>{% endif %}
+{% endmacro %}
+
+{% macro figure(fig, toggle=true, with_table=true) %}
+<figure class="ix-fig" id="ix-fig-{{ fig.id }}"><figcaption><span class="ix-fig-title">{{ fig.title }}</span></figcaption><div class="ix-plot">{{ fig.svg|safe }}</div>{% if with_table and fig.table and fig.table.rows %}{% if toggle %}<details class="ix-fig-table"><summary>{{ _('Show as table') }}</summary>{{ table(fig.table) }}</details>{% else %}{{ table(fig.table) }}{% endif %}{% endif %}</figure>
+{% endmacro %}
+
+{% macro section_document(section) %}
+<section class="ix-doc-section" id="section-{{ section.id }}">
+  <header class="ix-doc-section-head">{% if section.kicker %}<p class="ix-kicker">{{ section.kicker }}</p>{% endif %}<h2>{{ section.title }}</h2></header>
+  {% for text in section.summary %}<p class="ix-doc-summary">{{ text }}</p>{% endfor %}
+  {{ tiles(section.tiles) }}
+  {% if section.figures %}<div class="ix-doc-figures">{% for fig in section.figures %}{{ figure(fig) }}{% endfor %}</div>{% endif %}
+  {{ table(section.table) }}
+  {% if section.notes %}<ul class="ix-doc-notes">{% for note in section.notes %}<li>{{ note }}</li>{% endfor %}</ul>{% endif %}
+</section>
+{% endmacro %}

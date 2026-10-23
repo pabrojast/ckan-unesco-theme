@@ -695,11 +695,25 @@ El helper `_get_pages_by_initiative` de `controller.py` reutiliza el lector púb
 - `ihpix_store.py`: tablas aditivas y snapshots transaccionales.
 - `ihpix_resource_access.py`: visibilidad real de paquetes, eventos y cursos.
 - `ihpix_collaboration.py`: acciones `ihpix_workspace_item_list/save`, `ihpix_report_collaboration_show`, `ihpix_report_collaborator_update`, `ihpix_notification_list/read`.
-- `ihpix_bulk.py`: XLSX versionado y validación pura; `ihpix_reporting.py`: acciones `ihpix_import_preview/show/create`, `ihpix_narrative_data`.
+- `ihpix_bulk.py`: XLSX versionado y validación pura; `ihpix_reporting.py`: acciones `ihpix_import_preview/show/create`, `ihpix_narrative_data` (desde 2026-10-23 admite `include_sources` y `sources_detail`, por defecto `true` para no cambiar la API).
 - `ihpix_views.py`: vistas sobre el blueprint existente `theme_ejemplo`; servicios/API y HTML comparten reglas.
-- `ihpix_presentation.py`: diapositivas paginadas desde las estadísticas del dashboard.
+- `ihpix_presentation.py`: diapositivas construidas sobre el registro de secciones (`slides(stats, translate, sections, formatter)` y `scope_title`); ver más abajo.
 
 Las nuevas acciones registran auth correspondiente en `auth.py`; la comprobación por recurso también se aplica dentro del servicio. Detalle y matriz de requisitos: [[IHP-IX Review September 2026]].
+
+## Informes y presentación con gráficos SVG (2026-10-23)
+
+- `ihpix_charts.py` — módulo puro (sin CKAN ni JS) que dibuja SVG deterministas: `bar_chart`, `stacked_bar_chart`, `donut_chart`, `column_chart`, `render(spec, width, …)` y `table_for(spec)` (la tabla accesible sale de la misma spec). Reglas: barras ≤ 24 px con extremo redondeado, valor directo en tinta, hueco de 2 px entre segmentos, `<title>`/`<desc>` con todos los valores, raíz `direction:ltr`. Paleta: `PA_COLORS`, `CATEGORICAL` (orden fijo, 8 tonos), `NEUTRAL` para Other/Unspecified y `MEASURE_COLORS` para series de medida.
+- `ihpix_report_sections.py` — registro de secciones: `SECTION_IDS` (13, la última es el anexo `sources`), `build_sections(stats, translate, options, sources)`, `render_figures(sections, layout)`, `section_choices`, `selected_ids`, `group_sources`, `dimension_label`/`short_label`. `LAYOUTS` fija anchura del viewBox y recortes por salida (`document` 680 px / 15 filas; `slide` 520 px / 8 filas, etiquetas cortas). Cada sección trae `tiles` (HTML), `highlights` (≤ 4 filas crudas para diapositivas), `figures` (specs + `svg` + `table`), `table`, `summary` y `notes`.
+- `ihpix_presentation.py` — una diapositiva por figura `in_slides` (SVG + ≤ 4 filas); el overview pagina sus filas como fichas grandes; el anexo nunca entra.
+- Traducción: la vista inyecta `tk._` como `translate` (mismo patrón que `ihpix_bulk_display`), porque el texto del SVG se genera en Python. Las claves están en `ihpix_i18n_strings.REPORT_LABELS` y `test_ihpix_report_sections.py` comprueba que toda clave traducida esté registrada.
+- Plantillas: `ihpix/snippets/report_section.html` (macros `tiles`, `figure`, `table`, `section_document`), `ihpix/narrative.html` (formulario con checkboxes de secciones + documento con portada, índice, secciones y anexo) y `ihpix/presentation.html`. CSS: `public/css/ihpix-report-sections.css` (compartido, tokens `--ix-*`), `ihpix-tools.css` (documento e impresión A4) e `ihpix-presentation.css` (1280×720).
+- `ihpix_stats.compute_progress_stats` añade `overview.countries` y `kpi_6.countries` (`_countries_by_role`): todos los países impactados con sus roles, tengan o no coordenadas (el mapa los omite).
+
+> [!note] Inferencia
+> La anchura del texto en SVG se aproxima (Arial ≈ 0,55 em por carácter): no hay medición en servidor. Las etiquetas largas se recortan con "…" y conservan el texto completo en `<title>` y en la tabla.
+
+Detalle de comportamiento y verificación: [[IHP-IX Reports UX October 2026]].
 
 ## Progress y países (2026-10-22)
 

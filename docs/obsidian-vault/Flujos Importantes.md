@@ -856,8 +856,8 @@ csunesco, sin crear una segunda configuración del tema.
 | `/ihpix/report/<id>/collaboration` | Autor invita/revoca; autor/colaborador consulta versiones autorizadas |
 | `/ihpix/notifications` | Notificaciones privadas del usuario y marcar leídas |
 | `/ihpix/import/template.xlsx`, `/ihpix/import` | Descargar → cargar → validar/preview → confirmar → borradores |
-| `/ihpix/reports/generate` | Organización/PA/Output + bienio → informe con fuentes publicadas |
-| `/ihpix/presentation` | Mismos filtros del dashboard → diapositivas 16:9 → PDF |
+| `/ihpix/reports/generate` | Ámbito (overall/flagship/ctwg/PA/Output/organización) + bienio/región/país → documento A4 con fichas, gráficos SVG por sección y anexo de fuentes. Parámetros desde 2026-10-23: `sections` (multivalor, todas por defecto), `sections_given=1` (marca que el formulario envió la selección), `sources=1` (anexo, marcado por defecto) y `sources_detail=1` (descripción y resultados). Ver [[IHP-IX Reports UX October 2026]] |
+| `/ihpix/presentation` | Mismos filtros del dashboard (+ `sections`) → una diapositiva 16:9 por figura, construida sobre el mismo registro de secciones → PDF |
 | `/ihpix/activities/<id>` | Detalle verificable de una actividad publicada y adjuntos visibles |
 | `/ihpix/report/<id>/resource-start` | POST tras guardar borrador; destino dataset/evento nativo |
 | `/ihpix/resource-return/attach` | POST desde recurso: autoriza, adjunta y vuelve a VII |

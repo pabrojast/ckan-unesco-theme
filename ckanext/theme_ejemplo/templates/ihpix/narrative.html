@@ -2,36 +2,90 @@
 {% block tools_content %}
 {% from 'ihpix/snippets/country_options.html' import country_options with context %}
 {% import 'ihpix/snippets/forms_assets.html' as forms_ui with context %}
+{% import 'ihpix/snippets/report_section.html' as rs with context %}
+{#
+  Informe narrativo IHP-IX: formulario de ámbito/filtros/secciones y documento
+  A4 con fichas, gráficos SVG (ihpix_charts) y anexo de fuentes. Las secciones
+  llegan de ihpix_report_sections (misma fuente que las diapositivas).
+#}
 {% set tax = h.get_ihpix_taxonomies() %}
 {{ forms_ui.forms_styles() }}{{ forms_ui.forms_scripts() }}
-<div class="ix-no-print"><h1>{{ _('Generate report') }}</h1>
-<form method="get" class="ix-tools-card"><label for="report-scope">{{ _('Scope') }}</label><select id="report-scope" name="scope"><option value="overall">{{ _('Overall') }}</option><option value="flagship">{{ _('Flagship initiative') }}</option><option value="ctwg">{{ _('Cross-cutting working group') }}</option><option value="pa">{{ _('Priority area') }}</option><option value="output">{{ _('Output') }}</option><option value="organization">{{ _('Organization') }}</option></select>
-<label for="report-value">{{ _('Select scope') }}</label><select id="report-value" name="value">
-<option data-scope="overall" value="">{{ _('All activities') }}</option>
-{% for item in tax.flagships %}<option data-scope="flagship" value="{{ item }}">{{ h.ihpix_flagship_label(item) }}</option>{% endfor %}
-{% for item in tax.cross_cutting_wgs %}<option data-scope="ctwg" value="{{ item }}">{{ h.ihpix_t(item) }}</option>{% endfor %}
-{% for code, title in priority_areas.items() %}<option data-scope="pa" value="{{ code }}">{{ code }} · {{ title }}</option>{% endfor %}
-{% for code, title in outputs.items() %}<option data-scope="output" value="{{ code }}">{{ code }} · {{ title }}</option>{% endfor %}
-{% for org in organizations %}<option data-scope="organization" value="{{ org.id }}">{{ org.title or org.name }}</option>{% endfor %}</select>
-<label for="report-biennium">{{ _('Biennium') }}</label><select id="report-biennium" name="biennium"><option value="">{{ _('All bienniums') }}</option>{% for b in biennia %}<option value="{{ b }}"{% if report and report.biennium == b %} selected{% endif %}>{{ b }}</option>{% endfor %}</select><label for="report-region">{{ _('Region') }}</label><select id="report-region" name="region"><option value="">{{ _('All regions') }}</option>{% for region in tax.regions %}<option value="{{ region }}"{% if report and report.filters.region == region %} selected{% endif %}>{{ h.ihpix_t(region) }}</option>{% endfor %}</select>
-<label for="report-country">{{ _('Country') }}</label><select id="report-country" name="country" data-ihpix-combobox><option value="">{{ _('All countries') }}</option>{{ country_options(report.filters.country if report else '') }}</select>
-<button class="btn btn-primary">{{ _('Generate report') }}</button></form>
-<script> (function(){var scope=document.getElementById('report-scope'), value=document.getElementById('report-value'), options=Array.from(value.options);function update(){value.replaceChildren();options.filter(function(x){return x.dataset.scope===scope.value;}).forEach(function(x){value.appendChild(x);});}scope.value={{ (report.scope if report else 'pa')|tojson }};scope.onchange=update;update();{% if report %}value.value={{ report.value|tojson }};{% endif %}}());</script>
+<link rel="stylesheet" href="{{ h.url_for_static('/css/ihpix-report-sections.css') }}">
+<div class="ix-no-print ix-report-form">
+<h1>{{ _('Generate report') }}</h1>
+<form method="get" class="ix-tools-card">
+  <div class="ix-form-grid">
+    <div><label for="report-scope">{{ _('Scope') }}</label><select id="report-scope" name="scope"><option value="overall">{{ _('Overall') }}</option><option value="flagship">{{ _('Flagship initiative') }}</option><option value="ctwg">{{ _('Cross-cutting working group') }}</option><option value="pa">{{ _('Priority area') }}</option><option value="output">{{ _('Output') }}</option><option value="organization">{{ _('Organization') }}</option></select></div>
+    <div><label for="report-value">{{ _('Select scope') }}</label><select id="report-value" name="value">
+      <option data-scope="overall" value="">{{ _('All activities') }}</option>
+      {% for item in tax.flagships %}<option data-scope="flagship" value="{{ item }}">{{ h.ihpix_flagship_label(item) }}</option>{% endfor %}
+      {% for item in tax.cross_cutting_wgs %}<option data-scope="ctwg" value="{{ item }}">{{ h.ihpix_t(item) }}</option>{% endfor %}
+      {% for code, title in priority_areas.items() %}<option data-scope="pa" value="{{ code }}">{{ code }} · {{ h.ihpix_t(title) }}</option>{% endfor %}
+      {% for code, title in outputs.items() %}<option data-scope="output" value="{{ code }}">{{ code }} · {{ title }}</option>{% endfor %}
+      {% for org in organizations %}<option data-scope="organization" value="{{ org.id }}">{{ org.title or org.name }}</option>{% endfor %}</select></div>
+    <div><label for="report-biennium">{{ _('Biennium') }}</label><select id="report-biennium" name="biennium"><option value="">{{ _('All bienniums') }}</option>{% for b in biennia %}<option value="{{ b }}"{% if report and report.biennium == b %} selected{% endif %}>{{ b }}</option>{% endfor %}</select></div>
+    <div><label for="report-region">{{ _('Region') }}</label><select id="report-region" name="region"><option value="">{{ _('All regions') }}</option>{% for region in tax.regions %}<option value="{{ region }}"{% if report and report.filters.region == region %} selected{% endif %}>{{ h.ihpix_t(region) }}</option>{% endfor %}</select></div>
+    <div><label for="report-country">{{ _('Country') }}</label><select id="report-country" name="country" data-ihpix-combobox><option value="">{{ _('All countries') }}</option>{{ country_options(report.filters.country if report else '') }}</select></div>
+  </div>
+  <fieldset class="ix-sections">
+    <legend>{{ _('Sections') }}</legend>
+    <div class="ix-sections-tools"><button type="button" class="ix-linkbtn" data-ix-select="all">{{ _('Select all') }}</button><button type="button" class="ix-linkbtn" data-ix-select="none">{{ _('Select none') }}</button></div>
+    <div class="ix-sections-grid">{% for sid, title in section_choices %}<label class="ix-check"><input type="checkbox" name="sections" value="{{ sid }}"{% if sid in selected %} checked{% endif %}> <span>{{ title }}</span></label>{% endfor %}</div>
+    <input type="hidden" name="sections_given" value="1">
+    <label class="ix-check"><input type="checkbox" name="sources" value="1"{% if include_sources %} checked{% endif %}> <span>{{ _('Appendix: list of source activities') }}</span></label>
+    <label class="ix-check ix-check--sub"><input type="checkbox" name="sources_detail" value="1"{% if sources_detail %} checked{% endif %}> <span>{{ _('Include descriptions and outcomes') }}</span></label>
+  </fieldset>
+  <button class="btn btn-primary">{{ _('Generate report') }}</button>
+</form>
+<script>(function(){var scope=document.getElementById('report-scope'), value=document.getElementById('report-value'), options=Array.from(value.options);function update(){value.replaceChildren();options.filter(function(x){return x.dataset.scope===scope.value;}).forEach(function(x){value.appendChild(x);});}scope.value={{ (report.scope if report else 'pa')|tojson }};scope.onchange=update;update();{% if report %}value.value={{ report.value|tojson }};{% endif %}
+Array.prototype.forEach.call(document.querySelectorAll('[data-ix-select]'),function(button){button.onclick=function(){var on=button.getAttribute('data-ix-select')==='all';Array.prototype.forEach.call(document.querySelectorAll('.ix-sections-grid input'),function(input){input.checked=on;});};});}());</script>
 </div>
 {% if report %}
-<article class="ix-narrative">
-{% if report.filters.country %}<p>{{ _('Showing activities linked to this country through reporting, support or beneficiaries. Totals describe these activities, not results allocated to this country alone.') }}</p>{% endif %}
-<h1>{{ report.title }}</h1><p>{{ _('IHP-IX implementation report') }} · {{ report.biennium or _('All bienniums') }}</p><p>{{ _('Region') }}: {{ h.ihpix_t(report.filters.region) if report.filters.region else _('All regions') }} · {{ _('Country') }}: {{ h.get_member_state_title(report.filters.country) if report.filters.country else _('All countries') }}</p><p>{{ _('Generated') }}: {{ report.generated_at }}</p>
-<p>{{ _('This report uses published activity records. Review the narrative and its sources before sharing. Subtotals across multiple Priority Areas or Outputs can overlap; the overall activity count is unique.') }}</p>
-{% if report.scope == 'organization' %}<p>{{ _('Only verified organization links are included. Historical free-text institution names require reconciliation before they can be attributed to this organization.') }} {{ _('Unlinked published records across the portal') }}: {{ report.unlinked_legacy }}.</p>{% endif %}
 {% set s = report.stats %}
-{% if report.sources %}
-<p>{{ _('Published activities in the selected scope') }}: <strong>{{ s.overview.activities }}</strong>. {{ _('Participating institutions') }}: {{ s.overview.institutions }}. {{ _('Countries recorded in reporting, support or beneficiary roles') }}: {{ s.overview.member_states_impacted }}.</p>
-<table class="table"><thead><tr><th>{{ _('Indicator') }}</th><th>{{ _('Reported total') }}</th></tr></thead><tbody>
-{% for label, value in [(_('Knowledge products'),s.kpi_1.knowledge_products),(_('Scientific products'),s.kpi_1.scientific_products),(_('Stakeholders reached through knowledge exchange'),s.kpi_2.individuals),(_('Training materials and courses'),s.kpi_3.materials),(_('Curricula'),s.kpi_4.curricula),(_('Stakeholders reached through awareness activities'),s.kpi_5.individuals),(_('Member States supported in transboundary water management, as reported'),s.kpi_6.member_states_reported),(_('Stakeholder groups with strengthened capacity'),s.kpi_8.stakeholder_groups)] %}<tr><td>{{ label }}</td><td>{{ value }}</td></tr>{% endfor %}</tbody></table>
-<h2>{{ _('Reported results and sources') }}</h2>
-{% for item in report.sources %}<section class="ix-narrative-source"><h3><a href="{{ h.url_for('theme_ejemplo.ihpix_activity_detail', id=item.id, qualified=True) }}">{{ loop.index }}. {{ item.title }}</a></h3><p>{{ _('Institution') }}: {{ item.institution }} · {{ _('Outputs') }}: {{ item.outputs|join(', ') }}</p><p>{{ item.description }}</p><p>{{ item.outcomes }}</p></section>{% endfor %}
-{% else %}<p>{{ _('No published activities match these filters. No results have been inferred.') }}</p>{% endif %}
-</article><button class="btn btn-primary ix-no-print" type="button" onclick="window.print()">{{ _('Print / Save as PDF') }}</button>
+{% set empty = not s.overview.activities %}
+<article class="ix-narrative ix-doc">
+  <header class="ix-doc-cover">
+    <p class="ix-kicker">{{ _('Intergovernmental Hydrological Programme · Phase IX, 2022–2029') }}</p>
+    <h1>{{ report.title }}</h1>
+    <p class="ix-doc-sub">{{ _('IHP-IX implementation report') }} · {{ report.biennium or _('All bienniums') }}</p>
+    <dl class="ix-doc-meta">
+      <div><dt>{{ _('Region') }}</dt><dd>{{ h.ihpix_t(report.filters.region) if report.filters.region else _('All regions') }}</dd></div>
+      <div><dt>{{ _('Country') }}</dt><dd>{{ h.get_member_state_title(report.filters.country) if report.filters.country else _('All countries') }}</dd></div>
+      <div><dt>{{ _('Published activities') }}</dt><dd>{{ h.localised_number(s.overview.activities) }}</dd></div>
+      <div><dt>{{ _('Generated') }}</dt><dd>{{ report.generated_at }}</dd></div>
+    </dl>
+    {% if report.filters.country %}<p class="ix-doc-note">{{ _('Showing activities linked to this country through reporting, support or beneficiaries. Totals describe these activities, not results allocated to this country alone.') }}</p>{% endif %}
+    <p class="ix-doc-note">{{ _('This report uses published activity records. Review the narrative and its sources before sharing. Subtotals across multiple Priority Areas or Outputs can overlap; the overall activity count is unique.') }}</p>
+    {% if report.scope == 'organization' %}<p class="ix-doc-note">{{ _('Only verified organization links are included. Historical free-text institution names require reconciliation before they can be attributed to this organization.') }} {{ _('Unlinked published records across the portal') }}: {{ h.localised_number(report.unlinked_legacy) }}.</p>{% endif %}
+  </header>
+  {% if empty %}
+  <p class="ix-doc-empty">{{ _('No published activities match these filters. No results have been inferred.') }}</p>
+  {% else %}
+  <nav class="ix-doc-toc" aria-label="{{ _('Contents') }}"><ol>{% for section in sections %}<li><a href="#section-{{ section.id }}">{{ section.title }}</a></li>{% endfor %}</ol></nav>
+  {% for section in sections if not section.appendix %}{{ rs.section_document(section) }}{% endfor %}
+  {% if appendix %}
+  <section class="ix-doc-section ix-doc-appendix" id="section-sources">
+    <header class="ix-doc-section-head"><h2>{{ appendix.title }}</h2></header>
+    {% for text in appendix.summary %}<p class="ix-doc-summary">{{ text }}</p>{% endfor %}
+    {% for group in appendix.groups %}
+    <h3>{{ group.title }}</h3>
+    {% for out in group.outputs %}
+    <h4>{{ out.label }}</h4>
+    <div class="ix-table-wrap"><table class="ix-table ix-sources"><thead><tr><th>{{ _('Activity') }}</th><th>{{ _('Institution') }}</th><th>{{ _('Outputs') }}</th><th>{{ _('Biennium') }}</th></tr></thead><tbody>
+    {% for item in out.activities %}<tr class="ix-narrative-source"><td><a href="{{ h.url_for('theme_ejemplo.ihpix_activity_detail', id=item.id, qualified=True) }}">{{ item.title }}</a></td><td>{{ item.institution }}</td><td>{{ item.outputs|join(', ') }}</td><td>{{ item.biennium }}</td></tr>
+    {% if appendix.detail %}<tr class="ix-source-detail"><td colspan="4">{% if item.description %}<p>{{ item.description }}</p>{% endif %}{% if item.outcomes %}<p>{{ item.outcomes }}</p>{% endif %}</td></tr>{% endif %}
+    {% endfor %}
+    </tbody></table></div>
+    {% endfor %}
+    {% endfor %}
+    {% if appendix.notes %}<ul class="ix-doc-notes">{% for note in appendix.notes %}<li>{{ note }}</li>{% endfor %}</ul>{% endif %}
+  </section>
+  {% endif %}
+  {% endif %}
+</article>
+<div class="ix-no-print ix-doc-actions">
+  <button class="btn btn-primary" type="button" onclick="window.print()">{{ _('Print / Save as PDF') }}</button>
+  {% if report.scope != 'organization' %}<a class="btn btn-default" href="{{ h.url_for('theme_ejemplo.ihpix_presentation', scope=report.scope, value=report.value or '', biennium=report.biennium or None, region=report.filters.region or None, country=report.filters.country or None, sections=(selected if selected|length < section_choices|length else None)) }}">{{ _('Presentation / PDF') }}</a>{% endif %}
+</div>
 {% endif %}
 {% endblock %}

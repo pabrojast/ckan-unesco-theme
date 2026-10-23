@@ -118,6 +118,14 @@ def test_presentation_uses_dashboard_values_and_bounded_pages():
     assert pages[0]['rows'][0][1] == stats['overview']['activities']
     assert any(['Knowledge products', 5] in page['rows'] for page in pages)
     assert all(len(page['rows']) <= 4 for page in pages)
+    # Cada figura `in_slides` es una diapositiva con su SVG; el anexo nunca entra
+    assert any(page['figure'] and page['figure']['svg'].startswith('<svg') for page in pages)
+    assert all(page['section_id'] != 'sources' for page in pages)
+    assert {page['section_id'] for page in slides(stats, sections=['overview', 'kpi_1'])} == {'overview', 'kpi_1'}
+    assert [page['id'] for page in slides(stats, sections=['overview'])] == ['overview-1']
+    # Las filas destacadas se recortan: los títulos de Output no caben en 16:9
+    assert all(len(label) <= 80 for page in pages for label, _ in page['rows'])
+    assert any(label.endswith('\u2026') for page in pages for label, _ in page['rows'])
 
 
 def test_secondary_output_without_key_does_not_inherit_primary_key():
