@@ -322,3 +322,38 @@ campos y sidecars. Suspender temporalmente el cron durante la reconciliación,
 esperar trabajos activos, simular y aplicar con respaldo; reanudar su estado
 anterior y verificar al menos dos consolidaciones y el navegador. Renovar sólo
 las claves de caché anónima del tema. No tocar producción.
+
+### Evidencia SLD — 2026-10-23
+
+- Funcionalidad inicial `ba68671`, preparación de imagen/QA `c1a63fa` y
+  traducción árabe final `08128a5`. PR [#4](https://github.com/pabrojast/ckan-unesco-theme/pull/4)
+  hacia `dev210`; se incorporó además su cambio concurrente `4cf47e1` sin perder
+  las secciones de documentación de ninguna entrega.
+- Imagen final web y CronJob: `pabrojast/ckan-base210@sha256:2fbf429417c2f71c900c17bb4c9f01c2fd56cec50a34bf17ad0bf2eaa151a1e4`,
+  marca `.theme-sld-revision=08128a596445e98442b3d0ccc09e048d5aafbde2`.
+  Primer parche funcional `sha256:64a7b03d16dbd2dfe4c9e1f10afb8583f8c5d0b844aa40b40f7c74c11626c7ea`,
+  sobre la base vigente `sha256:44d0fc039a69ff8d9ca883819b8682af982e6e7d43ec617d0602558bb6f354d3`.
+  Los 23 archivos del parche coinciden con Git y 642 archivos previos permanecen
+  idénticos, incluida la plantilla de errores ajena a esta entrega.
+- Respaldo privado: `/home/pabrojast/backups/ckan-dev-sld-20261023/`, con
+  Deployments, CronJob, cuatro tablas de tracking, pendientes Redis, huellas
+  por ID de recursos/vistas, fuentes e informe previo a reconciliar.
+- A las 13:18:39 UTC, reconciliación aplicada: **26035 → 25786 descargas**,
+  excluyendo **249** correspondientes a 25 contadores SLD. Se conservaron
+  exactamente los 1370 contadores originales y las 44497 visitas de ese
+  instante; los 1809 recursos y las 19980 vistas mantuvieron sus huellas.
+  Las visitas y descargas legítimas posteriores siguen incrementándose.
+- Los 27 recursos SLD se muestran con cero descargas en helpers; los diez
+  resultados del ranking son archivos de datos. Descarga manual real, fetch
+  automático y ruta sin extensión sirvieron los estilos y dejaron invariables
+  los contadores SLD y sus pendientes Redis.
+- Rollout final completado. CronJob reanudado; un job manual y las corridas
+  programadas `pageviews-flush-29879365` y `pageviews-flush-29879370` finalizaron
+  correctamente, esta última con la imagen final. Se conservaron los sidecars.
+- QA: 200 tests puros después de integrar `dev210`, 8 escenarios PostgreSQL/Redis,
+  28 comprobaciones contra CKAN real, navegador EN/ES/FR/AR, móvil 390×844,
+  búsqueda por estilo, lista completa, estilos sin asociación, paginación
+  20/17 sin duplicados, teclado y ausencia de errores JavaScript.
+  Artefactos locales en `output/sld-validation/` y `output/playwright/sld-*.png`.
+- Se retiraron las dos bases de prueba y su red, y el builder temporal. No se
+  borraron recursos, vistas ni históricos de tracking. Producción no se modificó.
