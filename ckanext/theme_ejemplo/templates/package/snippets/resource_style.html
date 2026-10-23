@@ -1,0 +1,19 @@
+{# Enlace al mismo recurso CKAN; permisos propios del estilo, no del padre. #}
+<div class="resource-style" data-style-id="{{ style.id }}">
+  <div class="resource-style-copy">
+    <span class="resource-style-label">{{ _('Visualization style') }} <span class="resource-style-format">SLD</span></span>
+    <a class="resource-style-name" href="{{ h.url_for(pkg.type ~ '_resource.read', id=pkg.name, resource_id=style.id) }}">{{ h.resource_display_name(style) }}</a>
+    {% if style._style_views %}<small class="resource-style-views">{{ _('Used in') }}: {{ style._style_views|join(', ') }}</small>{% endif %}
+  </div>
+  <div class="resource-style-actions">
+    <a href="{{ h.url_for(pkg.type ~ '_resource.read', id=pkg.name, resource_id=style.id) }}">{{ _('Details') }}</a>
+    {% if style.url and h.is_url(style.url) %}
+      {% if 'datashare_can_download' in h and not h.datashare_can_download(pkg, style) %}
+        <span class="datashare-download-locked"><i class="fa fa-lock" aria-hidden="true"></i> {{ _('Download restricted') }}</span>
+      {% else %}
+        <a href="{{ style.url }}" target="_blank" rel="noopener">{{ _('Download style') }}</a>
+      {% endif %}
+    {% endif %}
+    {% if can_edit %}<a href="{{ h.url_for(pkg.type ~ '_resource.edit', id=pkg.name, resource_id=style.id) }}">{{ _('Edit') }}</a>{% endif %}
+  </div>
+</div>

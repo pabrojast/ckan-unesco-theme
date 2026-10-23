@@ -16,6 +16,7 @@
 {% set url = h.url_for(url_action, id=pkg.id if is_activity_archive else pkg.name, resource_id=res.id, **({'activity_id': request.args['activity_id']} if 'activity_id' in request.args else {})) %}
 {# Icono por formato para mejorar el escaneo visual #}
 {% set fmt = (res.format or '').lower() %}
+{% set is_sld = h.theme_ejemplo_is_sld(res) %}
 {% set format_icon_map = {
   'csv': 'fa-file-excel-o',
   'xls': 'fa-file-excel-o',
@@ -50,7 +51,7 @@
     <a class="heading" href="{{ url }}" title="{{ res.name or res.description }}">
       {{ h.resource_display_name(res) }}
     </a>
-    {% set dl = h.get_resource_downloads(res.id) %}
+    {% set dl = {'total': 0} if is_sld else h.get_resource_downloads(res.id) %}
     {% if dl.total > 0 %}
     <span class="resource-downloads-badge" title="{{ _('Downloads') }}">
       <i class="fa fa-download"></i> {{ dl.total }}
@@ -58,6 +59,7 @@
     {% endif %}
   </div>
   {% endblock %}
+  {% if is_sld %}<p class="resource-style-kind">{{ _('Cartographic style') }} · SLD</p>{% endif %}
   {% block resource_item_description %}
     {% set description = h.get_translated(res, 'description') %}
     {% if description %}
@@ -138,6 +140,18 @@
   </div>
   {% endif %}
   {% endblock %}
+  {% if res._style_resources and not url_is_edit and not is_activity_archive %}
+  <div class="resource-styles">
+    {% if res._style_resources|length > 1 %}
+    <details{% if res._styles_expanded %} open{% endif %}>
+      <summary>{{ _('Visualization styles') }} ({{ res._style_resources|length }})</summary>
+    {% endif %}
+    {% for style in res._style_resources %}
+      {% snippet 'package/snippets/resource_style.html', pkg=pkg, style=style, can_edit=can_edit %}
+    {% endfor %}
+    {% if res._style_resources|length > 1 %}</details>{% endif %}
+  </div>
+  {% endif %}
 </li>
 
 {# Read-more toggler is registered once globally via resources_list.html #}

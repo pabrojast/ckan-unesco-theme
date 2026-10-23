@@ -6,6 +6,7 @@ import json
 import logging
 import time
 from sqlalchemy import text
+from .resource_styles import is_sld_resource, present_resources, sld_sql, raw_download_sql
 
 log = logging.getLogger(__name__)
 
@@ -165,17 +166,18 @@ def get_resource_downloads(resource_id):
         engine = model.meta.engine
         if _ensure_materialized_views():
             sql = text("""
-                SELECT total_downloads
-                FROM tracking_resource_stats
-                WHERE resource_id = :rid
-            """)
+                SELECT CASE WHEN {sld} THEN 0 ELSE s.total_downloads END
+                FROM tracking_resource_stats s
+                LEFT JOIN resource r ON r.id::text = s.resource_id
+                WHERE s.resource_id = :rid
+            """.format(sld=sld_sql()))
         else:
             sql = text("""
                 SELECT count(*) AS total_downloads
-                FROM tracking_raw
+                FROM tracking_raw t
                 WHERE tracking_type = 'resource'
-                  AND url LIKE :rid
-            """)
+                  AND url LIKE :rid AND {eligible}
+            """.format(eligible=raw_download_sql()))
         with engine.connect() as conn:
             if _ensure_materialized_views():
                 row = conn.execute(sql, {'rid': resource_id}).fetchone()
@@ -211,7 +213,9 @@ def get_tracking_totals():
                 "SELECT to_regclass('tracking_site_totals')")).fetchone()
             if check[0] is not None:
                 row = conn.execute(text(
-                    "SELECT total_page_views, total_downloads FROM tracking_site_totals"
+                    "SELECT total_page_views, (SELECT COALESCE(SUM(s.total_downloads), 0) "
+                    "FROM tracking_resource_stats s LEFT JOIN resource r ON r.id::text = s.resource_id "
+                    "WHERE NOT {sld}) FROM tracking_site_totals WHERE id = 1".format(sld=sld_sql())
                 )).fetchone()
                 if row:
                     result = {'page_views': row[0] or 0, 'downloads': row[1] or 0}
@@ -219,10 +223,10 @@ def get_tracking_totals():
                 row = conn.execute(text("""
                     SELECT
                         count(*) FILTER (WHERE tracking_type = 'page'),
-                        count(*) FILTER (WHERE tracking_type = 'resource')
-                    FROM tracking_raw
+                        count(*) FILTER (WHERE tracking_type = 'resource' AND {eligible})
+                    FROM tracking_raw t
                     WHERE tracking_type IN ('page', 'resource')
-                """)).fetchone()
+                """.format(eligible=raw_download_sql()))).fetchone()
                 if row:
                     result = {'page_views': row[0] or 0, 'downloads': row[1] or 0}
     except Exception as e:
@@ -303,9 +307,10 @@ def get_popular_resources(limit=5):
                          AND r.state = 'active'
                     JOIN package p ON r.package_id = p.id
                          AND p.state = 'active'
-                    ORDER BY s.total_downloads DESC
+                    WHERE NOT {sld} AND s.total_downloads > 0
+                    ORDER BY s.total_downloads DESC, s.resource_id
                     LIMIT 10
-                """)
+                """.format(sld=sld_sql()))
                 rows = conn.execute(sql).fetchall()
                 for row in rows:
                     results.append({
@@ -322,55 +327,37 @@ def get_popular_resources(limit=5):
     _tracking_cache['popular_resources'] = results
     return results[:limit]
 
-def get_paged_resources(package_id, page=1, items_per_page=20, q='', format_filter=''):
-    """
-    Get paginated resources for a package with optional search and format filter.
-    """
+def resource_presentation(pkg, resources=None, page=1, items_per_page=20,
+                          q='', format_filter='', mode='grouped'):
+    """Presentación de un paquete ya autorizado, con una consulta de vistas."""
+    resources = pkg.get('resources', []) if resources is None else resources
+    views = []
+    ids = [r['id'] for r in resources if not is_sld_resource(r)]
+    if mode != 'all' and ids and any(is_sld_resource(r) for r in resources):
+        try:
+            rows = model.Session.query(
+                model.ResourceView.resource_id, model.ResourceView.view_type,
+                model.ResourceView.title, model.ResourceView.config,
+            ).filter(model.ResourceView.resource_id.in_(ids),
+                     model.ResourceView.view_type == 'terria_view').all()
+            views = [dict(zip(('resource_id', 'view_type', 'title', 'config'), row))
+                     for row in rows]
+        except Exception as error:
+            _warn_and_rollback_helper_error('No se pudieron leer estilos asociados', error)
+    return present_resources(resources, views, page, items_per_page,
+                             q, format_filter, mode)
+
+
+def get_paged_resources(package_id, page=1, items_per_page=20, q='',
+                        format_filter='', mode='grouped'):
+    """Mantiene el helper público, usando la misma presentación que AJAX."""
     try:
-        package = toolkit.get_action('package_show')({}, {'id': package_id})
-        resources = package.get('resources', [])
-
-        # Collect unique formats before filtering
-        all_formats = sorted(set(
-            (r.get('format') or '').strip()
-            for r in resources
-            if (r.get('format') or '').strip()
-        ), key=str.lower)
-
-        # Apply search filter
-        if q:
-            q_lower = q.lower()
-            resources = [
-                r for r in resources
-                if q_lower in (r.get('name') or '').lower()
-                or q_lower in (r.get('description') or '').lower()
-                or q_lower in (r.get('url') or '').lower()
-            ]
-
-        # Apply format filter
-        if format_filter:
-            fmt_lower = format_filter.lower()
-            resources = [
-                r for r in resources
-                if (r.get('format') or '').lower() == fmt_lower
-            ]
-
-        total = len(resources)
-        start = (page - 1) * items_per_page
-        end = start + items_per_page
-        paged_resources = resources[start:end]
-
-        return {
-            'resources': paged_resources,
-            'total': total,
-            'formats': all_formats,
-        }
+        pkg = toolkit.get_action('package_show')({}, {'id': package_id})
     except toolkit.ObjectNotFound:
-        return {
-            'resources': [],
-            'total': 0,
-            'formats': [],
-        }
+        return present_resources([], page=page, items_per_page=items_per_page)
+    return resource_presentation(pkg, page=page, items_per_page=items_per_page,
+                                 q=q, format_filter=format_filter, mode=mode)
+
 
 def markdown_excerpt(text, length=180, killwords=False, end='...'):
     """

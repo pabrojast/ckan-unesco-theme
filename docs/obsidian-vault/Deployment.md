@@ -302,3 +302,21 @@ La publicación reveló que la regla de GitHub exigía `Theme checks` pero solo 
 ## Comprobación adicional de Progress (2026-10-22)
 
 El workflow vigente `.github/workflows/theme-checks.yml` ejecuta también `node --check` sobre `ihpix-progress.js`, además de las regresiones IHP-IX y la taxonomía. El procedimiento de esta mejora en DEV se documenta en [[IHP-IX Progress UX October 2026]].
+
+## Entrega SLD — procedimiento exclusivo de DEV
+
+Construir con `scripts/docker/Dockerfile.sld-dev` sobre el digest vigente. El
+contexto `patch/` contiene exclusivamente los archivos `ckanext/` del diff de
+esta entrega y los nuevos; conserva ajustes ajenos de la imagen base. La marca
+`.theme-sld-revision` identifica el commit del parche. El Docker clásico puede
+rechazar esta base por profundidad de capas: usar Buildx con driver
+`docker-container` y snapshotter `native`, exportando directamente al registro.
+
+Antes del rollout, respaldar Deployment, CronJob `pageviews-flush`, contadores
+PostgreSQL y pendientes Redis; registrar el digest base y huellas de archivos
+ajenos. Revalidar la imagen vigente inmediatamente antes de actualizar. Actualizar
+sólo el contenedor web CKAN y la imagen del CronJob, preservando sus restantes
+campos y sidecars. Suspender temporalmente el cron durante la reconciliación,
+esperar trabajos activos, simular y aplicar con respaldo; reanudar su estado
+anterior y verificar al menos dos consolidaciones y el navegador. Renovar sólo
+las claves de caché anónima del tema. No tocar producción.

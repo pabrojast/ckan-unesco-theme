@@ -9835,3 +9835,43 @@ msgid "No locations are available on this map for the selected activities."
 msgstr ""
 "No hay ubicaciones disponibles en este mapa para las actividades "
 "seleccionadas."
+
+#: ckanext/theme_ejemplo/templates/package/snippets/resource_style.html
+msgid "Visualization style"
+msgstr "Estilo de visualización"
+
+#: ckanext/theme_ejemplo/templates/package/snippets/resource_style.html
+msgid "Visualization styles"
+msgstr "Estilos de visualización"
+
+#: ckanext/theme_ejemplo/templates/package/snippets/resource_style.html
+msgid "Cartographic style"
+msgstr "Estilo cartográfico"
+
+#: ckanext/theme_ejemplo/templates/package/snippets/resource_style.html
+msgid "Download style"
+msgstr "Descargar estilo"
+
+#: ckanext/theme_ejemplo/templates/package/snippets/resource_style.html
+msgid "Show all files"
+msgstr "Mostrar todos los archivos"
+
+#: ckanext/theme_ejemplo/templates/package/snippets/resource_style.html
+msgid "Style files"
+msgstr "archivos de estilo"
+
+#: ckanext/theme_ejemplo/templates/package/snippets/resource_style.html
+msgid "Resources could not be loaded. Please try again."
+msgstr "No se pudieron cargar los recursos. Inténtalo de nuevo."
+
+#: ckanext/theme_ejemplo/templates/package/snippets/resource_style.html
+msgid "Results"
+msgstr "Resultados"
+
+#: ckanext/theme_ejemplo/templates/package/snippets/resource_style.html
+msgid "resources"
+msgstr "recursos"
+
+#: ckanext/theme_ejemplo/templates/package/snippets/resource_style.html
+msgid "Used in"
+msgstr "Usado en"
