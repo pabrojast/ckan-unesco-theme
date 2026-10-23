@@ -2743,63 +2743,27 @@ class MyLogica():
         @staticmethod
         def dataset_resources_ajax(id):
             """AJAX endpoint for paginated/filtered resource list."""
+            from ckanext.theme_ejemplo.helpers import resource_presentation
             page = request.args.get('page', 1, type=int)
             items_per_page = request.args.get('limit', 20, type=int)
             q = request.args.get('q', '').strip()
             format_filter = request.args.get('format', '').strip()
-
-            items_per_page = min(items_per_page, 100)
-
+            mode = request.args.get('mode', 'grouped')
+            context = {'user': current_user.name, 'auth_user_obj': current_user}
             try:
-                pkg = toolkit.get_action('package_show')({}, {'id': id})
+                pkg = toolkit.get_action('package_show')(context, {'id': id})
                 can_edit = h.check_access('package_update', {'id': pkg['id']})
             except toolkit.ObjectNotFound:
                 abort(404)
-            except Exception:
-                pkg = {'id': id, 'name': id, 'type': 'dataset'}
-                can_edit = False
-
-            # Filter and paginate from already-loaded resources
-            resources = pkg.get('resources', [])
-            all_formats = sorted(set(
-                (r.get('format') or '').strip()
-                for r in resources
-                if (r.get('format') or '').strip()
-            ), key=str.lower)
-
-            if q:
-                q_lower = q.lower()
-                resources = [
-                    r for r in resources
-                    if q_lower in (r.get('name') or '').lower()
-                    or q_lower in (r.get('description') or '').lower()
-                    or q_lower in (r.get('url') or '').lower()
-                ]
-            if format_filter:
-                fmt_lower = format_filter.lower()
-                resources = [
-                    r for r in resources
-                    if (r.get('format') or '').lower() == fmt_lower
-                ]
-
-            total = len(resources)
-            start = (page - 1) * items_per_page
-            paged = resources[start:start + items_per_page]
-
+            except toolkit.NotAuthorized:
+                abort(403)
+            result = resource_presentation(
+                pkg, page=page, items_per_page=items_per_page,
+                q=q, format_filter=format_filter, mode=mode)
             html = render_template(
                 'package/snippets/resources_list_items.html',
-                pkg=pkg,
-                resources=paged,
-                can_edit=can_edit,
-            )
-
-            return jsonify({
-                'html': html,
-                'total': total,
-                'page': page,
-                'items_per_page': items_per_page,
-                'formats': all_formats,
-            })
+                pkg=pkg, resources=result.pop('resources'), can_edit=can_edit)
+            return jsonify(dict(result, html=html))
 
         @staticmethod
         def dataset_read(package_type, id):

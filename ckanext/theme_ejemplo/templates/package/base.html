@@ -31,7 +31,7 @@
      publicado puede tener descargas y cero vistas todavía. #}
   {% set dl = namespace(total=0) %}
   {% for res in (pkg.resources if pkg else []) %}
-    {% set dl.total = dl.total + (res.tracking_summary.total if res.tracking_summary else 0) %}
+    {% set dl.total = dl.total + (res.tracking_summary.total if res.tracking_summary and not h.theme_ejemplo_is_sld(res) else 0) %}
   {% endfor %}
   {% if pkg and pkg.tracking_summary and (pkg.tracking_summary.total or dl.total) %}
   <script id="tracking-data" type="application/json">
@@ -40,7 +40,7 @@
       "recent": {{ pkg.tracking_summary.recent|default(0) }},
       "resources": {
         {% for res in pkg.resources %}
-        "{{ res.id }}": {{ res.tracking_summary.total if res.tracking_summary else 0 }}{{ "," if not loop.last }}
+        "{{ res.id }}": {{ res.tracking_summary.total if res.tracking_summary and not h.theme_ejemplo_is_sld(res) else 0 }}{{ "," if not loop.last }}
         {% endfor %}
       },
       "labels": {

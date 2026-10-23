@@ -11713,3 +11713,43 @@ msgstr ""
 
 msgid "No locations are available on this map for the selected activities."
 msgstr ""
+
+#: ckanext/theme_ejemplo/templates/package/snippets/resource_style.html
+msgid "Visualization style"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/package/snippets/resource_style.html
+msgid "Visualization styles"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/package/snippets/resource_style.html
+msgid "Cartographic style"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/package/snippets/resource_style.html
+msgid "Download style"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/package/snippets/resource_style.html
+msgid "Show all files"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/package/snippets/resource_style.html
+msgid "Style files"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/package/snippets/resource_style.html
+msgid "Resources could not be loaded. Please try again."
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/package/snippets/resource_style.html
+msgid "Results"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/package/snippets/resource_style.html
+msgid "resources"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/package/snippets/resource_style.html
+msgid "Used in"
+msgstr ""

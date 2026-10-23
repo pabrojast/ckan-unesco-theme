@@ -1,0 +1,60 @@
+async (page) => {
+  const base = new URL(page.url()).origin;
+  const results = [];
+  const errors = [];
+  page.on('pageerror', error => errors.push(error.message));
+  const names = ['harmonized-hydrogeological-map-of-the-hoa-1-5-000-000',
+    'geological-map-of-somalia-1-1-500-000', 'african-drought-atlas'];
+  const assert = (value, message) => { if (!value) throw new Error(message); };
+  for (const locale of ['', '/es', '/fr', '/ar']) {
+    await page.setViewportSize({width: locale ? 390 : 1440, height: locale ? 844 : 1000});
+    const name = names[0];
+    await page.goto(base + locale + '/dataset/' + name);
+    await page.locator('#dataset-resources').waitFor();
+    const section = page.locator('#dataset-resources');
+    assert(await section.locator('.resource-style').count() === 2, 'two associated styles');
+    assert(await section.locator('#resources-list > .resource-item').count() === 1, 'one grouped resource');
+    await section.locator('summary').click();
+    assert(await section.locator('details').getAttribute('open') !== null, 'styles expanded');
+    assert(await section.locator('.resource-style').first().isVisible(), 'style visible');
+    await section.screenshot({path: 'output/playwright/sld-' + (locale.slice(1) || 'en') + '.png'});
+    const overflow = await page.evaluate(() => document.documentElement.scrollWidth > innerWidth + 1);
+    assert(!overflow, 'horizontal overflow ' + locale);
+    assert(await section.locator('.resource-style .resource-downloads-badge').count() === 0, 'no style counters');
+    const downloadLinks = await section.locator('.resource-style-actions a').evaluateAll(nodes => nodes.map(n => n.getAttribute('href')));
+    assert(downloadLinks.length >= 4, 'style details and download links');
+    let response = page.waitForResponse(r => r.url().includes('/resources_ajax?') && r.status() === 200);
+    await section.locator('#resources-all-files').check(); await response;
+    await page.waitForFunction(() => document.querySelectorAll('#resources-list > .resource-item').length === 3);
+    assert(await section.locator('.resource-style').count() === 0, 'flat view without nested duplication');
+    response = page.waitForResponse(r => r.url().includes('/resources_ajax?') && r.status() === 200);
+    await section.locator('#resources-all-files').uncheck(); await response;
+    response = page.waitForResponse(r => r.url().includes('/resources_ajax?') && r.status() === 200);
+    await section.locator('#resources-format-filter').selectOption('SLD'); await response;
+    await page.waitForFunction(() => !!document.querySelector('#resources-list details[open]'));
+    assert(await section.locator('.resource-style').count() === 2, 'SLD filter retains parent');
+    response = page.waitForResponse(r => r.url().includes('/resources_ajax?') && r.status() === 200);
+    await section.locator('#resources-search').fill('HG_RECLASS'); await response;
+    await page.waitForFunction(() => document.querySelectorAll('#resources-list .resource-style').length === 1);
+    assert(await section.locator('.resource-style-name').textContent().then(x => x.includes('HG_RECLASS')), 'search finds associated style');
+    results.push({locale: locale || 'en', grouped: 1, all: 3, styles: 2, search: true, noOverflow: true});
+  }
+  await page.setViewportSize({width:1440,height:1000});
+  await page.goto(base + '/dataset/' + names[1]);
+  await page.locator('#dataset-resources').waitFor();
+  assert(await page.locator('#resources-list > .resource-item').count() === 4, 'orphan style remains visible');
+  assert(await page.locator('#resources-list .resource-style-kind').count() === 1, 'orphan style identified');
+  results.push({orphanStyle:true});
+  await page.goto(base + '/dataset/' + names[2]);
+  await page.locator('#dataset-resources').waitFor();
+  assert(await page.locator('#resources-list > .resource-item').count() === 20, 'first page size');
+  const first = await page.locator('#resources-list > .resource-item').evaluateAll(nodes=>nodes.map(n=>n.dataset.id));
+  const response = page.waitForResponse(r => r.url().includes('/resources_ajax?') && r.status() === 200);
+  await page.locator('#resources-pagination-links button[data-page="2"]').first().click(); await response;
+  await page.waitForFunction(id => document.querySelector('#resources-list > .resource-item').dataset.id !== id, first[0]);
+  const second = await page.locator('#resources-list > .resource-item').evaluateAll(nodes=>nodes.map(n=>n.dataset.id));
+  assert(second.length > 0 && second.every(id=>!first.includes(id)), 'second page no duplicates');
+  results.push({pagination:true, first:first.length, second:second.length});
+  assert(errors.length === 0, 'JavaScript exceptions: ' + errors.join('; '));
+  return {results, errors};
+}

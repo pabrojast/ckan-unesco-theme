@@ -329,6 +329,26 @@ Regresiones reproducibles adicionales: `scripts/ihpix_review_privacy.py` (15 che
 
 `scripts/playwright/ihpix_progress_filters.cjs` prueba selección geográfica, coherencia de exportaciones, recuperación ante fallos, borradores y 80 combinaciones de página/idioma/viewport. La fixture aislada y las variables de ejecución se documentan en [[IHP-IX Progress UX October 2026]]. La suite pura incluye una regresión para impedir que un alias vacío resuelva a un país con nombre no latino.
 
+## Recursos SLD y tracking
+
+- `test_resource_styles.py`: clasificación, asociaciones compartidas/múltiples,
+  URLs históricas, entradas malformadas, búsqueda, filtros, lista plana y
+  agrupación antes de paginar. Sin CKAN.
+- `test_pageview_tracking.py`: filtros existentes más exclusión manual de SLD
+  por URL/metadatos antes de deduplicar.
+- `test_sld_tracking_db.py`: PostgreSQL y Redis aislados; igualdad de política
+  Python/SQL, rankings y helpers, fallback legado, pendientes SLD, simulación,
+  reconciliación repetida, respaldo y fallos de DB/bloqueo. Requiere
+  `SLD_TEST_DATABASE_URL` y `SLD_TEST_REDIS_URL` de bases exclusivas de pruebas;
+  esta suite recrea sus tablas, nunca debe apuntar a CKAN real.
+- `scripts/sld_dev_smoke.py`: renderiza páginas y AJAX públicos en CKAN real,
+  idiomas EN/ES/FR/AR, conservación de recursos API y rechazo de privados.
+
+El workflow `Theme checks` incorpora estos tests con PostgreSQL 17/Redis 7 y
+valida sintaxis de `resource-list.js`. Validar además en navegador escritorio y
+móvil: estilos compartidos/independientes, búsqueda, cambio de modo, paginación,
+permisos, enlaces de descarga y ausencia de insignias SLD/desbordamiento.
+
 ## Dataset extent: límite de zoom USGS (2026-10-23)
 
 - 32 comprobaciones de renderizado con las extensiones Jinja de CKAN 2.10:

@@ -225,3 +225,23 @@ el plugin está habilitado y delega a su fuente IHP.
 `python3 scripts/build_ihpix_taxonomy_data.py --check` comprueba que los JSON generados coinciden con el snapshot oficial (34 Outputs/151 KA). Sin `--check` los regenera; `--seed` es la opción explícita para datos legados.
 
 `scripts/ihpix_review_acceptance.py` ejecuta aceptación HTTP solo en un CKAN local aislado: requisitos y variables en [[Testing#Aceptación IHP-IX de septiembre (2026-10-21)]].
+
+## Reconciliar descargas excluyendo SLD
+
+```bash
+ckan -c /srv/app/production.ini pageviews reconcile-downloads
+ckan -c /srv/app/production.ini pageviews reconcile-downloads --apply --backup /ruta/privada/sld-before.json
+```
+
+Por defecto sólo informa total anterior/resultante y recursos excluidos. Aplicar
+requiere Redis disponible, el bloqueo compartido con `pageviews flush` y un
+archivo de respaldo nuevo (0600, no sobrescribe). La transacción modifica sólo
+`tracking_site_totals.total_downloads`, conservando visitas e histórico por
+recurso. El respaldo incluye los contadores originales y pendientes en Redis;
+`applied=false`/`snapshot_phase=before` identifica que es la captura previa.
+Repetir recalcula el mismo agregado; no resta dos veces. Los incrementos nuevos
+en Redis permanecen pendientes para el siguiente flush.
+
+Para revertir la política, restaurar la imagen anterior y recalcular la suma
+completa de `tracking_resource_stats`, conservando las visitas y las nuevas
+descargas; no restaurar valores viejos encima de incrementos posteriores.
