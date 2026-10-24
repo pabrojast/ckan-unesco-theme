@@ -31,8 +31,10 @@ PAGES = [
     '/ihpix/progress', '/ihpix/progress/pa/PA1', '/ihpix/progress/output/1.3',
     '/ihpix/progress/flagship/friend', '/ihpix/progress/ctwg/ecohydrology-and-water-quality',
     '/ihpix/progress?biennium=2024-2025',
+    '/ihpix/outputs?country=chile', '/ihpix/outputs?flagship=friend', '/ihpix/outputs?organization=cazalac',
+    '/group/chile/ihpix', '/group/friend-water/ihpix', '/organization/cazalac/ihpix',
     '/ckan-admin/ihpix', '/ckan-admin/ihpix/activities', '/ckan-admin/ihpix/reports?status=pending',
-    '/ckan-admin/ihpix/workspaces', '/ckan-admin/ihpix/overview',
+    '/ckan-admin/ihpix/workspaces', '/ckan-admin/ihpix/overview', '/ckan-admin/ihpix/institutions',
 ]
 REPORT_MARKERS = ('ihpix-forms-i18n', 'data-ihpix-multipicker', 'data-ihpix-markdown',
                   'id="ihpix-publication-modal"', '<option value="course">',

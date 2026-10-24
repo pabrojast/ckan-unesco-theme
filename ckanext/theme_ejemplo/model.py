@@ -1099,6 +1099,30 @@ class IhpixActivity(model.DomainObject):
         return cache[key]
 
     @classmethod
+    def _scope_ids(cls, scope, value):
+        """Ids de las actividades de un flagship o CTWG con la misma
+        normalización que el panel de progreso (códigos, slugs y alias:
+        'GWADI' → 'G-WADI'). Antes se usaba ILIKE sobre el texto crudo y las
+        pestañas de iniciativa no encontraban los heredados."""
+        from flask import g, has_request_context
+        from ckanext.theme_ejemplo import ihpix_stats as stats
+        from ckanext.theme_ejemplo.actions import _ihpix_resolve_scope_value
+        key = (scope, value or '')
+        cache = getattr(g, '_ihpix_scope_ids', {}) if has_request_context() else {}
+        if key not in cache:
+            resolved = _ihpix_resolve_scope_value(scope, value)
+            ids = []
+            if resolved:
+                fields = ('id', 'flagships', 'cross_cutting_wg')
+                rows = meta.Session.query(*(getattr(cls, f) for f in fields)).all()
+                prepared = [stats.prepare_row(dict(zip(fields, row))) for row in rows]
+                ids = [row['id'] for row in stats.filter_rows(prepared, scope=scope, value=resolved)]
+            cache[key] = ids
+            if has_request_context():
+                g._ihpix_scope_ids = cache
+        return cache[key]
+
+    @classmethod
     def get_filtered(cls, status=None, priority_area=None, output=None,
                      q_text=None, biennium=None, country=None, region=None,
                      flagship=None, organization=None, ctwg=None,
@@ -1124,9 +1148,9 @@ class IhpixActivity(model.DomainObject):
             partners = cast(func.coalesce(func.nullif(cls.partner_org_ids, ''), '[]'), JSONB)
             q = q.filter(or_(cls.institution_org_id == org_id, partners.contains([org_id])))
         if flagship:
-            q = q.filter(cls.flagships.ilike(u'%' + flagship + u'%'))
+            q = q.filter(cls.id.in_(cls._scope_ids('flagship', flagship)))
         if ctwg:
-            q = q.filter(cls.cross_cutting_wg.ilike(u'%' + ctwg + u'%'))
+            q = q.filter(cls.id.in_(cls._scope_ids('ctwg', ctwg)))
         if reported_by:
             values = (list(reported_by) if isinstance(reported_by, (list, tuple))
                       else [reported_by])
@@ -1147,13 +1171,13 @@ class IhpixActivity(model.DomainObject):
     @classmethod
     def get_published(cls, priority_area=None, output=None, q_text=None,
                       biennium=None, country=None, region=None, flagship=None,
-                      organization=None, limit=20, offset=0):
+                      organization=None, ctwg=None, limit=20, offset=0):
         """Return published activities with optional filters."""
         return cls.get_filtered(
             status=cls.STATUS_PUBLISHED, priority_area=priority_area,
             output=output, q_text=q_text, biennium=biennium, country=country,
             region=region, flagship=flagship, organization=organization,
-            limit=limit, offset=offset)
+            ctwg=ctwg, limit=limit, offset=offset)
 
     @classmethod
     def _apply_stat_filters(cls, q, filters):
@@ -1172,10 +1196,10 @@ class IhpixActivity(model.DomainObject):
         if output:
             q = q.filter(cls._association_filter('output', output))
         if filters.get('ctwg'):
-            q = q.filter(cls.cross_cutting_wg.ilike('%' + filters['ctwg'] + '%'))
+            q = q.filter(cls.id.in_(cls._scope_ids('ctwg', filters['ctwg'])))
         flagship = filters.get('flagship')
         if flagship:
-            q = q.filter(cls.flagships.ilike(u'%' + flagship + u'%'))
+            q = q.filter(cls.id.in_(cls._scope_ids('flagship', flagship)))
         return q
 
     @classmethod

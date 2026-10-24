@@ -246,7 +246,7 @@ Patrón LRU con buster:
 
 ## 7. Portal IHP-IX
 
-**Rutas**: `/ihpix` (pública), `/ihpix/outputs`, `/ihpix/outputs/<code>`, `/ihpix/priority-area/<pa>`, `/ihpix/contributors`, `/ihpix/workspaces`, `/ihpix/workspaces/<code>` (+ `/join`, `/leave`, `/members`, `/members/process`), `/ihpix/report`, `/ihpix/report/<id>/edit`, `/ihpix/my-reports`, `/user/<id>/ihpix`, `/ihpix/progress` (+ `/pa/<pa>`, `/output/<code>`, `/flagship/<slug>`, `/ctwg/<slug>`; `/ihpix/dashboard` redirige ahí desde 2026-10) (todas las demás: **usuarios logueados**), `/ckan-admin/ihpix/overview`, `/ckan-admin/ihpix/workspaces`
+**Rutas**: `/ihpix` (pública), `/ihpix/outputs`, `/ihpix/outputs/<code>`, `/ihpix/priority-area/<pa>`, `/ihpix/contributors`, `/ihpix/workspaces`, `/ihpix/workspaces/<code>` (+ `/join`, `/leave`, `/members`, `/members/process`), `/ihpix/report`, `/ihpix/report/<id>/edit`, `/ihpix/my-reports`, `/user/<id>/ihpix`, `/ihpix/progress` (+ `/pa/<pa>`, `/output/<code>`, `/flagship/<slug>`, `/ctwg/<slug>`; `/ihpix/dashboard` redirige ahí desde 2026-10) (todas las demás: **usuarios logueados**), `/ckan-admin/ihpix/overview`, `/ckan-admin/ihpix/workspaces`, `/ckan-admin/ihpix/institutions`
 
 **Taxonomías oficiales**: ver [[Modulos]] → `ihpix_constants.py` (5 Priority Areas, 34 Outputs con título, 128 key activities derivadas del Excel, 18 Flagships, 7 Regions, 3 CTWGs, 12 Institution Types, 8 KPIs con 9 tipos de producto de conocimiento y 12 de material de formación, 195 Member States, 4 Biennia 2022-2029).
 
@@ -260,10 +260,15 @@ Patrón LRU con buster:
    → Métricas de impacto con contadores animados
 2. Outputs (/ihpix/outputs) — usuarios logueados:
    → Lista actividades publicadas de IhpixActivity
-   → Filtros: biennium, region, country, organization, priority_area, output
-     (listas desde h.get_ihpix_taxonomies(), ya no hardcodeadas)
+   → Filtros: biennium, region, country, organization, priority_area, output,
+     flagship, ctwg (listas desde h.get_ihpix_taxonomies(), ya no hardcodeadas).
+     `organization` admite nombre o id; `flagship`/`ctwg` código o slug. Los chips
+     muestran etiquetas legibles y conservan el resto de filtros (macro `explorer_url`)
    → Vistas expandibles con detalle (incl. adjuntos), exportación CSV
    → Los chips PA / Output enlazan a las páginas por PA y por Output
+   → Institución, país sede, Member States (beneficiarios y de apoyo), flagships
+     y CTWG enlazan a la pestaña IHP-IX de la organización o del grupo
+     (`ihpix/snippets/entity_chips.html` + `controller._ihpix_entity_links`, 2026-10-23)
 2b. Páginas navegables (fase iii, usuarios logueados):
    → /ihpix/outputs/<code>: stats del Output, actividades paginadas,
      contribuidores, adjuntos agrupados por tipo, instituciones líderes,
@@ -381,6 +386,20 @@ Patrón LRU con buster:
 7. Admin Content/Activities (/ckan-admin/ihpix, /activities):
    → Edición de hero, CTA cards, priority areas
    → CRUD completo de actividades, importación bulk Excel
+8. Admin Institutions (/ckan-admin/ihpix/institutions) — sysadmin (2026-10-24):
+   → ihpix_institution_link_list() agrupa las instituciones heredadas (texto)
+     sin institution_org_id por clave normalizada y propone organizaciones
+     (ihpix_org_match: exacto / acrónimo / contenido / tramo / iniciales /
+     palabra clave / similar; ≥ 90 % se preselecciona)
+   → Formulario único: casilla + selector por institución (las 134 opciones
+     se cargan por JS al abrir), "Select all confident", filtro `q`
+   → POST /ckan-admin/ihpix/institutions/link → ihpix_institution_link():
+     rellena institution_org_id en todas las filas con esa clave y sin
+     organización (bloqueo + ensure_baseline + snapshot = una revisión por
+     actividad), invalida cachés y recalcula el resumen por país; el texto
+     de la institución no cambia. "Unlink" vacía el id en las filas que
+     apuntan a esa organización. Atajo desde la pestaña vacía de la
+     organización (sólo sysadmin) y botón "Link institutions" en Overview
 ```
 
 ### Modelo de gates condicionales (PDF 2026)
@@ -531,6 +550,16 @@ reporte público: tipos KPI como listas JSON, `member_states` JSON,
   pestañas IHP-IX de org/grupo) exige sesión: `controller._require_login()`
   redirige a `/user/login?came_from=…`. Las acciones de lectura pasan a
   `_logged_in_only`.
+- Pestañas IHP-IX (`/group/<name>/ihpix`, `/organization/<name>/ihpix`, revisadas
+  el 2026-10-23): `ihpix_entities.group_scope` clasifica el grupo. Un Member State
+  (hijo de `member-states` o con título de país oficial) filtra por país con los
+  mismos roles que Progress (sede, apoyo, beneficiario); una iniciativa reconocida
+  como flagship o CTWG filtra por ese ámbito (`IhpixActivity._scope_ids`, misma
+  normalización que el panel en vez de `ILIKE`); una iniciativa sin equivalente
+  muestra un aviso y no lista nada. Antes toda pestaña de grupo filtraba por
+  país y en las iniciativas salía vacía. La organización sigue filtrando por id
+  (`institution_org_id` / `partner_org_ids`), nunca por texto; su enlace al
+  explorador pasa ahora el `name` (antes el título, que no resolvía).
 - `cache.py` excluye `/ihpix/report`, `/ihpix/outputs`, `/ihpix/dashboard`,
   `/ihpix/progress`, `/ihpix/priority-area`, `/ihpix/contributors`,
   `/ihpix/workspaces`, `/ihpix/my-reports`, `/ihpix/markdown-preview`,

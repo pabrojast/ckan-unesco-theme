@@ -220,6 +220,43 @@ def _ihpix_links_map(activities):
         return {}
 
 
+def _ihpix_entity_links(activities):
+    """{activity_id: fichas enlazables} (país sede, Member States por rol,
+    flagships, CTWG, organización) para el explorador y las pestañas IHP-IX.
+    Los slugs de grupo salen de las listas cacheadas de member-states e
+    iniciativas; las organizaciones se resuelven por id en una consulta."""
+    try:
+        from ckanext.theme_ejemplo import ihpix_entities as E
+        from ckanext.theme_ejemplo.actions import _ihpix_country_index
+        index = _ihpix_country_index()
+        member_states = E.member_state_slugs(toolkit.h.get_member_states_groups_list(), index)
+        initiatives = list(toolkit.h.get_initiatives_groups_list())
+        flagships = E.flagship_groups(initiatives)
+        ctwgs = E.ctwg_groups(initiatives)
+        org_ids = set()
+        for a in activities or []:
+            if a.get('institution_org_id'):
+                org_ids.add(a['institution_org_id'])
+            org_ids.update(E.partner_ids(a))
+        orgs = {}
+        if org_ids:
+            for org in model.Session.query(model.Group).filter(
+                    model.Group.id.in_(list(org_ids)),
+                    model.Group.is_organization == True,  # noqa: E712
+                    model.Group.state == 'active').all():
+                orgs[org.id] = {'name': org.name, 'title': org.display_name}
+        out = {}
+        for a in activities or []:
+            links = E.activity_links(a, index, member_states, flagships, ctwgs)
+            links['institution']['org'] = orgs.get(links['institution']['org_id'])
+            links['partners'] = [orgs[i] for i in links['partners'] if i in orgs]
+            out[a.get('id')] = links
+        return out
+    except Exception as e:
+        log.warning('IHP-IX: no se pudieron preparar los enlaces de entidades: %s', e)
+        return {}
+
+
 def _format_error_dict(error_dict):
     """'campo: mensaje; campo2: mensaje2' para toasts/flash."""
     parts = []
@@ -957,10 +994,28 @@ class MyLogica():
                 region_filter = request.args.get('region', '')
                 country_filter = request.args.get('country', '')
                 organization_filter = request.args.get('organization', '')
+                flagship_filter = request.args.get('flagship', '')
+                ctwg_filter = request.args.get('ctwg', '')
                 q = request.args.get('q', '')
                 page = int(request.args.get('page', 1))
                 items_per_page = 20
                 offset = items_per_page * (page - 1)
+
+                # Etiquetas legibles de los filtros que llegan por slug/id
+                # desde las pestañas de grupo y organización.
+                from ckanext.theme_ejemplo import ihpix_constants as C
+                from ckanext.theme_ejemplo import ihpix_relations as R
+                from ckanext.theme_ejemplo.actions import _ihpix_resolve_scope_value
+                flagship_code = _ihpix_resolve_scope_value('flagship', flagship_filter) if flagship_filter else None
+                ctwg_value = _ihpix_resolve_scope_value('ctwg', ctwg_filter) if ctwg_filter else None
+                country_meta = R.country_metadata(country_filter) if country_filter else None
+                country_label = (country_meta['country_title_en'] if country_meta
+                                 else get_member_state_title(country_filter))
+                organization_title = organization_filter
+                if organization_filter:
+                    org = model.Group.get(organization_filter)
+                    if org and org.is_organization:
+                        organization_title = org.display_name
 
                 try:
                     results, total = IhpixActivity.get_published(
@@ -971,6 +1026,8 @@ class MyLogica():
                         country=country_filter or None,
                         region=region_filter or None,
                         organization=organization_filter or None,
+                        flagship=flagship_filter or None,
+                        ctwg=ctwg_filter or None,
                         limit=items_per_page,
                         offset=offset,
                     )
@@ -985,6 +1042,7 @@ class MyLogica():
                 return render_template("ihpix/outputs.html",
                                        activities=activities,
                                        links_by_activity=_ihpix_links_map(activities),
+                                       entity_links=_ihpix_entity_links(activities),
                                        facets=facets,
                                        total=total,
                                        pa_filter=pa_filter,
@@ -992,7 +1050,13 @@ class MyLogica():
                                        biennium_filter=biennium_filter,
                                        region_filter=region_filter,
                                        country_filter=country_filter,
+                                       country_label=country_label,
                                        organization_filter=organization_filter,
+                                       organization_title=organization_title,
+                                       flagship_filter=flagship_filter,
+                                       flagship_label=C.flagship_label(flagship_code) if flagship_code else flagship_filter,
+                                       ctwg_filter=ctwg_filter,
+                                       ctwg_label=ctwg_value or ctwg_filter,
                                        q=q,
                                        page=page,
                                        items_per_page=items_per_page)
@@ -1776,6 +1840,7 @@ class MyLogica():
                     group_type='organization',
                     activities=activities,
                     links_by_activity=_ihpix_links_map(activities),
+                    entity_links=_ihpix_entity_links(activities),
                     facets=facets,
                     total=total,
                     pa_filter=pa_filter,
@@ -1959,7 +2024,8 @@ class MyLogica():
                 abort(500)
 
         def group_ihpix(name):
-            """Group/Member State IHP-IX tab — actividades IHP-IX de este país (usuarios logueados)."""
+            """Group IHP-IX tab — actividades del país (Member State) o de la
+            iniciativa (flagship / CTWG) que representa el grupo (usuarios logueados)."""
             redirect = _require_login()
             if redirect:
                 return redirect
@@ -1973,6 +2039,8 @@ class MyLogica():
                 from ckanext.theme_ejemplo.model import (
                     IhpixActivity, init_ihpix_activities_db,
                 )
+                from ckanext.theme_ejemplo import ihpix_constants as C
+                from ckanext.theme_ejemplo import ihpix_entities as E
                 init_ihpix_activities_db()
 
                 pa_filter = request.args.get('pa', '')
@@ -1983,16 +2051,32 @@ class MyLogica():
                 items_per_page = 20
                 offset = items_per_page * (page - 1)
 
+                # Un grupo Member State filtra por país (sede, apoyo o
+                # beneficiario); una iniciativa, por su flagship o CTWG.
                 try:
-                    results, total = IhpixActivity.get_published(
-                        priority_area=pa_filter or None,
-                        output=output_filter or None,
-                        q_text=q or None,
-                        biennium=biennium_filter or None,
-                        country=name or None,
-                        limit=items_per_page,
-                        offset=offset,
-                    )
+                    member_names = {n for n, _t in toolkit.h.get_member_states_groups_list()}
+                except Exception:
+                    member_names = set()
+                tab_scope, tab_value = E.group_scope(group.get('name'), group.get('title'), member_names)
+                scope_filter = {}
+                if tab_scope == 'country':
+                    scope_filter['country'] = group.get('name')
+                elif tab_scope in ('flagship', 'ctwg'):
+                    scope_filter[tab_scope] = tab_value
+
+                try:
+                    if tab_scope:
+                        results, total = IhpixActivity.get_published(
+                            priority_area=pa_filter or None,
+                            output=output_filter or None,
+                            q_text=q or None,
+                            biennium=biennium_filter or None,
+                            limit=items_per_page,
+                            offset=offset,
+                            **scope_filter
+                        )
+                    else:
+                        results, total = [], 0
                     activities = [a.as_dict() for a in results]
                     facets = IhpixActivity.get_facets()
                 except Exception as e:
@@ -2005,8 +2089,13 @@ class MyLogica():
                     "group/ihpix.html",
                     group_dict=group,
                     group_type='group',
+                    tab_scope=tab_scope,
+                    tab_value=tab_value or '',
+                    tab_slug=E.scope_slug(tab_scope, tab_value),
+                    tab_label=C.flagship_label(tab_value) if tab_scope == 'flagship' else (tab_value or ''),
                     activities=activities,
                     links_by_activity=_ihpix_links_map(activities),
+                    entity_links=_ihpix_entity_links(activities),
                     facets=facets,
                     total=total,
                     pa_filter=pa_filter,
@@ -5021,6 +5110,70 @@ class MyLogica():
                 log.error('IHP-IX recompute summary: %s', e)
                 h.flash_error(_('Could not recompute the country summary.'))
             return h.redirect_to('theme_ejemplo.ihpix_admin_overview')
+
+        # ── IHP-IX: instituciones heredadas ↔ organizaciones ──────────────
+
+        @staticmethod
+        def ihpix_institutions_admin():
+            """Sysadmin: vincula las instituciones heredadas (texto) con
+            organizaciones IHP-WINS a partir de sugerencias."""
+            if not (c.userobj and c.userobj.sysadmin):
+                return abort(403, _('Not authorized'))
+            from ckanext.theme_ejemplo import ihpix_org_match as OM
+            q = (request.args.get('q') or '').strip()
+            try:
+                data = toolkit.get_action('ihpix_institution_link_list')(
+                    MyLogica._ihpix_ctx(), {'q': q})
+            except Exception as e:
+                log.error('IHP-IX institutions admin: %s', e)
+                h.flash_error(_('Could not load the institutions.'))
+                data = {'unlinked': [], 'linked': [], 'organizations': [], 'totals': {}}
+            return render_template(
+                'admin/ihpix_institutions.html',
+                unlinked=data.get('unlinked', []),
+                linked=data.get('linked', []),
+                organizations=data.get('organizations', []),
+                totals=data.get('totals') or {},
+                q=q,
+                confident=OM.CONFIDENT,
+            )
+
+        @staticmethod
+        def ihpix_institutions_link():
+            """POST: aplica la selección (vincular) o deshace un vínculo."""
+            if not (c.userobj and c.userobj.sysadmin):
+                return abort(403, _('Not authorized'))
+            q = (request.form.get('q') or '').strip()
+            params = {'q': q} if q else {}
+            links = []
+            if request.form.get('unlink'):
+                links.append({'key': (request.form.get('key') or '').strip(),
+                              'organization_id': '',
+                              'current_organization_id': (request.form.get('organization_id') or '').strip()})
+            else:
+                for index in request.form.getlist('apply'):
+                    key = (request.form.get('key-%s' % index) or '').strip()
+                    org_id = (request.form.get('org-%s' % index) or '').strip()
+                    if key and org_id:
+                        links.append({'key': key, 'organization_id': org_id})
+            if not links:
+                h.flash_notice(_('No institutions were selected.'))
+                return h.redirect_to('theme_ejemplo.ihpix_institutions_admin', **params)
+            try:
+                result = toolkit.get_action('ihpix_institution_link')(
+                    MyLogica._ihpix_ctx(), {'links': links})
+                if request.form.get('unlink'):
+                    h.flash_success(_('Unlinked %(n)d activities.')
+                                    % {'n': result.get('updated', 0)})
+                else:
+                    h.flash_success(_('Linked %(n)d activities for %(k)d institutions.')
+                                    % {'n': result.get('updated', 0), 'k': len(links)})
+            except toolkit.ValidationError as e:
+                h.flash_error(_format_error_dict(e.error_dict))
+            except Exception as e:
+                log.error('IHP-IX institutions link: %s', e)
+                h.flash_error(_('Could not update the institution links.'))
+            return h.redirect_to('theme_ejemplo.ihpix_institutions_admin', **params)
 
         # ── Open Learning Courses (caché curada) ──────────────────────────
 

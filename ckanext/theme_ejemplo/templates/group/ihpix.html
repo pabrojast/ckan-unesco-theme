@@ -1,6 +1,7 @@
 {% extends "group/read_base.html" %}
 {% import 'ihpix/snippets/activity_links.html' as links_ui with context %}
 {% import 'ihpix/snippets/forms_assets.html' as forms_ui with context %}
+{% import 'ihpix/snippets/entity_chips.html' as chips_ui with context %}
 
 {% block subtitle %}{{ _('IHP-IX Activities') }} {{ g.template_title_delimiter }} {{ group_dict.display_name }}{% endblock %}
 
@@ -387,6 +388,11 @@
     border: 1px solid #D1ECFA;
   }
   .gix-json-tags-row { margin-bottom: 8px; }
+  .gix-dtag--link { text-decoration: none; }
+  .gix-dtag--link:hover, .gix-dtag--link:focus { background: var(--ox-primary); color: #fff; border-color: var(--ox-primary); text-decoration: none; }
+  .gix-dtag--muted { background: var(--ox-surface-alt); color: var(--ox-text-sec); border-color: var(--ox-border); }
+  .gix-card-meta a { color: inherit; text-decoration: underline dotted; }
+  .gix-card-meta a:hover, .gix-card-meta a:focus { color: var(--ox-primary); }
 
   /* Stakeholder mini-cards */
   .gix-stake-grid {
@@ -498,6 +504,8 @@
   }
 </style>
 
+{% set tab_scope = tab_scope if tab_scope is defined else 'country' %}
+{% set tab_slug = tab_slug if tab_slug is defined else group_dict.name %}
 <div class="gix-wrap">
 
   {# ── Info bar ──────────────────────────────────────────── #}
@@ -507,9 +515,28 @@
       <span class="gix-count-pill">
         <i class="fa fa-bar-chart"></i> {{ total }} {{ _('activities') }}
       </span>
-      <a href="{{ h.url_for('/ihpix/outputs', country=group_dict.name) }}" class="gix-link-btn" target="_blank">
-        <i class="fa fa-external-link"></i> {{ _('Full Explorer') }}
-      </a>
+      {% if tab_scope == 'flagship' %}
+        <a href="{{ h.url_for('/ihpix/progress/flagship/' ~ tab_slug) }}" class="gix-link-btn">
+          <i class="fa fa-bar-chart"></i> {{ _('Progress') }}
+        </a>
+        <a href="{{ h.url_for('/ihpix/outputs', flagship=tab_slug) }}" class="gix-link-btn" target="_blank">
+          <i class="fa fa-external-link"></i> {{ _('Full Explorer') }}
+        </a>
+      {% elif tab_scope == 'ctwg' %}
+        <a href="{{ h.url_for('/ihpix/progress/ctwg/' ~ tab_slug) }}" class="gix-link-btn">
+          <i class="fa fa-bar-chart"></i> {{ _('Progress') }}
+        </a>
+        <a href="{{ h.url_for('/ihpix/outputs', ctwg=tab_slug) }}" class="gix-link-btn" target="_blank">
+          <i class="fa fa-external-link"></i> {{ _('Full Explorer') }}
+        </a>
+      {% elif tab_scope == 'country' %}
+        <a href="{{ h.url_for('/ihpix/progress', country=group_dict.title or group_dict.name) }}" class="gix-link-btn">
+          <i class="fa fa-bar-chart"></i> {{ _('Progress') }}
+        </a>
+        <a href="{{ h.url_for('/ihpix/outputs', country=group_dict.name) }}" class="gix-link-btn" target="_blank">
+          <i class="fa fa-external-link"></i> {{ _('Full Explorer') }}
+        </a>
+      {% endif %}
     </div>
   </div>
 
@@ -626,6 +653,7 @@
     {{ forms_ui.forms_styles() }}
     {% for activity in activities %}
       {% set pa = activity.priority_area or '' %}
+      {% set links = (entity_links or {}).get(activity.id) %}
       <div class="gix-card">
         <div class="gix-card-accent" data-pa="{{ pa }}" style="background: {{ h.get_ihpix_taxonomies().pa_colors.get(pa, '#E2E8F0') }};"></div>
         <div class="gix-card-body">
@@ -648,25 +676,7 @@
             </span>
           </div>
 
-          {% if activity.country or activity.institution %}
-            <div class="gix-card-meta">
-              {% if activity.institution %}
-                <span><i class="fa fa-building-o"></i> {{ activity.institution }}</span>
-              {% endif %}
-              {% if activity.institution and activity.country %}
-                <span class="gix-meta-sep">•</span>
-              {% endif %}
-              {% if activity.country %}
-                <span><i class="fa fa-globe"></i> {{ activity.country }}</span>
-              {% endif %}
-              {% if activity.institution_type and (activity.institution or activity.country) %}
-                <span class="gix-meta-sep">•</span>
-              {% endif %}
-              {% if activity.institution_type %}
-                <span><i class="fa fa-tag"></i> {{ activity.institution_type }}</span>
-              {% endif %}
-            </div>
-          {% endif %}
+          {{ chips_ui.card_meta(activity, links, 'gix') }}
 
           <div class="gix-card-tags">
             {% if pa %}
@@ -714,7 +724,7 @@
                   <div class="gix-detail-value">{{ activity.unesco_participation }}</div>
                 </div>
               {% endif %}
-              {% if activity.supporting_member_state %}
+              {% if activity.supporting_member_state and not links %}
                 <div class="gix-detail-item">
                   <div class="gix-detail-label">{{ _('Supporting Member State') }}</div>
                   <div class="gix-detail-value">{{ activity.supporting_member_state }}</div>
@@ -728,23 +738,8 @@
               {% endif %}
             </div>
 
-            {# JSON fields: Flagships, Regions, Member States, Cross-cutting WG #}
-            {% set json_sections = [
-              (activity.flagships, _('Flagships')),
-              (activity.regions, _('Regions')),
-              (activity.member_states, _('Member States')),
-              (activity.cross_cutting_wg, _('Cross-cutting Working Groups'))
-            ] %}
-            {% for raw_value, label in json_sections %}
-              {% if raw_value %}
-                <div class="gix-json-tags-row">
-                  <div class="gix-detail-label">{{ label }}</div>
-                  <div class="gix-tag-list gix-json-tags" data-json="{{ raw_value | e }}">
-                    <span class="gix-dtag">{{ raw_value }}</span>
-                  </div>
-                </div>
-              {% endif %}
-            {% endfor %}
+            {# Flagships, regiones, Member States y CTWG enlazados a sus pestañas #}
+            {{ chips_ui.entity_rows(activity, links, 'gix', 'gix-json-tags') }}
 
             {# Products & Training #}
             {% set has_products = activity.knowledge_product_type or activity.num_knowledge_products or activity.scientific_product_type or activity.num_scientific_products or activity.training_type or activity.num_training_materials or activity.num_curricula or activity.num_transboundary_ms %}
@@ -931,7 +926,13 @@
         <i class="fa fa-flask"></i>
       </div>
       <h3>{{ _('No IHP-IX activities found') }}</h3>
-      <p>{{ _('No reported activities match the current filters for this member state.') }}</p>
+      {% if tab_scope == 'country' %}
+        <p>{{ _('No reported activities match the current filters for this member state.') }}</p>
+      {% elif tab_scope %}
+        <p>{{ _('No reported activities match the current filters for this initiative.') }}</p>
+      {% else %}
+        <p>{{ _('This initiative is not linked to an IHP-IX flagship or working group, so no activities can be attributed to it.') }}</p>
+      {% endif %}
       {% if q or pa_filter or output_filter or (biennium_filter is defined and biennium_filter) %}
         <a href="{{ h.url_for('theme_ejemplo.group_ihpix', name=group_dict.name) }}" class="gix-fbtn gix-fbtn--solid" style="margin-top: 4px;">
           <i class="fa fa-times"></i> {{ _('Clear All Filters') }}

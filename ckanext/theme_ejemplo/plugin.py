@@ -1227,6 +1227,20 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 methods=['GET']
             )
 
+            # IHP-IX: vincular instituciones heredadas con organizaciones (sysadmin)
+            blueprint.add_url_rule(
+                u'/ckan-admin/ihpix/institutions',
+                u'ihpix_institutions_admin',
+                MyLogica.ihpix_institutions_admin,
+                methods=['GET']
+            )
+            blueprint.add_url_rule(
+                u'/ckan-admin/ihpix/institutions/link',
+                u'ihpix_institutions_link',
+                MyLogica.ihpix_institutions_link,
+                methods=['POST']
+            )
+
             # Bug ticket system
             blueprint.add_url_rule(
                 u'/bug-tickets',
@@ -1505,6 +1519,9 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 'ihpix_geojson': custom_actions.ihpix_geojson,
                 'ihpix_activity_geojson': custom_actions.ihpix_activity_geojson,
                 'ihpix_country_summary_list': custom_actions.ihpix_country_summary_list,
+                # IHP-IX: instituciones heredadas ↔ organizaciones (admin)
+                'ihpix_institution_link_list': custom_actions.ihpix_institution_link_list,
+                'ihpix_institution_link': custom_actions.ihpix_institution_link,
                 # Initiative requests
                 'initiative_request_create': custom_actions.initiative_request_create,
                 'initiative_request_list': custom_actions.initiative_request_list,
@@ -1595,6 +1612,8 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 'ihpix_geojson': custom_auth.ihpix_geojson,
                 'ihpix_activity_geojson': custom_auth.ihpix_activity_geojson,
                 'ihpix_country_summary_list': custom_auth.ihpix_country_summary_list,
+                'ihpix_institution_link_list': custom_auth.ihpix_institution_link_list,
+                'ihpix_institution_link': custom_auth.ihpix_institution_link,
                 # Initiative requests
                 'initiative_request_create': custom_auth.initiative_request_create,
                 'initiative_request_list': custom_auth.initiative_request_list,

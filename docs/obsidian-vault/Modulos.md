@@ -241,7 +241,7 @@ Helpers: `is_valid_*`, `normalize_bool`, `filter_valid`, `flagship_label`, `slug
 **Rol**: agregación de los dashboards de progreso (réplica de los Power BI oficiales). Módulo **puro** (`tests/test_ihpix_stats.py`); lo invoca la acción `ihpix_progress_stats`.
 
 - `SCOPES = ('overall', 'pa', 'output', 'flagship', 'ctwg')`; `DIMENSION_BY_SCOPE`: overall/flagship/ctwg → `priority_area`, pa → `output`, output → `key_activity`.
-- `build_country_index(summaries, group_pairs)` → `{clave_lower: {name, region, lat, lon}}` (nombres de `IhpixCountrySummary`, títulos y slugs de los grupos `member-states`, alias).
+- `build_country_index(summaries, group_pairs)` → `{clave_lower: {name, region, lat, lon}}` (nombres de `IhpixCountrySummary`, títulos y slugs de los grupos `member-states`, alias). Desde 2026-10-23 el título del grupo pasa por `COUNTRY_NAME_ALIASES` antes de indexarse y las claves pliegan los apóstrofos tipográficos (`ihpix_normalize._key`): el slug `venezuela-bolivarian-republic-of-` (formulario) y el heredado `Venezuela` comparten canónico; antes eran dos países y la pestaña del Member State perdía los heredados (afectaba a Venezuela, Palestina, Micronesia, Côte d’Ivoire, RPD Corea y Lao).
 - `prepare_row(row, índice)` (alias + puertas derivadas + `impacted_member_states` = unión normalizada de `member_states`, `country` y `supporting_member_state`), `filter_rows(rows, scope, value, filters)`.
 - `compute_progress_stats(rows, scope, value, filters, country_index, labels)` → JSON con `scope{kind,value,label,dimension}`, `overview{activities, member_states_impacted, institutions, contributors, by_dimension, by_output (34 siempre), by_region, regions_declared, map, unresolved_member_states, by_biennium, top_institutions, output_biennium_matrix}`, `kpi_1 … kpi_8` (totales, `by_dimension`, `*_by_type` con `activities` y `products`, `pct_youth` / `pct_female`, mapa de KPI 6), `produced_by_dimension` y `reached_by_dimension` (ámbito output), `options` (listas para los selectores). Reglas: porcentajes `round(…, 1)` o `None`; key activity vacía → `Unspecified`; orden natural por código.
 
@@ -700,6 +700,26 @@ El helper `_get_pages_by_initiative` de `controller.py` reutiliza el lector púb
 - `ihpix_presentation.py`: diapositivas construidas sobre el registro de secciones (`slides(stats, translate, sections, formatter)` y `scope_title`); ver más abajo.
 
 Las nuevas acciones registran auth correspondiente en `auth.py`; la comprobación por recurso también se aplica dentro del servicio. Detalle y matriz de requisitos: [[IHP-IX Review September 2026]].
+
+## ihpix_entities.py (2026-10-23)
+
+**Rol**: enlaces entre actividades y entidades del portal. Módulo **puro** (`tests/test_ihpix_entities.py`).
+
+- `group_scope(name, title, member_state_names)` → `('country', slug)`, `('flagship', código)`, `('ctwg', nombre)` o `(None, None)`: Member State si el grupo cuelga de `member-states` o su título es un país oficial; iniciativa → flagship/CTWG por slug del nombre o del título (`ihpix_constants.flagship_for_group` / `ctwg_for_group`, que también comparan el slug de la etiqueta: `friend-water` → `FRIEND`, `lasii` → `LASII`). En dev, 18 de los 21 flagships tienen grupo de iniciativa (faltan IAHR Label, MAR y Youth4Water).
+- `scope_slug`, `member_state_slugs(pairs, índice)` → `{nombre canónico: slug}`, `flagship_groups(pairs)` → `{código: slug}`, `ctwg_groups(pairs)`.
+- `activity_links(activity, índice, member_states, flagships, ctwgs)` → `{country, supporters, beneficiaries, flagships, cross_cutting_wg, regions, institution, partners}` con nombre canónico (`ihpix_stats.prepare_row`), slug de grupo y `resolved`. Las URL las construye la plantilla.
+- Consumidores: `controller._ihpix_entity_links(activities)` (resuelve organizaciones por id en una consulta) y el snippet `ihpix/snippets/entity_chips.html` (macros `card_meta` y `entity_rows`, con fallback a las filas JSON crudas si no hay enlaces), usado por `ihpix/outputs.html`, `group/ihpix.html` y `organization/ihpix.html`. `IhpixActivity._scope_ids(scope, value)` filtra flagship/CTWG con `prepare_row` + `filter_rows` (códigos, slugs y alias) y sustituye los `ILIKE` de `get_filtered` y `_apply_stat_filters`.
+
+## ihpix_org_match.py (2026-10-24)
+
+**Rol**: sugerencias para vincular la institución heredada (texto libre de `IhpixActivity.institution`) con una organización CKAN. Módulo **puro** (`tests/test_ihpix_org_match.py`); no decide nada: la vinculación la aplica un sysadmin.
+
+- `normalize` / `key` / `compact` / `tokens`: ASCII sin diacríticos, apóstrofos plegados (`ihpix_normalize._key`), `&` → "and", Center→Centre, sin palabras vacías (en/es/fr/pt) ni coletillas ("under the auspices of UNESCO", "C2C", "category 2 centre").
+- `acronyms` (siglas entre paréntesis), `initials` (iniciales sin paréntesis; una palabra en mayúsculas ≤ 5 letras se conserva: "UK CEH" ↔ `ukceh`), `pieces` / `segments` (tramos de un texto compuesto: "CERSHI, UNAM and …").
+- `prepare_org` / `prepare_orgs` (título, `name` como nombre largo en slug, siglas, iniciales) y `prepare_institution`.
+- `score(inst, org)` → `(0..1, razón)`: `exact` 1.0 (título o slug), `acronym` 0.95/0.9, `contains` 0.9 (0.75 si el fragmento contenido es genérico: "Field Office", "IHP National Committee"), `segment` 0.9/0.8, `initials` 0.85, `token` 0.8/0.7 ("UNESCO IHP" ↔ IHP), `similar` ≤ 0.85 (Jaccard ponderado, las palabras genéricas pesan la mitad; parecido de cadena sólo si comparten una palabra específica, para no emparejar "UNESCO Cairo Office" con "UNESCO Jakarta Office"). `THRESHOLD` 0.6 para mostrar, `CONFIDENT` 0.9 para preseleccionar.
+- `suggest(texto, orgs, limit=3)`, `group_activities(rows)` → `{unlinked, linked, totals}` (grupos por clave con variantes, conteo, ids y estados), `filter_groups(groups, q)`.
+- Consumidores: `actions.ihpix_institution_link_list` / `ihpix_institution_link` (sysadmin), vistas `controller.ihpix_institutions_admin` / `ihpix_institutions_link` y plantilla `admin/ihpix_institutions.html`. Calibrado con las 332 instituciones del seed y las 134 organizaciones de dev: 71 grupos con sugerencia confiable, ~1 s en total.
 
 ## Informes y presentación con gráficos SVG (2026-10-23)
 

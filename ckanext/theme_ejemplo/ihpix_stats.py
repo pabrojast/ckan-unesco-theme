@@ -70,7 +70,8 @@ def natural_key(code):
 
 
 def _key(value):
-    return N.clean_text(value).lower()
+    u"""Misma clave que `ihpix_normalize._key` (apóstrofos plegados)."""
+    return N._key(value)
 
 
 def _pct(part, total):
@@ -107,11 +108,17 @@ def build_country_index(summaries, group_pairs=None):
     for slug, title in group_pairs or ():
         title = N.clean_text(title)
         slug = N.clean_text(slug)
-        entry = index.get(_key(title))
+        # El título del grupo pasa por los alias antes de buscarlo: así el
+        # slug 'venezuela-bolivarian-republic-of-' y el heredado 'Venezuela'
+        # comparten canónico (antes el grupo creaba una entrada aparte).
+        canonical = N.normalize_country_name(title) or title
+        entry = index.get(_key(canonical)) or index.get(_key(title))
         if entry is None:
-            entry = {'name': title or slug, 'region': '', 'lat': None, 'lon': None}
-            if title:
-                index[_key(title)] = entry
+            entry = {'name': canonical or slug, 'region': '', 'lat': None, 'lon': None}
+            if canonical:
+                index[_key(canonical)] = entry
+        if title:
+            index.setdefault(_key(title), entry)
         if slug:
             index.setdefault(_key(slug), entry)
     for alias, target in N.COUNTRY_NAME_ALIASES.items():

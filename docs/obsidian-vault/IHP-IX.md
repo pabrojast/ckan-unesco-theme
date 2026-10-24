@@ -23,6 +23,8 @@ Hub de la implementación del **reporting y gestión del conocimiento IHP-IX** e
 - `ihpix_forms.py`, `ihpix_links.py`, `ihpix_workspaces.py`, `ihpix_publications.py`, `ihpix_normalize.py` (alias y puertas de los datos heredados), `ihpix_stats.py` (agregación de los dashboards de progreso) — módulos **puros** con la lógica de validación/reglas; testeados sin CKAN.
 - Puentes al ecosistema (2026-09-24): modal "Upload a publication" (crea datasets `documents` y los adjunta), tipo de adjunto `course` + propuesta de cursos Open Learning, "Add a dataset" prellenado → [[Flujos Importantes#7.1 Adjuntos (Sección VII)]].
 - `ihpix_charts.py` (SVG puro) e `ihpix_report_sections.py` (registro de secciones del informe y de las diapositivas, 2026-10-23) → [[Modulos#Informes y presentación con gráficos SVG (2026-10-23)]].
+- `ihpix_entities.py` (puro, 2026-10-23): ámbito de la pestaña IHP-IX de cada grupo (Member State → país; iniciativa → flagship/CTWG) y fichas enlazables de cada actividad → [[Modulos#ihpix_entities.py (2026-10-23)]], [[IHP-IX Entity Links October 2026]].
+- `ihpix_org_match.py` (puro, 2026-10-24): sugerencias para vincular instituciones heredadas (texto) con organizaciones CKAN; las aplica el sysadmin en `/ckan-admin/ihpix/institutions` → [[Modulos#ihpix_org_match.py (2026-10-24)]], [[IHP-IX Entity Links October 2026]].
 - `ihpix_i18n_strings.py` — literales de taxonomías para Babel; los templates traducen valores con `h.ihpix_t`.
 - Kit de formularios `public/js/ihpix-forms.js` + `public/css/ihpix-forms.css` (Combobox, MultiPicker, MarkdownEditor, CharCounter, Toast, Modal, FileUpload; se carga con `ihpix/snippets/forms_assets.html`) → [[Modulos#Kit de formularios IHP-IX]]. El reporte lo usa desde 2026-09-24 (pase UX: ver [[Flujos Importantes#7. Portal IHP-IX]] punto 3).
 - Rediseño 2026-10-11 (línea IHP, tokens: tinta `#0B2A4A`, azul UNESCO `#0069B4`/`#004E8C`, papel `#F4F8FC`, radio 6px, sin sombras): `public/css/ihpix-report.css` + `public/js/ihpix-report.js` (formulario) y `public/css/ihpix-progress.css` + `public/js/ihpix-progress.js` (dashboards). Mockup en el artefacto Design "IHP-IX reporting redesign".
@@ -36,6 +38,20 @@ Hub de la implementación del **reporting y gestión del conocimiento IHP-IX** e
 
 - `ckan ihpix seed-data`, `ckan ihpix recompute-summary`, `ckan ihpix seed-workspaces`, `ckan ihpix normalize-legacy` → [[Comandos Utiles#IHP-IX: Ingesta de datos]].
 - Tests puros: `PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python3 -m pytest -q ckanext/theme_ejemplo/tests/test_ihpix_*.py` → [[Testing]].
+
+## Pestañas IHP-IX de grupos y organizaciones (2026-10-23, sin desplegar)
+
+Reporte de UNESCO: las actividades del explorador no aparecían en las pestañas
+IHP-IX de iniciativas, Member States y organizaciones. Causas y arreglos en
+[[IHP-IX Entity Links October 2026]]; código en `dev210` sin desplegar.
+
+**Vinculación asistida de instituciones (2026-10-24, sin desplegar)**: la pestaña
+de cada organización sólo lista actividades con `institution_org_id`. El panel
+sysadmin `/ckan-admin/ihpix/institutions` agrupa las instituciones heredadas
+(texto) sin organización, propone coincidencias (`ihpix_org_match`) y aplica la
+selección con `ihpix_institution_link` (una revisión por actividad; reversible
+con "Unlink"). Ver [[IHP-IX Entity Links October 2026]] y
+[[Flujos Importantes#7. Portal IHP-IX]].
 
 ## Informes y presentación rediseñados (2026-10-23, sin desplegar)
 

@@ -447,6 +447,16 @@ def ihpix_country_summary_recompute(context, data_dict):
     return _sysadmin_only(context, data_dict)
 
 
+def ihpix_institution_link_list(context, data_dict):
+    """Instituciones heredadas y sugerencias de organización: sysadmin."""
+    return _sysadmin_only(context, data_dict)
+
+
+def ihpix_institution_link(context, data_dict):
+    """Vincular/desvincular instituciones con organizaciones: sysadmin."""
+    return _sysadmin_only(context, data_dict)
+
+
 # ── Initiative Request Auth ─────────────────────────────────────────────────
 
 def initiative_request_create(context, data_dict):

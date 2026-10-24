@@ -4118,6 +4118,139 @@ def ihpix_country_summary_recompute(context, data_dict):
     return {'success': True, 'updated': updated}
 
 
+# ── IHP-IX: vinculación de instituciones heredadas con organizaciones ───────
+
+def _ihpix_organizations():
+    """Organizaciones activas de IHP-WINS como `{id, name, title}` (por título)."""
+    rows = model.Session.query(model.Group.id, model.Group.name, model.Group.title).filter(
+        model.Group.is_organization == True,  # noqa: E712
+        model.Group.state == 'active').all()
+    orgs = [{'id': gid, 'name': name, 'title': (title or name or u'').strip() or name}
+            for gid, name, title in rows]
+    orgs.sort(key=lambda org: org['title'].lower())
+    return orgs
+
+
+def _ihpix_institution_rows():
+    """Campos mínimos de todas las actividades para agrupar por institución."""
+    init_ihpix_activities_db()
+    return [{'id': aid, 'institution': institution, 'institution_org_id': org_id, 'status': status}
+            for aid, institution, org_id, status in model.Session.query(
+                IhpixActivity.id, IhpixActivity.institution,
+                IhpixActivity.institution_org_id, IhpixActivity.status).all()]
+
+
+@toolkit.side_effect_free
+def ihpix_institution_link_list(context, data_dict):
+    """Instituciones heredadas (texto) agrupadas por clave normalizada, con
+    sugerencias de organización para las no vinculadas y la organización
+    actual de las vinculadas. Sysadmin only.
+
+    `q` filtra por texto; `limit_suggestions` (3 por defecto)."""
+    toolkit.check_access('ihpix_institution_link_list', context, data_dict)
+    from ckanext.theme_ejemplo import ihpix_org_match as OM
+    query = (data_dict.get('q') or u'').strip()
+    try:
+        limit = int(data_dict.get('limit_suggestions') or OM.MAX_SUGGESTIONS)
+    except (TypeError, ValueError):
+        limit = OM.MAX_SUGGESTIONS
+    organizations = _ihpix_organizations()
+    prepared = OM.prepare_orgs(organizations)
+    groups = OM.group_activities(_ihpix_institution_rows())
+    unlinked = OM.filter_groups(groups['unlinked'], query)
+    for group in unlinked:
+        group['suggestions'] = OM.suggest(group['institution'], prepared, limit=limit)
+    by_id = {org['id']: org for org in organizations}
+    linked = OM.filter_groups(groups['linked'], query)
+    for group in linked:
+        group['organization'] = by_id.get(group['organization_id'])
+    return {'unlinked': unlinked, 'linked': linked, 'organizations': organizations,
+            'totals': groups['totals'], 'q': query}
+
+
+def _ihpix_link_target(item):
+    """Resuelve una entrada de `links`: `(clave, organización | None, org actual)`."""
+    from ckanext.theme_ejemplo import ihpix_org_match as OM
+    key = (item.get('key') or u'').strip()
+    if not key and item.get('institution'):
+        key = OM.key(item['institution'])
+    if not key:
+        raise toolkit.ValidationError({'key': 'Institution is required'})
+    org_id = (item.get('organization_id') or u'').strip()
+    org = None
+    if org_id:
+        org = model.Group.get(org_id)
+        if not org or not org.is_organization or org.state != 'active':
+            raise toolkit.ValidationError(
+                {'organization_id': 'Select an active IHP-WINS organization'})
+    current = (item.get('current_organization_id') or u'').strip()
+    if org is None and not current:
+        raise toolkit.ValidationError(
+            {'organization_id': 'Select an organization to link, or the current one to unlink'})
+    return key, org, current
+
+
+def ihpix_institution_link(context, data_dict):
+    """Vincula (o desvincula) la organización IHP-WINS de todas las actividades
+    cuya institución heredada comparte clave normalizada. Sysadmin only.
+
+    `links`: lista de `{key | institution, organization_id, current_organization_id}`
+    (o esos mismos campos en el propio data_dict). Con `organization_id` se
+    rellena `institution_org_id` sólo en las filas que no tenían organización;
+    sin él se vacía en las filas que apuntan a `current_organization_id`. No
+    toca el texto de la institución. Cada actividad modificada gana una
+    revisión en su historial (bloqueo + snapshot, como el editor) y al final
+    se invalidan las cachés y se recalcula el resumen por país."""
+    toolkit.check_access('ihpix_institution_link', context, data_dict)
+    import datetime as _dt
+    from ckanext.theme_ejemplo import ihpix_org_match as OM
+    from ckanext.theme_ejemplo import ihpix_store as S
+    init_ihpix_activities_db()
+    items = data_dict.get('links')
+    if items is None:
+        items = [data_dict]
+    if not isinstance(items, list) or not items:
+        raise toolkit.ValidationError({'links': 'Provide at least one institution'})
+    plan = [_ihpix_link_target(item) for item in items if isinstance(item, dict)]
+    actor = _ihpix_user_obj(context)
+    actor_id = actor.id if actor else u''
+    by_key = {}
+    for activity in model.Session.query(IhpixActivity).filter(
+            IhpixActivity.institution != u'',
+            IhpixActivity.institution != None).all():  # noqa: E711
+        by_key.setdefault(OM.key(activity.institution), []).append(activity)
+    results, total = [], 0
+    now = _dt.datetime.utcnow()
+    for key, org, current in plan:
+        updated = 0
+        for activity in by_key.get(key, []):
+            if org is not None:
+                if activity.institution_org_id:
+                    continue
+                target = org.id
+            else:
+                if (activity.institution_org_id or u'') != current:
+                    continue
+                target = u''
+            locked = model.Session.query(IhpixActivity).filter(
+                IhpixActivity.id == activity.id).with_for_update().one()
+            links = _ihpix_links_for(locked.id)
+            S.ensure_baseline(locked, links)
+            locked.institution_org_id = target
+            locked.updated_at = now
+            S.snapshot(locked, actor_id, links)
+            updated += 1
+        results.append({
+            'key': key, 'organization_id': org.id if org else u'', 'updated': updated,
+            'organization': ({'id': org.id, 'name': org.name, 'title': org.display_name}
+                             if org else None)})
+        total += updated
+    model.Session.commit()
+    if total:
+        _ihpix_after_activity_change()
+    return {'success': True, 'updated': total, 'results': results}
+
+
 @toolkit.side_effect_free
 def ihpix_country_summary_list(context, data_dict):
     """List country summary records for IHP-IX.

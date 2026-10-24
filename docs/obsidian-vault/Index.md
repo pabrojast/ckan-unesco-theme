@@ -59,5 +59,6 @@ Bienvenido a la documentación interna de **ckanext-theme-ejemplo**, la extensi�
 
 - [[IHP-IX Progress UX October 2026]] — filtros geográficos, diseño y pruebas de Progress.
 - [[IHP-IX Reports UX October 2026]] — informes narrativos y diapositivas con gráficos SVG y secciones modulares.
+- [[IHP-IX Entity Links October 2026]] — pestañas IHP-IX de Member States, iniciativas y organizaciones enlazadas con el explorador.
 
 - [[IHP-IX Bulk Import UX October 2026]] — plantilla Excel guiada, ejemplos y flujo de importación.

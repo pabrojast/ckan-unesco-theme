@@ -3546,7 +3546,7 @@ msgstr ""
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:506
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:587
 msgid "activities"
-msgstr ""
+msgstr "actividades"
 
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:509
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:509
@@ -3721,7 +3721,7 @@ msgstr "No se encontraron actividades IHP-IX"
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:927
 msgid ""
 "No reported activities match the current filters for this member state."
-msgstr ""
+msgstr "Ninguna actividad reportada coincide con los filtros actuales para este Estado Miembro."
 "Ninguna actividad reportada coincide con los filtros actuales para este "
 "Estado Miembro."
 
@@ -10959,3 +10959,193 @@ msgstr "{n} más en la tabla"
 #: IHP-IX reports October 2026
 msgid "{reached}: {n}. Youth: {youth}%. Female participants: {female}%. Contributing activities: {a}."
 msgstr "{reached}: {n}. Jóvenes: {youth} %. Mujeres: {female} %. Actividades que contribuyen: {a}."
+
+#: IHP-IX entity links October 2026
+msgid "IHP-IX activities of this Member State"
+msgstr "Actividades IHP-IX de este Estado Miembro"
+
+#: IHP-IX entity links October 2026
+msgid "IHP-IX activities of this flagship initiative"
+msgstr "Actividades IHP-IX de esta Iniciativa Insignia"
+
+#: IHP-IX entity links October 2026
+msgid "IHP-IX activities of this organization"
+msgstr "Actividades IHP-IX de esta organización"
+
+#: IHP-IX entity links October 2026
+msgid "Supporting Member States"
+msgstr "Estados Miembros que apoyan"
+
+#: IHP-IX entity links October 2026
+msgid "Progress"
+msgstr "Progreso"
+
+#: IHP-IX entity links October 2026
+msgid "No reported activities match the current filters for this initiative."
+msgstr "Ninguna actividad reportada coincide con los filtros actuales para esta iniciativa."
+
+#: IHP-IX entity links October 2026
+msgid "This initiative is not linked to an IHP-IX flagship or working group, so no activities can be attributed to it."
+msgstr "Esta iniciativa no está vinculada a una Iniciativa Insignia ni a un grupo de trabajo de IHP-IX, por lo que no se le pueden atribuir actividades."
+
+#: IHP-IX institution links October 2026
+msgid "IHP-IX Institutions"
+msgstr "Instituciones IHP-IX"
+
+#: IHP-IX institution links October 2026
+msgid "Link institutions to IHP-WINS organizations"
+msgstr "Vincular instituciones con organizaciones de IHP-WINS"
+
+#: IHP-IX institution links October 2026
+msgid "Legacy activities name their lead institution as free text. Only activities linked to an organization by id appear in that organization's IHP-IX tab and in the explorer filter."
+msgstr "Las actividades heredadas indican su institución líder como texto libre. Solo las actividades vinculadas a una organización por id aparecen en la pestaña IHP-IX de esa organización y en el filtro del explorador."
+
+#: IHP-IX institution links October 2026
+msgid "Review the suggestions, pick the organization for each institution and apply the selection: every linked activity gets a new revision in its history and the link can be undone below. The institution text itself is never changed."
+msgstr "Revise las sugerencias, elija la organización de cada institución y aplique la selección: cada actividad vinculada recibe una nueva revisión en su historial y el vínculo puede deshacerse más abajo. El texto de la institución nunca se modifica."
+
+#: IHP-IX institution links October 2026
+msgid "Institutions without organization"
+msgstr "Instituciones sin organización"
+
+#: IHP-IX institution links October 2026
+msgid "Activities affected"
+msgstr "Actividades afectadas"
+
+#: IHP-IX institution links October 2026
+msgid "Activities already linked"
+msgstr "Actividades ya vinculadas"
+
+#: IHP-IX institution links October 2026
+msgid "Activities without institution"
+msgstr "Actividades sin institución"
+
+#: IHP-IX institution links October 2026
+msgid "Filter institutions"
+msgstr "Filtrar instituciones"
+
+#: IHP-IX institution links October 2026
+msgid "Filter institutions…"
+msgstr "Filtrar instituciones…"
+
+#: IHP-IX institution links October 2026
+msgid "Filter"
+msgstr "Filtrar"
+
+#: IHP-IX institution links October 2026
+msgid "Select all confident suggestions"
+msgstr "Seleccionar todas las sugerencias confiables"
+
+#: IHP-IX institution links October 2026
+msgid "Deselect all"
+msgstr "Deseleccionar todo"
+
+#: IHP-IX institution links October 2026
+msgid "Link the selected institutions to the chosen organizations?"
+msgstr "¿Vincular las instituciones seleccionadas con las organizaciones elegidas?"
+
+#: IHP-IX institution links October 2026
+msgid "Suggestions at or above"
+msgstr "Las sugerencias con al menos"
+
+#: IHP-IX institution links October 2026
+msgid "are preselected."
+msgstr "quedan preseleccionadas."
+
+#: IHP-IX institution links October 2026
+msgid "Suggestions"
+msgstr "Sugerencias"
+
+#: IHP-IX institution links October 2026
+msgid "Also written as:"
+msgstr "También escrito como:"
+
+#: IHP-IX institution links October 2026
+msgid "Exact match"
+msgstr "Coincidencia exacta"
+
+#: IHP-IX institution links October 2026
+msgid "Acronym"
+msgstr "Acrónimo"
+
+#: IHP-IX institution links October 2026
+msgid "Name contained"
+msgstr "Nombre contenido"
+
+#: IHP-IX institution links October 2026
+msgid "First institution listed"
+msgstr "Primera institución de la lista"
+
+#: IHP-IX institution links October 2026
+msgid "Initials"
+msgstr "Iniciales"
+
+#: IHP-IX institution links October 2026
+msgid "Keyword"
+msgstr "Palabra clave"
+
+#: IHP-IX institution links October 2026
+msgid "Similar name"
+msgstr "Nombre similar"
+
+#: IHP-IX institution links October 2026
+msgid "No suggestion"
+msgstr "Sin sugerencia"
+
+#: IHP-IX institution links October 2026
+msgid "— Select an organization —"
+msgstr "— Seleccione una organización —"
+
+#: IHP-IX institution links October 2026
+msgid "Link selected institutions"
+msgstr "Vincular las instituciones seleccionadas"
+
+#: IHP-IX institution links October 2026
+msgid "No institutions match the filter."
+msgstr "Ninguna institución coincide con el filtro."
+
+#: IHP-IX institution links October 2026
+msgid "Every institution with activities is already linked to an organization."
+msgstr "Todas las instituciones con actividades ya están vinculadas a una organización."
+
+#: IHP-IX institution links October 2026
+msgid "Already linked institutions"
+msgstr "Instituciones ya vinculadas"
+
+#: IHP-IX institution links October 2026
+msgid "Remove the organization link from all activities of this institution?"
+msgstr "¿Quitar el vínculo con la organización de todas las actividades de esta institución?"
+
+#: IHP-IX institution links October 2026
+msgid "Unlink"
+msgstr "Desvincular"
+
+#: IHP-IX institution links October 2026
+msgid "Could not load the institutions."
+msgstr "No se pudieron cargar las instituciones."
+
+#: IHP-IX institution links October 2026
+msgid "No institutions were selected."
+msgstr "No se seleccionó ninguna institución."
+
+#: IHP-IX institution links October 2026
+#, python-format
+msgid "Unlinked %(n)d activities."
+msgstr "Se desvincularon %(n)d actividades."
+
+#: IHP-IX institution links October 2026
+#, python-format
+msgid "Linked %(n)d activities for %(k)d institutions."
+msgstr "Se vincularon %(n)d actividades de %(k)d instituciones."
+
+#: IHP-IX institution links October 2026
+msgid "Could not update the institution links."
+msgstr "No se pudieron actualizar los vínculos de las instituciones."
+
+#: IHP-IX institution links October 2026
+msgid "Link institutions"
+msgstr "Vincular instituciones"
+
+#: IHP-IX institution links October 2026
+msgid "Link legacy institutions to this organization"
+msgstr "Vincular instituciones heredadas con esta organización"

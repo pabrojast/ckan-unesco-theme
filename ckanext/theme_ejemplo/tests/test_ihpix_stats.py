@@ -89,6 +89,31 @@ def test_build_country_index_resolves_names_slugs_and_aliases(index):
     assert index['nowhere']['lat'] is None
 
 
+def test_group_titles_share_canonical_name_with_legacy_aliases():
+    """El slug de grupo 'venezuela-bolivarian-republic-of-' (formulario) y el
+    heredado 'Venezuela' (seed normalizado) deben caer en el mismo país; la
+    pestaña del Member State filtraba por el slug y perdía los heredados.
+    Los apóstrofos tipográficos tampoco separan 'Côte d’Ivoire' de "Côte d'Ivoire"."""
+    summaries = [{'country': 'Venezuela', 'region': 'Latin America and the Caribbean'},
+                 {'country': u'Côte d’Ivoire', 'region': 'Africa'},
+                 {'country': 'Palestine', 'region': 'Arab States'}]
+    groups = [('venezuela-bolivarian-republic-of-', 'Venezuela (Bolivarian Republic of)'),
+              ('c-te-d-ivoire', "Côte d'Ivoire"), ('state-of-palestine', 'State of Palestine'),
+              ('atlantis', 'Atlantis')]
+    idx = S.build_country_index(summaries, groups)
+    for value in ('venezuela-bolivarian-republic-of-', 'Venezuela (Bolivarian Republic of)', 'Venezuela'):
+        assert S._resolve_country(value, idx) == ('Venezuela', True), value
+    for value in ('c-te-d-ivoire', "Côte d'Ivoire", u'Côte d’Ivoire', 'Ivory Coast'):
+        assert S._resolve_country(value, idx) == (u'Côte d’Ivoire', True), value
+    assert S._resolve_country('state-of-palestine', idx) == ('Palestine', True)
+    # Un grupo sin país conocido conserva su título como nombre
+    assert S._resolve_country('atlantis', idx) == ('Atlantis', True)
+    rows = [S.prepare_row({'id': 'legacy', 'country': 'Venezuela'}, idx),
+            S.prepare_row({'id': 'form', 'country': 'venezuela-bolivarian-republic-of-'}, idx)]
+    found = S.filter_rows(rows, filters={'country': 'venezuela-bolivarian-republic-of-'}, country_index=idx)
+    assert [r['id'] for r in found] == ['legacy', 'form']
+
+
 def test_overall_totals_union_of_country_fields(rows, index):
     stats = S.compute_progress_stats(rows, 'overall', country_index=index)
     ov = stats['overview']

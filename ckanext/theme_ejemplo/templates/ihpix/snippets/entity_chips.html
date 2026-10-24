@@ -1,0 +1,103 @@
+{#
+  Fichas enlazables de una actividad IHP-IX: país sede, Member States por
+  rol, flagships, CTWG y regiones, con enlace a la pestaña IHP-IX del grupo
+  u organización correspondiente. `links` es controller._ihpix_entity_links()[id];
+  si falta, se muestran los campos JSON crudos y el JS de cada página los
+  convierte en fichas (comportamiento anterior).
+
+  Uso:
+    {% import 'ihpix/snippets/entity_chips.html' as chips_ui with context %}
+    {{ chips_ui.card_meta(activity, links, 'ox') }}
+    {{ chips_ui.entity_rows(activity, links, 'ox', 'ihpix-out-json-tags') }}
+#}
+
+{% macro country_chip(item, prefix='ox') -%}
+  {%- if item.group -%}
+    <a class="{{ prefix }}-dtag {{ prefix }}-dtag--link" href="{{ h.url_for('theme_ejemplo.group_ihpix', name=item.group) }}" title="{{ _('IHP-IX activities of this Member State') }}">{{ item.label }}</a>
+  {%- else -%}
+    <span class="{{ prefix }}-dtag{% if not item.resolved %} {{ prefix }}-dtag--muted{% endif %}">{{ item.label }}</span>
+  {%- endif -%}
+{%- endmacro %}
+
+{% macro flagship_chip(item, prefix='ox') -%}
+  {%- set url = h.url_for('theme_ejemplo.group_ihpix', name=item.group) if item.group else h.url_for('/ihpix/progress/flagship/' ~ item.slug) -%}
+  <a class="{{ prefix }}-dtag {{ prefix }}-dtag--link" href="{{ url }}" title="{{ _('IHP-IX activities of this flagship initiative') }}">{{ item.label }}</a>
+{%- endmacro %}
+
+{% macro ctwg_chip(item, prefix='ox') -%}
+  {%- set url = h.url_for('theme_ejemplo.group_ihpix', name=item.group) if item.group else h.url_for('/ihpix/progress/ctwg/' ~ item.slug) -%}
+  <a class="{{ prefix }}-dtag {{ prefix }}-dtag--link" href="{{ url }}">{{ h.ihpix_t(item.label) }}</a>
+{%- endmacro %}
+
+{% macro chip_row(label, prefix='ox') %}
+  <div class="{{ prefix }}-json-tags-row">
+    <div class="{{ prefix }}-detail-label">{{ label }}</div>
+    <div class="{{ prefix }}-tag-list">{{ caller() }}</div>
+  </div>
+{% endmacro %}
+
+{% macro entity_rows(activity, links, prefix='ox', json_class='ihpix-out-json-tags') %}
+  {% if links %}
+    {% if links.flagships %}
+      {% call chip_row(_('Flagships'), prefix) %}{% for item in links.flagships %}{{ flagship_chip(item, prefix) }}{% endfor %}{% endcall %}
+    {% endif %}
+    {% if links.regions %}
+      {% call chip_row(_('Regions'), prefix) %}{% for region in links.regions %}<span class="{{ prefix }}-dtag">{{ h.ihpix_t(region) }}</span>{% endfor %}{% endcall %}
+    {% endif %}
+    {% if links.beneficiaries %}
+      {% call chip_row(_('Member States'), prefix) %}{% for item in links.beneficiaries %}{{ country_chip(item, prefix) }}{% endfor %}{% endcall %}
+    {% endif %}
+    {% if links.supporters %}
+      {% call chip_row(_('Supporting Member States'), prefix) %}{% for item in links.supporters %}{{ country_chip(item, prefix) }}{% endfor %}{% endcall %}
+    {% endif %}
+    {% if links.cross_cutting_wg %}
+      {% call chip_row(_('Cross-cutting Working Groups'), prefix) %}{% for item in links.cross_cutting_wg %}{{ ctwg_chip(item, prefix) }}{% endfor %}{% endcall %}
+    {% endif %}
+  {% else %}
+    {% for raw_value, label in [(activity.flagships, _('Flagships')), (activity.regions, _('Regions')), (activity.member_states, _('Member States')), (activity.cross_cutting_wg, _('Cross-cutting Working Groups'))] %}
+      {% if raw_value %}
+        <div class="{{ prefix }}-json-tags-row">
+          <div class="{{ prefix }}-detail-label">{{ label }}</div>
+          <div class="{{ prefix }}-tag-list {{ json_class }}" data-json="{{ raw_value | e }}">
+            <span class="{{ prefix }}-dtag">{{ raw_value }}</span>
+          </div>
+        </div>
+      {% endif %}
+    {% endfor %}
+  {% endif %}
+{% endmacro %}
+
+{% macro card_meta(activity, links, prefix='ox') %}
+  {% set country_label = links.country.label if links and links.country else activity.country %}
+  {% if activity.institution or country_label %}
+    <div class="{{ prefix }}-card-meta">
+      {% if activity.institution %}
+        <span><i class="fa fa-building-o"></i>
+          {% if links and links.institution and links.institution.org %}
+            <a href="{{ h.url_for('theme_ejemplo.organization_ihpix', name=links.institution.org.name) }}" title="{{ _('IHP-IX activities of this organization') }}">{{ activity.institution }}</a>
+          {% else %}
+            {{ activity.institution }}
+          {% endif %}
+        </span>
+      {% endif %}
+      {% if activity.institution and country_label %}
+        <span class="{{ prefix }}-meta-sep">•</span>
+      {% endif %}
+      {% if country_label %}
+        <span><i class="fa fa-globe"></i>
+          {% if links and links.country and links.country.group %}
+            <a href="{{ h.url_for('theme_ejemplo.group_ihpix', name=links.country.group) }}" title="{{ _('IHP-IX activities of this Member State') }}">{{ country_label }}</a>
+          {% else %}
+            {{ country_label }}
+          {% endif %}
+        </span>
+      {% endif %}
+      {% if activity.institution_type and (activity.institution or country_label) %}
+        <span class="{{ prefix }}-meta-sep">•</span>
+      {% endif %}
+      {% if activity.institution_type %}
+        <span><i class="fa fa-tag"></i> {{ h.ihpix_t(activity.institution_type) }}</span>
+      {% endif %}
+    </div>
+  {% endif %}
+{% endmacro %}

@@ -1,0 +1,305 @@
+{% extends "page.html" %}
+
+{% block title %}{{ _('IHP-IX Institutions') }} - {{ super() }}{% endblock %}
+
+{% block breadcrumb_content %}
+  <li><a href="/ckan-admin">{{ _('Administration') }}</a></li>
+  <li><a href="/ckan-admin/ihpix">{{ _('IHP-IX') }}</a></li>
+  <li class="active"><a href="{{ h.url_for('theme_ejemplo.ihpix_institutions_admin') }}">{{ _('Institutions') }}</a></li>
+{% endblock %}
+
+{% block content %}
+<div class="main">
+  <div class="container">
+    <style>
+      .ihpin-intro { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 10px; padding: .9rem 1.1rem; margin-bottom: 1rem; font-size: .9rem; color: #334155; }
+      .ihpin-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: .6rem; margin-bottom: 1rem; }
+      .ihpin-kpi { background: #fff; border: 1px solid #E2E8F0; border-radius: 10px; padding: .6rem .8rem; }
+      .ihpin-kpi strong { display: block; font-size: 1.4rem; color: #004E8C; line-height: 1.1; }
+      .ihpin-kpi span { font-size: .74rem; color: #64748B; text-transform: uppercase; letter-spacing: .04em; }
+      .ihpin-toolbar { display: flex; flex-wrap: wrap; gap: .5rem; align-items: center; justify-content: space-between; margin-bottom: .6rem; }
+      .ihpin-toolbar form { display: flex; gap: .4rem; flex-wrap: wrap; }
+      .ihpin-toolbar input[type=search] { min-width: 16rem; min-height: 32px; border: 1px solid #E2E8F0; border-radius: 6px; padding: .2rem .5rem; font-size: .85rem; }
+      .ihpin-actions { display: flex; flex-wrap: wrap; gap: .4rem; align-items: center; }
+      .ihpin-count { font-size: .82rem; color: #475569; }
+      .ihpin-table { width: 100%; border-collapse: collapse; font-size: .88rem; }
+      .ihpin-table th { text-align: start; font-size: .72rem; text-transform: uppercase; letter-spacing: .04em; color: #64748B; padding: .5rem .4rem; border-bottom: 2px solid #E2E8F0; }
+      .ihpin-table td { padding: .55rem .4rem; border-bottom: 1px solid #F1F5F9; vertical-align: top; }
+      .ihpin-table tr.is-selected td { background: #F0F7FF; }
+      .ihpin-table select { width: 100%; min-height: 32px; border: 1px solid #E2E8F0; border-radius: 6px; padding: .2rem .4rem; font-size: .85rem; background: #fff; }
+      .ihpin-inst { font-weight: 600; color: #0F172A; }
+      .ihpin-meta { font-size: .76rem; color: #64748B; margin-top: .15rem; }
+      .ihpin-variants { font-size: .76rem; color: #475569; margin-top: .2rem; }
+      .ihpin-badge { display: inline-block; padding: .05rem .45rem; border-radius: 999px; font-size: .72rem; font-weight: 700; background: #E8F4FD; color: #004E8C; }
+      .ihpin-badge--muted { background: #F1F5F9; color: #475569; }
+      .ihpin-sugg { display: flex; flex-wrap: wrap; gap: .3rem; }
+      .ihpin-sugg button { border: 1px solid #CBD5E1; background: #fff; border-radius: 999px; padding: .1rem .55rem; font-size: .78rem; color: #0F172A; cursor: pointer; max-width: 100%; text-align: start; }
+      .ihpin-sugg button:hover, .ihpin-sugg button:focus { border-color: #0069B4; background: #F0F7FF; }
+      .ihpin-sugg button.is-confident { border-color: #059669; background: #ECFDF5; }
+      .ihpin-sugg button .pct { font-weight: 700; color: #004E8C; margin-inline-start: .3rem; }
+      .ihpin-sugg button .why { color: #64748B; font-size: .7rem; margin-inline-start: .3rem; }
+      .ihpin-none { font-size: .78rem; color: #94A3B8; font-style: italic; }
+      .ihpin-empty { background: #F8FAFC; border: 1px dashed #CBD5E1; border-radius: 10px; padding: 1.2rem; text-align: center; color: #475569; font-size: .9rem; }
+      .ihpin-linked summary { cursor: pointer; font-weight: 700; color: #004E8C; margin: 1.2rem 0 .6rem; }
+      .ihpin-unlink { display: inline; }
+      .ihpin-apply { width: 18px; height: 18px; margin: .3rem 0 0; }
+      @media (max-width: 900px) {
+        .ihpin-table thead { display: none; }
+        .ihpin-table tr { display: grid; grid-template-columns: 28px 1fr; gap: .3rem .6rem; padding: .7rem 0; border-bottom: 1px solid #E2E8F0; }
+        .ihpin-table td { border: 0; padding: 0; }
+        .ihpin-table td.ihpin-cell-apply { grid-row: 1 / span 3; }
+        .ihpin-table td[data-label]::before { content: attr(data-label); display: block; font-size: .7rem; text-transform: uppercase; color: #64748B; letter-spacing: .04em; margin-bottom: .15rem; }
+      }
+    </style>
+
+    <ul class="nav nav-tabs" style="margin-bottom:1rem;">
+      <li><a href="/ckan-admin/ihpix">{{ _('Page Content') }}</a></li>
+      <li><a href="/ckan-admin/ihpix/activities">{{ _('Activities') }}</a></li>
+      <li><a href="/ckan-admin/ihpix/reports?status=pending">{{ _('Reports') }}</a></li>
+      <li><a href="{{ h.url_for('theme_ejemplo.ihpix_admin_overview') }}">{{ _('Overview') }}</a></li>
+      <li><a href="{{ h.url_for('theme_ejemplo.ihpix_workspaces_admin') }}">{{ _('Working groups') }}</a></li>
+      <li class="active"><a href="{{ h.url_for('theme_ejemplo.ihpix_institutions_admin') }}">{{ _('Institutions') }}</a></li>
+    </ul>
+
+    <h1 style="font-size:1.5rem;"><i class="fa fa-link" aria-hidden="true"></i> {{ _('Link institutions to IHP-WINS organizations') }}</h1>
+    <div class="ihpin-intro">
+      {{ _('Legacy activities name their lead institution as free text. Only activities linked to an organization by id appear in that organization\'s IHP-IX tab and in the explorer filter.') }}
+      {{ _('Review the suggestions, pick the organization for each institution and apply the selection: every linked activity gets a new revision in its history and the link can be undone below. The institution text itself is never changed.') }}
+    </div>
+
+    <div class="ihpin-kpis">
+      <div class="ihpin-kpi"><strong>{{ totals.unlinked_groups or 0 }}</strong><span>{{ _('Institutions without organization') }}</span></div>
+      <div class="ihpin-kpi"><strong>{{ totals.unlinked_activities or 0 }}</strong><span>{{ _('Activities affected') }}</span></div>
+      <div class="ihpin-kpi"><strong>{{ totals.linked_activities or 0 }}</strong><span>{{ _('Activities already linked') }}</span></div>
+      <div class="ihpin-kpi"><strong>{{ totals.without_institution or 0 }}</strong><span>{{ _('Activities without institution') }}</span></div>
+    </div>
+
+    <div class="ihpin-toolbar">
+      <form method="get" action="{{ h.url_for('theme_ejemplo.ihpix_institutions_admin') }}" role="search">
+        <label class="sr-only" for="ihpin-q">{{ _('Filter institutions') }}</label>
+        <input type="search" id="ihpin-q" name="q" value="{{ q or '' }}" placeholder="{{ _('Filter institutions…') }}">
+        <button type="submit" class="btn btn-default btn-sm">{{ _('Filter') }}</button>
+        {% if q %}<a class="btn btn-link btn-sm" href="{{ h.url_for('theme_ejemplo.ihpix_institutions_admin') }}">{{ _('Clear') }}</a>{% endif %}
+      </form>
+      <div class="ihpin-actions">
+        <button type="button" class="btn btn-default btn-sm" data-ihpin-select="confident">{{ _('Select all confident suggestions') }}</button>
+        <button type="button" class="btn btn-default btn-sm" data-ihpin-select="none">{{ _('Deselect all') }}</button>
+      </div>
+    </div>
+
+    {% if unlinked %}
+      <form method="post" action="{{ h.url_for('theme_ejemplo.ihpix_institutions_link') }}" id="ihpin-form"
+            onsubmit="return confirm({{ _('Link the selected institutions to the chosen organizations?')|tojson }});">
+        {{ h.csrf_input() }}
+        <input type="hidden" name="q" value="{{ q or '' }}">
+        <p class="ihpin-count">
+          {{ _('Suggestions at or above') }} {{ (confident * 100)|round|int }}% {{ _('are preselected.') }}
+          <strong><span data-ihpin-counter>0</span> {{ _('selected') }}</strong>
+        </p>
+        <table class="ihpin-table">
+          <thead>
+            <tr>
+              <th scope="col"><span class="sr-only">{{ _('Apply') }}</span></th>
+              <th scope="col">{{ _('Institution') }}</th>
+              <th scope="col">{{ _('Suggestions') }}</th>
+              <th scope="col">{{ _('Organization') }}</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for group in unlinked %}
+              {% set i = loop.index %}
+              {% set best = group.suggestions[0] if group.suggestions else none %}
+              {% set preselected = best if (best and best.confident) else none %}
+              <tr{% if preselected %} class="is-selected"{% endif %}>
+                <td class="ihpin-cell-apply">
+                  <input type="checkbox" class="ihpin-apply" id="apply-{{ i }}" name="apply" value="{{ i }}" data-row="{{ i }}"
+                         {% if preselected %}checked{% endif %} aria-label="{{ _('Apply') }}: {{ group.institution }}">
+                  <input type="hidden" name="key-{{ i }}" value="{{ group.key }}">
+                </td>
+                <td data-label="{{ _('Institution') }}">
+                  <div class="ihpin-inst">{{ group.institution }}</div>
+                  <div class="ihpin-meta">
+                    <span class="ihpin-badge">{{ group.count }} {{ _('activities') }}</span>
+                    {% for status, n in group.statuses.items() if status != 'published' %}
+                      <span class="ihpin-badge ihpin-badge--muted">{{ n }}
+                        {% if status == 'draft' %}{{ _('Draft') }}{% elif status == 'pending' %}{{ _('Pending') }}{% elif status == 'rejected' %}{{ _('Rejected') }}{% else %}{{ status }}{% endif %}</span>
+                    {% endfor %}
+                  </div>
+                  {% if group.variants %}
+                    <div class="ihpin-variants">{{ _('Also written as:') }} {{ group.variants|join(' · ') }}</div>
+                  {% endif %}
+                </td>
+                <td data-label="{{ _('Suggestions') }}">
+                  {% if group.suggestions %}
+                    <div class="ihpin-sugg">
+                      {% for s in group.suggestions %}
+                        <button type="button" data-ihpin-suggest data-row="{{ i }}" data-org="{{ s.id }}"
+                                class="{% if s.confident %}is-confident{% endif %}" title="{{ s.name }}">
+                          {{ s.title }}<span class="pct">{{ (s.score * 100)|round|int }}%</span>
+                          <span class="why">
+                            {%- if s.reason == 'exact' %}{{ _('Exact match') }}
+                            {%- elif s.reason == 'acronym' %}{{ _('Acronym') }}
+                            {%- elif s.reason == 'contains' %}{{ _('Name contained') }}
+                            {%- elif s.reason == 'segment' %}{{ _('First institution listed') }}
+                            {%- elif s.reason == 'initials' %}{{ _('Initials') }}
+                            {%- elif s.reason == 'token' %}{{ _('Keyword') }}
+                            {%- else %}{{ _('Similar name') }}{% endif -%}
+                          </span>
+                        </button>
+                      {% endfor %}
+                    </div>
+                  {% else %}
+                    <span class="ihpin-none">{{ _('No suggestion') }}</span>
+                  {% endif %}
+                </td>
+                <td data-label="{{ _('Organization') }}">
+                  <label class="sr-only" for="org-{{ i }}">{{ _('Organization') }}: {{ group.institution }}</label>
+                  {# Sólo la opción preseleccionada viaja en el HTML; el JS carga el resto de organizaciones al abrir el selector #}
+                  <select name="org-{{ i }}" id="org-{{ i }}" data-ihpix-org-select data-row="{{ i }}">
+                    <option value="">{{ _('— Select an organization —') }}</option>
+                    {% if preselected %}<option value="{{ preselected.id }}" selected>{{ preselected.title }}</option>{% endif %}
+                  </select>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        <p style="margin-top:.8rem;">
+          <button type="submit" class="btn btn-primary" data-ihpin-submit><i class="fa fa-link" aria-hidden="true"></i> {{ _('Link selected institutions') }}</button>
+        </p>
+      </form>
+    {% elif q %}
+      <div class="ihpin-empty">{{ _('No institutions match the filter.') }}</div>
+    {% else %}
+      <div class="ihpin-empty"><i class="fa fa-check-circle" aria-hidden="true"></i> {{ _('Every institution with activities is already linked to an organization.') }}</div>
+    {% endif %}
+
+    {% if linked %}
+      <details class="ihpin-linked"{% if not unlinked %} open{% endif %}>
+        <summary>{{ _('Already linked institutions') }} ({{ linked|length }})</summary>
+        <table class="ihpin-table">
+          <thead>
+            <tr>
+              <th scope="col">{{ _('Institution') }}</th>
+              <th scope="col">{{ _('Organization') }}</th>
+              <th scope="col"><span class="sr-only">{{ _('Actions') }}</span></th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for group in linked %}
+              <tr>
+                <td data-label="{{ _('Institution') }}">
+                  <div class="ihpin-inst">{{ group.institution }}</div>
+                  <div class="ihpin-meta"><span class="ihpin-badge">{{ group.count }} {{ _('activities') }}</span></div>
+                  {% if group.variants %}<div class="ihpin-variants">{{ _('Also written as:') }} {{ group.variants|join(' · ') }}</div>{% endif %}
+                </td>
+                <td data-label="{{ _('Organization') }}">
+                  {% if group.organization %}
+                    <a href="{{ h.url_for('theme_ejemplo.organization_ihpix', name=group.organization.name) }}">{{ group.organization.title }}</a>
+                  {% else %}
+                    <span class="ihpin-none">{{ group.organization_id }}</span>
+                  {% endif %}
+                </td>
+                <td>
+                  <form method="post" action="{{ h.url_for('theme_ejemplo.ihpix_institutions_link') }}" class="ihpin-unlink"
+                        onsubmit="return confirm({{ _('Remove the organization link from all activities of this institution?')|tojson }});">
+                    {{ h.csrf_input() }}
+                    <input type="hidden" name="unlink" value="1">
+                    <input type="hidden" name="q" value="{{ q or '' }}">
+                    <input type="hidden" name="key" value="{{ group.key }}">
+                    <input type="hidden" name="organization_id" value="{{ group.organization_id }}">
+                    <button type="submit" class="btn btn-default btn-xs"><i class="fa fa-unlink" aria-hidden="true"></i> {{ _('Unlink') }}</button>
+                  </form>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </details>
+    {% endif %}
+
+    <script type="application/json" id="ihpin-orgs">{{ organizations|tojson }}</script>
+    <script>
+    (function () {
+      var raw = document.getElementById('ihpin-orgs');
+      var orgs = [];
+      try { orgs = JSON.parse(raw.textContent || '[]'); } catch (e) { orgs = []; }
+      var form = document.getElementById('ihpin-form');
+      if (!form) { return; }
+      var counter = form.querySelector('[data-ihpin-counter]');
+      var submit = form.querySelector('[data-ihpin-submit]');
+
+      function fill(select) {
+        if (select.dataset.filled) { return; }
+        var current = select.value;
+        var placeholder = select.options[0];
+        select.innerHTML = '';
+        select.appendChild(placeholder);
+        orgs.forEach(function (org) {
+          var option = document.createElement('option');
+          option.value = org.id;
+          option.textContent = org.title;
+          select.appendChild(option);
+        });
+        select.value = current;
+        select.dataset.filled = '1';
+      }
+      function row(index) { return document.getElementById('apply-' + index).closest('tr'); }
+      function update() {
+        var boxes = form.querySelectorAll('input[name=apply]');
+        var n = 0;
+        boxes.forEach(function (box) {
+          var select = document.getElementById('org-' + box.dataset.row);
+          if (box.checked && !select.value) { box.checked = false; }
+          row(box.dataset.row).classList.toggle('is-selected', box.checked);
+          if (box.checked) { n += 1; }
+        });
+        if (counter) { counter.textContent = n; }
+        if (submit) { submit.disabled = n === 0; }
+      }
+      form.querySelectorAll('select[data-ihpix-org-select]').forEach(function (select) {
+        ['focus', 'mousedown', 'keydown', 'touchstart'].forEach(function (type) {
+          select.addEventListener(type, function () { fill(select); });
+        });
+        select.addEventListener('change', function () {
+          document.getElementById('apply-' + select.dataset.row).checked = !!select.value;
+          update();
+        });
+      });
+      form.querySelectorAll('[data-ihpin-suggest]').forEach(function (button) {
+        button.addEventListener('click', function () {
+          var select = document.getElementById('org-' + button.dataset.row);
+          fill(select);
+          select.value = button.dataset.org;
+          document.getElementById('apply-' + button.dataset.row).checked = true;
+          update();
+        });
+      });
+      form.querySelectorAll('input[name=apply]').forEach(function (box) {
+        box.addEventListener('change', function () {
+          var select = document.getElementById('org-' + box.dataset.row);
+          if (box.checked && !select.value) {
+            var best = row(box.dataset.row).querySelector('[data-ihpin-suggest]');
+            if (best) { fill(select); select.value = best.dataset.org; }
+          }
+          update();
+        });
+      });
+      document.querySelectorAll('[data-ihpin-select]').forEach(function (button) {
+        button.addEventListener('click', function () {
+          var mode = button.dataset.ihpinSelect;
+          form.querySelectorAll('input[name=apply]').forEach(function (box) {
+            var select = document.getElementById('org-' + box.dataset.row);
+            if (mode === 'none') { box.checked = false; return; }
+            var best = row(box.dataset.row).querySelector('[data-ihpin-suggest].is-confident');
+            if (best) { fill(select); select.value = best.dataset.org; box.checked = true; }
+          });
+          update();
+        });
+      });
+      update();
+    })();
+    </script>
+  </div>
+</div>
+{% endblock %}

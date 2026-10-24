@@ -196,8 +196,16 @@ SINGLE_VOCABULARIES = OrderedDict([
 ])
 
 
+APOSTROPHES = (u'\u2019', u'\u2018', u'\u02bc')
+
+
 def _key(value):
-    return WS_RE.sub(' ', str(value or '')).strip().lower()
+    u"""Clave de comparación: espacios colapsados, minúsculas y apóstrofos
+    tipográficos plegados al recto ("Côte d’Ivoire" == "Côte d'Ivoire")."""
+    text = WS_RE.sub(' ', str(value or '')).strip().lower()
+    for mark in APOSTROPHES:
+        text = text.replace(mark, "'")
+    return text
 
 
 def clean_text(value):

@@ -331,6 +331,33 @@ def ctwg_for_slug(slug):
     return CTWG_SLUGS.get(slugify(slug))
 
 
+def flagship_for_group(name, title=None):
+    u"""Código de flagship que representa un grupo CKAN de iniciativa, o None.
+
+    Compara el slug del grupo y el de su título con los slugs de los
+    códigos y de las etiquetas ('friend-water' → 'FRIEND', 'lasii' → 'LASII').
+    """
+    candidates = [slugify(name), slugify(title)]
+    for candidate in candidates:
+        if not candidate:
+            continue
+        code = FLAGSHIP_SLUGS.get(candidate)
+        if code:
+            return code
+        for code, label in FLAGSHIP_LABELS.items():
+            if slugify(label) == candidate:
+                return code
+    return None
+
+
+def ctwg_for_group(name, title=None):
+    u"""Cross-cutting Working Group que representa un grupo CKAN, o None."""
+    for candidate in (slugify(name), slugify(title)):
+        if candidate and candidate in CTWG_SLUGS:
+            return CTWG_SLUGS[candidate]
+    return None
+
+
 # ─── Biennia del programa IHP-IX 2022-2029 (Section I, 4) ────────────────
 
 BIENNIA = (
