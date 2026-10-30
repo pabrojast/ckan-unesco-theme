@@ -1,4 +1,6 @@
 {% extends "page.html" %}
+{% import 'ihpix/snippets/forms_assets.html' as forms_ui with context %}
+{% import 'admin/snippets/ihpix_admin_tabs.html' as admin_ui with context %}
 
 {% block title %}{{ _('IHP-IX Institutions') }} - {{ super() }}{% endblock %}
 
@@ -11,6 +13,8 @@
 {% block content %}
 <div class="main">
   <div class="container">
+    {{ forms_ui.forms_styles() }}
+    {{ forms_ui.forms_scripts() }}
     <style>
       .ihpin-intro { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 10px; padding: .9rem 1.1rem; margin-bottom: 1rem; font-size: .9rem; color: #334155; }
       .ihpin-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: .6rem; margin-bottom: 1rem; }
@@ -27,6 +31,13 @@
       .ihpin-table td { padding: .55rem .4rem; border-bottom: 1px solid #F1F5F9; vertical-align: top; }
       .ihpin-table tr.is-selected td { background: #F0F7FF; }
       .ihpin-table select { width: 100%; min-height: 32px; border: 1px solid #E2E8F0; border-radius: 6px; padding: .2rem .4rem; font-size: .85rem; background: #fff; }
+      /* Combobox (selector con búsqueda) con el mismo aspecto que los selects de la tabla */
+      .ihpin-table .ixf-combobox { width: 100%; min-width: 14rem; }
+      .ihpin-table .ixf-combobox-input { width: 100%; min-height: 32px; border: 1px solid #E2E8F0; border-radius: 6px; padding-block: .2rem; padding-inline-start: .4rem; font: inherit; font-size: .85rem; background: #fff; color: #0F172A; }
+      .ihpin-table .ixf-combobox-input:focus { outline: none; border-color: #0069B4; box-shadow: 0 0 0 3px rgba(0, 105, 180, .2); }
+      .ihpin-table .ixf-combobox-input::placeholder { color: #94A3B8; }
+      .ihpin-table .ixf-listbox { min-width: 18rem; }
+      .ihpin-cell-org { min-width: 16rem; }
       .ihpin-inst { font-weight: 600; color: #0F172A; }
       .ihpin-meta { font-size: .76rem; color: #64748B; margin-top: .15rem; }
       .ihpin-variants { font-size: .76rem; color: #475569; margin-top: .2rem; }
@@ -52,14 +63,7 @@
       }
     </style>
 
-    <ul class="nav nav-tabs" style="margin-bottom:1rem;">
-      <li><a href="/ckan-admin/ihpix">{{ _('Page Content') }}</a></li>
-      <li><a href="/ckan-admin/ihpix/activities">{{ _('Activities') }}</a></li>
-      <li><a href="/ckan-admin/ihpix/reports?status=pending">{{ _('Reports') }}</a></li>
-      <li><a href="{{ h.url_for('theme_ejemplo.ihpix_admin_overview') }}">{{ _('Overview') }}</a></li>
-      <li><a href="{{ h.url_for('theme_ejemplo.ihpix_workspaces_admin') }}">{{ _('Working groups') }}</a></li>
-      <li class="active"><a href="{{ h.url_for('theme_ejemplo.ihpix_institutions_admin') }}">{{ _('Institutions') }}</a></li>
-    </ul>
+    {{ admin_ui.admin_tabs('institutions') }}
 
     <h1 style="font-size:1.5rem;"><i class="fa fa-link" aria-hidden="true"></i> {{ _('Link institutions to IHP-WINS organizations') }}</h1>
     <div class="ihpin-intro">
@@ -152,10 +156,12 @@
                     <span class="ihpin-none">{{ _('No suggestion') }}</span>
                   {% endif %}
                 </td>
-                <td data-label="{{ _('Organization') }}">
+                <td data-label="{{ _('Organization') }}" class="ihpin-cell-org">
                   <label class="sr-only" for="org-{{ i }}">{{ _('Organization') }}: {{ group.institution }}</label>
-                  {# Sólo la opción preseleccionada viaja en el HTML; el JS carga el resto de organizaciones al abrir el selector #}
-                  <select name="org-{{ i }}" id="org-{{ i }}" data-ihpix-org-select data-row="{{ i }}">
+                  {# Sólo la opción preseleccionada viaja en el HTML; el JS rellena el resto de
+                     organizaciones y convierte el select en un combobox con búsqueda cuando la
+                     fila entra en pantalla (311 filas × 130 organizaciones no se pintan de golpe). #}
+                  <select name="org-{{ i }}" id="org-{{ i }}" data-ihpix-org-select data-row="{{ i }}" data-max-rows="40">
                     <option value="">{{ _('— Select an organization —') }}</option>
                     {% if preselected %}<option value="{{ preselected.id }}" selected>{{ preselected.title }}</option>{% endif %}
                   </select>
@@ -229,20 +235,44 @@
       var counter = form.querySelector('[data-ihpin-counter]');
       var submit = form.querySelector('[data-ihpin-submit]');
 
+      // Una sola cadena de <option> compartida: rellenar un select es un innerHTML.
+      function esc(text) { return String(text).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;'); }
+      var optionsHtml = orgs.map(function (org) {
+        return '<option value="' + esc(org.id) + '" data-search="' + esc(org.name || '') + '">' + esc(org.title) + '</option>';
+      }).join('');
       function fill(select) {
         if (select.dataset.filled) { return; }
         var current = select.value;
-        var placeholder = select.options[0];
-        select.innerHTML = '';
-        select.appendChild(placeholder);
-        orgs.forEach(function (org) {
-          var option = document.createElement('option');
-          option.value = org.id;
-          option.textContent = org.title;
-          select.appendChild(option);
-        });
+        var placeholder = select.options[0] ? select.options[0].outerHTML : '<option value=""></option>';
+        select.innerHTML = placeholder + optionsHtml;
         select.value = current;
         select.dataset.filled = '1';
+      }
+      // Combobox con búsqueda (kit ihpix-forms) sobre el select nativo, fila a fila.
+      function enhance(select) {
+        fill(select);
+        if (select.dataset.enhanced || !window.IhpixForms) { return; }
+        select.dataset.enhanced = '1';
+        select.setAttribute('data-ihpix-combobox', '');
+        window.IhpixForms.init(select.closest('td') || select.parentNode);
+      }
+      function setValue(select, value) {
+        fill(select);
+        select.value = value;
+        var api = window.IhpixForms && window.IhpixForms.get(select);
+        if (api && api.refresh) { api.refresh(); }
+      }
+      function enhanceVisible() {
+        var selects = Array.prototype.slice.call(form.querySelectorAll('select[data-ihpix-org-select]'));
+        if (!('IntersectionObserver' in window)) { selects.forEach(enhance); return; }
+        var observer = new IntersectionObserver(function (entries) {
+          entries.forEach(function (entry) {
+            if (!entry.isIntersecting) { return; }
+            observer.unobserve(entry.target);
+            enhance(entry.target.querySelector('select[data-ihpix-org-select]'));
+          });
+        }, { rootMargin: '600px 0px' });
+        selects.forEach(function (select) { observer.observe(select.closest('tr')); });
       }
       function row(index) { return document.getElementById('apply-' + index).closest('tr'); }
       function update() {
@@ -258,6 +288,7 @@
         if (submit) { submit.disabled = n === 0; }
       }
       form.querySelectorAll('select[data-ihpix-org-select]').forEach(function (select) {
+        // Si la fila aún no se ha mejorado (sin IntersectionObserver o antes de cargar el kit), rellenar al tocar
         ['focus', 'mousedown', 'keydown', 'touchstart'].forEach(function (type) {
           select.addEventListener(type, function () { fill(select); });
         });
@@ -269,8 +300,7 @@
       form.querySelectorAll('[data-ihpin-suggest]').forEach(function (button) {
         button.addEventListener('click', function () {
           var select = document.getElementById('org-' + button.dataset.row);
-          fill(select);
-          select.value = button.dataset.org;
+          setValue(select, button.dataset.org);
           document.getElementById('apply-' + button.dataset.row).checked = true;
           update();
         });
@@ -280,7 +310,7 @@
           var select = document.getElementById('org-' + box.dataset.row);
           if (box.checked && !select.value) {
             var best = row(box.dataset.row).querySelector('[data-ihpin-suggest]');
-            if (best) { fill(select); select.value = best.dataset.org; }
+            if (best) { setValue(select, best.dataset.org); }
           }
           update();
         });
@@ -292,12 +322,15 @@
             var select = document.getElementById('org-' + box.dataset.row);
             if (mode === 'none') { box.checked = false; return; }
             var best = row(box.dataset.row).querySelector('[data-ihpin-suggest].is-confident');
-            if (best) { fill(select); select.value = best.dataset.org; box.checked = true; }
+            if (best) { setValue(select, best.dataset.org); box.checked = true; }
           });
           update();
         });
       });
       update();
+      // El kit de formularios se carga al final de la página: mejorar las filas al estar listo.
+      if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', enhanceVisible); }
+      else { enhanceVisible(); }
     })();
     </script>
   </div>

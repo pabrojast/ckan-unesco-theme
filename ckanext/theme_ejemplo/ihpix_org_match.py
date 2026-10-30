@@ -21,7 +21,13 @@ Razones (de mayor a menor confianza):
 - ``token``     una palabra del texto es el acrónimo o las iniciales de la
                 organización ("UNESCO IHP" ↔ Intergovernmental Hydrological
                 Programme).
-- ``similar``   solape de palabras o parecido de cadena (erratas).
+- ``similar``   solape de palabras o parecido de cadena (erratas), o las
+                mismas palabras específicas en otro orden ("UNESCO IHP
+                National Committee of the Republic of Korea" ↔ "Republic of
+                Korea IHP National Committee").
+
+Las organizaciones de prueba (título o slug con "demo", "test", "QA",
+"example"…) nunca se sugieren, aunque sigan en el selector.
 """
 import re
 import unicodedata
@@ -49,7 +55,22 @@ GENERIC = frozenset((
     'programme', 'committee', 'agency', 'ministry', 'management', 'resources',
     'sciences', 'science', 'development', 'sustainable', 'global',
     'environment', 'environmental', 'technology', 'hydrology', 'hydrological',
+    # Coletillas de sedes y formas jurídicas, gentilicios y regiones: pesan
+    # la mitad y no cuentan como palabras específicas de una institución.
+    'secretariat', 'headquarters', 'division', 'sector', 'field', 'unit',
+    'group', 'network', 'commission', 'council', 'association', 'society',
+    'foundation', 'organization', 'corporation', 'authority', 'directorate',
+    'general', 'faculty', 'school', 'college', 'laboratory', 'engineering',
+    'studies', 'education', 'training', 'cooperation', 'applied',
+    'integrated', 'systems', 'policy', 'climate',
+    'state', 'states', 'federal', 'republic', 'kingdom', 'united', 'nations',
+    'world', 'european', 'africa', 'african', 'asia', 'asian', 'america',
+    'latin', 'caribbean', 'pacific', 'arab',
 ))
+# Organizaciones de prueba o demostración del portal: no se sugieren.
+DEMO_RE = re.compile(
+    r'(?:^|[\s(\-_])(?:demo|test|testing|qa|example|examples|sandbox|dummy)(?:$|[\s)\-_])|testing', re.I)
+LEADING_UNESCO_RE = re.compile(r'^\s*unesco\b[\s\-–—:]*', re.I)
 # Grafías equivalentes (inglés británico / americano).
 VARIANTS = {
     'center': 'centre', 'centers': 'centres', 'program': 'programme',
@@ -65,6 +86,9 @@ BOILERPLATE = (
 )
 PAREN_RE = re.compile(r'\(([^()]{2,40})\)')
 SEGMENT_RE = re.compile(r',|;|/|\s[-–—]\s|\band\b|&', re.I)
+# Separadores fuertes: no cortan en "and"/"&" ("UNESCO Chair on Ecohydrology
+# and Applied Ecology, University of Lodz" → dos tramos, no tres).
+STRONG_SEGMENT_RE = re.compile(r',|;|/|\s[-–—]\s')
 NON_ALNUM_RE = re.compile(r'[^a-z0-9]+')
 WORD_RE = re.compile(r'[A-Za-z0-9]+')
 MIN_CONTAINS_CHARS = 12
@@ -138,14 +162,31 @@ def pieces(text):
     return [piece.strip() for piece in SEGMENT_RE.split(str(text or '')) if piece and piece.strip()]
 
 
-def segments(text):
+def segments(text, pattern=SEGMENT_RE):
     u"""Claves de los tramos de un texto compuesto, sin repetidos."""
     out = []
-    for piece in pieces(text):
-        piece_key = key(piece)
+    for piece in pattern.split(str(text or '')):
+        piece_key = key(piece) if piece and piece.strip() else ''
         if piece_key and piece_key not in out:
             out.append(piece_key)
     return out
+
+
+def _specific(tokens):
+    u"""Palabras que identifican a una institución (ni vacías ni genéricas)."""
+    return frozenset(t for t in tokens if t not in GENERIC and t not in STOPWORDS)
+
+
+def _segment_initials(text):
+    u"""Iniciales de cada tramo del texto, con y sin el "UNESCO" inicial:
+    "UNESCO Regional Office for Southern Africa - Harare …" → {rosa, urosa, hnss…}."""
+    found = set()
+    for piece in pieces(text):
+        for variant in (piece, LEADING_UNESCO_RE.sub('', piece)):
+            value = initials(variant)
+            if len(value) >= 3:
+                found.add(value)
+    return frozenset(found)
 
 
 def prepare_org(org):
@@ -155,13 +196,21 @@ def prepare_org(org):
     name = N.clean_text(org.get('name'))
     slug_text = name.replace('-', ' ').replace('_', ' ')
     title_key, slug_key = key(title), key(slug_text)
+    title_tokens = title_key.split()
+    # Las palabras específicas salen del título; si el título es sólo el
+    # acrónimo ("ICHARM"), del slug, que suele ser el nombre largo.
+    words_key = title_key if len(title_tokens) > 1 else slug_key
     return {
         'id': org.get('id'), 'name': name, 'title': title,
         'key': title_key, 'slug_key': slug_key,
         'compact': title_key.replace(' ', ''), 'slug_compact': slug_key.replace(' ', ''),
-        'tokens': frozenset(title_key.split()) | frozenset(slug_key.split()),
+        'tokens': frozenset(title_tokens) | frozenset(slug_key.split()),
+        'specific': _specific(words_key.split()),
+        'first_token': title_tokens[0] if title_tokens else '',
         'acronyms': acronyms(title),
         'initials': initials(title), 'slug_initials': initials(slug_text),
+        'segment_initials': _segment_initials(title),
+        'demo': bool(DEMO_RE.search(title) or DEMO_RE.search(name)),
     }
 
 
@@ -174,15 +223,23 @@ def prepare_institution(text):
     text_key = key(text)
     parts = pieces(text)
     # Iniciales del texto completo y del primer tramo ("Dublin City
-    # University, Ireland" → "dcui" y "dcu").
-    inits = {initials(text)}
-    if parts:
-        inits.add(initials(parts[0]))
+    # University, Ireland" → "dcui" y "dcu"), con y sin el "UNESCO" inicial
+    # ("UNESCO Regional Office for Southern Africa" → "rosa").
+    inits = set()
+    for variant in [text] + parts[:1]:
+        inits.add(initials(variant))
+        inits.add(initials(LEADING_UNESCO_RE.sub('', variant)))
+    # Palabras sin los paréntesis: "(IHP-ROK)" no cuenta como palabra propia.
+    plain_key = key(PAREN_RE.sub(' ', text))
+    plain_tokens = plain_key.split()
     return {
         'text': text, 'key': text_key, 'compact': text_key.replace(' ', ''),
         'tokens': frozenset(text_key.split()), 'acronyms': acronyms(text),
+        'plain_tokens': frozenset(plain_tokens), 'specific': _specific(plain_tokens),
+        'first_token': plain_tokens[0] if plain_tokens else '',
         'initials': initials(text), 'initials_set': frozenset(i for i in inits if len(i) >= 3),
         'segments': segments(text),
+        'strong_segments': segments(text, STRONG_SEGMENT_RE),
     }
 
 
@@ -258,6 +315,7 @@ def score(inst, org):
         # Africa" ↔ "… - Harare Natural Science Sector").
         consider(_contains(org_key, inst['key'], 3), 'contains')
         consider(_contains(inst['key'], org_key, 4), 'contains')
+    short_org = {k for k in org_compacts if 3 <= len(k) <= 8}
     first = inst['segments'][0] if inst['segments'] else ''
     if first and first != inst['key']:
         if first in org_keys or first.replace(' ', '') in org_compacts:
@@ -265,15 +323,58 @@ def score(inst, org):
         elif any(seg in org_keys or seg.replace(' ', '') in org_compacts
                  for seg in inst['segments'][1:]):
             consider(0.8, 'segment')
-    org_initials = {k for k in (org['initials'], org['slug_initials']) if len(k) >= 3}
+    strong = inst['strong_segments']
+    if len(strong) > 1:
+        # Un tramo completo (entre comas o guiones) es el título de la organización
+        # ("Facultad de Ingeniería … - UNESCO Chair Water and Education for
+        # Sustainable Development").
+        if any(seg in org_keys or seg.replace(' ', '') in org_compacts for seg in strong[1:]):
+            consider(0.8, 'segment')
+        # El primer tramo, con alguna palabra específica, está dentro del título
+        # ("UNESCO Chair for Hydrological Change, RWTH Aachen University" ↔
+        # "UNESCO Chair in Hydrological Change and Water Resources Management").
+        if (_specific(strong[0].split())
+                and any(_contains(strong[0], org_key, 3) >= 0.9 for org_key in org_keys)):
+            consider(0.85, 'segment')
+    # El texto empieza por el título corto de la organización
+    # ("WSDAC (Water for Sustainable Development …)").
+    if inst['first_token'] and inst['first_token'] in short_org:
+        consider(0.9, 'acronym')
+    org_initials = ({k for k in (org['initials'], org['slug_initials']) if len(k) >= 3}
+                    | org['segment_initials'])
     if inst['compact'] in org_initials:
         consider(0.85, 'initials')
     if inst['initials_set'] & (org_compacts | org['acronyms']):
         consider(0.85, 'initials')
-    short_org = {k for k in org_compacts if 3 <= len(k) <= 8}
+    # Todas las palabras específicas del texto son las siglas o el título
+    # corto de la organización ("UNESCO IHP Secretariat" ↔ Intergovernmental
+    # Hydrological Programme; "UNESCO ROSA" ↔ Regional Office for Southern Africa).
+    if inst['specific'] and inst['specific'] <= org_initials:
+        consider(0.85, 'initials')
+    elif inst['specific'] and inst['specific'] <= (org['acronyms'] | short_org):
+        consider(0.85, 'acronym')
+    # Mismas palabras específicas en otro orden, sin sobrar ninguna.
+    if (len(org['specific']) >= 2
+            and _shared(org['specific'], inst['plain_tokens']) == org['specific']
+            and _shared(inst['specific'], org['tokens']) == inst['specific']):
+        consider(0.88, 'similar')
+    # Sede de UNESCO nombrada por la ciudad ("UNESCO Harare" ↔ "… - Harare
+    # Natural Science Sector"): texto corto con "unesco" cuyas palabras
+    # específicas están todas en el título.
+    if ('unesco' in inst['plain_tokens'] and 1 <= len(inst['specific']) <= 2
+            and len(inst['plain_tokens']) <= 4
+            and all(len(t) >= 5 for t in inst['specific'])
+            and _shared(inst['specific'], org['tokens']) == inst['specific']):
+        consider(0.8, 'contains')
     if short_org & inst['tokens']:
         consider(0.8, 'token')
-    if org_initials & inst['tokens'] or inst['initials_set'] & org['tokens']:
+    if org_initials & inst['tokens']:
+        consider(0.7, 'token')
+    # Las iniciales del texto son una palabra del título: sólo palabras de
+    # 4+ letras o la primera del título ("DCU Water Institute"); "ihp" dentro
+    # de "Gambia IHP National Committee" no basta.
+    if any(t in org['tokens'] and (len(t) >= 4 or t == org['first_token'])
+           for t in inst['initials_set']):
         consider(0.7, 'token')
     jaccard, shared = _overlap(inst['tokens'], org['tokens'])
     if shared >= 2 and jaccard >= 0.5:
@@ -294,6 +395,8 @@ def suggest(institution, prepared_orgs, limit=MAX_SUGGESTIONS, threshold=THRESHO
     inst = institution if isinstance(institution, dict) else prepare_institution(institution)
     found = []
     for org in prepared_orgs:
+        if org.get('demo'):
+            continue
         value, reason = score(inst, org)
         if value >= threshold:
             found.append({'id': org['id'], 'name': org['name'], 'title': org['title'],

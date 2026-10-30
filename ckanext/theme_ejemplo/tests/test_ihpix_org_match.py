@@ -38,6 +38,16 @@ ORGS = [
     {'id': 'o-citizen', 'name': 'citizen-science', 'title': 'Citizen Science'},
     {'id': 'o-sustain', 'name': 'unesco-chair-on-sustainability', 'title': 'UNESCO Chair on Sustainability'},
     {'id': 'o-tehran', 'name': 'unesco-chair-on-water-reuse-at-the-university-of-tehran', 'title': 'UNESCO Chair on Water Reuse at the University of Tehran '},
+    {'id': 'o-aachen', 'name': 'unesco-chair-in-hydrological-change-and-water-resources-management',
+     'title': 'UNESCO Chair in Hydrological Change and Water Resources Management'},
+    {'id': 'o-wsdac', 'name': 'centre-for-water-for-sustainable-development-and-adaptation-to-climate-change', 'title': 'WSDAC'},
+    {'id': 'o-demo', 'name': 'ihp-demo-bahrain', 'title': 'IHP Bahrain (demo)'},
+    {'id': 'o-qa', 'name': 'dashboard-qa-1788992789-01ae7c', 'title': 'Dashboard Builder QA'},
+    {'id': 'o-wedsd', 'name': 'unesco-chair-in-water-and-education-for-sustainable-development',
+     'title': 'UNESCO Chair in Water and Education for Sustainable Development'},
+    {'id': 'o-wrdrr', 'name': 'unesco-chair-for-water-related-disaster-risk-reduction',
+     'title': 'UNESCO Chair for Water Related Disaster Risk Reduction'},
+    {'id': 'o-wwd', 'name': 'unesco-chair-on-water-women-and-development', 'title': 'UNESCO Chair on Water, Women and Development'},
 ]
 PREPARED = OM.prepare_orgs(ORGS)
 
@@ -116,8 +126,10 @@ def test_no_false_positives_for_unrelated_or_generic_names():
 
 
 def test_suggest_orders_limits_and_marks_confident():
+    # "IHP" a secas ya no propone comités nacionales (la palabra "ihp" dentro
+    # de "Gambia IHP National Committee" no basta) ni organizaciones demo.
     found = OM.suggest('IHP', PREPARED, limit=2)
-    assert [item['id'] for item in found] == ['o-ihp', 'o-gambia']
+    assert [item['id'] for item in found] == ['o-ihp']
     assert found[0]['confident'] is False and found[0]['score'] == 0.85
     assert OM.suggest('ICWRGC', PREPARED)[0]['confident'] is True
     assert all(0.6 <= item['score'] <= 1.0 for item in OM.suggest('IHP', PREPARED, limit=None))
@@ -174,3 +186,41 @@ def test_seed_institutions_resolve_quickly_with_the_dev_sample():
     assert time.time() - started < 1.0
     assert groups['totals']['unlinked_activities'] == len(rows) and groups['totals']['unlinked_groups'] >= 300
     assert confident >= 25
+
+
+def test_specific_words_reordered_initials_and_short_texts():
+    # Mismas palabras específicas en otro orden: el comité correcto gana claramente
+    assert _top('UNESCO IHP National Committee of the Republic of Korea (IHP-ROK)') == ('o-korea', 0.88, 'similar')
+    assert _top('Slovenian National Committee IHP') == ('o-slovenia', 0.88, 'similar')
+    # "UK IHP National Committee" no es ninguno de los comités conocidos
+    assert all(item['score'] < 0.8 for item in OM.suggest('UK IHP National Committee', PREPARED))
+    # Las palabras específicas son las siglas de la organización
+    for text in ('UNESCO IHP', 'UNESCO IHP Secretariat', 'IHP Secretariat', 'UNESCO-IHP'):
+        assert _top(text) == ('o-ihp', 0.85, 'initials'), text
+    assert _top('IHP-LAC') == ('o-ihp', 0.7, 'token')          # "lac" no es parte de las siglas
+    assert _top('UNESCO ROSA') == ('o-harare', 0.85, 'initials')
+    # Texto corto con la ciudad de la sede
+    assert _top('UNESCO Harare') == ('o-harare', 0.8, 'contains')
+    assert _top('UNESCO Baghdad') == ('o-baghdad', 0.8, 'contains')
+    assert _top('UNESCO Jakarta') == ('o-jakarta', 0.8, 'contains')
+    # Sin "unesco" la regla de la sede no aplica: una palabra suelta no basta
+    assert all(item['score'] < 0.8 for item in OM.suggest('Korea Environment Corporation (K-eco)', PREPARED))
+    assert OM.suggest('Global Network of Water Museums (WAMU+NET)', PREPARED) == []
+    # Tramo completo entre guiones igual al título de la organización
+    assert _top('Facultad de Ingeniería y Ciencias Hidricas - UNESCO Chair Water and Education for Sustainable Development')[0] == 'o-wedsd'
+    # El primer tramo genérico ("UNESCO Chair Water") no empareja con otras cátedras
+    assert all(item['id'] != 'o-wrdrr' for item in OM.suggest(
+        'UNESCO Chair Water, Women and Development, Federal University of Ouro Preto', PREPARED))
+    # Primer tramo contenido en el título de la organización
+    assert _top('UNESCO Chair for Hydrological Change, RWTH Aachen University') == ('o-aachen', 0.85, 'segment')
+    # El texto empieza por el título corto de la organización
+    assert _top('WSDAC (Water for Sustainable Development and Adaptation to Climate Change)') == ('o-wsdac', 0.9, 'acronym')
+    # Las organizaciones demo/QA nunca se sugieren
+    assert all(item['id'] not in ('o-demo', 'o-qa') for item in OM.suggest('IHP Bahrain', PREPARED, limit=None))
+    by_id = {org['id']: org for org in ORGS}
+    assert OM.prepare_org(by_id['o-demo'])['demo'] is True and OM.prepare_org(by_id['o-qa'])['demo'] is True
+    assert OM.prepare_org(by_id['o-icharm'])['demo'] is False and OM.prepare_org(by_id['o-citizen'])['demo'] is False
+    # Sin falsos positivos nuevos
+    for text in ('State Hydrological Institute', 'Kyoto University', 'UNESCO MAPUTO', 'Imperial College'):
+        assert OM.suggest(text, PREPARED) == [], text
+
