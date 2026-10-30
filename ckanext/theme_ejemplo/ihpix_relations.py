@@ -23,6 +23,17 @@ def read_list(value):
     return value
 
 
+def read_ids(value):
+    u"""Lista de ids (texto) desde JSON o lista, sin vacíos; lista vacía si el
+    JSON no es válido (`partner_org_ids` heredados)."""
+    if isinstance(value, (list, tuple)):
+        return [str(x) for x in value if x]
+    try:
+        return [str(x) for x in read_list(value) if x]
+    except (ValueError, TypeError):
+        return []
+
+
 def associations(row, kind='contribution'):
     """No reinterpreta texto libre heredado; sólo usa códigos conocidos."""
     field = 'contributions_json' if kind == 'contribution' else 'synergies_json'

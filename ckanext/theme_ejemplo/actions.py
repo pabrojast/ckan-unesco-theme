@@ -3615,22 +3615,19 @@ def _ihpix_published_rows():
     return _ihpix_cached('rows', _ihpix_stats_ttl(), _build)
 
 
-def _ihpix_linked_organizations():
-    """Organizaciones activas con alguna actividad publicada vinculada
-    (líder `institution_org_id` o socia en `partner_org_ids`) como
-    `[{id, name, title, count}]` ordenadas por título: alimentan el selector
-    de organización de Progress y del explorador. Misma caché/TTL que las
-    filas publicadas; se vacía con `_ihpix_invalidate_stats_cache()` (que
+def _ihpix_organization_options():
+    """Opciones del selector de organización de Progress y del explorador:
+    todas las organizaciones activas como `[{id, name, title, count}]`, con
+    el nº de actividades publicadas vinculadas (líder `institution_org_id` o
+    socia en `partner_org_ids`), las vinculadas primero
+    (`ihpix_stats.organization_options`). Misma caché/TTL que las filas
+    publicadas; se vacía con `_ihpix_invalidate_stats_cache()` (que
     `ihpix_institution_link` dispara) y al cambiar la huella de
     `_ihpix_check_stats_version()`, también desde otros workers."""
     from ckanext.theme_ejemplo import ihpix_stats
 
     def _build():
-        counts = ihpix_stats.organization_counts(_ihpix_published_rows())
-        if not counts:
-            return []
-        return [dict(org, count=counts[org['id']])
-                for org in _ihpix_organizations() if org['id'] in counts]
+        return ihpix_stats.organization_options(_ihpix_published_rows(), _ihpix_organizations())
     _ihpix_check_stats_version()
     return _ihpix_cached('organizations', _ihpix_stats_ttl(), _build)
 
@@ -3718,7 +3715,8 @@ def ihpix_progress_stats(context, data_dict):
     CKAN: actividades donde es institución líder o socia). Usuarios
     autenticados. El JSON lo define `ihpix_stats.compute_progress_stats`,
     más `organization` ({id, name, title} o None) y
-    `options.organizations` (sólo las vinculadas a actividades publicadas);
+    `options.organizations` (todas las activas con su nº de actividades
+    vinculadas, las vinculadas primero);
     los sysadmin reciben además `overview.pending`.
     """
     toolkit.check_access('ihpix_progress_stats', context, data_dict)
@@ -3755,7 +3753,7 @@ def ihpix_progress_stats(context, data_dict):
             _ihpix_published_rows(), scope=scope, value=value or None,
             filters=filters, country_index=_ihpix_country_index(),
             labels=_ihpix_stats_labels(),
-            organizations=_ihpix_linked_organizations())
+            organizations=_ihpix_organization_options())
         stats['organization'] = organization
         if organization:
             stats['filters'] = dict(stats['filters'], organization=organization['name'])
@@ -4182,10 +4180,11 @@ def _ihpix_organizations():
 def _ihpix_institution_rows():
     """Campos mínimos de todas las actividades para agrupar por institución."""
     init_ihpix_activities_db()
-    return [{'id': aid, 'institution': institution, 'institution_org_id': org_id, 'status': status}
-            for aid, institution, org_id, status in model.Session.query(
-                IhpixActivity.id, IhpixActivity.institution,
-                IhpixActivity.institution_org_id, IhpixActivity.status).all()]
+    return [{'id': aid, 'institution': institution, 'institution_org_id': org_id,
+             'status': status, 'partner_org_ids': partners}
+            for aid, institution, org_id, status, partners in model.Session.query(
+                IhpixActivity.id, IhpixActivity.institution, IhpixActivity.institution_org_id,
+                IhpixActivity.status, IhpixActivity.partner_org_ids).all()]
 
 
 @toolkit.side_effect_free
@@ -4206,18 +4205,44 @@ def ihpix_institution_link_list(context, data_dict):
     prepared = OM.prepare_orgs(organizations)
     groups = OM.group_activities(_ihpix_institution_rows())
     unlinked = OM.filter_groups(groups['unlinked'], query)
+    by_id = {org['id']: org for org in organizations}
     for group in unlinked:
         group['suggestions'] = OM.suggest(group['institution'], prepared, limit=limit)
-    by_id = {org['id']: org for org in organizations}
+        # Textos con varias instituciones: socias confiables de los demás tramos
+        # (sin repetir la mejor sugerencia de líder, que es la que se aplicaría)
+        group['partner_suggestions'] = OM.suggest_partners(
+            group['institution'], prepared, exclude=[s['id'] for s in group['suggestions'][:1]])
     linked = OM.filter_groups(groups['linked'], query)
     for group in linked:
         group['organization'] = by_id.get(group['organization_id'])
+        group['partner_orgs'] = [by_id[p] for p in group.get('partners', []) if p in by_id]
     return {'unlinked': unlinked, 'linked': linked, 'organizations': organizations,
             'totals': groups['totals'], 'q': query}
 
 
+def _ihpix_partner_targets(item, lead):
+    """Organizaciones socias de una entrada de `links` (`partner_organization_ids`,
+    lista o texto separado por comas): activas, sin repetir y distintas de la líder."""
+    raw = item.get('partner_organization_ids') or []
+    if isinstance(raw, str):
+        raw = raw.split(',')
+    partners, seen = [], set()
+    for value in raw:
+        org_id = (value or u'').strip()
+        if not org_id or org_id in seen or (lead is not None and org_id == lead.id):
+            continue
+        org = model.Group.get(org_id)
+        if not org or not org.is_organization or org.state != 'active':
+            raise toolkit.ValidationError(
+                {'partner_organization_ids': 'Select active IHP-WINS organizations as partners'})
+        seen.add(org.id)
+        partners.append(org)
+    return partners
+
+
 def _ihpix_link_target(item):
-    """Resuelve una entrada de `links`: `(clave, organización | None, org actual)`."""
+    """Resuelve una entrada de `links`: `(clave, organización | None, org actual,
+    organizaciones socias)`."""
     from ckanext.theme_ejemplo import ihpix_org_match as OM
     key = (item.get('key') or u'').strip()
     if not key and item.get('institution'):
@@ -4235,23 +4260,28 @@ def _ihpix_link_target(item):
     if org is None and not current:
         raise toolkit.ValidationError(
             {'organization_id': 'Select an organization to link, or the current one to unlink'})
-    return key, org, current
+    return key, org, current, _ihpix_partner_targets(item, org)
 
 
 def ihpix_institution_link(context, data_dict):
     """Vincula (o desvincula) la organización IHP-WINS de todas las actividades
     cuya institución heredada comparte clave normalizada. Sysadmin only.
 
-    `links`: lista de `{key | institution, organization_id, current_organization_id}`
-    (o esos mismos campos en el propio data_dict). Con `organization_id` se
-    rellena `institution_org_id` sólo en las filas que no tenían organización;
-    sin él se vacía en las filas que apuntan a `current_organization_id`. No
+    `links`: lista de `{key | institution, organization_id, current_organization_id,
+    partner_organization_ids}` (o esos mismos campos en el propio data_dict).
+    Con `organization_id` se rellena `institution_org_id` sólo en las filas
+    que no tenían organización y se añaden `partner_organization_ids` a sus
+    `partner_org_ids` (el texto reportado puede nombrar varias instituciones:
+    una líder en CKAN y las demás como socias); sin él se vacía en las filas
+    que apuntan a `current_organization_id` y se retiran de ellas las socias
+    indicadas. No
     toca el texto de la institución. Cada actividad modificada gana una
     revisión en su historial (bloqueo + snapshot, como el editor) y al final
     se invalidan las cachés y se recalcula el resumen por país."""
     toolkit.check_access('ihpix_institution_link', context, data_dict)
     import datetime as _dt
     from ckanext.theme_ejemplo import ihpix_org_match as OM
+    from ckanext.theme_ejemplo import ihpix_relations as R
     from ckanext.theme_ejemplo import ihpix_store as S
     init_ihpix_activities_db()
     items = data_dict.get('links')
@@ -4269,7 +4299,8 @@ def ihpix_institution_link(context, data_dict):
         by_key.setdefault(OM.key(activity.institution), []).append(activity)
     results, total = [], 0
     now = _dt.datetime.utcnow()
-    for key, org, current in plan:
+    for key, org, current, partners in plan:
+        partner_ids = [p.id for p in partners]
         updated = 0
         for activity in by_key.get(key, []):
             if org is not None:
@@ -4280,18 +4311,26 @@ def ihpix_institution_link(context, data_dict):
                 if (activity.institution_org_id or u'') != current:
                     continue
                 target = u''
+            existing = R.read_ids(activity.partner_org_ids)
+            if org is not None:
+                merged = existing + [p for p in partner_ids if p not in existing and p != target]
+            else:
+                merged = [p for p in existing if p not in partner_ids]
             locked = model.Session.query(IhpixActivity).filter(
                 IhpixActivity.id == activity.id).with_for_update().one()
             links = _ihpix_links_for(locked.id)
             S.ensure_baseline(locked, links)
             locked.institution_org_id = target
+            if merged != existing:
+                locked.partner_org_ids = json.dumps(merged)
             locked.updated_at = now
             S.snapshot(locked, actor_id, links)
             updated += 1
         results.append({
             'key': key, 'organization_id': org.id if org else u'', 'updated': updated,
             'organization': ({'id': org.id, 'name': org.name, 'title': org.display_name}
-                             if org else None)})
+                             if org else None),
+            'partners': [{'id': p.id, 'name': p.name, 'title': p.display_name} for p in partners]})
         total += updated
     model.Session.commit()
     if total:

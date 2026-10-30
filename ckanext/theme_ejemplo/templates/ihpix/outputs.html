@@ -757,12 +757,12 @@
 
         <div class="ox-fg ox-fg--organization">
           <label for="ihpix-out-organization">{{ _('Organization') }}</label>
-          {# Sólo organizaciones con actividades publicadas vinculadas (líder o socia). #}
-          <select name="organization" id="ihpix-out-organization" class="ox-select" data-ihpix-combobox{% if not organizations and not organization_filter %} disabled{% endif %}>
+          {# Combobox con búsqueda: todas las organizaciones activas, las vinculadas primero y con su conteo. #}
+          <select name="organization" id="ihpix-out-organization" class="ox-select" data-ihpix-combobox>
             <option value="">{{ _('All organizations') }}</option>
-            {{ organization_options(organizations, organization_name or organization_filter, organization_title, with_count=true) }}
+            {{ organization_options(organizations, organization_name or organization_filter, organization_title) }}
           </select>
-          {% if not organizations %}
+          {% if not (organizations or [])|selectattr('count')|list %}
             <small class="ox-fg-hint">{{ _('No organizations are linked to published activities yet.') }}{% if c.userobj and c.userobj.sysadmin %} <a href="{{ h.url_for('theme_ejemplo.ihpix_institutions_admin') }}">{{ _('Link institutions') }}</a>{% endif %}</small>
           {% endif %}
         </div>

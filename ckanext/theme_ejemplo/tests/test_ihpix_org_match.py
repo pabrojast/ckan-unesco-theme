@@ -140,14 +140,17 @@ def test_group_activities_merges_variants_and_splits_linked_rows():
         {'id': 'a1', 'institution': 'UNESCO IHP', 'institution_org_id': '', 'status': 'published'},
         {'id': 'a2', 'institution': 'UNESCO-IHP', 'institution_org_id': '', 'status': 'published'},
         {'id': 'a3', 'institution': ' unesco  ihp ', 'institution_org_id': None, 'status': 'draft'},
-        {'id': 'a4', 'institution': 'IGRAC', 'institution_org_id': 'o-igrac', 'status': 'published'},
+        {'id': 'a4', 'institution': 'IGRAC', 'institution_org_id': 'o-igrac', 'status': 'published',
+         'partner_org_ids': '["p-2", "p-1"]'},
+        {'id': 'a8', 'institution': 'IGRAC', 'institution_org_id': 'o-igrac', 'status': 'published',
+         'partner_org_ids': '["p-1", "p-3"]'},
         {'id': 'a5', 'institution': 'IGRAC', 'institution_org_id': '', 'status': 'pending'},
         {'id': 'a6', 'institution': '', 'institution_org_id': '', 'status': 'published'},
         {'id': 'a7', 'institution': 'of the', 'institution_org_id': '', 'status': 'published'},
     ]
     groups = OM.group_activities(rows)
     assert groups['totals'] == {'unlinked_groups': 2, 'unlinked_activities': 4,
-                                'linked_groups': 1, 'linked_activities': 1, 'without_institution': 2}
+                                'linked_groups': 1, 'linked_activities': 2, 'without_institution': 2}
     first = groups['unlinked'][0]
     assert first['key'] == 'unesco ihp' and first['count'] == 3
     assert first['institution'] == 'UNESCO IHP'            # variante más frecuente (empate → primera)
@@ -155,7 +158,9 @@ def test_group_activities_merges_variants_and_splits_linked_rows():
     assert first['ids'] == ['a1', 'a2', 'a3'] and first['statuses'] == {'published': 2, 'draft': 1}
     assert groups['unlinked'][1]['institution'] == 'IGRAC' and groups['unlinked'][1]['ids'] == ['a5']
     linked = groups['linked'][0]
-    assert linked['organization_id'] == 'o-igrac' and linked['ids'] == ['a4']
+    assert linked['organization_id'] == 'o-igrac' and linked['ids'] == ['a4', 'a8']
+    assert linked['partners'] == ['p-1']                   # socias comunes a todo el grupo
+    assert first['partners'] == [] and groups['unlinked'][1]['partners'] == []
     assert OM.filter_groups(groups['unlinked'], 'ihp') == [first]
     assert OM.filter_groups(groups['unlinked'], 'UNESCO-IHP') == [first]
     assert OM.filter_groups(groups['unlinked'], '') == groups['unlinked']
@@ -223,4 +228,18 @@ def test_specific_words_reordered_initials_and_short_texts():
     # Sin falsos positivos nuevos
     for text in ('State Hydrological Institute', 'Kyoto University', 'UNESCO MAPUTO', 'Imperial College'):
         assert OM.suggest(text, PREPARED) == [], text
+
+
+def test_suggest_partners_from_the_other_segments():
+    text = 'CERSHI, National Autonomous University of Mexico and UNESCO Chair on Sustainability'
+    partners = OM.suggest_partners(text, PREPARED, exclude=['o-cershi'])
+    assert [(p['id'], p['confident'], p['segment']) for p in partners] == [
+        ('o-sustain', True, 'UNESCO Chair on Sustainability')]
+    # El primer tramo es la líder: no se propone como socia; sin tramos no hay socias
+    assert OM.suggest_partners('CERSHI and Grupo Modelo', PREPARED) == []
+    assert OM.suggest_partners('UNESCO Chair on Sustainability', PREPARED) == []
+    # Las sugerencias ya usadas para la líder se excluyen y no se repiten
+    assert OM.suggest_partners('Tampere University, UNESCO Chair in Sustainable Water Services, IGRAC and IGRAC',
+                               PREPARED, exclude=['o-igrac']) == []
+    assert [p['id'] for p in OM.suggest_partners('UNAM, IGRAC and IGRAC', PREPARED)] == ['o-igrac']
 

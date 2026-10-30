@@ -1,14 +1,16 @@
 {# Opciones del selector de organización (Progress y explorador IHP-IX).
-   `organizations`: [{id, name, title, count}] — sólo las vinculadas a
-   actividades publicadas (acción `ihpix_progress_stats`, `options.organizations`).
-   El valor es el `name` (lo que llevan las URLs); `data-search` admite el id. #}
-{% macro organization_options(organizations, selected='', selected_title='', with_count=false) %}
+   `organizations`: [{id, name, title, count}] — todas las activas, las que
+   tienen actividades publicadas vinculadas primero (acción
+   `ihpix_progress_stats`, `options.organizations`). El valor es el `name`
+   (lo que llevan las URLs); `data-search` admite el id; `data-description`
+   muestra el nº de actividades en el desplegable del combobox. #}
+{% macro organization_options(organizations, selected='', selected_title='') %}
   {% set found = namespace(value=false) %}
   {% for org in organizations or [] %}
     {% set active = selected and selected in (org.name, org.id) %}
     {% if active %}{% set found.value = true %}{% endif %}
-    <option value="{{ org.name }}" data-search="{{ org.name }} {{ org.id }}"{% if active %} selected{% endif %}>{{ org.title }}{% if with_count and org.count is defined %} ({{ org.count }}){% endif %}</option>
+    <option value="{{ org.name }}" data-search="{{ org.name }} {{ org.id }}"{% if org.count %} data-description="{{ org.count }} {{ _('activities') }}"{% endif %}{% if active %} selected{% endif %}>{{ org.title }}</option>
   {% endfor %}
-  {# Conserva enlaces a organizaciones sin actividades vinculadas sin convertir el filtro en "todas". #}
+  {# Conserva enlaces a organizaciones desconocidas sin convertir el filtro en "todas". #}
   {% if selected and not found.value %}<option value="{{ selected }}" selected>{{ selected_title or selected }}</option>{% endif %}
 {% endmacro %}

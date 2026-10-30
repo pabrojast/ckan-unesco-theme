@@ -38,6 +38,16 @@
       .ihpin-table .ixf-combobox-input::placeholder { color: #94A3B8; }
       .ihpin-table .ixf-listbox { min-width: 18rem; }
       .ihpin-cell-org { min-width: 16rem; }
+      .ihpin-partners { margin-top: .4rem; display: flex; flex-direction: column; gap: .3rem; }
+      .ihpin-partner { display: flex; gap: .3rem; align-items: center; }
+      .ihpin-partner .ixf-combobox, .ihpin-partner select { flex: 1 1 auto; min-width: 0; }
+      .ihpin-partner-remove { flex: 0 0 auto; width: 28px; height: 28px; border: 1px solid #CBD5E1; border-radius: 6px; background: #fff; color: #64748B; cursor: pointer; font-size: 1rem; line-height: 1; }
+      .ihpin-partner-remove:hover { border-color: #B91C1C; color: #B91C1C; }
+      .ihpin-addlink { align-self: flex-start; border: 0; background: none; padding: 0; font-size: .78rem; font-weight: 600; color: #0069B4; cursor: pointer; }
+      .ihpin-addlink:hover { text-decoration: underline; }
+      .ihpin-sugg--partners { align-items: center; }
+      .ihpin-sugg-label { font-size: .72rem; color: #64748B; text-transform: uppercase; letter-spacing: .04em; }
+      .ihpin-sugg button.is-added { opacity: .55; }
       .ihpin-inst { font-weight: 600; color: #0F172A; }
       .ihpin-meta { font-size: .76rem; color: #64748B; margin-top: .15rem; }
       .ihpin-variants { font-size: .76rem; color: #475569; margin-top: .2rem; }
@@ -69,6 +79,7 @@
     <div class="ihpin-intro">
       {{ _('Legacy activities name their lead institution as free text. Only activities linked to an organization by id appear in that organization\'s IHP-IX tab and in the explorer filter.') }}
       {{ _('Review the suggestions, pick the organization for each institution and apply the selection: every linked activity gets a new revision in its history and the link can be undone below. The institution text itself is never changed.') }}
+      {{ _('If the reported text names several institutions, add the other ones as partner organizations: they are stored as partners of every activity in the group and removed together with the lead link.') }}
     </div>
 
     <div class="ihpin-kpis">
@@ -165,6 +176,20 @@
                     <option value="">{{ _('— Select an organization —') }}</option>
                     {% if preselected %}<option value="{{ preselected.id }}" selected>{{ preselected.title }}</option>{% endif %}
                   </select>
+                  {# Socias: el texto reportado puede nombrar varias instituciones; en CKAN
+                     sólo hay una líder, las demás se guardan en `partner_org_ids`. #}
+                  <div class="ihpin-partners" data-ihpin-partners="{{ i }}">
+                    {% if group.partner_suggestions %}
+                      <div class="ihpin-sugg ihpin-sugg--partners">
+                        <span class="ihpin-sugg-label">{{ _('Suggested partners') }}:</span>
+                        {% for s in group.partner_suggestions %}
+                          <button type="button" data-ihpin-partner-suggest data-row="{{ i }}" data-org="{{ s.id }}" title="{{ s.segment }} → {{ s.name }}">+ {{ s.title }}</button>
+                        {% endfor %}
+                      </div>
+                    {% endif %}
+                    <div class="ihpin-partner-list" data-ihpin-partner-list="{{ i }}"></div>
+                    <button type="button" class="ihpin-addlink" data-ihpin-add-partner="{{ i }}"><i class="fa fa-plus" aria-hidden="true"></i> {{ _('Add partner organization') }}</button>
+                  </div>
                 </td>
               </tr>
             {% endfor %}
@@ -173,6 +198,14 @@
         <p style="margin-top:.8rem;">
           <button type="submit" class="btn btn-primary" data-ihpin-submit><i class="fa fa-link" aria-hidden="true"></i> {{ _('Link selected institutions') }}</button>
         </p>
+        <template id="ihpin-partner-template">
+          <div class="ihpin-partner">
+            <select data-ihpix-org-partner data-max-rows="40" aria-label="{{ _('Partner organization') }}">
+              <option value="">{{ _('— Select a partner organization —') }}</option>
+            </select>
+            <button type="button" class="ihpin-partner-remove" data-ihpin-remove-partner aria-label="{{ _('Remove') }}" title="{{ _('Remove') }}">&times;</button>
+          </div>
+        </template>
       </form>
     {% elif q %}
       <div class="ihpin-empty">{{ _('No institutions match the filter.') }}</div>
@@ -205,6 +238,11 @@
                   {% else %}
                     <span class="ihpin-none">{{ group.organization_id }}</span>
                   {% endif %}
+                  {% if group.partner_orgs %}
+                    <div class="ihpin-meta">{{ _('Partners') }}:
+                      {% for p in group.partner_orgs %}<a href="{{ h.url_for('theme_ejemplo.organization_ihpix', name=p.name) }}">{{ p.title }}</a>{% if not loop.last %} · {% endif %}{% endfor %}
+                    </div>
+                  {% endif %}
                 </td>
                 <td>
                   <form method="post" action="{{ h.url_for('theme_ejemplo.ihpix_institutions_link') }}" class="ihpin-unlink"
@@ -214,6 +252,7 @@
                     <input type="hidden" name="q" value="{{ q or '' }}">
                     <input type="hidden" name="key" value="{{ group.key }}">
                     <input type="hidden" name="organization_id" value="{{ group.organization_id }}">
+                    <input type="hidden" name="partner_ids" value="{{ group.partners|join(',') }}">
                     <button type="submit" class="btn btn-default btn-xs"><i class="fa fa-unlink" aria-hidden="true"></i> {{ _('Unlink') }}</button>
                   </form>
                 </td>
@@ -275,6 +314,40 @@
         selects.forEach(function (select) { observer.observe(select.closest('tr')); });
       }
       function row(index) { return document.getElementById('apply-' + index).closest('tr'); }
+      // Socias: un combobox más por organización añadida (name="partner-<fila>", repetible).
+      var partnerTemplate = document.getElementById('ihpin-partner-template');
+      var partnerSeq = 0;
+      function partnerSelects(index) {
+        return Array.prototype.slice.call(form.querySelectorAll('[data-ihpin-partner-list="' + index + '"] select'));
+      }
+      function addPartner(index, orgId) {
+        var list = form.querySelector('[data-ihpin-partner-list="' + index + '"]');
+        if (!list || !partnerTemplate) { return null; }
+        if (orgId && partnerSelects(index).some(function (s) { return s.value === orgId; })) { return null; }
+        var node = partnerTemplate.content.firstElementChild.cloneNode(true);
+        var select = node.querySelector('select');
+        select.name = 'partner-' + index;
+        select.id = 'partner-' + index + '-' + (++partnerSeq);
+        list.appendChild(node);
+        fill(select);
+        if (orgId) { select.value = orgId; }
+        if (window.IhpixForms) {
+          select.setAttribute('data-ihpix-combobox', '');
+          window.IhpixForms.init(node);
+        }
+        node.querySelector('[data-ihpin-remove-partner]').addEventListener('click', function () { node.remove(); syncPartnerSuggestions(index); });
+        select.addEventListener('change', function () { syncPartnerSuggestions(index); });
+        syncPartnerSuggestions(index);
+        var api = window.IhpixForms && window.IhpixForms.get(select);
+        if (!orgId && api && api.focusTarget) { api.focusTarget.focus(); }
+        return select;
+      }
+      function syncPartnerSuggestions(index) {
+        var chosen = partnerSelects(index).map(function (s) { return s.value; });
+        form.querySelectorAll('[data-ihpin-partner-suggest][data-row="' + index + '"]').forEach(function (button) {
+          button.classList.toggle('is-added', chosen.indexOf(button.dataset.org) !== -1);
+        });
+      }
       function update() {
         var boxes = form.querySelectorAll('input[name=apply]');
         var n = 0;
@@ -314,6 +387,12 @@
           }
           update();
         });
+      });
+      form.querySelectorAll('[data-ihpin-add-partner]').forEach(function (button) {
+        button.addEventListener('click', function () { addPartner(button.dataset.ihpinAddPartner, ''); });
+      });
+      form.querySelectorAll('[data-ihpin-partner-suggest]').forEach(function (button) {
+        button.addEventListener('click', function () { addPartner(button.dataset.row, button.dataset.org); });
       });
       document.querySelectorAll('[data-ihpin-select]').forEach(function (button) {
         button.addEventListener('click', function () {

@@ -35,6 +35,7 @@ from collections import OrderedDict
 from difflib import SequenceMatcher
 
 from ckanext.theme_ejemplo import ihpix_normalize as N
+from ckanext.theme_ejemplo import ihpix_relations as R
 
 # Umbrales de la interfaz: por debajo de THRESHOLD no se muestra; a partir de
 # CONFIDENT la sugerencia se preselecciona en el formulario.
@@ -172,6 +173,11 @@ def segments(text, pattern=SEGMENT_RE):
     return out
 
 
+def is_demo(org):
+    u"""True si la organización es de prueba o demostración (título o slug)."""
+    return bool(DEMO_RE.search(str(org.get('title') or '')) or DEMO_RE.search(str(org.get('name') or '')))
+
+
 def _specific(tokens):
     u"""Palabras que identifican a una institución (ni vacías ni genéricas)."""
     return frozenset(t for t in tokens if t not in GENERIC and t not in STOPWORDS)
@@ -210,7 +216,7 @@ def prepare_org(org):
         'acronyms': acronyms(title),
         'initials': initials(title), 'slug_initials': initials(slug_text),
         'segment_initials': _segment_initials(title),
-        'demo': bool(DEMO_RE.search(title) or DEMO_RE.search(name)),
+        'demo': is_demo({'title': title, 'name': name}),
     }
 
 
@@ -405,6 +411,27 @@ def suggest(institution, prepared_orgs, limit=MAX_SUGGESTIONS, threshold=THRESHO
     return found[:limit] if limit else found
 
 
+def suggest_partners(institution, prepared_orgs, exclude=(), limit=2):
+    u"""Organizaciones socias que sugiere un texto con varias instituciones
+    ("CERSHI, UNAM and UNESCO Chair on Sustainability"): el mejor candidato
+    **confiable** de cada tramo posterior al primero, sin repetir ni incluir
+    las ids de `exclude` (las sugerencias de institución líder)."""
+    text = institution['text'] if isinstance(institution, dict) else institution
+    exclude = set(exclude or ())
+    found = []
+    for piece in pieces(text)[1:]:
+        best = suggest(piece, prepared_orgs, limit=1)
+        if not best or not best[0]['confident']:
+            continue
+        item = best[0]
+        if item['id'] in exclude or any(f['id'] == item['id'] for f in found):
+            continue
+        found.append(dict(item, segment=N.clean_text(piece)))
+        if limit and len(found) >= limit:
+            break
+    return found
+
+
 def _variant_display(variants):
     u"""Texto representativo del grupo: el más frecuente; a igualdad, el primero."""
     best, best_count = None, -1
@@ -415,10 +442,12 @@ def _variant_display(variants):
 
 
 def group_activities(rows):
-    u"""Agrupa actividades (`{id, institution, institution_org_id, status}`) por
-    clave de institución. Devuelve `{'unlinked': [...], 'linked': [...],
-    'totals': {...}}`; cada grupo trae `key`, `institution`, `variants`,
-    `count`, `ids` y `statuses`; los vinculados añaden `organization_id`."""
+    u"""Agrupa actividades (`{id, institution, institution_org_id, status[,
+    partner_org_ids]}`) por clave de institución. Devuelve `{'unlinked': [...],
+    'linked': [...], 'totals': {...}}`; cada grupo trae `key`, `institution`,
+    `variants`, `count`, `ids`, `statuses` y `partners` (ids de organizaciones
+    socias comunes a todas sus actividades); los vinculados añaden
+    `organization_id`."""
     unlinked, linked = OrderedDict(), OrderedDict()
     without_institution = 0
     for row in rows or []:
@@ -432,12 +461,14 @@ def group_activities(rows):
         group = bucket.get(group_key)
         if group is None:
             group = bucket[group_key] = {'key': text_key, 'variants': OrderedDict(), 'count': 0,
-                                         'ids': [], 'statuses': OrderedDict()}
+                                         'ids': [], 'statuses': OrderedDict(), '_partners': None}
             if org_id:
                 group['organization_id'] = org_id
         group['variants'][text] = group['variants'].get(text, 0) + 1
         group['count'] += 1
         group['ids'].append(row.get('id'))
+        partners = set(R.read_ids(row.get('partner_org_ids')))
+        group['_partners'] = partners if group['_partners'] is None else group['_partners'] & partners
         status = row.get('status') or ''
         group['statuses'][status] = group['statuses'].get(status, 0) + 1
 
@@ -448,6 +479,7 @@ def group_activities(rows):
             group['institution'] = display
             group['variants'] = [text for text in group['variants'] if text != display]
             group['statuses'] = dict(group['statuses'])
+            group['partners'] = sorted(group.pop('_partners') or ())
             out.append(group)
         out.sort(key=lambda g: (-g['count'], g['institution'].lower()))
         return out

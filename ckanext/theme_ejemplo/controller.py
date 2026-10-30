@@ -1006,7 +1006,7 @@ class MyLogica():
                 from ckanext.theme_ejemplo import ihpix_constants as C
                 from ckanext.theme_ejemplo import ihpix_relations as R
                 from ckanext.theme_ejemplo.actions import (
-                    _ihpix_linked_organizations, _ihpix_resolve_organization,
+                    _ihpix_organization_options, _ihpix_resolve_organization,
                     _ihpix_resolve_scope_value,
                 )
                 flagship_code = _ihpix_resolve_scope_value('flagship', flagship_filter) if flagship_filter else None
@@ -1018,9 +1018,9 @@ class MyLogica():
                 organization = _ihpix_resolve_organization(organization_filter)
                 organization_title = organization['title'] if organization else ''
                 organization_name = organization['name'] if organization else ''
-                # Selector: sólo organizaciones con actividades publicadas vinculadas.
+                # Selector con búsqueda: todas las organizaciones, las vinculadas primero.
                 try:
-                    organizations = _ihpix_linked_organizations()
+                    organizations = _ihpix_organization_options()
                 except Exception as e:
                     log.error('Error al listar las organizaciones vinculadas IHP-IX: %s', e)
                     organizations = []
@@ -5168,13 +5168,17 @@ class MyLogica():
             if request.form.get('unlink'):
                 links.append({'key': (request.form.get('key') or '').strip(),
                               'organization_id': '',
-                              'current_organization_id': (request.form.get('organization_id') or '').strip()})
+                              'current_organization_id': (request.form.get('organization_id') or '').strip(),
+                              # Socias añadidas junto con la líder: se retiran con ella
+                              'partner_organization_ids': (request.form.get('partner_ids') or '').strip()})
             else:
                 for index in request.form.getlist('apply'):
                     key = (request.form.get('key-%s' % index) or '').strip()
                     org_id = (request.form.get('org-%s' % index) or '').strip()
+                    partners = [p.strip() for p in request.form.getlist('partner-%s' % index) if p.strip()]
                     if key and org_id:
-                        links.append({'key': key, 'organization_id': org_id})
+                        links.append({'key': key, 'organization_id': org_id,
+                                      'partner_organization_ids': partners})
             if not links:
                 h.flash_notice(_('No institutions were selected.'))
                 return h.redirect_to('theme_ejemplo.ihpix_institutions_admin', **params)

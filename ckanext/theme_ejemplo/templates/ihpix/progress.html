@@ -71,13 +71,12 @@
           </select>
         </div>
         <div class="ixg-filter ixg-filter--organization"><label for="ixg-filter-organization">{{ _('Organization') }}</label>
-          {# Sólo organizaciones con actividades publicadas vinculadas (líder o socia).
-             Con la lista vacía el control se deshabilita, salvo que llegue
-             `?organization=` por URL, para poder limpiarlo. #}
-          <select id="ixg-filter-organization" class="ixg-select" data-ihpix-combobox{% if not opts.organizations and not filters.organization %} disabled{% endif %}>
+          {# Combobox con búsqueda: todas las organizaciones activas, las que
+             tienen actividades vinculadas (líder o socia) primero y con su conteo. #}
+          <select id="ixg-filter-organization" class="ixg-select" data-ihpix-combobox>
             <option value="">{{ _('All organizations') }}</option>{{ organization_options(opts.organizations, filters.organization, organization_title) }}
           </select>
-          {% if opts and not opts.organizations %}
+          {% if opts and not (opts.organizations or [])|selectattr('count')|list %}
             <p class="ixg-filter-hint">{{ _('No organizations are linked to published activities yet.') }}{% if is_sysadmin %} <a href="{{ h.url_for('theme_ejemplo.ihpix_institutions_admin') }}">{{ _('Link institutions') }}</a>{% endif %}</p>
           {% endif %}
         </div>

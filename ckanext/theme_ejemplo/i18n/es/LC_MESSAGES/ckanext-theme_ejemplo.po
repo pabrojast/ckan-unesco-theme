@@ -11165,3 +11165,19 @@ msgstr "Se muestran las actividades en las que esta organización es la instituc
 #: ckanext/theme_ejemplo/templates/ihpix/progress.html
 msgid "No organizations are linked to published activities yet."
 msgstr "Todavía no hay organizaciones vinculadas a actividades publicadas."
+
+#: ckanext/theme_ejemplo/templates/admin/ihpix_institutions.html
+msgid "Add partner organization"
+msgstr "Añadir organización socia"
+
+#: ckanext/theme_ejemplo/templates/admin/ihpix_institutions.html
+msgid "— Select a partner organization —"
+msgstr "— Selecciona una organización socia —"
+
+#: ckanext/theme_ejemplo/templates/admin/ihpix_institutions.html
+msgid "Suggested partners"
+msgstr "Socias sugeridas"
+
+#: ckanext/theme_ejemplo/templates/admin/ihpix_institutions.html
+msgid "If the reported text names several institutions, add the other ones as partner organizations: they are stored as partners of every activity in the group and removed together with the lead link."
+msgstr "Si el texto reportado nombra varias instituciones, añade las demás como organizaciones socias: se guardan como socias de todas las actividades del grupo y se retiran junto con el vínculo de la líder."

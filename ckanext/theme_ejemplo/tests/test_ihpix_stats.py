@@ -351,3 +351,17 @@ def test_options_echo_linked_organizations(index):
     stats = S.compute_progress_stats(rows, 'overall', country_index=index, organizations=orgs)
     assert stats['options']['organizations'] == orgs
     json.dumps(stats)
+
+
+def test_organization_options_list_every_org_linked_first_and_hide_demo():
+    orgs = [{'id': 'org-3', 'name': 'zeta', 'title': 'Zeta Institute'},
+            {'id': 'org-1', 'name': 'alpha', 'title': 'Alpha Centre'},
+            {'id': 'org-7', 'name': 'beta', 'title': 'Beta University'},
+            {'id': 'org-d', 'name': 'ihp-demo-x', 'title': 'IHP X (demo)'},
+            {'id': 'org-2', 'name': 'qa-demo', 'title': 'Dashboard QA'}]
+    options = S.organization_options(_org_rows(), orgs)
+    # Vinculadas primero por nº de actividades, luego el resto por título; la demo sin actividades no sale
+    assert [(o['name'], o['count']) for o in options] == [
+        ('alpha', 2), ('qa-demo', 1), ('zeta', 1), ('beta', 0)]
+    assert S.organization_options([], orgs) == [
+        dict(orgs[1], count=0), dict(orgs[2], count=0), dict(orgs[0], count=0)]

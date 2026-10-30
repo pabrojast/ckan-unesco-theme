@@ -10847,3 +10847,19 @@ msgstr "عرض الأنشطة التي تكون فيها هذه المنظمة �
 #: ckanext/theme_ejemplo/templates/ihpix/progress.html
 msgid "No organizations are linked to published activities yet."
 msgstr "لا توجد منظمات مرتبطة بأنشطة منشورة حتى الآن."
+
+#: ckanext/theme_ejemplo/templates/admin/ihpix_institutions.html
+msgid "Add partner organization"
+msgstr "إضافة منظمة شريكة"
+
+#: ckanext/theme_ejemplo/templates/admin/ihpix_institutions.html
+msgid "— Select a partner organization —"
+msgstr "— اختر منظمة شريكة —"
+
+#: ckanext/theme_ejemplo/templates/admin/ihpix_institutions.html
+msgid "Suggested partners"
+msgstr "شركاء مقترحون"
+
+#: ckanext/theme_ejemplo/templates/admin/ihpix_institutions.html
+msgid "If the reported text names several institutions, add the other ones as partner organizations: they are stored as partners of every activity in the group and removed together with the lead link."
+msgstr "إذا كان النص المُبلَّغ عنه يذكر عدة مؤسسات، فأضف الأخرى كمنظمات شريكة: تُحفظ كشريكة لكل نشاط في المجموعة وتُزال مع رابط المؤسسة الرائدة."

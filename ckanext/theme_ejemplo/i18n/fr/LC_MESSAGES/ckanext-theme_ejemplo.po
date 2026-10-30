@@ -11209,3 +11209,19 @@ msgstr "Affichage des activités où cette organisation est l'institution chef d
 #: ckanext/theme_ejemplo/templates/ihpix/progress.html
 msgid "No organizations are linked to published activities yet."
 msgstr "Aucune organisation n'est encore liée à des activités publiées."
+
+#: ckanext/theme_ejemplo/templates/admin/ihpix_institutions.html
+msgid "Add partner organization"
+msgstr "Ajouter une organisation partenaire"
+
+#: ckanext/theme_ejemplo/templates/admin/ihpix_institutions.html
+msgid "— Select a partner organization —"
+msgstr "— Sélectionner une organisation partenaire —"
+
+#: ckanext/theme_ejemplo/templates/admin/ihpix_institutions.html
+msgid "Suggested partners"
+msgstr "Partenaires suggérés"
+
+#: ckanext/theme_ejemplo/templates/admin/ihpix_institutions.html
+msgid "If the reported text names several institutions, add the other ones as partner organizations: they are stored as partners of every activity in the group and removed together with the lead link."
+msgstr "Si le texte déclaré nomme plusieurs institutions, ajoutez les autres comme organisations partenaires : elles sont enregistrées comme partenaires de chaque activité du groupe et retirées avec le lien de l'institution chef de file."

@@ -477,3 +477,19 @@ msgstr ""
 #: ckanext/theme_ejemplo/templates/ihpix/progress.html
 msgid "No organizations are linked to published activities yet."
 msgstr ""
+
+#: ckanext/theme_ejemplo/templates/admin/ihpix_institutions.html
+msgid "Add partner organization"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/admin/ihpix_institutions.html
+msgid "— Select a partner organization —"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/admin/ihpix_institutions.html
+msgid "Suggested partners"
+msgstr ""
+
+#: ckanext/theme_ejemplo/templates/admin/ihpix_institutions.html
+msgid "If the reported text names several institutions, add the other ones as partner organizations: they are stored as partners of every activity in the group and removed together with the lead link."
+msgstr ""

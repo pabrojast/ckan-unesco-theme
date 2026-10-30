@@ -31,6 +31,7 @@ from collections import OrderedDict
 
 from ckanext.theme_ejemplo import ihpix_constants as C
 from ckanext.theme_ejemplo import ihpix_normalize as N
+from ckanext.theme_ejemplo import ihpix_org_match as OM
 from ckanext.theme_ejemplo import ihpix_relations as R
 
 SCOPES = ('overall', 'pa', 'output', 'flagship', 'ctwg')
@@ -158,12 +159,7 @@ def _resolve_country(value, index):
 def partner_org_ids(value):
     u"""Ids de organizaciones socias (`partner_org_ids` en JSON o ya en
     lista); lista vacía si el JSON no es válido o no es una lista."""
-    if isinstance(value, (list, tuple)):
-        return [str(x) for x in value if x]
-    try:
-        return [str(x) for x in R.read_list(value) if x]
-    except (ValueError, TypeError):
-        return []
+    return R.read_ids(value)
 
 
 def organization_counts(rows):
@@ -184,6 +180,24 @@ def organization_counts(rows):
         for oid in ids:
             counts[oid] = counts.get(oid, 0) + 1
     return counts
+
+
+def organization_options(rows, organizations):
+    u"""Opciones del selector de organización de Progress y del explorador:
+    todas las organizaciones activas (`[{id, name, title}]`) con el nº de
+    actividades publicadas vinculadas (`count`, líder o socia). Primero las
+    vinculadas, por nº de actividades, y después el resto por título, para
+    que al escribir una letra se encuentre cualquier organización. Las de
+    prueba (demo/QA) sólo aparecen si tienen actividades vinculadas."""
+    counts = organization_counts(rows)
+    out = []
+    for org in organizations or []:
+        count = counts.get(org.get('id'), 0)
+        if not count and OM.is_demo(org):
+            continue
+        out.append(dict(org, count=count))
+    out.sort(key=lambda o: (-o['count'], (o.get('title') or '').lower()))
+    return out
 
 
 def prepare_row(row, country_index=None):
