@@ -20,6 +20,9 @@ Reglas:
   dashboard lo explica).
 - Member States impactados = nombres canónicos de `member_states` ∪
   `country` ∪ `supporting_member_state`, resueltos con `country_index`.
+- Filtro `organization` (id de organización CKAN): la actividad cuenta si
+  la organización es la institución líder (`institution_org_id`) o una
+  socia (`partner_org_ids`), igual que la pestaña `/organization/<name>/ihpix`.
 """
 from __future__ import unicode_literals
 
@@ -152,6 +155,37 @@ def _resolve_country(value, index):
 
 # ─── Preparación y filtrado de filas ─────────────────────────────────────
 
+def partner_org_ids(value):
+    u"""Ids de organizaciones socias (`partner_org_ids` en JSON o ya en
+    lista); lista vacía si el JSON no es válido o no es una lista."""
+    if isinstance(value, (list, tuple)):
+        return [str(x) for x in value if x]
+    try:
+        return [str(x) for x in R.read_list(value) if x]
+    except (ValueError, TypeError):
+        return []
+
+
+def organization_counts(rows):
+    u"""Nº de filas por id de organización (líder o socia, una vez por
+    fila), sobre filas crudas o preparadas. Sólo cuenta las publicadas si
+    traen `status`."""
+    counts = OrderedDict()
+    for row in rows:
+        if (row.get('status') or 'published') != 'published':
+            continue
+        ids = []
+        lead = N.clean_text(row.get('institution_org_id'))
+        if lead:
+            ids.append(lead)
+        for pid in partner_org_ids(row.get('partner_org_ids')):
+            if pid not in ids:
+                ids.append(pid)
+        for oid in ids:
+            counts[oid] = counts.get(oid, 0) + 1
+    return counts
+
+
 def prepare_row(row, country_index=None):
     u"""Fila normalizada para agregar: listas en `list`, alias aplicados,
     puertas derivadas, países canónicos e `impacted_member_states`."""
@@ -171,6 +205,8 @@ def prepare_row(row, country_index=None):
     out['priority_area'] = N.clean_text(row.get('priority_area'))
     out['output'] = N.clean_text(row.get('output'))
     out['institution'] = N.clean_text(row.get('institution'))
+    out['institution_org_id'] = N.clean_text(row.get('institution_org_id'))
+    out['partner_org_ids'] = partner_org_ids(row.get('partner_org_ids'))
     code = N.clean_text(row.get('key_activity_code')) or C.key_activity_code(row.get('key_activity'))
     out['key_activity_code'] = code
     out.update(N.derive_gates(row))
@@ -221,6 +257,7 @@ def filter_rows(rows, scope='overall', value=None, filters=None, country_index=N
     if filters.get('country'):
         country = _resolve_country(filters.get('country'), country_index)[0]
     inst_type = N.clean_text(filters.get('institution_type'))
+    organization = N.clean_text(filters.get('organization'))
     out = []
     for row in rows:
         if scope == 'pa' and value not in (R.dimension_values(row, 'priority_area') or [row['priority_area']]):
@@ -242,6 +279,9 @@ def filter_rows(rows, scope='overall', value=None, filters=None, country_index=N
         if country and country not in row['impacted_member_states']:
             continue
         if inst_type and row['institution_type'] != inst_type:
+            continue
+        if organization and not (row.get('institution_org_id') == organization
+                                 or organization in (row.get('partner_org_ids') or [])):
             continue
         row = dict(row, _scope=scope, _scope_value=value)
         out.append(row)
@@ -351,7 +391,8 @@ def _by_output(rows, labels):
     return result
 
 
-def _options(all_rows, labels, country_index, scope='overall', value=None):
+def _options(all_rows, labels, country_index, scope='overall', value=None,
+             organizations=None):
     labels = labels or {}
     outputs_by_pa = OrderedDict()
     for pa, pairs in C.OUTPUTS.items():
@@ -379,6 +420,9 @@ def _options(all_rows, labels, country_index, scope='overall', value=None):
         'biennia': biennia,
         'regions': regions,
         'key_activities': key_activities,
+        # Organizaciones con actividades vinculadas; las resuelve la acción
+        # (títulos desde la BD), aquí sólo se devuelven tal cual.
+        'organizations': list(organizations or []),
     }
 
 
@@ -474,13 +518,16 @@ def _output_biennium_matrix(rows):
 
 
 def compute_progress_stats(rows, scope='overall', value=None, filters=None,
-                           country_index=None, labels=None):
+                           country_index=None, labels=None, organizations=None):
     u"""JSON completo del dashboard de progreso para un ámbito.
 
     `rows`: dicts de actividades (sólo se agregan las publicadas si traen
     `status`). `value`: PA ('PA1'), Output ('1.3'), código de flagship o
     nombre de CTWG según `scope`. `labels`: {'outputs': {code: title},
     'key_activities': {code: title}} opcional (por defecto, constantes).
+    `organizations`: lista `[{id, name, title, count}]` para el selector
+    (se devuelve en `options.organizations`); `filters['organization']` es
+    el id de la organización (líder o socia).
     """
     if scope not in SCOPES:
         raise ValueError('scope desconocido: %s' % scope)
@@ -651,5 +698,5 @@ def compute_progress_stats(rows, scope='overall', value=None, filters=None,
         'kpi_8': kpi_8,
         'produced_by_dimension': produced,
         'reached_by_dimension': reached,
-        'options': _options(prepared, labels, country_index, scope, value),
+        'options': _options(prepared, labels, country_index, scope, value, organizations),
     }

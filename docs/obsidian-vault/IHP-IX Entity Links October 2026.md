@@ -16,6 +16,7 @@ Reporte de UNESCO (2026-10-23): en `/ihpix/outputs` las actividades muestran Mem
 - Explorador: filtros `organization` (nombre o id), `flagship` y `ctwg` (código o slug) con chips legibles; macro `explorer_url` conserva los filtros en chips y paginación. El enlace de la pestaña de organización pasa `name`.
 - Fichas enlazadas en explorador y pestañas (`ihpix/snippets/entity_chips.html`): institución → pestaña de la organización (si hay id), país sede y Member States beneficiarios/de apoyo → pestaña del grupo, flagships → pestaña de la iniciativa (18 de 21 en dev) o panel de progreso, CTWG → panel de progreso. Países no resueltos se muestran atenuados sin enlace.
 - Traducciones: 7 literales nuevos en es/fr/ar (+ el aviso vacío de Member State que estaba sin traducir), `.pot` y `.mo` compilados con `msgfmt`.
+- **2026-10-30, filtro por organización**: Progress y explorador reutilizan la misma regla de pertenencia que la pestaña (líder o socia, por id). Detalle en [[IHP-IX Progress UX October 2026#Filtro por organización (2026-10-30)]]; `ihpix_entities.partner_ids` delega en `ihpix_stats.partner_org_ids`.
 
 ## Verificación
 

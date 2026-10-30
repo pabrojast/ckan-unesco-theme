@@ -140,7 +140,14 @@ def ihpix_narrative_data(context, data):
         raise tk.ValidationError({'biennium': 'Select a reporting biennium'})
     geography = {key: str(data.get(key) or '').strip() for key in ('country', 'region')}
     filters = dict(status='published', biennium=biennium, limit=None, **geography)
-    from ckanext.theme_ejemplo.actions import _ihpix_resolve_scope_value
+    from ckanext.theme_ejemplo.actions import _ihpix_resolve_scope_value, _ihpix_resolve_organization
+    # `organization` como filtro (desde Progress) acompaña a cualquier ámbito
+    # salvo al propio ámbito "organization"; se aplica por id, líder o socia.
+    organization = None
+    if scope != 'organization':
+        organization = _ihpix_resolve_organization(data.get('organization'))
+        if organization:
+            filters['organization'] = organization['id']
     if scope == 'overall':
         value = ''
         title = tk._('Overall implementation progress')
@@ -170,6 +177,8 @@ def ihpix_narrative_data(context, data):
     index = _ihpix_country_index()
     stat_scope = scope if scope != 'organization' else 'overall'
     stat_filters = dict(geography, biennium=biennium)
+    if organization:
+        stat_filters['organization'] = organization['id']
     # Una sola selección para indicadores y fuentes; evita coincidencias parciales de SQL.
     selected = filter_rows([prepare_row(a.as_dict(), index) for a in rows],
                           stat_scope, value, stat_filters, index)
@@ -187,7 +196,8 @@ def ihpix_narrative_data(context, data):
                 item.update(description=a.description, outcomes=a.outcomes)
             sources.append(item)
     return {'title': title, 'scope': scope, 'value': value, 'biennium': biennium,
-            'filters': stat_filters, 'scope_label': stats['scope']['label'],
+            'filters': stat_filters, 'organization': organization,
+            'scope_label': stats['scope']['label'],
             'include_sources': include_sources, 'sources_detail': sources_detail,
             'generated_at': stats['generated_at'], 'stats': stats,
             'sources': sources,

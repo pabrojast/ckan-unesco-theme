@@ -98,11 +98,9 @@ def ctwg_groups(pairs):
 
 def partner_ids(activity):
     u"""Ids de organizaciones socias guardados en la actividad (lista vacía
-    si el JSON no es válido)."""
-    try:
-        return [str(x) for x in R.read_list(activity.get('partner_org_ids')) if x]
-    except (ValueError, TypeError):
-        return []
+    si el JSON no es válido). Misma lectura que usa el filtro por
+    organización de Progress (`ihpix_stats.partner_org_ids`)."""
+    return S.partner_org_ids(activity.get('partner_org_ids'))
 
 
 def activity_links(activity, country_index=None, member_states=None,

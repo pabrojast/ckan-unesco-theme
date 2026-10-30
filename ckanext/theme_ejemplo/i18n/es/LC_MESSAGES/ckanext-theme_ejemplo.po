@@ -11149,3 +11149,19 @@ msgstr "Vincular instituciones"
 #: IHP-IX institution links October 2026
 msgid "Link legacy institutions to this organization"
 msgstr "Vincular instituciones heredadas con esta organización"
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html
+msgid "All organizations"
+msgstr "Todas las organizaciones"
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html
+msgid "Clear organization filter"
+msgstr "Quitar el filtro de organización"
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html
+msgid "Showing activities where this organization is the lead institution or a partner. Totals describe these activities, not results attributable to this organization alone."
+msgstr "Se muestran las actividades en las que esta organización es la institución líder o una socia. Los totales describen esas actividades, no resultados atribuibles solo a esta organización."
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html
+msgid "No organizations are linked to published activities yet."
+msgstr "Todavía no hay organizaciones vinculadas a actividades publicadas."

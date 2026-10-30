@@ -3554,7 +3554,8 @@ def ihpix_dashboard_stats(context, data_dict):
 # (ámbito, valor, filtros). Con varios workers la frescura máxima es el TTL;
 # las escrituras del propio proceso la invalidan al momento.
 
-_IHPIX_STATS_CACHE = {'rows': None, 'index': None, 'labels': None, 'results': {}}
+_IHPIX_STATS_CACHE = {'rows': None, 'index': None, 'labels': None,
+                      'organizations': None, 'results': {}}
 
 
 def _ihpix_stats_ttl(key='ckanext.theme_ejemplo.ihpix_stats_cache_ttl', default=120):
@@ -3570,6 +3571,7 @@ def _ihpix_invalidate_stats_cache():
     _IHPIX_STATS_CACHE['rows'] = None
     _IHPIX_STATS_CACHE['index'] = None
     _IHPIX_STATS_CACHE['labels'] = None
+    _IHPIX_STATS_CACHE['organizations'] = None
     _IHPIX_STATS_CACHE['results'] = {}
 
 
@@ -3611,6 +3613,26 @@ def _ihpix_published_rows():
             status=IhpixActivity.STATUS_PUBLISHED, limit=None)
         return [a.as_dict() for a in rows]
     return _ihpix_cached('rows', _ihpix_stats_ttl(), _build)
+
+
+def _ihpix_linked_organizations():
+    """Organizaciones activas con alguna actividad publicada vinculada
+    (líder `institution_org_id` o socia en `partner_org_ids`) como
+    `[{id, name, title, count}]` ordenadas por título: alimentan el selector
+    de organización de Progress y del explorador. Misma caché/TTL que las
+    filas publicadas; se vacía con `_ihpix_invalidate_stats_cache()` (que
+    `ihpix_institution_link` dispara) y al cambiar la huella de
+    `_ihpix_check_stats_version()`, también desde otros workers."""
+    from ckanext.theme_ejemplo import ihpix_stats
+
+    def _build():
+        counts = ihpix_stats.organization_counts(_ihpix_published_rows())
+        if not counts:
+            return []
+        return [dict(org, count=counts[org['id']])
+                for org in _ihpix_organizations() if org['id'] in counts]
+    _ihpix_check_stats_version()
+    return _ihpix_cached('organizations', _ihpix_stats_ttl(), _build)
 
 
 def _ihpix_country_index():
@@ -3672,15 +3694,32 @@ def _ihpix_resolve_scope_value(scope, value):
     return None
 
 
+def _ihpix_resolve_organization(value):
+    """`{'id', 'name', 'title'}` de la organización indicada por name o id
+    (como el explorador y `IhpixActivity.get_filtered`). Si no existe se
+    devuelve el valor crudo en los tres campos: el filtro no encuentra nada
+    pero nunca da 404. `None` si `value` está vacío."""
+    value = (value or u'').strip()
+    if not value:
+        return None
+    org = model.Group.get(value)
+    if org and org.is_organization:
+        return {'id': org.id, 'name': org.name, 'title': org.display_name}
+    return {'id': value, 'name': value, 'title': value}
+
+
 @toolkit.side_effect_free
 def ihpix_progress_stats(context, data_dict):
     """Progreso IHP-IX por ámbito (réplica de los dashboards Power BI).
 
     Params: scope (overall|pa|output|flagship|ctwg), value (PA1 / 1.3 /
     código o slug de flagship / nombre o slug de CTWG), biennium, region,
-    country, institution_type. Usuarios autenticados. El JSON lo define
-    `ihpix_stats.compute_progress_stats`; los sysadmin reciben además
-    `overview.pending`.
+    country, institution_type, organization (name o id de una organización
+    CKAN: actividades donde es institución líder o socia). Usuarios
+    autenticados. El JSON lo define `ihpix_stats.compute_progress_stats`,
+    más `organization` ({id, name, title} o None) y
+    `options.organizations` (sólo las vinculadas a actividades publicadas);
+    los sysadmin reciben además `overview.pending`.
     """
     toolkit.check_access('ihpix_progress_stats', context, data_dict)
     init_ihpix_activities_db()
@@ -3695,10 +3734,15 @@ def ihpix_progress_stats(context, data_dict):
     if value is None:
         raise toolkit.ObjectNotFound('Unknown {} "{}"'.format(scope, data_dict.get('value')))
     filters = {}
-    for key in ('biennium', 'region', 'country', 'institution_type'):
+    for key in ('biennium', 'region', 'country', 'institution_type', 'organization'):
         val = (data_dict.get(key) or u'').strip()
         if val:
             filters[key] = val
+    # El filtro se aplica por id (name e id comparten entrada de caché); en
+    # `stats.filters` se devuelve el name, que es lo que llevan las URLs.
+    organization = _ihpix_resolve_organization(filters.get('organization'))
+    if organization:
+        filters['organization'] = organization['id']
 
     _ihpix_check_stats_version()
     cache_key = (scope, value, tuple(sorted(filters.items())))
@@ -3710,7 +3754,11 @@ def ihpix_progress_stats(context, data_dict):
         stats = ihpix_stats.compute_progress_stats(
             _ihpix_published_rows(), scope=scope, value=value or None,
             filters=filters, country_index=_ihpix_country_index(),
-            labels=_ihpix_stats_labels())
+            labels=_ihpix_stats_labels(),
+            organizations=_ihpix_linked_organizations())
+        stats['organization'] = organization
+        if organization:
+            stats['filters'] = dict(stats['filters'], organization=organization['name'])
         if len(_IHPIX_STATS_CACHE['results']) > 200:
             _IHPIX_STATS_CACHE['results'] = {}
         _IHPIX_STATS_CACHE['results'][cache_key] = (now + _ihpix_stats_ttl(), stats)

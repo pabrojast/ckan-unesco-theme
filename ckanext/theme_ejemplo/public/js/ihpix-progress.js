@@ -5,7 +5,8 @@
  * `ihpix_progress_stats`) y la configuración de `#ihpix-progress-config`;
  * pinta tiles, gráficos (Chart.js), mapas (Leaflet) y tablas accesibles, y
  * vuelve a pedir los datos a la API cuando cambian los filtros (bienio,
- * región). Sin dependencias más allá de Chart.js y Leaflet, ya cargados por
+ * región, país y organización; `FILTERS`), actualizando la URL con
+ * `pushState`. Sin dependencias más allá de Chart.js y Leaflet, ya cargados por
  * el template. Expone `window.IhpixProgress = { init, load, render }`.
  */
 (function (window, document) {
@@ -21,7 +22,10 @@
   var requestController = null;
   var lastAttempt = null;
   var committedParams = null;
-  var FILTERS = ['biennium', 'region', 'country'];
+  var FILTERS = ['biennium', 'region', 'country', 'organization'];
+  // Avisos de selección con su botón de limpiar: [filtro, caja, etiqueta].
+  var SELECTIONS = [['country', '#ixg-selection', '#ixg-selected-country'],
+                    ['organization', '#ixg-selection-organization', '#ixg-selected-organization']];
   var reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   /* ── Utilidades ─────────────────────────────────────────────── */
@@ -708,11 +712,12 @@
     var option = Array.prototype.find.call(input.options, function (o) { return o.value.toLocaleLowerCase() === key || o.textContent.toLocaleLowerCase() === key; });
     return option ? option.value : value;
   }
-  function countryLabel(value) {
-    var input = $('#ixg-filter-country');
+  function optionLabel(key, value) {
+    var input = $('#ixg-filter-' + key);
     var option = input && Array.prototype.find.call(input.options, function (o) { return o.value === value; });
     return option ? option.textContent.trim() : value;
   }
+  function countryLabel(value) { return optionLabel('country', value); }
   function currentParams() {
     var params = {scope: CFG.scope, value: CFG.value || ''};
     FILTERS.forEach(function (key) {
@@ -733,12 +738,13 @@
     });
     if (window.IhpixForms) { window.IhpixForms.refresh(); }
   }
-  function selectCountry(country) {
+  function selectFilter(key, value) {
     var params = currentParams();
-    params.country = countryValue(country);
+    params[key] = value;
     setControls(params);
     return load(params);
   }
+  function selectCountry(country) { return selectFilter('country', countryValue(country)); }
   function filteredUrl(href, params, includeScope) {
     var url = new URL(href, window.location.href);
     FILTERS.forEach(function (key) {
@@ -757,10 +763,11 @@
     ['#ixg-download', '#ixg-presentation', '#ixg-narrative'].forEach(function (selector) {
       var a = $(selector); if (a) { a.href = filteredUrl(a.href, params, true); }
     });
-    var box = $('#ixg-selection');
-    if (box) { box.hidden = !params.country; }
-    var label = $('#ixg-selected-country');
-    if (label) { label.textContent = countryLabel(params.country || ''); }
+    SELECTIONS.forEach(function (entry) {
+      var box = $(entry[1]), label = $(entry[2]);
+      if (box) { box.hidden = !params[entry[0]]; }
+      if (label) { label.textContent = optionLabel(entry[0], params[entry[0]] || ''); }
+    });
   }
   function load(params, historyMode) {
     params = Object.assign({scope: CFG.scope, value: CFG.value || ''}, params);
@@ -805,6 +812,8 @@
       if (input) { input.addEventListener('change', function () { load(currentParams()); }); }
     });
     $('#ixg-clear-country').addEventListener('click', function () { selectCountry(''); });
+    var clearOrganization = $('#ixg-clear-organization');
+    if (clearOrganization) { clearOrganization.addEventListener('click', function () { selectFilter('organization', ''); }); }
     $('#ixg-retry').addEventListener('click', function () { setControls(lastAttempt); load(lastAttempt); });
     $('.ixg').addEventListener('click', function (event) {
       var button = event.target.closest('[data-ixg-country]');

@@ -217,7 +217,13 @@ def presentation():
     data = dict(request.args)
     requested = request.args.getlist('sections') or None
     stats = tk.get_action('ihpix_progress_stats')(context(), data)
-    filters = {key: data[key] for key in ('biennium', 'region', 'country', 'institution_type') if data.get(key)}
+    filters = {key: data[key] for key in ('biennium', 'region', 'country', 'institution_type', 'organization')
+               if data.get(key)}
+    # La acción resuelve name/id; el enlace de vuelta y la cabecera usan name y título.
+    organization = stats.get('organization') or {}
+    organization_title = organization.get('title') or filters.get('organization', '')
+    if filters.get('organization') and organization.get('name'):
+        filters['organization'] = organization['name']
     scope = stats['scope']['kind']
     value = stats['scope'].get('value') or ''
     if scope == 'overall':
@@ -226,11 +232,13 @@ def presentation():
         back = tk.url_for('theme_ejemplo.ihpix_progress_' + scope,
             value=K.slugify(value) if scope in ('flagship', 'ctwg') else value, **filters)
     filter_labels = {'biennium': tk._('Biennium'), 'region': tk._('Region'),
-                     'country': tk._('Country'), 'institution_type': tk._('Institution type')}
+                     'country': tk._('Country'), 'institution_type': tk._('Institution type'),
+                     'organization': tk._('Organization')}
     return render_template('ihpix/presentation.html', stats=stats,
                            slides=slides(stats, tk._, sections=requested, formatter=_number_formatter()),
                            scope_title=scope_title(stats, tk._), filters=filters,
-                           filter_labels=filter_labels, back=back, source_url=request.url)
+                           filter_labels=filter_labels, organization_title=organization_title,
+                           back=back, source_url=request.url)
 
 
 def pending_resource():

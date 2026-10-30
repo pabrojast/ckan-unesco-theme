@@ -43,3 +43,24 @@ La revisión móvil detectó que el input del combobox heredaba la flecha de fon
 Imagen final de DEV: `pabrojast/ckan-base210@sha256:94547fbb3344ae58a5a5bebf60c462f903553c042cd5352f24b6cb5f5dc81e1c`, pod `ckan-8bf96d45b-bz9km`, 4/4 Ready y cero reinicios. Los 27 archivos comprobados coinciden por SHA-256 con el código publicado; las imágenes auxiliares y las huellas completas de datos siguen iguales. Esta imagen sustituye a la indicada arriba e incorpora el mismo cambio funcional.
 
 El recorrido en DEV completó **108 comprobaciones funcionales y visuales** sobre el cambio principal, más **13 comprobaciones** del ajuste final de selectores en Progress, explorador y formulario, en EN/ES/FR/AR a 390 px. No hubo excepciones JavaScript. El token temporal de verificación fue revocado y una petición protegida confirmó HTTP 403; los contenedores y credenciales de las pruebas aisladas se retiraron.
+
+## Filtro por organización (2026-10-30)
+
+Petición de UNESCO: filtrar por organización en `/ihpix/progress` (y `/pa|/output|/flagship|/ctwg/<value>`) y en `/ihpix/outputs`. Código en `dev210`, **sin desplegar**.
+
+- **Parámetro** `organization` (name o id de una organización CKAN; las URLs generadas llevan el `name`). Regla de pertenencia idéntica a la pestaña `/organization/<name>/ihpix`, al explorador y a la narrativa: la organización es la institución líder (`institution_org_id`) o una socia (`partner_org_ids`). Un valor desconocido devuelve cero actividades con la etiqueta cruda; nunca 404.
+- **Progress**: la acción `ihpix_progress_stats` acepta `organization`, lo resuelve (`_ihpix_resolve_organization`) y filtra en `ihpix_stats.filter_rows` por id; devuelve `organization` (`{id, name, title}`) y `options.organizations`. El combobox `#ixg-filter-organization` entra en `FILTERS` de `ihpix-progress.js`, así que el filtro se conserva en pestañas, selectores de ámbito, historial (`pushState`), descarga JSON, presentación y narrativa. Aviso `#ixg-selection-organization` con botón de limpiar, análogo al de país.
+- **Explorador**: el filtro `?organization=` ya existía (SQL en `IhpixActivity.get_filtered`); ahora tiene control visible (`<select name="organization" data-ihpix-combobox>`, etiquetas con conteo) y el formulario conserva `organization`, `flagship` y `ctwg` al pulsar Apply mediante inputs ocultos (antes se perdían).
+- **Lista del selector** (decisión del usuario, 2026-10-30): sólo organizaciones activas con al menos una actividad publicada vinculada (`actions._ihpix_linked_organizations`: `ihpix_stats.organization_counts` sobre las filas publicadas ∩ `_ihpix_organizations()`), cacheada en el slot `organizations` de la caché de stats (TTL 120 s, invalidada con las demás al aprobar/editar/vincular y por la huella de `_ihpix_check_stats_version`). Macro compartido `ihpix/snippets/organization_options.html` (valor `name`, `data-search` con name e id, opción de respaldo si el valor actual no está en la lista). Lista vacía → control deshabilitado con la pista "No organizations are linked to published activities yet." y, para sysadmin, enlace a `/ckan-admin/ihpix/institutions`; si llega `?organization=` por URL no se deshabilita, para poder limpiarlo.
+- **Presentación y narrativa**: `/ihpix/presentation` muestra el título de la organización en la cabecera de filtros y su enlace de vuelta conserva el `name`; `ihpix_narrative_data` acepta `organization` como filtro junto a cualquier ámbito (antes sólo era un ámbito) y el documento lo muestra en los metadatos, lo conserva al regenerar (input oculto) y lo pasa al enlace de presentación.
+- **Traducciones**: 4 literales nuevos en es/fr/ar (`All organizations`, `Clear organization filter`, el aviso de selección y la pista de lista vacía), `.pot` y `.mo` compilados con `msgfmt`.
+
+> [!note] Estado de los datos en dev (2026-10-30)
+> Ninguna de las 746 actividades de dev tiene `institution_org_id` (DOC-036), así que el selector saldrá deshabilitado con la pista hasta que un sysadmin aplique las vinculaciones del panel `/ckan-admin/ihpix/institutions` (también en `dev210`, sin desplegar). Renombrar una organización en CKAN no cambia la huella de actividades: el título del selector puede tardar hasta el TTL (120 s) en actualizarse.
+
+### Verificación (2026-10-30)
+
+- Suite pura: 236 pruebas (`test_ihpix_stats.py` añade `partner_org_ids`, `prepare_row`, `organization_counts`, filtro por organización y eco de `options.organizations`; `test_ihpix_constants.py` incluye el macro nuevo entre los snippets sin código vivo).
+- Plantillas `progress.html`, `outputs.html`, `narrative.html` y `presentation.html` compiladas con Jinja2 sin CKAN; macro renderizado con lista vacía, selección por name, por id y desconocida. `node --check` del JS y `msgfmt --check` de los tres `.po`.
+- `scripts/ihpix_dev_smoke.py` añade las URLs con `organization=cazalac` (explorador con `flagship`, progress, presentación y narrativa).
+

@@ -1,6 +1,7 @@
 {% extends "page.html" %}
 {% import 'ihpix/snippets/forms_assets.html' as forms_ui with context %}
 {% from 'ihpix/snippets/country_options.html' import country_options with context %}
+{% from 'ihpix/snippets/organization_options.html' import organization_options with context %}
 {#
   Dashboards de progreso IHP-IX: réplica web de los Power BI oficiales
   ("IHP-IX Implementation Progress"). Una plantilla para los cinco ámbitos
@@ -43,7 +44,7 @@
         <div class="ixg-head-tools">
           <a id="ixg-presentation" class="ixg-btn" href="{{ h.url_for('theme_ejemplo.ihpix_presentation', scope=scope, value=scope_value or '', **filters) }}">{{ _('Presentation / PDF') }}</a>
           <a id="ixg-narrative" class="ixg-btn" href="{{ h.url_for('theme_ejemplo.ihpix_narrative', scope=scope, value=scope_value or '', **filters) }}">{{ _('Generate report') }}</a>
-          <a id="ixg-download" class="ixg-btn" href="{{ h.url_for('/api/3/action/ihpix_progress_stats', scope=scope, value=scope_value or None, biennium=filters.biennium or None, region=filters.region or None, country=filters.country or None) }}" download="ihpix-progress-{{ scope }}{% if scope_value %}-{{ scope_value|lower|replace(' ', '-') }}{% endif %}.json">
+          <a id="ixg-download" class="ixg-btn" href="{{ h.url_for('/api/3/action/ihpix_progress_stats', scope=scope, value=scope_value or None, biennium=filters.biennium or None, region=filters.region or None, country=filters.country or None, organization=filters.organization or None) }}" download="ihpix-progress-{{ scope }}{% if scope_value %}-{{ scope_value|lower|replace(' ', '-') }}{% endif %}.json">
             <i class="fa fa-download" aria-hidden="true"></i> {{ _('Download data') }}
           </a>
         </div>
@@ -69,11 +70,27 @@
             <option value="">{{ _('All countries') }}</option>{{ country_options(filters.country) }}
           </select>
         </div>
+        <div class="ixg-filter ixg-filter--organization"><label for="ixg-filter-organization">{{ _('Organization') }}</label>
+          {# Sólo organizaciones con actividades publicadas vinculadas (líder o socia).
+             Con la lista vacía el control se deshabilita, salvo que llegue
+             `?organization=` por URL, para poder limpiarlo. #}
+          <select id="ixg-filter-organization" class="ixg-select" data-ihpix-combobox{% if not opts.organizations and not filters.organization %} disabled{% endif %}>
+            <option value="">{{ _('All organizations') }}</option>{{ organization_options(opts.organizations, filters.organization, organization_title) }}
+          </select>
+          {% if opts and not opts.organizations %}
+            <p class="ixg-filter-hint">{{ _('No organizations are linked to published activities yet.') }}{% if is_sysadmin %} <a href="{{ h.url_for('theme_ejemplo.ihpix_institutions_admin') }}">{{ _('Link institutions') }}</a>{% endif %}</p>
+          {% endif %}
+        </div>
       </div>
       <div class="ixg-selection" id="ixg-selection" hidden>
         <strong id="ixg-selected-country"></strong>
         <button class="ixg-btn" type="button" id="ixg-clear-country">{{ _('Clear country filter') }}</button>
         <span>{{ _('Showing activities linked to this country through reporting, support or beneficiaries. Totals describe these activities, not results allocated to this country alone.') }}</span>
+      </div>
+      <div class="ixg-selection" id="ixg-selection-organization" hidden>
+        <strong id="ixg-selected-organization">{{ organization_title }}</strong>
+        <button class="ixg-btn" type="button" id="ixg-clear-organization">{{ _('Clear organization filter') }}</button>
+        <span>{{ _('Showing activities where this organization is the lead institution or a partner. Totals describe these activities, not results attributable to this organization alone.') }}</span>
       </div>
       <div id="ixg-load-error" class="ixg-load-error" role="alert" hidden>
         <span>{{ _('The update failed. The previous results are still displayed.') }}</span>

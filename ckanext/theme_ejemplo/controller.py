@@ -1005,17 +1005,25 @@ class MyLogica():
                 # desde las pestañas de grupo y organización.
                 from ckanext.theme_ejemplo import ihpix_constants as C
                 from ckanext.theme_ejemplo import ihpix_relations as R
-                from ckanext.theme_ejemplo.actions import _ihpix_resolve_scope_value
+                from ckanext.theme_ejemplo.actions import (
+                    _ihpix_linked_organizations, _ihpix_resolve_organization,
+                    _ihpix_resolve_scope_value,
+                )
                 flagship_code = _ihpix_resolve_scope_value('flagship', flagship_filter) if flagship_filter else None
                 ctwg_value = _ihpix_resolve_scope_value('ctwg', ctwg_filter) if ctwg_filter else None
                 country_meta = R.country_metadata(country_filter) if country_filter else None
                 country_label = (country_meta['country_title_en'] if country_meta
                                  else get_member_state_title(country_filter))
-                organization_title = organization_filter
-                if organization_filter:
-                    org = model.Group.get(organization_filter)
-                    if org and org.is_organization:
-                        organization_title = org.display_name
+                # `organization` llega como name o id; las URLs generadas usan el name.
+                organization = _ihpix_resolve_organization(organization_filter)
+                organization_title = organization['title'] if organization else ''
+                organization_name = organization['name'] if organization else ''
+                # Selector: sólo organizaciones con actividades publicadas vinculadas.
+                try:
+                    organizations = _ihpix_linked_organizations()
+                except Exception as e:
+                    log.error('Error al listar las organizaciones vinculadas IHP-IX: %s', e)
+                    organizations = []
 
                 try:
                     results, total = IhpixActivity.get_published(
@@ -1052,7 +1060,9 @@ class MyLogica():
                                        country_filter=country_filter,
                                        country_label=country_label,
                                        organization_filter=organization_filter,
+                                       organization_name=organization_name,
                                        organization_title=organization_title,
+                                       organizations=organizations,
                                        flagship_filter=flagship_filter,
                                        flagship_label=C.flagship_label(flagship_code) if flagship_code else flagship_filter,
                                        ctwg_filter=ctwg_filter,
@@ -4877,11 +4887,18 @@ class MyLogica():
                 'biennium': (request.args.get('biennium') or '').strip(),
                 'region': (request.args.get('region') or '').strip(),
                 'country': (request.args.get('country') or '').strip(),
+                'organization': (request.args.get('organization') or '').strip(),
             }
             from ckanext.theme_ejemplo import ihpix_relations as R
+            from ckanext.theme_ejemplo.actions import _ihpix_resolve_organization
             selected_country = R.country_metadata(filters['country'])
             if selected_country:
                 filters['country'] = selected_country['country_title_en']
+            # Organización por name o id; las URLs (`**filters`) llevan el name.
+            organization = _ihpix_resolve_organization(filters['organization'])
+            organization_title = organization['title'] if organization else ''
+            if organization:
+                filters['organization'] = organization['name']
             context = {'user': c.user, 'model': model}
             try:
                 stats = toolkit.get_action('ihpix_progress_stats')(context, {
@@ -4890,6 +4907,7 @@ class MyLogica():
                     'biennium': filters['biennium'],
                     'region': filters['region'],
                     'country': filters['country'],
+                    'organization': filters['organization'],
                 })
             except Exception as e:
                 log.error('Error al calcular el progreso IHP-IX (%s/%s): %s',
@@ -4910,6 +4928,7 @@ class MyLogica():
                 scope_value=resolved,
                 scope_slug=value,
                 filters=filters,
+                organization_title=organization_title,
                 is_sysadmin=is_sysadmin,
             )
 

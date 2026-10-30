@@ -284,3 +284,70 @@ def test_invalid_scope_raises():
 def test_output_is_json_serializable(rows, index):
     stats = S.compute_progress_stats(rows, 'overall', country_index=index)
     json.dumps(stats)
+
+
+# ─── Filtro por organización (líder o socia) ─────────────────────────────
+
+def _org_rows():
+    return [
+        _row(id='lead', institution_org_id='org-1'),
+        _row(id='partner', institution_org_id='org-9', partner_org_ids='["org-1", "org-2", ""]'),
+        _row(id='other', institution_org_id='org-3', biennium='2022-2023'),
+        _row(id='bad-json', partner_org_ids='not json'),
+        _row(id='pending', status='pending', institution_org_id='org-1'),
+    ]
+
+
+def test_partner_org_ids_tolerates_lists_and_invalid_json():
+    assert S.partner_org_ids('["o2", "", "o3"]') == ['o2', 'o3']
+    assert S.partner_org_ids(['o2', '', 'o3']) == ['o2', 'o3']
+    assert S.partner_org_ids('not json') == []
+    assert S.partner_org_ids('{"a": 1}') == []
+    assert S.partner_org_ids(None) == []
+    assert S.partner_org_ids('') == []
+
+
+def test_prepare_row_normalises_organization_links(index):
+    row = S.prepare_row(_row(institution_org_id=' o1 ', partner_org_ids='["o2", "", "o3"]'), index)
+    assert row['institution_org_id'] == 'o1'
+    assert row['partner_org_ids'] == ['o2', 'o3']
+    bare = S.prepare_row(_row(), index)
+    assert bare['institution_org_id'] == ''
+    assert bare['partner_org_ids'] == []
+    assert S.prepare_row(_row(partner_org_ids='not json'), index)['partner_org_ids'] == []
+
+
+def test_organization_counts_lead_and_partners_once_per_published_row():
+    counts = S.organization_counts(_org_rows())
+    # 'pending' no cuenta; 'partner' aporta org-9 (líder) y org-1/org-2 (socias)
+    assert dict(counts) == {'org-1': 2, 'org-9': 1, 'org-2': 1, 'org-3': 1}
+    assert S.organization_counts([]) == {}
+    # Filas ya preparadas (listas en vez de JSON) dan el mismo resultado
+    prepared = [S.prepare_row(r) for r in _org_rows()]
+    assert dict(S.organization_counts(prepared)) == dict(counts)
+
+
+def test_filters_by_organization_lead_or_partner(index):
+    rows = _org_rows()
+    lead = S.compute_progress_stats(rows, 'overall', filters={'organization': 'org-1'}, country_index=index)
+    assert lead['overview']['activities'] == 2          # líder en 'lead', socia en 'partner'
+    assert lead['filters'] == {'organization': 'org-1'}
+    partner_only = S.compute_progress_stats(rows, 'overall', filters={'organization': 'org-2'}, country_index=index)
+    assert partner_only['overview']['activities'] == 1
+    none = S.compute_progress_stats(rows, 'overall', filters={'organization': 'org-404'}, country_index=index)
+    assert none['overview']['activities'] == 0
+    combined = S.compute_progress_stats(rows, 'overall', filters={'organization': 'org-3', 'biennium': '2024-2025'},
+                                        country_index=index)
+    assert combined['overview']['activities'] == 0     # org-3 sólo reporta en 2022-2023
+    scoped = S.compute_progress_stats(rows, 'pa', 'PA1', filters={'organization': 'org-1'}, country_index=index)
+    assert scoped['overview']['activities'] == 2
+
+
+def test_options_echo_linked_organizations(index):
+    rows = _org_rows()
+    plain = S.compute_progress_stats(rows, 'overall', country_index=index)
+    assert plain['options']['organizations'] == []
+    orgs = [{'id': 'org-1', 'name': 'inst-a', 'title': 'Inst A', 'count': 2}]
+    stats = S.compute_progress_stats(rows, 'overall', country_index=index, organizations=orgs)
+    assert stats['options']['organizations'] == orgs
+    json.dumps(stats)

@@ -11193,3 +11193,19 @@ msgstr "Lier les institutions"
 #: IHP-IX institution links October 2026
 msgid "Link legacy institutions to this organization"
 msgstr "Lier des institutions héritées à cette organisation"
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html
+msgid "All organizations"
+msgstr "Toutes les organisations"
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html
+msgid "Clear organization filter"
+msgstr "Effacer le filtre d'organisation"
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html
+msgid "Showing activities where this organization is the lead institution or a partner. Totals describe these activities, not results attributable to this organization alone."
+msgstr "Affichage des activités où cette organisation est l'institution chef de file ou un partenaire. Les totaux décrivent ces activités, et non des résultats attribuables à cette seule organisation."
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html
+msgid "No organizations are linked to published activities yet."
+msgstr "Aucune organisation n'est encore liée à des activités publiées."

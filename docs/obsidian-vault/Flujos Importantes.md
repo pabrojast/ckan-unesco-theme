@@ -264,6 +264,12 @@ Patrón LRU con buster:
      flagship, ctwg (listas desde h.get_ihpix_taxonomies(), ya no hardcodeadas).
      `organization` admite nombre o id; `flagship`/`ctwg` código o slug. Los chips
      muestran etiquetas legibles y conservan el resto de filtros (macro `explorer_url`)
+   → Selector de organización visible (2026-10-30): combobox con sólo las
+     organizaciones que tienen actividades publicadas vinculadas, líder o socia
+     (`actions._ihpix_linked_organizations`, `ihpix/snippets/organization_options.html`,
+     valor = `name`, etiqueta con conteo); vacío → deshabilitado con pista y enlace
+     al panel de vinculación para sysadmin. El formulario conserva `organization`,
+     `flagship` y `ctwg` al pulsar Apply (antes se perdían)
    → Vistas expandibles con detalle (incl. adjuntos), exportación CSV
    → Los chips PA / Output enlazan a las páginas por PA y por Output
    → Institución, país sede, Member States (beneficiarios y de apoyo), flagships
@@ -349,7 +355,12 @@ Patrón LRU con buster:
      Progress": una plantilla (ihpix/progress.html) para cinco ámbitos
      — overall, pa/<PA>, output/<code>, flagship/<slug>, ctwg/<slug> —
      con selector de ámbito (pestañas + <select> que navega), filtros de
-     bienio y región (fetch a ihpix_progress_stats + replaceState)
+     bienio, región, país y organización (fetch a ihpix_progress_stats +
+     pushState; `FILTERS` en ihpix-progress.js). El filtro de organización
+     (2026-10-30) aplica la misma regla que la pestaña de la organización
+     (institución líder o socia por id), se conserva en pestañas, descarga,
+     presentación y narrativa, y su selector sólo lista organizaciones con
+     actividades vinculadas (`stats.options.organizations`)
    → Secciones (una por página Power BI): "Who is benefiting" (tiles,
      donut por PA/output/key activity, barras de Member States por
      región, mapa Leaflet, bienio, instituciones), KPI 1 (productos de

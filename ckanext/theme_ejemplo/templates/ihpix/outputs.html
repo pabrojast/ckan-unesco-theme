@@ -1,5 +1,6 @@
 {% extends "page.html" %}
 {% from 'ihpix/snippets/country_options.html' import country_options with context %}
+{% from 'ihpix/snippets/organization_options.html' import organization_options with context %}
 {% import 'ihpix/snippets/activity_links.html' as links_ui with context %}
 {% import 'ihpix/snippets/forms_assets.html' as forms_ui with context %}
 {% import 'ihpix/snippets/entity_chips.html' as chips_ui with context %}
@@ -155,6 +156,9 @@
     min-width: 150px;
   }
   .ox-fg--wide { flex: 2 1 220px; }
+  /* El selector de organización suele caer solo en la segunda fila: no dejar que ocupe toda la fila. */
+  .ox-fg--organization { max-width: 420px; }
+  .ox-fg-hint { display: block; margin-top: 4px; font-size: 12px; color: var(--ox-text-sec); }
   .ox-fg label {
     display: block;
     font-size: 12px;
@@ -666,7 +670,7 @@
      `page` fija la página. Lee las variables de la vista, no las del bloque. #}
   {% macro explorer_url(drop=None, page=None) -%}
     {%- set args = {} -%}
-    {%- for key, value in [('q', q), ('pa', pa_filter), ('output', output_filter), ('biennium', biennium_filter), ('region', region_filter), ('country', country_filter), ('organization', organization_filter), ('flagship', flagship_filter), ('ctwg', ctwg_filter)] -%}
+    {%- for key, value in [('q', q), ('pa', pa_filter), ('output', output_filter), ('biennium', biennium_filter), ('region', region_filter), ('country', country_filter), ('organization', organization_name or organization_filter), ('flagship', flagship_filter), ('ctwg', ctwg_filter)] -%}
       {%- if value and key != drop -%}{%- do args.update({key: value}) -%}{%- endif -%}
     {%- endfor -%}
     {%- if page -%}{%- do args.update({'page': page}) -%}{%- endif -%}
@@ -677,6 +681,10 @@
   <div class="ox-filters">
     <p class="ox-filters-head"><i class="fa fa-sliders"></i> {{ _('Filter Activities') }}</p>
     <form method="get" action="{{ h.url_for('/ihpix/outputs') }}" id="ihpix-out-filter-form">
+      {# Filtros que llegan desde las pestañas de iniciativa y no tienen control
+         propio: se conservan al pulsar Apply (la página vuelve a la 1). #}
+      {% if flagship_filter %}<input type="hidden" name="flagship" value="{{ flagship_filter }}">{% endif %}
+      {% if ctwg_filter %}<input type="hidden" name="ctwg" value="{{ ctwg_filter }}">{% endif %}
       <div class="ox-filters-grid">
         <div class="ox-fg ox-fg--wide">
           <label for="ihpix-out-q">{{ _('Search') }}</label>
@@ -747,6 +755,18 @@
           </select>
         </div>
 
+        <div class="ox-fg ox-fg--organization">
+          <label for="ihpix-out-organization">{{ _('Organization') }}</label>
+          {# Sólo organizaciones con actividades publicadas vinculadas (líder o socia). #}
+          <select name="organization" id="ihpix-out-organization" class="ox-select" data-ihpix-combobox{% if not organizations and not organization_filter %} disabled{% endif %}>
+            <option value="">{{ _('All organizations') }}</option>
+            {{ organization_options(organizations, organization_name or organization_filter, organization_title, with_count=true) }}
+          </select>
+          {% if not organizations %}
+            <small class="ox-fg-hint">{{ _('No organizations are linked to published activities yet.') }}{% if c.userobj and c.userobj.sysadmin %} <a href="{{ h.url_for('theme_ejemplo.ihpix_institutions_admin') }}">{{ _('Link institutions') }}</a>{% endif %}</small>
+          {% endif %}
+        </div>
+
         <div class="ox-filter-actions">
           <button type="submit" class="ox-fbtn ox-fbtn--solid">
             <i class="fa fa-search"></i> {{ _('Apply') }}
@@ -775,7 +795,7 @@
             ('biennium', biennium_filter, biennium_filter),
             ('region', region_filter, h.ihpix_t(region_filter)),
             ('country', country_filter, country_label or country_filter),
-            ('organization', organization_filter, organization_title or organization_filter),
+            ('organization', organization_name or organization_filter, organization_title or organization_filter),
             ('flagship', flagship_filter, flagship_label or flagship_filter),
             ('ctwg', ctwg_filter, h.ihpix_t(ctwg_label or ctwg_filter)),
             ('q', q, '"' ~ q ~ '"')] if value %}
