@@ -1950,8 +1950,34 @@ def ihpix_activity_update(context, data_dict):
     return result
 
 
+def _ihpix_purge_activities(activities, actor=u''):
+    """Borra actividades con sus adjuntos y sus entradas del ledger de
+    workspaces en una sola transacción; refresca caché y resumen una vez.
+    Devuelve los ids borrados."""
+    ids = [activity.id for activity in activities]
+    if not ids:
+        return []
+    init_ihpix_activity_links_db()
+    init_ihpix_working_groups_db()
+    model.Session.query(IhpixActivityLink).filter(
+        IhpixActivityLink.activity_id.in_(ids)).delete(synchronize_session=False)
+    model.Session.query(IhpixContribution).filter(
+        IhpixContribution.activity_id.in_(ids)).delete(synchronize_session=False)
+    for activity in activities:
+        model.Session.delete(activity)
+    model.Session.commit()
+    log.info('IHP-IX: %s borró %d actividad(es): %s', actor or 'sistema',
+             len(ids), ', '.join(ids[:20]))
+    _ihpix_after_activity_change()
+    return ids
+
+
 def ihpix_activity_delete(context, data_dict):
-    """Delete an IHP-IX activity. Sysadmin only."""
+    """Delete an IHP-IX activity. Sysadmin only.
+
+    Borra también adjuntos y entradas del ledger. El sysadmin puede borrar
+    aunque el workspace del output esté archivado.
+    """
     toolkit.check_access('ihpix_activity_delete', context, data_dict)
     init_ihpix_activities_db()
 
@@ -1959,15 +1985,61 @@ def ihpix_activity_delete(context, data_dict):
     activity = IhpixActivity.get(activity_id)
     if not activity:
         raise toolkit.ObjectNotFound('IHP-IX activity not found')
+    _ihpix_purge_activities([activity], context.get('user'))
+    return {'success': True, 'id': activity_id}
 
-    init_ihpix_activity_links_db()
-    IhpixActivityLink.delete_for_activity(activity.id)
-    from ckanext.theme_ejemplo.ihpix_service import check_workspaces
-    check_workspaces(activity.as_dict())
-    model.Session.delete(activity)
-    model.Session.commit()
-    _ihpix_after_activity_change()
-    return {'success': True}
+
+BULK_DELETE_FILTERS = ('status', 'priority_area', 'output', 'q', 'biennium',
+                       'country', 'region', 'flagship', 'organization', 'ctwg')
+
+
+def ihpix_activity_bulk_delete(context, data_dict):
+    """Borra varias actividades de una vez. Sysadmin only.
+
+    Acepta ``ids`` (lista, JSON de lista o texto separado por comas) o bien
+    ``all_matching`` junto con los filtros de ``ihpix_activity_list``
+    (``status``, ``priority_area``, ``output``, ``q``, ``biennium``,
+    ``country``, ``region``, ``flagship``, ``organization``, ``ctwg``). Con
+    ``all_matching`` es obligatorio ``expected_count``: si el total que
+    coincide ya no es ese, no se borra nada (la lista cambió desde que se
+    cargó la página). Devuelve ``deleted``, ``ids`` y ``missing``.
+    """
+    from ckanext.theme_ejemplo import ihpix_relations as R
+    toolkit.check_access('ihpix_activity_bulk_delete', context, data_dict)
+    init_ihpix_activities_db()
+
+    missing = []
+    if toolkit.asbool(data_dict.get('all_matching') or False):
+        filters = {key: (data_dict.get(key) or u'').strip() or None
+                   for key in BULK_DELETE_FILTERS}
+        if filters['status'] and filters['status'] not in IhpixActivity.VALID_STATUSES:
+            raise toolkit.ValidationError(
+                {'status': 'Must be one of: {}'.format(
+                    ', '.join(IhpixActivity.VALID_STATUSES))})
+        activities, total = IhpixActivity.get_filtered(
+            status=filters['status'], priority_area=filters['priority_area'],
+            output=filters['output'], q_text=filters['q'],
+            biennium=filters['biennium'], country=filters['country'],
+            region=filters['region'], flagship=filters['flagship'],
+            organization=filters['organization'], ctwg=filters['ctwg'],
+            limit=None)
+        expected = _parse_int_field(data_dict, 'expected_count', -1)
+        if expected != total:
+            raise toolkit.ValidationError({'expected_count': (
+                'The list changed since it was loaded ({} activities match '
+                'now). Reload the page and try again.'.format(total))})
+    else:
+        ids = R.split_ids(data_dict.get('ids'))
+        if not ids:
+            raise toolkit.ValidationError({'ids': 'Select at least one activity'})
+        activities = model.Session.query(IhpixActivity).filter(
+            IhpixActivity.id.in_(ids)).all()
+        found = {activity.id for activity in activities}
+        missing = [ident for ident in ids if ident not in found]
+
+    deleted = _ihpix_purge_activities(activities, context.get('user'))
+    return {'success': True, 'deleted': len(deleted), 'ids': deleted,
+            'missing': missing}
 
 
 # ── IHP-IX Reporting & Dashboard ────────────────────────────────────────────
@@ -2385,25 +2457,23 @@ def ihpix_report_show(context, data_dict):
 
 
 def ihpix_report_delete(context, data_dict):
-    """Borra un reporte: el propietario sólo sus borradores; sysadmin cualquiera."""
+    """Borra un reporte: el propietario sólo sus borradores (y nunca en un
+    workspace archivado); el sysadmin cualquiera, también desde la cola de
+    revisión. Se borran con él adjuntos y entradas del ledger."""
     toolkit.check_access('ihpix_report_delete', context, data_dict)
     init_ihpix_activities_db()
 
     activity = _ihpix_get_report_or_404(data_dict)
     user_obj = _ihpix_user_obj(context)
-    if (not (user_obj and user_obj.sysadmin)
-            and activity.status != IhpixActivity.STATUS_DRAFT):
-        raise toolkit.ValidationError(
-            {'status': 'Only draft reports can be deleted'})
+    if not (user_obj and user_obj.sysadmin):
+        if activity.status != IhpixActivity.STATUS_DRAFT:
+            raise toolkit.ValidationError(
+                {'status': 'Only draft reports can be deleted'})
+        from ckanext.theme_ejemplo.ihpix_service import check_workspaces
+        check_workspaces(activity.as_dict())
 
     activity_id = activity.id
-    init_ihpix_activity_links_db()
-    IhpixActivityLink.delete_for_activity(activity_id)
-    from ckanext.theme_ejemplo.ihpix_service import check_workspaces
-    check_workspaces(activity.as_dict())
-    model.Session.delete(activity)
-    model.Session.commit()
-    _ihpix_after_activity_change()
+    _ihpix_purge_activities([activity], context.get('user'))
     return {'success': True, 'id': activity_id}
 
 

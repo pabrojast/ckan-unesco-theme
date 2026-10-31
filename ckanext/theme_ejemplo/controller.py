@@ -4200,16 +4200,44 @@ class MyLogica():
             except toolkit.NotAuthorized:
                 return base.abort(403, _('Not authorized'))
 
-            pa_filter = request.args.get('pa_filter', '')
-            page = int(request.args.get('page', 1))
+            pa_filter = (request.args.get('pa_filter') or '').strip()
+            status_filter = (request.args.get('status') or '').strip()
+            q_filter = (request.args.get('q') or '').strip()
+            try:
+                page = max(int(request.args.get('page', 1)), 1)
+            except (TypeError, ValueError):
+                page = 1
+            try:
+                deleted = max(int(request.args.get('deleted', 0)), 0)
+            except (TypeError, ValueError):
+                deleted = 0
             limit = 20
             offset = (page - 1) * limit
 
             data = {'limit': limit, 'offset': offset}
             if pa_filter:
                 data['priority_area'] = pa_filter
+            if status_filter:
+                data['status'] = status_filter
+            if q_filter:
+                data['q'] = q_filter
 
-            result = toolkit.get_action('ihpix_activity_list')(context, data)
+            try:
+                result = toolkit.get_action('ihpix_activity_list')(context, data)
+            except toolkit.ValidationError:
+                # Estado desconocido en la URL: se ignora ese filtro.
+                status_filter = ''
+                data.pop('status', None)
+                result = toolkit.get_action('ihpix_activity_list')(context, data)
+
+            # Filtros activos, para la paginación y el borrado masivo
+            try:
+                from urllib.parse import urlencode
+            except ImportError:  # Python 2
+                from urllib import urlencode
+            active_filters = [(key, value) for key, value in (
+                ('pa_filter', pa_filter), ('status', status_filter), ('q', q_filter)) if value]
+            filter_query = urlencode(active_filters)
 
             # Listas para selectores del formulario
             try:
@@ -4230,6 +4258,10 @@ class MyLogica():
                 total=result['count'],
                 facets=result.get('facets', {}),
                 pa_filter=pa_filter,
+                status_filter=status_filter,
+                q_filter=q_filter,
+                filter_query=filter_query,
+                deleted=deleted,
                 page=page,
                 items_per_page=limit,
                 org_list=org_list,
@@ -4350,6 +4382,34 @@ class MyLogica():
                 return jsonify({'success': False, 'error': 'Activity not found'}), 404
             except Exception as e:
                 log.error('Error deleting IHP-IX activity: %s', e)
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        @staticmethod
+        def ihpix_activities_bulk_delete():
+            """AJAX: borra varias actividades (selección o todo lo filtrado)."""
+            context = {
+                'user': c.user,
+                'auth_user_obj': c.userobj,
+            }
+            data = {}
+            ids = [value for value in request.form.getlist('ids') if value]
+            if ids:
+                data['ids'] = ids
+            for key in ('all_matching', 'expected_count', 'status', 'priority_area',
+                        'output', 'q', 'biennium', 'country', 'region', 'flagship',
+                        'organization', 'ctwg'):
+                value = request.form.get(key)
+                if value not in (None, ''):
+                    data[key] = value
+            try:
+                result = toolkit.get_action('ihpix_activity_bulk_delete')(context, data)
+                return jsonify(result)
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+            except toolkit.ValidationError as e:
+                return jsonify({'success': False, 'error': e.error_dict}), 400
+            except Exception as e:
+                log.error('Error en el borrado masivo de actividades IHP-IX: %s', e)
                 return jsonify({'success': False, 'error': str(e)}), 500
 
         @staticmethod
@@ -5016,6 +5076,26 @@ class MyLogica():
                                 'error': 'Report not found'}), 404
             except Exception as e:
                 log.error('Error reviewing IHP-IX report: %s', e)
+                return jsonify({'success': False, 'error': str(e)}), 500
+
+        @staticmethod
+        def ihpix_report_delete_admin():
+            """AJAX (sysadmin): borra un reporte desde la cola de revisión."""
+            if not (c.userobj and c.userobj.sysadmin):
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+            context = {'user': c.user, 'model': model, 'auth_user_obj': c.userobj}
+            try:
+                result = toolkit.get_action('ihpix_report_delete')(
+                    context, {'id': request.form.get('id', '')})
+                return jsonify(result)
+            except toolkit.ObjectNotFound:
+                return jsonify({'success': False, 'error': 'Report not found'}), 404
+            except toolkit.NotAuthorized:
+                return jsonify({'success': False, 'error': 'Not authorized'}), 403
+            except toolkit.ValidationError as e:
+                return jsonify({'success': False, 'error': e.error_dict}), 400
+            except Exception as e:
+                log.error('Error al borrar un reporte IHP-IX desde la cola: %s', e)
                 return jsonify({'success': False, 'error': str(e)}), 500
 
         # ── IHP-IX Admin Overview (PDF 2026 spec) ─────────────────────────

@@ -10863,3 +10863,63 @@ msgstr "شركاء مقترحون"
 #: ckanext/theme_ejemplo/templates/admin/ihpix_institutions.html
 msgid "If the reported text names several institutions, add the other ones as partner organizations: they are stored as partners of every activity in the group and removed together with the lead link."
 msgstr "إذا كان النص المُبلَّغ عنه يذكر عدة مؤسسات، فأضف الأخرى كمنظمات شريكة: تُحفظ كشريكة لكل نشاط في المجموعة وتُزال مع رابط المؤسسة الرائدة."
+
+msgid "1 activity deleted."
+msgstr "تم حذف نشاط واحد."
+
+msgid "%(n)s activities deleted."
+msgstr "تم حذف %(n)s من الأنشطة."
+
+msgid "Search by title, institution or country"
+msgstr "البحث حسب العنوان أو المؤسسة أو البلد"
+
+msgid "All statuses"
+msgstr "جميع الحالات"
+
+msgid "Select all on this page"
+msgstr "تحديد الكل في هذه الصفحة"
+
+msgid "%(n)s selected"
+msgstr "تم تحديد %(n)s"
+
+msgid "Delete selected"
+msgstr "حذف المحدد"
+
+msgid "Delete all matching activities"
+msgstr "حذف جميع الأنشطة المطابقة"
+
+msgid "Deleting removes the activity, its attachments and its workspace ledger entries. This cannot be undone."
+msgstr "يؤدي الحذف إلى إزالة النشاط ومرفقاته وسجلاته في مساحات العمل. لا يمكن التراجع عن ذلك."
+
+msgid "Select %(title)s"
+msgstr "تحديد %(title)s"
+
+msgid "No activities selected."
+msgstr "لم يتم تحديد أي نشاط."
+
+msgid "Delete %(n)s selected activities?"
+msgstr "هل تريد حذف الأنشطة المحددة (%(n)s)؟"
+
+msgid "The selected activities will be deleted permanently."
+msgstr "سيتم حذف الأنشطة المحددة نهائيًا."
+
+msgid "Delete all matching activities?"
+msgstr "هل تريد حذف جميع الأنشطة المطابقة؟"
+
+msgid "All %(n)s activities matching the current filters will be deleted permanently, including those on other pages."
+msgstr "سيتم حذف جميع الأنشطة المطابقة للمرشحات الحالية (%(n)s) نهائيًا، بما في ذلك الموجودة في الصفحات الأخرى."
+
+msgid "Final confirmation"
+msgstr "التأكيد النهائي"
+
+msgid "This cannot be undone: %(n)s activities will be deleted."
+msgstr "لا يمكن التراجع عن ذلك: سيتم حذف %(n)s من الأنشطة."
+
+msgid "Yes, delete %(n)s"
+msgstr "نعم، احذف %(n)s"
+
+msgid "Delete this report?"
+msgstr "هل تريد حذف هذا التقرير؟"
+
+msgid "The report and its attachments will be deleted permanently."
+msgstr "سيتم حذف التقرير ومرفقاته نهائيًا."

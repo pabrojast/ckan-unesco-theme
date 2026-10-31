@@ -11181,3 +11181,63 @@ msgstr "Socias sugeridas"
 #: ckanext/theme_ejemplo/templates/admin/ihpix_institutions.html
 msgid "If the reported text names several institutions, add the other ones as partner organizations: they are stored as partners of every activity in the group and removed together with the lead link."
 msgstr "Si el texto reportado nombra varias instituciones, añade las demás como organizaciones socias: se guardan como socias de todas las actividades del grupo y se retiran junto con el vínculo de la líder."
+
+msgid "1 activity deleted."
+msgstr "1 actividad eliminada."
+
+msgid "%(n)s activities deleted."
+msgstr "%(n)s actividades eliminadas."
+
+msgid "Search by title, institution or country"
+msgstr "Buscar por título, institución o país"
+
+msgid "All statuses"
+msgstr "Todos los estados"
+
+msgid "Select all on this page"
+msgstr "Seleccionar todo en esta página"
+
+msgid "%(n)s selected"
+msgstr "%(n)s seleccionadas"
+
+msgid "Delete selected"
+msgstr "Eliminar seleccionadas"
+
+msgid "Delete all matching activities"
+msgstr "Eliminar todas las actividades filtradas"
+
+msgid "Deleting removes the activity, its attachments and its workspace ledger entries. This cannot be undone."
+msgstr "Al eliminar se borran la actividad, sus adjuntos y sus entradas en el registro de los espacios de trabajo. No se puede deshacer."
+
+msgid "Select %(title)s"
+msgstr "Seleccionar %(title)s"
+
+msgid "No activities selected."
+msgstr "No hay actividades seleccionadas."
+
+msgid "Delete %(n)s selected activities?"
+msgstr "¿Eliminar las %(n)s actividades seleccionadas?"
+
+msgid "The selected activities will be deleted permanently."
+msgstr "Las actividades seleccionadas se eliminarán de forma permanente."
+
+msgid "Delete all matching activities?"
+msgstr "¿Eliminar todas las actividades filtradas?"
+
+msgid "All %(n)s activities matching the current filters will be deleted permanently, including those on other pages."
+msgstr "Las %(n)s actividades que coinciden con los filtros actuales se eliminarán de forma permanente, incluidas las de otras páginas."
+
+msgid "Final confirmation"
+msgstr "Confirmación final"
+
+msgid "This cannot be undone: %(n)s activities will be deleted."
+msgstr "No se puede deshacer: se eliminarán %(n)s actividades."
+
+msgid "Yes, delete %(n)s"
+msgstr "Sí, eliminar %(n)s"
+
+msgid "Delete this report?"
+msgstr "¿Eliminar este informe?"
+
+msgid "The report and its attachments will be deleted permanently."
+msgstr "El informe y sus adjuntos se eliminarán de forma permanente."

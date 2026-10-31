@@ -1187,6 +1187,12 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 methods=['POST']
             )
             blueprint.add_url_rule(
+                u'/ckan-admin/ihpix/activities/bulk-delete',
+                u'ihpix_activities_bulk_delete',
+                MyLogica.ihpix_activities_bulk_delete,
+                methods=['POST']
+            )
+            blueprint.add_url_rule(
                 u'/ckan-admin/ihpix/activities/show',
                 u'ihpix_activities_show',
                 MyLogica.ihpix_activities_show,
@@ -1210,6 +1216,12 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 u'/ckan-admin/ihpix/reports/review',
                 u'ihpix_report_review_admin',
                 MyLogica.ihpix_report_review_admin,
+                methods=['POST']
+            )
+            blueprint.add_url_rule(
+                u'/ckan-admin/ihpix/reports/delete',
+                u'ihpix_report_delete_admin',
+                MyLogica.ihpix_report_delete_admin,
                 methods=['POST']
             )
 
@@ -1486,6 +1498,7 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 'ihpix_activity_create': custom_actions.ihpix_activity_create,
                 'ihpix_activity_update': custom_actions.ihpix_activity_update,
                 'ihpix_activity_delete': custom_actions.ihpix_activity_delete,
+                'ihpix_activity_bulk_delete': custom_actions.ihpix_activity_bulk_delete,
                 # IHP-IX reporting & dashboard
                 'ihpix_report_submit': custom_actions.ihpix_report_submit,
                 'ihpix_report_update': custom_actions.ihpix_report_update,
@@ -1580,6 +1593,7 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 'ihpix_activity_create': custom_auth.ihpix_activity_create,
                 'ihpix_activity_update': custom_auth.ihpix_activity_update,
                 'ihpix_activity_delete': custom_auth.ihpix_activity_delete,
+                'ihpix_activity_bulk_delete': custom_auth.ihpix_activity_bulk_delete,
                 # IHP-IX reporting & dashboard
                 'ihpix_admin_overview_stats': custom_auth.ihpix_admin_overview_stats,
                 'ihpix_report_submit': custom_auth.ihpix_report_submit,

@@ -148,15 +148,16 @@ acciones de **ckanext-pages**. Ver la advertencia en
 **IHP-IX contenido** (2):
 - `ihpix_content_list`, `ihpix_content_update`
 
-**IHP-IX actividades** (5):
-- `ihpix_activity_list`, `ihpix_activity_show`, `ihpix_activity_create`, `ihpix_activity_update`, `ihpix_activity_delete`
+**IHP-IX actividades** (6):
+- `ihpix_activity_list`, `ihpix_activity_show`, `ihpix_activity_create`, `ihpix_activity_update`, `ihpix_activity_delete`, `ihpix_activity_bulk_delete`
+- `ihpix_activity_delete` / `ihpix_activity_bulk_delete` (2026-10-31) — sysadmin. Comparten `_ihpix_purge_activities()`: borran la actividad, sus adjuntos (`IhpixActivityLink`) y sus entradas del ledger (`IhpixContribution.activity_id`) en una transacción, y refrescan caché de stats y `IhpixCountrySummary` una sola vez. El sysadmin borra aunque el workspace del output esté archivado (antes `check_workspaces` lo impedía). El masivo acepta `ids` (lista, JSON o texto separado por comas; `ihpix_relations.split_ids`) **o** `all_matching=1` con los filtros de `ihpix_activity_list` y un `expected_count` obligatorio: si el total que coincide ya no es ese, no borra nada. Devuelve `deleted`, `ids`, `missing`.
 - `ihpix_activity_list` acepta `priority_area, output, q, biennium, country, region, flagship, organization, ctwg, status` (este último solo sysadmin; el resto siempre ve `published`). Usa `IhpixActivity.get_filtered()`.
 
 **IHP-IX reportes** (8) — workflow completo en [[Flujos Importantes#7. Portal IHP-IX]]:
 - `ihpix_report_submit` — crea un reporte desde el formulario PDF 2026 (6 secciones, gates Y/N, listas JSON). `save_as_draft=1` → `draft` (solo exige título); si no → `pending`. La validación vive en [[Modulos#ihpix_forms.py]]. Guarda `reported_by` = **id** de usuario.
 - `ihpix_report_update` — edita y (re)envía un reporte propio (`draft`/`rejected`) o cualquiera (sysadmin; un `published` se corrige sin volver a la cola). Payload completo del form + `id`.
 - `ihpix_report_show` — propietario o sysadmin; devuelve `as_dict()` + `form` (prefill) + `reporter` + `can_edit`.
-- `ihpix_report_delete` — propietario solo `draft`; sysadmin cualquiera.
+- `ihpix_report_delete` — propietario solo `draft` (y nunca en un workspace archivado); sysadmin cualquiera, también desde la cola `/ckan-admin/ihpix/reports` (2026-10-31). Usa `_ihpix_purge_activities()` (adjuntos y ledger incluidos).
 - `ihpix_my_reports_list` — reportes del usuario autenticado con `counts_by_status`.
 - `ihpix_report_review` — approve/reject por sysadmin. Valida la transición (`pending → published|rejected`, `rejected → published` para "Re-approve"), exige `review_notes` al rechazar y **envía email** al reportante (best effort, `mailer.mail_user`).
 - `ihpix_dashboard_stats` — usuarios logueados (la landing lo llama con `ignore_auth`); KPI cards + breakdowns base (incluye `links_by_type`). Desde 2026-10 el antiguo `/ihpix/dashboard` redirige a `/ihpix/progress`.
@@ -478,7 +479,7 @@ Cada modelo tiene `init_*_db()` y `define_*_table()`. Son idempotentes (verifica
 
 | Patrón | Acciones |
 |---|---|
-| **Sysadmin only** | featured_dataset_*, featured_publication_*, portal_card_*, admin_user_*, ihpix_content_*, ihpix_activity_create/update/delete, ihpix_report_review, ihpix_admin_overview_stats, ihpix_country_summary_recompute, bug_ticket_api_list, open_learning_* |
+| **Sysadmin only** | featured_dataset_*, featured_publication_*, portal_card_*, admin_user_*, ihpix_content_*, ihpix_activity_create/update/delete/bulk_delete, ihpix_report_review, ihpix_admin_overview_stats, ihpix_country_summary_recompute, bug_ticket_api_list, open_learning_* |
 | **Autenticado** | membership_request_create, membership_request_count, initiative_request_create, initiative_request_count, bug_ticket_create/list/show/update, ihpix_report_submit, ihpix_my_reports_list, ihpix_link_search, ihpix_contributor_list, **ihpix_activity_list, ihpix_activity_show, ihpix_dashboard_stats, ihpix_geojson, ihpix_activity_geojson, ihpix_country_summary_list** (eran públicas hasta 2026-09; la landing `/ihpix` obtiene sus stats en servidor con `ignore_auth`) |
 | **Propietario del reporte o sysadmin** | ihpix_report_show, ihpix_report_update, ihpix_report_delete, ihpix_activity_link_create, ihpix_activity_link_delete (`_ihpix_report_owner_or_sysadmin`: compara `reported_by` con id y username; si el reporte no existe autoriza para que la acción devuelva 404) |
 | **Publicada, o propietario/sysadmin** | ihpix_activity_link_list |

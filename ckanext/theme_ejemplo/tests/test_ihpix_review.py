@@ -171,3 +171,13 @@ def test_empty_country_never_resolves_to_a_country_with_non_latin_name():
     assert '' not in R.country_index()
     assert R.country_metadata('CL')['country_title_en'] == 'Chile'
     assert R.country_metadata('مصر')['country_title_en'] == 'Egypt'
+
+
+def test_split_ids_accepts_lists_json_and_comma_text():
+    from ckanext.theme_ejemplo import ihpix_relations as R
+    assert R.split_ids(None) == []
+    assert R.split_ids('') == []
+    assert R.split_ids('a, b,,c a') == ['a', 'b', 'c']
+    assert R.split_ids(['x', 'y,z', '', None, 'x']) == ['x', 'y', 'z']
+    assert R.split_ids('["p", "q", ""]') == ['p', 'q']
+    assert R.split_ids('[not json') == []

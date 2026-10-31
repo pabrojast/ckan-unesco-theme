@@ -552,6 +552,39 @@ reporte público: tipos KPI como listas JSON, `member_states` JSON,
 > nunca HTML) y se renderizan con `h.ihpix_markdown()` → `render_markdown`
 > de CKAN (sanitiza). Los emails los envían como texto plano.
 
+#### 7.1.e Borrado de datos desde el panel admin (2026-10-31)
+
+`/ckan-admin/ihpix/activities` permite al sysadmin limpiar datos sin pasar
+por la base de datos:
+
+- **Filtros** en la cabecera de la lista: búsqueda (`q`, mismo criterio que
+  `ihpix_activity_list`), estado (`status`) y Priority Area (`pa_filter`).
+  La paginación los conserva (`filter_query`).
+- **Selección múltiple**: casilla por tarjeta, "Select all on this page" y
+  botón "Delete selected" (`POST /ckan-admin/ihpix/activities/bulk-delete`
+  con `ids`).
+- **"Delete all matching activities (N)"**: borra todo lo que coincide con
+  los filtros, también las páginas que no se ven. Pide **dos**
+  confirmaciones y envía `all_matching=1` + `expected_count=N` + filtros; si
+  en el servidor el total ya no es N (otro admin cambió la lista) la acción
+  rechaza con error y no borra nada.
+- Tras el borrado la página recarga en la primera página con
+  `?deleted=N` y muestra el aviso "N activities deleted.".
+- Cada borrado elimina la actividad, sus adjuntos y sus entradas del ledger
+  de workspaces, y recalcula caché de stats y resumen por país una vez
+  (`_ihpix_purge_activities`). Las imágenes subidas no se borran del
+  almacenamiento.
+- La cola `/ckan-admin/ihpix/reports` tiene botón "Delete" en cada tarjeta
+  (`POST /ckan-admin/ihpix/reports/delete` → `ihpix_report_delete`), con
+  confirmación, para informes pendientes, rechazados, borradores o
+  publicados.
+
+> [!warning] Irreversible
+> No hay papelera: el borrado es definitivo. Para datos heredados
+> (`original_id`) la alternativa sigue siendo el comando de importación con
+> o sin `--append` (ver [[Flujos Importantes#7. Portal IHP-IX]]) y el backup de la base
+> de datos.
+
 ### 7.2 Visibilidad (2026-09)
 
 - La landing `/ihpix` sigue siendo **pública**; sus contadores se calculan

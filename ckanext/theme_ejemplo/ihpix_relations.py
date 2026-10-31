@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 """Relaciones del reporte: validación pura y lectura compatible de heredados."""
 import json
+import re
 from functools import lru_cache
 from pathlib import Path
 
@@ -32,6 +33,25 @@ def read_ids(value):
         return [str(x) for x in read_list(value) if x]
     except (ValueError, TypeError):
         return []
+
+
+def split_ids(value):
+    u"""Ids únicos, en orden, desde una lista, un JSON de lista o texto separado
+    por comas o espacios (selecciones de formularios y peticiones AJAX)."""
+    if value in (None, ''):
+        return []
+    if isinstance(value, (list, tuple, set)):
+        items = list(value)
+    else:
+        text = str(value).strip()
+        items = read_ids(text) if text.startswith('[') else [text]
+    out = []
+    for item in items:
+        for ident in re.split(r'[,\s]+', str(item or '')):
+            ident = ident.strip()
+            if ident and ident not in out:
+                out.append(ident)
+    return out
 
 
 def associations(row, kind='contribution'):

@@ -158,8 +158,8 @@ Todos bajo `/ckan-admin/*`, requieren rol sysadmin. Ver rutas completas en [[Flu
 | Tickets de errores | `/ckan-admin/bug-tickets` | Ver y gestionar tickets |
 | Usuarios | `/ckan-admin/users` | Gestión completa de usuarios |
 | Contenido IHP-IX | `/ckan-admin/ihpix/content` | Editar secciones IHP-IX |
-| Actividades IHP-IX | `/ckan-admin/ihpix/activities` | CRUD actividades |
-| Reportes IHP-IX | `/ckan-admin/ihpix/reports` | Cola de revisión (pending / rejected / published / draft), approve/reject con email al reportante, enlace al formulario completo |
+| Actividades IHP-IX | `/ckan-admin/ihpix/activities` | CRUD actividades; filtros por búsqueda/estado/PA, selección múltiple y borrado masivo con doble confirmación (2026-10-31) |
+| Reportes IHP-IX | `/ckan-admin/ihpix/reports` | Cola de revisión (pending / rejected / published / draft), approve/reject con email al reportante, enlace al formulario completo, borrado por sysadmin (2026-10-31) |
 | Overview IHP-IX | `/ckan-admin/ihpix/overview` | KPIs, distribuciones, geografía, completeness, adjuntos; export CSV completo (`?export=csv`) y botón "Recompute map counts" |
 | Working groups IHP-IX | `/ckan-admin/ihpix/workspaces` | Título, descripción, lead (username) y estado de los 34 workspaces; acceso a la gestión de miembros |
 

@@ -493,3 +493,69 @@ msgstr ""
 #: ckanext/theme_ejemplo/templates/admin/ihpix_institutions.html
 msgid "If the reported text names several institutions, add the other ones as partner organizations: they are stored as partners of every activity in the group and removed together with the lead link."
 msgstr ""
+
+msgid "1 activity deleted."
+msgstr ""
+
+msgid "%(n)s activities deleted."
+msgstr ""
+
+msgid "Filter activities"
+msgstr ""
+
+msgid "Search by title, institution or country"
+msgstr ""
+
+msgid "All statuses"
+msgstr ""
+
+msgid "Select all on this page"
+msgstr ""
+
+msgid "%(n)s selected"
+msgstr ""
+
+msgid "Delete selected"
+msgstr ""
+
+msgid "Delete all matching activities"
+msgstr ""
+
+msgid "Deleting removes the activity, its attachments and its workspace ledger entries. This cannot be undone."
+msgstr ""
+
+msgid "Select %(title)s"
+msgstr ""
+
+msgid "No activities selected."
+msgstr ""
+
+msgid "Delete %(n)s selected activities?"
+msgstr ""
+
+msgid "The selected activities will be deleted permanently."
+msgstr ""
+
+msgid "Delete all matching activities?"
+msgstr ""
+
+msgid "All %(n)s activities matching the current filters will be deleted permanently, including those on other pages."
+msgstr ""
+
+msgid "Final confirmation"
+msgstr ""
+
+msgid "This cannot be undone: %(n)s activities will be deleted."
+msgstr ""
+
+msgid "Yes, delete %(n)s"
+msgstr ""
+
+msgid "Delete this report?"
+msgstr ""
+
+msgid "The report and its attachments will be deleted permanently."
+msgstr ""
+
+msgid "Priority Area"
+msgstr ""

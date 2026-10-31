@@ -244,6 +244,10 @@ def ihpix_activity_delete(context, data_dict):
     return _sysadmin_only(context, data_dict)
 
 
+def ihpix_activity_bulk_delete(context, data_dict):
+    return _sysadmin_only(context, data_dict)
+
+
 # ── IHP-IX Reporting & Dashboard Auth ──────────────────────────────────────
 
 def ihpix_report_submit(context, data_dict):
