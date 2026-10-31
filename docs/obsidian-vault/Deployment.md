@@ -368,8 +368,8 @@ Despliegue lanzado por el usuario con el workflow `deploy` del repositorio Docke
 - Navegador (sesión sysadmin del usuario en `data.dev-wins.com`): pestañas admin con estilo; en el panel, escribir "igr" lista IGRAC y "Add partner organization" abre un combobox que al escribir "cer" lista CeReGAS, CERSHI y una cátedra; en `/ihpix/progress` el filtro de organización lista 127 opciones y escribir "cer" filtra al instante sin aplicar nada; en `/ihpix/outputs?flagship=friend` escribir "ihe" lista IHE Delft, el chip FRIEND-Water se mantiene y el formulario lleva `flagship` oculto. No se aplicó ningún vínculo ni filtro.
 - Pendiente: que UNESCO aplique las vinculaciones en `/ckan-admin/ihpix/institutions` para que el filtro tenga organizaciones con datos; recalcular `IhpixCountrySummary` si hace falta. Producción no se modificó.
 
-> [!note] Observado de paso
-> Varios pods `pageviews-flush-*` figuraban en estado `Failed` en el namespace `ckan` de dev (2026-10-30, antes de este despliegue). No se tocaron; ver [[Deployment#Entrega SLD — procedimiento exclusivo de DEV]].
+> [!note] Observado de paso: pods `pageviews-flush-*` en `Failed`
+> Revisados el 2026-10-31: son tres Jobs antiguos (2026-10-07 16:10 y 16:15 UTC; 2026-10-20 09:55 UTC) que el CronJob conserva por `failedJobsHistoryLimit: 3`. Los seis pods fallaron igual: timeouts a `solr-headless` y `connection refused` a `postgres` durante el arranque de CKAN (`make_app → load_environment → init_model`), es decir **antes** de tocar Redis, así que no se perdió ningún conteo. Coinciden con reinicios del nodo `ubuntu-2404-noble-amd64-base`, que aloja `postgres-0` y `solr-0` (`c4w-postgres-0` arrancó el 2026-10-07 16:15 UTC y el nodo volvió a `Ready` el 2026-10-20 09:57 UTC). Desde entonces todas las corridas terminan en `Complete`; `tracking_site_totals` se actualiza cada 5 min y el día 2026-10-20 tiene su serie diaria completa. No requiere acción; para limpiarlos basta borrar esos Jobs. Ver [[Comandos Utiles#Conteo liviano de vistas (pageviews)]] y la limitación de conteo anotada en [[Flujos Importantes#12. Conteo liviano de vistas]].
 
 ## Verificación de importación IHP-IX (2026-10-23)
 

@@ -172,6 +172,18 @@ kubectl -n ckan create job pv-flush-test --from=cronjob/pageviews-flush
 
 Requiere `ckanext.theme_ejemplo.pageviews_enabled = true` y `ckan.tracking_enabled = false`. Ver [[Flujos Importantes#Conteo liviano de vistas]] y [[Variables de Entorno#Conteo liviano de vistas (pageviews)]].
 
+> [!tip] Pods `pageviews-flush-*` en `Failed` (revisado en dev el 2026-10-31)
+> El CronJob conserva los últimos tres Jobs fallidos (`failedJobsHistoryLimit: 3`), así que pods en `Error` de hace semanas siguen listados aunque el volcado ya funcione. Diagnóstico rápido:
+>
+> ```bash
+> kubectl -n ckan get jobs | grep pageviews-flush          # los recientes deben estar Complete 1/1
+> kubectl -n ckan logs <pod-fallido> | tail -n 5             # causa real al final del traceback
+> kubectl -n ckan exec deploy/ckan -c ckan -- ckan -c /srv/app/production.ini pageviews status
+> kubectl -n ckan delete job <job-fallido> ...               # sólo limpieza; no afecta a los conteos
+> ```
+>
+> Caso visto en dev: `connection refused` a `postgres` y timeouts a `solr-headless` durante el arranque de CKAN mientras el nodo que aloja `postgres-0` y `solr-0` se reiniciaba (2026-10-07 y 2026-10-20). Como el fallo ocurre antes de `flush_to_db()`, los contadores quedan en Redis y los vuelca la corrida siguiente; y si Postgres cae a mitad del volcado, `flush_to_db` reintegra los deltas en Redis antes de propagar el error. Para consultas ad hoc desde el pod: `tracking_dataset_daily(dataset_name, day, views)`, `tracking_dataset_stats(dataset_name, total_views, recent_views, updated)`, `tracking_resource_stats(resource_id, total_downloads, updated)`, `tracking_site_totals(id, total_page_views, total_downloads, updated)`; el diario conserva `pageviews_recent_days` (14) días.
+
 ---
 
 ## Packaging y distribución

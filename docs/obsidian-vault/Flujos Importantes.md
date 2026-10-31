@@ -829,6 +829,11 @@ Request /dataset/<name> (GET)  ──┐
 > [!tip] Resiliencia
 > Redis caído → el registro es no-op y el serving sigue intacto. Postgres es la fuente durable; una caída de Redis sólo pierde los deltas aún no volcados (aceptable para conteos de vistas; el flush frecuente lo minimiza). El `RENAME` atómico evita perder incrementos durante el volcado.
 
+> [!warning] Limitación medida en dev (2026-10-31): el identificador contado es el segmento crudo de la URL
+> `_match` guarda tal cual lo que sigue a `/dataset/`, y `/dataset/<id>` acepta tanto el `name` como el UUID, además de las exportaciones DCAT `/dataset/<id>.rdf|.ttl|.n3|.jsonld|.xml`. En `tracking_dataset_stats` de dev había 3 281 filas: 413 nombres reales (18 863 vistas), 663 UUIDs de datasets existentes (7 554 vistas), 2 054 exportaciones DCAT (25 421 vistas, casi todas de rastreadores) y 151 identificadores sin dataset (355 vistas; datasets borrados o 404, porque el hook corre en `before_request` y no conoce el código de respuesta). Consecuencias: el badge (`dataset_name = :name`) y "más vistos" (`JOIN package ON p.name`) ignoran las vistas registradas bajo UUID, mientras que `total_page_views` del sitio sí las suma todas, incluidas las exportaciones DCAT. Además, en dev el 85–90 % de los datasets contados cada día tienen exactamente una vista (patrón de rastreador con User-Agent no listado en `_BOT_RE`), así que las cifras de dev describen sobre todo tráfico automático.
+>
+> Pendiente de decisión: ignorar las extensiones DCAT en `_match`, resolver UUID → `name` en el volcado (o en el registro) y un comando de reconciliación tipo `pageviews reconcile-downloads` que consolide las filas existentes y recalcule `tracking_site_totals`. No se ha cambiado código.
+
 ---
 
 ## 13. Completitud de metadatos y orden por defecto en /dataset
