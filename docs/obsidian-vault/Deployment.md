@@ -358,6 +358,19 @@ las claves de caché anónima del tema. No tocar producción.
 - Se retiraron las dos bases de prueba y su red, y el builder temporal. No se
   borraron recursos, vistas ni históricos de tracking. Producción no se modificó.
 
+## IHP-IX filtro por organización y panel de instituciones — DEV 2026-10-31
+
+Despliegue lanzado por el usuario con el workflow `deploy` del repositorio Docker (`ckan-unesco-docker`, rama `miserver-2.10`, [run 41146120487](https://github.com/pabrojast/ckan-unesco-docker/actions/runs/41146120487), iniciado 2026-10-30 23:43 UTC, correcto a las 00:13 UTC). Tema en `dev210` hasta `6246c5f` (filtro por organización `5ac2609`, panel de instituciones `fe3806e`, buscador y socias `6246c5f`).
+
+- Imagen: `pabrojast/ckan-base210:20261030234412@sha256:45de691626af2e81afa70cc36e5740724ed1062d98349b50f5ed0977eab0ca7f` (anterior `20261030172803@sha256:17d36116…`); pod `ckan-764c8cf8db-d2lh7`, 1/1 Ready, 0 reinicios. Comprobado dentro del pod que el código contiene `suggest_partners`, `organization_options`, el snippet `admin/snippets/ihpix_admin_tabs.html`, el filtro `ixg-filter-organization` y la interfaz de socias.
+- Smoke `scripts/ihpix_dev_smoke.py` desde el pod: 35 páginas 200/302 sin errores Jinja (incluidas `/ihpix/outputs?organization=cazalac&flagship=friend`, `/ihpix/progress?organization=cazalac`, presentación y narrativa con `organization`), marcadores de reporte y progreso presentes, `ihpix_progress_stats` 744 actividades / 191 Member States.
+- API en el pod: `options.organizations` = 126 (todas activas, 0 con actividades vinculadas, sin demo/QA), `organization=cazalac` → 0 actividades (no hay vínculos aún), valor desconocido → vacío sin error; `ihpix_institution_link_list`: 311 grupos sin vincular, 73 confiables (213 actividades), una socia sugerida ("CERSHI and Chair on Sustainable Water Security"), 2,9 s.
+- Navegador (sesión sysadmin del usuario en `data.dev-wins.com`): pestañas admin con estilo; en el panel, escribir "igr" lista IGRAC y "Add partner organization" abre un combobox que al escribir "cer" lista CeReGAS, CERSHI y una cátedra; en `/ihpix/progress` el filtro de organización lista 127 opciones y escribir "cer" filtra al instante sin aplicar nada; en `/ihpix/outputs?flagship=friend` escribir "ihe" lista IHE Delft, el chip FRIEND-Water se mantiene y el formulario lleva `flagship` oculto. No se aplicó ningún vínculo ni filtro.
+- Pendiente: que UNESCO aplique las vinculaciones en `/ckan-admin/ihpix/institutions` para que el filtro tenga organizaciones con datos; recalcular `IhpixCountrySummary` si hace falta. Producción no se modificó.
+
+> [!note] Observado de paso
+> Varios pods `pageviews-flush-*` figuraban en estado `Failed` en el namespace `ckan` de dev (2026-10-30, antes de este despliegue). No se tocaron; ver [[Deployment#Entrega SLD — procedimiento exclusivo de DEV]].
+
 ## Verificación de importación IHP-IX (2026-10-23)
 
 `Theme checks` incluye la sintaxis de `scripts/playwright/ihpix_bulk.cjs` además de las regresiones puras. El recorrido que crea borradores y comprueba rollback debe ejecutarse únicamente en CKAN aislado; ver [[Testing]] y [[IHP-IX Bulk Import UX October 2026]].
