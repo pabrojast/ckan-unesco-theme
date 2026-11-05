@@ -349,6 +349,18 @@ a.hv2-panel:hover img { transform: scale(1.03); }
    theme_ejemplo.css are not changed. */
 body:has(#hv2) header.masthead:hover { background-color: transparent !important; }
 
+/* Logged in: CKAN's account bar (.account-masthead, solid blue in
+   theme_ejemplo.css) is see-through over the hero, like the header below it.
+   The hero slides up under the bar by its height, which home_v2.html measures
+   into --hv2-acct-h and marks with html.hv2-acct (without JavaScript the bar
+   stays as it was). flow-root keeps the bar's floated items from narrowing
+   the hero that now sits beside them. Skipped while a flash message shows. */
+html.hv2-acct body:has(#hv2) .account-masthead { display: flow-root; position: relative; z-index: 1001; background: transparent !important; border-bottom: 1px solid rgba(255, 255, 255, .25); text-shadow: 0 1px 4px rgba(0, 0, 0, .45), 0 2px 18px rgba(0, 0, 0, .35); }
+html.hv2-acct body:has(#hv2) .account-masthead .account ul li { border-left-color: rgba(255, 255, 255, .25) !important; }
+html.hv2-acct body:has(#hv2) .account-masthead :is(.dropdown-menu, .admin-dropdown-menu) { text-shadow: none; }
+html.hv2-acct body:has(#hv2):not(:has(.flash-messages .alert)) .hv2-hero { margin-top: calc(-1 * var(--hv2-acct-h, 0px)); padding-top: var(--hv2-acct-h, 0px); }
+html.hv2-acct body:has(#hv2):has(.flash-messages .alert) .account-masthead { background: #0B2A4A !important; }
+
 /* The top bar of the header (Register, Log in, IHP IX, language): on screens
    with a mouse it folds away and the row with the logos and the menu moves up.
    home-v2.js unfolds it (.hv2-topbar-open) when the mouse reaches the top edge

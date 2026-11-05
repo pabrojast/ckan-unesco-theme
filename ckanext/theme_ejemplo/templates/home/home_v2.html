@@ -35,9 +35,23 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@700&family=Albert+Sans:wght@400;500;800&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
-<link rel="stylesheet" href="{{ h.url_for_static('/css/home-v2.css') }}?v=20261020g">
+<link rel="stylesheet" href="{{ h.url_for_static('/css/home-v2.css') }}?v=20261105a">
 
 <div class="hv2" id="hv2">
+{# Logged in: CKAN's account bar (.account-masthead) sits above the hero. Measure
+   it before the hero is drawn so the hero can slide up under it and the bar is
+   see-through like the header (home-v2.css); kept up to date when it wraps. #}
+<script>
+(function () {
+  var bar = document.querySelector('.account-masthead');
+  if (!bar) { return; }
+  var root = document.documentElement;
+  var measure = function () { root.style.setProperty('--hv2-acct-h', bar.offsetHeight + 'px'); };
+  measure();
+  root.classList.add('hv2-acct');
+  if (window.ResizeObserver) { new ResizeObserver(measure).observe(bar); }
+})();
+</script>
 <a class="hv2-skip" href="#hv2-sections">{{ _('Skip to main content') }}</a>
 
 {# ═════════════ HERO: looping film from the IHP 50th anniversary video ═════════════ #}
@@ -508,4 +522,4 @@
 </div>{# /#hv2-sections #}
 </div>{# /.hv2 #}
 
-<script src="{{ h.url_for_static('/js/home-v2.js') }}?v=20261020g" defer></script>
+<script src="{{ h.url_for_static('/js/home-v2.js') }}?v=20261105a" defer></script>
