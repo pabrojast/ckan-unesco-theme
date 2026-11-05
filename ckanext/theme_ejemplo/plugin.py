@@ -25,6 +25,7 @@ from . import db_fork_safety
 from . import pageview_tracking
 from . import ranking
 from . import home_v2  # Home page v2 (added by Jorgen Van Der Biest)
+from . import community  # Community of practice (added by Jorgen Van Der Biest)
 from . import search as theme_search
 from .utils import normalize_user_image_url
 import logging
@@ -1296,6 +1297,9 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 lambda id: MyLogica.dataset_read('dataset', id),
                 methods=['GET']
             )
+
+            # Community of practice (added by Jorgen Van Der Biest): see community.py
+            community.register(blueprint)
 
             return blueprint
         

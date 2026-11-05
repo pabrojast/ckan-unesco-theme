@@ -24,6 +24,7 @@ Bienvenido a la documentación interna de **ckanext-theme-ejemplo**, la extensi�
 - [[Busqueda]] — Motores de búsqueda por superficie y sugerencias mientras se escribe
 - [[Biblioteca de Imagenes]] — Imagenes reutilizables para stories
 - [[IHP-IX]] — Reporting IHP-IX: formulario, adjuntos, páginas navegables y working groups
+- [[Comunidad de Practica DACS]] — Plataforma de miembros de la Década de la Criosfera en `/group/dacs/community-of-practice`, sin Firebase
 
 ### Operación
 - [[Testing]] — Estrategia y ejecución de tests
