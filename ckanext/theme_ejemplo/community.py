@@ -76,9 +76,10 @@ def _current_user():
             user = current_user
     except ImportError:
         pass
-    if user is None:
-        user = getattr(toolkit.c, 'userobj', None)
-    if user is None or getattr(user, 'state', 'active') != 'active':
+    if not user:
+        # CKAN 2.10 pone g.userobj = '' (cadena vacía) para visitantes anónimos.
+        user = getattr(toolkit.c, 'userobj', None) or None
+    if not user or not getattr(user, 'id', None) or getattr(user, 'state', 'active') != 'active':
         return None
     # current_user es un proxy: se usa el objeto del modelo.
     return model.User.get(user.id) or user
@@ -254,11 +255,11 @@ def api(name, action):
     payload = request.get_json(silent=True)
     if not isinstance(payload, dict):
         return _json({'error': {'code': 'invalid-argument', 'message': 'JSON body expected.'}}, 400)
-    user = _current_user()
-    group = _group(name)
-    if action == 'me':
-        return _json(_me(user, group, name))
     try:
+        user = _current_user()
+        group = _group(name)
+        if action == 'me':
+            return _json(_me(user, group, name))
         result = _api(name).handle(action, payload, _auth(user, group))
     except ApiError as exc:
         if exc.code not in ('permission-denied', 'not-found'):
