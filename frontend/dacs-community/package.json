@@ -1,0 +1,56 @@
+{
+  "name": "dacs-community-ihp-wins",
+  "version": "3.29.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "scripts": {
+    "dev": "vite --host 127.0.0.1",
+    "build:ckan": "node scripts/clean-build.mjs && tsc --noEmit && vite build",
+    "preview": "vite preview --host 127.0.0.1",
+    "test": "node --experimental-strip-types --test tests/member-roles.test.mjs tests/calendar.test.mjs tests/decade-goals.test.mjs tests/meetings.test.mjs tests/workspace-links.test.mjs tests/discussion.test.mjs tests/appointments.test.mjs tests/coordination.test.mjs tests/mailing.test.mjs tests/tasks.test.mjs",
+    "test:rules": "node scripts/test-rules.mjs",
+    "test:membership": "node --experimental-strip-types --test tests/member-roles.test.mjs",
+    "test:calendar": "node --experimental-strip-types --test tests/calendar.test.mjs",
+    "test:goals": "node --experimental-strip-types --test tests/decade-goals.test.mjs",
+    "test:meetings": "node --experimental-strip-types --test tests/meetings.test.mjs",
+    "test:links": "node --experimental-strip-types --test tests/workspace-links.test.mjs",
+    "test:discussion": "node --experimental-strip-types --test tests/discussion.test.mjs",
+    "test:appointments": "node --experimental-strip-types --test tests/appointments.test.mjs",
+    "test:coordination": "node --experimental-strip-types --test tests/coordination.test.mjs",
+    "test:mailing": "node --experimental-strip-types --test tests/mailing.test.mjs",
+    "test:tasks": "node --experimental-strip-types --test tests/tasks.test.mjs"
+  },
+  "dependencies": {
+    "@fontsource-variable/source-sans-3": "^5.3.1",
+    "class-variance-authority": "0.7.1",
+    "clsx": "2.1.1",
+    "d3-geo": "^3.1.1",
+    "lucide-react": "^1.31.0",
+    "radix-ui": "^1.6.7",
+    "react": "19.2.6",
+    "react-dom": "19.2.6",
+    "sonner": "^2.0.8",
+    "tailwind-merge": "3.6.0",
+    "three": "^0.180.0",
+    "topojson-client": "^3.1.0",
+    "world-atlas": "^2.0.2"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "4.2.1",
+    "@types/d3-geo": "^3.1.0",
+    "@types/node": "22.19.19",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
+    "@types/three": "^0.180.0",
+    "@types/topojson-client": "^3.1.5",
+    "@vitejs/plugin-react": "6.0.2",
+    "postcss": "^8.5.0",
+    "tailwindcss": "4.2.1",
+    "tw-animate-css": "^1.4.0",
+    "typescript": "5.9.3",
+    "vite": "8.0.13"
+  }
+}

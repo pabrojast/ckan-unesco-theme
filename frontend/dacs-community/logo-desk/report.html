@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="color-scheme" content="dark light">
+<meta name="robots" content="noindex, nofollow">
+<title>Activity report · DACS Logo Authorisation Platform</title>
+<link rel="icon" type="image/png" href="assets/img/favicon.png">
+<link rel="stylesheet" href="styles.css">
+<script type="module" src="report.js"></script>
+</head>
+<body class="public">
+<div class="photo" aria-hidden="true"></div>
+<main class="pub">
+  <header class="glass pub-head">
+    <div class="lockup"><div class="logo-decade" role="img" aria-label="Decade of Action for Cryospheric Sciences 2025–2034"></div><i aria-hidden="true"></i><div class="logo-unesco" role="img" aria-label="UNESCO"></div></div>
+    <button class="btn sm" data-theme-btn type="button">Bright</button>
+  </header>
+
+  <section class="glass card pub-intro">
+    <div class="eyebrow">Logo Authorisation Platform</div>
+    <h1 class="title">Report on an activity using the Decade logo</h1>
+    <p class="sub">Organisations authorised to use the logo of the Decade of Action for Cryospheric Sciences (2025–2034) report on their activity: a progress update while it runs, and a final report once it ends. The information is used by the UNESCO Secretariat to follow the activities carrying the logo and to compile the reporting of the Decade.</p>
+    <p class="sub" style="margin-top:10px">You need the <b>request reference</b> and the <b>reporting code</b> sent with your authorisation. If you do not have them, write to <a href="mailto:cryosphere@unesco.org">cryosphere@unesco.org</a>.</p>
+  </section>
+
+  <form id="repForm" class="stack" novalidate>
+    <section class="glass card">
+      <h2>1. Your authorisation</h2>
+      <div class="grid g2" style="margin-top:14px">
+        <label class="field"><span>Request reference <em class="req">required</em></span><input class="input" id="f_ref" required placeholder="DACS-LOGO-2026-000" autocomplete="off" spellcheck="false"></label>
+        <label class="field"><span>Reporting code <em class="req">required</em></span><input class="input" id="f_code" required placeholder="XXXX-XXXX-XX" autocomplete="off" spellcheck="false"></label>
+      </div>
+      <div class="grid g3" style="margin-top:14px">
+        <label class="field"><span>Type of report <em class="req">required</em></span><select class="input" id="f_type" required><option value="">Choose</option><option>Progress update</option><option>Final report</option></select></label>
+        <label class="field"><span>Period covered: from</span><input class="input" type="date" id="f_from"></label>
+        <label class="field"><span>to</span><input class="input" type="date" id="f_to"></label>
+      </div>
+    </section>
+
+    <section class="glass card">
+      <h2>2. Person reporting</h2>
+      <div class="grid g3" style="margin-top:14px">
+        <label class="field"><span>Full name <em class="req">required</em></span><input class="input" id="f_name" required maxlength="120" autocomplete="name"></label>
+        <label class="field"><span>E-mail address <em class="req">required</em></span><input class="input" type="email" id="f_email" required maxlength="160" autocomplete="email"></label>
+        <label class="field"><span>Organisation <em class="req">required</em></span><input class="input" id="f_org" required maxlength="200" autocomplete="organization"></label>
+      </div>
+    </section>
+
+    <section class="glass card">
+      <h2>3. The activity</h2>
+      <div class="grid g2" style="margin-top:14px">
+        <label class="field"><span>Status of the activity <em class="req">required</em></span><select class="input" id="f_status" required><option value="">Choose</option><option>Ongoing, on schedule</option><option>Ongoing, delayed</option><option>Completed</option><option>Postponed</option><option>Cancelled</option></select></label>
+        <label class="field"><span>Where the logo was used</span><input class="input" id="f_logo" maxlength="500" placeholder="Website, banners, publication, presentation…"></label>
+      </div>
+      <label class="field" style="margin-top:14px"><span>Summary of what was done <em class="req">required</em></span><textarea class="input" id="f_summary" rows="5" required maxlength="4000"></textarea><small class="count" data-for="f_summary"></small></label>
+      <label class="field" style="margin-top:14px"><span>Outcomes and results</span><textarea class="input" id="f_outcomes" rows="5" maxlength="4000" placeholder="What changed thanks to the activity: knowledge produced, decisions informed, capacities built, partnerships formed…"></textarea><small class="count" data-for="f_outcomes"></small></label>
+    </section>
+
+    <section class="glass card">
+      <h2>4. Reach and contribution to the Decade</h2>
+      <div class="grid g3" style="margin-top:14px">
+        <label class="field"><span>People reached (estimate)</span><input class="input" type="number" min="0" step="1" id="f_people" inputmode="numeric"></label>
+        <label class="field"><span>Events, publications or products</span><input class="input" type="number" min="0" step="1" id="f_outputs" inputmode="numeric"></label>
+        <label class="field"><span>Countries involved</span><input class="input" id="f_countries" maxlength="500" placeholder="Separate with commas"></label>
+      </div>
+      <h3 style="margin-top:18px">Main goals of the Decade the activity contributed to</h3>
+      <div class="chips" id="f_mgs" style="margin-top:10px"></div>
+      <label class="field" style="margin-top:14px"><span>How the activity contributed to these goals</span><textarea class="input" id="f_contrib" rows="4" maxlength="3000"></textarea></label>
+    </section>
+
+    <section class="glass card">
+      <h2>5. Evidence</h2>
+      <label class="field" style="margin-top:14px"><span>Links to outputs or evidence</span><textarea class="input" id="f_links" rows="3" maxlength="2000" placeholder="One link per line: web page, publication, video, photo album, shared folder…"></textarea></label>
+      <div class="field" style="margin-top:14px"><span>Attachment (optional)</span>
+        <div class="row"><label class="btn" for="f_file">Choose a file</label><input type="file" id="f_file" class="sr" accept=".pdf,.png,.jpg,.jpeg,.webp,.docx"><span class="muted" id="f_fileNote" style="font-size:13px">PDF, Word or image, 700 KB at most. For larger files, share a link above.</span></div>
+      </div>
+    </section>
+
+    <section class="glass card">
+      <label class="check"><input type="checkbox" id="f_consent" required><span>I confirm that the information is accurate and I agree that UNESCO may use it, including figures and links, in the reporting of the Decade of Action for Cryospheric Sciences.</span></label>
+      <p class="banner" id="f_msg" role="alert" hidden style="margin-top:14px"></p>
+      <div class="row" style="margin-top:16px"><button type="submit" class="btn primary" id="f_submit">Submit the report</button><span class="muted" style="font-size:13px">You can submit as many progress updates as needed.</span></div>
+    </section>
+  </form>
+
+  <section class="glass card pub-done" id="done" hidden>
+    <div class="eyebrow">Thank you</div>
+    <h1 class="title">Report received</h1>
+    <p class="sub" id="doneText"></p>
+    <div class="row" style="margin-top:16px"><button class="btn" type="button" id="another">Submit another report</button></div>
+  </section>
+
+  <footer class="pub-foot">UNESCO Intergovernmental Hydrological Programme · Secretariat of the Decade of Action for Cryospheric Sciences · <a href="mailto:cryosphere@unesco.org">cryosphere@unesco.org</a></footer>
+</main>
+</body>
+</html>
