@@ -5,10 +5,11 @@
   in home_v2.py). The site header (header.html) floats over the hero video,
   as it floated over the old hero.
 
-  Order follows the platform's areas: hero (video + search, About panel,
-  counters ribbon), section bar, then Network, Datasets, Knowledge,
-  Thematic viewers, Water Family and Learning. The old Spotlight slide deck
-  was removed at Jorgen's request; its links are elsewhere on the page.
+  Order follows the platform's areas: hero (video + search, counters
+  ribbon), section bar, then Network, Datasets, Knowledge, Thematic viewers,
+  Water Family and Learning. The old Spotlight slide deck and the About
+  IHP-WINS panel of the hero were removed at Jorgen's request; the About text
+  and the brochure link now open the Network section.
 
   Look ("field report"): sections are laid out with hairline rules and
   columns instead of boxes, square corners. Type after caladan.bio: Albert
@@ -35,7 +36,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Lexend:wght@700&family=Albert+Sans:wght@400;500;800&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&display=swap">
-<link rel="stylesheet" href="{{ h.url_for_static('/css/home-v2.css') }}?v=20261105a">
+<link rel="stylesheet" href="{{ h.url_for_static('/css/home-v2.css') }}?v=20261105b">
 
 <div class="hv2" id="hv2">
 {# Logged in: CKAN's account bar (.account-masthead) sits above the hero. Measure
@@ -64,7 +65,7 @@
   <div class="hv2-hero-scrim" aria-hidden="true"></div>
 
   <div class="hv2-wrap hv2-hero-body">
-    <div class="hv2-hero-title" data-hv2-about-toggle title="{{ _('About IHP-WINS') }}">
+    <div class="hv2-hero-title">
       <img class="hv2-hero-logo" src="{{ h.url_for_static('/home_v2/unesco-ihp-logo-white.png') }}" alt="{{ _('UNESCO Intergovernmental Hydrological Programme') }}">
       <span class="hv2-hero-rule" aria-hidden="true"></span>
       <div class="hv2-hero-titles">
@@ -85,40 +86,8 @@
     <div class="hv2-hero-links hv2-fade">
       <a href="{{ h.url_for('dataset.search') }}"><strong>{{ h.SI_number_span(n_all) }}</strong> {{ _('dataset') if n_all == 1 else _('datasets') }}</a>
       <a href="{{ h.url_for('organization.index') }}"><strong>{{ h.SI_number_span(n_orgs) }}</strong> {{ _('organization') if n_orgs == 1 else _('organizations') }}</a>
-      <span class="hv2-sep" aria-hidden="true"></span>
-      <button type="button" class="hv2-about-btn" id="hv2-about-btn" aria-expanded="false" aria-controls="IHPWINS"
-              data-label-open="{{ _('About IHP-WINS') }}" data-label-close="{{ _('Close') }}">
-        <span class="hv2-about-label">{{ _('About IHP-WINS') }}</span> <i class="fa fa-chevron-down" aria-hidden="true"></i>
-      </button>
     </div>
 
-    {# About IHP-WINS: collapsed by default, opens over the video (open without JavaScript) #}
-    <noscript><style>.hv2-about-wrap { grid-template-rows: 1fr !important; opacity: 1 !important; margin: 0 !important; } .hv2-about-btn { display: none !important; }</style></noscript>
-    <div class="hv2-about-wrap" id="IHPWINS" role="region" aria-labelledby="hv2-about-btn">
-      <div class="hv2-about-clip">
-        <div class="hv2-about-panel">
-          <div class="hv2-about-intro">
-            <h2 class="hv2-about-h">{{ _('The IHP Water Information Network System') }}</h2>
-            <div class="hv2-about-txt">{{ _("The Intergovernmental Hydrological Programme's Water Information Network System (IHP-WINS) promotes the sharing of water-related data among countries, organizations and stakeholders as part of the UNESCO IHP mandate.") }}</div>
-            <a class="hv2-about-brochure" href="https://unesdoc.unesco.org/ark:/48223/pf0000393465" target="_blank" rel="noopener">{{ _('Access the brochure') }} <span class="hv2-mono">PDF &nearr;</span></a>
-          </div>
-          <div class="hv2-about-cols">
-            <div class="hv2-about-col">
-              <h3>{{ _('Data integration') }}</h3>
-              <div>{{ _('Integrates water-related data from monitoring networks, research institutions and international organizations using standardized formats.') }}</div>
-            </div>
-            <div class="hv2-about-col">
-              <h3>{{ _('International cooperation') }}</h3>
-              <div>{{ _('Strengthens collaboration and knowledge exchange among water professionals at national, regional and global scales.') }}</div>
-            </div>
-            <div class="hv2-about-col">
-              <h3>{{ _('Evidence-based decisions') }}</h3>
-              <div>{{ _('Supports sustainable water management through tools for data visualization, analysis and informed decision-making.') }}</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
   </div>
 
   {# Live counters: a ribbon along the bottom edge of the video, with the
@@ -145,7 +114,6 @@
 {# ═════════════ SECTION BAR (sticky) ═════════════ #}
 <nav class="hv2-secnav" aria-label="{{ _('On this page') }}">
   <div class="hv2-wrap hv2-secnav-in">
-    <a class="hv2-snav" href="#IHPWINS">{{ _('About') }}</a>
     <a class="hv2-snav" href="#network">{{ _('Network') }}</a>
     <a class="hv2-snav" href="#datasets">{{ _('Datasets') }}</a>
     <a class="hv2-snav" href="#knowledge">{{ _('Knowledge') }}</a>
@@ -161,12 +129,18 @@
 {# ═════════════ 01 NETWORK ═════════════ #}
 <section class="hv2-sec hv2-sec-tight" id="network" style="padding-bottom: 0">
   <div class="hv2-wrap">
-    <div class="hv2-shead hv2-shead-open">
+    {# The text that was in the About IHP-WINS panel of the hero (removed at
+       Jorgen's request); #IHPWINS stays here so old links still land on it #}
+    <div class="hv2-shead hv2-shead-open" id="IHPWINS">
       <div class="hv2-sidx"><span class="hv2-lbl">{{ _('The network') }}</span></div>
       <div class="hv2-stxt">
-        <h2 class="hv2-h2">{{ _('Member States, organizations and initiatives share data in hubs') }}</h2>
-        <div class="hv2-lead">{{ _('People join through their organization. Organizations contribute data, tools and expertise, and can work in several hubs at once. A record is published once and appears in every hub it belongs to.') }}</div>
+        <h2 class="hv2-h2">{{ _('The IHP Water Information Network System') }}</h2>
+        <div class="hv2-lead">{{ _("The Intergovernmental Hydrological Programme's Water Information Network System (IHP-WINS) promotes the sharing of water-related data among countries, organizations and stakeholders as part of the UNESCO IHP mandate.") }}</div>
       </div>
+      <a class="hv2-sdoc" href="https://unesdoc.unesco.org/ark:/48223/pf0000393465" target="_blank" rel="noopener">
+        <span class="hv2-lbl">{{ _('Brochure') }}</span>
+        <span class="hv2-arr">{{ _('Access the brochure') }} <span class="hv2-mono">PDF</span> <span aria-hidden="true">&nearr;</span></span>
+      </a>
       <img class="hv2-simg" src="{{ h.url_for_static('/Landing_page/Content/IHPTITLE02DATASETS.jpg') }}" alt="" loading="lazy">
     </div>
     <div class="hv2-cols hv2-c3 hv2-flush-b">
@@ -522,4 +496,4 @@
 </div>{# /#hv2-sections #}
 </div>{# /.hv2 #}
 
-<script src="{{ h.url_for_static('/js/home-v2.js') }}?v=20261105a" defer></script>
+<script src="{{ h.url_for_static('/js/home-v2.js') }}?v=20261105b" defer></script>
