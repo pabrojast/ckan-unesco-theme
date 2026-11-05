@@ -60,7 +60,7 @@ export function onAuthStateChanged(_auth, next) {
 
 const here = () => (typeof location !== "undefined" ? location.pathname + location.search : config.routeBase);
 export const loginUrl = () => config.loginUrl || "/user/login?came_from=" + encodeURIComponent(here());
-export const registerUrl = () => config.registerUrl || "/user/register";
+export const registerUrl = () => config.registerUrl || "/colab";
 export const logoutUrl = () => config.logoutUrl || "/user/_logout";
 export const resetUrl = () => config.resetUrl || "/user/reset";
 

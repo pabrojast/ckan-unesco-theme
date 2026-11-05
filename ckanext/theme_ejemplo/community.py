@@ -194,7 +194,7 @@ def page(name, subpath=None):
         'staticBase': STATIC_BASE,
         'csrfToken': _csrf_token(),
         'loginUrl': u'/user/login?came_from=' + quote(here, safe=''),
-        'registerUrl': u'/user/register',
+        'registerUrl': u'/colab',  # registro de IHP-WINS (ckanext-colab), como el enlace Register del encabezado
         'logoutUrl': u'/user/_logout',
         'resetUrl': u'/user/reset',
         'groupUrl': u'/group/%s' % name,

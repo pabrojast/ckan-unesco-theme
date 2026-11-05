@@ -79,7 +79,7 @@ def serve(port, rules_path, browser_user=None):
                 with open(os.path.join(PUBLIC, 'dacs-community', 'index.html'), encoding='utf-8') as f:
                     html = f.read()
                 cfg = {'routeBase': ROUTE + '/', 'apiBase': ROUTE + '/api/', 'loginUrl': '/user/login',
-                       'registerUrl': '/user/register', 'logoutUrl': '/user/_logout', 'resetUrl': '/user/reset',
+                       'registerUrl': '/colab', 'logoutUrl': '/user/_logout', 'resetUrl': '/user/reset',
                        'groupUrl': '/group/dacs', 'groupTitle': 'DACS', 'csrfToken': 'test-token'}
                 html = html.replace('<head>', '<head><script>window.__DACS__=%s;</script>' % json.dumps(cfg), 1)
                 return self.reply(200, html.encode('utf-8'), 'text/html')
