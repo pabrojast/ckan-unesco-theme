@@ -272,6 +272,12 @@ La marca de inicialización es **por componente** (`data-ihpix-ready-<md|counter
 
 ---
 
+## community.py, community_store.py, community_rules.py
+
+**Rol**: Comunidad de práctica de un grupo (hoy `dacs`) en `/group/<name>/community-of-practice`: la aplicación DACS Community (React) con la sesión de CKAN, documentos en la tabla `dacs_community_document` y permisos del archivo `community_data/dacs.rules` (sintaxis de reglas de Firestore). `community.py` es la única pieza que importa CKAN; las otras dos se prueban con SQLite. Detalle en [[Comunidad de Practica DACS]].
+
+---
+
 ## helpers.py (~661 líneas)
 
 **Rol**: Funciones helper independientes para templates Jinja2.

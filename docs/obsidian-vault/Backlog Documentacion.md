@@ -75,6 +75,7 @@ Elementos marcados como "Pendiente por confirmar" en la documentación:
 | [[Setup Local]] | URLs exactas de los forks de extensiones |
 | [[Deployment]] | Stack y proceso de producción |
 | [[Variables de Entorno]] | Si existen variables de entorno adicionales no documentadas en el código |
+| [[Comunidad de Practica DACS]] | `ckan.csrf_protection.ignore_extensions` en producción; límite de cuerpo del ingress; existencia del grupo `dacs` |
 
 ---
 
