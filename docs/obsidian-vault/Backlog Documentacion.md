@@ -44,6 +44,8 @@
 | DOC-035 | IHP-IX/UX | Informes y diapositivas con SVG (2026-10-23). **Parcial**: (a) el árabe dentro de los SVG se verificó con un render local de los catálogos compilados (glifos ligados y etiquetas mixtas "PA1 – عربي" correctas; falta confirmarlo en DEV con datos reales); (b) las 84 claves nuevas por idioma se tradujeron a es/fr/ar y se compilaron (los títulos de Output/KA siguen en inglés: vienen del JSON). Pendiente: decidir si UNESCO quiere el anexo de fuentes marcado por defecto en el ámbito `overall` (744 filas ≈ 15 páginas A4; constante `DEFAULT_SOURCES` en `ihpix_views.py`). Ver [[IHP-IX Reports UX October 2026]]. | Media |
 | DOC-034 | i18n | **Parcial 2026-10-21**: `.pot` actualizado y nuevos textos de herramientas/formulario/presentación traducidos y compilados en es/fr/ar. Resta completar textos históricos sin traducción. Antecedente: los `.po` de `ckanext/theme_ejemplo/i18n` siguen referenciando `templates/ihpix/dashboard.html` (retirado el 2026-10-11) y no incluyen los literales nuevos del formulario rediseñado ni de los dashboards de progreso. Regenerar el `.pot` y actualizar es/fr/ar (DOC-013). | Media |
 | DOC-029 | IHP-IX/UX | Tras la fase D quedan dos flecos: (1) las descripciones de `ihpix_content` (landing) siguen en texto plano: si se quiere Markdown hay que renderizarlas con `h.ihpix_markdown` en `ihpix/index.html`; (2) `country` en el admin usa `<datalist>` (slug o nombre libre) hasta resolver DOC-021. Los tipos KPI (JSON o texto legacy) ya se presentan con `h.ihpix_list_display`. | Baja |
+| DOC-037 | i18n | Páginas de iniciativa (2026-11-07): unas 240 cadenas nuevas de `templates/initiative/` sin traducción es/fr/ar, tampoco en `preview`. Hasta entonces se ven en inglés. | Media |
+| DOC-038 | Módulos | Añadir `initiative.py` a [[Modulos]]; esa nota tampoco lista `ai_water.py`. | Baja |
 
 ---
 
@@ -58,6 +60,7 @@
 | TEST-005 | `auth.py` | Tests para funciones de autorización | Media |
 | TEST-006 | `validators.py` | Tests para los 3 validadores | Baja |
 | TEST-007 | IHP-IX | Hecho: `test_ihpix_forms.py` (17), `test_ihpix_links.py` (12), `test_ihpix_constants.py` (5), `test_ihpix_workspaces.py` (10) y rutas/visibilidad en `test_plugin.py`. Pendiente: tests con BD (`clean_db`) para `ihpix_report_update` (transiciones owner/sysadmin), `ihpix_report_review` (email, transiciones, recompute, ledger + auto-contributor), `_sync_activity_links` (full replace), `get_contributor_stats`, `recompute_from_activities`, join/approve de workspaces y la migración `_migrate_ihpix_reported_by`. | Media |
+| TEST-008 | `initiative.py` | Sin tests automáticos para `derive_roles`, `parse_form` ni `landing_conf`. Probar también las pestañas News y Events con la plantilla común: se probó en `preview`, que no tiene el arreglo `4e1b9b8` de `dev210`. | Media |
 
 ---
 
@@ -81,6 +84,7 @@ Elementos marcados como "Pendiente por confirmar" en la documentación:
 | [[Setup Local]] | URLs exactas de los forks de extensiones |
 | [[Deployment]] | Stack y proceso de producción |
 | [[Variables de Entorno]] | Si existen variables de entorno adicionales no documentadas en el código |
+| [[Initiative pages]] | Si Pillow está en la imagen de producción (solo afecta a los colores sin JavaScript) |
 
 ---
 
