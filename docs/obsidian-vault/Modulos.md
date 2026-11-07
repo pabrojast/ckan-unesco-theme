@@ -768,3 +768,33 @@ las visitas. El fallback `tracking_raw` excluye por URL y metadatos del recurso.
 ## Excel IHP-IX plano v3
 
 `ihpix_bulk_flat.py` reúne los campos editables en Actividades, genera referencias al importar y vincula detalles adicionales por título unívoco. El generador/lector compartido mantiene v1/v2. El formato v3 no requiere nuevas rutas, dependencias ni tablas. Ver [[IHP-IX Bulk Import UX October 2026]].
+
+### Navegación compartida IHP-IX (2026-11-06)
+
+`ihpix_navigation.py` construye la jerarquía de regreso según el endpoint, con URLs localizadas y filtros de Progress. El helper `ihpix_navigation` devuelve una lista vacía fuera de IHP-IX. `header.html` incluye `ihpix/snippets/navigation.html` después de la cabecera, incluso cuando una página sustituye `content`; la presentación independiente lo incluye explícitamente. También cubre perfiles, grupos, organizaciones y administración IHP-IX. Los assets `ihpix-navigation.css/js` ofrecen navegación adaptable, RTL y ocultación al imprimir.
+
+## Autoguardado del reporte IHP-IX (2026-11-06)
+
+`ihpix_report_autosave` (acción autenticada, registrada en `plugin.py`) usa `ihpix_service.autosave`: autor/admin/colaborador autorizado, sólo estados `draft` o `rejected`, con las mismas validaciones de campos, organizaciones, adjuntos y workspaces del guardado manual. Conserva `rejected` y nunca envía a revisión. `ihpix_autosave.py` deriva una identidad por usuario y UUID de borrador; un advisory lock transaccional serializa su creación y la comparación normalizada reconoce reintentos sin crear filas/revisiones duplicadas. Una revisión obsoleta con respuestas distintas devuelve conflicto. `_sync_activity_links` conserva la identidad del adjunto por destino cuando el navegador todavía no conoce su ID. No añade tablas, migraciones, dependencias ni configuración.
+
+`ihpix_views.report_autosave` expone POST `/ihpix/report/autosave`; reutiliza el handler de formulario, incluido 400 de validación, 403 de permisos y 409 con versión actual y URL de edición. El JS serializa autoguardado, guardado explícito y envío final; no reconstruye estadísticas públicas por cada cambio de un borrador.
+
+### Recursos inline en el reporte IHP-IX (2026-11-06)
+
+`ihpix_resources.py` registra `ihpix_resource_create` (usuario activo autenticado). `POST /ihpix/resources` recibe multipart y devuelve JSON con el adjunto o errores por campo. Datasets: organización con permiso de creación, tipo y categoría del esquema vigente, licencia, contacto, archivo/URL y visibilidad explícita (privado → `access_level=confidential`). Usa `package_create` y `resource_create`; si falla la subida oculta el dataset vacío y permite reintentarlo. Eventos: pertenencia a organización, fechas/modalidad y agenda opcional; usa `ckanext_water_family_upload` y `ckanext_pages_update` con `submission_action=submit` (pendiente/privado, también para admin). UUID por intento + nombre derivado de usuario/tipo y advisory lock de sesión evitan duplicar contenido en reintentos; el lock usa otra conexión porque las acciones nativas hacen commit.
+
+`resource_modals.html` y `ihpix-resources.js` comparten el kit `IhpixForms` con los tres modales de publicaciones: errores en el formulario, archivo o URL, progreso, cierre con Escape y retorno de foco. Las respuestas se conservan al cerrar/reabrir el modal durante la misma visita; los recursos creados se incorporan a `ihpixLinks` y al autoguardado del reporte. Sin cambios de esquema, dependencias ni configuración.
+
+### Planificación y espacios por grupo IHP-IX
+
+- `ihpix_planning.py`: reglas puras, ocho grupos iniciales, cuatro bienios, parsers de planes/contactos y exportación XLSX.
+- `ihpix_legacy_reports.py`: adaptación explícita de los dos formatos históricos de ejecución; preservación de fuente y validación del formulario existente.
+- `ihpix_group_store.py`: nueve tablas aditivas para grupos, membresías, planes, versiones, vínculos con reportes, contactos, documentos, conversaciones/tareas e importaciones.
+- `ihpix_groups.py`: acciones `ihpix_group_list/show/update`, `ihpix_group_member_save`, `ihpix_plan_save/show/transition/report_create`, `ihpix_group_document_save/show`, `ihpix_group_contact_save`, `ihpix_group_item_save`, `ihpix_group_import_preview/show/apply`. Exigen usuario activo y autorizan cada objeto/operación; las acciones se registran junto con sus funciones de auth.
+- `ihpix_group_views.py`, `templates/ihpix/groups/`, `public/js/ihpix-groups.js`, `public/css/ihpix-groups.css`: rutas de grupo, formulario de tres pasos, guardado, importación corregible y descargas privadas. El adaptador POST de formularios exige AJAX del mismo origen; clientes externos usan la API nativa con token.
+
+Las rutas de grupo están bajo `/ihpix/workspaces/groups/<slug>`; planes en `/plans/new` y `/plans/<id>`, documentos en `/documents/<id>`, exportación en `/export.xlsx`, importación en `/import` y `/import/<id>`. La ruta `/ihpix/group-api/<operation>` adapta formularios a las mismas acciones. Los espacios históricos `/ihpix/workspaces/<code>` siguen operativos.
+
+### Calendario y continuidad del reporte
+
+`ihpix_calendar.py` valida fechas ISO y arma un mes/agenda/lista sin fecha usando únicamente objetos ya autorizados por el servicio. `ihpix_group_views.detail` admite `tab=calendar` y `month=YYYY-MM`; no añade endpoints ni dependencias. Las plantillas `calendar.html`, `journey.html` y `plan_journey.html` exponen programación y paso al reporte. `ihpix_plan_report_create` recibe `biennium`, copia contexto del plan aprobado y reanuda el borrador propio bajo bloqueo del plan. La importación consolida filas idénticas conservando `origin.sources` y una versión de auditoría.

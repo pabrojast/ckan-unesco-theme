@@ -93,15 +93,13 @@
           <button type="button" class="ihpix-report-btn is-primary" data-ihpix-publication-open>
             <i class="fa fa-cloud-upload" aria-hidden="true"></i> {{ _('Upload a publication') }}
           </button>
-          <a class="ihpix-report-btn is-secondary" id="ihpix-lw-dataset-link" data-ihpix-resource-start="dataset" target="_blank" rel="noopener"
-             href="{{ pub.dataset_new_url or '/dataset/new' }}?tag_string=ihp-ix{% if pub.output_code %},ihp-ix-output-{{ pub.output_code }}{% endif %}{% if pub.orgs and pub.orgs|length == 1 %}&owner_org={{ pub.orgs[0].id }}{% endif %}"
-             data-base-url="{{ pub.dataset_new_url or '/dataset/new' }}"{% if pub.orgs and pub.orgs|length == 1 %} data-owner-org="{{ pub.orgs[0].id }}"{% endif %}>
+          <button type="button" class="ihpix-report-btn is-secondary" id="ihpix-lw-dataset-link" data-ihpix-resource-open="dataset">
             <i class="fa fa-database" aria-hidden="true"></i> {{ _('Add a dataset') }}
-          </a>
-          <a class="ihpix-report-btn is-secondary" data-ihpix-resource-start="event" href="{{ h.ihpix_pages_url('pages.water_events_new', '/water-events_edit') }}" target="_blank" rel="noopener">
+          </button>
+          <button type="button" class="ihpix-report-btn is-secondary" data-ihpix-resource-open="event">
             <i class="fa fa-calendar-plus-o" aria-hidden="true"></i> {{ _('Create an event') }}
-          </a>
-          <p class="ihpix-lw-bridges-help">{{ _('Publications are attached immediately. Before opening a dataset or event editor, save your draft. The resource page offers “Attach this resource and return”.') }}</p>
+          </button>
+          <p class="ihpix-lw-bridges-help">{{ _('Create and attach resources here without leaving your report. Your draft keeps saving automatically.') }}</p>
         </div>
 
         <div class="ihpix-report-row">
@@ -455,23 +453,6 @@
       });
     });
   }
-
-  /* ── "Add a dataset": prellenar owner_org/tag del Output actual ── */
-  var datasetLink = document.getElementById('ihpix-lw-dataset-link');
-  var outputSel = document.getElementById('ihpix-field-output');
-  function syncDatasetLink() {
-    if (!datasetLink) return;
-    var base = datasetLink.getAttribute('data-base-url') || '/dataset/new';
-    var code = (outputSel && outputSel.value) || OUTPUT_CODE;
-    var params = ['tag_string=' + encodeURIComponent('ihp-ix' + (code ? ',ihp-ix-output-' + code : ''))];
-    var org = datasetLink.getAttribute('data-owner-org');
-    if (org) params.unshift('owner_org=' + encodeURIComponent(org));
-    var titleIn2 = document.getElementById('ihpix-field-title');
-    if (titleIn2 && titleIn2.value.trim()) params.push('title=' + encodeURIComponent(titleIn2.value.trim() + ' — data'));
-    datasetLink.href = base + '?' + params.join('&');
-  }
-  if (outputSel) outputSel.addEventListener('change', syncDatasetLink);
-  if (datasetLink) { datasetLink.addEventListener('focus', syncDatasetLink); datasetLink.addEventListener('mouseenter', syncDatasetLink); syncDatasetLink(); }
 
   /* ── Alta manual ──────────────────────────────────────────── */
   addBtn.addEventListener('click', function() {

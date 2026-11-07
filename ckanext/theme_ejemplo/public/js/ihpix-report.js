@@ -39,7 +39,15 @@
     optionalTouched: 'Optional section with answers',
     saving: 'Saving…',
     savedBrowser: 'Saved in this browser',
-    savedServer: 'Saved on the server',
+    savedServer: 'Saved to your account',
+    autosaveTitle: 'Saved in this browser. Add an activity title to save to your account.',
+    autosaveLocal: 'Saved in this browser. Waiting to sync with your account.',
+    autosaveInvalid: 'Saved in this browser. Some answers need correction before saving to your account.',
+    autosaveUnsafe: 'Changes are not saved yet. Keep this page open and retry.',
+    autosaveConflict: 'Another editor saved changes. Compare the versions before continuing.',
+    autosaveManual: 'Changes are saved in this browser. Save explicitly to update this report.',
+    continueUploads: 'Continue to uploads',
+    continueReview: 'Continue to review',
     restored: 'We restored your unsaved answers from a previous session.',
     draftDiscarded: 'Draft discarded. You can start a fresh report.',
     reviewComplete: 'Complete',
@@ -103,6 +111,48 @@
     var EDIT_MODE = !!CONFIG.editMode;
     var READ_ONLY = !!CONFIG.readOnly;
     var INITIAL_DATA = CONFIG.initialData || {};
+    var currentStep = 1;
+    var completed = false;
+
+    /* Los tres pasos comparten un formulario: ocultar un paso no borra sus respuestas. */
+    var wizard = document.querySelector('.ihpix-wizard');
+    var stepPanels = form.querySelectorAll('[data-ihpix-step]');
+    var previousStep = form.querySelector('[data-ihpix-step-previous]');
+    var nextStep = form.querySelector('[data-ihpix-step-next]');
+    function showStep(step, moveFocus, updateHash) {
+      currentStep = Math.max(1, Math.min(3, Number(step) || 1));
+      stepPanels.forEach(function (panel) { panel.hidden = Number(panel.dataset.ihpixStep) !== currentStep; });
+      if (wizard) wizard.querySelectorAll('button').forEach(function (button) {
+        if (Number(button.dataset.ihpixStepGo) === currentStep) button.setAttribute('aria-current', 'step');
+        else button.removeAttribute('aria-current');
+      });
+      document.querySelector('.ihpix-report-layout').classList.toggle('is-later-step', currentStep > 1);
+      previousStep.hidden = currentStep === 1;
+      nextStep.hidden = currentStep === 3;
+      nextStep.textContent = currentStep === 1 ? S.continueUploads : S.continueReview;
+      submitBtn.hidden = currentStep !== 3 || READ_ONLY;
+      updateProgress();
+      if (updateHash) history.replaceState(null, '', '#section-' + (currentStep === 1 ? '1' : currentStep === 2 ? '7' : 'review'));
+      if (moveFocus) {
+        var panel = form.querySelector('[data-ihpix-step="' + currentStep + '"]');
+        panel.focus({preventScroll:true});
+        wizard.scrollIntoView({behavior:prefersReducedMotion ? 'auto' : 'smooth', block:'start'});
+      }
+    }
+    function revealStep(target) {
+      var panel = target.closest('[data-ihpix-step]');
+      if (panel) showStep(panel.dataset.ihpixStep, false, false);
+    }
+    function stepFromHash() {
+      var target = document.getElementById(window.location.hash.slice(1));
+      if (target) revealStep(target);
+    }
+    if (wizard) wizard.querySelectorAll('button').forEach(function (button) {
+      button.addEventListener('click', function () { showStep(button.dataset.ihpixStepGo, true, true); persistDraft(); });
+    });
+    previousStep.addEventListener('click', function () { showStep(currentStep - 1, true, true); persistDraft(); });
+    nextStep.addEventListener('click', function () { showStep(currentStep + 1, true, true); persistDraft(); });
+    window.addEventListener('hashchange', stepFromHash);
 
     /* ── Toasts ─────────────────────────────────────────────────── */
     function showToast(message, type) {
@@ -243,6 +293,7 @@
           var target = document.getElementById(id);
           if (target) {
             e.preventDefault();
+            revealStep(target);
             target.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'start' });
             if (history.replaceState) history.replaceState(null, '', href);
           }
@@ -254,7 +305,7 @@
       var current = null;
       Object.keys(sectionMap).forEach(function(id) {
         var sec = document.getElementById(id);
-        if (sec && sec.offsetTop <= scrollPos) current = id;
+        if (sec && sec.offsetParent !== null && sec.offsetTop <= scrollPos) current = id;
       });
       navLinks.forEach(function(a) { a.classList.remove('active'); });
       if (current && sectionMap[current]) sectionMap[current].classList.add('active');
@@ -317,6 +368,7 @@
           e.preventDefault();
           var f = document.getElementById(it.fieldId);
           if (f) {
+            revealStep(f);
             f.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'center' });
             var component = window.IhpixForms && window.IhpixForms.get(f);
             var target = (component && component.focusTarget) || f.querySelector('input:not([type="hidden"]), select, textarea, button') || f;
@@ -385,7 +437,7 @@
         var field = document.getElementById(r.fieldId);
         if (!field || field.disabled) return;
         // Un campo oculto por un gate en "no" no se valida
-        if (field.offsetParent === null) { clearFieldError(r.fieldId, r.errorId); return; }
+        if (field.closest('.ihpix-conditional:not(.show)')) { clearFieldError(r.fieldId, r.errorId); return; }
         if (r.test()) {
           clearFieldError(r.fieldId, r.errorId);
         } else {
@@ -477,11 +529,11 @@
       apply.textContent = conflictText('Apply choices to my draft'); box.appendChild(apply);
       apply.onclick = function () {
         if (choices.some(function (x) {return !x.select.value;})) {showToast(conflictText('Choose an answer for each changed field.'), 'error'); return;}
-        var resolved = Object.assign({}, local);
+        var resolved = collectFormData();
         choices.forEach(function (x) {if (x.select.value === 'server') resolved[x.field] = current[x.field];});
         resolved.expected_revision = current.expected_revision;
         restoreFormData(resolved); refreshDerivedUI(); applyRestoredSelects(resolved);
-        box.hidden = true; persistDraft();
+        box.hidden = true; conflictPaused = false; persistDraft(); queueServer();
         showToast(conflictText('Changes compared. Review your answers and save the draft.'), 'success');
       };
       box.scrollIntoView({block:'center'});
@@ -489,97 +541,70 @@
 
     /* ── Submit ────────────────────────────────────────────────── */
     function submitForm(asDraft, afterSave) {
-      if (!validateForm(asDraft)) {
-        showToast(S.fixHighlighted, 'error');
-        return;
-      }
+      if (READ_ONLY || manualSaving || conflictPaused) return;
+      if (!validateForm(asDraft)) { showToast(S.fixHighlighted, 'error'); return; }
+      manualSaving = true;
+      clearTimeout(saveTimer); clearTimeout(serverTimer);
       var btn = asDraft ? draftBtn : submitBtn;
       btn.classList.add('ihpix-report-loading');
-      btn.disabled = true;
-
-      if (window.IhpixRelations) window.IhpixRelations.sync();
-      var formData = new FormData(form);
-      if (asDraft) formData.append('save_as_draft', '1');
-
-      return fetch(FORM_ACTION_URL, {
-        method: 'POST',
-        body: formData,
-        headers: { 'X-Requested-With': 'XMLHttpRequest' }
-      })
-      .then(function(response) {
-        return response.json().then(function(data) {
-          return { ok: response.ok, data: data };
-        });
-      })
-      .then(function(result) {
-        btn.classList.remove('ihpix-report-loading');
-        btn.disabled = false;
-        if (result.ok && result.data.success) {
-          var msg = result.data.message || (asDraft
-            ? S.draftSaved
-            : S.submitted);
-          showToast(msg, 'success');
-          // El servidor pasa a ser la fuente de verdad: el borrador local sobra
-          clearDraft();
-          if (form.elements.expected_revision && result.data.data) form.elements.expected_revision.value = result.data.data.revision;
-          if (errorSummary) errorSummary.classList.remove('show');
-          if (restoreBanner) restoreBanner.classList.remove('show');
-          if (afterSave) { return afterSave(result.data.data); }
-          if (asDraft && EDIT_MODE) {
-            // Seguimos en el mismo borrador; sólo actualizamos el indicador
-            setAutosaveStatus('server');
-            return;
-          }
-          if (result.data.next_url) {
-            // Borrador nuevo → su página de edición; envío → "mis reportes"
-            window.location.href = result.data.next_url;
-            return;
-          }
-          form.style.display = 'none';
-          successState.classList.add('ihpix-report-visible');
-          successState.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'start' });
-          form.reset();
-        } else {
-          if (result.data.code === 'revision_conflict') showConflict(result.data.current);
-          var err = result.data.errors ? S.fixHighlighted : (result.data.error || result.data.message || S.genericError);
-          showToast(err, 'error');
-          if (result.data.errors) highlightServerErrors(result.data.errors);
+      form.inert = true;
+      return (AUTO_URL ? saveToServer() : Promise.resolve(true)).then(function (saved) {
+        if (!saved) {
+          if (lastSaveError && lastSaveError.errors) highlightServerErrors(lastSaveError.errors);
+          showToast(conflictPaused ? S.autosaveConflict : ((lastSaveError && lastSaveError.error) || S.networkError), 'error');
+          return;
         }
-      })
-      .catch(function() {
-        btn.classList.remove('ihpix-report-loading');
-        btn.disabled = false;
-        showToast(S.networkError, 'error');
-      });
+        if (asDraft && AUTO_URL) {
+          showToast(S.draftSaved, 'success');
+          if (afterSave) return afterSave(saved);
+          return;
+        }
+        if (window.IhpixRelations) window.IhpixRelations.sync();
+        var data = new FormData(form);
+        if (asDraft) data.append('save_as_draft', '1');
+        return fetch(FORM_ACTION_URL, {method:'POST', body:data, credentials:'same-origin',
+          headers:{'X-Requested-With':'XMLHttpRequest'}})
+          .then(function (response) { return response.json().then(function (body) { return {ok:response.ok, data:body}; }); })
+          .then(function (result) {
+            if (!result.ok || !result.data.success) {
+              if (result.data.code === 'revision_conflict') { conflictPaused = true; showConflict(result.data.current); setAutosaveStatus('conflict'); }
+              if (result.data.errors) highlightServerErrors(result.data.errors);
+              showToast(result.data.error || S.genericError, 'error');
+              return;
+            }
+            form.elements.expected_revision.value = result.data.data.revision;
+            serverSnapshot = fingerprint(collectFormData());
+            INITIAL_DATA = collectFormData();
+            clearDraft();
+            if (restoreBanner) restoreBanner.classList.remove('show');
+            if (errorSummary) errorSummary.classList.remove('show');
+            if (asDraft) {
+              adoptReport(result.data.data.id, result.data.next_url);
+              setAutosaveStatus('server');
+              if (afterSave) return afterSave(result.data.data);
+              return;
+            }
+            completed = true;
+            showToast(S.submitted, 'success');
+            if (result.data.next_url) window.location.href = result.data.next_url;
+          });
+      }).catch(function () { showToast(S.networkError, 'error'); })
+        .then(function () {
+          btn.classList.remove('ihpix-report-loading');
+          form.inert = false;
+          manualSaving = false;
+        });
     }
 
     form.addEventListener('submit', function(e) {
       e.preventDefault();
-      submitForm(false);
+      if (currentStep < 3) showStep(currentStep + 1, true, true);
+      else submitForm(false);
     });
     draftBtn.addEventListener('click', function() { submitForm(true); });
-    form.querySelectorAll('[data-ihpix-resource-start]').forEach(function (link) {
-      link.addEventListener('click', function (event) {
-        event.preventDefault();
-        submitForm(true, function (saved) {
-          var data = new FormData(); data.append('kind', link.dataset.ihpixResourceStart);
-          if (form.elements._csrf_token) data.append('_csrf_token', form.elements._csrf_token.value);
-          return fetch('/ihpix/report/' + saved.id + '/resource-start', {method:'POST', body:data})
-            .then(function (response) {if (!response.ok) throw new Error('Resource editor unavailable'); return response.json();})
-            .then(function (result) {window.location.href = result.url;});
-        });
-      });
-    });
-
-
     /* Allow resetting to submit another report */
     window.ihpixReportReset = function() {
-      successState.classList.remove('ihpix-report-visible');
-      form.style.display = '';
-      clearFieldErrors();
-      if (errorSummary) errorSummary.classList.remove('show');
-      refreshDerivedUI();
-      window.scrollTo({ top: 0, behavior: prefersReducedMotion ? 'auto' : 'smooth' });
+      window.location.href = CONFIG.newReportUrl || '/ihpix/report';
     };
 
     /* ════════════════════════════════════════════════════════════
@@ -748,6 +773,7 @@
           e.preventDefault();
           var target = document.getElementById(a.getAttribute('data-ihpix-review-go'));
           if (!target) return;
+          revealStep(target);
           target.scrollIntoView({ behavior: prefersReducedMotion ? 'auto' : 'smooth', block: 'center' });
           setTimeout(function () {
             var focusable = target.matches('input, select, textarea') ? target : target.querySelector('input, select, textarea');
@@ -822,37 +848,54 @@
       });
     });
 
-    /* ── Autoguardado local (sobrevive recargas y cierres) ──────── */
+    /* ── Borrador local y sincronización serializada con la cuenta ── */
     var USER_ID = CONFIG.userId || '';
-    var LEGACY_SAVE_KEY = 'ihpix-report-draft-v1';
-    var SAVE_KEY = 'ihpix-report-draft-v3:' + USER_ID + ':' + (CONFIG.reportId || 'new');
-    var saveTimer = null;
-    var storageOk = (function() {
-      try {
-        localStorage.setItem('__ihpix_test__', '1');
-        localStorage.removeItem('__ihpix_test__');
-        return true;
-      } catch (e) { return false; }
-    })();
+    var REPORT_ID = CONFIG.reportId || '';
+    var AUTO_URL = CONFIG.autosaveUrl || '';
+    var SAVE_KEY = 'ihpix-report-draft-v3:' + USER_ID + ':' + (REPORT_ID || 'new');
+    var clientDraftId = makeDraftId();
+    var saveTimer = null, serverTimer = null, serverPending = null;
+    var serverSnapshot = null, navigationSnapshot = null, lastSavedData = null;
+    var manualSaving = false, conflictPaused = false, lastSaveError = null;
+    var storageOk = true, lastSavedAt = null;
+    var retrySave = document.getElementById('ihpix-autosave-retry');
 
+    function makeDraftId() {
+      if (window.crypto && window.crypto.randomUUID) return window.crypto.randomUUID();
+      return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function (letter) {
+        var random = Math.floor(Math.random() * 16);
+        return (letter === 'x' ? random : (random & 3 | 8)).toString(16);
+      });
+    }
+    function fingerprint(data) {
+      var clean = {};
+      Object.keys(data).sort().forEach(function (key) {
+        if (key !== '_csrf_token' && key !== 'expected_revision') clean[key] = data[key];
+      });
+      return JSON.stringify(clean);
+    }
     function setAutosaveStatus(state) {
-      if (!autosaveStatus) return;
-      if (state === 'saving') {
-        autosaveStatus.innerHTML = '<i class="fa fa-spinner fa-spin" aria-hidden="true"></i> ' + escapeHtml(S.saving);
-      } else if (state === 'saved') {
-        autosaveStatus.innerHTML = '<i class="fa fa-check" aria-hidden="true"></i> ' + escapeHtml(S.savedBrowser);
-      } else if (state === 'server') {
-        autosaveStatus.innerHTML = '<i class="fa fa-cloud" aria-hidden="true"></i> ' + escapeHtml(S.savedServer);
-      } else {
-        autosaveStatus.innerHTML = '';
-      }
+      var text = '', icon = 'check';
+      if (state === 'saving') { text = S.saving; icon = 'spinner fa-spin'; }
+      else if (state === 'server') { text = S.savedServer + (lastSavedAt ? ' · ' + lastSavedAt.toLocaleTimeString() : ''); icon = 'cloud'; }
+      else if (state === 'title') text = S.autosaveTitle;
+      else if (state === 'local') text = S.autosaveLocal;
+      else if (state === 'invalid') text = S.autosaveInvalid;
+      else if (state === 'unsafe') { text = S.autosaveUnsafe; icon = 'exclamation-triangle'; }
+      else if (state === 'conflict') { text = S.autosaveConflict; icon = 'exclamation-triangle'; }
+      else if (state === 'saved') text = AUTO_URL ? S.savedBrowser : S.autosaveManual;
+      document.querySelectorAll('[data-ihpix-autosave-status]').forEach(function (el) {
+        el.dataset.saveState = state;
+        el.innerHTML = text ? '<i class="fa fa-' + icon + '" aria-hidden="true"></i> ' + escapeHtml(text) : '';
+      });
+      if (retrySave) retrySave.hidden = !AUTO_URL || ['local', 'invalid', 'unsafe'].indexOf(state) < 0;
     }
 
     function collectFormData() {
       if (window.IhpixRelations) window.IhpixRelations.sync();
       var data = {};
       form.querySelectorAll('input, select, textarea').forEach(function(el) {
-        if (!el.name || el.type === 'file' || el.type === 'submit' || el.type === 'button') return;
+        if (!el.name || el.name === '_csrf_token' || el.type === 'file' || el.type === 'submit' || el.type === 'button') return;
         if (el.type === 'radio') {
           if (!Object.prototype.hasOwnProperty.call(data, el.name)) data[el.name] = '';
           if (el.checked) data[el.name] = el.value;
@@ -868,6 +911,7 @@
 
     function restoreFormData(data) {
       Object.keys(data).forEach(function(name) {
+        if (name === '_csrf_token') return;
         var value = data[name];
         var els = form.querySelectorAll('[name="' + name + '"]');
         if (!els.length) return;
@@ -901,49 +945,132 @@
       updateProgress();
     }
 
-    var navigationSnapshot = null;
+
 
     function persistDraft() {
-      if (!storageOk) return false;
+      if (READ_ONLY) return false;
+      var data = collectFormData();
       try {
-        localStorage.setItem(SAVE_KEY, JSON.stringify({
-          savedAt: Date.now(),
-          data: collectFormData()
-        }));
-        navigationSnapshot = JSON.stringify(collectFormData());
-        setAutosaveStatus('saved');
+        localStorage.setItem(SAVE_KEY, JSON.stringify({savedAt:Date.now(), data:data,
+          clientDraftId:clientDraftId, reportId:REPORT_ID, serverSnapshot:serverSnapshot, step:currentStep}));
+        storageOk = true;
+        navigationSnapshot = fingerprint(data);
         return true;
-      } catch (e) {
-        setAutosaveStatus('');
-        return false;
-      }
+      } catch (error) { storageOk = false; return false; }
     }
-
-    var draftsLink = document.getElementById('ihpix-my-drafts');
-    if (draftsLink) {
-      draftsLink.addEventListener('click', function (event) {
-        if (READ_ONLY || JSON.stringify(collectFormData()) === navigationSnapshot) return;
-        if (saveTimer) clearTimeout(saveTimer);
-        if (!persistDraft()) {
-          event.preventDefault();
-          window.alert(S.draftNavigationError || 'Your latest answers could not be saved in this browser. Save as draft before leaving this form.');
-        }
-      });
-    }
-
-    function scheduleAutosave() {
-      if (!storageOk) return;
-      setAutosaveStatus('saving');
-      if (saveTimer) clearTimeout(saveTimer);
-      saveTimer = setTimeout(persistDraft, 900);
-    }
-
     function clearDraft() {
-      if (saveTimer) clearTimeout(saveTimer);
-      if (!storageOk) return;
-      try { localStorage.removeItem(SAVE_KEY); } catch (e) {}
+      clearTimeout(saveTimer); clearTimeout(serverTimer);
+      try { localStorage.removeItem(SAVE_KEY); } catch (error) {}
       setAutosaveStatus('');
     }
+    function adoptReport(id, editUrl) {
+      if (!id) return;
+      var oldKey = SAVE_KEY;
+      REPORT_ID = CONFIG.reportId = id;
+      EDIT_MODE = true;
+      FORM_ACTION_URL = editUrl || FORM_ACTION_URL;
+      SAVE_KEY = 'ihpix-report-draft-v3:' + USER_ID + ':' + id;
+      if (editUrl && window.history.replaceState) window.history.replaceState(null, '', editUrl + window.location.hash);
+      if (persistDraft() && oldKey !== SAVE_KEY) {
+        try { localStorage.removeItem(oldKey); } catch (error) {}
+      }
+    }
+    function queueServer(delay) {
+      clearTimeout(serverTimer);
+      if (!AUTO_URL || READ_ONLY || manualSaving || conflictPaused) return;
+      serverTimer = setTimeout(function () { saveToServer(); }, delay == null ? 1600 : delay);
+    }
+    function saveToServer() {
+      clearTimeout(serverTimer);
+      if (!AUTO_URL || READ_ONLY || conflictPaused) return Promise.resolve(null);
+      // Todo guardado, incluso el manual, espera el acuse anterior y vuelve a leer la respuesta actual.
+      if (serverPending) return serverPending.then(function (saved) { return saved ? saveToServer() : null; });
+      var payload = collectFormData(), snapshot = fingerprint(payload);
+      persistDraft();
+      if (!(payload.title || '').trim()) {
+        setAutosaveStatus(storageOk ? 'title' : 'unsafe');
+        return Promise.resolve(null);
+      }
+      if (REPORT_ID && snapshot === serverSnapshot) {
+        setAutosaveStatus('server');
+        return Promise.resolve(lastSavedData || {id:REPORT_ID, revision:form.elements.expected_revision.value});
+      }
+      var data = new FormData(form);
+      data.append('client_draft_id', clientDraftId);
+      if (REPORT_ID) data.append('id', REPORT_ID);
+      setAutosaveStatus('saving');
+      lastSaveError = null;
+      if (restoreDiscard) restoreDiscard.disabled = true;
+      serverPending = fetch(AUTO_URL, {method:'POST', body:data, credentials:'same-origin',
+        headers:{'X-Requested-With':'XMLHttpRequest', 'Accept':'application/json'}})
+        .then(function (response) { return response.json().then(function (body) { return {ok:response.ok, status:response.status, data:body}; }); })
+        .then(function (result) {
+          if (!result.ok || !result.data.success) {
+            lastSaveError = result.data;
+            if (result.data.code === 'revision_conflict') {
+              adoptReport(result.data.report_id, result.data.edit_url);
+              conflictPaused = true;
+              showConflict(result.data.current);
+              setAutosaveStatus('conflict');
+            } else {
+              persistDraft();
+              setAutosaveStatus(storageOk ? (result.status === 400 ? 'invalid' : 'local') : 'unsafe');
+            }
+            return null;
+          }
+          var saved = result.data.data;
+          form.elements.expected_revision.value = saved.revision;
+          serverSnapshot = snapshot;
+          INITIAL_DATA = Object.assign({}, payload, {expected_revision:saved.revision});
+          lastSavedData = saved;
+          lastSavedAt = new Date();
+          adoptReport(saved.id, result.data.next_url);
+          if (restoreBanner) restoreBanner.classList.remove('show');
+          setAutosaveStatus(fingerprint(collectFormData()) === snapshot ? 'server' : (storageOk ? 'local' : 'unsafe'));
+          return saved;
+        }).catch(function () {
+          persistDraft();
+          setAutosaveStatus(storageOk ? 'local' : 'unsafe');
+          return null;
+        }).then(function (saved) {
+          serverPending = null;
+          if (restoreDiscard) restoreDiscard.disabled = false;
+          if (saved && fingerprint(collectFormData()) !== serverSnapshot) queueServer(100);
+          return saved;
+        });
+      return serverPending;
+    }
+    function scheduleAutosave() {
+      if (READ_ONLY) return;
+      clearTimeout(saveTimer);
+      saveTimer = setTimeout(function () {
+        persistDraft();
+        if (!serverPending && !conflictPaused) {
+          setAutosaveStatus(fingerprint(collectFormData()) === serverSnapshot ? 'server' :
+            (!storageOk ? 'unsafe' : (!AUTO_URL ? 'saved' : (fieldValue('title') ? 'local' : 'title'))));
+        }
+      }, 300);
+      queueServer();
+    }
+    document.querySelectorAll('#ihpix-my-drafts, .ix-navigation a').forEach(function (link) {
+      link.addEventListener('click', function (event) {
+        var snapshot = fingerprint(collectFormData());
+        if (READ_ONLY || snapshot === navigationSnapshot || snapshot === serverSnapshot) return;
+        if (!persistDraft()) {
+          event.preventDefault(); event.stopImmediatePropagation();
+          window.alert(S.draftNavigationError);
+        }
+      }, true);
+    });
+    window.addEventListener('pagehide', function () { if (!READ_ONLY && !completed) persistDraft(); });
+    window.addEventListener('beforeunload', function (event) {
+      if (READ_ONLY || completed || fingerprint(collectFormData()) === serverSnapshot || persistDraft()) return;
+      event.preventDefault(); event.returnValue = '';
+    });
+    window.addEventListener('online', function () { queueServer(0); });
+    if (retrySave) retrySave.addEventListener('click', function () {
+      saveToServer().then(function () { if (lastSaveError && lastSaveError.errors) highlightServerErrors(lastSaveError.errors); });
+    });
 
     /* Valores iniciales del servidor (edición) o de la URL (?pa=&output=) */
     function applyInitialData() {
@@ -967,57 +1094,46 @@
       }
     }
 
+
+
     function initAutosave() {
       applyInitialData();
-      if (READ_ONLY) { return; }
-      if (!storageOk) {
-        if (autosaveStatus) autosaveStatus.style.display = 'none';
-        applyInitialData();
-        return;
-      }
+      serverSnapshot = REPORT_ID ? fingerprint(collectFormData()) : null;
+      if (READ_ONLY) return;
       var raw = null;
-      try {
-        raw = localStorage.getItem(SAVE_KEY);
-        // Los borradores v1 (con "No" por defecto en las puertas) se descartan
-        try { localStorage.removeItem(LEGACY_SAVE_KEY); localStorage.removeItem(LEGACY_SAVE_KEY + ':' + USER_ID); } catch (e2) {}
-      } catch (e) {}
+      try { raw = localStorage.getItem(SAVE_KEY); } catch (error) { storageOk = false; }
       if (raw) {
         try {
           var parsed = JSON.parse(raw);
-          if (parsed && parsed.data && Object.keys(parsed.data).length) {
-            restoreFormData(parsed.data);
-            refreshDerivedUI();
-            applyRestoredSelects(parsed.data);
-            if (restoreBanner) {
-              if (restoreText && parsed.savedAt) {
-                restoreText.textContent =
-                  S.restored
-                  + ' (' + new Date(parsed.savedAt).toLocaleString() + ')';
-              }
+          if (parsed && parsed.data) {
+            if (parsed.clientDraftId) clientDraftId = parsed.clientDraftId;
+            // Si todo quedó confirmado, preferimos la versión actual del servidor (puede venir de otra pestaña).
+            if (!parsed.serverSnapshot || fingerprint(parsed.data) !== parsed.serverSnapshot) {
+              restoreFormData(parsed.data); refreshDerivedUI(); applyRestoredSelects(parsed.data);
+            }
+            if (!window.location.hash && parsed.step) currentStep = parsed.step;
+            if (restoreBanner && fingerprint(collectFormData()) !== serverSnapshot) {
+              restoreText.textContent = S.restored + (parsed.savedAt ? ' (' + new Date(parsed.savedAt).toLocaleString() + ')' : '');
               restoreBanner.classList.add('show');
             }
-            setAutosaveStatus('saved');
+            if (fingerprint(collectFormData()) !== serverSnapshot) scheduleAutosave();
           }
-        } catch (e) {}
+        } catch (error) {}
       }
-      // Las respuestas locales y su revisión prevalecen sobre el servidor/perfil.
-      // Los listeners se conectan tras restaurar para no reguardar al cargar.
       form.addEventListener('input', scheduleAutosave);
       form.addEventListener('change', scheduleAutosave);
+      if (REPORT_ID && fingerprint(collectFormData()) === serverSnapshot) setAutosaveStatus('server');
     }
-
-    if (restoreDiscard) {
-      restoreDiscard.addEventListener('click', function() {
-        form.reset();
-        clearFieldErrors();
-        if (errorSummary) errorSummary.classList.remove('show');
-        if (restoreBanner) restoreBanner.classList.remove('show');
-        refreshDerivedUI();
-        clearDraft();
-        applyInitialData();
-        showToast(S.draftDiscarded, 'success');
-      });
-    }
+    if (restoreDiscard) restoreDiscard.addEventListener('click', function () {
+      if (serverPending) return;
+      if (REPORT_ID) { clearDraft(); completed = true; window.location.reload(); return; }
+      clearDraft(); form.reset(); clearFieldErrors();
+      if (errorSummary) errorSummary.classList.remove('show');
+      if (restoreBanner) restoreBanner.classList.remove('show');
+      applyInitialData(); refreshDerivedUI();
+      navigationSnapshot = fingerprint(collectFormData());
+      setAutosaveStatus(REPORT_ID ? 'server' : '');
+    });
 
     /* ── Botón "volver arriba" ──────────────────────────────────── */
     if (backToTop) {
@@ -1035,12 +1151,16 @@
 
     /* ── Arranque ───────────────────────────────────────────────── */
     initAutosave();
-    navigationSnapshot = JSON.stringify(collectFormData());
+    navigationSnapshot = fingerprint(collectFormData());
     updateProgress();
+    document.querySelector('.ihpix-report-page').classList.add('is-wizard-ready');
+    wizard.hidden = false;
+    showStep(currentStep, false, false);
+    stepFromHash();
     if (READ_ONLY) {
       // Pendiente/publicado para su autor: se puede consultar, no editar
       form.querySelectorAll('input, select, textarea, button').forEach(function(el) {
-        el.disabled = true;
+        if (!el.matches('[data-ihpix-step-next], [data-ihpix-step-previous]')) el.disabled = true;
       });
     }
 

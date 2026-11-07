@@ -257,3 +257,17 @@ en Redis permanecen pendientes para el siguiente flush.
 Para revertir la política, restaurar la imagen anterior y recalcular la suma
 completa de `tracking_resource_stats`, conservando las visitas y las nuevas
 descargas; no restaurar valores viejos encima de incrementos posteriores.
+
+### Comprobar grupos y planificación en QA desechable
+
+Con el entorno local de pruebas preparado (`/qa/app.ini`, base `ihpix-form-db/ihpix_form` y usuarios `qa-form-*`):
+
+```bash
+docker exec ihpix-groups-app python3 /app/src/ckanext-theme-ejemplo/scripts/ihpix_groups_check.py
+```
+
+El script verifica el destino antes de escribir y crea únicamente fixtures de QA. Los tests puros se ejecutan con `pytest -q ckanext/theme_ejemplo/tests/test_ihpix_planning.py ckanext/theme_ejemplo/tests/test_ihpix_navigation.py`.
+
+### Demo autorizada de los workspaces IHP-IX
+
+Dentro del contenedor CKAN, `python3 scripts/ihpix_workspace_demo.py --ini /app/production.ini --sources /ruta/privada --summary /ruta/privada/manifest.json` valida los siete archivos. Agregar `--apply` carga planes/contactos, adjunta originales privados y deja ejecución en vista previa. `--user` exige un administrador activo (por defecto `ckan_admin`). El comando rechaza sitios distintos de `data.dev-wins.com` y la QA aislada. Hacer backup IHP-IX antes de aplicarlo. Es idempotente por lote/archivo y conserva hashes e identificadores en el manifiesto; no aprueba planes, publica reportes ni crea cuentas.

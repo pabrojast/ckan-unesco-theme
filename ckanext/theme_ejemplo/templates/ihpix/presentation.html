@@ -4,6 +4,7 @@
 <link rel="stylesheet" href="{{ h.url_for_static('/css/ihpix-report-sections.css') }}">
 <link rel="stylesheet" href="{{ h.url_for_static('/css/ihpix-presentation.css') }}"></head>
 <body>
+{% snippet 'ihpix/snippets/navigation.html' %}
 {% import 'ihpix/snippets/report_section.html' as rs with context %}
 {#
   Diapositivas 16:9 (1280×720) construidas por ihpix_presentation.slides sobre

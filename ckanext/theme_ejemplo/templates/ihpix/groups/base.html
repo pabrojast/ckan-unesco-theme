@@ -1,0 +1,21 @@
+{% extends 'page.html' %}
+{% block subtitle %}{{ _('Working groups') }} · IHP IX{% endblock %}
+{% block page_header %}{% endblock %}
+{% block secondary %}{% endblock %}
+{% block content %}
+{% import 'ihpix/snippets/forms_assets.html' as forms_ui with context %}
+{{ forms_ui.forms_styles() }}{{ forms_ui.forms_scripts() }}
+<link rel="stylesheet" href="{{ h.url_for_static('/css/ihpix-groups.css') }}?v=20261107-1">
+<main class="ixg" id="content"><div id="ihpix-groups" data-api="{{ h.url_for('theme_ejemplo.ihpix_group_api',operation='__operation__') }}" data-user="{{ c.userobj.id }}">
+  {% if group and not plan is defined and not batch is defined %}<a class="ixg-back" href="{{ h.url_for('theme_ejemplo.ihpix_workspaces') }}">← {{ _('Working groups') }}</a>{% endif %}
+  <div id="ixg-feedback" role="status" aria-live="polite" hidden></div>
+  {% block group_content %}{% endblock %}
+</div></main>
+<script type="application/json" id="ixg-strings">{{ {
+ 'saving':_('Saving…'),'saved':_('Saved to your account'),'local':_('Saved in this browser. Waiting to sync with your account.'),
+ 'unsafe':_('Changes are not saved yet. Keep this page open and retry.'),'conflict':_('Another editor saved changes. Reload before continuing.'),
+ 'network':_('Network error. Please try again.'),'done':_('Changes saved'),'required':_('Please review the highlighted fields.'),
+ 'leave':_('Your changes have not been saved yet.'),'restore':_('Recovered changes from this browser'),'confirm':_('Confirm this operation?')
+}|tojson }}</script>
+<script src="{{ h.url_for_static('/js/ihpix-groups.js') }}?v=20261107-1"></script>
+{% endblock %}

@@ -19,7 +19,7 @@ def context():
 def signed_in(view):
     @wraps(view)
     def wrapped(*args, **kwargs):
-        if not c.userobj:
+        if not c.userobj or getattr(c.userobj,'state',None)!='active':
             return redirect(tk.url_for('user.login', came_from=request.full_path))
         try:
             return view(*args, **kwargs)
@@ -291,8 +291,43 @@ def resource_attach():
     return redirect(tk.url_for('theme_ejemplo.ihpix_report_edit', id=activity.id) + '#section-7')
 
 
+def report_autosave():
+    from ckanext.theme_ejemplo.controller import MyLogica
+    return MyLogica._ihpix_handle_report_post('ihpix_report_autosave', {
+        'id': request.form.get('id') or None,
+        'client_draft_id': request.form.get('client_draft_id'),
+        'save_as_draft': '1',
+    })
+
+
+def resource_create():
+    from ckanext.theme_ejemplo.controller import MyLogica
+    if not c.userobj:
+        return jsonify(success=False, error=tk._('You must be logged in')), 403
+    data = dict(request.form)
+    upload = request.files.get('file')
+    if upload is not None and upload.filename:
+        data['upload'] = upload
+    try:
+        result = tk.get_action('ihpix_resource_create')(context(), data)
+        return jsonify(dict(result, success=True))
+    except tk.ValidationError as exc:
+        model.Session.rollback()
+        return MyLogica._ihpix_error_response(exc, 400)
+    except tk.NotAuthorized:
+        model.Session.rollback()
+        return jsonify(success=False, error=tk._('Not authorized')), 403
+    except Exception:
+        model.Session.rollback()
+        import logging
+        logging.getLogger(__name__).exception('IHP-IX: error al crear un recurso inline')
+        return jsonify(success=False, error=tk._('The resource could not be created. Please try again.')), 500
+
+
 def register(blueprint):
     for path, endpoint, view, methods in [
+        ('/ihpix/resources', 'ihpix_resource_create', resource_create, ['POST']),
+        ('/ihpix/report/autosave', 'ihpix_report_autosave', report_autosave, ['POST']),
         ('/ihpix/report/<id>/resource-start', 'ihpix_resource_start', resource_start, ['POST']),
         ('/ihpix/resource-return/attach', 'ihpix_resource_attach', resource_attach, ['POST']),
         ('/ihpix/presentation', 'ihpix_presentation', presentation, ['GET']),

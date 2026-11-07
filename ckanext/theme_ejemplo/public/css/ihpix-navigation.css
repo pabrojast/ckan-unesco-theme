@@ -1,0 +1,29 @@
+/* Navegación independiente del layout de cada página IHP-IX. */
+.masthead.ix-navigation-masthead { position: relative !important; }
+.ix-navigation-wrap ~ .main { padding-top: 20px !important; }
+.ix-navigation-wrap { background: #fff; border-bottom: 1px solid #d5e0ec; }
+.ix-navigation { max-width: 1280px; margin: 0 auto; padding: 12px 24px; display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; font: 14px/1.5 Arial, sans-serif; color: #0b2a4a; }
+.ix-navigation a { color: #005a9c; text-decoration: none; }
+.ix-navigation a:hover { text-decoration: underline; }
+.ix-navigation a:focus-visible { outline: 3px solid #0069b4; outline-offset: 3px; }
+.ix-navigation .ix-navigation-back { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 0 14px; border: 1px solid #afc1d4; border-radius: 6px; font-weight: 700; flex-shrink: 0; }
+.ix-navigation ol { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 10px; list-style: none; padding: 0; margin: 0; min-width: 0; }
+.ix-navigation li { display: flex; align-items: baseline; gap: 10px; min-width: 0; overflow-wrap: anywhere; }
+.ix-navigation li + li::before { content: '/'; color: #64748b; }
+.ix-navigation [aria-current] { font-weight: 600; }
+[dir="rtl"] .ix-navigation-arrow { transform: scaleX(-1); }
+@media (max-width: 600px) { .ix-navigation { padding: 10px 16px; gap: 8px 14px; } }
+@media print { .ix-navigation-wrap { display: none !important; } }
+
+/* El left:-9999px heredado de CKAN ensancha el documento RTL en el menú admin.
+   Conservar las etiquetas para lectores de pantalla sin desplazarlas fuera. */
+html[dir="rtl"] .account-masthead .text {
+  left: auto !important;
+  right: auto !important;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

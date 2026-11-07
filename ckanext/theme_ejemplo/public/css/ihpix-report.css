@@ -404,3 +404,39 @@ fieldset.ihpix-report-field-error .ihpix-yesno { border-color: var(--ixr-danger)
 .ihpix-relation-row .ihpix-report-field-error {outline:2px solid var(--ixr-danger); outline-offset:2px;}
 #ihpix-conflict {padding:1rem; background:#fff3cd; overflow-wrap:anywhere;}
 #ihpix-conflict pre {white-space:pre-wrap; max-height:24rem; overflow:auto;}
+
+/* Flujo guiado: los campos conservan sus IDs y el mismo formulario. */
+.ihpix-wizard[hidden], .ihpix-report-page [data-ihpix-step][hidden], .ihpix-report-actions [hidden] { display: none !important; }
+.ihpix-wizard { margin: 20px 0 24px; }
+.ihpix-wizard ol { display: flex; gap: 12px; list-style: none; padding: 0; margin: 0; }
+.ihpix-wizard li { flex: 1; min-width: 0; }
+.ihpix-wizard button { display: flex; align-items: center; gap: 10px; width: 100%; min-height: 56px; padding: 12px; border: 1px solid #afc1d4; border-radius: 6px; background: #fff; color: #0b2a4a; text-align: start; font: inherit; cursor: pointer; }
+.ihpix-wizard button[aria-current="step"] { border-color: #0069b4; background: #e8f4fd; font-weight: 700; }
+.ihpix-wizard button:focus-visible, .ihpix-retry-save:focus-visible { outline: 3px solid #0069b4; outline-offset: 3px; }
+.ihpix-step-number { display: inline-flex; flex: 0 0 28px; align-items: center; justify-content: center; width: 28px; height: 28px; border-radius: 50%; border: 1px solid #afc1d4; }
+.ihpix-wizard [aria-current] .ihpix-step-number { background: #0069b4; border-color: #0069b4; color: #fff; }
+.ihpix-report-layout.is-later-step .ihpix-form-sticky { display: none; }
+.ihpix-step-heading { margin: 0 0 12px; font-size: 24px; color: #0b2a4a; }
+.ihpix-save-feedback { flex-basis: 100%; display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.ihpix-retry-save { background: none; border: 0; color: #005a9c; text-decoration: underline; padding: 6px; cursor: pointer; }
+.ihpix-autosave-status[data-save-state="unsafe"], .ihpix-autosave-status[data-save-state="conflict"] { color: #a12525; }
+.ihpix-report-page.is-wizard-ready .is-readonly .ihpix-report-actions { display: flex; }
+.ihpix-report-form.is-readonly #ihpix-report-draft-btn, .ihpix-report-form.is-readonly #ihpix-report-submit-btn, .ihpix-report-form.is-readonly .ihpix-save-feedback { display: none; }
+@media (max-width: 600px) {
+  .ihpix-wizard ol { gap: 6px; }
+  .ihpix-wizard button { flex-direction: column; gap: 6px; height: 100%; padding: 10px 6px; font-size: 13px; text-align: center; }
+  .ihpix-save-feedback .ihpix-autosave-status { min-width: 0; overflow-wrap: anywhere; }
+}
+@media print {
+  .ihpix-wizard { display: none !important; }
+  .ihpix-report-page.is-wizard-ready [data-ihpix-step][hidden] { display: block !important; }
+}
+
+/* Las cinco opciones de alta comparten modal, espaciado y controles. */
+.ihpix-resource-modal [hidden] { display:none !important; }
+.ihpix-resource-modal .ihpix-report-field { margin-block-end:18px; min-width:0; flex:1 1 240px; }
+.ihpix-resource-modal .ihpix-report-error-text:empty { display:none; }
+.ihpix-resource-modal .ixf-modal-footer { flex-wrap:wrap; gap:10px; }
+.ihpix-resource-modal .ixf-muted { flex:1 1 200px; }
+.ihpix-resource-modal .ixf-segmented { flex-wrap:wrap; }
+.ihpix-resource-modal[aria-busy="true"] { cursor:progress; }

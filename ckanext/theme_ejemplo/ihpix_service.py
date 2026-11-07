@@ -14,6 +14,7 @@ from ckanext.theme_ejemplo.model import (IhpixActivity, IhpixWorkingGroup,
 
 class RevisionConflict(tk.ValidationError):
     def __init__(self, activity, actor=None):
+        self.activity_id = activity.id
         from ckanext.theme_ejemplo import actions as A
         from ckanext.theme_ejemplo.ihpix_resource_access import filtered
         self.current = F.activity_to_form_dict(activity.as_dict())
@@ -85,12 +86,15 @@ def validate_organizations(values):
             raise tk.ValidationError({'institution_org_id': 'Select an active IHP-WINS organization'})
 
 
-def save(context, data, activity=None):
+def save(context, data, activity=None, autosave=False, new_id=None):
     """Valida y guarda sin commit: el llamador controla la transacción."""
     from ckanext.theme_ejemplo import actions as A
     user = A._ihpix_user_obj(context)
     is_draft = A.C.normalize_bool(data.get('save_as_draft'))
+    previous_status = activity.status if activity else None
     if activity:
+        if autosave and activity.status not in F.OWNER_EDITABLE_STATUSES:
+            raise tk.NotAuthorized('Autosave is only available for drafts and returned reports')
         activity = lock(activity.id, data.get('expected_revision'), user)
         owner = activity.is_owned_by(user)
         if not (user.sysadmin or owner or can_collaborate(activity, user)):
@@ -107,15 +111,17 @@ def save(context, data, activity=None):
     check_workspaces(values, activity.as_dict() if activity else None)
     if activity is None:
         activity = IhpixActivity(title=values['title'], priority_area=values['priority_area'])
+        if new_id:
+            activity.id = new_id
         activity.reported_by = user.id
         activity.status = 'draft'
         model.Session.add(activity)
     else:
         S.ensure_baseline(activity, A._ihpix_links_for(activity.id))
     A._apply_report_values(activity, values)
-    if is_draft:
+    if is_draft and not (autosave and previous_status == 'rejected'):
         activity.status = 'draft'
-    elif activity.status != 'published':
+    elif not is_draft and activity.status != 'published':
         A._ihpix_mark_submitted(activity)
     if 'links_json' in data:
         A._sync_activity_links(activity, data['links_json'], user)
@@ -126,6 +132,40 @@ def save(context, data, activity=None):
         A._ihpix_ledger_on_submit(activity)
     model.Session.flush()
     return activity
+
+
+def autosave(context, data):
+    """Serializa la creación y reconoce reintentos de una respuesta perdida."""
+    from sqlalchemy import text
+    from ckanext.theme_ejemplo import actions as A, ihpix_autosave as D
+    from ckanext.theme_ejemplo.ihpix_resource_access import filtered
+    user = A._ihpix_user_obj(context)
+    if not user or user.state != 'active':
+        raise tk.NotAuthorized('Must be logged in')
+    data = dict(data, save_as_draft='1')
+    activity_id = data.get('id')
+    if not activity_id:
+        try:
+            activity_id, lock_id = D.draft_identity(user.id, data.get('client_draft_id'))
+        except (ValueError, TypeError, AttributeError):
+            raise tk.ValidationError({'client_draft_id': 'Invalid draft identifier'})
+        # Una pestaña que reintenta no crea otra actividad aunque no recibiera el primer acuse.
+        model.Session.execute(text('SELECT pg_advisory_xact_lock(:key)'), {'key': lock_id})
+    activity = model.Session.query(IhpixActivity).filter_by(id=activity_id).with_for_update().populate_existing().one_or_none()
+    if data.get('id') and activity is None:
+        raise tk.ObjectNotFound('Report not found')
+    if activity:
+        if not (user.sysadmin or activity.is_owned_by(user) or can_collaborate(activity, user)):
+            raise tk.NotAuthorized('Report access was revoked')
+        if activity.status not in F.OWNER_EDITABLE_STATUSES:
+            raise tk.NotAuthorized('Autosave is only available for drafts and returned reports')
+        values = A._ihpix_validate(data, True)
+        validate_organizations(values)
+        check_workspaces(values, activity.as_dict())
+        if D.equivalent({key: getattr(activity, key, None) for key in values}, values) and D.equivalent_links(
+                filtered(A._ihpix_links_for(activity.id), user), data.get('links_json', '[]')):
+            return activity
+    return save(context, data, activity, autosave=True, new_id=activity_id)
 
 
 def save_admin(context, data, activity=None):

@@ -397,3 +397,45 @@ IHPIX_QA_FILES=/ruta/spreadsheets IHPIX_QA_TOKENS=/ruta/privada/tokens.json \
 ## Regresiones del Excel plano v3
 
 `test_ihpix_bulk_flat.py` compara los valores completos de los ejemplos v2/v3 en cuatro idiomas, prueba copiar y ordenar filas sin códigos, preserva asociaciones por título, rechaza títulos ambiguos/desconocidos y comprueba errores en celdas planas, cero/No y listas nativas. La prueba de navegador de bulk incluye ahora una carga v2 además de v1 y v3. La fixture obtiene las columnas de los encabezados estables para evitar depender de su posición visual.
+
+### Navegación IHP-IX (2026-11-06)
+
+`test_ihpix_navigation.py` cubre regresos desde accesos directos, ámbitos de Progress, informes, presentaciones, workspaces, perfiles y administración, incluyendo filtros y localización de URLs. Se ejecuta con la suite pura IHP-IX existente. La comprobación de navegador debe incluir regreso con filtros, formularios con cambios sin esperar el autosave, fallo del almacenamiento, acceso directo sin historial, móvil, RTL e impresión.
+
+Validación del 2026-11-06: 253 pruebas puras aprobadas; 49 comprobaciones de navegador contra la candidata y 14 contra DEV público. Incluye regreso repetido Progress → Output → informe/presentación, filtros modificados después de cargar la página, rechazo de referrer externo, borrador inmediato y bloqueo de salida ante fallo de almacenamiento. Capturas de escritorio/móvil y RTL en `output/playwright/ihpix-navigation-20261106/` (fuera de Git).
+
+### Autoguardado y tres pasos del reporte (2026-11-06)
+
+`test_ihpix_autosave.py` comprueba la identidad por usuario/borrador, normalización para reintentos y comparación de enlaces. `scripts/ihpix_autosave_check.py` exige `/qa/app.ini`, host `ihpix-form-db`, base `ihpix_form` y los usuarios `qa-form-author`, `qa-form-other`, `qa-form-admin`: sólo ejecutarlo en una instancia local desechable. Verifica creación/reintentos, permisos, revisiones, validación, identidad de adjuntos, estados devuelto/pendiente/publicado, workspace archivado y envío explícito. No ejecutarlo contra DEV ni mediante un túnel a datos compartidos.
+
+La comprobación con navegador cubre los tres pasos, enlace desde errores, recarga sin almacenamiento local, respuesta perdida, cambios durante una petición, desconexión, fallo de ambos almacenamientos, dos pestañas con conflicto y recuperación de la versión más reciente. Evidencia local: `output/playwright/ihpix-form-20261106/`.
+
+Resultado previo al despliegue: **262 tests puros**, **21 comprobaciones de servicio** y **81 comprobaciones de navegador** aprobadas. Cinco peticiones de creación simultáneas devolvieron el mismo borrador/revisión. La subida de PDF se probó con almacenamiento local desechable (el almacenamiento remoto de DEV conserva su configuración). Móvil a 320/390 px, escritorio a 1440 px, es/fr/ar/en y navegación en modo de sólo lectura verificados. No se ejecutó la suite CKAN contra la base compartida.
+
+DEV después del rollout: **14 comprobaciones** aprobadas; endpoint de autoguardado rechaza el borrador sin título (400), controles de los tres pasos visibles y usables, idiomas es/fr/ar sin desbordamiento móvil, cero excepciones JS. Fingerprints de las 12 tablas IHP-IX idénticos antes/después (746 actividades); sin reportes de prueba creados en DEV.
+
+### Subidas inline IHP-IX (2026-11-06)
+
+`test_ihpix_resources.py` valida tipos/tamaño de archivos, organizaciones, fechas, URL, campos obligatorios e identidad de reintento. Suite pura: **283 pruebas aprobadas**. `scripts/ihpix_resources_check.py` exige `/qa/app.ini`, base `ihpix_form` y host `ihpix-form-db`; sólo ejecutar en CKAN local desechable con fixtures `qa-form-*`. Sus **19 comprobaciones** incluyen permisos, visibilidad privada/pública, respuesta perdida, rollback ante fallo de almacenamiento y recuperación sin duplicados, eventos sin agenda/con URL y revisión incluso para admin.
+
+El navegador crea un CSV privado y un evento con PDF, recarga y comprueba sus asociaciones al borrador; comprueba también el modal de publicaciones existente y simula una respuesta perdida. Evidencia local de escritorio/móvil y EN/ES/FR/AR en `output/playwright/ihpix-inline-20261106/` (fuera de Git). El almacenamiento QA usa drivers locales para datos y assets; no usar credenciales Azure de DEV en el entorno de pruebas.
+
+La revisión de navegador aprobó **53 comprobaciones** funcionales y **16 revisiones de visibilidad de controles** en EN/ES/FR/AR, 320 y 1440 px; capturas tomadas después de terminar la animación del modal. La suite de servicio de autoguardado existente conserva sus **21 comprobaciones** aprobadas. El endpoint de recursos rechaza peticiones anónimas (403).
+
+DEV público: **24 comprobaciones aprobadas**, sin excepciones JS; las cinco opciones abren dentro del reporte, los nuevos endpoints rechazan formularios vacíos sin crear contenido, y los modales se muestran traducidos y sin desbordamiento móvil en es/fr/ar.
+
+## Planificación y grupos IHP-IX
+
+`test_ihpix_planning.py` cubre fuentes/roundtrip Excel, celdas vacías y cero, taxonomía, validación estructural, contactos repetidos y reportes históricos sin inferir finalización. `test_ihpix_navigation.py` cubre la jerarquía grupo/Output/plan.
+
+`scripts/ihpix_groups_check.py` es una comprobación de integración para la base **desechable** `ihpix-form-db/ihpix_form`; verifica explícitamente ese destino antes de escribir. Prueba privacidad, observadores, aprobación/devolución, revisiones, archivos nuevos frente al plan acordado, reintentos, conciliación, revocación y archivo del grupo. Nunca se ejecuta contra DEV/producción.
+
+La validación en navegador incluye guardado, los tres pasos, documento interno, cinco modales de catálogo, revisión y reporte vinculado, siete secciones de grupo, vista previa de libros reales, móvil e idiomas ES/FR/AR. Los libros reales sólo se previsualizan en QA aislado. Las verificaciones de DEV deben ser de lectura o rechazos sin escritura y comparar las doce tablas históricas antes/después; sólo se esperan las nueve tablas nuevas y ocho filas iniciales de grupos.
+
+Resultado del 6 de noviembre de 2026: **300 tests puros**, **39 comprobaciones de servicios de grupos**, **21 de autosave de reportes** y **19 de recursos** aprobadas. Navegador local: propuesta/adjuntos/envío (15), aprobación/importaciones/secciones (14), móvil e idiomas (13), además de recuperación de texto sin conexión y conflicto entre dos editores. En DEV: **32 verificaciones de navegador y 7 HTTP**, más aislamiento de caché autenticada/anónima y redirección al login. El proveedor de DEV puede entregar un `AnonymousUser` sin atributo `state`: se comprueba explícitamente antes de acceder a grupos. El entorno QA, sus credenciales y navegadores temporales fueron retirados.
+
+### Calendario y demo de workspaces
+
+- `test_ihpix_calendar.py`: fechas inválidas/invertidas, año bisiesto, intervalos entre meses, hitos sin inicio, tareas, falta de fechas y exportación con fechas.
+- `scripts/ihpix_calendar_check.py`: sólo base QA aislada; permisos de calendario, snapshot aprobado durante revisión, selección de bienio, reanudación sin duplicados, resultados reales vacíos y fuentes duplicadas conservadas.
+- La carga de demo se ensaya en QA y se repite para comprobar idempotencia. Comparar fingerprints históricos antes/después en DEV. Navegador: recorrido completo, calendario/agenda, fuentes, enlaces, ES/FR/AR y ancho móvil.

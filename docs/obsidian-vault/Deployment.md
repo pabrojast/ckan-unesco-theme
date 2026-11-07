@@ -374,3 +374,44 @@ Despliegue lanzado por el usuario con el workflow `deploy` del repositorio Docke
 ## Verificación de importación IHP-IX (2026-10-23)
 
 `Theme checks` incluye la sintaxis de `scripts/playwright/ihpix_bulk.cjs` además de las regresiones puras. El recorrido que crea borradores y comprueba rollback debe ejecutarse únicamente en CKAN aislado; ver [[Testing]] y [[IHP-IX Bulk Import UX October 2026]].
+
+### Navegación IHP-IX en DEV (2026-11-06)
+
+Aplicada en `default` / `ckan`, deployment `ckan`, con la imagen `pabrojast/ckan-base210:ihpix-navigation-20261106@sha256:8550bd4eba5f2e075888206b1eaf9bc4613f1d94a6ff0f0ecd3e1fc47517ab7e`. Se construyó sobre el digest DEV vigente `325b1fd3…`, copiando sólo los archivos de esta corrección; se verificó que sus fuentes previas coincidían con el checkout. El único cambio al spec del deployment fue la imagen de CKAN. Rollout Ready, cero reinicios; las 12 tablas IHP-IX conservaron conteos y huellas (746 actividades). Validación: 253 pruebas puras, 49 comprobaciones de navegador en la candidata y 14 en la URL pública, más revisión visual EN/ES/FR/AR a 320, 390 y 1440 px. Evidencia local en `output/playwright/ihpix-navigation-20261106/`. Esta publicación de imagen no implica publicación Git de los cambios locales.
+
+### Formulario IHP-IX: autoguardado y tres pasos (2026-11-06)
+
+DEV (`default` / namespace `ckan`) usa `pabrojast/ckan-base210:ihpix-autosave-steps-20261106@sha256:72a1c07b0af877f28da1a3ede5939e25d6da034c13345c99e89ac8fb1ff34aad`, sobre la imagen de navegación del mismo día. Overlay de 15 archivos de aplicación, sin migraciones ni cambios de configuración. Sólo cambió la imagen del deployment. Rollout completado, pod Ready con cero reinicios. Los fingerprints de las 12 tablas IHP-IX permanecieron idénticos (746 actividades). La comprobación pública autenticada aprobó 14 verificaciones de pasos, validación del endpoint sin crear reportes, móvil es/fr/ar y ausencia de excepciones JS. Las escrituras de prueba, PDF y conflictos se probaron en una base local desechable; producción no cambió.
+
+Token temporal de QA revocado y comprobado contra Progress protegido (redirección a login). Sesiones de navegador y contenedores/red de la base aislada eliminados; credenciales temporales retiradas.
+
+### DEV — adjuntos inline IHP-IX (2026-11-06)
+
+Imagen `pabrojast/ckan-base210:ihpix-inline-resources-20261106`, digest `sha256:a2ef51e88053be8854c7fa89cb0af8fd3d94a28ab56fdcee882d5da66ad452b2`, basada en la imagen de autoguardado `72a1c07b0af877f28da1a3ede5939e25d6da034c13345c99e89ac8fb1ff34aad`. Overlay de 17 archivos de aplicación; los 14 archivos existentes de la línea base coincidían con la imagen anterior y los 17 archivos de la candidata se verificaron por hash dentro del pod nuevo.
+
+Despliegue `ckan`, contexto `default`, namespace `ckan`; sólo cambió la imagen. Rollout completado, pod `ckan-58765f9577-qrrvm` Ready y sin reinicios, respetando el retraso inicial de las probes. Validación: 283 pruebas puras, 19 de servicio de recursos, 21 de regresión de autoguardado, 53 comprobaciones funcionales de navegador local, 16 revisiones visuales y 24 comprobaciones en la URL pública de DEV.
+
+Las 12 tablas IHP-IX conservan exactamente sus fingerprints antes/después (746 actividades). Las altas reales de datasets, eventos y publicaciones se probaron sólo en CKAN desechable con almacenamiento local; en DEV se probaron formularios y peticiones incompletas rechazadas. Sin migraciones ni cambios en producción. Evidencia: `output/playwright/ihpix-inline-20261106/`.
+
+Token temporal de DEV revocado y verificado rechazado (403). Se retiraron los contenedores, la red y el túnel propios de QA, y se cerraron las sesiones de navegador y eliminaron las credenciales temporales.
+
+## Despliegue DEV de espacios por grupo IHP-IX
+
+Destino autorizado: contexto `default`, namespace `ckan`, deployment/contenedor `ckan`. La migración es aditiva y se ejecuta al inicializar el plugin, bajo un bloqueo PostgreSQL: nueve tablas nuevas y ocho grupos iniciales. Antes de desplegar, guardar snapshot de deployment, dump de `ihpix_*` y fingerprints de las doce tablas históricas. Después, comparar esas tablas y verificar la nueva interfaz, descargas y permisos, además de esperar Ready. No cambiar probes, credenciales ni configuración de servicios.
+
+El rollback de aplicación consiste en restaurar la imagen anterior; deja las tablas nuevas para conservar cualquier trabajo realizado. No eliminar tablas ni restaurar un dump sobre datos nuevos automáticamente. Los miembros, contactos, planes y archivos reales se incorporan mediante decisiones explícitas en la interfaz; el despliegue no concede roles de grupo a leads antiguos. No hay despliegue de producción autorizado para este cambio.
+
+La imagen de overlay debe copiar los archivos con propietario `ckan:ckan` y verificar su lectura ejecutándose como el usuario final. Una comprobación sólo como root no detecta archivos locales con modo `0600`; esto se detectó y corrigió en el arranque de la réplica candidata, manteniéndose disponible la réplica anterior.
+
+Verificado el 6 de noviembre de 2026 (hora de Santiago): DEV quedó en `pabrojast/ckan-base210@sha256:347e47ed6d62c9e47cdac42bd99ad58c504adee5d873236f57687461e7829db1`, pod `ckan-799484d744-rnz29`, Ready y sin reinicios. La especificación sólo cambió la imagen. Los fingerprints de las doce tablas históricas coinciden, incluidos los 746 registros de actividades; las nueve tablas nuevas contienen únicamente los ocho grupos iniciales. No se importaron datos reales ni se concedieron membresías. Token temporal revocado y rechazo HTTP 403 comprobado. Evidencias y dump privado: `/tmp/ihpix-groups-20261106/`.
+
+### Calendario y demo IHP-IX en DEV (2026-11-07)
+
+- Contexto `default`, namespace `ckan`; se cambió únicamente la imagen de `deployment/ckan`. La versión de calendario `ihpix-calendar-20261107-r2` usa digest `sha256:04418bb38b1ac0a994ab8662cb077a9bb0a420e37852a48d5723b78541f43355`.
+- Durante la comprobación coincidió una actualización de Terria. Su imagen final conserva las capas y los 22 archivos del calendario (hashes verificados como usuario de ejecución). Imagen activa: `pabrojast/ckan-base210@sha256:3f3f539ac0f5376e0db87d29e24476dcadbb574fab4b2e5efd45deb65f412698`; pod `ckan-7967c96b87-shmzg`, Ready, sin reinicios. Se mantienen los probes y el resto de la configuración.
+- Backup previo de las 21 tablas IHP-IX en `/tmp/ihpix-calendar-20261107/ihpix-before.dump`, con SHA-256 y manifiestos en el mismo directorio privado. Antes de la carga, todas las tablas seguían idénticas tras actualizar la imagen.
+- Demo: 247 planes de 249 filas, 249 versiones con procedencias, 164 contactos, siete documentos privados y cinco lotes de importación. Las 199 filas de ejecución quedan en vista previa (135 posibles coincidencias en el libro PA4); no se crean reportes nuevos ni se aprueban planes. Los 746 reportes existentes conservan su fingerprint. Sólo cambian las cinco tablas de planes/versiones/contactos/documentos/importaciones.
+- Verificación: 313 pruebas puras IHP-IX, 39 controles del servicio de grupos y 12 del calendario; recorrido navegador de planificación → aprobación → reporte/reanudación, agenda móvil ES/FR/AR, 22 verificaciones HTTP de fuentes privadas y 22 de navegador DEV, más nueve comprobaciones de la imagen final (incluida versión de assets y filtros).
+- Los archivos CSS/JS de grupos usan `v=20261107-1` para renovar la caché de clientes existentes. No hay DDL, nueva configuración ni dependencias.
+
+La comparación final tras la imagen combinada mantuvo idénticos los fingerprints de las 21 tablas respecto de la carga verificada. Se revocó el token temporal (HTTP 403 comprobado), se cerró el navegador y se retiraron los cuatro contenedores y la red de QA creados para esta tarea. Evidencia y manifiesto: `/tmp/ihpix-calendar-20261107/result.json`.

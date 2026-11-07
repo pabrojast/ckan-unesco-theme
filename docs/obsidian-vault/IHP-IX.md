@@ -101,3 +101,43 @@ Cursos vía el plugin `learning` cuando está cargado (DOC-030). Ver
 ## Pendientes conocidos
 
 Ver DOC-008 (títulos de Outputs derivados del Excel, cotejar con el OIP), DOC-031 (lista oficial de key activities), DOC-032 (etiquetas canónicas de los tipos KPI), DOC-033 (paleta por PA y daltonismo), DOC-034 (regenerar `.pot`), DOC-018/021 (autor y país de las filas del seed), DOC-019 (datasets/eventos sin `came_from`), DOC-022/023 (alcance del piloto y leads iniciales), DOC-028 (rol editor para subir publicaciones) en [[Backlog Documentacion]].
+
+## Formulario guiado y recuperación (2026-11-06)
+
+El reporte distribuye las secciones I–VI en **Datos de la actividad**, la sección VII en **Archivos y recursos** y el resumen/envío en **Revisar y enviar**. Los adjuntos siguen siendo opcionales. El borrador se guarda automáticamente en la cuenta al introducir un título; las respuestas incompletas o sin conexión mantienen respaldo local e indicador de sincronización. Enviar sigue siendo una acción explícita del paso 3. Ver [[Flujos Importantes#Formulario IHP-IX en tres pasos y guardado automático (2026-11-06)]].
+
+### Subidas uniformes en el paso 2 (2026-11-06)
+
+Dataset y evento usan ahora el mismo patrón de ventana dentro del reporte que los tres tipos de publicación. Cada ventana permite completar los datos, adjuntar un archivo o URL y recibir errores sin navegar fuera. Las respuestas y el archivo seleccionado se conservan al cerrar/reabrir durante la misma visita; tras crear el recurso, su asociación se guarda con el borrador del reporte. Los campos del modal todavía sin enviar no se recuperan tras recargar toda la página.
+
+Los datasets exigen los metadatos mínimos reales del catálogo y respetan la visibilidad elegida (privado por defecto). Los eventos admiten agenda/folleto opcional y pasan por revisión antes de publicarse. La navegación atrás y los tres pasos del reporte se mantienen. Ver [[Modulos#Recursos inline en el reporte IHP-IX (2026-11-06)]] y [[Flujos Importantes#Crear todos los adjuntos dentro del paso 2 (2026-11-06)]].
+
+## Espacios por grupo y planificación (noviembre de 2026)
+
+La entrada `/ihpix/workspaces` organiza cinco OETWG y tres CTWG. Cada grupo contiene Outputs, plan por bienio, seguimiento, documentos privados, miembros/contactos y conversaciones con tareas. Las rutas históricas por Output continúan disponibles y conservan sus permisos.
+
+Una **actividad planificada** es distinta de un reporte `IhpixActivity`. Su propuesta recoge descripción, Output/actividad clave, responsable, institución, socios y cuatro compromisos textuales (2022–2023, 2024–2025, 2026–2027, 2028–2029). Vacío significa sin compromiso informado. El formulario ofrece tres pasos: actividad/compromisos, documentos/recursos, revisión/envío. Guarda borradores en servidor y mantiene una copia local por usuario para recuperación; revisiones concurrentes producen un conflicto visible.
+
+La revisión recorre `draft → submitted → approved/returned`. Aprueban responsables del grupo o leads del Output correspondiente. El seguimiento independiente usa `planned/ongoing/completed/cancelled`. Editar un plan aprobado conserva su fotografía acordada hasta aprobar la nueva versión, incluidos los documentos aprobados. Los planes nunca alimentan los indicadores de Progress. **Report execution** crea un borrador del formulario existente, vinculado al plan, sin copiar compromisos como resultados, indicadores o fechas reales.
+
+Los roles de grupo son responsable, colaborador y observador. Un lead de Output no se convierte automáticamente en responsable del grupo. Las membresías antiguas se muestran a responsables para conciliarlas explícitamente. Importar contactos no crea cuentas, concede permisos ni envía invitaciones; vincular una cuenta existente exige correo coincidente.
+
+### Libros de referencia e importación
+
+La importación siempre presenta filas corregibles y decisiones antes de confirmar. Se admiten los libros de planes originales y la exportación de la plataforma; contactos; y reportes históricos de ejecución/en curso. Estos últimos utilizan la validación y guardado del formulario de reportes existente y se crean como borradores. Las coincidencias con reportes accesibles se pueden vincular sin sobrescribirlas. El año de una hoja no demuestra que una actividad haya finalizado.
+
+La inspección local de las fuentes entregadas identificó 185 propuestas en OETWG1, 64 en OETWG IV, 164 contactos consolidados, 141 filas en Priority_Area_4_Report y 58 en RCTWS. En contactos, las hojas por Output contienen copias del padrón con filas ocultas; sólo se asignan Outputs con una marca explícita, consolidando personas y conservando las filas de procedencia. Las cantidades corresponden a lectura de fuentes, no a datos importados en DEV.
+
+Cada lote conserva archivo, hoja, fila y valores originales (en reportes). Repetir la confirmación devuelve los mismos registros. Los archivos modificados muestran coincidencias para conciliación; no sustituyen automáticamente datos existentes. La exportación del plan crea una hoja por Output y escribe respuestas como texto para impedir fórmulas de Excel.
+
+### Documentos y colaboración
+
+Los documentos internos se suben en el mismo modal del kit de formularios, hasta 20 MB, con categorías y versiones. Se guardan en PostgreSQL y se descargan mediante una ruta autorizada, como adjuntos, sin caché pública. La creación de recursos del catálogo es una acción separada y usa sus permisos/publicación habituales. Conversaciones y tareas admiten responsable, fecha, estado y vínculo con una actividad/documento. No se implementan chat en tiempo real, videollamadas ni coedición Office.
+
+## Calendario y paso del plan al reporte (2026-11-07)
+
+Cada grupo tiene una pestaña Calendario: mes navegable, agenda accesible en móvil y actividades «Por programar». Las fechas `planned_start`/`planned_end` son opcionales; un bienio o un año del Excel nunca genera una fecha exacta. Se muestran intervalos explícitos de planes y vencimientos de tareas autorizadas. Los filtros se conservan al navegar meses. El XLSX exportado incluye las fechas al final, sin cambiar las columnas originales.
+
+El recorrido visible es **1. Planificar y programar → 2. Reportar ejecución**. Tras la aprobación se elige un bienio con compromiso; se crea o retoma el borrador propio de ese plan y bienio. Se copian título, clasificación (incluidas contribuciones adicionales), focal point, institución, correo válido y partners si cumplen el límite oficial. Resultados, indicadores y fechas reales se completan en el formulario oficial. El reporte permite consultar los compromisos del plan acordado actual, sin sincronización que sobrescriba respuestas. Una nueva revisión del plan no modifica reportes existentes.
+
+La demo autorizada conserva siete archivos privados y sus hashes: 185 filas de OETWG I y 64 de OETWG IV (247 actividades distintas), 164 contactos sin cuentas/permisos nuevos y 199 filas históricas en vista previa para conciliación. Los planes permanecen en borrador y sin fechas inventadas. Dos filas idénticas de OETWG IV comparten una actividad y mantienen ambas procedencias. Un correo inválido queda vacío en el campo editable; el original permanece íntegro en la procedencia y el XLSX. Las 141 filas del reporte PA4 y 58 del libro RCTWS se consultan en Seguimiento; aún no se convierten en resultados publicados.

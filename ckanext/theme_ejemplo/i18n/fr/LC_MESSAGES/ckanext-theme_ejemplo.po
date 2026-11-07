@@ -11285,3 +11285,1047 @@ msgstr "Supprimer ce rapport ?"
 
 msgid "The report and its attachments will be deleted permanently."
 msgstr "Le rapport et ses pièces jointes seront supprimés définitivement."
+
+#: templates/ihpix/snippets/navigation.html ihpix_navigation.py
+msgid "Back"
+msgstr "Retour"
+
+#: templates/ihpix/snippets/navigation.html ihpix_navigation.py
+msgid "Collaboration"
+msgstr "Collaboration"
+
+#: templates/ihpix/report.html
+msgid "Activity details"
+msgstr "Détails de l’activité"
+
+#: templates/ihpix/report.html
+msgid "Uploads and resources"
+msgstr "Fichiers et ressources"
+
+#: templates/ihpix/report.html
+msgid "Reporting steps"
+msgstr "Étapes du rapport"
+
+#: templates/ihpix/report.html
+msgid "Previous step"
+msgstr "Étape précédente"
+
+#: templates/ihpix/report.html
+msgid "Continue to uploads"
+msgstr "Continuer vers les fichiers"
+
+#: templates/ihpix/report.html
+msgid "Continue to review"
+msgstr "Continuer vers la vérification"
+
+#: templates/ihpix/report.html
+msgid "Retry save"
+msgstr "Réessayer l’enregistrement"
+
+#: templates/ihpix/report.html
+msgid "Discard unsaved changes"
+msgstr "Abandonner les modifications non enregistrées"
+
+#: templates/ihpix/report.html
+msgid "Complete the activity details, add supporting resources, then review and submit."
+msgstr "Renseignez les détails de l’activité, ajoutez les ressources associées, puis vérifiez et envoyez le rapport."
+
+#: templates/ihpix/report.html
+msgid "Add publications, datasets, events or links that support your activity. You can skip this step if you have no resources to attach."
+msgstr "Ajoutez des publications, jeux de données, événements ou liens associés à votre activité. Vous pouvez passer cette étape si vous n’avez aucune ressource à joindre."
+
+#: templates/ihpix/report.html
+msgid "Your draft is saved automatically after you enter an activity title. Uploads come in step 2."
+msgstr "Votre brouillon est enregistré automatiquement après la saisie du titre de l’activité. Les fichiers s’ajoutent à l’étape 2."
+
+#: templates/ihpix/report.html
+msgid "Saved in this browser. Add an activity title to save to your account."
+msgstr "Enregistré dans ce navigateur. Ajoutez un titre à l’activité pour enregistrer dans votre compte."
+
+#: templates/ihpix/report.html
+msgid "Saved in this browser. Waiting to sync with your account."
+msgstr "Enregistré dans ce navigateur. En attente de synchronisation avec votre compte."
+
+#: templates/ihpix/report.html
+msgid "Saved in this browser. Some answers need correction before saving to your account."
+msgstr "Enregistré dans ce navigateur. Certaines réponses doivent être corrigées avant l’enregistrement dans votre compte."
+
+#: templates/ihpix/report.html
+msgid "Changes are not saved yet. Keep this page open and retry."
+msgstr "Les modifications ne sont pas encore enregistrées. Gardez cette page ouverte et réessayez."
+
+#: templates/ihpix/report.html
+msgid "Another editor saved changes. Compare the versions before continuing."
+msgstr "Un autre contributeur a enregistré des modifications. Comparez les versions avant de continuer."
+
+#: templates/ihpix/report.html
+msgid "Changes are saved in this browser. Save explicitly to update this report."
+msgstr "Les modifications sont enregistrées dans ce navigateur. Enregistrez explicitement pour mettre à jour ce rapport."
+
+#: templates/ihpix/report.html
+msgid "Saved to your account"
+msgstr "Enregistré dans votre compte"
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "Agenda or flyer (optional)"
+msgstr "Programme ou affiche (facultatif)"
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "Choose a file or a URL"
+msgstr "Choisissez un fichier ou une URL"
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "Choose a file to upload"
+msgstr "Choisissez un fichier à téléverser"
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "Choose a license"
+msgstr "Choisissez une licence"
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "Choose an organization"
+msgstr "Choisissez une organisation"
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "Choose dataset or event"
+msgstr "Choisissez un jeu de données ou un événement"
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "Choose the dataset visibility"
+msgstr "Choisissez la visibilité du jeu de données"
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "Choose the event format"
+msgstr "Choisissez le format de l’événement"
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "Create and attach"
+msgstr "Créer et joindre"
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "Create and attach resources here without leaving your report. Your draft keeps saving automatically."
+msgstr "Créez et joignez des ressources ici sans quitter votre rapport. Votre brouillon continue de s’enregistrer automatiquement."
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "Create the resource and attach it without leaving this step."
+msgstr "Créez la ressource et joignez-la sans quitter cette étape."
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "Data file"
+msgstr "Fichier de données"
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "End date"
+msgstr "Date de fin"
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "End date must not be before start date"
+msgstr "La date de fin ne peut pas précéder la date de début"
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "Enter a valid date"
+msgstr "Saisissez une date valide"
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "Event format"
+msgstr "Format de l’événement"
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "Hybrid"
+msgstr "Hybride"
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "In person"
+msgstr "En présentiel"
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "Invalid request identifier"
+msgstr "Identifiant de demande non valide"
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "License"
+msgstr "Licence"
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "Location"
+msgstr "Lieu"
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "No attachment"
+msgstr "Sans pièce jointe"
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "Online"
+msgstr "En ligne"
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "Private datasets are only available to authorized organization members."
+msgstr "Les jeux de données privés sont accessibles uniquement aux membres autorisés de l’organisation."
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "Public"
+msgstr "Public"
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "Registration URL"
+msgstr "URL d’inscription"
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "Resource URL"
+msgstr "URL de la ressource"
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "Resource created and added to your report."
+msgstr "Ressource créée et ajoutée à votre rapport."
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "Submit event and attach"
+msgstr "Soumettre l’événement et joindre"
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "The dataset uses the visibility you select."
+msgstr "Le jeu de données utilisera la visibilité choisie."
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "The event is sent for review before it becomes public."
+msgstr "L’événement est soumis à révision avant d’être publié."
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "The file could not be uploaded. Please try again."
+msgstr "Le fichier n’a pas pu être téléversé. Réessayez."
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "The file exceeds the upload limit"
+msgstr "Le fichier dépasse la limite de téléversement"
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "The resource could not be created. Please try again."
+msgstr "La ressource n’a pas pu être créée. Réessayez."
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "This answer is too long"
+msgstr "Cette réponse est trop longue"
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "This file type is not allowed"
+msgstr "Ce type de fichier n’est pas autorisé"
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "Visibility"
+msgstr "Visibilité"
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "You cannot create content in this organization"
+msgstr "Vous ne pouvez pas créer de contenu dans cette organisation"
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "You need an organization membership to create this content. Ask an organization administrator for access."
+msgstr "Vous devez être membre d’une organisation pour créer ce contenu. Demandez l’accès à un administrateur de l’organisation."
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "Please select a valid option"
+msgstr "Sélectionnez une option valide"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Activity and commitments"
+msgstr "Activité et engagements"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Activity plan"
+msgstr "Plan d’activités"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Add a title to save your draft to your account."
+msgstr "Ajoutez un titre pour enregistrer le brouillon dans votre compte."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Add an existing user"
+msgstr "Ajouter un utilisateur existant"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Add contact"
+msgstr "Ajouter un contact"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Add member"
+msgstr "Ajouter un membre"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Additional associations"
+msgstr "Associations supplémentaires"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Additional outputs"
+msgstr "Outputs supplémentaires"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Agreed plan"
+msgstr "Plan convenu"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "An identical record already exists. Reimporting will not create a duplicate."
+msgstr "Un enregistrement identique existe déjà. La réimportation ne créera pas de doublon."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Another editor saved changes. Reload before continuing."
+msgstr "Un autre éditeur a enregistré des modifications. Rechargez avant de continuer."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Approve plan"
+msgstr "Approuver le plan"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Attach internal working documents or references. This step is optional."
+msgstr "Joignez des documents de travail internes ou des références. Cette étape est facultative."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Awaiting review"
+msgstr "En attente de révision"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Cancelled"
+msgstr "Annulée"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Catalogue resources use their own publication and visibility rules. Internal documents remain private."
+msgstr "Les ressources du catalogue suivent leurs propres règles de publication et de visibilité. Les documents internes restent privés."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Category"
+msgstr "Catégorie"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Changes saved"
+msgstr "Modifications enregistrées"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Commitments by biennium"
+msgstr "Engagements par biennium"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Compare existing records"
+msgstr "Comparer les enregistrements existants"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Confirm group membership"
+msgstr "Confirmer l’adhésion au groupe"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Confirm selected rows"
+msgstr "Confirmer les lignes sélectionnées"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Confirm this operation?"
+msgstr "Confirmer cette opération ?"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Contacts"
+msgstr "Contacts"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Contacts do not grant membership or send invitations."
+msgstr "Les contacts n’accordent aucune adhésion et n’envoient aucune invitation."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Continue to documents"
+msgstr "Continuer vers les documents"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Conversation"
+msgstr "Conversation"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Conversations"
+msgstr "Conversations"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Create a resource in the catalogue"
+msgstr "Créer une ressource dans le catalogue"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Create draft"
+msgstr "Créer un brouillon"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Describe the deliverables or milestones expected in each period. Leave periods without commitments empty."
+msgstr "Décrivez les livrables ou étapes prévus pour chaque période. Laissez vides les périodes sans engagement."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Documents and resources"
+msgstr "Documents et ressources"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Edit contact"
+msgstr "Modifier le contact"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Excel workbook"
+msgstr "Classeur Excel"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Execution reports"
+msgstr "Rapports de mise en œuvre"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Execution status"
+msgstr "État de mise en œuvre"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Existing record to update"
+msgstr "Enregistrement existant à mettre à jour"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Export plan to Excel"
+msgstr "Exporter le plan vers Excel"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Group manager"
+msgstr "Responsable du groupe"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Group responsibilities"
+msgstr "Responsabilités du groupe"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Group role"
+msgstr "Rôle dans le groupe"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Group title"
+msgstr "Nom du groupe"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Group workspace"
+msgstr "Espace du groupe"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Import completed"
+msgstr "Importation terminée"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Import decision"
+msgstr "Décision d’importation"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Import with preview"
+msgstr "Importer avec aperçu"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Imported execution reports"
+msgstr "Rapports de mise en œuvre importés"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Institutional role"
+msgstr "Fonction institutionnelle"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Internal documents are available only to authorized members. Uploading does not publish them in the catalogue."
+msgstr "Les documents internes sont réservés aux membres autorisés. Leur téléversement ne les publie pas dans le catalogue."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Job title"
+msgstr "Intitulé du poste"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Join this group"
+msgstr "Rejoindre ce groupe"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Key activity code"
+msgstr "Code de l’activité clé"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Language"
+msgstr "Langue"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Latest proposals"
+msgstr "Dernières propositions"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Lead Member State (optional)"
+msgstr "État membre responsable (facultatif)"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Lead institution"
+msgstr "Institution responsable"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Link an existing account with the same email (optional)"
+msgstr "Lier un compte existant avec la même adresse courriel (facultatif)"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Link existing report"
+msgstr "Lier un rapport existant"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Manage group"
+msgstr "Gérer le groupe"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Members and contacts"
+msgstr "Membres et contacts"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Membership gives access to the group plan, internal documents and conversations."
+msgstr "L’adhésion donne accès au plan du groupe, aux documents internes et aux conversations."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Message"
+msgstr "Message"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "No conversations yet."
+msgstr "Aucune conversation pour le moment."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "No execution reports linked yet."
+msgstr "Aucun rapport de mise en œuvre lié pour le moment."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "No group manager assigned yet."
+msgstr "Aucun responsable de groupe n’est encore désigné."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "No planned activities yet."
+msgstr "Aucune activité planifiée pour le moment."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Original source values"
+msgstr "Valeurs d’origine du fichier"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Output / key activity"
+msgstr "Output / activité clé"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Output permissions remain unchanged. Assign a group role explicitly after reviewing each membership."
+msgstr "Les autorisations des Outputs sont conservées. Attribuez explicitement un rôle de groupe après avoir vérifié chaque adhésion."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Output workspace"
+msgstr "Espace de l’Output"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Outputs linked to this group"
+msgstr "Outputs liés à ce groupe"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Plan activities, coordinate your group and report what was achieved."
+msgstr "Planifiez les activités, coordonnez votre groupe et rapportez les résultats obtenus."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Planned"
+msgstr "Planifiée"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Planned activities"
+msgstr "Activités planifiées"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Planned activity"
+msgstr "Activité planifiée"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Planning"
+msgstr "Planification"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Planning steps"
+msgstr "Étapes de planification"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Plans are imported as drafts. Contacts do not grant access."
+msgstr "Les plans sont importés comme brouillons. Les contacts n’accordent aucun accès."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Post"
+msgstr "Publier le message"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Presentations"
+msgstr "Présentations"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Preview import"
+msgstr "Aperçu de l’importation"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Private document, up to 20 MB. Earlier versions are kept."
+msgstr "Document privé, jusqu’à 20 Mo. Les versions précédentes sont conservées."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Progress update"
+msgstr "Mise à jour de l’avancement"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Propose activity"
+msgstr "Proposer une activité"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Proposed activity"
+msgstr "Activité proposée"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Recovered changes from this browser"
+msgstr "Modifications récupérées depuis ce navigateur"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Reference title"
+msgstr "Titre de la référence"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "References"
+msgstr "Références"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Related activity"
+msgstr "Activité associée"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Related planned activity"
+msgstr "Activité planifiée associée"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Related document"
+msgstr "Document associé"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Related groups"
+msgstr "Groupes associés"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Reload saved version"
+msgstr "Recharger la version enregistrée"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Reply"
+msgstr "Répondre"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Report execution"
+msgstr "Rapporter la mise en œuvre"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Request membership"
+msgstr "Demander l’adhésion"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Responsible focal point"
+msgstr "Point focal responsable"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Return for changes"
+msgstr "Renvoyer pour corrections"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Returned"
+msgstr "Renvoyée"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Review and correct this row"
+msgstr "Vérifier et corriger cette ligne"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Review comments"
+msgstr "Commentaires de révision"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Review existing Output memberships"
+msgstr "Vérifier les adhésions existantes aux Outputs"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Review proposal"
+msgstr "Examiner la proposition"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Review status"
+msgstr "État de révision"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Review the source rows, correct incomplete answers and choose how to handle existing records before confirming."
+msgstr "Vérifiez les lignes source, corrigez les réponses incomplètes et choisissez comment traiter les enregistrements existants avant de confirmer."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Row"
+msgstr "Ligne"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Save changes"
+msgstr "Enregistrer les modifications"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Save contact"
+msgstr "Enregistrer le contact"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Save draft"
+msgstr "Enregistrer le brouillon"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Settings"
+msgstr "Paramètres"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Skip row"
+msgstr "Ignorer la ligne"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Start a conversation or task"
+msgstr "Démarrer une conversation ou une tâche"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Strategy"
+msgstr "Stratégie"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Submit proposal"
+msgstr "Soumettre la proposition"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Task status"
+msgstr "État de la tâche"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "The agreed version remains available while these changes are reviewed."
+msgstr "La version convenue reste disponible pendant la révision de ces modifications."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "The responsible lead reviews your proposal before it becomes part of the agreed plan."
+msgstr "Le responsable examine votre proposition avant son intégration au plan convenu."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Thematic working groups"
+msgstr "Groupes de travail thématiques"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "These counts describe the plan. Implementation progress uses published execution reports."
+msgstr "Ces totaux décrivent le plan. L’avancement de la mise en œuvre utilise les rapports d’exécution publiés."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Tracking and reports"
+msgstr "Suivi et rapports"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Update"
+msgstr "Mettre à jour"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Update an existing record after review"
+msgstr "Mettre à jour un enregistrement existant après vérification"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Update execution"
+msgstr "Mettre à jour la mise en œuvre"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Update membership"
+msgstr "Mettre à jour l’adhésion"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Upload an internal document"
+msgstr "Téléverser un document interne"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Upload new version"
+msgstr "Téléverser une nouvelle version"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Use the report import workflow for implemented activities. They are reviewed separately from the plan."
+msgstr "Utilisez l’importation des rapports pour les activités réalisées. Ils sont examinés séparément du plan."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Version history"
+msgstr "Historique des versions"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "View imported records"
+msgstr "Voir les enregistrements importés"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Workbook contents"
+msgstr "Contenu du classeur"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Your changes have not been saved yet."
+msgstr "Vos modifications n’ont pas encore été enregistrées."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "records processed"
+msgstr "enregistrements traités"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "source rows"
+msgstr "lignes source"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Select an output of this group"
+msgstr "Sélectionnez un Output de ce groupe"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Select a key activity of this output"
+msgstr "Sélectionnez une activité clé de cet Output"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Select a valid output"
+msgstr "Sélectionnez un Output valide"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Add a commitment for at least one biennium"
+msgstr "Ajoutez un engagement pour au moins un biennium"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Wait for review before editing"
+msgstr "Attendez la révision avant de modifier"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Add a reason for returning the proposal"
+msgstr "Indiquez la raison du renvoi de la proposition"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Approve the plan before reporting execution"
+msgstr "Approuvez le plan avant de rapporter sa mise en œuvre"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Historical rows require review. The worksheet year does not prove completion."
+msgstr "Les lignes historiques nécessitent une révision. L’année de la feuille ne prouve pas l’achèvement."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "The operation failed. Your changes have not been confirmed."
+msgstr "L’opération a échoué. Vos modifications n’ont pas été confirmées."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Keep outputs that already have planned activities"
+msgstr "Conservez les Outputs qui ont déjà des activités planifiées"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Choose an XLSX workbook"
+msgstr "Choisissez un classeur XLSX"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "No planned activities found"
+msgstr "Aucune activité planifiée trouvée"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "No contacts found"
+msgstr "Aucun contact trouvé"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "No execution reports found"
+msgstr "Aucun rapport de mise en œuvre trouvé"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Workbook is too large"
+msgstr "Le classeur est trop volumineux"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Too many rows"
+msgstr "Trop de lignes"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Invalid request"
+msgstr "Requête non valide"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Your recovered draft"
+msgstr "Votre brouillon récupéré"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Calendar"
+msgstr "Calendrier"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Schedule (optional)"
+msgstr "Dates prévues (facultatif)"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Add dates when they are agreed. Activities without dates remain in the biennial plan and the calendar backlog."
+msgstr "Ajoutez les dates une fois convenues. Les activités sans date restent dans le plan biennal et la liste à programmer."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Planned start"
+msgstr "Début prévu"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Planned end / milestone"
+msgstr "Fin prévue / jalon"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Original source"
+msgstr "Source originale"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "The source values are preserved here. Review missing or inconsistent fields before submitting the plan."
+msgstr "Les valeurs originales sont conservées ici. Vérifiez les champs incomplets ou incohérents avant de soumettre le plan."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Planned dates and task deadlines. Open an activity to schedule it or report execution."
+msgstr "Dates prévues et échéances des tâches. Ouvrez une activité pour la programmer ou rendre compte de son exécution."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Calendar months"
+msgstr "Mois du calendrier"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Previous month"
+msgstr "Mois précédent"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Current month"
+msgstr "Mois actuel"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Next month"
+msgstr "Mois suivant"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Go to month"
+msgstr "Aller au mois"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Go"
+msgstr "Aller"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Monthly calendar"
+msgstr "Calendrier mensuel"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Monday"
+msgstr "Lundi"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Tuesday"
+msgstr "Mardi"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Wednesday"
+msgstr "Mercredi"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Thursday"
+msgstr "Jeudi"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Friday"
+msgstr "Vendredi"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Saturday"
+msgstr "Samedi"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Sunday"
+msgstr "Dimanche"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Agenda for this month"
+msgstr "Agenda du mois"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "No scheduled activities this month. Choose dates from the activities below when your group agrees them."
+msgstr "Aucune activité programmée ce mois-ci. Ajoutez les dates aux activités ci-dessous lorsque le groupe les aura convenues."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "To schedule"
+msgstr "À programmer"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Biennial commitments are preserved. A blank date means not scheduled, not cancelled."
+msgstr "Les engagements biennaux sont conservés. Une date vide indique que la programmation reste à faire."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "All listed activities have dates."
+msgstr "Toutes les activités affichées ont des dates."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "How this workspace works"
+msgstr "Fonctionnement de cet espace"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Plan and schedule"
+msgstr "Planifier et programmer"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Describe the activity, keep the commitments for each biennium and add agreed dates. Submit the proposal for review."
+msgstr "Décrivez l’activité, conservez les engagements par biennium et ajoutez les dates convenues. Soumettez la proposition pour examen."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Open calendar"
+msgstr "Ouvrir le calendrier"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Report what happened"
+msgstr "Rendre compte de l’exécution"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "From an approved plan, start a linked report. The context is copied; add actual results, evidence and indicators before submitting it for review."
+msgstr "Depuis un plan approuvé, créez un rapport lié. Le contexte est copié ; ajoutez les résultats réels, les preuves et les indicateurs avant soumission."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Activity journey"
+msgstr "Parcours de l’activité"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "No start date"
+msgstr "Sans date de début"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "No end date"
+msgstr "Sans date de fin"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Create or resume a draft for the selected biennium. Context is copied from the agreed plan; actual results remain for you to complete."
+msgstr "Créez ou reprenez un brouillon pour le biennium choisi. Le contexte du plan convenu est copié ; complétez les résultats réels."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Reporting biennium"
+msgstr "Biennium du rapport"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Continue to execution report"
+msgstr "Continuer vers le rapport d’exécution"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Submit the plan and have it approved to unlock the execution report. Saving a plan does not publish results."
+msgstr "Soumettez le plan et faites-le approuver pour ouvrir le rapport d’exécution. Enregistrer un plan ne publie pas de résultats."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "The activity owner or responsible lead can prepare the execution report."
+msgstr "L’auteur de l’activité ou le responsable peut préparer le rapport d’exécution."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Stage 2 · Report what happened"
+msgstr "Étape 2 · Rendre compte de l’exécution"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "The plan provides context. Complete actual dates, outcomes and indicators below. Changes to this report do not change the plan."
+msgstr "Le plan fournit le contexte. Complétez ci-dessous les dates réelles, les résultats et les indicateurs. Modifier ce rapport ne modifie pas le plan."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Consult the agreed commitments"
+msgstr "Consulter les engagements convenus"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Planned dates"
+msgstr "Dates prévues"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Source workbooks for review"
+msgstr "Classeurs sources à examiner"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Historical reports remain separate until reconciled. Review source values and matches before creating or linking an execution report."
+msgstr "Les rapports historiques restent séparés jusqu’au rapprochement. Vérifiez les valeurs sources et les correspondances avant de créer ou lier un rapport."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Review plan"
+msgstr "Examiner le plan"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "The end date must be on or after the start date"
+msgstr "La date de fin doit être égale ou postérieure à la date de début"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Choose a biennium from the agreed plan"
+msgstr "Choisissez un biennium du plan convenu"

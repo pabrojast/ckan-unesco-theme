@@ -2150,6 +2150,9 @@ def _sync_activity_links(activity, links_payload, user_obj):
         raise toolkit.ValidationError(errors)
 
     existing = {link.id: link for link in IhpixActivityLink.get_by_activity(activity.id)}
+    # El acuse puede perderse antes de que el navegador conozca los IDs asignados.
+    existing_by_key = {ihpix_links.dedupe_key(link.as_dict()): link
+                       for link in existing.values() if visible(link.as_dict(), user_obj)}
     for values in validated:
         if values['id'] in existing and not visible(existing[values['id']].as_dict(), user_obj):
             raise toolkit.NotAuthorized('No access to this attachment')
@@ -2162,6 +2165,8 @@ def _sync_activity_links(activity, links_payload, user_obj):
             continue  # el mismo objeto/URL dos veces: se conserva el primero
         seen_keys.add(key)
         link = existing.get(values['id']) if values['id'] else None
+        if link is None:
+            link = existing_by_key.get(key)
         if link is None:
             link = IhpixActivityLink(
                 activity_id=activity.id,
@@ -2406,6 +2411,14 @@ def _ihpix_notify_reporter(activity, action):
         mailer.mail_user(user, subject, body)
     except Exception as e:
         log.warning('IHP-IX: no se pudo enviar el email de revisión: %s', e)
+
+
+def ihpix_report_autosave(context, data_dict):
+    toolkit.check_access('ihpix_report_autosave', context, data_dict)
+    from ckanext.theme_ejemplo import ihpix_service as service
+    activity = service.autosave(context, data_dict)
+    model.Session.commit()
+    return activity.as_dict()
 
 
 def ihpix_report_submit(context, data_dict):

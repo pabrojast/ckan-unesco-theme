@@ -972,3 +972,40 @@ reconcilia por suma de recursos elegibles, sin descontar repetidamente.
 ## Excel IHP-IX: una actividad completa por fila
 
 La plantilla predeterminada IHP-IX/3 abre Actividades: datos generales, alcance e indicadores se completan en la misma fila. Las hojas adicionales vinculan recursos y relaciones por título, sin copiar identificadores. El ejemplo separado demuestra el formato plano; se siguen aceptando las versiones anteriores. Ver [[IHP-IX Bulk Import UX October 2026]].
+
+## Regreso entre páginas IHP-IX (2026-11-06)
+
+Todas las páginas HTML de IHP-IX muestran «Volver» y la jerarquía de enlaces bajo la cabecera. Un acceso directo vuelve al nivel superior (Progress → IHP IX; ámbito de Progress → Progress; miembros/colaboración → workspace; edición → mis reportes). Si se llegó desde otra página IHP-IX del mismo sitio, «Volver» usa el historial del navegador. Los enlaces de jerarquía permiten subir directamente sin recorrer los cambios de filtros del historial. Los informes y las presentaciones conservan ámbito, país, región, bienio y organización al regresar a Progress; sus enlaces se generan con `url_for` para respetar el idioma. Al usar la nueva barra desde el formulario, primero se guarda el borrador local; si falla, se bloquea la salida y se muestra el aviso existente.
+
+### Formulario IHP-IX en tres pasos y guardado automático (2026-11-06)
+
+1. **Datos de la actividad**: secciones I–VI, con guardado automático tras escribir un título válido.
+2. **Archivos y recursos**: sección VII, opcional; los editores externos regresan a `#section-7`.
+3. **Revisar y enviar**: resumen, enlaces para corregir respuestas y envío explícito a revisión.
+
+Los controles Anterior/Continuar y el indicador superior cambian el paso sin vaciar campos. Validar el envío comprueba también los pasos ocultos. Los enlaces a errores abren el paso correspondiente y enfocan el campo.
+
+POST `/ihpix/report/autosave` guarda en la cuenta después de una pausa al editar. El primer guardado cambia la URL al borrador de servidor. Antes de tener título, sin conexión o con respuestas inválidas, la copia se conserva localmente por usuario/reporte y el estado explica que todavía no está sincronizada. Si fallan ambos almacenamientos, se avisa y se protege la salida. Tras recargar se recuperan los cambios locales pendientes; una copia ya confirmada no reemplaza una versión más reciente del servidor. Los conflictos entre editores se resuelven explícitamente. Descartar cambios pendientes en un reporte existente vuelve a cargar su versión actual del servidor.
+
+### Crear todos los adjuntos dentro del paso 2 (2026-11-06)
+
+Las cinco opciones del reporte (dataset, material de formación, publicación científica, publicación general y evento) abren modales sin salir de la página. Las tres publicaciones conservan su endpoint; dataset/evento usan POST `/ihpix/resources` y se adjuntan al recibir confirmación. El reporte sigue autoguardándose. Cancelar/cerrar conserva lo escrito y el archivo seleccionado mientras la página siga abierta; un error permite corregir o reintentar. El servidor reconoce un reintento cuya respuesta se perdió y devuelve el recurso ya creado.
+
+Los datasets se crean con la visibilidad elegida; los eventos se envían a revisión. El envío del reporte sigue siendo explícito en el paso 3. Las rutas anteriores `/ihpix/report/<id>/resource-start` y `/ihpix/resource-return/attach` se conservan por compatibilidad, pero los botones del reporte ya no abren editores externos.
+
+## IHP-IX: grupo → propuesta → reporte de ejecución
+
+1. `/ihpix/workspaces` abre los ocho grupos; sus Outputs enlazan el plan y el espacio histórico correspondiente. Breadcrumbs y regreso determinista cubren grupo, plan, importación y vistas históricas.
+2. Un miembro colaborador crea `/ihpix/workspaces/groups/<slug>/plans/new`. Guarda por revisión y UUID estable; el navegador conserva cambios pendientes. Los conflictos no sobrescriben el guardado ajeno.
+3. El paso 2 adjunta documentos internos privados o crea recursos del catálogo mediante modales. El paso 3 envía la propuesta a revisión. El lead del Output o responsable del grupo aprueba o devuelve con motivo.
+4. El plan acordado se conserva durante nuevas revisiones. Cambiar estado de ejecución no publica un reporte ni modifica Progress.
+5. **Report execution** crea un borrador del formulario existente y un vínculo bidireccional; exige completar resultados reales antes de su revisión/publicación habitual.
+6. `/import` muestra planes, contactos o reportes históricos antes de confirmar. La conciliación decide omitir, crear, actualizar un plan/contacto por revisión o vincular un reporte existente. Las fuentes reales no se importan automáticamente durante despliegue.
+7. `/documents/<id>` verifica permisos de grupo/plan y de versión acordada antes de servir el archivo. Contactos, conversaciones y tareas permanecen dentro del grupo autorizado.
+
+### Calendario del workspace → reporte vinculado
+
+1. `/ihpix/workspaces/groups/<slug>?tab=calendar&month=YYYY-MM` muestra fechas acordadas, tareas y actividades pendientes de programar. En móvil usa agenda.
+2. Abrir un plan, añadir inicio/fin opcionales y guardar automáticamente; enviar y aprobar conserva el flujo de revisión existente.
+3. En «Reportar la ejecución», seleccionar el bienio: se abre un borrador vinculado y se retoma si ya existe uno propio. Las fechas/compromisos del plan no se convierten en resultados reales.
+4. Los libros históricos cargados para la demo se revisan desde Seguimiento, antes de confirmar decisiones de conciliación. Los documentos fuente originales siguen privados.

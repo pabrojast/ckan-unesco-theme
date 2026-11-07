@@ -49,6 +49,7 @@
 {%- endmacro %}
 
 <div class="ihpix-report-page">
+{% if planned_origin %}<div class="ihpix-linked-plan" style="padding:18px;border:1px solid #bcd2e8;background:#f3f8fd;border-radius:8px;margin-bottom:20px"><strong>{{ _('Stage 2 · Report what happened') }}</strong><p><a href="{{ h.url_for('theme_ejemplo.ihpix_group_plan',slug=planned_origin.group_id,id=planned_origin.id) }}">← {{ _('Related planned activity') }}: {{ planned_origin.payload.title }}</a></p><p>{{ _('The plan provides context. Complete actual dates, outcomes and indicators below. Changes to this report do not change the plan.') }}</p><details><summary>{{ _('Consult the agreed commitments') }}</summary>{% set agreed=planned_origin.approved or planned_origin.payload %}<p style="white-space:pre-wrap">{{ agreed.description }}</p>{% for period,commitment in agreed.periods.items() if commitment %}<p style="white-space:pre-wrap"><strong>{{ period }}</strong><br>{{ commitment }}</p>{% endfor %}<p>{{ agreed.focal_point }} · {{ agreed.institution }} · {{ agreed.member_state }}</p><p style="white-space:pre-wrap">{{ agreed.partners }}</p><p>{{ _('Planned dates') }}: {{ agreed.get('planned_start') or '—' }} → {{ agreed.get('planned_end') or '—' }}</p></details></div>{% endif %}
 
 <div class="ihpix-report-toast-container" id="ihpix-report-toasts" role="status" aria-live="polite"></div>
 
@@ -81,7 +82,7 @@
     <div class="ihpix-report-head-text">
       <div class="ihpix-report-kicker">{{ _('IHP-IX (2022–2029) · Reporting on implemented activities') }}</div>
       <h1>{% if edit_mode %}{{ _('Edit the activity report') }}{% else %}{{ _('Report an implemented activity') }}{% endif %}</h1>
-      <p class="ihpix-report-lede">{{ _('The form covers 7 sections aligned with the official UNESCO IHP-IX reporting guidelines') }}</p>
+      <p class="ihpix-report-lede">{{ _('Complete the activity details, add supporting resources, then review and submit.') }}</p>
       <p><small>{{ _('If you have multiple activities to report, you can use the multiple upload option.') }} <a href="{{ h.url_for('theme_ejemplo.ihpix_import') }}">{{ _('Import reports') }}</a></small></p>
     </div>
     <div class="ihpix-report-head-meta">
@@ -92,7 +93,7 @@
           <div class="ihpix-progress-fill" id="ihpix-progress-fill"></div>
         </div>
       </div>
-      <span class="ihpix-autosave-status" id="ihpix-autosave-status" aria-live="polite"></span>
+      <span class="ihpix-autosave-status" id="ihpix-autosave-status" data-ihpix-autosave-status aria-live="polite"></span>
     </div>
   </header>
 
@@ -100,7 +101,7 @@
   <div class="ihpix-restore-banner" id="ihpix-restore-banner" role="status">
     <i class="fa fa-history" aria-hidden="true"></i>
     <span class="ihpix-restore-text" id="ihpix-restore-text">{{ _('We restored your unsaved answers from a previous session.') }}</span>
-    <button type="button" id="ihpix-restore-discard">{{ _('Discard and start over') }}</button>
+    <button type="button" id="ihpix-restore-discard">{{ _('Discard unsaved changes') }}</button>
   </div>
 
   {% if edit_mode and activity %}
@@ -131,6 +132,13 @@
   </div>
   {% endif %}
 
+  <nav class="ihpix-wizard" aria-label="{{ _('Reporting steps') }}" hidden>
+    <ol>
+      <li><button type="button" data-ihpix-step-go="1"><span class="ihpix-step-number">1</span><span>{{ _('Activity details') }}</span></button></li>
+      <li><button type="button" data-ihpix-step-go="2"><span class="ihpix-step-number">2</span><span>{{ _('Uploads and resources') }}</span></button></li>
+      <li><button type="button" data-ihpix-step-go="3"><span class="ihpix-step-number">3</span><span>{{ _('Review and submit') }}</span></button></li>
+    </ol>
+  </nav>
   <div class="ihpix-report-layout">
 
     {# Carril de secciones (pegajoso en escritorio, barra horizontal en móvil) #}
@@ -147,7 +155,9 @@
           <li class="ihpix-nav-review"><a href="#section-review"><span class="roman"><i class="fa fa-check-square-o" aria-hidden="true"></i></span><span class="ihpix-nav-label">{{ _('Review and submit') }}</span><span class="ihpix-nav-status" aria-hidden="true"></span></a></li>
         </ol>
       </nav>
-      <p class="ihpix-nav-hint">{% if edit_mode %}{{ _('Changes are kept on the server when you save the draft.') }}{% else %}{{ _('Your answers are kept in this browser as you type. You can leave and come back later.') }}{% endif %}</p>
+      {% if can_edit and (not activity or activity.status in ('draft', 'rejected')) %}
+      <p class="ihpix-nav-hint">{{ _('Your draft is saved automatically after you enter an activity title. Uploads come in step 2.') }}</p>
+      {% endif %}
     </div>
 
   <form id="ihpix-report-form" class="ihpix-report-form ihpix-report-main{% if not can_edit %} is-readonly{% endif %}" novalidate>
@@ -162,6 +172,7 @@
       <ul></ul>
     </div>
 
+    <div data-ihpix-step="1" tabindex="-1" aria-label="{{ _('Activity details') }}">
     {# ── Section I: General information ─────────────────────────────── #}
     <div class="ihpix-report-section" id="section-1">
       <div class="ihpix-report-section-header">
@@ -765,7 +776,13 @@
     </div>
 
     {# ── Section VII: Publications, events & data (adjuntos) ─────── #}
-    {% include 'ihpix/snippets/report_links_section.html' %}
+    </div>{# /paso 1 #}
+    <div data-ihpix-step="2" tabindex="-1" aria-label="{{ _('Uploads and resources') }}">
+      <h2 class="ihpix-step-heading">{{ _('Uploads and resources') }}</h2>
+      <p class="ihpix-report-help">{{ _('Add publications, datasets, events or links that support your activity. You can skip this step if you have no resources to attach.') }}</p>
+      {% include 'ihpix/snippets/report_links_section.html' %}
+    </div>{# /paso 2 #}
+    <div data-ihpix-step="3" tabindex="-1" aria-label="{{ _('Review and submit') }}">
 
     {# ── Review and submit ──────────────────────────────────────── #}
     <div class="ihpix-report-section ihpix-review" id="section-review">
@@ -788,12 +805,16 @@
     </div>
 
     {# Barra de acciones (pegajosa abajo) #}
+    </div>{# /paso 3 #}
     <div class="ihpix-report-actions">
+      <div class="ihpix-save-feedback"><span class="ihpix-autosave-status" data-ihpix-autosave-status></span><button type="button" id="ihpix-autosave-retry" class="ihpix-retry-save" hidden>{{ _('Retry save') }}</button></div>
+      <button type="button" class="ihpix-report-btn is-secondary" data-ihpix-step-previous hidden>{{ _('Previous step') }}</button>
       <span class="ihpix-report-actions-status" id="ihpix-actions-status" aria-live="polite"></span>
       <button type="button" class="ihpix-report-btn is-secondary" id="ihpix-report-draft-btn">
         <i class="fa fa-spinner fa-spin" aria-hidden="true"></i>
         {{ _('Save as draft') }}
       </button>
+      <button type="button" class="ihpix-report-btn" data-ihpix-step-next hidden>{{ _('Continue to uploads') }}</button>
       <button type="submit" class="ihpix-report-btn" id="ihpix-report-submit-btn">
         <i class="fa fa-spinner fa-spin" aria-hidden="true"></i>
         {{ _('Submit for review') }}
@@ -804,7 +825,10 @@
   </div>{# /.ihpix-report-layout #}
 
   {# Modal "Upload a publication" (fuera del form del reporte: tiene su propio <form>) #}
-  {% if publication_ctx %}{{ pub_ui.publication_modal(publication_ctx, mode='report') }}{% endif %}
+  {% if publication_ctx %}
+    {{ pub_ui.publication_modal(publication_ctx, mode='report') }}
+    {% include 'ihpix/snippets/resource_modals.html' %}
+  {% endif %}
 
   <button type="button" class="ihpix-backtotop" id="ihpix-backtotop" aria-label="{{ _('Back to top') }}" title="{{ _('Back to top') }}">
     <i class="fa fa-arrow-up" aria-hidden="true"></i>
@@ -813,6 +837,8 @@
   {# Configuración del JS del reporte (public/js/ihpix-report.js, bundle theme/ihpix-report-js) #}
   {% set ihpix_report_config = {
     'actionUrl': form_action_url or '',
+    'autosaveUrl': h.url_for('theme_ejemplo.ihpix_report_autosave') if can_edit and (not activity or activity.status in ('draft', 'rejected')) else '',
+    'newReportUrl': h.url_for('theme_ejemplo.ihpix_report'),
     'editMode': (true if edit_mode else false),
     'readOnly': (false if can_edit else true),
     'initialData': form_initial or {},
@@ -883,7 +909,15 @@
       'optionalTouched': _('Optional section with answers'),
       'saving': _('Saving…'),
       'savedBrowser': _('Saved in this browser'),
-      'savedServer': _('Saved on the server'),
+      'savedServer': _('Saved to your account'),
+      'autosaveTitle': _('Saved in this browser. Add an activity title to save to your account.'),
+      'autosaveLocal': _('Saved in this browser. Waiting to sync with your account.'),
+      'autosaveInvalid': _('Saved in this browser. Some answers need correction before saving to your account.'),
+      'autosaveUnsafe': _('Changes are not saved yet. Keep this page open and retry.'),
+      'autosaveConflict': _('Another editor saved changes. Compare the versions before continuing.'),
+      'autosaveManual': _('Changes are saved in this browser. Save explicitly to update this report.'),
+      'continueUploads': _('Continue to uploads'),
+      'continueReview': _('Continue to review'),
       'restored': _('We restored your unsaved answers from a previous session.'),
       'draftDiscarded': _('Draft discarded. You can start a fresh report.'),
       'reviewComplete': _('Complete'),

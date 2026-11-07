@@ -1087,35 +1087,9 @@ class MyLogica():
 
         @staticmethod
         def ihpix_workspaces():
-            """Listado de workspaces (uno por Output) agrupados por PA."""
-            redirect = _require_login()
-            if redirect:
-                return redirect
-            from ckanext.theme_ejemplo import ihpix_constants as C
-            from collections import OrderedDict
-            pa_filter = request.args.get('pa', '').strip()
-            try:
-                data = toolkit.get_action('ihpix_working_group_list')(
-                    MyLogica._ihpix_ctx(),
-                    {'priority_area': pa_filter if pa_filter in C.PRIORITY_AREAS else ''})
-                workspaces = data.get('results', [])
-            except Exception as e:
-                log.error('IHP-IX workspaces: %s', e)
-                workspaces = []
-            by_pa = OrderedDict((pa, []) for pa in C.PRIORITY_AREAS)
-            for ws in workspaces:
-                by_pa.setdefault(ws['priority_area'], []).append(ws)
-            mine = [ws for ws in workspaces
-                    if ws.get('my_membership') and ws['my_membership']['status'] != 'removed']
-            return render_template(
-                'ihpix/workspaces.html',
-                workspaces=workspaces,
-                workspaces_by_pa=by_pa,
-                mine=mine,
-                pa_filter=pa_filter,
-                priority_areas=C.PRIORITY_AREAS,
-                pending_requests=toolkit.h.get_pending_ihpix_wg_members_count(),
-            )
+            """Entrada de los ocho grupos; las rutas por Output se conservan."""
+            from .ihpix_group_views import index
+            return index()
 
         @staticmethod
         def ihpix_workspace_detail(code):
@@ -4524,6 +4498,8 @@ class MyLogica():
             except RevisionConflict as e:
                 model.Session.rollback()
                 return jsonify({'success': False, 'code': 'revision_conflict',
+                                'report_id': e.activity_id,
+                                'edit_url': h.url_for('theme_ejemplo.ihpix_report_edit', id=e.activity_id),
                                 'current': e.current,
                                 'error': _('Another editor saved a newer version. Compare the changes before saving again.')}), 409
             except toolkit.ValidationError as e:
@@ -4536,9 +4512,11 @@ class MyLogica():
                 return jsonify({'success': False,
                                 'error': _('Not authorized')}), 403
             except toolkit.ObjectNotFound:
+                model.Session.rollback()
                 return jsonify({'success': False,
                                 'error': _('Report not found')}), 404
             except Exception as e:
+                model.Session.rollback()
                 log.error('Error saving IHP-IX report: %s', e)
                 return jsonify({'success': False,
                                 'error': _('An error occurred. Please try again.')}), 500
@@ -4617,8 +4595,17 @@ class MyLogica():
             except toolkit.NotAuthorized:
                 return abort(403, _('Not authorized'))
 
+            from . import ihpix_group_store as group_store, ihpix_groups
+            planned_origin = None
+            for link in group_store.rows(group_store.reports, group_store.reports.c.report_id == id):
+                try:
+                    planned_origin = ihpix_groups.plan_access(c.userobj, link['plan_id'])
+                    break
+                except toolkit.NotAuthorized:
+                    continue
             return render_template(
                 'ihpix/report.html',
+                planned_origin=planned_origin,
                 is_logged_in=True,
                 edit_mode=True,
                 activity=activity,
@@ -4680,6 +4667,7 @@ class MyLogica():
             datasets, listas de grupos, campos disponibles del esquema
             `documents`, reportes propios del Output y límites."""
             from ckanext.theme_ejemplo import ihpix_publications as P
+            from ckanext.theme_ejemplo import ihpix_resources as IR
             from ckanext.theme_ejemplo import actions as theme_actions
             ctx = MyLogica._ihpix_ctx()
             logged_in = bool(c.userobj)
@@ -4713,6 +4701,15 @@ class MyLogica():
                 upload_max_mb = 50
             return {
                 'logged_in': logged_in,
+                'event_orgs': toolkit.get_action('organization_list_for_user')(
+                    {'user': c.userobj.name, 'auth_user_obj': c.userobj}, {'permission': 'read'}) if logged_in else [],
+                'licenses': toolkit.get_action('license_list')({}, {}),
+                'dataset_metadata_fields': [field for field in toolkit.get_action(
+                    'scheming_dataset_schema_show')(ctx, {'type': 'dataset'})['dataset_fields']
+                    if field['field_name'] in ('dcat_type', 'topic')],
+                'dataset_accept': ','.join('.' + ext for ext in IR.DATA_EXTENSIONS),
+                'agenda_accept': ','.join('.' + ext for ext in IR.AGENDA_EXTENSIONS),
+                'agenda_max_mb': min(upload_max_mb, 20),
                 'orgs': [{'id': o.get('id'), 'name': o.get('name'),
                           'title': o.get('title') or o.get('display_name') or o.get('name')}
                          for o in orgs],

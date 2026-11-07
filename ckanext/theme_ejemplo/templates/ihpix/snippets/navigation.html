@@ -1,0 +1,15 @@
+{% set trail = trail or h.ihpix_navigation() %}
+<link rel="stylesheet" href="{{ h.url_for_static('/css/ihpix-navigation.css') }}?v=20261106-groups">
+<div class="ix-navigation-wrap">
+  <nav class="ix-navigation" aria-label="{{ _('Page navigation') }}">
+    <a class="ix-navigation-back" data-ihpix-back href="{{ trail[-2][1] }}"{% if '/ihpix/progress' in trail[-2][1] %} data-ihpix-progress-parent{% endif %}>
+      <span class="ix-navigation-arrow" aria-hidden="true">←</span> {{ _('Back') }}
+    </a>
+    <ol>
+      {% for label, url in trail %}
+        <li>{% if loop.last %}<span aria-current="page">{{ label }}</span>{% else %}<a href="{{ url }}"{% if '/ihpix/progress' in url %} data-ihpix-progress-parent{% endif %}>{{ label }}</a>{% endif %}</li>
+      {% endfor %}
+    </ol>
+  </nav>
+</div>
+<script defer src="{{ h.url_for_static('/js/ihpix-navigation.js') }}"></script>

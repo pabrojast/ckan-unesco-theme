@@ -480,6 +480,8 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
             membership_model.init_ihpix_country_summary_db()
             from ckanext.theme_ejemplo import ihpix_store
             ihpix_store.init_db()
+            from ckanext.theme_ejemplo import ihpix_group_store
+            ihpix_group_store.init_db()
             # Create initiative_request table if needed
             membership_model.init_initiative_requests_db()
             # Create open_learning_course table if needed
@@ -1365,12 +1367,16 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
 
             from ckanext.theme_ejemplo import ihpix_views
             ihpix_views.register(blueprint)
+            from ckanext.theme_ejemplo import ihpix_group_views
+            ihpix_group_views.register(blueprint)
             initiative.add_url_rules(blueprint)  # Initiative pages (added by Jorgen Van Der Biest)
             return blueprint
         
         def get_helpers(self):
             from ckanext.theme_ejemplo import ihpix_views
+            from ckanext.theme_ejemplo.ihpix_navigation import navigation
             helpers_map = {
+                 'ihpix_navigation': navigation,
                  'ihpix_pending_resource': ihpix_views.pending_resource,
                  'get_latest_courses': self.get_latest_courses,
                  'get_featured_datasets': self.get_featured_datasets,
@@ -1454,8 +1460,9 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
 
         # IActions
         def get_actions(self):
-            from ckanext.theme_ejemplo import ihpix_collaboration, ihpix_reporting
+            from ckanext.theme_ejemplo import ihpix_collaboration, ihpix_reporting, ihpix_resources, ihpix_groups
             return {
+                **ihpix_groups.ACTIONS,
                 **ihpix_collaboration.ACTIONS,
                 **ihpix_reporting.ACTIONS,
                 'user_show': custom_actions.user_show,
@@ -1504,6 +1511,7 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 'ihpix_activity_bulk_delete': custom_actions.ihpix_activity_bulk_delete,
                 # IHP-IX reporting & dashboard
                 'ihpix_report_submit': custom_actions.ihpix_report_submit,
+                'ihpix_report_autosave': custom_actions.ihpix_report_autosave,
                 'ihpix_report_update': custom_actions.ihpix_report_update,
                 'ihpix_report_show': custom_actions.ihpix_report_show,
                 'ihpix_report_delete': custom_actions.ihpix_report_delete,
@@ -1515,6 +1523,7 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 'ihpix_activity_link_delete': custom_actions.ihpix_activity_link_delete,
                 'ihpix_link_search': custom_actions.ihpix_link_search,
                 'ihpix_publication_create': custom_actions.ihpix_publication_create,
+                'ihpix_resource_create': ihpix_resources.create,
                 'ihpix_course_propose': custom_actions.ihpix_course_propose,
                 # IHP-IX descubribilidad / analítica
                 'ihpix_contributor_list': custom_actions.ihpix_contributor_list,
@@ -1555,7 +1564,9 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
         # IAuthFunctions
         def get_auth_functions(self):
             from ckanext.theme_ejemplo import ihpix_collaboration, ihpix_reporting
+            from ckanext.theme_ejemplo import ihpix_groups
             return {
+                **{name: custom_auth._logged_in_only for name in ihpix_groups.ACTIONS},
                 **{name: custom_auth._logged_in_only for name in dict(ihpix_collaboration.ACTIONS, **ihpix_reporting.ACTIONS)},
                 'membership_request_create': custom_auth.membership_request_create,
                 'membership_request_list': custom_auth.membership_request_list,
@@ -1600,6 +1611,8 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 # IHP-IX reporting & dashboard
                 'ihpix_admin_overview_stats': custom_auth.ihpix_admin_overview_stats,
                 'ihpix_report_submit': custom_auth.ihpix_report_submit,
+                'ihpix_report_autosave': custom_auth._logged_in_only,
+                'ihpix_resource_create': custom_auth._logged_in_only,
                 'ihpix_report_update': custom_auth.ihpix_report_update,
                 'ihpix_report_show': custom_auth.ihpix_report_show,
                 'ihpix_report_delete': custom_auth.ihpix_report_delete,

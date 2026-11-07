@@ -759,7 +759,7 @@
     return url.pathname + url.search + url.hash;
   }
   function syncLinks(params) {
-    $all('.ixg-scope-tabs a, .ixg-strip a').forEach(function (a) { a.href = filteredUrl(a.href, params); });
+    $all('.ixg-scope-tabs a, .ixg-strip a, [data-ihpix-progress-parent]').forEach(function (a) { a.href = filteredUrl(a.href, params); });
     ['#ixg-download', '#ixg-presentation', '#ixg-narrative'].forEach(function (selector) {
       var a = $(selector); if (a) { a.href = filteredUrl(a.href, params, true); }
     });
