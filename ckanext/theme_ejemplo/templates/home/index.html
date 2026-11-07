@@ -12,9 +12,7 @@
       {{ self.flash() }}
     </div>
     {% block primary_content %}
-      {# Home page v2 (added by Jorgen Van Der Biest): replaces
-         {% snippet "home/custom_layout.html" %}, see home_v2.py #}
-      {% snippet "home/home_v2.html" %}
+      {% snippet "home/custom_layout.html"%}
     {% endblock %}
   </div>
 {% endblock %}

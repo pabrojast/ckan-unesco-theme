@@ -1,5 +1,9 @@
 # Home page v2 (redesign)
 
+> [!warning] Desactivada en `dev210` desde el 2026-11-07
+> `dev210` volvió a la home anterior (`home/custom_layout.html`), la plantilla que también usa `origin/production`. El código de esta nota sigue en el repo sin usar: `home_v2.py`, `home_v2.html`, `home-v2.css`, `home-v2.js` y `public/home_v2/`; `plugin.py` sigue registrando sus helpers.
+> Para reactivarla: en `templates/home/index.html`, renderizar `home/home_v2.html`, y en `templates/header.html`, restaurar las 2 líneas del logo de IHP-WINS (ver el merge `9e89d32`).
+
 Added by Jorgen Van Der Biest. The IHP-WINS home page design. It keeps every link of the previous home page, reorganised by the platform's areas.
 
 ## How it is wired
