@@ -1,9 +1,14 @@
 """Regresiones de enlaces de regreso, filtros y rutas localizadas."""
+from pathlib import Path
+from types import SimpleNamespace
 from urllib.parse import urlencode, parse_qs, urlsplit
 
+from jinja2 import Environment, FileSystemLoader
 import pytest
 
 from ckanext.theme_ejemplo.ihpix_navigation import breadcrumbs
+
+TEMPLATES = Path(__file__).resolve().parents[1] / 'templates'
 
 
 def url_for(endpoint, **params):
@@ -75,3 +80,26 @@ def test_entity_and_admin_pages_return_to_ihpix():
 def test_navigation_is_absent_outside_ihpix():
     for endpoint in ('home.index', 'dataset.read', 'theme_ejemplo.member_states', None):
         assert breadcrumbs(endpoint, {}, {}, url_for, str) == []
+
+
+def render_navigation(endpoint):
+    env = Environment(loader=FileSystemLoader(str(TEMPLATES)))
+    env.globals.update(
+        _=lambda text: text,
+        h=SimpleNamespace(url_for_static=lambda path: path),
+        request=SimpleNamespace(endpoint=endpoint),
+    )
+    template = env.get_template('ihpix/snippets/navigation.html')
+    return template.render(trail=[('Home', '/'), ('IHP IX', '/ihpix')])
+
+
+def test_landing_navigation_uses_the_site_container():
+    html = render_navigation('theme_ejemplo.ihpix')
+    assert '<div class="container">' in html
+    assert 'ix-navigation--site' in html
+
+
+def test_child_navigation_keeps_its_own_width():
+    html = render_navigation('theme_ejemplo.ihpix_progress')
+    assert 'class="container"' not in html
+    assert 'ix-navigation--site' not in html

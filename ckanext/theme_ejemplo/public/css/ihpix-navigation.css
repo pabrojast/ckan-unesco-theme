@@ -13,6 +13,8 @@
 .ix-navigation [aria-current] { font-weight: 600; }
 [dir="rtl"] .ix-navigation-arrow { transform: scaleX(-1); }
 @media (max-width: 600px) { .ix-navigation { padding: 10px 16px; gap: 8px 14px; } }
+/* Dentro del .container del sitio, el ancho y el margen lateral los pone ese contenedor. */
+.ix-navigation.ix-navigation--site { max-width: none; padding-inline: 0; }
 @media print { .ix-navigation-wrap { display: none !important; } }
 
 /* El left:-9999px heredado de CKAN ensancha el documento RTL en el menú admin.

@@ -1,15 +1,19 @@
 {% set trail = trail or h.ihpix_navigation() %}
-<link rel="stylesheet" href="{{ h.url_for_static('/css/ihpix-navigation.css') }}?v=20261106-groups">
+{# La portada de IHP-IX usa el .container del sitio; las páginas de 1280px conservan su ancho. #}
+{% set on_landing = request.endpoint == 'theme_ejemplo.ihpix' %}
+<link rel="stylesheet" href="{{ h.url_for_static('/css/ihpix-navigation.css') }}?v=20261107-landing">
 <div class="ix-navigation-wrap">
-  <nav class="ix-navigation" aria-label="{{ _('Page navigation') }}">
-    <a class="ix-navigation-back" data-ihpix-back href="{{ trail[-2][1] }}"{% if '/ihpix/progress' in trail[-2][1] %} data-ihpix-progress-parent{% endif %}>
-      <span class="ix-navigation-arrow" aria-hidden="true">←</span> {{ _('Back') }}
-    </a>
-    <ol>
-      {% for label, url in trail %}
-        <li>{% if loop.last %}<span aria-current="page">{{ label }}</span>{% else %}<a href="{{ url }}"{% if '/ihpix/progress' in url %} data-ihpix-progress-parent{% endif %}>{{ label }}</a>{% endif %}</li>
-      {% endfor %}
-    </ol>
-  </nav>
+  <div{% if on_landing %} class="container"{% endif %}>
+    <nav class="ix-navigation{% if on_landing %} ix-navigation--site{% endif %}" aria-label="{{ _('Page navigation') }}">
+      <a class="ix-navigation-back" data-ihpix-back href="{{ trail[-2][1] }}"{% if '/ihpix/progress' in trail[-2][1] %} data-ihpix-progress-parent{% endif %}>
+        <span class="ix-navigation-arrow" aria-hidden="true">←</span> {{ _('Back') }}
+      </a>
+      <ol>
+        {% for label, url in trail %}
+          <li>{% if loop.last %}<span aria-current="page">{{ label }}</span>{% else %}<a href="{{ url }}"{% if '/ihpix/progress' in url %} data-ihpix-progress-parent{% endif %}>{{ label }}</a>{% endif %}</li>
+        {% endfor %}
+      </ol>
+    </nav>
+  </div>
 </div>
 <script defer src="{{ h.url_for_static('/js/ihpix-navigation.js') }}"></script>
