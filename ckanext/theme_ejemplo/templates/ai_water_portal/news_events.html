@@ -8,6 +8,7 @@
 <div class="aiw-cols">
   <section aria-labelledby="aiw-news-title">
     <div class="aiw-list-head"><h2 id="aiw-news-title">{{ _('News') }}</h2></div>
+    {% snippet 'ai_water_portal/snippets/add_button.html', kind='news', gname=group_dict.name %}
     {% for item in news %}
     <article class="aiw-item">
       {% set d = item.publish_date or item.created %}
@@ -25,6 +26,7 @@
       <h2 id="aiw-events-title">{{ _('Events') }}</h2>
       <a href="{{ h.url_for('theme_ejemplo.group_events', name=group_dict.name) }}">{{ _('All events') }} ({{ all_events|length }}) →</a>
     </div>
+    {% snippet 'ai_water_portal/snippets/add_button.html', kind='event', gname=group_dict.name %}
     {% for item in all_events[:6] %}
     {% set d = item.publish_date or item.created %}
     <article class="aiw-event">

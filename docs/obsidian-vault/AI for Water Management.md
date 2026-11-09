@@ -35,7 +35,7 @@ Todo el código nuevo está en ficheros propios:
   - Plegadas, quedan `inert`: sin foco ni lectores de pantalla.
   - Sin JavaScript, un `<noscript>` en `snippets/head.html` la deja visible.
   - En el móvil, el menú del grupo es una sola fila que se desliza.
-  - Menú **Add** en el menú del grupo (`ai_water_portal/snippets/add_menu.html`), solo con sesión iniciada y permisos de creación:
+  - Botones **Add ...** debajo del título de cada lista (`ai_water_portal/snippets/add_button.html`), solo con sesión iniciada y permisos de creación. Están en la portada, en News & events y en Knowledge hub › Datasets y › Data stories; en Documents ya está el botón "Add Document" de siempre.
     - Dataset: `/dataset/new`; la iniciativa se elige en el formulario.
     - Document: `/documents/new?group=`.
     - News: `/water-news_edit?initiative=` (preselecciona la iniciativa).

@@ -182,6 +182,7 @@
           <h2>{{ _('Latest news') }}</h2>
           <a href="{{ h.url_for('theme_ejemplo.group_news', name=group_dict.name) }}">{{ _('All news') }} ({{ news_count }}) →</a>
         </div>
+        {% snippet 'ai_water_portal/snippets/add_button.html', kind='news', gname=group_dict.name %}
         {% for item in news %}
         <article class="aiw-item">
           {% set d = item.publish_date or item.created %}
@@ -200,6 +201,7 @@
           <h2>{{ _('Events') }}</h2>
           <a href="{{ h.url_for('theme_ejemplo.group_events', name=group_dict.name) }}">{{ _('All events') }} ({{ events_count }}) →</a>
         </div>
+        {% snippet 'ai_water_portal/snippets/add_button.html', kind='event', gname=group_dict.name %}
         {% for item in events %}
         {% set d = item.publish_date or item.created %}
         <article class="aiw-event">
@@ -222,6 +224,7 @@
           <h2>{{ _('Datasets') }}</h2>
           <a href="{{ h.url_for('group.read', id=group_dict.name) }}?q=">{{ _('All datasets') }} ({{ datasets_count }}) →</a>
         </div>
+        {% snippet 'ai_water_portal/snippets/add_button.html', kind='dataset', gname=group_dict.name %}
         {% for pkg in datasets %}
         <article class="aiw-item">
           <h3><a href="{{ h.url_for(pkg.type ~ '.read', id=pkg.name) }}">{{ pkg.title or pkg.name }}</a></h3>
@@ -240,6 +243,7 @@
           <h2>{{ _('Data stories') }}</h2>
           <a href="{{ h.url_for('theme_ejemplo.group_data_stories', name=group_dict.name) }}">{{ _('All data stories') }} →</a>
         </div>
+        {% snippet 'ai_water_portal/snippets/add_button.html', kind='story', gname=group_dict.name %}
         {% for story in stories %}
         <article class="aiw-item">
           {% set d = story.published_at or story.created_at %}
@@ -262,6 +266,7 @@
       <h2 id="aiw-docs-title">{{ _('Documents') }}</h2>
       <a href="{{ h.url_for('theme_ejemplo.group_publications', name=group_dict.name) }}">{{ _('All documents') }} ({{ documents_count }}) →</a>
     </div>
+    {% snippet 'ai_water_portal/snippets/add_button.html', kind='document', gname=group_dict.name %}
     <article class="aiw-book">
       <img src="/ai_water/book-cover.webp" width="500" height="650" alt="{{ _('Cover of Applications of AI for water management') }}" />
       <div>
