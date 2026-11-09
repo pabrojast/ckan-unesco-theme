@@ -273,4 +273,5 @@ body.aiw-autohide:not(.aiw-header-hidden) .aiw-reveal-zone { display: none; }
 .aiw-status--lead { color: #9E3A10; background: #FDE9DF; }
 .aiw-status--partner { color: var(--aiw-blue); background: var(--aiw-cyan-soft); }
 .aiw-status--invited { color: var(--aiw-body); background: #E6EEF2; }
+.aiw-status--interest { color: var(--aiw-blue); background: #FFFFFF; box-shadow: inset 0 0 0 1px var(--aiw-mid); }
 .aiw-place .fa { color: var(--aiw-orange-text); }
