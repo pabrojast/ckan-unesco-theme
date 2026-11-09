@@ -415,3 +415,11 @@ Verificado el 6 de noviembre de 2026 (hora de Santiago): DEV quedó en `pabrojas
 - Los archivos CSS/JS de grupos usan `v=20261107-1` para renovar la caché de clientes existentes. No hay DDL, nueva configuración ni dependencias.
 
 La comparación final tras la imagen combinada mantuvo idénticos los fingerprints de las 21 tablas respecto de la carga verificada. Se revocó el token temporal (HTTP 403 comprobado), se cerró el navegador y se retiraron los cuatro contenedores y la red de QA creados para esta tarea. Evidencia y manifiesto: `/tmp/ihpix-calendar-20261107/result.json`.
+
+## Release coordinada de Azure (2026-11-09)
+
+Se preparó `release/azure-20261109` integrando `production` con `dev210` (`6eee194af203b03ef495d87db0f47111e1763dd8`). La integración conserva la carga diferida del slideshow y el guard de sobrecarga de producción. No se copian los datos de demostración de Hetzner.
+
+La imagen se construye desde el digest vigente de Azure y fija cada extensión en `ckan-unesco-docker/deploy/docker/release-20261109.json`. Learning y dashboards nativos requieren las migraciones aditivas y sus colas dedicadas; Terria usa un digest fijo y conserva sus valores Helm de Azure. MapLibre, Graphic Walker, Chart.js y ChartsCha no se habilitan como extensiones CKAN.
+
+La publicación de esta rama no acredita un despliegue. La ejecución y la evidencia corresponden al procedimiento `deploy/releases/20261109.md` del repositorio Docker, mediante `scripts/manual-deploy.sh` con contexto `ckan`, namespace `ckan`, más el despliegue Helm de Terria. El rollback conserva las tablas nuevas y restaura las imágenes/configuraciones previas; no borra datos recibidos después de la migración.
