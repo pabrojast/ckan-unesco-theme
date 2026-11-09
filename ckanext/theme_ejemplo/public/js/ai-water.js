@@ -1,28 +1,34 @@
 /*
  * AI for Water Management (páginas del grupo con diseño propio, y páginas de
  * iniciativa que usan la misma plantilla).
- * La cabecera del sitio (las franjas de IHP-WINS) está plegada desde el
- * primer pintado (ver ai-water.css) y el menú de la iniciativa (.aiw-subnav)
- * queda arriba. El botón "IHP-WINS menu", a la derecha de ese menú, la
- * despliega o la pliega. Ya no aparece al pasar el ratón por el borde.
+ * Las franjas de IHP-WINS (barra de la cuenta, cabecera del sitio y migas)
+ * están plegadas por defecto desde el primer pintado (ver ai-water.css); solo
+ * queda arriba el menú de la iniciativa (.aiw-subnav). El botón "IHP-WINS
+ * menu", a la derecha de ese menú, las despliega o las pliega. No aparecen al
+ * pasar el ratón.
  */
 (function () {
   'use strict';
   function init() {
     var body = document.body;
     var header = document.querySelector('header.masthead');
-    var bar = document.querySelector('.aiw-subnav .aiw-wrap');
-    var anchor = document.querySelector('.aiw');
-    if (!body || !header || !bar || !anchor) { return; }
+    var subnav = document.querySelector('.aiw-subnav');
+    var bar = subnav && subnav.querySelector('.aiw-wrap');
+    if (!body || !header || !bar) { return; }
 
     var root = document.documentElement;
+    var account = document.querySelector('.account-masthead');
+    var toolbar = document.querySelector('.aiw .toolbar');
+    var crumbs = toolbar && toolbar.closest('.container');
+    var folded = [account, header, crumbs].filter(Boolean);
+    // Elemento de referencia para que el contenido no salte (justo después del menú)
+    var anchor = subnav.nextElementSibling || subnav;
     if (!header.id) { header.id = 'aiw-site-header'; }
 
     var button = document.createElement('button');
     button.type = 'button';
     button.className = 'aiw-ribbon-toggle';
     button.setAttribute('aria-controls', header.id);
-    button.setAttribute('aria-expanded', 'false');
     button.innerHTML = '<span>IHP-WINS<span class="aiw-ribbon-toggle-more"> menu</span></span>' +
       '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" ' +
       'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>';
@@ -34,34 +40,39 @@
       list.scrollLeft = Math.max(0, current.offsetLeft - list.offsetLeft - 16);
     }
 
-    function setHeight() {
+    function setHeights() {
       root.style.setProperty('--aiw-header-h', header.offsetHeight + 'px');
+      root.style.setProperty('--aiw-acct-h', (account ? account.offsetHeight : 0) + 'px');
     }
     function setOpen(open) {
-      // Arriba del todo, la cabecera empuja el contenido al desplegarse. Más
+      // Arriba del todo, las franjas empujan el contenido al desplegarse. Más
       // abajo, el contenido no debe saltar: se compensa el desplazamiento.
       var scrolled = window.scrollY > 4;
       var before = anchor.getBoundingClientRect().top;
       if (scrolled) { body.classList.add('aiw-ribbons-instant'); }
       body.classList.toggle('aiw-ribbons-open', open);
       button.setAttribute('aria-expanded', open ? 'true' : 'false');
-      // Plegada, la cabecera no recibe el foco ni la leen los lectores de pantalla
-      header.inert = !open;
+      // Plegadas, no reciben el foco ni las leen los lectores de pantalla
+      folded.forEach(function (el) { el.inert = !open; });
       if (scrolled) {
         // 'instant': el sitio usa scroll-behavior: smooth
         window.scrollBy({ top: anchor.getBoundingClientRect().top - before, left: 0, behavior: 'instant' });
         window.requestAnimationFrame(function () { body.classList.remove('aiw-ribbons-instant'); });
       }
     }
-    header.inert = true;
+    setOpen(false);
     button.addEventListener('click', function () {
       setOpen(!body.classList.contains('aiw-ribbons-open'));
     });
 
-    window.addEventListener('resize', setHeight);
-    // La altura cambia si se abre el menú móvil de la cabecera
-    if (window.ResizeObserver) { new ResizeObserver(setHeight).observe(header); }
-    setHeight();
+    window.addEventListener('resize', setHeights);
+    // Las alturas cambian si se abre el menú móvil de la cabecera
+    if (window.ResizeObserver) {
+      var ro = new ResizeObserver(setHeights);
+      ro.observe(header);
+      if (account) { ro.observe(account); }
+    }
+    setHeights();
   }
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
