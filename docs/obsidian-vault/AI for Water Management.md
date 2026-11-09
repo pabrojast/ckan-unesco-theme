@@ -27,7 +27,15 @@ Todo el código nuevo está en ficheros propios:
 - `ckanext/theme_ejemplo/ai_water.py`: `GROUP_LANDINGS` (configuración por grupo) y los helpers `theme_ejemplo_group_landing`, `theme_ejemplo_group_landing_data` y `theme_ejemplo_group_pages`.
 - `templates/group/read.html`: muestra la portada en `/group/<name>` sin parámetros.
 - `templates/ai_water_portal/`: portada, marco de las pestañas (`group_frame.html`), cabecera y menú (`snippets/header.html`), introducciones de pestañas y vista News & events.
-- `public/css/ai-water.css` (todo bajo `.aiw`), `public/js/ai-water.js` (la cabecera del sitio se oculta al bajar y el menú del grupo queda fijo; filtros de la lista de socios) y `public/ai_water/` (ilustraciones).
+- `public/css/ai-water.css` (todo bajo `.aiw`), `public/js/ai-water.js` y `public/ai_water/` (ilustraciones).
+  - Cabecera del sitio: plegada desde el primer pintado; el menú del grupo queda fijo arriba.
+  - Botón **IHP-WINS menu**, a la derecha del menú del grupo: despliega o pliega la cabecera.
+  - Desde noviembre de 2026 ya no aparece al pasar el ratón por el borde superior, porque el movimiento resultaba incómodo.
+  - Plegada, la cabecera queda `inert`: sin foco ni lectores de pantalla.
+  - Sin JavaScript, un `<noscript>` en `snippets/head.html` la deja visible.
+  - En el móvil, el menú del grupo es una sola fila que se desliza.
+  - `ai-water.js` también hace los filtros de la lista de socios.
+  - Lo mismo vale para las páginas de iniciativa con la plantilla común.
 
 En ficheros existentes solo se añaden líneas, marcadas con `AI for Water Management (added by Jorgen Van Der Biest)`:
 
