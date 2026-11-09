@@ -1,0 +1,92 @@
+{#
+  Miembros del AI for Water Expert Group, por institución (formulario de
+  expresión de interés, 23 respuestas, octubre-noviembre de 2026).
+  Se incluye desde partners_body.html.
+
+  Permiso: un experto solo aparece en público con 'public': True, cuando ha
+  aceptado figurar con su nombre y cargo en la página. Los administradores del
+  grupo y los sysadmins ven la lista completa, con los nombres aún no públicos
+  marcados, para revisarla. Sin ningún nombre público, los visitantes no ven
+  esta sección.
+  Pendiente por confirmar: el orden nombre/apellido de los expertos de China
+  Three Gorges University y el apellido completo de Mariangel García.
+#}
+{% set experts = [
+  {'org': 'UNESCO Chair, University of Texas at Austin', 'name': 'Dev Niyogi', 'title': _('Chair Professor'),
+   'focus': _('Urban digital twins and AI for extremes; AusTwin'), 'public': False},
+  {'org': 'International Water Management Institute (IWMI)', 'name': 'Mariangel García', 'title': _('Research Group Leader, Water Futures Data and Analytics'),
+   'focus': _("IWMI's AI portfolio and digital twins"), 'public': False},
+  {'org': 'International Water Management Institute (IWMI)', 'name': 'Giriraj Amarnath', 'title': _('Principal Researcher and Research Group Lead, Water Data for Climate Resilience'),
+   'focus': _('AWARE early warning and anticipatory action; SukhaRakshak AI drought advisories'), 'public': False},
+  {'org': 'CSIC – CIDE (CSIC-UV-GVA)', 'name': 'Antonio Moreno-Rodenas', 'title': _('Researcher'),
+   'focus': _('Course design lead; lead author of the UNESCO-IHP/Deltares publication on AI for water'), 'public': False},
+  {'org': 'International Research Centre on Artificial Intelligence (IRCAI)', 'name': 'João Pita Costa', 'title': _('Head of AI Research'),
+   'focus': _('NAIADES project and the IRCAI SDG6 Observatory'), 'public': False},
+  {'org': 'International Research Centre on Artificial Intelligence (IRCAI)', 'name': 'Davor Orlic', 'title': _('COO'),
+   'focus': _('Linking start-ups to UNESCO values; IRCAI and AWS Climate Fellowship'), 'public': False},
+  {'org': 'UNESCO Communication and Information Sector', 'name': 'Leona Verdadero', 'title': _('Programme Specialist, Digital Policies'),
+   'focus': _('Green digital transformation and the water footprint of AI infrastructure'), 'public': False},
+  {'org': 'Abdus Salam International Centre for Theoretical Physics (ICTP)', 'name': 'Marco Zennaro', 'title': _('Research Scientist'),
+   'focus': _('Edge AI for water and capacity building in edge AI'), 'public': False},
+  {'org': 'UNESCO Chair on Sustainability, Universitat Politècnica de Catalunya', 'name': 'Jordi Morató i Farreras', 'title': _('Director'),
+   'focus': _('SURENEXUS, an AI-enabled digital twin for the Water–Energy–Food–Ecosystems Nexus'), 'public': False},
+  {'org': 'Seoul National University of Science and Technology (SeoulTech)', 'name': 'Inhwan Park', 'title': _('Associate Professor'),
+   'focus': _('Surrogate models for runoff and LID; water level prediction with graph neural networks'), 'public': False},
+  {'org': 'Chung-Ang University', 'name': 'Wooyoung Na', 'title': _('Assistant Professor'),
+   'focus': _('AI for hydrometeorological hazard forecasting and flood early warning'), 'public': False},
+  {'org': 'International Research Center of Big Data for Sustainable Development Goals (CBAS)', 'name': 'Yubao Qiu', 'title': _('Research Professor'),
+   'focus': _('Cryosphere datasets and explainable AI for sea ice forecasting'), 'public': False},
+  {'org': 'Aerospace Information Research Institute, Chinese Academy of Sciences (AIR-CAS)', 'name': 'Xiaoting Li', 'title': '',
+   'focus': _('SAR remote sensing of cryospheric water states'), 'public': False},
+  {'org': 'China Three Gorges University', 'name': 'Huang Yan', 'title': _('President and Professor'),
+   'focus': _('Hydrological AI, river-basin digital twins, flood and drought forecasting'), 'public': False},
+  {'org': 'China Three Gorges University', 'name': 'Ma Kai', 'title': _('Dean and Professor'),
+   'focus': _('Leads development of the Dayu large language model'), 'public': False},
+  {'org': 'China Three Gorges University', 'name': 'Jiali Guo', 'title': _('Professor'),
+   'focus': _('Hybrid HBV and deep learning models; water level and streamflow forecasting'), 'public': False},
+  {'org': 'China Three Gorges University', 'name': 'Li Changwen', 'title': _('Professor'),
+   'focus': _('Flood prevention large model'), 'public': False},
+  {'org': 'China Three Gorges University', 'name': 'Ren Kang', 'title': _('Associate Professor'),
+   'focus': _('Hybrid models and time-series prediction for reservoirs and hydropower'), 'public': False},
+  {'org': 'China Three Gorges University', 'name': 'Te Zhang', 'title': _('Associate Professor'),
+   'focus': _('LSTM runoff prediction'), 'public': False},
+  {'org': 'China Three Gorges University', 'name': 'Li Xiaolong', 'title': _('Lecturer'),
+   'focus': _('Development and application of the Dayu large language model'), 'public': False},
+  {'org': 'Flanders Hydraulics', 'name': 'Abdelkarim Bellafkih', 'title': _('Managing Director'),
+   'focus': _('A Voice for the Scheldt; GUBERNA AI Sounding Board'), 'public': False},
+] %}
+
+{% set can_review = h.check_access('group_update', {'id': group_dict.id}) %}
+{% set shown = experts if can_review else (experts | selectattr('public') | list) %}
+{% set hidden_count = experts | rejectattr('public') | list | length %}
+
+{% if shown %}
+<section class="aiw-section" aria-labelledby="aiw-members-title">
+  <div class="aiw-wrap">
+    <div class="aiw-head">
+      <span class="aiw-eyebrow">{{ _('AI for Water Expert Group') }}</span>
+      <h2 id="aiw-members-title" class="aiw-h2">{{ _('Members') }}</h2>
+      <span class="aiw-rule"></span>
+      <p class="aiw-lead">{{ _('Members serve in their expert capacity. They come from UNESCO Category 2 Centres, UNESCO Chairs, research institutions, Member State institutions and the UN system.') }}</p>
+    </div>
+    {% if can_review and hidden_count %}
+    <p class="aiw-members-note" role="note">{{ ungettext('Only editors of this group see the full list. %(num)s expert has not agreed to be listed publicly yet, so visitors do not see this name until it is set to public in the theme (ai_water_portal/snippets/expert_members.html).', 'Only editors of this group see the full list. %(num)s experts have not agreed to be listed publicly yet, so visitors do not see these names until they are set to public in the theme (ai_water_portal/snippets/expert_members.html).', hidden_count) }}</p>
+    {% endif %}
+    <div class="aiw-table-box">
+      <table class="aiw-table aiw-members">
+        <thead><tr><th scope="col">{{ _('Expert') }}</th><th scope="col">{{ _('Organisation') }}</th><th scope="col">{{ _('Focus') }}</th></tr></thead>
+        <tbody>
+          {% for e in shown | sort(attribute='org') %}
+          <tr>
+            <td><strong>{{ e.name }}</strong>{% if e.title %}<span class="aiw-members-title">{{ e.title }}</span>{% endif %}
+              {% if can_review and not e.public %}<span class="aiw-status aiw-status--invited aiw-members-private">{{ _('Not public yet') }}</span>{% endif %}</td>
+            <td>{{ e.org }}</td>
+            <td>{{ e.focus }}</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+{% endif %}

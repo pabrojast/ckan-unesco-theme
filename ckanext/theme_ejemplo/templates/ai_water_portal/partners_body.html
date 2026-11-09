@@ -13,43 +13,49 @@
   ('un', _('UN system initiatives'), _('UN system')),
 ] %}
 
+{#
+  'experts': expertos de la institución en el AI for Water Expert Group
+  (formulario de expresión de interés, octubre-noviembre de 2026).
+  Las notas van a nivel de institución; los nombres de los expertos están en
+  snippets/expert_members.html, que solo los muestra con su permiso.
+#}
 {% set partners = [
-  {'type': 'research', 'status': _('Course lead'), 'tone': 'lead', 'name': 'Spanish National Research Council (CSIC)', 'place': _('Spain'),
-   'note': _('Leads the Open Learning Course on AI for Water Management.')},
+  {'type': 'research', 'status': _('Course lead'), 'tone': 'lead', 'name': 'Spanish National Research Council (CSIC) – CIDE (CSIC-UV-GVA)', 'place': _('Spain'), 'experts': 1,
+   'note': _('Leads the design of the Open Learning Course on AI for Water Management. Work on edge-AI vision, fast emulators of flood and water quality models, and deep learning on satellite imagery.')},
   {'type': 'research', 'status': _('Knowledge partner'), 'tone': 'partner', 'name': 'Deltares', 'place': _('Netherlands'),
    'note': _('Co-published Applications of AI for water management (UNESCO/Deltares, 2025), the evidence base for the Strategy.')},
   {'type': 'un', 'status': _('Coordination link'), 'tone': 'partner', 'name': 'AI for Good (ITU)', 'place': _('Geneva, Switzerland'),
-   'note': _('The Task Force is IHP’s coordination point with AI for Good, the UN platform for AI and the SDGs.')},
+   'note': _('The Expert Group is IHP’s coordination point with AI for Good, the UN platform for AI and the SDGs.')},
   {'type': 'un', 'status': _('Coordination link'), 'tone': 'partner', 'name': 'Artificial Intelligence Climate Institute (AICI)', 'place': _('UNESCO and ITU'),
    'note': _('UN initiative on AI and climate, co-led by UNESCO and ITU.')},
   {'type': 'un', 'status': _('Contributor'), 'tone': 'partner', 'name': 'UNESCO Ethics of AI', 'place': _('Paris, France'),
    'note': _('Supports the course module on ethics and risks, and Pillar 4 on readiness and policy.')},
-  {'type': 'centre', 'status': _('Expressed interest'), 'tone': 'interest', 'name': 'International Research Centre on Artificial Intelligence (IRCAI)', 'place': _('Ljubljana, Slovenia'),
-   'note': _('UNESCO Category 2 Centre on AI, named in the Strategy as a technical hub for AI tool development.')},
-  {'type': 'centre', 'status': _('Expressed interest'), 'tone': 'interest', 'name': 'Abdus Salam International Centre for Theoretical Physics (ICTP)', 'place': _('Trieste, Italy'),
-   'note': _('Partner on the IHP-WINS IoT Portal, with work on TinyML and low-cost monitoring for data-scarce contexts.')},
-  {'type': 'centre', 'status': _('Expressed interest'), 'tone': 'interest', 'name': 'International Research Center of Big Data for Sustainable Development Goals (CBAS)', 'place': _('Beijing, China'),
-   'note': _('UNESCO Category 2 Centre, named in the Strategy for computational infrastructure partnerships.')},
+  {'type': 'centre', 'status': _('Expressed interest'), 'tone': 'interest', 'name': 'International Research Centre on Artificial Intelligence (IRCAI)', 'place': _('Ljubljana, Slovenia'), 'experts': 2,
+   'note': _('UNESCO Category 2 Centre on AI, named in the Strategy as a technical hub for AI tool development. Runs the IRCAI SDG6 Observatory and worked on the NAIADES project on water management.')},
+  {'type': 'centre', 'status': _('Expressed interest'), 'tone': 'interest', 'name': 'Abdus Salam International Centre for Theoretical Physics (ICTP)', 'place': _('Trieste, Italy'), 'experts': 1,
+   'note': _('Edge AI, including water applications, and capacity building in edge AI. Partner on the IHP-WINS IoT Portal.')},
+  {'type': 'centre', 'status': _('Expressed interest'), 'tone': 'interest', 'name': 'International Research Center of Big Data for Sustainable Development Goals (CBAS)', 'place': _('Beijing, China'), 'experts': 1,
+   'note': _('Cryosphere datasets for AI forecasting and explainable AI for polar sea ice forecasting, within the GEO Cold Regions Initiative. Named in the Strategy for computational infrastructure partnerships.')},
   {'type': 'centre', 'status': _('Invited'), 'tone': 'invited', 'name': 'Centre for Hydroinformatics (CIH)', 'place': _('Brazil'),
    'note': _('UNESCO Category 2 Centre, named in the Strategy for digital ecosystems and computing.')},
-  {'type': 'chair', 'status': _('Expressed interest'), 'tone': 'interest', 'name': 'UNESCO Chair, University of Texas at Austin', 'place': _('Austin, United States'),
-   'note': _('UNESCO Chair working on open data, AI, water and cities.')},
-  {'type': 'chair', 'status': _('Expressed interest'), 'tone': 'interest', 'name': 'UNESCO Chair on Sustainability, Universitat Politècnica de Catalunya', 'place': _('Barcelona, Spain'),
-   'note': _('Perspective on sustainable and equitable outcomes of AI for water.')},
+  {'type': 'chair', 'status': _('Expressed interest'), 'tone': 'interest', 'name': 'UNESCO Chair, University of Texas at Austin', 'place': _('Austin, United States'), 'experts': 1,
+   'note': _('Urban digital twins and AI for extremes, including AusTwin, an operational city-wide digital twin for Austin, and the UT-City CoLab.')},
+  {'type': 'chair', 'status': _('Expressed interest'), 'tone': 'interest', 'name': 'UNESCO Chair on Sustainability, Universitat Politècnica de Catalunya', 'place': _('Barcelona, Spain'), 'experts': 1,
+   'note': _('Coordinates SURENEXUS (PRIMA), a participatory, AI-enabled digital twin for the Water–Energy–Food–Ecosystems Nexus, tested in four Mediterranean sites.')},
   {'type': 'chair', 'status': _('Invited'), 'tone': 'invited', 'name': 'UNESCO Chair, University of Birmingham', 'place': _('Birmingham, United Kingdom'),
    'note': _('UNESCO Chair in the water sciences.')},
-  {'type': 'research', 'status': _('Expressed interest'), 'tone': 'interest', 'name': 'China Three Gorges University', 'place': _('Yichang, China'),
-   'note': _('University partner on AI and hydrology.')},
-  {'type': 'research', 'status': _('Expressed interest'), 'tone': 'interest', 'name': 'International Water Management Institute (IWMI)', 'place': _('Colombo, Sri Lanka'),
+  {'type': 'research', 'status': _('Expressed interest'), 'tone': 'interest', 'name': 'China Three Gorges University', 'place': _('Yichang, China'), 'experts': 7,
+   'note': _('Hydrological AI, river-basin digital twins and flood and drought forecasting. Develops Dayu, a large language model for water conservancy and flood control.')},
+  {'type': 'research', 'status': _('Expressed interest'), 'tone': 'interest', 'name': 'International Water Management Institute (IWMI)', 'place': _('Colombo, Sri Lanka'), 'experts': 2,
    'note': _('CGIAR research centre with an AI portfolio of 132 assets in 30 countries, including the AWARE early warning platform and the Limpopo River Basin digital twin.')},
-  {'type': 'research', 'status': _('Expressed interest'), 'tone': 'interest', 'name': 'Aerospace Information Research Institute, Chinese Academy of Sciences (AIR-CAS)', 'place': _('Beijing, China'),
+  {'type': 'research', 'status': _('Expressed interest'), 'tone': 'interest', 'name': 'Aerospace Information Research Institute, Chinese Academy of Sciences (AIR-CAS)', 'place': _('Beijing, China'), 'experts': 1,
    'note': _('Radar remote sensing of cryospheric water states in the permafrost transition zone.')},
-  {'type': 'research', 'status': _('Expressed interest'), 'tone': 'interest', 'name': 'Flanders Hydraulics', 'place': _('Antwerp, Belgium'),
+  {'type': 'research', 'status': _('Expressed interest'), 'tone': 'interest', 'name': 'Flanders Hydraulics', 'place': _('Antwerp, Belgium'), 'experts': 1,
    'note': _('Scientific institute of the Flemish Government, behind A Voice for the Scheldt, a conversational AI over real-time water data, models and research documents.')},
-  {'type': 'un', 'status': _('Expressed interest'), 'tone': 'interest', 'name': 'UNESCO Communication and Information Sector', 'place': _('Paris, France'),
+  {'type': 'un', 'status': _('Expressed interest'), 'tone': 'interest', 'name': 'UNESCO Communication and Information Sector', 'place': _('Paris, France'), 'experts': 1,
    'note': _('Green digital transformation and the water footprint of AI infrastructure.')},
-  {'type': 'member', 'status': _('Expressed interest'), 'tone': 'interest', 'name': 'Korean National Committee for IHP (IHP-ROK)', 'place': _('Republic of Korea'),
-   'note': _('National committee and Output 1.9 contributor.')},
+  {'type': 'member', 'status': _('Expressed interest'), 'tone': 'interest', 'name': 'Korean National Committee for IHP (IHP-ROK)', 'place': _('Republic of Korea'), 'experts': 2,
+   'note': _('Lead Member State for IHP-IX Output 1.9. Experts from SeoulTech (Seoul National University of Science and Technology) and Chung-Ang University work on AI flood forecasting and early warning.')},
 ] %}
 
 
@@ -65,7 +71,7 @@
       <article class="aiw-person">
         <div class="aiw-avatar" aria-hidden="true">JV</div>
         <div><h3>Jorgen Van Der Biest</h3><span class="aiw-role">{{ _('Associate Project Officer, UNESCO-IHP') }}</span></div>
-        <p>{{ _('Secretariat focal point for IHP-IX Output 1.9 on emerging technologies. Coordinates the Strategy, the Task Force and IHP-WINS.') }}</p>
+        <p>{{ _('Secretariat focal point for IHP-IX Output 1.9 on emerging technologies. Coordinates the Strategy, the Expert Group and IHP-WINS.') }}</p>
         <span class="aiw-tag">{{ _('Secretariat') }}</span>
       </article>
       <article class="aiw-person">
@@ -76,19 +82,21 @@
       </article>
       <article class="aiw-person aiw-person--accent">
         <div class="aiw-avatar" style="background: #4372C2; color: #FFFFFF;" aria-hidden="true">AM</div>
-        <div><h3>Dr Antonio Moreno-Rodenas</h3><span class="aiw-role">{{ _('Spanish National Research Council (CSIC)') }}</span></div>
+        <div><h3>Dr Antonio Moreno-Rodenas</h3><span class="aiw-role">{{ _('CSIC – CIDE (CSIC-UV-GVA), Spain') }}</span></div>
         <p>{{ _('Leads the design and development of the Open Learning Course on AI for Water Management.') }}</p>
         <span class="aiw-tag aiw-tag--orange">{{ _('Course lead') }}</span>
       </article>
       <article class="aiw-person aiw-person--open">
         <div class="aiw-avatar" style="background: #A6E2EF; color: #28448C;" aria-hidden="true">?</div>
-        <div><h3>{{ _('Co-chairs') }}</h3><span class="aiw-role">{{ _('To be elected by the Task Force') }}</span></div>
+        <div><h3>{{ _('Co-chairs') }}</h3><span class="aiw-role">{{ _('To be elected by the Expert Group') }}</span></div>
         <p>{{ _('Two members, ideally from different regions, chair meetings with the Secretariat for two years.') }}</p>
         <span class="aiw-tag">{{ _('Open') }}</span>
       </article>
     </div>
   </div>
 </section>
+
+{% include "ai_water_portal/snippets/expert_members.html" %}
 
 <section class="aiw-section" aria-labelledby="aiw-partners-title">
   <div class="aiw-wrap">
@@ -116,6 +124,7 @@
         </div>
         <h4>{{ p.name }}</h4>
         <span class="aiw-place"><i class="fa fa-map-marker" aria-hidden="true"></i> {{ p.place }}</span>
+        {% if p.experts %}<span class="aiw-partner-experts">{{ ungettext('%(num)s expert in the Expert Group', '%(num)s experts in the Expert Group', p.experts) }}</span>{% endif %}
         <p>{{ p.note }}</p>
       </article>
       {% endfor %}
@@ -129,15 +138,15 @@
   <div class="aiw-wrap">
     <div class="aiw-why">
       <div class="aiw-why-text">
-        <h2 id="aiw-roles-title" class="aiw-h2" style="font-size: 30px;">{{ _('How the Task Force is organised') }}</h2>
+        <h2 id="aiw-roles-title" class="aiw-h2" style="font-size: 30px;">{{ _('How the Expert Group is organised') }}</h2>
         <span class="aiw-rule"></span>
-        <p class="aiw-lead">{{ _("The Task Force works mainly online, with plenary meetings at least twice a year and smaller work stream groups in between. Decisions are taken by consensus. Membership is voluntary and unpaid, and members' institutions cover their own costs.") }}</p>
+        <p class="aiw-lead">{{ _("The Expert Group works mainly online, with plenary meetings at least twice a year and smaller work stream groups in between. Decisions are taken by consensus. Membership is voluntary and unpaid, and members' institutions cover their own costs.") }}</p>
         <a class="aiw-btn aiw-btn--solid" style="align-self: flex-start; margin-top: 8px;" href="https://forms.cloud.microsoft/e/7xEqXu70he">{{ _('Express your interest') }}
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F56F36" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
       </div>
       <dl class="aiw-roles">
         <div><dt>{{ _('Secretariat') }}</dt><dd>{{ _('UNESCO-IHP convenes meetings, aligns work with IHP-IX, coordinates the course and reports to the IHP Council.') }}</dd></div>
-        <div><dt>{{ _('Co-chairs') }}</dt><dd>{{ _('Chair meetings, prepare the annual plan of action and represent the Task Force at events.') }}</dd></div>
+        <div><dt>{{ _('Co-chairs') }}</dt><dd>{{ _('Chair meetings, prepare the annual plan of action and represent the Expert Group at events.') }}</dd></div>
         <div><dt>{{ _('Work stream leads') }}</dt><dd>{{ _('Lead a pillar or course component, coordinate contributors and report progress.') }}</dd></div>
         <div><dt>{{ _('Members') }}</dt><dd>{{ _('Join meetings, contribute to at least one work stream, review drafts and share the work in their networks.') }}</dd></div>
       </dl>

@@ -2,7 +2,7 @@
   Portada de la iniciativa AI for Water Management.
   Se incluye desde group/read.html cuando el grupo está en GROUP_LANDINGS
   (ai_water.py, clave overview) y la URL no lleva parámetros. Recibe group_dict.
-  Texto fijo: Estrategia IHP de IA para la gestión del agua y TdR del Task Force.
+  Texto fijo: Estrategia IHP de IA para la gestión del agua y TdR del Expert Group.
   Listas dinámicas: datasets, documentos, noticias, eventos y data stories del
   grupo, vía h.theme_ejemplo_group_landing_data.
 #}
@@ -25,14 +25,14 @@
 <section class="aiw-hero" aria-labelledby="aiw-hero-title">
   <div class="aiw-wrap">
     <div class="aiw-hero-text">
-      <span class="aiw-eyebrow">{{ _('IHP-IX Output 1.9 · Strategy & Task Force') }}</span>
+      <span class="aiw-eyebrow">{{ _('IHP-IX Output 1.9 · Strategy & Expert Group') }}</span>
       <h1 id="aiw-hero-title">
         <span class="aiw-t1">{{ _('Artificial Intelligence') }}</span>
         <span class="aiw-t2">{{ _('for water management') }}</span>
       </h1>
       <p>{{ _('Helping UNESCO Member States and the Water Family use AI responsibly for water security, climate resilience and evidence-based water governance, through open science, capacity development and international cooperation.') }}</p>
       <div class="aiw-hero-actions">
-        <a class="aiw-btn aiw-btn--light" href="https://forms.cloud.microsoft/e/7xEqXu70he">{{ _('Join the Task Force') }}
+        <a class="aiw-btn aiw-btn--light" href="https://forms.cloud.microsoft/e/7xEqXu70he">{{ _('Join the Expert Group') }}
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F56F36" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
         <a class="aiw-btn aiw-btn--outline" href="/ai-water-tools">{{ _('Explore the AI4Water Tool Database') }}</a>
       </div>
@@ -47,7 +47,7 @@
 <section class="aiw-figures" aria-label="{{ _('Key figures') }}">
   <div class="aiw-wrap">
     <div class="aiw-figure"><strong>4</strong><span>{{ _('strategic pillars, from tools to policy') }}</span></div>
-    <div class="aiw-figure"><strong>4</strong><span>{{ _('Task Force work streams') }}</span></div>
+    <div class="aiw-figure"><strong>4</strong><span>{{ _('Expert Group work streams') }}</span></div>
     <div class="aiw-figure"><strong>10,000</strong><span>{{ _('people in 100+ Member States reached by 2029 (target)') }}</span></div>
     <div class="aiw-figure"><strong>1.9 · 2.6 · 3.1 · 5.1</strong><span>{{ _('IHP-IX outputs the Strategy contributes to') }}</span></div>
   </div>
@@ -62,6 +62,12 @@
         <span class="aiw-rule"></span>
         <p class="aiw-lead">{{ _('Climate variability, growing demand, ageing infrastructure and data-scarce basins are outpacing conventional monitoring and modelling. AI, combined with Earth observation, monitoring networks, citizen science and real-time sensors, can help close that gap.') }}</p>
         <p class="aiw-lead">{{ _('Realising it takes more than technology: trustworthy data, ethical safeguards, institutional readiness and the capacity of countries to develop and govern their own AI-based water systems. That is why the Strategy gives as much weight to data, governance and skills as to the tools themselves.') }}</p>
+        <h3 class="aiw-h3caps">{{ _('Guiding principles') }}</h3>
+        <ul class="aiw-principles">
+          <li><strong>{{ _('Water problems first, AI second.') }}</strong> {{ _('Tools and training start from the water challenge, not from the technology.') }}</li>
+          <li><strong>{{ _('Hybrid intelligence.') }}</strong> {{ _('AI works together with hydrological science, physics-based models and observations.') }}</li>
+          <li><strong>{{ _('Responsible AI.') }}</strong> {{ _('Aligned with the UNESCO Recommendation on the Ethics of Artificial Intelligence and the UNESCO Recommendation on Open Science.') }}</li>
+        </ul>
       </div>
       <div class="aiw-toc">
         <div class="aiw-toc-title">{{ _('Theory of change') }}</div>
@@ -118,10 +124,10 @@
 <section id="workstreams" class="aiw-section" style="padding-bottom: 80px;" aria-labelledby="aiw-ws-title">
   <div class="aiw-wrap">
     <div class="aiw-head">
-      <span class="aiw-eyebrow">{{ _('AI for Water Task Force') }}</span>
+      <span class="aiw-eyebrow">{{ _('AI for Water Expert Group') }}</span>
       <h2 id="aiw-ws-title" class="aiw-h2">{{ _('How the work gets done') }}</h2>
       <span class="aiw-rule"></span>
-      <p class="aiw-lead">{{ _('The Task Force coordinates delivery across the Water Family. AI is mainstreamed into existing Flagship Initiatives (FRIEND-Water, IFI, IDI and IIWQ) rather than set up as a new one. Every member commits to at least one work stream.') }}</p>
+      <p class="aiw-lead">{{ _('The Expert Group coordinates delivery across the Water Family. AI is mainstreamed into existing Flagship Initiatives (FRIEND-Water, IFI, IDI and IIWQ) rather than set up as a new one. Every member commits to at least one work stream.') }}</p>
     </div>
     <div class="aiw-grid4">
       <article class="aiw-ws">
@@ -133,7 +139,7 @@
         <span class="aiw-ws-label">{{ _('Work stream 2') }}</span>
         <h3>{{ _('Open Learning Course on AI') }}</h3>
         <p>{{ _('A 10–15 hour online course on the IHP Open Learning Platform: introduction, techniques, water applications, and ethics and risks. English pilot first, Spanish to follow.') }}</p>
-        <p class="aiw-ws-lead"><strong>{{ _('Lead:') }}</strong> Dr Antonio Moreno-Rodenas, CSIC</p>
+        <p class="aiw-ws-lead"><strong>{{ _('Lead:') }}</strong> Dr Antonio Moreno-Rodenas, CSIC – CIDE</p>
       </article>
       <article class="aiw-ws">
         <span class="aiw-ws-label">{{ _('Work stream 3') }}</span>
@@ -265,6 +271,21 @@
         <a class="aiw-btn aiw-btn--solid" style="align-self: flex-start; margin-top: 4px;" href="https://unesdoc.unesco.org/ark:/48223/pf0000393243">{{ _('Read on UNESDOC') }}</a>
       </div>
     </article>
+    <div class="aiw-links">
+      <h3 class="aiw-h3caps">{{ _('More on AI for water') }}</h3>
+      <article class="aiw-item">
+        <h3><a href="https://www.youtube.com/playlist?list=PLsw0Ktu8CQPzfZsN7meOB7ekBd1GxJV7S">{{ _('Seminar on AI for water management: recordings') }}</a></h3>
+        <p>{{ _('Paris, 13 June 2025, held for IHP’s 50th anniversary. On YouTube.') }}</p>
+      </article>
+      <article class="aiw-item">
+        <h3><a href="/ihpix">{{ _('IHP-IX reporting on IHP-WINS') }}</a></h3>
+        <p>{{ _('Progress on Output 1.9 and the other IHP-IX outputs the Strategy contributes to.') }}</p>
+      </article>
+      <article class="aiw-item">
+        <h3><a href="https://aiforgood.itu.int/">{{ _('AI for Good') }}</a></h3>
+        <p>{{ _('The UN platform on AI for the SDGs, led by ITU. The Expert Group is IHP’s coordination point with it.') }}</p>
+      </article>
+    </div>
     {% if documents %}
     <div>
       {% for pkg in documents %}
@@ -281,7 +302,7 @@
 <section class="aiw-cta" aria-labelledby="aiw-join-title">
   <div class="aiw-cta-art" role="presentation"></div>
   <div class="aiw-cta-text">
-    <h2 id="aiw-join-title">{{ _('Working on AI and water?') }} <span>{{ _('Join the Task Force.') }}</span></h2>
+    <h2 id="aiw-join-title">{{ _('Working on AI and water?') }} <span>{{ _('Join the Expert Group.') }}</span></h2>
     <p>{{ _('Membership runs for two years and is voluntary. Members serve in their expert capacity, with balance across regions, gender, disciplines and career stages. All contributions are credited.') }}</p>
     <a class="aiw-btn aiw-btn--light" href="https://forms.cloud.microsoft/e/7xEqXu70he">{{ _('Express your interest') }}
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#F56F36" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg></a>
