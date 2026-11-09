@@ -271,21 +271,12 @@ body.aiw-ribbons-instant > .main, body.aiw-ribbons-instant .aiw-subnav { transit
 .aiw-ribbon-toggle:focus-visible { outline: 2px solid #FFFFFF; outline-offset: 2px; }
 .aiw-ribbon-toggle svg { transition: transform .2s ease; }
 .aiw-ribbon-toggle[aria-expanded="true"] svg { transform: rotate(180deg); }
-/* Menú "Add" (snippets/add_menu.html), solo con sesión iniciada y permisos */
-.aiw-add { position: relative; flex: none; margin-left: auto; }
-.aiw-add + .aiw-ribbon-toggle { margin-left: 0; }
-.aiw-add-toggle { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 8px 14px; color: var(--aiw-blue-deep); background: #FFFFFF; border-radius: 3px; font-size: 15px; font-weight: 600; line-height: 1.2; cursor: pointer; list-style: none; }
-.aiw-add-toggle::-webkit-details-marker { display: none; }
-.aiw-add-toggle:hover { background: #E8F1F8; }
-.aiw-add-toggle:focus-visible { outline: 2px solid #FFFFFF; outline-offset: 2px; }
-.aiw-add-menu { position: absolute; right: 0; top: calc(100% + 8px); width: 300px; max-width: calc(100vw - 32px); padding: 8px 0; background: #FFFFFF; border: 1px solid var(--aiw-line); box-shadow: 0 8px 24px rgba(14, 42, 61, 0.16); z-index: 995; }
-.aiw-subnav .aiw-add-title { margin: 0; padding: 8px 16px; font-size: 13px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--aiw-body); }
-.aiw-subnav .aiw-add-menu ul { display: block; list-style: none; margin: 0; padding: 0; }
-.aiw-subnav .aiw-add-menu a { display: flex; flex-direction: column; gap: 2px; padding: 10px 16px; color: var(--aiw-ink); font-size: inherit; font-weight: inherit; border-radius: 0; text-decoration: none; box-shadow: none; }
-.aiw-subnav .aiw-add-menu a:hover, .aiw-subnav .aiw-add-menu a:focus { background: #F1F6FA; color: var(--aiw-ink); }
-.aiw-subnav .aiw-add-menu a:focus-visible { outline: 2px solid var(--aiw-blue); outline-offset: -2px; }
-.aiw-subnav .aiw-add-menu strong { font-size: 16px; font-weight: 600; color: var(--aiw-blue); }
-.aiw-subnav .aiw-add-menu span { font-size: 14px; line-height: 1.4; color: var(--aiw-body); }
+/* Botones "Add ..." debajo de los títulos de las listas (snippets/add_button.html) */
+.aiw-add-row { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 12px; margin-top: 12px; }
+.aiw .aiw-add-btn { display: inline-flex; align-items: center; gap: 6px; min-height: 40px; padding: 6px 14px; color: var(--aiw-blue); background: #FFFFFF; border: 1px solid var(--aiw-blue); border-radius: 3px; font-size: 15px; font-weight: 600; text-decoration: none; white-space: nowrap; }
+.aiw .aiw-add-btn:hover, .aiw .aiw-add-btn:focus { color: #FFFFFF; background: var(--aiw-blue); text-decoration: none; }
+.aiw .aiw-add-btn:focus-visible { outline: 2px solid var(--aiw-blue); outline-offset: 2px; }
+.aiw-add-hint { font-size: 14px; line-height: 1.4; color: var(--aiw-body); }
 @media (max-width: 640px) {
   /* En el móvil, el menú de la iniciativa ocupa una sola fila que se desliza */
   .aiw-subnav .aiw-wrap { padding-right: 12px; }
@@ -293,9 +284,6 @@ body.aiw-ribbons-instant > .main, body.aiw-ribbons-instant .aiw-subnav { transit
   .aiw-subnav .aiw-wrap > ul::-webkit-scrollbar { display: none; }
   .aiw-subnav .aiw-wrap > ul > li { flex: none; }
   .aiw-ribbon-toggle { padding: 8px 10px; }
-  .aiw-add-toggle { padding: 8px 10px; }
-  .aiw-add { position: static; }
-  .aiw-add-menu { left: 16px; right: 16px; width: auto; max-width: none; top: calc(100% + 4px); }
   .aiw-ribbon-toggle-more { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 }
 /* Al saltar a un ancla, que el título no quede bajo el menú fijo */

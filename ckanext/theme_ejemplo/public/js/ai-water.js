@@ -119,28 +119,3 @@
     init();
   }
 })();
-
-/*
- * Menú "Add" del menú de la iniciativa (<details>, ver snippets/add_menu.html):
- * se cierra al pulsar fuera o con Escape. Sin JavaScript funciona igual.
- */
-(function () {
-  'use strict';
-  function init() {
-    var menus = document.querySelectorAll('details.aiw-add');
-    if (!menus.length) { return; }
-    document.addEventListener('click', function (e) {
-      menus.forEach(function (d) { if (d.open && !d.contains(e.target)) { d.open = false; } });
-    });
-    menus.forEach(function (d) {
-      d.addEventListener('keydown', function (e) {
-        if (e.key === 'Escape' && d.open) { d.open = false; d.querySelector('summary').focus(); }
-      });
-    });
-  }
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', init);
-  } else {
-    init();
-  }
-})();

@@ -1,0 +1,48 @@
+{#
+  Botón "Add ..." debajo del título de una lista (Datasets, Documents, News,
+  Events, Data stories) en las páginas con diseño propio. Solo con sesión
+  iniciada y permiso para crear ese contenido (las mismas comprobaciones que
+  los formularios). Uso:
+    {% snippet 'ai_water_portal/snippets/add_button.html', kind='news', gname=group_dict.name %}
+  kind: dataset | document | news | event | story
+
+  - dataset: /dataset/new. El formulario no permite preseleccionar la
+    iniciativa desde la URL; se elige en el campo "Initiative".
+  - document: /documents/new?group=<grupo>, como el botón "Add Document" de
+    la pestaña Documents.
+  - news, event: /water-news_edit y /water-events_edit con ?initiative=<grupo>,
+    que el formulario de ckanext-pages ya preselecciona.
+  - story: /data-stories/new. Una historia solo se puede asociar a una
+    organización, así que no aparece en la lista de la iniciativa.
+#}
+{% if c.userobj %}
+  {% if kind in ['dataset', 'document'] %}
+    {% set allowed = h.check_access('package_create') %}
+  {% elif kind == 'news' %}
+    {% set allowed = h.check_access('ckanext_water_news_update', {'page_type': 'water-news'}) %}
+  {% elif kind == 'event' %}
+    {% set allowed = h.check_access('ckanext_water_events_update', {'page_type': 'water-events'}) %}
+  {% elif kind == 'story' %}
+    {% set allowed = h.check_access('data_story_create') %}
+  {% else %}
+    {% set allowed = false %}
+  {% endif %}
+  {% if allowed %}
+    {% set q = gname | urlencode %}
+    {% set links = {
+      'dataset': ('/dataset/new', _('Add dataset'), _('Choose this initiative under "Initiative" in the form.')),
+      'document': (h.url_for('documents.new', group=gname), _('Add document'), ''),
+      'news': ('/water-news_edit?initiative=' ~ q, _('Add news'), ''),
+      'event': ('/water-events_edit?initiative=' ~ q, _('Add event'), ''),
+      'story': ('/data-stories/new', _('Add data story'), _('Data stories are linked to an organisation, so a new story does not appear in this list.')),
+    } %}
+    {% set link = links[kind] %}
+    <div class="aiw-add-row">
+      <a class="aiw-add-btn" href="{{ link[0] }}">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" aria-hidden="true"><path d="M12 5v14M5 12h14"/></svg>
+        {{ link[1] }}
+      </a>
+      {% if link[2] %}<span class="aiw-add-hint">{{ link[2] }}</span>{% endif %}
+    </div>
+  {% endif %}
+{% endif %}
