@@ -35,6 +35,12 @@ Todo el código nuevo está en ficheros propios:
   - Plegadas, quedan `inert`: sin foco ni lectores de pantalla.
   - Sin JavaScript, un `<noscript>` en `snippets/head.html` la deja visible.
   - En el móvil, el menú del grupo es una sola fila que se desliza.
+  - Menú **Add** en el menú del grupo (`ai_water_portal/snippets/add_menu.html`), solo con sesión iniciada y permisos de creación:
+    - Dataset: `/dataset/new`; la iniciativa se elige en el formulario.
+    - Document: `/documents/new?group=`.
+    - News: `/water-news_edit?initiative=` (preselecciona la iniciativa).
+    - Event: `/water-events_edit?initiative=` (preselecciona la iniciativa).
+    - Data story: `/data-stories/new`; solo se puede asociar a una organización.
   - `ai-water.js` también hace los filtros de la lista de socios.
   - Lo mismo vale para las páginas de iniciativa con la plantilla común.
 
