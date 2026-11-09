@@ -49,7 +49,28 @@ Para dar este tratamiento a otro grupo basta con añadirlo a `GROUP_LANDINGS` co
 
 [[Initiative pages]] generaliza este diseño para otras iniciativas. `ai_water.group_landing` busca primero en `GROUP_LANDINGS` y, si el grupo no está, usa `initiative.landing_conf`: un grupo de `GROUP_LANDINGS` nunca usa la plantilla común.
 
-`group_frame.html` acepta por configuración la clase (`root_class`), los colores (`root_style`) y los créditos (`credit`), y `snippets/head.html` añade `initiative.css` solo a las iniciativas con página completa. `ai-water.css` no cambia.
+`group_frame.html` acepta por configuración la clase (`root_class`), los colores (`root_style`) y los créditos (`credit`), y `snippets/head.html` añade `initiative.css` solo a las iniciativas con página completa.
+
+## Socios y miembros del Expert Group
+
+El grupo de coordinación se llama **AI for Water Expert Group** (antes "Task Force" o "Working Group" en la Estrategia rev4 y el formulario). El contenido sale del formulario de expresión de interés (23 respuestas: 21 expertos de 13 instituciones).
+
+- `templates/ai_water_portal/partners_body.html`: lista de instituciones (`partners`). Cada una tiene un estado (`status`, `tone`):
+  - `interest`: Expressed interest;
+  - `invited`: Invited;
+  - `lead`: Course lead;
+  - `partner`: Knowledge partner, Coordination link, Contributor.
+
+  También tiene el número de expertos en el Expert Group (`experts`).
+- `templates/ai_water_portal/snippets/expert_members.html`: lista de expertos por institución (nombre, cargo, tema).
+  - Un experto solo aparece en público con `'public': True`, cuando ha aceptado figurar con su nombre en la página.
+  - Los administradores del grupo y los sysadmins ven la lista completa, con los nombres aún no públicos marcados.
+  - Sin ningún nombre público, los visitantes no ven la sección.
+
+> [!note] Pendiente por confirmar
+> - Orden nombre/apellido de los expertos de China Three Gorges University y apellido completo de Mariangel García (IWMI).
+> - Si la invitación al CIH se envió.
+> - El tipo de CBAS: la página lo muestra entre los Category 2 Centres; las respuestas del formulario lo describen como institución de investigación.
 
 ## Ilustraciones
 
