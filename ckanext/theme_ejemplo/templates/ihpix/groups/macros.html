@@ -1,0 +1,10 @@
+{% macro field(name,label,value='',type='text',required=false) %}
+<label class="ixg-field">{{ label }}{% if required %} <span aria-hidden="true">*</span>{% endif %}
+{% if type=='textarea' %}<textarea name="{{ name }}" rows="4"{% if required %} required{% endif %}>{{ value or '' }}</textarea>{% else %}<input name="{{ name }}" type="{{ type }}" value="{{ value or '' }}"{% if required %} required{% endif %}>{% endif %}
+<span data-error-for="{{ name }}" class="ixg-error"></span></label>
+{% endmacro %}
+{% macro hidden(name,value) %}<input type="hidden" name="{{ name }}" value="{{ value }}">{% endmacro %}
+{% macro group_hidden(group) %}{{ h.csrf_input() }}{{ hidden('group_id',group.id) }}{% endmacro %}
+{% macro plan_link(p) %}<a href="{{ h.url_for('theme_ejemplo.ihpix_group_plan',slug=p.group_id,id=p.id) }}">{{ p.payload.title }}</a>{% endmacro %}
+{% macro state(value) %}{{ {'draft':_('Draft'),'submitted':_('Awaiting review'),'approved':_('Approved'),'returned':_('Returned'),'planned':_('Planned'),'ongoing':_('In progress'),'completed':_('Completed'),'cancelled':_('Cancelled'),'manager':_('Group manager'),'contributor':_('Contributor'),'observer':_('Observer'),'active':_('Active'),'pending':_('Pending'),'removed':_('Removed'),'done':_('Completed'),'strategy':_('Strategy'),'planning':_('Planning'),'presentation':_('Presentations'),'report':_('Reports'),'other':_('Other')}.get(value,value) }}{% endmacro %}
+{% macro output_select(name,outputs,titles,value='') %}<select name="{{ name }}"><option value="">{{ _('Select an option') }}</option>{% for o in outputs %}<option value="{{ o }}"{% if value==o %} selected{% endif %}>{{ o }} · {{ h.ihpix_t(titles.get(o,'')) }}</option>{% endfor %}</select>{% endmacro %}

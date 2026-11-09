@@ -1,0 +1,68 @@
+{% extends "page.html" %}
+{#
+  Initiative pages (added by Jorgen Van Der Biest). New file.
+  /ckan-admin/initiative-requests/<id>/answers (sysadmin): respuestas del
+  cuestionario de una solicitud con página completa, para revisarla antes de
+  aprobarla en /ckan-admin/initiative-requests.
+#}
+{% block title %}{{ req.title }} - {{ _('Initiative request') }} - {{ super() }}{% endblock %}
+{% block subtitle %}{{ _('Initiative request') }}{% endblock %}
+{% block breadcrumb_content %}
+  <li><a href="{{ h.url_for('theme_ejemplo.initiative_requests_admin') }}">{{ _('Initiative requests') }}</a></li>
+  <li class="active"><a href="">{{ req.title }}</a></li>
+{% endblock %}
+{% block secondary %}{% endblock %}
+{% block page_header %}{% endblock %}
+{% block primary %}<div class="primary col-xs-12" role="main">{{ self.primary_content() }}</div>{% endblock %}
+
+{% block primary_content_inner %}
+<link rel="stylesheet" href="{{ h.url_for_static('/css/initiative.css') }}?v=20261015-1" />
+{% set d = details %}
+<div class="ini-answers">
+  <p><a href="{{ h.url_for('theme_ejemplo.initiative_requests_admin') }}">← {{ _('Back to the requests') }}</a></p>
+  <h1>{{ req.title }}</h1>
+  <p class="ini-lead">{{ d.tagline }}</p>
+  <p class="ini-help">{{ _('Requested on %(date)s · status: %(status)s · proposed address /group/%(name)s', date=h.render_datetime(req.created_at), status=req.status, name=req.name) }}</p>
+
+  <h2>{{ _('Colours') }}</h2>
+  <div class="ini-answer-colours">
+    {% for key, label in [('primary', _('Main colour')), ('soft', _('Light band')), ('accent', _('Accent')), ('accent_ink', _('Text accent')), ('tint', _('Section'))] %}
+    <div><span style="background: {{ palette.roles[key] }}"></span>{{ label }}<code>{{ palette.roles[key] }}</code></div>
+    {% endfor %}
+  </div>
+  <ul class="ini-checks">
+    {% for c in checks %}<li class="{{ 'ok' if c.ok else 'fail' }}"><span class="ini-check-mark" aria-label="{{ _('Passes') if c.ok else _('Fails') }}"></span><span>{{ _(c.label) }}</span><code>{{ c.value }}:1 / {{ c.target }}:1</code></li>{% endfor %}
+  </ul>
+
+  <h2>{{ _('Images') }}</h2>
+  <div class="ini-answer-images">
+    {% for slot in ['hero', 'band', 'support'] %}{% set img = d.images[slot] %}
+    {% if img.url %}<figure><img src="{{ img.url }}" alt="{{ img.alt }}" /><figcaption><b>{{ slot | capitalize }}</b> · {{ img.credit }}</figcaption></figure>{% endif %}
+    {% endfor %}
+  </div>
+
+  <h2>{{ _('Answers') }}</h2>
+  <table class="table table-striped ini-answer-table">
+    <tbody>
+      <tr><th scope="row">{{ _('Description') }}</th><td>{{ h.render_markdown(req.description) }}</td></tr>
+      <tr><th scope="row">{{ _('Short name') }}</th><td>{{ d.short_name }}</td></tr>
+      <tr><th scope="row">{{ _('Title on the page') }}</th><td>{{ d.title_line1 }} / {{ d.title_line2 }}</td></tr>
+      <tr><th scope="row">{{ _('Type') }}</th><td>{{ labels.type.get(d.type, '') }}</td></tr>
+      <tr><th scope="row">{{ _('Status and years') }}</th><td>{{ labels.status.get(d.status, '') }} {{ d.start_year }}{% if d.end_year %}–{{ d.end_year }}{% endif %}</td></tr>
+      <tr><th scope="row">{{ _('Lead organisation') }}</th><td>{{ orgs[d.lead_org].title if d.lead_org in orgs else d.lead_org }}</td></tr>
+      <tr><th scope="row">{{ _('Why it matters') }}</th><td><b>{{ d.why_title }}</b><br />{{ d.why_text }}</td></tr>
+      <tr><th scope="row">{{ _('Theory of change') }}</th><td>{{ _('IF') }} {{ d.toc['if'] }}<br />{{ _('THEN') }} {{ d.toc.then }}<br />{{ _('SO THAT') }} {{ d.toc.so_that }}</td></tr>
+      <tr><th scope="row">{{ _('Objectives') }}</th><td><ol>{% for o in d.objectives %}<li><b>{{ o.title }}</b>{% if o.tag %} ({{ o.tag }}){% endif %}: {{ o.text }}{% if o['items'] %}<ul>{% for it in o['items'] %}<li>{{ it }}</li>{% endfor %}</ul>{% endif %}</li>{% endfor %}</ol></td></tr>
+      <tr><th scope="row">{{ _('Key figures') }}</th><td>{% for f in d.figures %}<b>{{ f.value }}</b> {{ f.label }}{% if not loop.last %}<br />{% endif %}{% endfor %}</td></tr>
+      <tr><th scope="row">{{ _('Geographic scope') }}</th><td>{{ labels.scope.get(d.scope, '') }}{% if d.member_states %}: {% for n in d.member_states %}{{ ms_titles.get(n, n) }}{% if not loop.last %}, {% endif %}{% endfor %}{% endif %}</td></tr>
+      <tr><th scope="row">{{ _('IHP-IX outputs') }}</th><td>{{ d.outputs | join(', ') }}</td></tr>
+      <tr><th scope="row">{{ _('SDGs') }}</th><td>{{ d.sdgs | join(', ') }}</td></tr>
+      <tr><th scope="row">{{ _('Themes') }}</th><td>{{ d.themes | join(', ') }}</td></tr>
+      <tr><th scope="row">{{ _('Contacts') }}</th><td>{% for c in d.contacts %}{{ c.name }} · {{ c.role }} · {{ c.email }}{% if not c.public %} ({{ _('not public') }}){% endif %}{% if not loop.last %}<br />{% endif %}{% endfor %}</td></tr>
+      <tr><th scope="row">{{ _('Partners') }}</th><td>{% for n in d.partners %}{{ orgs[n].title if n in orgs else n }}{% if not loop.last %}, {% endif %}{% endfor %}</td></tr>
+      <tr><th scope="row">{{ _('Page content') }}</th><td>{% if d.content_skipped %}{{ _('Skipped (defaults)') }}{% else %}{{ d.cta.label }} {{ d.cta.url }}<br />{{ d.cta2.label }} {{ d.cta2.url }}<br />{{ d.cta_heading }}{% endif %}</td></tr>
+      <tr><th scope="row">{{ _('Image rights confirmed') }}</th><td>{{ _('Yes') if d.image_rights else _('No') }}</td></tr>
+    </tbody>
+  </table>
+</div>
+{% endblock %}

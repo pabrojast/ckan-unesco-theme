@@ -1,0 +1,9 @@
+{% extends 'ihpix/groups/base.html' %}
+{% import 'ihpix/groups/macros.html' as m with context %}
+{% block group_content %}
+<header class="ixg-header"><p class="ixg-kicker">IHP IX · 2022–2029</p><h1>{{ _('Working groups') }}</h1><p>{{ _('Plan activities, coordinate your group and report what was achieved.') }}</p></header>
+{% for kind,label in [('oetwg',_('Thematic working groups')),('ctwg',_('Cross-cutting working groups'))] %}
+<h2>{{ label }}</h2><div class="ixg-grid">
+{% for g in groups if g.kind==kind %}<a class="ixg-card ixg-group-card" href="{{ h.url_for('theme_ejemplo.ihpix_group',slug=g.id) }}"><h3>{{ h.ihpix_t(g.title) }}</h3><p>{{ g.outputs|length }} {{ _('Outputs') }}</p>{% if g.membership %}<span class="ixg-badge">{{ m.state(g.membership.role) }} · {{ m.state(g.membership.status) }}</span>{% endif %}{% if g.can_manage %}<span class="ixg-badge">{{ _('Manage group') }}</span>{% endif %}{% if g.status=='archived' %}<p>{{ _('Archived') }}</p>{% endif %}</a>{% endfor %}
+</div>{% endfor %}
+{% endblock %}

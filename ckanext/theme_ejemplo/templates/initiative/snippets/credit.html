@@ -1,0 +1,8 @@
+{# Initiative pages (added by Jorgen Van Der Biest). New file.
+   Créditos de las imágenes de la iniciativa (respuestas del cuestionario). #}
+{% set ini_credit = h.theme_ejemplo_initiative_data(group_dict) %}
+{% if ini_credit.credits %}
+<div class="aiw-wrap aiw-credit">
+  {{ _('Images:') }} {{ ini_credit.credits | join('; ') }}.
+</div>
+{% endif %}

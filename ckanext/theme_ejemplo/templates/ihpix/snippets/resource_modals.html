@@ -1,0 +1,126 @@
+{# Los recursos usan el mismo kit y estructura visual que publication_modal.html. #}
+{% set ctx = publication_ctx %}
+{% macro input(kind, name, label, type='text', required=false, value='', maxlength='') %}
+<div class="ihpix-report-field">
+  <label class="ihpix-report-label" for="ihpix-{{ kind }}-{{ name }}">{{ label }}{% if required %} <span class="ihpix-report-required">*</span>{% endif %}</label>
+  <input id="ihpix-{{ kind }}-{{ name }}" name="{{ name }}" type="{{ type }}" class="ihpix-report-input" value="{{ value }}"{% if required %} required{% endif %}{% if name == 'title' %} data-autofocus{% endif %}{% if maxlength %} maxlength="{{ maxlength }}"{% endif %} aria-describedby="ihpix-{{ kind }}-{{ name }}-error">
+  <div class="ihpix-report-error-text" id="ihpix-{{ kind }}-{{ name }}-error" data-error-for="{{ name }}" role="alert"></div>
+</div>
+{% endmacro %}
+{% for kind in ('dataset', 'event') %}
+{% set orgs = ctx.orgs if kind == 'dataset' else ctx.event_orgs %}
+<div class="ixf-modal ihpix-resource-modal" id="ihpix-{{ kind }}-modal" hidden role="dialog" aria-modal="true" aria-labelledby="ihpix-{{ kind }}-modal-title" data-resource-kind="{{ kind }}" data-post-url="{{ h.url_for('theme_ejemplo.ihpix_resource_create') }}">
+  <div class="ixf-modal-dialog is-wide">
+    <div class="ixf-modal-header">
+      <h2 class="ixf-modal-title" id="ihpix-{{ kind }}-modal-title">{{ _('Add a dataset') if kind == 'dataset' else _('Create an event') }}</h2>
+      <button type="button" class="ixf-modal-close" data-ihpix-modal-close aria-label="{{ _('Close') }}">&times;</button>
+    </div>
+    {% if not orgs %}
+      <div class="ixf-modal-body ixf-empty-state">
+        <p>{{ _('You need an organization membership to create this content. Ask an organization administrator for access.') }}</p>
+      </div>
+      <div class="ixf-modal-footer"><button type="button" class="ihpix-report-btn is-secondary" data-ihpix-modal-close>{{ _('Close') }}</button></div>
+    {% else %}
+    <form class="ihpix-resource-form" novalidate>
+      {{ h.csrf_input() }}
+      <input type="hidden" name="kind" value="{{ kind }}">
+      <input type="hidden" name="request_id">
+      <input type="hidden" name="output_code">
+      <div class="ixf-modal-body">
+        <p class="ihpix-report-help">{{ _('Create the resource and attach it without leaving this step.') }}</p>
+        <div class="ixf-alert is-error" data-resource-error role="alert" hidden></div>
+        {{ input(kind, 'title', _('Title'), required=true, maxlength='300') }}
+        <div class="ihpix-report-field">
+          <label class="ihpix-report-label" for="ihpix-{{ kind }}-organization">{{ _('Organization') }} <span class="ihpix-report-required">*</span></label>
+          <select name="organization" id="ihpix-{{ kind }}-organization" class="ihpix-report-select" required{% if orgs|length > 6 %} data-ihpix-combobox{% endif %} aria-describedby="ihpix-{{ kind }}-organization-error">
+            {% if orgs|length > 1 %}<option value="">{{ _('Choose an organization') }}</option>{% endif %}
+            {% for org in orgs %}<option value="{{ org.id }}">{{ org.title or org.name }}</option>{% endfor %}
+          </select>
+          <div class="ihpix-report-error-text" id="ihpix-{{ kind }}-organization-error" data-error-for="organization" role="alert"></div>
+        </div>
+        <div class="ihpix-report-field">
+          <label class="ihpix-report-label" for="ihpix-{{ kind }}-description">{{ _('Description') }} <span class="ihpix-report-required">*</span></label>
+          <textarea id="ihpix-{{ kind }}-description" name="description" rows="4" maxlength="5000" class="ihpix-report-textarea" data-ihpix-counter required aria-describedby="ihpix-{{ kind }}-description-error"></textarea>
+          <div class="ihpix-report-error-text" id="ihpix-{{ kind }}-description-error" data-error-for="description" role="alert"></div>
+        </div>
+        {% if kind == 'dataset' %}
+          <div class="ihpix-report-row">
+            {% for field in ctx.dataset_metadata_fields %}
+            <div class="ihpix-report-field">
+              <label class="ihpix-report-label" for="ihpix-dataset-{{ field.field_name }}">{{ h.scheming_language_text(field.label) }} <span class="ihpix-report-required">*</span></label>
+              <select name="{{ field.field_name }}" id="ihpix-dataset-{{ field.field_name }}" class="ihpix-report-select" required aria-describedby="ihpix-dataset-{{ field.field_name }}-error">
+                <option value="">{{ _('Select an option') }}</option>
+                {% for choice in field.choices %}<option value="{{ choice.value }}">{{ h.scheming_language_text(choice.label) }}</option>{% endfor %}
+              </select>
+              <div class="ihpix-report-error-text" id="ihpix-dataset-{{ field.field_name }}-error" data-error-for="{{ field.field_name }}" role="alert"></div>
+            </div>
+            {% endfor %}
+          </div>
+          {{ input(kind, 'contact_email', _('Contact email'), type='email', required=true, value=ctx.user_email) }}
+          <div class="ihpix-report-row">
+            <div class="ihpix-report-field">
+              <label class="ihpix-report-label" for="ihpix-dataset-visibility">{{ _('Visibility') }}</label>
+              <select name="visibility" id="ihpix-dataset-visibility" class="ihpix-report-select"><option value="private">{{ _('Private') }}</option><option value="public">{{ _('Public') }}</option></select>
+              <p class="ihpix-report-help">{{ _('Private datasets are only available to authorized organization members.') }}</p>
+              <div class="ihpix-report-error-text" data-error-for="visibility" role="alert"></div>
+            </div>
+            <div class="ihpix-report-field">
+              <label class="ihpix-report-label" for="ihpix-dataset-license_id">{{ _('License') }}</label>
+              <select name="license_id" id="ihpix-dataset-license_id" class="ihpix-report-select">
+                {% for license in ctx.licenses %}<option value="{{ license.id }}"{% if license.id == 'notspecified' %} selected{% endif %}>{{ license.title }}</option>{% endfor %}
+              </select>
+              <div class="ihpix-report-error-text" data-error-for="license_id" role="alert"></div>
+            </div>
+          </div>
+        {% else %}
+          <div class="ihpix-report-row">
+            {{ input(kind, 'start_date', _('Start date'), type='date', required=true) }}
+            {{ input(kind, 'end_date', _('End date'), type='date') }}
+          </div>
+          <div class="ihpix-report-row">
+            <div class="ihpix-report-field">
+              <label class="ihpix-report-label" for="ihpix-event-event_format">{{ _('Event format') }}</label>
+              <select name="event_format" id="ihpix-event-event_format" class="ihpix-report-select"><option value="in-person">{{ _('In person') }}</option><option value="online">{{ _('Online') }}</option><option value="hybrid">{{ _('Hybrid') }}</option></select>
+              <div class="ihpix-report-error-text" data-error-for="event_format" role="alert"></div>
+            </div>
+            {{ input(kind, 'location', _('Location'), maxlength='300') }}
+          </div>
+          {{ input(kind, 'registration_url', _('Registration URL'), type='url') }}
+        {% endif %}
+        <fieldset class="ixf-fieldset">
+          <legend class="ihpix-report-label">{{ _('Data file') if kind == 'dataset' else _('Agenda or flyer (optional)') }}</legend>
+          <div class="ixf-segmented" role="radiogroup" aria-label="{{ _('Source') }}">
+            {% if kind == 'event' %}<label><input type="radio" name="source_kind" value="none" checked> {{ _('No attachment') }}</label>{% endif %}
+            <label><input type="radio" name="source_kind" value="file"{% if kind == 'dataset' %} checked{% endif %}> {{ _('Upload a file') }}</label>
+            <label><input type="radio" name="source_kind" value="url"> {{ _('Link to a URL') }}</label>
+          </div>
+          <div data-resource-source="file"{% if kind == 'event' %} hidden{% endif %}>
+            <div data-ihpix-upload data-max-mb="{{ ctx.upload_max_mb if kind == 'dataset' else ctx.agenda_max_mb }}" data-accept="{{ ctx.dataset_accept if kind == 'dataset' else ctx.agenda_accept }}">
+              <input type="file" name="file" id="ihpix-{{ kind }}-file" accept="{{ ctx.dataset_accept if kind == 'dataset' else ctx.agenda_accept }}" aria-label="{{ _('Data file') if kind == 'dataset' else _('Agenda or flyer (optional)') }}">
+            </div>
+          </div>
+          <div data-resource-source="url" hidden>
+            <input type="url" name="source_url" class="ihpix-report-input" id="ihpix-{{ kind }}-source_url" placeholder="https://" aria-label="{{ _('Resource URL') }}">
+          </div>
+          <div class="ihpix-report-error-text" data-error-for="source" role="alert"></div>
+        </fieldset>
+        <div class="ixf-alert is-success" data-resource-success hidden role="status"></div>
+      </div>
+      <div class="ixf-modal-footer">
+        <span class="ixf-muted">{{ _('The dataset uses the visibility you select.') if kind == 'dataset' else _('The event is sent for review before it becomes public.') }}</span>
+        <button type="button" class="ihpix-report-btn is-secondary" data-ihpix-modal-close>{{ _('Cancel') }}</button>
+        <button type="submit" class="ihpix-report-btn is-primary">{{ _('Create and attach') if kind == 'dataset' else _('Submit event and attach') }}</button>
+      </div>
+    </form>
+    {% endif %}
+  </div>
+</div>
+{% endfor %}
+<script type="application/json" id="ihpix-resource-strings">{{ {
+  'saving': _('Uploading…'), 'created': _('Resource created and added to your report.'),
+  'network': _('Network error. Please try again.'), 'fix': _('Please review the highlighted fields.'),
+  'missing': _('This field is required'), 'email': _('Invalid email address'),
+  'date': _('End date must not be before start date'), 'file': _('Choose a file to upload'),
+  'url': _('The URL must start with http:// or https://')
+}|tojson }}</script>
+<script src="{{ h.url_for_static('/js/ihpix-resources.js') }}?v=20261106-1"></script>

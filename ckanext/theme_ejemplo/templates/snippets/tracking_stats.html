@@ -8,7 +8,7 @@
 {% set total_downloads = 0 %}
 {% set ns_dl = namespace(total=0) %}
 {% for res in pkg.resources %}
-  {% set dl = h.get_resource_downloads(res.id) %}
+  {% set dl = {'total': 0} if h.theme_ejemplo_is_sld(res) else h.get_resource_downloads(res.id) %}
   {% set ns_dl.total = ns_dl.total + dl.total %}
 {% endfor %}
 

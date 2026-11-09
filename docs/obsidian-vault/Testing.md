@@ -18,6 +18,14 @@
 | `test_ihpix_publications.py` | 18 | `ihpix_publications.py` — modal "Upload a publication": filtrado por esquema (13 vs 29 campos), slugs, autores (subcampos name/orcid/affiliation), contact_email obligatorio, errores del esquema (módulo puro) |
 | `test_ihpix_constants.py` | 9 | `ihpix_constants.py` (títulos de Output desde JSON, PA por Output), `ihpix_i18n_strings.py` (cobertura de taxonomías y mensajes de validación) y guardas de plantillas: snippets importables como módulo, sin `{# #}` anidados, sin `_('%(x)s')` sin kwargs |
 | `test_ihpix_workspaces.py` | 11 | `ihpix_workspaces.py` — reglas de membresía y permisos de los working groups (módulo puro) |
+| `test_ihpix_normalize.py` | 13 | `ihpix_normalize.py` — alias de valores heredados (doble espacio, `2022 - 2023`, `Report`, stakeholder groups con paréntesis, multis con comas, flagship `No`), puertas derivadas, alias de país, idempotencia (módulo puro, 2026-10) |
+| `test_ihpix_stats.py` | 19 | `ihpix_stats.py` — totales por ámbito, unión de los tres campos de país, región por índice, filas con puerta en `false` pero conteo > 0, "por tipo", dimensión por ámbito, `Unspecified`, porcentajes con total 0, matriz, no resueltos, países por rol, título de grupo y heredado con el mismo canónico (módulo puro, 2026-10) |
+| `test_ihpix_charts.py` | 13 | `ihpix_charts.py` — SVG bien formado y accesible (`role="img"`, `<title>`, `<desc>`), escape de texto de usuario, proporción de barras, `max_rows` con nota y tabla completa, recorte con "…", `color_for`, apiladas con hueco y totales, donut con % y total central, columnas con los 4 bienios, spec vacía, formateador, determinismo, etiquetas cortas (módulo puro, 2026-10-23) |
+| `test_ihpix_report_sections.py` | 11 | `ihpix_report_sections.py` — orden y selección de secciones, anexo agrupado por PA/Output, figuras según ámbito (donut/bar; outputs sólo en overall/flagship/ctwg), tablas de países con no resueltos, matriz por bienio, fichas/highlights/figuras por KPI, render en ambos layouts, traductor inyectado, stats vacías, formateador y **cobertura i18n** (toda clave traducida está en `ihpix_i18n_strings`) (2026-10-23) |
+| `test_ihpix_entities.py` | 6 | `ihpix_entities.py` — ámbito de la pestaña de un grupo (Member State / flagship / CTWG / sin atribución, con la muestra de grupos de dev), slugs de URL, mapas canónicos, fichas enlazables (slug del formulario, nombres heredados, roles, no resueltos), campos inválidos y `flagship_for_group` para los 21 flagships (2026-10-23) |
+| `test_ihpix_org_match.py` | 10 | `ihpix_org_match.py` — normalización (acentos, Center/Centre, coletilla "under the auspices of UNESCO"), exactos por título o slug, acrónimos entre paréntesis, contenido, primer tramo, iniciales ("UK CEH", "HTC KL"), fragmentos genéricos sugeridos pero no confiables, ausencia de falsos positivos ("UNESCO", oficinas distintas), orden/límite, agrupación de variantes y filas vinculadas, rendimiento con las 744 filas del seed (< 1 s) y, desde 2026-10-30, mismas palabras en otro orden, siglas como palabras específicas, sedes "UNESCO <ciudad>", primer tramo contenido, título corto inicial y exclusión de organizaciones demo, socias sugeridas por tramo (`suggest_partners`) y socias comunes del grupo (módulo puro, 2026-10-24) |
+
+Los tests puros IHP-IX (`test_ihpix_*.py`, 231 el 2026-10-24) corren sin CKAN: `PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python3 -m pytest -q ckanext/theme_ejemplo/tests/test_ihpix_*.py`. `test_ihpix_constants.py` comprueba además que los JSON de títulos y key activities cargan, que hay 18 flagships con slug de ida y vuelta y que cada literal nuevo está en `ihpix_i18n_strings.py`.
 
 ### Módulos sin tests
 - `actions.py` (45 acciones)
@@ -43,6 +51,28 @@ kubectl --context default -n ckan exec -i $POD -c ckan -- python3 - < scripts/ih
 
 Para validar cambios sin reconstruir la imagen: `kubectl cp` de los ficheros al
 pod y volver a lanzar el script (el proceso es nuevo y lee el disco).
+
+> [!warning] El paquete del pod es de root (2026-10-11)
+> Desde el despliegue del 2026-10 `/app/src/ckanext-theme-ejemplo` pertenece a
+> root y el contenedor corre como `ckan`: `kubectl cp` no puede sobrescribir.
+> Alternativa que funcionó: copiar el árbol a `/tmp/theme-overlay`
+> (`kubectl exec … -- cp -r /app/src/ckanext-theme-ejemplo/ckanext /tmp/theme-overlay/`),
+> extraer ahí un tarball con los ficheros cambiados y lanzar los procesos con
+> `PYTHONPATH=/tmp/theme-overlay` más un `sitecustomize.py` en esa carpeta que
+> haga `ckanext.__path__.insert(0, '/tmp/theme-overlay/ckanext')` (el namespace
+> `ckanext` de pkg_resources no respeta el orden de PYTHONPATH por sí solo).
+> El smoke se lanza entonces con `python3 -c "import sys; sys.path.insert(0,
+> '/tmp/theme-overlay'); import ckanext; ckanext.__path__.insert(0,
+> '/tmp/theme-overlay/ckanext'); exec(open('/tmp/theme-overlay/scripts/ihpix_dev_smoke.py').read())"`.
+> Ojo: cualquier proceso nuevo con el modelo nuevo aplica la migración (y la
+> normalización de heredados) a la base de dev: respaldar antes
+> (ver [[Deployment#Despliegue a desarrollo (data.dev-wins.com)]]).
+
+El smoke incluye desde 2026-10-11 las cinco rutas de progreso, la redirección
+de `/ihpix/dashboard`, los marcadores del formulario rediseñado
+(`key_activity_code`, `training_type_other`, `UWMP`, `section-review`) y una
+llamada a `ihpix_progress_stats` cuyos totales deben coincidir con la SQL
+directa (`sum(stakeholders_knowledge)` de las publicadas, etc.).
 
 ## Navegador real (Playwright) contra dev
 
@@ -70,6 +100,35 @@ Crea un borrador "Playwright IHP-IX draft (delete me)" y una publicación
 "…smoke publication (delete me)" del usuario editor: borrarlos después
 (`ihpix_report_delete` / `dataset_purge`) y revocar los tokens. Ejecutada en
 verde el 2026-09-25 (16 pasos, 0 errores de consola).
+
+### Formulario rediseñado y dashboards de progreso (2026-10-11)
+
+`scripts/playwright/ihpix_progress.js` solo hace GET (no crea datos): comprueba
+el formulario (23 obligatorios, 18 flagships, 12 tipos de formación, 13 puertas
+sin valor por defecto, key activities filtradas por Output, tabla de revisión,
+resumen de errores al enviar incompleto), móvil 390 px, árabe RTL, los cinco
+ámbitos de progreso (tiles, ≥ 8 gráficos, franja de 34 outputs, mapa con
+marcadores, filtro de bienio vía API, "Show as table") y la redirección del
+dashboard antiguo; guarda capturas y `results.json`.
+
+Para verificar **sin desplegar**: servidor de desarrollo en el pod con la copia
+de `/tmp/theme-overlay` (`kubectl exec … -- env PYTHONPATH=/tmp/theme-overlay
+ckan -c /srv/app/production.ini run -H 0.0.0.0 -p 5001 -r -t`) y
+`kubectl port-forward pod/<ckan> 5001:5001`. El port-forward se cae con las
+peticiones en paralelo del navegador, así que el script acepta
+`IHPIX_PW_TUNNEL` (comando del port-forward) e `IHPIX_PW_SERVER` (comando que
+reinicia el servidor) y los relanza él mismo cuando el sitio deja de responder:
+
+```bash
+NODE_PATH=/ruta/privada/node_modules IHPIX_PW_TOKENS=/ruta/privada/tokens.json \
+IHPIX_PW_BASE=http://127.0.0.1:5001 \
+IHPIX_PW_TUNNEL="kubectl --context default -n ckan port-forward pod/<ckan> 5001:5001" \
+IHPIX_PW_SERVER=/ruta/privada/restart-server.sh \
+node scripts/playwright/ihpix_progress.js
+```
+
+Playwright 1.58 necesita Chromium 1208 en `~/.cache/ms-playwright`; una
+instalación 1.57 pide la 1200 y falla aunque haya otras builds.
 
 ## Cómo ejecutar tests
 
@@ -242,3 +301,141 @@ La validación en navegador cubre catálogo, edición, relaciones y tamaño móv
 ## Encabezado responsive (2026-10-01)
 
 Verificar inicio, catálogo y Rapid Response entre 320 y 1920 px, incluyendo 768/800/820/991/992/1024/1199/1366. En catálogo y Rapid Response, el ancho del documento debe coincidir con el viewport. En inicio, comparar además con la versión previa: la auditoría detectó desbordamiento preexistente fuera del encabezado (480 px de documento a 320 px), idéntico antes y después del parche. Comprobar el menú móvil abierto/cerrado, la navegación que pasa a varias líneas, el foco del buscador y su panel de sugerencias. Repetir con traducciones. La prueba del candidato debe cargar el CSS real del checkout en el orden de producción y repetirse con los assets de la imagen final y las URLs públicas. Ver [[Troubleshooting]].
+
+## Asociaciones de Water Family
+
+`ckanext/theme_ejemplo/tests/test_initiative_pages.py` comprueba la integración del lector con `ckanext-pages`: News y Events con JSON histórico y exclusión de contenido privado, borrador, pendiente o rechazado; también verifica el contexto `c.group_dict` requerido por el menú de Pages en ambas pestañas. Requiere Pages instalado y PostgreSQL, Solr y Redis de pruebas aislados; el fixture reinicia la base y migra Pages.
+
+```bash
+pytest --ckan-ini=test.ini -q ckanext/theme_ejemplo/tests/test_initiative_pages.py
+```
+
+La suite de formularios y API está en `ckanext-pages/ckanext/pages/tests/test_water_family_initiatives.py`. Estos cambios deben entregarse junto con el helper actualizado de Pages; la validación local no implica despliegue.
+
+Validación local del 2026-10-09: 4 pruebas del tema y 9 de Pages aprobadas. Playwright verificó las pestañas reales de iniciativas después de publicar y quitar asociaciones en News/Events, con el tema completo y el menú de Pages activos. Evidencia en `ckanext-pages/output/playwright/water-family-initiatives/`; producción permanece sin desplegar.
+
+## Aceptación IHP-IX de septiembre (2026-10-21)
+
+```bash
+PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python3 -m pytest -q ckanext/theme_ejemplo/tests/test_ihpix_*.py
+python3 scripts/build_ihpix_taxonomy_data.py --check
+IHPIX_QA_TOKENS=/ruta/privada/tokens.json python3 scripts/ihpix_review_acceptance.py
+```
+
+El script HTTP exige localhost, cinco usuarios QA (`admin`, `author`, `collaborator`, `observer`, `outsider`) y tokens en JSON privado. El administrador QA es sysadmin; el espacio 1.10 debe existir, activo y sin lead. Usa copia aislada de DEV, registra baseline de publicados y elimina sus reportes al terminar. No apuntarlo a un port-forward de un entorno compartido: modifica membresías y estados de espacios durante las pruebas.
+
+Resultados: 146 tests puros, 29 checks HTTP y pruebas adicionales de privacidad, rollback y navegador. Matriz y límites de la evidencia en [[IHP-IX Review September 2026]]. Estas comprobaciones no equivalen a ejecutar todo el CI histórico de CKAN 2.9.
+
+El recorrido de navegador reproducible está en `scripts/playwright/ihpix_review.cjs` (Node + Playwright):
+
+```bash
+IHPIX_QA_TOKENS=/ruta/privada/tokens.json IHPIX_QA_OUTPUT=/tmp/ihpix-browser \
+  node scripts/playwright/ihpix_review.cjs
+```
+
+Guarda capturas/PDF fuera de Git y elimina el reporte que crea al finalizar correctamente. `IHPIX_QA_BASE` permite otro puerto local; exige la misma instancia aislada del script HTTP. Los recorridos de archivos/eventos y Excel se validaron además con fixtures locales privados.
+
+Regresiones reproducibles adicionales: `scripts/ihpix_review_privacy.py` (15 checks; además exige `IHPIX_QA_FIXTURES` con `package`/`package_name` de un dataset privado del autor, inaccesible al colaborador) y `scripts/ihpix_review_rollback.py` (4 checks; archiva/restaura 1.10 para provocar fallo en la segunda fila). Ejecutarlas secuencialmente en la instancia aislada, con `IHPIX_QA_TOKENS` definido. No usan archivos reales de usuarios.
+
+## Control automático Theme checks
+
+`.github/workflows/theme-checks.yml` ejecuta las 146 regresiones puras IHP-IX, verifica el snapshot oficial y la sintaxis de los tres scripts del navegador. Corre al publicar `dev210`, en pull requests y manualmente, con Python 3.11, permisos de lectura y acciones fijadas por SHA. Su job se llama exactamente `Theme checks`, como el control requerido por GitHub. Complementa las pruebas HTTP/navegador contra CKAN real; no sustituye al workflow manual `Tests` de CKAN 2.9 ni despliega entornos.
+
+## Progress IHP-IX: países y navegación
+
+`scripts/playwright/ihpix_progress_filters.cjs` prueba selección geográfica, coherencia de exportaciones, recuperación ante fallos, borradores y 80 combinaciones de página/idioma/viewport. La fixture aislada y las variables de ejecución se documentan en [[IHP-IX Progress UX October 2026]]. La suite pura incluye una regresión para impedir que un alias vacío resuelva a un país con nombre no latino.
+
+## Recursos SLD y tracking
+
+- `test_resource_styles.py`: clasificación, asociaciones compartidas/múltiples,
+  URLs históricas, entradas malformadas, búsqueda, filtros, lista plana y
+  agrupación antes de paginar. Sin CKAN.
+- `test_pageview_tracking.py`: filtros existentes más exclusión manual de SLD
+  por URL/metadatos antes de deduplicar.
+- `test_sld_tracking_db.py`: PostgreSQL y Redis aislados; igualdad de política
+  Python/SQL, rankings y helpers, fallback legado, pendientes SLD, simulación,
+  reconciliación repetida, respaldo y fallos de DB/bloqueo. Requiere
+  `SLD_TEST_DATABASE_URL` y `SLD_TEST_REDIS_URL` de bases exclusivas de pruebas;
+  esta suite recrea sus tablas, nunca debe apuntar a CKAN real.
+- `scripts/sld_dev_smoke.py`: renderiza páginas y AJAX públicos en CKAN real,
+  idiomas EN/ES/FR/AR, conservación de recursos API y rechazo de privados.
+
+El workflow `Theme checks` incorpora estos tests con PostgreSQL 17/Redis 7 y
+valida sintaxis de `resource-list.js`. Validar además en navegador escritorio y
+móvil: estilos compartidos/independientes, búsqueda, cambio de modo, paginación,
+permisos, enlaces de descarga y ausencia de insignias SLD/desbordamiento.
+
+## Dataset extent: límite de zoom USGS (2026-10-23)
+
+- 32 comprobaciones de renderizado con las extensiones Jinja de CKAN 2.10:
+  ambas plantillas, ramas de versión 2.9/2.10, límites numéricos y de texto,
+  conservación de límites inferiores, assets y configuración compartida.
+- Playwright verificó escritorio (1280×900) y móvil (390×844): controles,
+  teclado, rueda, doble clic y pinza; el zoom queda en 8, el botón «+» se
+  deshabilita y no se solicitan imágenes USGS superiores a 8. También se
+  comprobaron puntos, polígonos pequeños, límite 6 y otro proveedor.
+- La prueba sustituyó únicamente el fragmento HTML en el navegador por la
+  salida de las plantillas locales, usando los assets reales del portal.
+  No equivale a un despliegue ni a la suite completa de integración CKAN.
+- Las 26 pruebas existentes de `test_license_history_template.py` pasaron.
+  Evidencia local: `output/playwright/extent-fix-20261023/`.
+
+## Importación guiada IHP-IX v2 (2026-10-23)
+
+La suite pura suma 178 pruebas. `test_ihpix_bulk_v2.py` cubre mapeo completo, datos compartidos, indicadores, relaciones, archivos alterados, coordenadas XML reales, traducciones y compatibilidad. No requiere CKAN ni Babel; usa los catálogos MO incluidos.
+
+`scripts/playwright/ihpix_bulk.cjs` requiere un CKAN local **desechable**: usa autor, usuario ajeno y admin, y archiva/restaura temporalmente el workspace 1.10 para comprobar rollback. No ejecutarlo mediante port-forward contra un entorno compartido. `scripts/playwright/fixtures/ihpix_bulk.py` genera fixtures y vacía únicamente las tablas de reportes/importaciones de la base local `ihpix_bulk`; exige `/qa/app.ini` y el host `ihpix-bulk-db`. Los usuarios y tokens se preparan separadamente en esa instancia.
+
+```bash
+PYTEST_DISABLE_PLUGIN_AUTOLOAD=1 python3 -m pytest -q ckanext/theme_ejemplo/tests/test_ihpix_*.py
+IHPIX_QA_FILES=/ruta/spreadsheets IHPIX_QA_TOKENS=/ruta/privada/tokens.json \
+  IHPIX_QA_OUTPUT=/tmp/ihpix-bulk-browser node scripts/playwright/ihpix_bulk.cjs
+```
+
+`IHPIX_QA_BASE` admite otro puerto local (por defecto 5013). El JSON de tokens contiene `author`, `other` y `admin`; nunca se versiona. Se guardan resultados incluso si una comprobación falla. Las pruebas comparan valores persistidos, owner-only, idempotencia, rollback y retry, v1/v2, ejemplos/minimal/errores y cuatro idiomas entre 320 y 1440 px. La evidencia y las limitaciones de traducción oficial están en [[IHP-IX Bulk Import UX October 2026]].
+
+## Regresiones del Excel plano v3
+
+`test_ihpix_bulk_flat.py` compara los valores completos de los ejemplos v2/v3 en cuatro idiomas, prueba copiar y ordenar filas sin códigos, preserva asociaciones por título, rechaza títulos ambiguos/desconocidos y comprueba errores en celdas planas, cero/No y listas nativas. La prueba de navegador de bulk incluye ahora una carga v2 además de v1 y v3. La fixture obtiene las columnas de los encabezados estables para evitar depender de su posición visual.
+
+### Navegación IHP-IX (2026-11-06)
+
+`test_ihpix_navigation.py` cubre regresos desde accesos directos, ámbitos de Progress, informes, presentaciones, workspaces, perfiles y administración, incluyendo filtros y localización de URLs. Se ejecuta con la suite pura IHP-IX existente. La comprobación de navegador debe incluir regreso con filtros, formularios con cambios sin esperar el autosave, fallo del almacenamiento, acceso directo sin historial, móvil, RTL e impresión.
+
+Validación del 2026-11-06: 253 pruebas puras aprobadas; 49 comprobaciones de navegador contra la candidata y 14 contra DEV público. Incluye regreso repetido Progress → Output → informe/presentación, filtros modificados después de cargar la página, rechazo de referrer externo, borrador inmediato y bloqueo de salida ante fallo de almacenamiento. Capturas de escritorio/móvil y RTL en `output/playwright/ihpix-navigation-20261106/` (fuera de Git).
+
+### Autoguardado y tres pasos del reporte (2026-11-06)
+
+`test_ihpix_autosave.py` comprueba la identidad por usuario/borrador, normalización para reintentos y comparación de enlaces. `scripts/ihpix_autosave_check.py` exige `/qa/app.ini`, host `ihpix-form-db`, base `ihpix_form` y los usuarios `qa-form-author`, `qa-form-other`, `qa-form-admin`: sólo ejecutarlo en una instancia local desechable. Verifica creación/reintentos, permisos, revisiones, validación, identidad de adjuntos, estados devuelto/pendiente/publicado, workspace archivado y envío explícito. No ejecutarlo contra DEV ni mediante un túnel a datos compartidos.
+
+La comprobación con navegador cubre los tres pasos, enlace desde errores, recarga sin almacenamiento local, respuesta perdida, cambios durante una petición, desconexión, fallo de ambos almacenamientos, dos pestañas con conflicto y recuperación de la versión más reciente. Evidencia local: `output/playwright/ihpix-form-20261106/`.
+
+Resultado previo al despliegue: **262 tests puros**, **21 comprobaciones de servicio** y **81 comprobaciones de navegador** aprobadas. Cinco peticiones de creación simultáneas devolvieron el mismo borrador/revisión. La subida de PDF se probó con almacenamiento local desechable (el almacenamiento remoto de DEV conserva su configuración). Móvil a 320/390 px, escritorio a 1440 px, es/fr/ar/en y navegación en modo de sólo lectura verificados. No se ejecutó la suite CKAN contra la base compartida.
+
+DEV después del rollout: **14 comprobaciones** aprobadas; endpoint de autoguardado rechaza el borrador sin título (400), controles de los tres pasos visibles y usables, idiomas es/fr/ar sin desbordamiento móvil, cero excepciones JS. Fingerprints de las 12 tablas IHP-IX idénticos antes/después (746 actividades); sin reportes de prueba creados en DEV.
+
+### Subidas inline IHP-IX (2026-11-06)
+
+`test_ihpix_resources.py` valida tipos/tamaño de archivos, organizaciones, fechas, URL, campos obligatorios e identidad de reintento. Suite pura: **283 pruebas aprobadas**. `scripts/ihpix_resources_check.py` exige `/qa/app.ini`, base `ihpix_form` y host `ihpix-form-db`; sólo ejecutar en CKAN local desechable con fixtures `qa-form-*`. Sus **19 comprobaciones** incluyen permisos, visibilidad privada/pública, respuesta perdida, rollback ante fallo de almacenamiento y recuperación sin duplicados, eventos sin agenda/con URL y revisión incluso para admin.
+
+El navegador crea un CSV privado y un evento con PDF, recarga y comprueba sus asociaciones al borrador; comprueba también el modal de publicaciones existente y simula una respuesta perdida. Evidencia local de escritorio/móvil y EN/ES/FR/AR en `output/playwright/ihpix-inline-20261106/` (fuera de Git). El almacenamiento QA usa drivers locales para datos y assets; no usar credenciales Azure de DEV en el entorno de pruebas.
+
+La revisión de navegador aprobó **53 comprobaciones** funcionales y **16 revisiones de visibilidad de controles** en EN/ES/FR/AR, 320 y 1440 px; capturas tomadas después de terminar la animación del modal. La suite de servicio de autoguardado existente conserva sus **21 comprobaciones** aprobadas. El endpoint de recursos rechaza peticiones anónimas (403).
+
+DEV público: **24 comprobaciones aprobadas**, sin excepciones JS; las cinco opciones abren dentro del reporte, los nuevos endpoints rechazan formularios vacíos sin crear contenido, y los modales se muestran traducidos y sin desbordamiento móvil en es/fr/ar.
+
+## Planificación y grupos IHP-IX
+
+`test_ihpix_planning.py` cubre fuentes/roundtrip Excel, celdas vacías y cero, taxonomía, validación estructural, contactos repetidos y reportes históricos sin inferir finalización. `test_ihpix_navigation.py` cubre la jerarquía grupo/Output/plan.
+
+`scripts/ihpix_groups_check.py` es una comprobación de integración para la base **desechable** `ihpix-form-db/ihpix_form`; verifica explícitamente ese destino antes de escribir. Prueba privacidad, observadores, aprobación/devolución, revisiones, archivos nuevos frente al plan acordado, reintentos, conciliación, revocación y archivo del grupo. Nunca se ejecuta contra DEV/producción.
+
+La validación en navegador incluye guardado, los tres pasos, documento interno, cinco modales de catálogo, revisión y reporte vinculado, siete secciones de grupo, vista previa de libros reales, móvil e idiomas ES/FR/AR. Los libros reales sólo se previsualizan en QA aislado. Las verificaciones de DEV deben ser de lectura o rechazos sin escritura y comparar las doce tablas históricas antes/después; sólo se esperan las nueve tablas nuevas y ocho filas iniciales de grupos.
+
+Resultado del 6 de noviembre de 2026: **300 tests puros**, **39 comprobaciones de servicios de grupos**, **21 de autosave de reportes** y **19 de recursos** aprobadas. Navegador local: propuesta/adjuntos/envío (15), aprobación/importaciones/secciones (14), móvil e idiomas (13), además de recuperación de texto sin conexión y conflicto entre dos editores. En DEV: **32 verificaciones de navegador y 7 HTTP**, más aislamiento de caché autenticada/anónima y redirección al login. El proveedor de DEV puede entregar un `AnonymousUser` sin atributo `state`: se comprueba explícitamente antes de acceder a grupos. El entorno QA, sus credenciales y navegadores temporales fueron retirados.
+
+### Calendario y demo de workspaces
+
+- `test_ihpix_calendar.py`: fechas inválidas/invertidas, año bisiesto, intervalos entre meses, hitos sin inicio, tareas, falta de fechas y exportación con fechas.
+- `scripts/ihpix_calendar_check.py`: sólo base QA aislada; permisos de calendario, snapshot aprobado durante revisión, selección de bienio, reanudación sin duplicados, resultados reales vacíos y fuentes duplicadas conservadas.
+- La carga de demo se ensaya en QA y se repite para comprobar idempotencia. Comparar fingerprints históricos antes/después en DEV. Navegador: recorrido completo, calendario/agenda, fuentes, enlaces, ES/FR/AR y ancho móvil.

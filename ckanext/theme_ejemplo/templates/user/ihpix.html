@@ -1,5 +1,10 @@
 {% extends "user/read_base.html" %}
 
+{% block styles %}
+  {{ super() }}
+  {% asset 'theme/ihpix-profile-css' %}
+{% endblock %}
+
 {% block subtitle %}{{ _('IHP-IX Reports') }} {{ g.template_title_delimiter }} {{ user_dict.display_name }}{% endblock %}
 
 {% block page_primary_action %}
@@ -17,38 +22,11 @@
     'published': _('Published'),
     'rejected': _('Needs changes'),
   } %}
-  <style>
-    .ihpix-my-tabs { margin-bottom: 1rem; }
-    .ihpix-my-tabs .badge { margin-left: .35rem; }
-    .ihpix-my-table td { vertical-align: middle; }
-    .ihpix-my-actions { white-space: nowrap; text-align: right; }
-    .ihpix-my-actions form { display: inline-block; margin-left: .25rem; }
-    .ihpix-status-pill {
-      display: inline-block; padding: .15rem .6rem; border-radius: 999px;
-      font-size: .75rem; font-weight: 700; text-transform: uppercase;
-      letter-spacing: .03em; color: #fff; background: #6b7280;
-    }
-    .ihpix-status-pill.is-draft { background: #6b7280; }
-    .ihpix-status-pill.is-pending { background: #d97706; }
-    .ihpix-status-pill.is-published { background: #15803d; }
-    .ihpix-status-pill.is-rejected { background: #b91c1c; }
-    .ihpix-my-intro { color: #555; margin-bottom: 1rem; }
-  </style>
 
-  <h2 class="hide-heading">{{ _('IHP-IX Reports') }}</h2>
+  <div class="ihpix-my-reports">
+  <h2 class="ihpix-my-heading">{{ _('IHP-IX Reports') }}</h2>
 
   {% if summary %}
-  <style>
-    .ihpix-part { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; margin-bottom: 1rem; }
-    .ihpix-part-stat { background: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 10px; padding: .7rem .9rem; }
-    .ihpix-part-n { font-size: 1.4rem; font-weight: 800; color: #004E8C; line-height: 1.1; }
-    .ihpix-part-l { font-size: .72rem; text-transform: uppercase; letter-spacing: .05em; color: #64748B; margin-top: .2rem; }
-    .ihpix-part-ws { display: flex; flex-wrap: wrap; gap: .4rem; margin: .4rem 0 1rem; }
-    .ihpix-part-ws a { display: inline-block; padding: .2rem .6rem; border-radius: 999px; background: #E8F4FD; color: #004E8C; font-size: .8rem; font-weight: 600; text-decoration: none; }
-    .ihpix-part-feed { list-style: none; margin: 0 0 1.2rem; padding: 0; font-size: .86rem; }
-    .ihpix-part-feed li { padding: .35rem 0; border-bottom: 1px solid #F1F5F9; }
-    .ihpix-part-feed time { color: #94A3B8; font-size: .75rem; margin-left: .4rem; }
-  </style>
   <div class="ihpix-part">
     <div class="ihpix-part-stat"><div class="ihpix-part-n">{{ summary.reports_published }}</div><div class="ihpix-part-l">{{ _('Published reports') }}</div></div>
     <div class="ihpix-part-stat"><div class="ihpix-part-n">{{ summary.workspaces|length }}</div><div class="ihpix-part-l">{{ _('Working groups') }}</div></div>
@@ -84,13 +62,13 @@
       ('published', status_labels['published'], counts.get('published', 0)),
       ('rejected', status_labels['rejected'], counts.get('rejected', 0)),
     ] %}
-    <ul class="nav nav-tabs ihpix-my-tabs">
+    <ul class="ihpix-my-tabs" aria-label="{{ _('Filter reports by status') }}">
       {% for value, label, n in tabs %}
         <li class="{% if status_filter == value %}active{% endif %}">
           {% if value %}
-            <a href="{{ h.url_for('theme_ejemplo.user_ihpix', id=user_dict.name, status=value) }}">{{ label }} <span class="badge">{{ n }}</span></a>
+            <a {% if status_filter == value %}aria-current="page"{% endif %} href="{{ h.url_for('theme_ejemplo.user_ihpix', id=user_dict.name, status=value) }}">{{ label }} <span class="ihpix-my-count">{{ n }}</span></a>
           {% else %}
-            <a href="{{ h.url_for('theme_ejemplo.user_ihpix', id=user_dict.name) }}">{{ label }} <span class="badge">{{ n }}</span></a>
+            <a {% if status_filter == value %}aria-current="page"{% endif %} href="{{ h.url_for('theme_ejemplo.user_ihpix', id=user_dict.name) }}">{{ label }} <span class="ihpix-my-count">{{ n }}</span></a>
           {% endif %}
         </li>
       {% endfor %}
@@ -98,61 +76,54 @@
   {% endif %}
 
   {% if reports %}
-    <table class="table table-striped ihpix-my-table">
-      <thead>
-        <tr>
-          <th>{{ _('Title') }}</th>
-          <th>{{ _('Priority Area / Output') }}</th>
-          <th>{{ _('Biennium') }}</th>
-          <th>{{ _('Status') }}</th>
-          <th>{{ _('Updated') }}</th>
-          {% if can_see_all %}<th></th>{% endif %}
-        </tr>
-      </thead>
-      <tbody>
-        {% for r in reports %}
-          <tr>
-            <td>
-              <strong>{{ r.title }}</strong>
-              {% if r.institution %}<br><small class="text-muted">{{ r.institution }}</small>{% endif %}
-            </td>
-            <td>{{ r.priority_area }}{% if r.output %} &middot; {{ r.output }}{% endif %}</td>
-            <td>{{ r.biennium or '&mdash;'|safe }}</td>
-            <td>
-              <span class="ihpix-status-pill is-{{ r.status }}">{{ status_labels.get(r.status, r.status) }}</span>
-              {% if r.status == 'rejected' and r.review_notes %}
-                <br><small class="text-muted" title="{{ r.review_notes }}">{{ r.review_notes|truncate(80) }}</small>
-              {% endif %}
-            </td>
-            <td>{{ h.render_datetime(r.updated_at, with_hours=True) if r.updated_at else '' }}</td>
+    <div class="ihpix-my-list">
+      {% for r in reports %}
+        <article class="ihpix-my-card" aria-labelledby="ihpix-report-title-{{ loop.index }}">
+          <div class="ihpix-my-card-heading">
+            <h3 id="ihpix-report-title-{{ loop.index }}">
+              {% if can_see_all %}<a href="{{ h.url_for('theme_ejemplo.ihpix_report_edit', id=r.id) }}">{{ r.title }}</a>{% else %}{{ r.title }}{% endif %}
+            </h3>
+            <span class="ihpix-status-pill is-{{ r.status }}">{{ status_labels.get(r.status, r.status) }}</span>
+          </div>
+          {% if r.institution %}<p class="ihpix-my-institution">{{ r.institution }}</p>{% endif %}
+          <div class="ihpix-my-card-body">
+            <dl class="ihpix-my-meta">
+              <div><dt>{{ _('Priority Area / Output') }}</dt><dd>{{ r.priority_area or '—' }}{% if r.output %} &middot; {{ r.output }}{% endif %}</dd></div>
+              <div><dt>{{ _('Biennium') }}</dt><dd>{{ r.biennium or _('Not specified') }}</dd></div>
+              <div><dt>{{ _('Updated') }}</dt><dd>{{ h.render_datetime(r.updated_at, with_hours=True) if r.updated_at else '—' }}</dd></div>
+            </dl>
             {% if can_see_all %}
-              <td class="ihpix-my-actions">
-                {% if r.status in ('draft', 'rejected') or is_sysadmin %}
-                  <a class="btn btn-default btn-sm" href="{{ h.url_for('theme_ejemplo.ihpix_report_edit', id=r.id) }}">
-                    <i class="fa fa-pencil"></i> {{ _('Edit') }}
-                  </a>
-                {% else %}
-                  <a class="btn btn-default btn-sm" href="{{ h.url_for('theme_ejemplo.ihpix_report_edit', id=r.id) }}">
-                    <i class="fa fa-eye"></i> {{ _('View') }}
-                  </a>
-                {% endif %}
+              <div class="ihpix-my-actions">
+                <a class="ihpix-my-button" href="{{ h.url_for('theme_ejemplo.ihpix_report_edit', id=r.id) }}">
+                  {% if r.status in ('draft', 'rejected') or is_sysadmin %}
+                    <i class="fa fa-pencil" aria-hidden="true"></i> {{ _('Edit') }}
+                  {% else %}
+                    <i class="fa fa-eye" aria-hidden="true"></i> {{ _('View') }}
+                  {% endif %}
+                </a>
                 {% if r.status == 'draft' or is_sysadmin %}
                   <form method="post" action="{{ h.url_for('theme_ejemplo.ihpix_report_delete_view', id=r.id) }}"
-                        onsubmit="return confirm({{ _('Delete this report? This cannot be undone.')|tojson }});">
+                        onsubmit='return confirm({{ _('Delete this report? This cannot be undone.')|tojson }});'>
                     {{ h.csrf_input() }}
-                    <button type="submit" class="btn btn-danger btn-sm"><i class="fa fa-trash"></i> {{ _('Delete') }}</button>
+                    <button type="submit" class="ihpix-my-button is-danger"><i class="fa fa-trash" aria-hidden="true"></i> {{ _('Delete') }}</button>
                   </form>
                 {% endif %}
-              </td>
+              </div>
             {% endif %}
-          </tr>
-        {% endfor %}
-      </tbody>
-    </table>
+          </div>
+          {% if r.status == 'rejected' and r.review_notes %}
+            <div class="ihpix-my-review"><strong>{{ _('Review notes') }}</strong><p>{{ r.review_notes }}</p></div>
+          {% endif %}
+        </article>
+      {% endfor %}
+    </div>
     {{ page.pager() }}
   {% else %}
-    <p class="empty">
-      {% if is_myself %}
+    <p class="ihpix-my-empty">
+      {% if status_filter and can_see_all %}
+        {{ _('No reports with this status.') }}
+        <a href="{{ h.url_for('theme_ejemplo.user_ihpix', id=user_dict.name) }}">{{ _('View all reports') }}</a>
+      {% elif is_myself %}
         {{ _("You haven't submitted any IHP-IX reports yet.") }}
         <a href="{{ h.url_for('theme_ejemplo.ihpix_report') }}">{{ _('Report an activity') }}</a>
       {% else %}
@@ -160,4 +131,5 @@
       {% endif %}
     </p>
   {% endif %}
+  </div>
 {% endblock %}

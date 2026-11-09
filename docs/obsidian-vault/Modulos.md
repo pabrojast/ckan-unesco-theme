@@ -37,6 +37,22 @@
 
 ---
 
+## Plantillas de Dataset extent
+
+- `templates/spatial/snippets/dataset_map_base.html`: override del mapa de
+  extensión; copia la configuración de `h.get_common_map_config()` y limita
+  `maxZoom` a 8 sólo para `USGS.USImagery`, respetando límites inferiores y
+  convirtiendo valores de configuración de texto a entero. Conserva los assets
+  y el módulo JavaScript de `ckanext-spatial`.
+- `templates/schemingdcat/snippets/schemingdcat_dataset_map_base.html`: delega en
+  la plantilla anterior para compartir el comportamiento en el contenido
+  principal y la barra lateral.
+
+No modifica la configuración global del mapa ni el buscador espacial. Ver
+[[Flujos Importantes#Mapa de extensión del dataset]].
+
+---
+
 ## controller.py (~3,960 líneas)
 
 **Rol**: Todas las funciones de vista Flask.
@@ -132,18 +148,20 @@ acciones de **ckanext-pages**. Ver la advertencia en
 **IHP-IX contenido** (2):
 - `ihpix_content_list`, `ihpix_content_update`
 
-**IHP-IX actividades** (5):
-- `ihpix_activity_list`, `ihpix_activity_show`, `ihpix_activity_create`, `ihpix_activity_update`, `ihpix_activity_delete`
+**IHP-IX actividades** (6):
+- `ihpix_activity_list`, `ihpix_activity_show`, `ihpix_activity_create`, `ihpix_activity_update`, `ihpix_activity_delete`, `ihpix_activity_bulk_delete`
+- `ihpix_activity_delete` / `ihpix_activity_bulk_delete` (2026-10-31) — sysadmin. Comparten `_ihpix_purge_activities()`: borran la actividad, sus adjuntos (`IhpixActivityLink`) y sus entradas del ledger (`IhpixContribution.activity_id`) en una transacción, y refrescan caché de stats y `IhpixCountrySummary` una sola vez. El sysadmin borra aunque el workspace del output esté archivado (antes `check_workspaces` lo impedía). El masivo acepta `ids` (lista, JSON o texto separado por comas; `ihpix_relations.split_ids`) **o** `all_matching=1` con los filtros de `ihpix_activity_list` y un `expected_count` obligatorio: si el total que coincide ya no es ese, no borra nada. Devuelve `deleted`, `ids`, `missing`.
 - `ihpix_activity_list` acepta `priority_area, output, q, biennium, country, region, flagship, organization, ctwg, status` (este último solo sysadmin; el resto siempre ve `published`). Usa `IhpixActivity.get_filtered()`.
 
 **IHP-IX reportes** (8) — workflow completo en [[Flujos Importantes#7. Portal IHP-IX]]:
 - `ihpix_report_submit` — crea un reporte desde el formulario PDF 2026 (6 secciones, gates Y/N, listas JSON). `save_as_draft=1` → `draft` (solo exige título); si no → `pending`. La validación vive en [[Modulos#ihpix_forms.py]]. Guarda `reported_by` = **id** de usuario.
 - `ihpix_report_update` — edita y (re)envía un reporte propio (`draft`/`rejected`) o cualquiera (sysadmin; un `published` se corrige sin volver a la cola). Payload completo del form + `id`.
 - `ihpix_report_show` — propietario o sysadmin; devuelve `as_dict()` + `form` (prefill) + `reporter` + `can_edit`.
-- `ihpix_report_delete` — propietario solo `draft`; sysadmin cualquiera.
+- `ihpix_report_delete` — propietario solo `draft` (y nunca en un workspace archivado); sysadmin cualquiera, también desde la cola `/ckan-admin/ihpix/reports` (2026-10-31). Usa `_ihpix_purge_activities()` (adjuntos y ledger incluidos).
 - `ihpix_my_reports_list` — reportes del usuario autenticado con `counts_by_status`.
 - `ihpix_report_review` — approve/reject por sysadmin. Valida la transición (`pending → published|rejected`, `rejected → published` para "Re-approve"), exige `review_notes` al rechazar y **envía email** al reportante (best effort, `mailer.mail_user`).
-- `ihpix_dashboard_stats` — público; KPI cards + breakdowns base para `/ihpix/dashboard` (incluye `links_by_type`).
+- `ihpix_dashboard_stats` — usuarios logueados (la landing lo llama con `ignore_auth`); KPI cards + breakdowns base (incluye `links_by_type`). Desde 2026-10 el antiguo `/ihpix/dashboard` redirige a `/ihpix/progress`.
+- `ihpix_progress_stats` (2026-10-11) — `@side_effect_free`, usuarios logueados. Parámetros `scope` (`overall|pa|output|flagship|ctwg`), `value` (código de PA/Output o slug de flagship/CTWG), `biennium`, `region`, `country`, `institution_type` y, desde 2026-10-30, `organization` (name o id de una organización CKAN; `_ihpix_resolve_organization` lo resuelve y el filtro se aplica por id: institución líder o socia). Carga las actividades publicadas (`as_dict()`), construye el índice de países (`ihpix_stats.build_country_index` con `IhpixCountrySummary` + grupos `member-states` + alias) y delega en [[Modulos#ihpix_stats.py]]. Devuelve además `organization` (`{id, name, title}` o `None`; con valor desconocido los tres campos llevan el valor crudo y el resultado es vacío, nunca 404) y `options.organizations` (`_ihpix_linked_organizations`: organizaciones activas con alguna actividad publicada vinculada, `[{id, name, title, count}]`, también usada por el explorador). Caché en proceso con TTL `ckanext.theme_ejemplo.ihpix_stats_cache_ttl` (120 s) para filas, índice, organizaciones y resultados; `_ihpix_invalidate_stats_cache()` se llama al aprobar (`ihpix_report_review`), editar/borrar actividades, vincular instituciones y recalcular el resumen. Añade `overview.pending` si el usuario es sysadmin.
 - `ihpix_admin_overview_stats` — **sysadmin only**; metrics extendidas para `/ckan-admin/ihpix/overview`: KPI targets totals (Σ + youth/female), breakdowns por flagship/CTWG/institution_type, completeness histogram, recent pending.
 
 **IHP-IX adjuntos** (4) — ver [[Flujos Importantes#7.1 Adjuntos (Sección VII)]]:
@@ -153,15 +171,18 @@ acciones de **ckanext-pages**. Ver la advertencia en
 - `ihpix_publication_create` (2026-09-24) — crea una publicación desde IHP-IX: comprueba que el usuario sea editor/admin de la organización (`ihpix_publication_orgs` → `organization_list_for_user(permission='create_dataset')`), valida con [[Modulos#ihpix_publications.py]], lee los campos disponibles del esquema con `scheming_dataset_schema_show` (`ihpix_documents_schema_fields`, con fallback), llama a `package_create` (reintenta con sufijo si el `name` colisiona y **sin `groups`** si CKAN niega el Member State → `warnings`), luego `resource_create` (fichero `upload` o URL; si falla, `package_delete` best effort). Con `activity_id` adjunta vía `ihpix_activity_link_create`; siempre registra `publication_created` en el ledger del workspace del Output. Vista: `POST /ihpix/publications` (`controller.ihpix_publication_create_view`, multipart → JSON `{package, link, attached, warnings}`; 400 `{errors}` mapeados al modal, 403 `reason=no_org`).
 - `ihpix_course_propose` (2026-09-24) — propone un curso de Open Learning: `course_url`/`course_id` → `ihpix_links.parse_course_id`; rate limit `ihpix_course_proposals_per_day`; `openlearning.fetch_and_upsert_course` (nuevo → `pending`, guarda `proposed_by/proposed_at/proposal_note`); si ya está `approved` devuelve el adjunto listo; `hidden` → error. Email a sysadmins + cola `open_learning` de la campana + ledger `course_proposed`. Vista: `POST /ihpix/courses/propose` (XHR → JSON; form → redirect + flash; la usa `/courses`). **Con `ckanext-learning` cargado** (`_ihpix_learning_loaded()`), tanto esta acción como `ihpix_link_search kind=course` y `get_pending_open_learning_count` usan el catálogo nativo (`package_search type:learning`, `learning.compat.add`, `learning.compat.course_list`); el adjunto se construye con `ihpix_links.course_link_from_learning_package` (url `/learning/<name>`).
 
-**Taxonomías centralizadas** (nuevo módulo `ihpix_constants.py`, 2026-05):
-`PRIORITY_AREAS` (5), `OUTPUTS` (34, dict por PA), `FLAGSHIPS` (15), `REGIONS` (7),
-`CROSS_CUTTING_WGS` (3), `LEAD_INSTITUTION_TYPES` (12), `KNOWLEDGE_PRODUCT_TYPES` (7),
-`SCIENTIFIC_PRODUCT_TYPES` (4), `KNOWLEDGE_ACTIVITY_TYPES` (5), `TRAINING_TYPES` (4),
+**Taxonomías centralizadas** (módulo `ihpix_constants.py`, 2026-05; ampliado 2026-10-11 con la guía + el Microsoft Form/Power BI oficiales):
+`PRIORITY_AREAS` (5), `OUTPUTS` (34, dict por PA), `FLAGSHIPS` (18: FRIEND, GRAPHIC, G-WADI, HELP, IDI, IFI, IIWQ, ISARM, ISI, IWRM, JIIHP, LASII, MAR, PCCP, UWMP, WAMU-NET, WHYMAP, WLRI) + `FLAGSHIP_LABELS` (`FRIEND-Water`, `LaSII`), `REGIONS` (7),
+`CROSS_CUTTING_WGS` (3), `LEAD_INSTITUTION_TYPES` (12), `KNOWLEDGE_PRODUCT_TYPES` (9: Book, Report or paper, Assessment, Statistic or data source, Tool, Methodology, Website, Brochure, Other),
+`SCIENTIFIC_PRODUCT_TYPES` (4), `KNOWLEDGE_ACTIVITY_TYPES` (5), `TRAINING_TYPES` (12, con `TRAINING_TYPE_GROUPS` materials / courses / other),
 `STAKEHOLDER_GROUP_TYPES` (9), `BIENNIA` (4: 2022-2023 → 2028-2029),
-`MEMBER_STATES` (195 ISO-2), `KPIS` (8 con metadata para tablas).
-Helpers: `is_valid_*`, `normalize_bool`, `filter_valid`.
+`MEMBER_STATES` (195 ISO-2), `KPIS` (8 con `title`, `question` (pregunta Power BI), `gate_question` (Sí/No de la guía), `target`, `count_column`, `type_column`, `other_column`, `has_youth_female`).
+Helpers: `is_valid_*`, `normalize_bool`, `filter_valid`, `flagship_label`, `slugify`, `FLAGSHIP_SLUGS` / `CTWG_SLUGS`, `flagship_for_slug`, `ctwg_for_slug`.
 
-**Títulos de Output** (`ihpix_constants`, 2026-09): `OUTPUTS` sigue trayendo solo códigos (DOC-008). `load_output_titles()` lee `data/ihpix_output_titles.json` (`{"1.1": "…"}`) si existe y lo cachea; `output_title(code)`, `output_label(code)` ("1.3 – Título" o solo el código), `priority_area_for_output(code)`. Helpers de template: `h.ihpix_output_title`, `h.ihpix_output_label`, `h.ihpix_priority_area_for_output`.
+> [!note] Inferencia
+> El valor canónico de los tipos es la etiqueta del Microsoft Form/Power BI cuando difiere del PDF de la guía (`Report or paper` vs `Report`); los alias viven en `ihpix_normalize.LEGACY_VALUE_ALIASES`. Pendiente confirmar con UNESCO (DOC-032).
+
+**Títulos de Output y key activities** (`ihpix_constants`, 2026-09/2026-10): `OUTPUTS` sigue trayendo solo códigos; `load_output_titles()` lee `data/ihpix_output_titles.json` (`{"1.1": "…"}`, 34 títulos **derivados del Excel**, DOC-008) y lo cachea; `output_title(code)`, `output_label(code)`, `priority_area_for_output(code)`. `load_key_activities(path=None)` lee `data/ihpix_key_activities.json` (`{"1.3": [{"code": "1.3.1", "title": "…"}]}`, 128 key activities derivadas de los reportes; ruta alternativa con `ckanext.theme_ejemplo.ihpix_key_activities_file`), `key_activities_for(output)`, `key_activity_code(texto)` (regex `^\d+\.\d+\.\d+`), `key_activity_title(code)`, `key_activity_label(code)`, `is_valid_key_activity(output, code)` (sin lista para ese Output basta el patrón). Ambos JSON se regeneran con `scripts/build_ihpix_taxonomy_data.py` (`--check` para CI). Helpers de template: `h.ihpix_output_title`, `h.ihpix_output_label`, `h.ihpix_priority_area_for_output`, `h.ihpix_flagship_label`.
 
 **IHP-IX descubribilidad y analítica** (2, 2026-09):
 - `ihpix_contributor_list` — usuarios con reportes publicados (`GROUP BY reported_by`) con conteos y `reporter` resuelto. Filtros: `q` (nombre), `priority_area`, `output`, `biennium`, `region`, `country`, `flagship`. Autenticado.
@@ -201,6 +222,33 @@ Helpers: `is_valid_*`, `normalize_bool`, `filter_valid`.
 - `activity_to_form_dict(activity_dict)` → inverso para el modo edición (bool → `'yes'/'no'`, JSON → lista, None → `''`).
 - Listas que comparte con el controller: `SINGLE_FORM_FIELDS`, `MULTI_FORM_FIELDS` (única fuente de nombres de campo del form), `BOOL_FIELDS`, `OWNER_EDITABLE_STATUSES = ('draft', 'rejected')`.
 - Las fechas solo se tocan si vienen en el payload (`reported_date` la fija el servidor al enviar).
+- Rediseño 2026-10-11: campos `key_activity_code` (validado contra el Output, `key_activity_invalid`; si falta se deriva del texto `x.y.z.` de `key_activity`) y `training_type_other`; `_json_list` y `biennium`/`institution_type` pasan por los alias de `ihpix_normalize` (editar una fila heredada no la rompe); `REQUIRED_FOR_SUBMISSION` añade `description`, `outcomes`, `priority_area`, `output` y `GATE_FIELDS_REQUIRED` exige respuesta a las 13 preguntas Sí/No (mensaje `gate_required`); `activity_to_form_dict` devuelve `''` cuando la puerta es `None`.
+
+---
+
+## ihpix_normalize.py
+
+**Rol**: alias y reglas para los datos heredados del Excel de Microsoft Forms (2026-10-11). Módulo **puro** (`tests/test_ihpix_normalize.py`). Ver [[Flujos Importantes#7.5 Normalización de los datos heredados (2026-10)]].
+
+- `LEGACY_VALUE_ALIASES = {campo: {alias: canónico | None}}` (`None` descarta: flagship `No`), `COUNTRY_NAME_ALIASES` (nombres del Excel → nombres de `IhpixCountrySummary`).
+- `clean_text`, `split_legacy_multi(valor, permitidos)` (JSON → lista; si no, matching greedy de valores permitidos, los más largos primero, y el resto por comas), `normalize_choice`, `normalize_multi` → (válidos, desconocidos; los desconocidos pasan a `Other` y al `*_other` si está vacío), `normalize_stakeholder_group_types` (prefijo antes de " ("), `normalize_country_name(valor, índice)`, `normalize_date` (`2023-09-29T00:00:00` → `2023-09-29`).
+- `derive_gates(row)`: `kpi_X_active = puerta or conteo > 0 or tipo no vacío` (en 2 y 5 también youth/female > 0); `has_flagship`, `regions_benefit`, `has_member_state_support`, `has_synergies`, `unesco_secretariat_participation ← normalize_bool(unesco_participation)`.
+- `normalize_activity_row(row) -> dict` con **solo** las claves que cambian (idempotente; también `key_activity_code`). Lo usan `model._normalize_ihpix_legacy_values()`, el CLI `normalize-legacy`, `seed_data` y, en lectura, `ihpix_stats.prepare_row`.
+
+---
+
+## ihpix_stats.py
+
+**Rol**: agregación de los dashboards de progreso (réplica de los Power BI oficiales). Módulo **puro** (`tests/test_ihpix_stats.py`); lo invoca la acción `ihpix_progress_stats`.
+
+- `SCOPES = ('overall', 'pa', 'output', 'flagship', 'ctwg')`; `DIMENSION_BY_SCOPE`: overall/flagship/ctwg → `priority_area`, pa → `output`, output → `key_activity`.
+- `build_country_index(summaries, group_pairs)` → `{clave_lower: {name, region, lat, lon}}` (nombres de `IhpixCountrySummary`, títulos y slugs de los grupos `member-states`, alias). Desde 2026-10-23 el título del grupo pasa por `COUNTRY_NAME_ALIASES` antes de indexarse y las claves pliegan los apóstrofos tipográficos (`ihpix_normalize._key`): el slug `venezuela-bolivarian-republic-of-` (formulario) y el heredado `Venezuela` comparten canónico; antes eran dos países y la pestaña del Member State perdía los heredados (afectaba a Venezuela, Palestina, Micronesia, Côte d’Ivoire, RPD Corea y Lao).
+- `prepare_row(row, índice)` (alias + puertas derivadas + `impacted_member_states` = unión normalizada de `member_states`, `country` y `supporting_member_state`; desde 2026-10-30 también `institution_org_id` limpio y `partner_org_ids` como lista), `filter_rows(rows, scope, value, filters)` (filtros `biennium`, `region`, `country`, `institution_type` y `organization` = id de organización líder o socia).
+- `partner_org_ids(value)` (= `ihpix_relations.read_ids`: lista de ids desde JSON o lista, `[]` si el JSON no es válido; `ihpix_entities.partner_ids` delega aquí), `organization_counts(rows)` (filas publicadas por id de organización, líder o socia, una vez por fila) y `organization_options(rows, organizations)` (todas las organizaciones activas con `count`, vinculadas primero por nº de actividades y después por título; las demo/QA de `ihpix_org_match.is_demo` sólo si tienen actividades): base del selector con búsqueda de Progress y del explorador.
+- `compute_progress_stats(rows, scope, value, filters, country_index, labels, organizations)` → JSON con `scope{kind,value,label,dimension}`, `overview{activities, member_states_impacted, institutions, contributors, by_dimension, by_output (34 siempre), by_region, regions_declared, map, unresolved_member_states, by_biennium, top_institutions, output_biennium_matrix}`, `kpi_1 … kpi_8` (totales, `by_dimension`, `*_by_type` con `activities` y `products`, `pct_youth` / `pct_female`, mapa de KPI 6), `produced_by_dimension` y `reached_by_dimension` (ámbito output), `options` (listas para los selectores). Reglas: porcentajes `round(…, 1)` o `None`; key activity vacía → `Unspecified`; orden natural por código.
+
+> [!note] Inferencia
+> "Por tipo" suma el conteo de productos de cada actividad bajo **cada** tipo que declaró (una actividad con dos tipos cuenta dos veces), que es como lo presentan los donuts de Power BI. La UI lo indica en el panel.
 
 ---
 
@@ -259,6 +307,8 @@ La marca de inicialización es **por componente** (`data-ihpix-ready-<md|counter
 
 **Dónde se usa (2026-09-24)** — `templates/ihpix/report.html`: `country` y `supporting_member_state` son `Combobox` (búsqueda por nombre e ISO-2 vía `data-search`); Member States (Sección IV) es un `MultiPicker` en modo `checkboxes` (reemplaza el picker a mano, `memberPicker` queda a `null`); `key_activity`, `synergies` y `additional_notes` son `MarkdownEditor` + `CharCounter`; `partners` es textarea con contador; `institution` tiene un `<datalist>` con las instituciones de actividades publicadas (`controller._ihpix_institution_suggestions()`, caché en proceso 10 min, ≤300). Los grupos Sí/No y los grids de checkboxes van en `<fieldset><legend>`; cada `.ihpix-report-help` tiene `id` y el control `aria-describedby`. Sección VII: confirmación al quitar (`IhpixForms.confirm`), flechas ↓/↑ en los resultados, botón "Refresh search" y API pública `window.ihpixLinks = {reload, add, getLinks}`. Autosave por usuario: clave `ihpix-report-draft-v1:<user_id>` (migra la clave global antigua). Los textos Markdown se renderizan con `h.ihpix_markdown()` en `ihpix/outputs.html`, `group|organization/ihpix.html`, `admin/ihpix_reports.html` y la descripción de `ihpix/workspace_detail.html`.
 
+**Assets del reporte y de los dashboards (2026-10-11)** — el CSS y el JS del reporte salieron del template a `public/css/ihpix-report.css` y `public/js/ihpix-report.js` (bundles `theme/ihpix-report-css` y `theme/ihpix-report-js`, este con `preload: theme/ihpix-forms-js`); el JS lee su configuración de `<script type="application/json" id="ihpix-report-config">` (`actionUrl`, `editMode`, `readOnly`, `initialData`, `userId`, `keyActivities`, `sections`, `strings`) y expone `window.IhpixReport = {init, refresh, reset}`. Novedades: `REQUIRED_FIELDS` con 23 entradas (las puertas con `radio: true`), filtro Output → key activity (`filterKeyActivities`), tabla "Review and submit" (`renderReview`), clave de autosave `ihpix-report-draft-v2:<user_id>`. Los dashboards de progreso usan `public/js/ihpix-progress.js` (`window.IhpixProgress = {init, load, render}`: fábricas `doughnut`, `bars` con etiquetas directas, `gauge`, `map`, tablas accesibles, render perezoso por `IntersectionObserver`, recarga por `fetch`) y `public/css/ihpix-progress.css` (tokens `--ixg-*`). Paleta: PA `#0069B4 #0891B2 #059669 #D97706 #DC2626` (convención del portal) y categórica validada con la skill dataviz `#0069B4 #D97706 #7C3AED #059669 #DC2626 #0891B2 #DB2777 #4D7C0F` + gris `#94A3B8` para "Other".
+
 **Formularios admin (fase D, 2026-09-24)** — `admin/ihpix_activities.html`: cabeceras del acordeón como `<button aria-expanded aria-controls>`, `label for` en todos los campos, `country`/`supporting_member_state` con `<datalist>` de Member States (slug como valor, igual que el formulario público), Member States → `MultiPicker` modo `json` (hidden `member_states`), los 5 tipos KPI (`knowledge_product_type`, `scientific_product_type`, `knowledge_activity_type`, `training_type`, `stakeholder_group_type`) pasan de select único a **grids de checkboxes serializados en JSON** (mismo formato que el reporte; `parseJsonArray` acepta el valor suelto legacy), radios Sí/No para `unesco_secretariat_participation` (el texto `unesco_participation` queda como legacy), `key_activity`/`synergies`/`additional_notes` con Markdown + contador (`notes` = notas internas legacy), `description`/`outcomes` con `maxlength=250`; todos los `fetch` POST pasan por `IhpixForms.postForm` (token CSRF), `alert/confirm` → Toast/ConfirmDialog, modal de edición con `role=dialog`, Esc y devolución del foco. `admin/ihpix_content.html`: CSRF en `fetch`, `label for` generados, drop zones operables con teclado, acordeón con `aria-expanded`. `admin/ihpix_workspaces.html`: HTML válido (un `<form id="ws-form-<id>">` por fila fuera de la tabla y controles con `form=`), descripción en un `Modal` del kit con editor Markdown, lead con `Combobox` remoto sobre `/api/2/util/user/autocomplete`, confirmación al archivar, tabla responsive. `admin/ihpix_reports.html`: aprobación con `ConfirmDialog`, `label for` + contador en las notas de rechazo, CSRF. `ihpix/workspace_members.html` y `workspace_detail.html`: confirmaciones vía `data-ihpix-confirm` (el `onsubmit` inline queda como fallback sin JS), "Set role" desactivado hasta cambiar el valor y confirmación al degradar a un lead, nota de ingreso con placeholder y contador.
 
 > [!note] Bug global corregido (2026-09)
@@ -309,7 +359,7 @@ La marca de inicialización es **por componente** (`data-ihpix-ready-<md|counter
 `ihpix_pages_url(endpoint, fallback)` (URL de endpoints de otras extensiones con fallback si el blueprint no está: `pages.water_events_new` → `/water-events_edit`), `ihpix_markdown(text)` (Markdown → HTML saneado con `render_markdown`, envuelto en `.ixf-md-body`), `ihpix_link_type_icon(type)`, `ihpix_link_types()` ([(valor, etiqueta, icono)] para el widget de adjuntos), `ihpix_contribution_icon(kind)`, `get_pending_open_learning_count()` (cola `open_learning` de la campana, solo sysadmin), `ihpix_list_display(value)` (lista JSON o texto legacy de los tipos KPI → 'A, B' traducido; lo usan `ihpix/outputs.html` y las pestañas de grupo/organización)
 
 **IHP-IX** (9):
-`get_pending_ihpix_reports_count()` (cola `ihpix_reports` de la campana, sysadmin), `get_ihpix_reporter(reported_by)` → `{id, name, display_name, url}` resolviendo id o username (caché 5 min; texto libre del seed → solo `display_name`), `ihpix_link_url(link)` y `ihpix_link_type_label(link_type)` (adjuntos; usados por el macro `ihpix/snippets/activity_links.html`), `get_ihpix_taxonomies()` (todas las listas de `ihpix_constants` para los `<select>` de los templates: **única fuente**, sustituye las listas hardcodeadas que se habían desincronizado), `ihpix_output_title()`, `ihpix_output_label()`, `ihpix_priority_area_for_output()`, `ihpix_t(valor)` (traducción runtime de valores de taxonomía)
+`get_pending_ihpix_reports_count()` (cola `ihpix_reports` de la campana, sysadmin), `get_ihpix_reporter(reported_by)` → `{id, name, display_name, url}` resolviendo id o username (caché 5 min; texto libre del seed → solo `display_name`), `ihpix_link_url(link)` y `ihpix_link_type_label(link_type)` (adjuntos; usados por el macro `ihpix/snippets/activity_links.html`), `get_ihpix_taxonomies()` (todas las listas de `ihpix_constants` para los `<select>` de los templates: **única fuente**, sustituye las listas hardcodeadas que se habían desincronizado), `ihpix_output_title()`, `ihpix_output_label()`, `ihpix_priority_area_for_output()`, `ihpix_t(valor)` (traducción runtime de valores de taxonomía), `ihpix_flagship_label(code)` (`FRIEND` → `FRIEND-Water`)
 
 **Contenido destacado** (4):
 `get_featured_publications()`, `get_open_bug_tickets_count()`,
@@ -374,6 +424,7 @@ La marca de inicialización es **por componente** (`data-ihpix-ready-<md|counter
 - Campos base: id, title, priority_area, description, output, stakeholders (JSON), partner_organizations, start_date, end_date, status (planned/ongoing/completed), responsible_party, responsible_country, url, country_stats (JSON), created_at, updated_at
 - Campos expandidos (v2): biennium, flagships (JSON), regions (JSON), member_states (JSON), original_id, stakeholders_knowledge, stakeholders_awareness, knowledge_products, scientific_products, training_materials, among others (30+ columnas)
 - Gates PDF 2026 (booleanos): `unesco_secretariat_participation`, `has_member_state_support`, `has_flagship`, `has_synergies`, `regions_benefit`, `kpi_{1a,1b,2,3,4,5,6,8}_active`; textos `focal_point_name`, `*_other`, `stakeholder_group_name`, `additional_notes`
+- 2026-10-11: `key_activity_code` (índice `idx_ihpix_activity_key_activity_code`), `training_type_other`, `legacy_normalized_at` (marca de la normalización de heredados). `normalize_legacy_activities(session, dry_run, status, batch_size, only_pending)` es la función que comparten la migración de arranque y el CLI.
 - Workflow (2026-09): `submitted_at` (último envío a revisión); `reported_by` guarda el **id** de usuario (antes mezclaba username e id; `_migrate_ihpix_reported_by()` normaliza filas viejas)
 - Índices: `idx_ihpix_activity_{status,pa,output,biennium,reported_by}` (`_IHPIX_ACTIVITY_INDEXES`)
 - Métodos: `get()`, `get_by_priority_area()`, `get_filtered(status=None, …, limit=None)` (base de listados/export; `get_published()` es `get_filtered(status='published')`), `get_all()`, `get_pending()`, `get_facets()`, `get_stats()` (+ `links_by_type`), `get_timeline()` (por **fecha de la actividad**: `coalesce(start_date, reported_date, created_at)`), `get_country_stats()`, `get_country_counts(filters)`, `count_distinct_reporters()`, `get_contributor_stats(filters, q_text, limit, offset)`, `get_top_institutions()`, `get_output_biennium_matrix()`, `as_dict()` (incluye todos los gates), `get_by_reporter(user_obj, status, limit, offset)`, `count_by_status_for_reporter(user_obj)`, `count_by_status(status)`, `is_owned_by(user_obj)`
@@ -428,7 +479,7 @@ Cada modelo tiene `init_*_db()` y `define_*_table()`. Son idempotentes (verifica
 
 | Patrón | Acciones |
 |---|---|
-| **Sysadmin only** | featured_dataset_*, featured_publication_*, portal_card_*, admin_user_*, ihpix_content_*, ihpix_activity_create/update/delete, ihpix_report_review, ihpix_admin_overview_stats, ihpix_country_summary_recompute, bug_ticket_api_list, open_learning_* |
+| **Sysadmin only** | featured_dataset_*, featured_publication_*, portal_card_*, admin_user_*, ihpix_content_*, ihpix_activity_create/update/delete/bulk_delete, ihpix_report_review, ihpix_admin_overview_stats, ihpix_country_summary_recompute, bug_ticket_api_list, open_learning_* |
 | **Autenticado** | membership_request_create, membership_request_count, initiative_request_create, initiative_request_count, bug_ticket_create/list/show/update, ihpix_report_submit, ihpix_my_reports_list, ihpix_link_search, ihpix_contributor_list, **ihpix_activity_list, ihpix_activity_show, ihpix_dashboard_stats, ihpix_geojson, ihpix_activity_geojson, ihpix_country_summary_list** (eran públicas hasta 2026-09; la landing `/ihpix` obtiene sus stats en servidor con `ignore_auth`) |
 | **Propietario del reporte o sysadmin** | ihpix_report_show, ihpix_report_update, ihpix_report_delete, ihpix_activity_link_create, ihpix_activity_link_delete (`_ihpix_report_owner_or_sysadmin`: compara `reported_by` con id y username; si el reporte no existe autoriza para que la acción devuelva 404) |
 | **Publicada, o propietario/sysadmin** | ihpix_activity_link_list |
@@ -642,3 +693,116 @@ Los demás fondos se solicitan al mostrar su diapositiva. La rotación automáti
 espera al evento `load` y se pausa cuando el carrusel sale de la pantalla o
 la pestaña queda oculta. Conserva los controles manuales, la pausa por foco/hover
 y la preferencia de movimiento reducido. El primer fondo funciona sin JavaScript.
+
+## Lector de contenido de iniciativas
+
+El helper `_get_pages_by_initiative` de `controller.py` reutiliza el lector público de `ckanext-pages`, evitando una segunda implementación de comparación JSON y visibilidad. Se conserva el resultado esperado por las pestañas de grupo y el portal AI Water. Si Pages no está disponible, devuelve la lista vacía y registra el error. Ver [[Flujos Importantes]].
+
+## Servicios IHP-IX de revisión (2026-10-21)
+
+- `ihpix_relations.py`: relaciones múltiples, países UNESCO y ámbitos sin duplicados.
+- `ihpix_service.py`: guardado compartido, permisos, estados y revisión optimista.
+- `ihpix_store.py`: tablas aditivas y snapshots transaccionales.
+- `ihpix_resource_access.py`: visibilidad real de paquetes, eventos y cursos.
+- `ihpix_collaboration.py`: acciones `ihpix_workspace_item_list/save`, `ihpix_report_collaboration_show`, `ihpix_report_collaborator_update`, `ihpix_notification_list/read`.
+- `ihpix_bulk.py`: XLSX versionado y validación pura; `ihpix_reporting.py`: acciones `ihpix_import_preview/show/create`, `ihpix_narrative_data` (desde 2026-10-23 admite `include_sources` y `sources_detail`, por defecto `true` para no cambiar la API).
+- `ihpix_views.py`: vistas sobre el blueprint existente `theme_ejemplo`; servicios/API y HTML comparten reglas.
+- `ihpix_presentation.py`: diapositivas construidas sobre el registro de secciones (`slides(stats, translate, sections, formatter)` y `scope_title`); ver más abajo.
+
+Las nuevas acciones registran auth correspondiente en `auth.py`; la comprobación por recurso también se aplica dentro del servicio. Detalle y matriz de requisitos: [[IHP-IX Review September 2026]].
+
+## ihpix_entities.py (2026-10-23)
+
+**Rol**: enlaces entre actividades y entidades del portal. Módulo **puro** (`tests/test_ihpix_entities.py`).
+
+- `group_scope(name, title, member_state_names)` → `('country', slug)`, `('flagship', código)`, `('ctwg', nombre)` o `(None, None)`: Member State si el grupo cuelga de `member-states` o su título es un país oficial; iniciativa → flagship/CTWG por slug del nombre o del título (`ihpix_constants.flagship_for_group` / `ctwg_for_group`, que también comparan el slug de la etiqueta: `friend-water` → `FRIEND`, `lasii` → `LASII`). En dev, 18 de los 21 flagships tienen grupo de iniciativa (faltan IAHR Label, MAR y Youth4Water).
+- `scope_slug`, `member_state_slugs(pairs, índice)` → `{nombre canónico: slug}`, `flagship_groups(pairs)` → `{código: slug}`, `ctwg_groups(pairs)`.
+- `activity_links(activity, índice, member_states, flagships, ctwgs)` → `{country, supporters, beneficiaries, flagships, cross_cutting_wg, regions, institution, partners}` con nombre canónico (`ihpix_stats.prepare_row`), slug de grupo y `resolved`. Las URL las construye la plantilla.
+- Consumidores: `controller._ihpix_entity_links(activities)` (resuelve organizaciones por id en una consulta) y el snippet `ihpix/snippets/entity_chips.html` (macros `card_meta` y `entity_rows`, con fallback a las filas JSON crudas si no hay enlaces), usado por `ihpix/outputs.html`, `group/ihpix.html` y `organization/ihpix.html`. `IhpixActivity._scope_ids(scope, value)` filtra flagship/CTWG con `prepare_row` + `filter_rows` (códigos, slugs y alias) y sustituye los `ILIKE` de `get_filtered` y `_apply_stat_filters`.
+
+## ihpix_org_match.py (2026-10-24)
+
+**Rol**: sugerencias para vincular la institución heredada (texto libre de `IhpixActivity.institution`) con una organización CKAN. Módulo **puro** (`tests/test_ihpix_org_match.py`); no decide nada: la vinculación la aplica un sysadmin.
+
+- `normalize` / `key` / `compact` / `tokens`: ASCII sin diacríticos, apóstrofos plegados (`ihpix_normalize._key`), `&` → "and", Center→Centre, sin palabras vacías (en/es/fr/pt) ni coletillas ("under the auspices of UNESCO", "C2C", "category 2 centre").
+- `acronyms` (siglas entre paréntesis), `initials` (iniciales sin paréntesis; una palabra en mayúsculas ≤ 5 letras se conserva: "UK CEH" ↔ `ukceh`), `pieces` / `segments` (tramos de un texto compuesto: "CERSHI, UNAM and …").
+- `prepare_org` / `prepare_orgs` (título, `name` como nombre largo en slug, siglas, iniciales por tramo del título con y sin el "UNESCO" inicial, palabras específicas, `first_token`, `demo` = organización de prueba por `DEMO_RE`) y `prepare_institution` (además `plain_tokens` sin paréntesis, `specific`, `strong_segments` = tramos entre comas/guiones sin cortar en "and").
+- `score(inst, org)` → `(0..1, razón)`: `exact` 1.0 (título o slug), `acronym` 0.95/0.9 (siglas entre paréntesis; texto que empieza por el título corto, "WSDAC (Water for…)"; palabras específicas = título corto), `contains` 0.9 (0.75 si el fragmento contenido es genérico: "Field Office"; 0.8 sede "UNESCO <ciudad>": "UNESCO Harare"), `segment` 0.9/0.85/0.8 (primer tramo igual, primer tramo entre comas contenido en el título con alguna palabra específica, otro tramo igual), `initials` 0.85 (incluye "las palabras específicas son las siglas": "UNESCO IHP Secretariat" ↔ IHP, "UNESCO ROSA"), `similar` 0.88 (mismas palabras específicas en otro orden: "UNESCO IHP National Committee of the Republic of Korea" ↔ "Republic of Korea IHP National Committee") o ≤ 0.85 (Jaccard ponderado, las palabras genéricas pesan la mitad; parecido de cadena sólo si comparten una palabra específica), `token` 0.8/0.7 ("IHP-LAC" ↔ IHP; las iniciales del texto como palabra del título sólo con 4+ letras o si es la primera palabra, para que "ihp" dentro de "Gambia IHP National Committee" no cuente). `GENERIC` incluye desde 2026-10-30 coletillas de sede y forma jurídica, gentilicios y regiones. `THRESHOLD` 0.6 para mostrar, `CONFIDENT` 0.9 para preseleccionar; `suggest` omite las organizaciones `demo`.
+- `suggest(texto, orgs, limit=3)`, `suggest_partners(texto, orgs, exclude, limit=2)` (2026-10-30: mejor candidato **confiable** de cada tramo posterior al primero, para textos que nombran varias instituciones: "CERSHI, UNAM and UNESCO Chair on Sustainability" → la cátedra como socia), `group_activities(rows)` → `{unlinked, linked, totals}` (grupos por clave con variantes, conteo, ids, estados y `partners` = ids de organizaciones socias comunes a todas las actividades del grupo), `filter_groups(groups, q)`.
+- Consumidores: `actions.ihpix_institution_link_list` (añade `partner_suggestions` a los grupos sin vincular y `partner_orgs` a los vinculados) / `ihpix_institution_link` (`links[].partner_organization_ids`, lista o texto separado por comas: al vincular se añaden a `partner_org_ids` de cada actividad del grupo, sin repetir ni incluir la líder; al desvincular se retiran las indicadas junto con la líder; `_ihpix_partner_targets` valida que sean organizaciones activas), vistas `controller.ihpix_institutions_admin` / `ihpix_institutions_link` (campos `partner-<fila>` repetibles y `partner_ids` al desvincular) y plantilla `admin/ihpix_institutions.html` (botón "Add partner organization" que clona un combobox por socia, botones "+" con las socias sugeridas, socias listadas en "Already linked institutions"). Calibrado con las 332 instituciones del seed y las 134 organizaciones de dev: 71 grupos con sugerencia confiable, ~1 s en total. Recalibrado el 2026-10-30 con el respaldo de dev (745 filas, 135 organizaciones): 73 confiables / 32 débiles / 206 sin sugerencia, 0,85 s; ver [[IHP-IX Entity Links October 2026]].
+
+## Informes y presentación con gráficos SVG (2026-10-23)
+
+- `ihpix_charts.py` — módulo puro (sin CKAN ni JS) que dibuja SVG deterministas: `bar_chart`, `stacked_bar_chart`, `donut_chart`, `column_chart`, `render(spec, width, …)` y `table_for(spec)` (la tabla accesible sale de la misma spec). Reglas: barras ≤ 24 px con extremo redondeado, valor directo en tinta, hueco de 2 px entre segmentos, `<title>`/`<desc>` con todos los valores, raíz `direction:ltr`. Paleta: `PA_COLORS`, `CATEGORICAL` (orden fijo, 8 tonos), `NEUTRAL` para Other/Unspecified y `MEASURE_COLORS` para series de medida.
+- `ihpix_report_sections.py` — registro de secciones: `SECTION_IDS` (13, la última es el anexo `sources`), `build_sections(stats, translate, options, sources)`, `render_figures(sections, layout)`, `section_choices`, `selected_ids`, `group_sources`, `dimension_label`/`short_label`. `LAYOUTS` fija anchura del viewBox y recortes por salida (`document` 680 px / 15 filas; `slide` 520 px / 8 filas, etiquetas cortas). Cada sección trae `tiles` (HTML), `highlights` (≤ 4 filas crudas para diapositivas), `figures` (specs + `svg` + `table`), `table`, `summary` y `notes`.
+- `ihpix_presentation.py` — una diapositiva por figura `in_slides` (SVG + ≤ 4 filas); el overview pagina sus filas como fichas grandes; el anexo nunca entra.
+- Traducción: la vista inyecta `tk._` como `translate` (mismo patrón que `ihpix_bulk_display`), porque el texto del SVG se genera en Python. Las claves están en `ihpix_i18n_strings.REPORT_LABELS` y `test_ihpix_report_sections.py` comprueba que toda clave traducida esté registrada.
+- Plantillas: `ihpix/snippets/report_section.html` (macros `tiles`, `figure`, `table`, `section_document`), `ihpix/narrative.html` (formulario con checkboxes de secciones + documento con portada, índice, secciones y anexo) y `ihpix/presentation.html`. CSS: `public/css/ihpix-report-sections.css` (compartido, tokens `--ix-*`), `ihpix-tools.css` (documento e impresión A4) e `ihpix-presentation.css` (1280×720).
+- `ihpix_stats.compute_progress_stats` añade `overview.countries` y `kpi_6.countries` (`_countries_by_role`): todos los países impactados con sus roles, tengan o no coordenadas (el mapa los omite).
+
+> [!note] Inferencia
+> La anchura del texto en SVG se aproxima (Arial ≈ 0,55 em por carácter): no hay medición en servidor. Las etiquetas largas se recortan con "…" y conservan el texto completo en `<title>` y en la tabla.
+
+Detalle de comportamiento y verificación: [[IHP-IX Reports UX October 2026]].
+
+## Progress y países (2026-10-22)
+
+La vista Progress conecta `country` con el parámetro existente de estadísticas. Las narrativas añaden `overall`, `flagship`, `ctwg`, `country` y `region`. La paleta se centraliza en `PA_COLORS`/`PA_DARK_COLORS`, expuestas por `get_ihpix_taxonomies`. Ver [[IHP-IX Progress UX October 2026]].
+
+## resource_styles.py — estilos SLD asociados
+
+Política compartida `is_sld_resource`/`sld_sql` por formato, MIME SLD o extensión
+(case-insensitive, sin query/fragment y con extensión URL codificada). No se
+clasifica todo XML como SLD. `present_resources` es puro: deriva asociaciones
+desde `resource_view.config.style` de vistas Terria del mismo dataset, por URL
+exacta o UUID de ruta CKAN (también URLs históricas), sin mutar recursos.
+
+`helpers.resource_presentation` consulta vistas en lote sobre un paquete ya
+autorizado. Agrupa antes de buscar y paginar; admite `mode=grouped|all`, mantiene
+el orden, deduplica estilos por padre y expande coincidencias en estilos. Ante
+fallo de lectura conserva la lista plana. Se usa en el primer HTML y en
+`/dataset/<id>/resources_ajax`, que conserva sus campos y añade `mode`,
+`resource_count` y `style_count`; `total` cuenta filas de la vista seleccionada.
+
+El tracking omite SLD en escritura, lectura y rankings (antes del LIMIT). El
+flush filtra también los pendientes antiguos y reconstruye `total_downloads`
+a partir de contadores elegibles. Conserva el histórico por recurso y todas
+las visitas. El fallback `tracking_raw` excluye por URL y metadatos del recurso.
+
+## Importación IHP-IX guiada v2 (2026-10-23)
+
+`ihpix_bulk_schema.py`, `ihpix_bulk_workbook.py` y `ihpix_bulk_display.py` separan estructura del libro, adaptación al esquema original y presentación legible. `ihpix_bulk.py` mantiene lectura v1/v2 y validación compartida; las acciones `ihpix_import_preview/show/create` conservan sus claves y añaden metadatos de origen. `ihpix_views.py` agrega GET autenticado `/ihpix/import/example.xlsx`; la descarga de plantilla existente entrega v2. No hay cambios de DB ni dependencias nuevas. Ver [[IHP-IX Bulk Import UX October 2026]].
+
+## Excel IHP-IX plano v3
+
+`ihpix_bulk_flat.py` reúne los campos editables en Actividades, genera referencias al importar y vincula detalles adicionales por título unívoco. El generador/lector compartido mantiene v1/v2. El formato v3 no requiere nuevas rutas, dependencias ni tablas. Ver [[IHP-IX Bulk Import UX October 2026]].
+
+### Navegación compartida IHP-IX (2026-11-06)
+
+`ihpix_navigation.py` construye la jerarquía de regreso según el endpoint, con URLs localizadas y filtros de Progress. El helper `ihpix_navigation` devuelve una lista vacía fuera de IHP-IX. `header.html` incluye `ihpix/snippets/navigation.html` después de la cabecera, incluso cuando una página sustituye `content`; la presentación independiente lo incluye explícitamente. También cubre perfiles, grupos, organizaciones y administración IHP-IX. Los assets `ihpix-navigation.css/js` ofrecen navegación adaptable, RTL y ocultación al imprimir.
+
+## Autoguardado del reporte IHP-IX (2026-11-06)
+
+`ihpix_report_autosave` (acción autenticada, registrada en `plugin.py`) usa `ihpix_service.autosave`: autor/admin/colaborador autorizado, sólo estados `draft` o `rejected`, con las mismas validaciones de campos, organizaciones, adjuntos y workspaces del guardado manual. Conserva `rejected` y nunca envía a revisión. `ihpix_autosave.py` deriva una identidad por usuario y UUID de borrador; un advisory lock transaccional serializa su creación y la comparación normalizada reconoce reintentos sin crear filas/revisiones duplicadas. Una revisión obsoleta con respuestas distintas devuelve conflicto. `_sync_activity_links` conserva la identidad del adjunto por destino cuando el navegador todavía no conoce su ID. No añade tablas, migraciones, dependencias ni configuración.
+
+`ihpix_views.report_autosave` expone POST `/ihpix/report/autosave`; reutiliza el handler de formulario, incluido 400 de validación, 403 de permisos y 409 con versión actual y URL de edición. El JS serializa autoguardado, guardado explícito y envío final; no reconstruye estadísticas públicas por cada cambio de un borrador.
+
+### Recursos inline en el reporte IHP-IX (2026-11-06)
+
+`ihpix_resources.py` registra `ihpix_resource_create` (usuario activo autenticado). `POST /ihpix/resources` recibe multipart y devuelve JSON con el adjunto o errores por campo. Datasets: organización con permiso de creación, tipo y categoría del esquema vigente, licencia, contacto, archivo/URL y visibilidad explícita (privado → `access_level=confidential`). Usa `package_create` y `resource_create`; si falla la subida oculta el dataset vacío y permite reintentarlo. Eventos: pertenencia a organización, fechas/modalidad y agenda opcional; usa `ckanext_water_family_upload` y `ckanext_pages_update` con `submission_action=submit` (pendiente/privado, también para admin). UUID por intento + nombre derivado de usuario/tipo y advisory lock de sesión evitan duplicar contenido en reintentos; el lock usa otra conexión porque las acciones nativas hacen commit.
+
+`resource_modals.html` y `ihpix-resources.js` comparten el kit `IhpixForms` con los tres modales de publicaciones: errores en el formulario, archivo o URL, progreso, cierre con Escape y retorno de foco. Las respuestas se conservan al cerrar/reabrir el modal durante la misma visita; los recursos creados se incorporan a `ihpixLinks` y al autoguardado del reporte. Sin cambios de esquema, dependencias ni configuración.
+
+### Planificación y espacios por grupo IHP-IX
+
+- `ihpix_planning.py`: reglas puras, ocho grupos iniciales, cuatro bienios, parsers de planes/contactos y exportación XLSX.
+- `ihpix_legacy_reports.py`: adaptación explícita de los dos formatos históricos de ejecución; preservación de fuente y validación del formulario existente.
+- `ihpix_group_store.py`: nueve tablas aditivas para grupos, membresías, planes, versiones, vínculos con reportes, contactos, documentos, conversaciones/tareas e importaciones.
+- `ihpix_groups.py`: acciones `ihpix_group_list/show/update`, `ihpix_group_member_save`, `ihpix_plan_save/show/transition/report_create`, `ihpix_group_document_save/show`, `ihpix_group_contact_save`, `ihpix_group_item_save`, `ihpix_group_import_preview/show/apply`. Exigen usuario activo y autorizan cada objeto/operación; las acciones se registran junto con sus funciones de auth.
+- `ihpix_group_views.py`, `templates/ihpix/groups/`, `public/js/ihpix-groups.js`, `public/css/ihpix-groups.css`: rutas de grupo, formulario de tres pasos, guardado, importación corregible y descargas privadas. El adaptador POST de formularios exige AJAX del mismo origen; clientes externos usan la API nativa con token.
+
+Las rutas de grupo están bajo `/ihpix/workspaces/groups/<slug>`; planes en `/plans/new` y `/plans/<id>`, documentos en `/documents/<id>`, exportación en `/export.xlsx`, importación en `/import` y `/import/<id>`. La ruta `/ihpix/group-api/<operation>` adapta formularios a las mismas acciones. Los espacios históricos `/ihpix/workspaces/<code>` siguen operativos.
+
+### Calendario y continuidad del reporte
+
+`ihpix_calendar.py` valida fechas ISO y arma un mes/agenda/lista sin fecha usando únicamente objetos ya autorizados por el servicio. `ihpix_group_views.detail` admite `tab=calendar` y `month=YYYY-MM`; no añade endpoints ni dependencias. Las plantillas `calendar.html`, `journey.html` y `plan_journey.html` exponen programación y paso al reporte. `ihpix_plan_report_create` recibe `biennium`, copia contexto del plan aprobado y reanuda el borrador propio bajo bloqueo del plan. La importación consolida filas idénticas conservando `origin.sources` y una versión de auditoría.

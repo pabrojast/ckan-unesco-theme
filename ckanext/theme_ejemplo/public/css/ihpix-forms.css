@@ -116,6 +116,8 @@
 }
 .ixf-combobox.has-value .ixf-combobox-clear { display: block; }
 .ixf-combobox.has-value .ixf-combobox-input { padding-inline-end: 4.2rem; }
+/* El input hereda clases del select; el combobox ya tiene su propia flecha. */
+.ixf-combobox input.ixf-combobox-input { background-image: none !important; }
 .ixf-listbox {
   position: absolute;
   z-index: 1040;

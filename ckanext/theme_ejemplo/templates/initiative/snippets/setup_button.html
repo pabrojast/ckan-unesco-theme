@@ -1,0 +1,7 @@
+{# Initiative pages (added by Jorgen Van Der Biest). New file.
+   Botón para los administradores de una iniciativa: crear la página completa
+   (iniciativas estándar) o editarla. No aparece en grupos de Estados miembros. #}
+{% set ini_link = h.theme_ejemplo_initiative_setup_link(group_dict) %}
+{% if ini_link %}
+<a class="btn btn-default" href="{{ ini_link.url }}"><i class="fa fa-paint-brush"></i> {{ ini_link.label }}</a>
+{% endif %}

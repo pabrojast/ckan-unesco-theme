@@ -1,0 +1,36 @@
+{% extends "page.html" %}
+{#
+  Initiative pages (added by Jorgen Van Der Biest). New file.
+  /group/<name>/page-setup: crear la página completa de una iniciativa
+  estándar, o editar la de una iniciativa que ya la tiene. Solo para los
+  administradores del grupo y los sysadmins.
+#}
+{% block title %}{{ group.display_name }} - {{ _('Initiative page') }} - {{ super() }}{% endblock %}
+{% block subtitle %}{{ _('Initiative page') }}{% endblock %}
+
+{% block breadcrumb_content %}
+  <li><a href="{{ h.url_for('theme_ejemplo.initiatives') }}">{% trans %}Initiatives{% endtrans %}</a></li>
+  <li><a href="{{ h.url_for('group.read', id=group.name) }}">{{ group.display_name }}</a></li>
+  <li class="active"><a href="">{{ _('Initiative page') }}</a></li>
+{% endblock %}
+
+{% block secondary %}{% endblock %}
+{% block page_header %}{% endblock %}
+{% block primary %}
+  <div class="primary col-xs-12" role="main">{{ self.primary_content() }}</div>
+{% endblock %}
+
+{% block primary_content_inner %}
+  {% set has_page = page is defined and page %}
+  <link rel="stylesheet" href="{{ h.url_for_static('/css/initiative.css') }}?v=20261015-1" />
+  <h1><i class="fa fa-paint-brush"></i> {% if has_page %}{{ _('Edit the initiative page') }}{% else %}{{ _('Set up the full initiative page') }}{% endif %}</h1>
+  <p class="ini-lead">
+    {% if has_page %}
+      {{ _('Change the answers and images of the page of %(name)s. The changes are published when you save.', name=group.display_name) }}
+    {% else %}
+      {{ _('%(name)s uses the standard page. Answer these questions and upload a few images to give it a full page with its own colours. It is published when you save.', name=group.display_name) }}
+    {% endif %}
+  </p>
+  {% set action_url = h.url_for('theme_ejemplo.initiative_page_setup', name=group.name) %}
+  {% include "initiative/snippets/questionnaire.html" %}
+{% endblock %}

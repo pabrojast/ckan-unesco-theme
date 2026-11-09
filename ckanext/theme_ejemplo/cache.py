@@ -64,6 +64,7 @@ _DEFAULT_EXCLUDE_PREFIXES = (
     '/ihpix/my-reports',
     '/ihpix/outputs',
     '/ihpix/dashboard',
+    '/ihpix/progress',
     '/ihpix/priority-area',
     '/ihpix/contributors',
     '/ihpix/workspaces',

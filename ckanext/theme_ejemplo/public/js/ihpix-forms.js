@@ -655,7 +655,8 @@
       if (!select) { return; }
       Array.prototype.forEach.call(select.options, function (o) {
         if (!o.value && !o.hasAttribute('data-keep-empty')) { return; }
-        options.push({ value: o.value, label: o.textContent.trim(), search: normalize(o.textContent + ' ' + (o.getAttribute('data-search') || '') + ' ' + o.value), extra: o.getAttribute('data-search') || '' });
+        // Los términos de búsqueda no son etiquetas visibles (p. ej. slugs de países).
+        options.push({ value: o.value, label: o.textContent.trim(), search: normalize(o.textContent + ' ' + (o.getAttribute('data-search') || '') + ' ' + o.value), extra: o.getAttribute('data-description') || '' });
       });
     }
 

@@ -29,7 +29,7 @@ Estas claves se definen en el archivo de configuración de CKAN (`ckan.ini`) y s
 | `ckanext.theme_ejemplo.anon_cache_ttl` | `300` (5 min) | TTL en segundos de cada entrada |
 | `ckanext.theme_ejemplo.anon_cache_max_bytes` | `1048576` (1 MB) | Tamaño máximo del body para guardarlo en caché |
 | `ckanext.theme_ejemplo.anon_cache_include_paths` | _(vacío = todo)_ | Prefijos de path a cachear (CSV). Si está vacío, se cachea todo lo no excluido |
-| `ckanext.theme_ejemplo.anon_cache_exclude_paths` | `/api,/ckan-admin,/user,/dashboard,/feeds,/util,/_tracking,/membership-requests,/bug-tickets,/ihpix/report,/ihpix/my-reports,/ihpix/outputs,/ihpix/dashboard,/ihpix/priority-area,/ihpix/contributors,/ihpix/workspaces` | Prefijos a saltar siempre (las rutas IHP-IX para usuarios logueados quedan fuera; `/ihpix` landing sí se cachea) |
+| `ckanext.theme_ejemplo.anon_cache_exclude_paths` | `/api,/ckan-admin,/user,/dashboard,/feeds,/util,/_tracking,/membership-requests,/bug-tickets,/ihpix/report,/ihpix/my-reports,/ihpix/outputs,/ihpix/dashboard,/ihpix/progress,/ihpix/priority-area,/ihpix/contributors,/ihpix/workspaces` | Prefijos a saltar siempre (las rutas IHP-IX para usuarios logueados quedan fuera; `/ihpix` landing sí se cachea) |
 
 > [!tip]
 > Para desactivar puntualmente el caché en una request (debug), añade `?_nocache=1` o el header `Cache-Control: no-cache`. Las respuestas servidas/guardadas exponen `X-Anon-Cache: HIT|MISS`.
@@ -86,6 +86,8 @@ Ver [[Open Learning]] para el flujo completo de sincronización y curación.
 | `ckanext.theme_ejemplo.ihpix_publication_tags` | `ihp-ix` | Tags (separados por coma) que llevan siempre esas publicaciones; el código del Output se añade como `ihp-ix-output-<code>` |
 | `ckanext.theme_ejemplo.ihpix_course_proposals_enabled` | `true` | Permite a los usuarios logueados proponer cursos Open Learning (Sección VII y `/courses`) |
 | `ckanext.theme_ejemplo.ihpix_course_proposals_per_day` | `10` | Máximo de propuestas de cursos por usuario y día (`0` = sin límite) |
+| `ckanext.theme_ejemplo.ihpix_stats_cache_ttl` | `120` | Segundos de caché en proceso de `ihpix_progress_stats` (filas publicadas, índice de países y resultados por ámbito). Con varios workers la frescura máxima es el TTL; al aprobar o editar se invalida en el worker que lo hizo |
+| `ckanext.theme_ejemplo.ihpix_key_activities_file` | `data/ihpix_key_activities.json` del paquete | Ruta alternativa del JSON de key activities por Output (`{"1.3": [{"code": "1.3.1", "title": "…"}]}`); sirve para cargar la lista oficial del OIP sin tocar código |
 
 ### Claves de otras extensiones que este tema lee
 

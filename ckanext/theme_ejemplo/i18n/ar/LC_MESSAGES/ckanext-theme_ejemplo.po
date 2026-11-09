@@ -1148,7 +1148,7 @@ msgstr ""
 #: ckanext/theme_ejemplo/templates/admin/portal_cards.html:238
 #: ckanext/theme_ejemplo/templates/macros/form/image_upload.html:18
 msgid "Image URL"
-msgstr ""
+msgstr "رابط الصورة"
 
 #: ckanext/theme_ejemplo/templates/admin/featured_publications.html:246
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:162
@@ -2742,7 +2742,7 @@ msgstr ""
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:575
 #: ckanext/theme_ejemplo/templates/package/snippets/resources_list.html:41
 msgid "Clear"
-msgstr ""
+msgstr "مسح"
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:74
 msgid "New User"
@@ -2774,7 +2774,7 @@ msgstr ""
 #: ckanext/theme_ejemplo/templates/admin/users.html:92
 #: ckanext/theme_ejemplo/templates/bug_tickets/show.html:144
 msgid "Actions"
-msgstr ""
+msgstr "الإجراءات"
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:130
 msgid "Sysadmin"
@@ -3468,7 +3468,7 @@ msgstr ""
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:506
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:587
 msgid "activities"
-msgstr ""
+msgstr "أنشطة"
 
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:509
 #: ckanext/theme_ejemplo/templates/organization/ihpix.html:509
@@ -3643,7 +3643,7 @@ msgstr ""
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:927
 msgid ""
 "No reported activities match the current filters for this member state."
-msgstr ""
+msgstr "لا توجد أنشطة مُبلغ عنها تطابق عوامل التصفية الحالية لهذه الدولة العضو."
 
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:930
 #: ckanext/theme_ejemplo/templates/ihpix/outputs.html:1108
@@ -5878,11 +5878,11 @@ msgstr ""
 
 #: ckanext/theme_ejemplo/templates/package/snippets/resources_list.html:39
 msgid "Search resources by name or description…"
-msgstr ""
+msgstr "البحث عن الموارد حسب الاسم أو الوصف…"
 
 #: ckanext/theme_ejemplo/templates/package/snippets/resources_list.html:47
 msgid "All formats"
-msgstr ""
+msgstr "جميع الصيغ"
 
 #: ckanext/theme_ejemplo/templates/package/snippets/resources_list.html:72
 msgid "Resource pages"
@@ -8912,3 +8912,3058 @@ msgstr "موارد التعلّم"
 #~ "A growing global hub for water knowledge — real-time figures from our "
 #~ "network."
 #~ msgstr "مركز عالمي متنامٍ للمعرفة المائية — أرقام فورية من شبكتنا."
+
+
+#: IHP-IX review September 2026
+msgid "The form covers 7 sections aligned with the official UNESCO IHP-IX reporting guidelines"
+msgstr "يتألف النموذج من 7 أقسام تتوافق مع إرشادات اليونسكو الرسمية لإعداد تقارير المرحلة التاسعة من البرنامج الهيدرولوجي الدولي"
+
+#: IHP-IX review September 2026
+msgid "Additional contributions"
+msgstr "مساهمات إضافية"
+
+#: IHP-IX review September 2026
+msgid "Add contribution"
+msgstr "إضافة مساهمة"
+
+#: IHP-IX review September 2026
+msgid "Add synergy"
+msgstr "إضافة تآزر"
+
+#: IHP-IX review September 2026
+msgid "Add supporting country"
+msgstr "إضافة دولة داعمة"
+
+#: IHP-IX review September 2026
+msgid "Supporting country"
+msgstr "الدولة الداعمة"
+
+#: IHP-IX review September 2026
+msgid "Financial"
+msgstr "مالي"
+
+#: IHP-IX review September 2026
+msgid "In-kind"
+msgstr "عيني"
+
+#: IHP-IX review September 2026
+msgid "Hosting"
+msgstr "استضافة"
+
+#: IHP-IX review September 2026
+msgid "Partner organizations on IHP-WINS"
+msgstr "المنظمات الشريكة على IHP-WINS"
+
+#: IHP-IX review September 2026
+msgid "Organization on IHP-WINS"
+msgstr "المنظمة على IHP-WINS"
+
+#: IHP-IX review September 2026
+msgid "External institution / enter name below"
+msgstr "مؤسسة خارجية / أدخل الاسم أدناه"
+
+#: IHP-IX review September 2026
+msgid "Institution country, supporting countries and beneficiaries are recorded separately."
+msgstr "يُسجَّل بلد المؤسسة والدول الداعمة والمستفيدون بصورة منفصلة."
+
+#: IHP-IX review September 2026
+msgid "Previously reported country. Add further supporting countries and their roles below."
+msgstr "الدولة المُبلَّغ عنها سابقًا. أضف أدناه دولًا داعمة أخرى وأدوارها."
+
+#: IHP-IX review September 2026
+msgid "Add every related Priority Area, Output and key activity. Overall totals count this activity once; subtotals can overlap."
+msgstr "أضف كل مجال أولوية ومخرج ونشاط رئيسي ذي صلة. يُحتسب النشاط مرة واحدة في الإجمالي العام؛ وقد تتداخل المجاميع الفرعية."
+
+#: IHP-IX review September 2026
+msgid "A newer version was saved. Choose which changes to keep."
+msgstr "حُفظت نسخة أحدث. اختر التغييرات التي تريد الاحتفاظ بها."
+
+#: IHP-IX review September 2026
+msgid "Your answer"
+msgstr "إجابتك"
+
+#: IHP-IX review September 2026
+msgid "Saved answer"
+msgstr "الإجابة المحفوظة"
+
+#: IHP-IX review September 2026
+msgid "Choose an answer"
+msgstr "اختر إجابة"
+
+#: IHP-IX review September 2026
+msgid "Keep my answer"
+msgstr "الاحتفاظ بإجابتي"
+
+#: IHP-IX review September 2026
+msgid "Use saved answer"
+msgstr "استخدام الإجابة المحفوظة"
+
+#: IHP-IX review September 2026
+msgid "Apply choices to my draft"
+msgstr "تطبيق الاختيارات على مسودتي"
+
+#: IHP-IX review September 2026
+msgid "Choose an answer for each changed field."
+msgstr "اختر إجابة لكل حقل تم تغييره."
+
+#: IHP-IX review September 2026
+msgid "Changes compared. Review your answers and save the draft."
+msgstr "تمت مقارنة التغييرات. راجع إجاباتك واحفظ المسودة."
+
+#: IHP-IX review September 2026
+msgid "Collaborators and saved versions"
+msgstr "المتعاونون والنسخ المحفوظة"
+
+#: IHP-IX review September 2026
+msgid "Report collaboration"
+msgstr "التعاون في إعداد التقرير"
+
+#: IHP-IX review September 2026
+msgid "Collaborators can save draft changes. The author submits the report for review. Membership changes immediately affect editing access."
+msgstr "يمكن للمتعاونين حفظ تعديلات المسودة. يرسل المؤلف التقرير للمراجعة. تؤثر تغييرات العضوية فورًا في صلاحية التحرير."
+
+#: IHP-IX review September 2026
+msgid "Invite an active workspace contributor"
+msgstr "دعوة مساهم نشط في مساحة العمل"
+
+#: IHP-IX review September 2026
+msgid "Invite"
+msgstr "دعوة"
+
+#: IHP-IX review September 2026
+msgid "Revoke access"
+msgstr "إلغاء الوصول"
+
+#: IHP-IX review September 2026
+msgid "Revoked"
+msgstr "ملغى"
+
+#: IHP-IX review September 2026
+msgid "Saved versions"
+msgstr "النسخ المحفوظة"
+
+#: IHP-IX review September 2026
+msgid "Version"
+msgstr "النسخة"
+
+#: IHP-IX review September 2026
+msgid "The next save will record the first version."
+msgstr "سيُنشئ الحفظ التالي النسخة الأولى."
+
+#: IHP-IX review September 2026
+msgid "Workspace collaboration"
+msgstr "التعاون في مساحة العمل"
+
+#: IHP-IX review September 2026
+msgid "Comments and tasks"
+msgstr "التعليقات والمهام"
+
+#: IHP-IX review September 2026
+msgid "Add a comment or task"
+msgstr "إضافة تعليق أو مهمة"
+
+#: IHP-IX review September 2026
+msgid "Task"
+msgstr "مهمة"
+
+#: IHP-IX review September 2026
+msgid "Task title"
+msgstr "عنوان المهمة"
+
+#: IHP-IX review September 2026
+msgid "Description or comment"
+msgstr "الوصف أو التعليق"
+
+#: IHP-IX review September 2026
+msgid "Assigned to"
+msgstr "مُسنَدة إلى"
+
+#: IHP-IX review September 2026
+msgid "Due date"
+msgstr "تاريخ الاستحقاق"
+
+#: IHP-IX review September 2026
+msgid "In progress"
+msgstr "قيد التنفيذ"
+
+#: IHP-IX review September 2026
+msgid "Completed"
+msgstr "مكتملة"
+
+#: IHP-IX review September 2026
+msgid "Related activity (optional)"
+msgstr "النشاط المرتبط (اختياري)"
+
+#: IHP-IX review September 2026
+msgid "Attached resource (optional)"
+msgstr "المورد المرفق (اختياري)"
+
+#: IHP-IX review September 2026
+msgid "Update task status"
+msgstr "تحديث حالة المهمة"
+
+#: IHP-IX review September 2026
+msgid "No comments or tasks yet."
+msgstr "لا توجد تعليقات أو مهام بعد."
+
+#: IHP-IX review September 2026
+msgid "This workspace is archived and read-only."
+msgstr "مساحة العمل هذه مؤرشفة ومتاحة للقراءة فقط."
+
+#: IHP-IX review September 2026
+msgid "No lead assigned. Site administrators handle membership requests."
+msgstr "لم يُعيَّن مسؤول. يتولى مسؤولو الموقع معالجة طلبات العضوية."
+
+#: IHP-IX review September 2026
+msgid "Notifications"
+msgstr "الإشعارات"
+
+#: IHP-IX review September 2026
+msgid "No notifications yet."
+msgstr "لا توجد إشعارات بعد."
+
+#: IHP-IX review September 2026
+msgid "Mark as read"
+msgstr "وضع علامة مقروء"
+
+#: IHP-IX review September 2026
+msgid "Import IHP-IX reports"
+msgstr "استيراد تقارير المرحلة التاسعة"
+
+#: IHP-IX review September 2026
+msgid "Import reports"
+msgstr "استيراد التقارير"
+
+#: IHP-IX review September 2026
+msgid "Download XLSX template"
+msgstr "تنزيل قالب XLSX"
+
+#: IHP-IX review September 2026
+msgid "Completed XLSX workbook (up to 5 MB)"
+msgstr "ملف XLSX مكتمل (حتى 5 ميغابايت)"
+
+#: IHP-IX review September 2026
+msgid "Validate and preview"
+msgstr "التحقق والمعاينة"
+
+#: IHP-IX review September 2026
+msgid "Invalid values: correct before importing"
+msgstr "قيم غير صالحة: صححها قبل الاستيراد"
+
+#: IHP-IX review September 2026
+msgid "Incomplete for submission: can be saved as drafts"
+msgstr "غير مكتمل للإرسال: يمكن حفظه كمسودة"
+
+#: IHP-IX review September 2026
+msgid "Confirm and create drafts"
+msgstr "التأكيد وإنشاء المسودات"
+
+#: IHP-IX review September 2026
+msgid "Drafts created"
+msgstr "المسودات التي تم إنشاؤها"
+
+#: IHP-IX review September 2026
+msgid "Upload a completed workbook, review validation results, then create drafts. Each draft can be completed and submitted separately."
+msgstr "ارفع الملف المكتمل، وراجع نتائج التحقق، ثم أنشئ المسودات. يمكن إكمال كل مسودة وإرسالها على حدة."
+
+#: IHP-IX review September 2026
+msgid "Generate report"
+msgstr "إنشاء تقرير"
+
+#: IHP-IX review September 2026
+msgid "Generated"
+msgstr "تاريخ الإنشاء"
+
+#: IHP-IX review September 2026
+msgid "Scope"
+msgstr "النطاق"
+
+#: IHP-IX review September 2026
+msgid "Select scope"
+msgstr "اختيار النطاق"
+
+#: IHP-IX review September 2026
+msgid "All bienniums"
+msgstr "جميع الفترات الثنائية"
+
+#: IHP-IX review September 2026
+msgid "All bienniums and regions"
+msgstr "جميع الفترات الثنائية والمناطق"
+
+#: IHP-IX review September 2026
+msgid "IHP-IX implementation report"
+msgstr "تقرير تنفيذ المرحلة التاسعة"
+
+#: IHP-IX review September 2026
+msgid "Published activities in the selected scope"
+msgstr "الأنشطة المنشورة ضمن النطاق المحدد"
+
+#: IHP-IX review September 2026
+msgid "Participating institutions"
+msgstr "المؤسسات المشاركة"
+
+#: IHP-IX review September 2026
+msgid "Countries recorded in reporting, support or beneficiary roles"
+msgstr "الدول المسجلة بوصفها جهات مُبلِّغة أو داعمة أو مستفيدة"
+
+#: IHP-IX review September 2026
+msgid "Reported total"
+msgstr "الإجمالي المُبلَّغ عنه"
+
+#: IHP-IX review September 2026
+msgid "Reported results and sources"
+msgstr "النتائج المُبلَّغ عنها والمصادر"
+
+#: IHP-IX review September 2026
+msgid "Only verified organization links are included. Historical free-text institution names require reconciliation before they can be attributed to this organization."
+msgstr "لا تُدرج إلا الروابط الموثَّقة بالمنظمات. يجب مطابقة أسماء المؤسسات التاريخية المدخلة كنص حر قبل نسبتها إلى هذه المنظمة."
+
+#: IHP-IX review September 2026
+msgid "Unlinked published records across the portal"
+msgstr "السجلات المنشورة غير المرتبطة في البوابة"
+
+#: IHP-IX review September 2026
+msgid "No published activities match these filters. No results have been inferred."
+msgstr "لا توجد أنشطة منشورة تطابق هذه المرشحات. لم تُستنتج أي نتائج."
+
+#: IHP-IX review September 2026
+msgid "This report uses published activity records. Review the narrative and its sources before sharing. Subtotals across multiple Priority Areas or Outputs can overlap; the overall activity count is unique."
+msgstr "يستخدم هذا التقرير سجلات الأنشطة المنشورة. راجع النص ومصادره قبل المشاركة. قد تتداخل المجاميع الفرعية للمجالات أو المخرجات؛ ويُحتسب كل نشاط مرة واحدة في الإجمالي العام."
+
+#: IHP-IX review September 2026
+msgid "Presentation / PDF"
+msgstr "عرض تقديمي / PDF"
+
+#: IHP-IX review September 2026
+msgid "Presentation controls"
+msgstr "عناصر التحكم في العرض"
+
+#: IHP-IX review September 2026
+msgid "Print / Save as PDF"
+msgstr "طباعة / حفظ بصيغة PDF"
+
+#: IHP-IX review September 2026
+msgid "Indicator / scope"
+msgstr "المؤشر / النطاق"
+
+#: IHP-IX review September 2026
+msgid "Published records only. An activity counts once in the overall total and in each linked scope. Subtotals may overlap. Youth and female participants may overlap."
+msgstr "السجلات المنشورة فقط. يُحتسب النشاط مرة واحدة في الإجمالي العام وفي كل نطاق مرتبط. قد تتداخل المجاميع الفرعية، كما قد تتداخل فئتا الشباب والنساء."
+
+#: IHP-IX review September 2026
+msgid "Implementation overview"
+msgstr "نظرة عامة على التنفيذ"
+
+#: IHP-IX review September 2026
+msgid "Knowledge and scientific products"
+msgstr "منتجات المعرفة والمنتجات العلمية"
+
+#: IHP-IX review September 2026
+msgid "Knowledge exchange"
+msgstr "تبادل المعرفة"
+
+#: IHP-IX review September 2026
+msgid "Training and education"
+msgstr "التدريب والتعليم"
+
+#: IHP-IX review September 2026
+msgid "Activities by scope"
+msgstr "الأنشطة حسب النطاق"
+
+#: IHP-IX review September 2026
+msgid "Activities by Output"
+msgstr "الأنشطة حسب المخرج"
+
+#: IHP-IX review September 2026
+msgid "Knowledge products"
+msgstr "منتجات المعرفة"
+
+#: IHP-IX review September 2026
+msgid "Scientific products"
+msgstr "المنتجات العلمية"
+
+#: IHP-IX review September 2026
+msgid "Training materials and courses"
+msgstr "مواد التدريب ودوراته"
+
+#: IHP-IX review September 2026
+msgid "Curricula"
+msgstr "المناهج الدراسية"
+
+#: IHP-IX review September 2026
+msgid "Stakeholders reached through knowledge exchange"
+msgstr "أصحاب المصلحة الذين شملهم تبادل المعرفة"
+
+#: IHP-IX review September 2026
+msgid "Stakeholders reached through awareness activities"
+msgstr "أصحاب المصلحة الذين شملتهم أنشطة التوعية"
+
+#: IHP-IX review September 2026
+msgid "Awareness raising"
+msgstr "التوعية"
+
+#: IHP-IX review September 2026
+msgid "No data"
+msgstr "لا توجد بيانات"
+
+#: IHP-IX review September 2026
+msgid "Your IHP-IX draft is saved. Finish creating the resource, then attach it and return to your report."
+msgstr "حُفظت مسودة تقريرك. أكمل إنشاء المورد، ثم أرفقه وعُد إلى التقرير."
+
+#: IHP-IX review September 2026
+msgid "Attach this resource and return"
+msgstr "إرفاق هذا المورد والعودة"
+
+#: IHP-IX review September 2026
+msgid "Return to report"
+msgstr "العودة إلى التقرير"
+
+#: IHP-IX review September 2026
+msgid "Publication created. Save the report to keep this attachment."
+msgstr "أُنشئ المنشور. احفظ التقرير للاحتفاظ بهذا المرفق."
+
+#: IHP-IX review September 2026
+msgid "Save the report to keep its attachments. Before opening a dataset or event editor, your draft is saved automatically. Use “Attach this resource and return” on the resource page."
+msgstr "احفظ التقرير للاحتفاظ بمرفقاته. تُحفظ المسودة تلقائيًا قبل فتح محرر البيانات أو الأحداث. استخدم «إرفاق هذا المورد والعودة» في صفحة المورد."
+
+#: IHP-IX review September 2026
+msgid "Upload scientific publication"
+msgstr "رفع منشور علمي"
+
+#: IHP-IX review September 2026
+msgid "IHP-IX reporting tools"
+msgstr "أدوات إعداد تقارير المرحلة التاسعة"
+
+#: IHP-IX review September 2026
+msgid "IHP-IX tools"
+msgstr "أدوات المرحلة التاسعة"
+
+#: IHP-IX review September 2026
+msgid "Open report"
+msgstr "فتح التقرير"
+
+#: IHP-IX review September 2026
+msgid "General information"
+msgstr "معلومات عامة"
+
+#: IHP-IX review September 2026
+msgid "Priority area and output"
+msgstr "مجال الأولوية والمخرج"
+
+#: IHP-IX review September 2026
+msgid "Cross-cutting groups"
+msgstr "المجموعات الشاملة"
+
+#: IHP-IX review September 2026
+msgid "Region of implementation"
+msgstr "منطقة التنفيذ"
+
+#: IHP-IX review September 2026
+msgid "Key performance indicators"
+msgstr "مؤشرات الأداء الرئيسية"
+
+#: IHP-IX review September 2026
+msgid "Review and submit"
+msgstr "المراجعة والإرسال"
+
+#: IHP-IX review September 2026
+msgid "Publications, events and data"
+msgstr "المنشورات والأحداث والبيانات"
+
+#: IHP-IX review September 2026
+msgid "Report an implemented activity"
+msgstr "الإبلاغ عن نشاط منفَّذ"
+
+#: IHP-IX review September 2026
+msgid "The activity, who implemented it and when."
+msgstr "النشاط والجهة التي نفذته وموعد تنفيذه."
+
+#: IHP-IX review September 2026
+msgid "Required answered"
+msgstr "الحقول المطلوبة المكتملة"
+
+#: IHP-IX review September 2026
+msgid "{n} required answers are missing. Fix them and submit."
+msgstr "تنقص {n} إجابات مطلوبة. أكملها ثم أرسل التقرير."
+
+#: IHP-IX review September 2026
+msgid "One required answer is missing. Fix it and submit."
+msgstr "تنقص إجابة واحدة مطلوبة. أكملها ثم أرسل التقرير."
+
+#: IHP-IX review September 2026
+msgid "Everything required is answered. You can submit the report."
+msgstr "اكتملت جميع الإجابات المطلوبة. يمكنك إرسال التقرير."
+
+#: IHP-IX review September 2026
+msgid "Enter a whole number between 0 and 2147483647"
+msgstr "أدخل عددًا صحيحًا بين 0 و2147483647"
+
+#: ckanext/theme_ejemplo/ihpix_presentation.py
+msgid "Transboundary water systems"
+msgstr "النظم المائية العابرة للحدود"
+
+#: ckanext/theme_ejemplo/ihpix_presentation.py
+msgid "Stakeholder groups with strengthened capacity"
+msgstr "مجموعات أصحاب المصلحة التي تعززت قدراتها"
+
+#: ckanext/theme_ejemplo/ihpix_presentation.py
+msgid "Activities reported"
+msgstr "الأنشطة المُبلَّغ عنها"
+
+#: ckanext/theme_ejemplo/ihpix_presentation.py
+msgid "Member States supported in transboundary water management, as reported"
+msgstr "الدول الأعضاء المدعومة في إدارة المياه العابرة للحدود حسب التقارير"
+
+#: ckanext/theme_ejemplo/ihpix_presentation.py
+msgid "Distinct countries"
+msgstr "الدول المختلفة"
+
+#: ckanext/theme_ejemplo/ihpix_presentation.py
+msgid "Stakeholder groups"
+msgstr "مجموعات أصحاب المصلحة"
+
+#: ckanext/theme_ejemplo/ihpix_presentation.py
+msgid "Youth / female (%)"
+msgstr "الشباب / النساء (%)"
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "If you have multiple activities to report, you can use the multiple upload option."
+msgstr "إذا كانت لديك أنشطة متعددة للإبلاغ عنها، يمكنك استخدام خيار الرفع المتعدد."
+
+#: ckanext/theme_ejemplo/templates/ihpix/report.html
+msgid "This draft is visible to you and invited collaborators."
+msgstr "هذه المسودة مرئية لك وللمتعاونين المدعوين."
+
+msgid "Additional contribution {n}"
+msgstr "مساهمة إضافية {n}"
+
+msgid "Synergy {n}"
+msgstr "تآزر {n}"
+
+msgid "Supporting country {n}"
+msgstr "الدولة الداعمة {n}"
+
+msgid "Select an option"
+msgstr "اختر خيارًا"
+
+msgid "Key activity (optional)"
+msgstr "النشاط الرئيسي (اختياري)"
+
+msgid "Select an output first"
+msgstr "اختر نتيجة أولًا"
+
+msgid "Select a priority area first"
+msgstr "اختر مجالًا ذا أولوية أولًا"
+
+msgid "Type of support (select all that apply)"
+msgstr "نوع الدعم (اختر كل ما ينطبق)"
+
+msgid "Choose a supporting country."
+msgstr "اختر دولة داعمة."
+
+msgid "Choose at least one type of support."
+msgstr "اختر نوعًا واحدًا على الأقل من الدعم."
+
+msgid "Choose a priority area."
+msgstr "اختر مجالًا ذا أولوية."
+
+msgid "Choose an output for this priority area."
+msgstr "اختر نتيجة لهذا المجال ذي الأولوية."
+
+msgid "Choose a key activity from the selected output."
+msgstr "اختر نشاطًا رئيسيًا من النتيجة المحددة."
+
+msgid "Please review the selected entries."
+msgstr "يرجى مراجعة الخيارات المحددة."
+
+msgid "Filter reports by status"
+msgstr "تصفية التقارير حسب الحالة"
+
+msgid "Not specified"
+msgstr "غير محدد"
+
+msgid "No reports with this status."
+msgstr "لا توجد تقارير بهذه الحالة."
+
+msgid "View all reports"
+msgstr "عرض جميع التقارير"
+
+msgid "Select a priority area"
+msgstr "اختر مجالًا ذا أولوية"
+
+msgid "Select an output"
+msgstr "اختر نتيجة"
+
+msgid "Select a key activity"
+msgstr "اختر نشاطًا رئيسيًا"
+
+msgid "Review notes"
+msgstr "ملاحظات المراجعة"
+
+msgid "All countries"
+msgstr "جميع الدول"
+
+msgid "Clear country filter"
+msgstr "إزالة تصفية الدولة"
+
+msgid ""
+"Showing activities linked to this country through reporting, support or "
+"beneficiaries. Totals describe these activities, not results allocated to "
+"this country alone."
+msgstr ""
+"تُعرض الأنشطة المرتبطة بهذه الدولة من خلال الجهات المبلغة أو الدعم أو "
+"المستفيدين. تصف الإجماليات هذه الأنشطة، وليست نتائج مخصصة لهذه الدولة وحدها."
+
+msgid "The update failed. The previous results are still displayed."
+msgstr "تعذر التحديث. لا تزال النتائج السابقة معروضة."
+
+msgid "Pending review · all reports"
+msgstr "بانتظار المراجعة · جميع التقارير"
+
+msgid "Select a country to filter all charts. Circle size: linked activities."
+msgstr "اختر دولة لتصفية جميع الرسوم البيانية. حجم الدائرة: الأنشطة المرتبطة."
+
+msgid "Filter by this country"
+msgstr "التصفية حسب هذه الدولة"
+
+msgid "Other markers show countries linked to the selected activities."
+msgstr "تُظهر العلامات الأخرى الدول المرتبطة بالأنشطة المحددة."
+
+msgid "Selected country"
+msgstr "الدولة المحددة"
+
+msgid "Overall implementation progress"
+msgstr "التقدم العام في التنفيذ"
+
+msgid "Choose a valid reporting scope"
+msgstr "اختر نطاقًا صالحًا للتقرير"
+
+msgid "All activities"
+msgstr "جميع الأنشطة"
+
+msgid "My drafts"
+msgstr "مسوداتي"
+
+msgid ""
+"Your latest answers could not be saved in this browser. Save as draft before "
+"leaving this form."
+msgstr "تعذر حفظ أحدث إجاباتك في هذا المتصفح. احفظ مسودة قبل مغادرة هذا النموذج."
+
+msgid "View activity"
+msgstr "عرض النشاط"
+
+msgid "Filter activities"
+msgstr "تصفية الأنشطة"
+
+msgid "No locations are available on this map for the selected activities."
+msgstr "لا تتوفر مواقع على هذه الخريطة للأنشطة المحددة."
+
+msgid "1. Fill in the common reporting details"
+msgstr "1. أدخل بيانات التقارير المشتركة"
+
+msgid "2. Enter activities, then add details only where needed"
+msgstr "2. أدخل الأنشطة ثم أضف التفاصيل اللازمة فقط"
+
+msgid "3. Upload this workbook, review the results and confirm creation of drafts."
+msgstr "3. ارفع هذا الملف وراجع النتائج ثم أكد إنشاء المسودات."
+
+msgid "Activities in this file"
+msgstr "الأنشطة في هذا الملف"
+
+msgid "Activities to complete before submission"
+msgstr "أنشطة يجب استكمالها قبل الإرسال"
+
+msgid "Activity reference"
+msgstr "مرجع النشاط"
+
+msgid "Add at least one activity"
+msgstr "أضف نشاطًا واحدًا على الأقل"
+
+msgid "Additional contribution"
+msgstr "مساهمة إضافية"
+
+msgid "Additional details"
+msgstr "تفاصيل إضافية"
+
+msgid "Available choice"
+msgstr "الخيار المتاح"
+
+msgid "Beneficiary Member States"
+msgstr "الدول الأعضاء المستفيدة"
+
+msgid "Beneficiary regions"
+msgstr "المناطق المستفيدة"
+
+msgid "Brief description"
+msgstr "وصف موجز"
+
+msgid "Can create draft"
+msgstr "يمكن إنشاء مسودة"
+
+msgid "Cell"
+msgstr "الخلية"
+
+msgid "Check this value"
+msgstr "راجع هذه القيمة"
+
+msgid "Choose Additional contribution or Synergy"
+msgstr "اختر مساهمة إضافية أو تآزرًا"
+
+msgid "Choose a value from Reference lists."
+msgstr "اختر قيمة من القوائم المرجعية."
+
+msgid ""
+"Choose a value from the list. The Output must belong to its Priority Area, "
+"and the key activity to its Output."
+msgstr ""
+"اختر قيمة من القائمة. يجب أن يتبع الناتج مجاله ذا الأولوية وأن يتبع النشاط "
+"الرئيسي ناتجه."
+
+msgid "Choose an available option or enter a valid number."
+msgstr "اختر خيارًا متاحًا أو أدخل رقمًا صالحًا."
+
+msgid "Choose an indicator from the list"
+msgstr "اختر مؤشرًا من القائمة"
+
+msgid ""
+"Choose this code from the dropdown; codes must be text to preserve their "
+"digits."
+msgstr "اختر هذا الرمز من القائمة؛ يجب أن يكون نصًا للحفاظ على أرقامه."
+
+msgid "Column headers do not match template: "
+msgstr "العناوين لا تطابق القالب: "
+
+msgid "Column structure changed: "
+msgstr "تغير هيكل الأعمدة: "
+
+msgid "Complete Start here once with your contact, institution and biennium."
+msgstr "أكمل ورقة ابدأ هنا مرة واحدة ببيانات الاتصال والمؤسسة وفترة السنتين."
+
+msgid "Complete before submission"
+msgstr "يجب الاستكمال قبل الإرسال"
+
+msgid "Complete the primary classification before adding contributions"
+msgstr "أكمل التصنيف الرئيسي قبل إضافة المساهمات"
+
+msgid "Completion date"
+msgstr "تاريخ الانتهاء"
+
+msgid "Contribution to the key activity"
+msgstr "المساهمة في النشاط الرئيسي"
+
+msgid "Contributions and synergies"
+msgstr "المساهمات وأوجه التآزر"
+
+msgid "Correct the file and upload it again. No drafts were created."
+msgstr "صحح الملف وارفعه مجددًا. لم يتم إنشاء مسودات."
+
+msgid "Correct these values before creating drafts"
+msgstr "صحح هذه القيم قبل إنشاء المسودات"
+
+msgid "Create drafts"
+msgstr "إنشاء المسودات"
+
+msgid "Cross-cutting working groups"
+msgstr "مجموعات العمل الشاملة"
+
+msgid "Dataset or document"
+msgstr "مجموعة بيانات أو وثيقة"
+
+msgid "Describe Other"
+msgstr "وضح خيار آخر"
+
+msgid "Describe the synergies"
+msgstr "صف أوجه التآزر"
+
+msgid "Did countries or regions benefit?"
+msgstr "هل استفادت دول أو مناطق؟"
+
+msgid "Download completed example"
+msgstr "تنزيل مثال مكتمل"
+
+msgid "Download empty template"
+msgstr "تنزيل قالب فارغ"
+
+msgid "Email address of the focal point"
+msgstr "البريد الإلكتروني لجهة الاتصال"
+
+msgid "Enter a whole number from 0 to 2147483647. Leave blank if unanswered."
+msgstr "أدخل عددًا صحيحًا من 0 إلى 2147483647. اتركه فارغًا إذا لم تجب."
+
+msgid "Errors to correct"
+msgstr "أخطاء يجب تصحيحها"
+
+msgid "Event date"
+msgstr "تاريخ الفعالية"
+
+msgid "Event page"
+msgstr "صفحة الفعالية"
+
+msgid "Example publication"
+msgstr "منشور توضيحي"
+
+msgid "Example results only. Replace these with the results of your activity."
+msgstr "نتائج توضيحية فقط. استبدلها بنتائج نشاطك."
+
+msgid "Example workshop"
+msgstr "ورشة عمل توضيحية"
+
+msgid "Existing resource identifier"
+msgstr "معرّف المورد الموجود"
+
+msgid "Existing resource source"
+msgstr "مصدر المورد الموجود"
+
+msgid "Expanded workbook exceeds 30 MB"
+msgstr "يتجاوز حجم الملف بعد فك الضغط 30 ميغابايت"
+
+msgid "Explain how the activity contributed to the selected key activity."
+msgstr "اشرح كيف ساهم النشاط في النشاط الرئيسي المحدد."
+
+msgid "External link"
+msgstr "رابط خارجي"
+
+msgid "Fictional activity for learning how to complete this workbook."
+msgstr "نشاط افتراضي لتعلم كيفية إكمال هذا الملف."
+
+msgid "Fictional example. Do not submit as a real activity."
+msgstr "مثال افتراضي. لا ترسله بوصفه نشاطًا حقيقيًا."
+
+msgid "Fictional resource used to illustrate an external link."
+msgstr "مورد افتراضي لتوضيح رابط خارجي."
+
+msgid "Field"
+msgstr "الحقل"
+
+msgid "Files and publications can also be added after creating the drafts."
+msgstr "يمكنك أيضًا إضافة الملفات والمنشورات بعد إنشاء المسودات."
+
+msgid ""
+"Fill in your institution details once, add your activities and complete only "
+"the sections you need."
+msgstr "أدخل بيانات مؤسستك مرة واحدة وأضف أنشطتك وأكمل الأقسام التي تحتاجها فقط."
+
+msgid "Financial support"
+msgstr "دعم مالي"
+
+msgid "Flagship initiatives"
+msgstr "المبادرات الرائدة"
+
+msgid ""
+"For multiple choices, separate names with ;. See Reference lists. Example: "
+"Chile; Kenya."
+msgstr ""
+"للخيارات المتعددة، افصل الأسماء بالرمز ;. راجع القوائم المرجعية. مثال: شيلي; "
+"كينيا."
+
+msgid "Formulas are not allowed; paste values"
+msgstr "الصيغ غير مسموحة؛ الصق القيم"
+
+msgid "Help"
+msgstr "المساعدة"
+
+msgid "Hosting support"
+msgstr "دعم الاستضافة"
+
+msgid "How to fill in the workbook"
+msgstr "كيفية إكمال الملف"
+
+msgid "IHP-IX · Import activities"
+msgstr "المرحلة التاسعة · استيراد الأنشطة"
+
+msgid "IHP-WINS organization"
+msgstr "منظمة في IHP-WINS"
+
+msgid "Import activities from Excel"
+msgstr "استيراد الأنشطة من Excel"
+
+msgid "Import another file"
+msgstr "استيراد ملف آخر"
+
+msgid "Import steps"
+msgstr "خطوات الاستيراد"
+
+msgid ""
+"In Activities, enter one activity per row. Keep the prepared references: "
+"A001, A002…"
+msgstr ""
+"في ورقة الأنشطة، أدخل نشاطًا واحدًا في كل صف واحتفظ بالمراجع المعدة: A001، "
+"A002…"
+
+msgid "In-kind support"
+msgstr "دعم عيني"
+
+msgid "Indicator"
+msgstr "المؤشر"
+
+msgid "Indicators"
+msgstr "المؤشرات"
+
+msgid "Institution category"
+msgstr "فئة المؤسسة"
+
+msgid "Institution name"
+msgstr "اسم المؤسسة"
+
+msgid "Key activity"
+msgstr "النشاط الرئيسي"
+
+msgid "Knowledge improvement"
+msgstr "تحسين المعرفة"
+
+msgid "Leave blank if unanswered."
+msgstr "اتركه فارغًا إذا لم تجب."
+
+msgid "Link to the activity"
+msgstr "رابط النشاط"
+
+msgid "Linked to a flagship initiative?"
+msgstr "هل يرتبط بمبادرة رائدة؟"
+
+msgid "Maximum characters:"
+msgstr "الحد الأقصى للأحرف:"
+
+msgid "Missing worksheet: "
+msgstr "الورقة مفقودة: "
+
+msgid "Multiple activities"
+msgstr "أنشطة متعددة"
+
+msgid "Names of stakeholder groups"
+msgstr "أسماء مجموعات أصحاب المصلحة"
+
+msgid "Needs correction"
+msgstr "يحتاج إلى تصحيح"
+
+msgid "No matching activity row"
+msgstr "لا يوجد نشاط بهذا المرجع"
+
+msgid "Nothing will be published or submitted automatically."
+msgstr "لن يتم نشر أو إرسال أي شيء تلقائيًا."
+
+msgid "Of which female participants"
+msgstr "من بينهم الإناث"
+
+msgid "Of which youth (18–35 years old)"
+msgstr "من بينهم الشباب من 18 إلى 35 عامًا"
+
+msgid ""
+"Only the activity title is required to create a draft. Other required answers"
+" can be completed before submission."
+msgstr ""
+"عنوان النشاط وحده مطلوب لإنشاء مسودة. يمكن إكمال الإجابات المطلوبة الأخرى قبل"
+" الإرسال."
+
+msgid ""
+"Only the title is required to create a draft. You can complete other required"
+" answers before submitting it for review."
+msgstr ""
+"العنوان وحده مطلوب لإنشاء مسودة. يمكنك إكمال الإجابات المطلوبة الأخرى قبل "
+"إرسالها للمراجعة."
+
+msgid "Open my drafts"
+msgstr "فتح مسوداتي"
+
+msgid ""
+"Optional. Select the activity reference from Activities. Leave unanswered "
+"questions blank; No is an explicit answer."
+msgstr ""
+"اختياري. اختر مرجع النشاط من ورقة الأنشطة. اترك الأسئلة غير المجابة فارغة؛ لا"
+" إجابة صريحة."
+
+msgid "Optional: complete only when relevant."
+msgstr "اختياري: أكمل عند الحاجة فقط."
+
+msgid "Other institution category"
+msgstr "فئة أخرى للمؤسسة"
+
+msgid "Other partners"
+msgstr "شركاء آخرون"
+
+msgid "Participation and scope"
+msgstr "المشاركة والنطاق"
+
+msgid "Partner organization"
+msgstr "المنظمة الشريكة"
+
+msgid "Prepare the file"
+msgstr "إعداد الملف"
+
+msgid "Preview pages"
+msgstr "صفحات المعاينة"
+
+msgid "Previously downloaded IHP-IX templates are also accepted."
+msgstr "تُقبل أيضًا قوالب المرحلة التاسعة التي نُزلت سابقًا."
+
+msgid "Primary supporting Member State"
+msgstr "الدولة العضو الداعمة الرئيسية"
+
+msgid "Publications and resources"
+msgstr "المنشورات والموارد"
+
+msgid "Reference lists"
+msgstr "القوائم المرجعية"
+
+msgid "Relationship"
+msgstr "العلاقة"
+
+msgid "Resource type"
+msgstr "نوع المورد"
+
+msgid "Review your activities"
+msgstr "راجع أنشطتك"
+
+msgid "See a completed example"
+msgstr "اطلع على مثال مكتمل"
+
+msgid "Shared reporting details"
+msgstr "بيانات التقرير المشتركة"
+
+msgid "Shared value"
+msgstr "القيمة المشتركة"
+
+msgid "Stakeholder groups supported"
+msgstr "مجموعات أصحاب المصلحة المدعومة"
+
+msgid "Start here"
+msgstr "ابدأ هنا"
+
+msgid ""
+"Start here contains the common details. Activities has 11 columns. The other "
+"sheets are optional and organized by topic."
+msgstr ""
+"تحتوي ابدأ هنا على البيانات المشتركة. تتضمن الأنشطة 11 عمودًا. الأوراق الأخرى"
+" اختيارية ومنظمة حسب الموضوع."
+
+msgid "Start here: one activity per row."
+msgstr "ابدأ هنا: نشاط واحد لكل صف."
+
+msgid ""
+"Start with Activities. Complete the other sheets only when relevant. One "
+"activity per row; keep its reference when adding details on another sheet."
+msgstr ""
+"ابدأ بورقة الأنشطة. أكمل الأوراق الأخرى عند الحاجة فقط. نشاط واحد في كل صف؛ "
+"استخدم مرجعه لإضافة التفاصيل في ورقة أخرى."
+
+msgid "Start with the empty template"
+msgstr "ابدأ بالقالب الفارغ"
+
+msgid "Synergy"
+msgstr "تآزر"
+
+msgid ""
+"The example contains fictional activities. Use the empty template for real "
+"reports."
+msgstr "يحتوي المثال على أنشطة افتراضية. استخدم القالب الفارغ للتقارير الحقيقية."
+
+msgid ""
+"The file can be imported. Missing answers can be completed in the drafts "
+"before submission."
+msgstr "يمكن استيراد الملف. يمكنك إكمال الإجابات الناقصة في المسودات قبل الإرسال."
+
+msgid "The file could not be processed"
+msgstr "تعذر معالجة الملف"
+
+msgid "These values apply unless the activity has an exception."
+msgstr "تُطبق هذه القيم ما لم يكن للنشاط استثناء."
+
+msgid ""
+"This answer contains data, but its Yes/No question is No. Correct the "
+"question or clear this answer."
+msgstr ""
+"تحتوي هذه الإجابة على بيانات لكن سؤال نعم/لا إجابته لا. صحح السؤال أو امسح "
+"هذه الإجابة."
+
+msgid "This field does not apply to the selected indicator"
+msgstr "لا ينطبق هذا الحقل على المؤشر المحدد"
+
+msgid ""
+"This file contains fictional examples. Any drafts you create from it will "
+"also be examples."
+msgstr "يحتوي هذا الملف على أمثلة افتراضية. ستكون المسودات المنشأة منه أمثلة أيضًا."
+
+msgid ""
+"Three fictional activities show a basic report, training indicators and "
+"cooperation involving several countries and resources."
+msgstr ""
+"توضح ثلاثة أنشطة افتراضية تقريرًا أساسيًا ومؤشرات تدريب وتعاونًا بين دول "
+"متعددة مع موارد."
+
+msgid "Transboundary Member States supported"
+msgstr "الدول الأعضاء المدعومة بشأن المياه العابرة للحدود"
+
+msgid "Types (separate with ;)"
+msgstr "الأنواع (افصل بالرمز ;)"
+
+msgid "Unrecognized worksheet; move report data into the template sheets"
+msgstr "ورقة غير معروفة؛ انقل البيانات إلى أوراق القالب"
+
+msgid "Unsupported template version; download the current template"
+msgstr "إصدار القالب غير مدعوم؛ نزّل القالب الحالي"
+
+msgid "Untitled activity"
+msgstr "نشاط بلا عنوان"
+
+msgid "Upload"
+msgstr "رفع"
+
+msgid "Upload a valid XLSX workbook"
+msgstr "ارفع ملف XLSX صالحًا"
+
+msgid "Upload corrected file"
+msgstr "رفع الملف المصحح"
+
+msgid "Upload your completed workbook"
+msgstr "ارفع الملف المكتمل"
+
+msgid "Uploading checks the file. Drafts are created only after your confirmation."
+msgstr "يُفحص الملف عند رفعه. لا تُنشأ المسودات إلا بعد تأكيدك."
+
+msgid "Use ISO dates YYYY-MM-DD and nonnegative whole numbers up to 2147483647."
+msgstr "استخدم تواريخ ISO بصيغة YYYY-MM-DD وأعدادًا صحيحة غير سالبة حتى 2147483647."
+
+msgid "Use YYYY-MM-DD, for example 2026-09-15."
+msgstr "استخدم YYYY-MM-DD، مثل 2026-09-15."
+
+msgid "Use a unique, nonempty row reference"
+msgstr "استخدم مرجعًا فريدًا وغير فارغ"
+
+msgid "Use only one row per activity in this section (one per indicator)."
+msgstr "استخدم صفًا واحدًا لكل نشاط في هذا القسم (صفًا لكل مؤشر)."
+
+msgid "Use row_ref on relation sheets to link multiple entries to an activity."
+msgstr "استخدم row_ref في الأوراق المرتبطة لربط إدخالات متعددة بنشاط واحد."
+
+msgid ""
+"Use the dropdowns. For multiple choices, separate values with ;. Leave "
+"unanswered questions blank."
+msgstr ""
+"استخدم القوائم المنسدلة. للخيارات المتعددة، افصل القيم بالرمز ;. اترك الأسئلة"
+" غير المجابة فارغة."
+
+msgid "Use the same activity reference on every sheet, for example A001."
+msgstr "استخدم مرجع النشاط نفسه في جميع الأوراق، مثل A001."
+
+msgid ""
+"Use the same reference to add indicators, support, contributions or resources"
+" on the optional sheets."
+msgstr ""
+"استخدم المرجع نفسه لإضافة المؤشرات أو الدعم أو المساهمات أو الموارد في "
+"الأوراق الاختيارية."
+
+msgid ""
+"Use the worksheet and cell shown below, save your Excel file and upload it "
+"again."
+msgstr "استخدم الورقة والخلية الموضحتين أدناه، ثم احفظ ملف Excel وارفعه مجددًا."
+
+msgid "Use yes/no for gates. Empty answers remain unanswered."
+msgstr "استخدم yes/no للأسئلة. تبقى الخلايا الفارغة بلا إجابة."
+
+msgid "Used for every activity unless an exception is entered in Institutions."
+msgstr "يُستخدم لجميع الأنشطة ما لم تحدد استثناءً في ورقة المؤسسات."
+
+msgid "View activity details"
+msgstr "عرض تفاصيل النشاط"
+
+msgid "Was there Member State support?"
+msgstr "هل قدمت دول أعضاء دعمًا؟"
+
+msgid "Web address"
+msgstr "عنوان الويب"
+
+msgid "Were there synergies?"
+msgstr "هل وُجدت أوجه تآزر؟"
+
+msgid "Workbook exceeds 5 MB"
+msgstr "يتجاوز حجم الملف 5 ميغابايت"
+
+msgid "Workbook metadata is invalid"
+msgstr "بيانات الملف الوصفية غير صالحة"
+
+msgid "Workbook reference lists are missing"
+msgstr "القوائم المرجعية للملف مفقودة"
+
+msgid "Workbook reference lists exceed template limits"
+msgstr "تتجاوز القوائم المرجعية حدود القالب"
+
+msgid "Worksheet dimensions exceed template limits: "
+msgstr "تتجاوز أبعاد الورقة الحدود: "
+
+msgid "Worksheet structure changed; download the current template"
+msgstr "تغير هيكل الأوراق؛ نزّل القالب الحالي"
+
+msgid "XLSX · Up to 5 MB · Up to 2,000 activities"
+msgstr "XLSX · حتى 5 ميغابايت · حتى 2000 نشاط"
+
+msgid "Yes or no"
+msgstr "نعم أو لا"
+
+msgid ""
+"Your activities are saved. Open each draft to complete it and submit it for "
+"review."
+msgstr "تم حفظ أنشطتك. افتح كل مسودة لإكمالها وإرسالها للمراجعة."
+
+msgid "[EXAMPLE]"
+msgstr "[مثال]"
+
+msgid "River monitoring study"
+msgstr "دراسة لرصد الأنهار"
+
+msgid "Water management training"
+msgstr "تدريب على إدارة المياه"
+
+msgid "Regional water cooperation"
+msgstr "تعاون إقليمي في مجال المياه"
+
+msgid "Example Water Institute"
+msgstr "معهد مياه افتراضي"
+
+msgid "Example coordinator"
+msgstr "منسق افتراضي"
+
+msgid "Add a row for activity"
+msgstr "أضف صفًا للنشاط"
+
+msgid "Drafts could not be created"
+msgstr "تعذر إنشاء المسودات"
+
+msgid "Resource title"
+msgstr "عنوان المورد"
+
+msgid "Resource description"
+msgstr "وصف المورد"
+
+msgid ""
+"Common reporting rows changed; keep the field labels in their original "
+"positions"
+msgstr "تغيرت صفوف البيانات المشتركة؛ احتفظ بتسميات الحقول في مواضعها الأصلية"
+
+msgid "Worksheet dimensions exceed template limits"
+msgstr "تتجاوز أبعاد الورقة حدود القالب"
+
+msgid ""
+"Official classification titles are kept in their original language when "
+"no translation is available."
+msgstr "تُحفظ عناوين التصنيف الرسمية بلغتها الأصلية عندما لا تتوفر ترجمة."
+
+#: ckanext/theme_ejemplo/templates/package/snippets/resource_style.html
+msgid "Visualization style"
+msgstr "نمط العرض"
+
+#: ckanext/theme_ejemplo/templates/package/snippets/resource_style.html
+msgid "Visualization styles"
+msgstr "أنماط العرض"
+
+#: ckanext/theme_ejemplo/templates/package/snippets/resource_style.html
+msgid "Cartographic style"
+msgstr "نمط الخرائط"
+
+#: ckanext/theme_ejemplo/templates/package/snippets/resource_style.html
+msgid "Download style"
+msgstr "تنزيل النمط"
+
+#: ckanext/theme_ejemplo/templates/package/snippets/resource_style.html
+msgid "Show all files"
+msgstr "عرض جميع الملفات"
+
+#: ckanext/theme_ejemplo/templates/package/snippets/resource_style.html
+msgid "Style files"
+msgstr "ملفات الأنماط"
+
+#: ckanext/theme_ejemplo/templates/package/snippets/resource_style.html
+msgid "Resources could not be loaded. Please try again."
+msgstr "تعذر تحميل الموارد. يرجى المحاولة مرة أخرى."
+
+#: ckanext/theme_ejemplo/templates/package/snippets/resource_style.html
+msgid "Results"
+msgstr "النتائج"
+
+#: ckanext/theme_ejemplo/templates/package/snippets/resource_style.html
+msgid "resources"
+msgstr "موارد"
+
+#: ckanext/theme_ejemplo/templates/package/snippets/resource_style.html
+msgid "Used in"
+msgstr "مستخدم في"
+
+msgid "Archived workspaces are read-only"
+msgstr "لا يمكن تعديل مجموعات العمل المؤرشفة."
+
+msgid "Quick guide"
+msgstr "دليل سريع"
+
+msgid "Reporting details"
+msgstr "بيانات التقرير"
+
+msgid ""
+"One activity per row. Enter its details and indicators on this sheet. "
+"Leave unanswered fields blank."
+msgstr ""
+"نشاط واحد في كل صف. أدخل بياناته ومؤشراته في هذه الورقة. اترك الحقول التي"
+" لم تُجب عنها فارغة."
+
+msgid ""
+"Optional. Choose the activity by its title. Use this sheet only for "
+"additional contributions, support, organizations or resources."
+msgstr ""
+"اختياري. اختر النشاط حسب عنوانه. استخدم هذه الورقة فقط للمساهمات أو الدعم"
+" أو المنظمات أو الموارد الإضافية."
+
+msgid "Leave unanswered fields blank. You can complete them in the draft."
+msgstr "اترك الحقول التي لم تُجب عنها فارغة. يمكنك إكمالها في المسودة."
+
+msgid ""
+"Fill in Activities: one activity per row, including its reporting details"
+" and indicators."
+msgstr "أكمل ورقة الأنشطة: نشاط واحد في كل صف، مع بيانات التقرير ومؤشراته."
+
+msgid ""
+"Start with the activity title. Continue to the right and leave any "
+"unanswered fields blank."
+msgstr "ابدأ بعنوان النشاط. تابع عبر الأعمدة واترك الحقول التي لم تُجب عنها فارغة."
+
+msgid ""
+"Use the dropdowns when available. No formulas or reference codes are "
+"needed."
+msgstr "استخدم القوائم المنسدلة عندما تكون متاحة. لا تحتاج إلى صيغ أو رموز مرجعية."
+
+msgid ""
+"Repeat the contact and institution details for each activity. You can "
+"copy them from the previous row."
+msgstr "كرر بيانات الاتصال والمؤسسة لكل نشاط. يمكنك نسخها من الصف السابق."
+
+msgid ""
+"The other sheets are optional. Use them only when an activity has "
+"additional contributions, support, partner organizations or resources."
+msgstr ""
+"الأوراق الأخرى اختيارية. استخدمها فقط إذا كان للنشاط مساهمات أو دعم أو "
+"منظمات شريكة أو موارد إضافية."
+
+msgid ""
+"On an optional sheet, choose the activity title from the dropdown. Use "
+"distinct titles when adding these details."
+msgstr ""
+"في الورقة الاختيارية، اختر عنوان النشاط من القائمة المنسدلة. استخدم "
+"عناوين مختلفة عند إضافة هذه التفاصيل."
+
+msgid ""
+"Upload the workbook, review the results and create drafts. Nothing is "
+"submitted automatically."
+msgstr "ارفع الملف وراجع النتائج وأنشئ المسودات. لا يُرسل أي شيء تلقائيًا."
+
+msgid ""
+"The completed example is a separate file. Use the empty template for your"
+" real activities."
+msgstr "المثال المكتمل ملف منفصل. استخدم القالب الفارغ لأنشطتك الفعلية."
+
+msgid "Choose the activity title from Activities."
+msgstr "اختر عنوان النشاط من ورقة الأنشطة."
+
+msgid "Choose an activity title that appears exactly once in Activities"
+msgstr "اختر عنوان نشاط يظهر مرة واحدة فقط في ورقة الأنشطة"
+
+msgid "Extra contributions"
+msgstr "مساهمات إضافية"
+
+msgid "Extra Member State support"
+msgstr "دعم إضافي من الدول الأعضاء"
+
+msgid "Extra partner organizations"
+msgstr "منظمات شريكة إضافية"
+
+msgid "Extra resources"
+msgstr "موارد إضافية"
+
+msgid ""
+"Complete one activity per row on the Activities sheet, including its "
+"reporting details and indicators."
+msgstr "أكمل نشاطًا واحدًا في كل صف في ورقة الأنشطة، مع بيانات التقرير ومؤشراته."
+
+msgid ""
+"All activity fields are together on one sheet, grouped from left to "
+"right. Only the title is needed to create a draft."
+msgstr ""
+"جميع حقول النشاط موجودة في ورقة واحدة ومقسمة إلى مجموعات. لا تحتاج إلا "
+"إلى العنوان لإنشاء مسودة."
+
+msgid "Open Activities and enter one activity per row."
+msgstr "افتح ورقة الأنشطة وأدخل نشاطًا واحدًا في كل صف."
+
+msgid ""
+"Continue along the same row to add contact details, countries and "
+"indicators. Leave unanswered fields blank."
+msgstr ""
+"تابع في الصف نفسه لإضافة بيانات الاتصال والبلدان والمؤشرات. اترك الحقول "
+"التي لم تُجب عنها فارغة."
+
+msgid ""
+"Use the extra sheets only for additional contributions, support, partner "
+"organizations or resources. Choose the activity by its title."
+msgstr ""
+"استخدم الأوراق الإضافية فقط لإضافة مساهمات أو دعم أو منظمات شريكة أو "
+"موارد أخرى. اختر النشاط حسب عنوانه."
+
+msgid "Activity"
+msgstr "النشاط"
+
+#: IHP-IX reports October 2026
+msgid "* Not matched to a UNESCO Member State record."
+msgstr "* لا يطابق سجلاً لدولة عضو في اليونسكو."
+
+#: IHP-IX reports October 2026
+msgid "A country counts in every role it holds: reporting institution, supporting Member State or beneficiary. Totals describe whole activities, not results allocated per country."
+msgstr "تُحتسب الدولة في كل دور تؤديه: المؤسسة المُبلِّغة أو الدولة العضو الداعمة أو المستفيدة. تصف المجاميع الأنشطة الكاملة، لا النتائج الموزعة على كل دولة."
+
+#: IHP-IX reports October 2026
+msgid "Activities by key activity"
+msgstr "الأنشطة حسب النشاط الرئيسي"
+
+#: IHP-IX reports October 2026
+msgid "Activities by priority area"
+msgstr "الأنشطة حسب مجال الأولوية"
+
+#: IHP-IX reports October 2026
+msgid "Activities per Output"
+msgstr "الأنشطة حسب المخرج"
+
+#: IHP-IX reports October 2026
+msgid "Activities per biennium"
+msgstr "الأنشطة حسب فترة السنتين"
+
+#: IHP-IX reports October 2026
+msgid "Activities per region"
+msgstr "الأنشطة حسب المنطقة"
+
+#: IHP-IX reports October 2026
+msgid "Activities with a reported biennium: {n}."
+msgstr "الأنشطة ذات فترة سنتين مُبلَّغ عنها: {n}."
+
+#: IHP-IX reports October 2026
+msgid "Activities with curricula"
+msgstr "أنشطة ذات مناهج دراسية"
+
+#: IHP-IX reports October 2026
+msgid "Activities with training materials"
+msgstr "أنشطة ذات مواد تدريبية"
+
+#: IHP-IX reports October 2026
+msgid "Activities without a biennium: {n}."
+msgstr "أنشطة بدون فترة سنتين: {n}."
+
+#: IHP-IX reports October 2026
+msgid "Activities: {n}"
+msgstr "الأنشطة: {n}"
+
+#: IHP-IX reports October 2026
+msgid "All regions"
+msgstr "جميع المناطق"
+
+#: IHP-IX reports October 2026
+msgid "An activity counts once in the overall total and in each linked scope. Subtotals may overlap."
+msgstr "يُحتسب كل نشاط مرة واحدة في الإجمالي العام ومرة في كل نطاق مرتبط. قد تتداخل المجاميع الفرعية."
+
+#: IHP-IX reports October 2026
+msgid "An activity with several product types adds its count under each type."
+msgstr "النشاط الذي يتضمن عدة أنواع من المنتجات يُضيف عدده تحت كل نوع."
+
+#: IHP-IX reports October 2026
+msgid "Appendix: list of source activities"
+msgstr "الملحق: قائمة الأنشطة المصدر"
+
+#: IHP-IX reports October 2026
+msgid "Appendix: source activities"
+msgstr "الملحق: الأنشطة المصدر"
+
+#: IHP-IX reports October 2026
+msgid "Beneficiary"
+msgstr "مستفيد"
+
+#: IHP-IX reports October 2026
+msgid "Contents"
+msgstr "المحتويات"
+
+#: IHP-IX reports October 2026
+msgid "Countries across reporting, supporter and beneficiary roles"
+msgstr "الدول في أدوار الإبلاغ والدعم والاستفادة"
+
+#: IHP-IX reports October 2026
+msgid "Cross-cutting working group"
+msgstr "مجموعة عمل شاملة"
+
+#: IHP-IX reports October 2026
+msgid "Data-knowledge gap"
+msgstr "فجوة البيانات والمعرفة"
+
+#: IHP-IX reports October 2026
+msgid "Female participants"
+msgstr "المشاركات من النساء"
+
+#: IHP-IX reports October 2026
+msgid "Flagship initiative"
+msgstr "مبادرة رائدة"
+
+#: IHP-IX reports October 2026
+msgid "Group"
+msgstr "الفئة"
+
+#: IHP-IX reports October 2026
+msgid "Include descriptions and outcomes"
+msgstr "تضمين الأوصاف والنتائج"
+
+#: IHP-IX reports October 2026
+msgid "Individuals"
+msgstr "الأفراد"
+
+#: IHP-IX reports October 2026
+msgid "Individuals by activity type"
+msgstr "الأفراد حسب نوع النشاط"
+
+#: IHP-IX reports October 2026
+msgid "Individuals per {dimension}"
+msgstr "الأفراد حسب {dimension}"
+
+#: IHP-IX reports October 2026
+msgid "Individuals reached per {dimension}"
+msgstr "الأفراد الذين تم الوصول إليهم حسب {dimension}"
+
+#: IHP-IX reports October 2026
+msgid "Institution names as reported; the same institution may appear under several spellings."
+msgstr "أسماء المؤسسات كما وردت في التقارير؛ قد تظهر المؤسسة نفسها بعدة صيغ كتابية."
+
+#: IHP-IX reports October 2026
+msgid "Institution type"
+msgstr "نوع المؤسسة"
+
+#: IHP-IX reports October 2026
+msgid "Institutions with most activities"
+msgstr "المؤسسات الأكثر نشاطاً"
+
+#: IHP-IX reports October 2026
+msgid "Intergovernmental Hydrological Programme · Phase IX, 2022–2029"
+msgstr "البرنامج الهيدرولوجي الدولي الحكومي · المرحلة التاسعة، 2022–2029"
+
+#: IHP-IX reports October 2026
+msgid "KPI 1"
+msgstr "مؤشر الأداء 1"
+
+#: IHP-IX reports October 2026
+msgid "KPI 2"
+msgstr "مؤشر الأداء 2"
+
+#: IHP-IX reports October 2026
+msgid "KPI 3 and 4"
+msgstr "مؤشرا الأداء 3 و4"
+
+#: IHP-IX reports October 2026
+msgid "KPI 5"
+msgstr "مؤشر الأداء 5"
+
+#: IHP-IX reports October 2026
+msgid "KPI 6"
+msgstr "مؤشر الأداء 6"
+
+#: IHP-IX reports October 2026
+msgid "KPI 8"
+msgstr "مؤشر الأداء 8"
+
+#: IHP-IX reports October 2026
+msgid "Knowledge products by type"
+msgstr "منتجات المعرفة حسب النوع"
+
+#: IHP-IX reports October 2026
+msgid "Knowledge products: {k}. Scientific products: {s}. Contributing activities: {a}."
+msgstr "منتجات المعرفة: {k}. المنتجات العلمية: {s}. الأنشطة المساهمة: {a}."
+
+#: IHP-IX reports October 2026
+msgid "Largest share: {label} ({n})."
+msgstr "الحصة الأكبر: {label} ({n})."
+
+#: IHP-IX reports October 2026
+msgid "Materials"
+msgstr "المواد"
+
+#: IHP-IX reports October 2026
+msgid "Materials and curricula per {dimension}"
+msgstr "المواد والمناهج الدراسية حسب {dimension}"
+
+#: IHP-IX reports October 2026
+msgid "Member States impacted"
+msgstr "الدول الأعضاء المتأثرة"
+
+#: IHP-IX reports October 2026
+msgid "Member States impacted: {n}, across {regions} regions."
+msgstr "الدول الأعضاء المتأثرة: {n}، في {regions} من المناطق."
+
+#: IHP-IX reports October 2026
+msgid "Member States supported in transboundary water management, as reported: {n}, across {d} distinct countries and {a} activities."
+msgstr "الدول الأعضاء المدعومة في إدارة المياه العابرة للحدود حسب التقارير: {n}، في {d} من الدول المختلفة و{a} من الأنشطة."
+
+#: IHP-IX reports October 2026
+msgid "Member States supported per {dimension}"
+msgstr "الدول الأعضاء المدعومة حسب {dimension}"
+
+#: IHP-IX reports October 2026
+msgid "Member States supported, as reported"
+msgstr "الدول الأعضاء المدعومة حسب التقارير"
+
+#: IHP-IX reports October 2026
+msgid "Member States: {n}"
+msgstr "الدول الأعضاء: {n}"
+
+#: IHP-IX reports October 2026
+msgid "Outputs with reported activity"
+msgstr "المخرجات ذات أنشطة مُبلَّغ عنها"
+
+#: IHP-IX reports October 2026
+msgid "Overall"
+msgstr "عام"
+
+#: IHP-IX reports October 2026
+msgid "Priority area"
+msgstr "مجال الأولوية"
+
+#: IHP-IX reports October 2026
+msgid "Products"
+msgstr "المنتجات"
+
+#: IHP-IX reports October 2026
+msgid "Products and individuals are summed from the activity records linked to each scope."
+msgstr "تُجمع المنتجات والأفراد من سجلات الأنشطة المرتبطة بكل نطاق."
+
+#: IHP-IX reports October 2026
+msgid "Products per {dimension}"
+msgstr "المنتجات حسب {dimension}"
+
+#: IHP-IX reports October 2026
+msgid "Published activities in the selected scope: {n}. Participating institutions: {institutions}. Member States recorded in reporting, support or beneficiary roles: {countries}."
+msgstr "الأنشطة المنشورة في النطاق المحدد: {n}. المؤسسات المشاركة: {institutions}. الدول الأعضاء المسجلة في أدوار الإبلاغ أو الدعم أو الاستفادة: {countries}."
+
+#: IHP-IX reports October 2026
+msgid "Published records only. Open each activity to verify its figures."
+msgstr "السجلات المنشورة فقط. افتح كل نشاط للتحقق من أرقامه."
+
+#: IHP-IX reports October 2026
+msgid "Reported counts come from each activity; distinct countries are the union of the countries linked to those activities."
+msgstr "تأتي الأعداد المُبلَّغ عنها من كل نشاط؛ والدول المختلفة هي اتحاد الدول المرتبطة بتلك الأنشطة."
+
+#: IHP-IX reports October 2026
+msgid "Reporting"
+msgstr "مُبلِّغ"
+
+#: IHP-IX reports October 2026
+msgid "Scientific products by type"
+msgstr "المنتجات العلمية حسب النوع"
+
+#: IHP-IX reports October 2026
+msgid "Scientific research"
+msgstr "البحث العلمي"
+
+#: IHP-IX reports October 2026
+msgid "Sections"
+msgstr "الأقسام"
+
+#: IHP-IX reports October 2026
+msgid "Select all"
+msgstr "تحديد الكل"
+
+#: IHP-IX reports October 2026
+msgid "Select none"
+msgstr "إلغاء تحديد الكل"
+
+#: IHP-IX reports October 2026
+msgid "Show as table"
+msgstr "عرض كجدول"
+
+#: IHP-IX reports October 2026
+msgid "Source activities listed: {n}."
+msgstr "الأنشطة المصدر المدرجة: {n}."
+
+#: IHP-IX reports October 2026
+msgid "Stakeholder groups by type"
+msgstr "مجموعات أصحاب المصلحة حسب النوع"
+
+#: IHP-IX reports October 2026
+msgid "Stakeholder groups per {dimension}"
+msgstr "مجموعات أصحاب المصلحة حسب {dimension}"
+
+#: IHP-IX reports October 2026
+msgid "Stakeholder groups with strengthened capacity: {n}, across {d} distinct countries."
+msgstr "مجموعات أصحاب المصلحة ذات القدرات المعزَّزة: {n}، في {d} من الدول المختلفة."
+
+#: IHP-IX reports October 2026
+msgid "Supporter"
+msgstr "داعم"
+
+#: IHP-IX reports October 2026
+msgid "Training materials and courses: {m}. Curricula: {c}."
+msgstr "مواد التدريب ودوراته: {m}. المناهج الدراسية: {c}."
+
+#: IHP-IX reports October 2026
+msgid "Training materials by type"
+msgstr "مواد التدريب حسب النوع"
+
+#: IHP-IX reports October 2026
+msgid "Water education"
+msgstr "التعليم المائي"
+
+#: IHP-IX reports October 2026
+msgid "Water governance"
+msgstr "حوكمة المياه"
+
+#: IHP-IX reports October 2026
+msgid "Water management"
+msgstr "إدارة المياه"
+
+#: IHP-IX reports October 2026
+msgid "What was produced and who was reached"
+msgstr "ما تم إنتاجه ومن تم الوصول إليه"
+
+#: IHP-IX reports October 2026
+msgid "Where the activities take place"
+msgstr "أين تُنفَّذ الأنشطة"
+
+#: IHP-IX reports October 2026
+msgid "Youth (18–35)"
+msgstr "الشباب (18–35)"
+
+#: IHP-IX reports October 2026
+msgid "Youth and female participants may overlap."
+msgstr "قد يتداخل المشاركون من الشباب والنساء."
+
+#: IHP-IX reports October 2026
+msgid "Youth and female participation (%)"
+msgstr "مشاركة الشباب والنساء (%)"
+
+#: IHP-IX reports October 2026
+msgid "{n} more in the table"
+msgstr "{n} إضافية في الجدول"
+
+#: IHP-IX reports October 2026
+msgid "{reached}: {n}. Youth: {youth}%. Female participants: {female}%. Contributing activities: {a}."
+msgstr "{reached}: {n}. الشباب: {youth}%. النساء: {female}%. الأنشطة المساهمة: {a}."
+
+#: IHP-IX entity links October 2026
+msgid "IHP-IX activities of this Member State"
+msgstr "أنشطة IHP-IX لهذه الدولة العضو"
+
+#: IHP-IX entity links October 2026
+msgid "IHP-IX activities of this flagship initiative"
+msgstr "أنشطة IHP-IX لهذه المبادرة الرائدة"
+
+#: IHP-IX entity links October 2026
+msgid "IHP-IX activities of this organization"
+msgstr "أنشطة IHP-IX لهذه المنظمة"
+
+#: IHP-IX entity links October 2026
+msgid "Supporting Member States"
+msgstr "الدول الأعضاء الداعمة"
+
+#: IHP-IX entity links October 2026
+msgid "Progress"
+msgstr "التقدم"
+
+#: IHP-IX entity links October 2026
+msgid "No reported activities match the current filters for this initiative."
+msgstr "لا توجد أنشطة مُبلغ عنها تطابق عوامل التصفية الحالية لهذه المبادرة."
+
+#: IHP-IX entity links October 2026
+msgid "This initiative is not linked to an IHP-IX flagship or working group, so no activities can be attributed to it."
+msgstr "هذه المبادرة غير مرتبطة بمبادرة رائدة أو فريق عمل في IHP-IX، لذا لا يمكن إسناد أنشطة إليها."
+
+#: IHP-IX institution links October 2026
+msgid "IHP-IX Institutions"
+msgstr "مؤسسات IHP-IX"
+
+#: IHP-IX institution links October 2026
+msgid "Link institutions to IHP-WINS organizations"
+msgstr "ربط المؤسسات بمنظمات IHP-WINS"
+
+#: IHP-IX institution links October 2026
+msgid "Legacy activities name their lead institution as free text. Only activities linked to an organization by id appear in that organization's IHP-IX tab and in the explorer filter."
+msgstr "تذكر الأنشطة القديمة مؤسستها الرائدة كنص حر. لا تظهر في علامة تبويب IHP-IX الخاصة بالمنظمة وفي مرشح المستكشف إلا الأنشطة المرتبطة بمنظمة عبر المعرّف."
+
+#: IHP-IX institution links October 2026
+msgid "Review the suggestions, pick the organization for each institution and apply the selection: every linked activity gets a new revision in its history and the link can be undone below. The institution text itself is never changed."
+msgstr "راجع الاقتراحات واختر المنظمة لكل مؤسسة ثم طبّق التحديد: يحصل كل نشاط مرتبط على مراجعة جديدة في سجله ويمكن التراجع عن الربط أدناه. لا يُعدَّل نص المؤسسة نفسه أبداً."
+
+#: IHP-IX institution links October 2026
+msgid "Institutions without organization"
+msgstr "مؤسسات بدون منظمة"
+
+#: IHP-IX institution links October 2026
+msgid "Activities affected"
+msgstr "الأنشطة المعنية"
+
+#: IHP-IX institution links October 2026
+msgid "Activities already linked"
+msgstr "أنشطة مرتبطة بالفعل"
+
+#: IHP-IX institution links October 2026
+msgid "Activities without institution"
+msgstr "أنشطة بدون مؤسسة"
+
+#: IHP-IX institution links October 2026
+msgid "Filter institutions"
+msgstr "تصفية المؤسسات"
+
+#: IHP-IX institution links October 2026
+msgid "Filter institutions…"
+msgstr "تصفية المؤسسات…"
+
+#: IHP-IX institution links October 2026
+msgid "Filter"
+msgstr "تصفية"
+
+#: IHP-IX institution links October 2026
+msgid "Select all confident suggestions"
+msgstr "تحديد كل الاقتراحات الموثوقة"
+
+#: IHP-IX institution links October 2026
+msgid "Deselect all"
+msgstr "إلغاء تحديد الكل"
+
+#: IHP-IX institution links October 2026
+msgid "Link the selected institutions to the chosen organizations?"
+msgstr "هل تريد ربط المؤسسات المحددة بالمنظمات المختارة؟"
+
+#: IHP-IX institution links October 2026
+msgid "Suggestions at or above"
+msgstr "الاقتراحات التي تبلغ"
+
+#: IHP-IX institution links October 2026
+msgid "are preselected."
+msgstr "أو أكثر محددة مسبقاً."
+
+#: IHP-IX institution links October 2026
+msgid "Suggestions"
+msgstr "الاقتراحات"
+
+#: IHP-IX institution links October 2026
+msgid "Also written as:"
+msgstr "يُكتب أيضاً:"
+
+#: IHP-IX institution links October 2026
+msgid "Exact match"
+msgstr "تطابق تام"
+
+#: IHP-IX institution links October 2026
+msgid "Acronym"
+msgstr "اختصار"
+
+#: IHP-IX institution links October 2026
+msgid "Name contained"
+msgstr "الاسم متضمَّن"
+
+#: IHP-IX institution links October 2026
+msgid "First institution listed"
+msgstr "المؤسسة الأولى في القائمة"
+
+#: IHP-IX institution links October 2026
+msgid "Initials"
+msgstr "الأحرف الأولى"
+
+#: IHP-IX institution links October 2026
+msgid "Keyword"
+msgstr "كلمة مفتاحية"
+
+#: IHP-IX institution links October 2026
+msgid "Similar name"
+msgstr "اسم مشابه"
+
+#: IHP-IX institution links October 2026
+msgid "No suggestion"
+msgstr "لا اقتراح"
+
+#: IHP-IX institution links October 2026
+msgid "— Select an organization —"
+msgstr "— اختر منظمة —"
+
+#: IHP-IX institution links October 2026
+msgid "Link selected institutions"
+msgstr "ربط المؤسسات المحددة"
+
+#: IHP-IX institution links October 2026
+msgid "No institutions match the filter."
+msgstr "لا توجد مؤسسات تطابق المرشح."
+
+#: IHP-IX institution links October 2026
+msgid "Every institution with activities is already linked to an organization."
+msgstr "جميع المؤسسات التي لديها أنشطة مرتبطة بالفعل بمنظمة."
+
+#: IHP-IX institution links October 2026
+msgid "Already linked institutions"
+msgstr "مؤسسات مرتبطة بالفعل"
+
+#: IHP-IX institution links October 2026
+msgid "Remove the organization link from all activities of this institution?"
+msgstr "هل تريد إزالة الربط بالمنظمة من جميع أنشطة هذه المؤسسة؟"
+
+#: IHP-IX institution links October 2026
+msgid "Unlink"
+msgstr "إلغاء الربط"
+
+#: IHP-IX institution links October 2026
+msgid "Could not load the institutions."
+msgstr "تعذّر تحميل المؤسسات."
+
+#: IHP-IX institution links October 2026
+msgid "No institutions were selected."
+msgstr "لم يتم تحديد أي مؤسسة."
+
+#: IHP-IX institution links October 2026
+#, python-format
+msgid "Unlinked %(n)d activities."
+msgstr "تم إلغاء ربط %(n)d نشاطاً."
+
+#: IHP-IX institution links October 2026
+#, python-format
+msgid "Linked %(n)d activities for %(k)d institutions."
+msgstr "تم ربط %(n)d نشاطاً لـ %(k)d مؤسسة."
+
+#: IHP-IX institution links October 2026
+msgid "Could not update the institution links."
+msgstr "تعذّر تحديث روابط المؤسسات."
+
+#: IHP-IX institution links October 2026
+msgid "Link institutions"
+msgstr "ربط المؤسسات"
+
+#: IHP-IX institution links October 2026
+msgid "Link legacy institutions to this organization"
+msgstr "ربط المؤسسات القديمة بهذه المنظمة"
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html
+msgid "All organizations"
+msgstr "جميع المنظمات"
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html
+msgid "Clear organization filter"
+msgstr "مسح عامل تصفية المنظمة"
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html
+msgid "Showing activities where this organization is the lead institution or a partner. Totals describe these activities, not results attributable to this organization alone."
+msgstr "عرض الأنشطة التي تكون فيها هذه المنظمة المؤسسة الرائدة أو شريكة. تصف المجاميع هذه الأنشطة، وليس نتائج تُنسب إلى هذه المنظمة وحدها."
+
+#: ckanext/theme_ejemplo/templates/ihpix/progress.html
+msgid "No organizations are linked to published activities yet."
+msgstr "لا توجد منظمات مرتبطة بأنشطة منشورة حتى الآن."
+
+#: ckanext/theme_ejemplo/templates/admin/ihpix_institutions.html
+msgid "Add partner organization"
+msgstr "إضافة منظمة شريكة"
+
+#: ckanext/theme_ejemplo/templates/admin/ihpix_institutions.html
+msgid "— Select a partner organization —"
+msgstr "— اختر منظمة شريكة —"
+
+#: ckanext/theme_ejemplo/templates/admin/ihpix_institutions.html
+msgid "Suggested partners"
+msgstr "شركاء مقترحون"
+
+#: ckanext/theme_ejemplo/templates/admin/ihpix_institutions.html
+msgid "If the reported text names several institutions, add the other ones as partner organizations: they are stored as partners of every activity in the group and removed together with the lead link."
+msgstr "إذا كان النص المُبلَّغ عنه يذكر عدة مؤسسات، فأضف الأخرى كمنظمات شريكة: تُحفظ كشريكة لكل نشاط في المجموعة وتُزال مع رابط المؤسسة الرائدة."
+
+msgid "1 activity deleted."
+msgstr "تم حذف نشاط واحد."
+
+msgid "%(n)s activities deleted."
+msgstr "تم حذف %(n)s من الأنشطة."
+
+msgid "Search by title, institution or country"
+msgstr "البحث حسب العنوان أو المؤسسة أو البلد"
+
+msgid "All statuses"
+msgstr "جميع الحالات"
+
+msgid "Select all on this page"
+msgstr "تحديد الكل في هذه الصفحة"
+
+msgid "%(n)s selected"
+msgstr "تم تحديد %(n)s"
+
+msgid "Delete selected"
+msgstr "حذف المحدد"
+
+msgid "Delete all matching activities"
+msgstr "حذف جميع الأنشطة المطابقة"
+
+msgid "Deleting removes the activity, its attachments and its workspace ledger entries. This cannot be undone."
+msgstr "يؤدي الحذف إلى إزالة النشاط ومرفقاته وسجلاته في مساحات العمل. لا يمكن التراجع عن ذلك."
+
+msgid "Select %(title)s"
+msgstr "تحديد %(title)s"
+
+msgid "No activities selected."
+msgstr "لم يتم تحديد أي نشاط."
+
+msgid "Delete %(n)s selected activities?"
+msgstr "هل تريد حذف الأنشطة المحددة (%(n)s)؟"
+
+msgid "The selected activities will be deleted permanently."
+msgstr "سيتم حذف الأنشطة المحددة نهائيًا."
+
+msgid "Delete all matching activities?"
+msgstr "هل تريد حذف جميع الأنشطة المطابقة؟"
+
+msgid "All %(n)s activities matching the current filters will be deleted permanently, including those on other pages."
+msgstr "سيتم حذف جميع الأنشطة المطابقة للمرشحات الحالية (%(n)s) نهائيًا، بما في ذلك الموجودة في الصفحات الأخرى."
+
+msgid "Final confirmation"
+msgstr "التأكيد النهائي"
+
+msgid "This cannot be undone: %(n)s activities will be deleted."
+msgstr "لا يمكن التراجع عن ذلك: سيتم حذف %(n)s من الأنشطة."
+
+msgid "Yes, delete %(n)s"
+msgstr "نعم، احذف %(n)s"
+
+msgid "Delete this report?"
+msgstr "هل تريد حذف هذا التقرير؟"
+
+msgid "The report and its attachments will be deleted permanently."
+msgstr "سيتم حذف التقرير ومرفقاته نهائيًا."
+
+#: templates/ihpix/snippets/navigation.html ihpix_navigation.py
+msgid "Back"
+msgstr "رجوع"
+
+#: templates/ihpix/snippets/navigation.html ihpix_navigation.py
+msgid "Collaboration"
+msgstr "التعاون"
+
+#: templates/ihpix/report.html
+msgid "Activity details"
+msgstr "تفاصيل النشاط"
+
+#: templates/ihpix/report.html
+msgid "Uploads and resources"
+msgstr "الملفات والموارد"
+
+#: templates/ihpix/report.html
+msgid "Reporting steps"
+msgstr "خطوات إعداد التقرير"
+
+#: templates/ihpix/report.html
+msgid "Previous step"
+msgstr "الخطوة السابقة"
+
+#: templates/ihpix/report.html
+msgid "Continue to uploads"
+msgstr "المتابعة إلى الملفات"
+
+#: templates/ihpix/report.html
+msgid "Continue to review"
+msgstr "المتابعة إلى المراجعة"
+
+#: templates/ihpix/report.html
+msgid "Retry save"
+msgstr "إعادة محاولة الحفظ"
+
+#: templates/ihpix/report.html
+msgid "Discard unsaved changes"
+msgstr "تجاهل التغييرات غير المحفوظة"
+
+#: templates/ihpix/report.html
+msgid "Complete the activity details, add supporting resources, then review and submit."
+msgstr "أكمل تفاصيل النشاط وأضف الموارد الداعمة، ثم راجع التقرير وأرسله."
+
+#: templates/ihpix/report.html
+msgid "Add publications, datasets, events or links that support your activity. You can skip this step if you have no resources to attach."
+msgstr "أضف المنشورات أو مجموعات البيانات أو الفعاليات أو الروابط الداعمة لنشاطك. يمكنك تجاوز هذه الخطوة إذا لم تكن لديك موارد لإرفاقها."
+
+#: templates/ihpix/report.html
+msgid "Your draft is saved automatically after you enter an activity title. Uploads come in step 2."
+msgstr "تُحفظ المسودة تلقائياً بعد إدخال عنوان النشاط. تُضاف الملفات في الخطوة الثانية."
+
+#: templates/ihpix/report.html
+msgid "Saved in this browser. Add an activity title to save to your account."
+msgstr "تم الحفظ في هذا المتصفح. أضف عنوان النشاط للحفظ في حسابك."
+
+#: templates/ihpix/report.html
+msgid "Saved in this browser. Waiting to sync with your account."
+msgstr "تم الحفظ في هذا المتصفح. بانتظار المزامنة مع حسابك."
+
+#: templates/ihpix/report.html
+msgid "Saved in this browser. Some answers need correction before saving to your account."
+msgstr "تم الحفظ في هذا المتصفح. يجب تصحيح بعض الإجابات قبل الحفظ في حسابك."
+
+#: templates/ihpix/report.html
+msgid "Changes are not saved yet. Keep this page open and retry."
+msgstr "لم تُحفظ التغييرات بعد. أبقِ هذه الصفحة مفتوحة وأعد المحاولة."
+
+#: templates/ihpix/report.html
+msgid "Another editor saved changes. Compare the versions before continuing."
+msgstr "حفظ محرر آخر تغييرات. قارن النسختين قبل المتابعة."
+
+#: templates/ihpix/report.html
+msgid "Changes are saved in this browser. Save explicitly to update this report."
+msgstr "التغييرات محفوظة في هذا المتصفح. اضغط على الحفظ لتحديث هذا التقرير."
+
+#: templates/ihpix/report.html
+msgid "Saved to your account"
+msgstr "تم الحفظ في حسابك"
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "Agenda or flyer (optional)"
+msgstr "البرنامج أو النشرة (اختياري)"
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "Choose a file or a URL"
+msgstr "اختر ملفاً أو رابطاً"
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "Choose a file to upload"
+msgstr "اختر ملفاً لرفعه"
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "Choose a license"
+msgstr "اختر ترخيصاً"
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "Choose an organization"
+msgstr "اختر منظمة"
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "Choose dataset or event"
+msgstr "اختر مجموعة بيانات أو فعالية"
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "Choose the dataset visibility"
+msgstr "اختر مستوى ظهور مجموعة البيانات"
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "Choose the event format"
+msgstr "اختر صيغة الفعالية"
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "Create and attach"
+msgstr "إنشاء وإرفاق"
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "Create and attach resources here without leaving your report. Your draft keeps saving automatically."
+msgstr "أنشئ الموارد وأرفقها هنا دون مغادرة التقرير. يستمر حفظ المسودة تلقائياً."
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "Create the resource and attach it without leaving this step."
+msgstr "أنشئ المورد وأرفقه دون مغادرة هذه الخطوة."
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "Data file"
+msgstr "ملف البيانات"
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "End date"
+msgstr "تاريخ الانتهاء"
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "End date must not be before start date"
+msgstr "لا يمكن أن يسبق تاريخ الانتهاء تاريخ البدء"
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "Enter a valid date"
+msgstr "أدخل تاريخاً صالحاً"
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "Event format"
+msgstr "صيغة الفعالية"
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "Hybrid"
+msgstr "هجين"
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "In person"
+msgstr "حضوري"
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "Invalid request identifier"
+msgstr "معرّف الطلب غير صالح"
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "License"
+msgstr "الترخيص"
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "Location"
+msgstr "المكان"
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "No attachment"
+msgstr "دون مرفق"
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "Online"
+msgstr "عبر الإنترنت"
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "Private datasets are only available to authorized organization members."
+msgstr "مجموعات البيانات الخاصة متاحة فقط لأعضاء المنظمة المصرح لهم."
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "Public"
+msgstr "عام"
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "Registration URL"
+msgstr "رابط التسجيل"
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "Resource URL"
+msgstr "رابط المورد"
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "Resource created and added to your report."
+msgstr "تم إنشاء المورد وإضافته إلى التقرير."
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "Submit event and attach"
+msgstr "إرسال الفعالية وإرفاقها"
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "The dataset uses the visibility you select."
+msgstr "ستستخدم مجموعة البيانات مستوى الظهور الذي تختاره."
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "The event is sent for review before it becomes public."
+msgstr "تُرسل الفعالية للمراجعة قبل نشرها للعامة."
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "The file could not be uploaded. Please try again."
+msgstr "تعذر رفع الملف. يرجى إعادة المحاولة."
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "The file exceeds the upload limit"
+msgstr "يتجاوز الملف الحد الأقصى للرفع"
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "The resource could not be created. Please try again."
+msgstr "تعذر إنشاء المورد. يرجى إعادة المحاولة."
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "This answer is too long"
+msgstr "هذه الإجابة طويلة جداً"
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "This file type is not allowed"
+msgstr "هذا النوع من الملفات غير مسموح به"
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "Visibility"
+msgstr "الظهور"
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "You cannot create content in this organization"
+msgstr "لا يمكنك إنشاء محتوى في هذه المنظمة"
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "You need an organization membership to create this content. Ask an organization administrator for access."
+msgstr "يجب أن تكون عضواً في منظمة لإنشاء هذا المحتوى. اطلب الوصول من مسؤول المنظمة."
+
+#: templates/ihpix/snippets/resource_modals.html ihpix_resources.py
+msgid "Please select a valid option"
+msgstr "يرجى اختيار خيار صالح"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Activity and commitments"
+msgstr "النشاط والالتزامات"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Activity plan"
+msgstr "خطة الأنشطة"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Add a title to save your draft to your account."
+msgstr "أضف عنواناً لحفظ المسودة في حسابك."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Add an existing user"
+msgstr "إضافة مستخدم موجود"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Add contact"
+msgstr "إضافة جهة اتصال"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Add member"
+msgstr "إضافة عضو"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Additional associations"
+msgstr "ارتباطات إضافية"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Additional outputs"
+msgstr "مخرجات إضافية"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Agreed plan"
+msgstr "الخطة المتفق عليها"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "An identical record already exists. Reimporting will not create a duplicate."
+msgstr "يوجد سجل مطابق بالفعل. لن تؤدي إعادة الاستيراد إلى إنشاء نسخة مكررة."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Another editor saved changes. Reload before continuing."
+msgstr "حفظ محرر آخر تغييرات. أعد التحميل قبل المتابعة."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Approve plan"
+msgstr "الموافقة على الخطة"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Attach internal working documents or references. This step is optional."
+msgstr "أرفق وثائق عمل داخلية أو مراجع. هذه الخطوة اختيارية."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Awaiting review"
+msgstr "بانتظار المراجعة"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Cancelled"
+msgstr "ملغى"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Catalogue resources use their own publication and visibility rules. Internal documents remain private."
+msgstr "تخضع موارد الفهرس لقواعد النشر والظهور الخاصة بها. تبقى الوثائق الداخلية خاصة."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Category"
+msgstr "الفئة"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Changes saved"
+msgstr "تم حفظ التغييرات"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Commitments by biennium"
+msgstr "الالتزامات حسب فترة السنتين"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Compare existing records"
+msgstr "مقارنة السجلات الموجودة"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Confirm group membership"
+msgstr "تأكيد عضوية المجموعة"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Confirm selected rows"
+msgstr "تأكيد الصفوف المحددة"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Confirm this operation?"
+msgstr "هل تريد تأكيد هذه العملية؟"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Contacts"
+msgstr "جهات الاتصال"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Contacts do not grant membership or send invitations."
+msgstr "لا تمنح جهات الاتصال عضوية ولا ترسل دعوات."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Continue to documents"
+msgstr "المتابعة إلى الوثائق"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Conversation"
+msgstr "محادثة"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Conversations"
+msgstr "المحادثات"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Create a resource in the catalogue"
+msgstr "إنشاء مورد في الفهرس"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Create draft"
+msgstr "إنشاء مسودة"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Describe the deliverables or milestones expected in each period. Leave periods without commitments empty."
+msgstr "صف المخرجات أو المراحل المتوقعة في كل فترة. اترك الفترات التي لا تتضمن التزامات فارغة."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Documents and resources"
+msgstr "الوثائق والموارد"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Edit contact"
+msgstr "تعديل جهة الاتصال"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Excel workbook"
+msgstr "مصنف Excel"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Execution reports"
+msgstr "تقارير التنفيذ"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Execution status"
+msgstr "حالة التنفيذ"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Existing record to update"
+msgstr "السجل الموجود المراد تحديثه"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Export plan to Excel"
+msgstr "تصدير الخطة إلى Excel"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Group manager"
+msgstr "مسؤول المجموعة"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Group responsibilities"
+msgstr "مسؤوليات المجموعة"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Group role"
+msgstr "الدور في المجموعة"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Group title"
+msgstr "اسم المجموعة"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Group workspace"
+msgstr "مساحة عمل المجموعة"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Import completed"
+msgstr "اكتمل الاستيراد"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Import decision"
+msgstr "قرار الاستيراد"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Import with preview"
+msgstr "الاستيراد مع معاينة"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Imported execution reports"
+msgstr "تقارير التنفيذ المستوردة"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Institutional role"
+msgstr "الدور المؤسسي"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Internal documents are available only to authorized members. Uploading does not publish them in the catalogue."
+msgstr "الوثائق الداخلية متاحة فقط للأعضاء المصرح لهم. رفعها لا ينشرها في الفهرس."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Job title"
+msgstr "المسمى الوظيفي"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Join this group"
+msgstr "الانضمام إلى هذه المجموعة"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Key activity code"
+msgstr "رمز النشاط الرئيسي"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Language"
+msgstr "اللغة"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Latest proposals"
+msgstr "أحدث المقترحات"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Lead Member State (optional)"
+msgstr "الدولة العضو المسؤولة (اختياري)"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Lead institution"
+msgstr "المؤسسة المسؤولة"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Link an existing account with the same email (optional)"
+msgstr "ربط حساب موجود بالبريد الإلكتروني نفسه (اختياري)"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Link existing report"
+msgstr "ربط تقرير موجود"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Manage group"
+msgstr "إدارة المجموعة"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Members and contacts"
+msgstr "الأعضاء وجهات الاتصال"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Membership gives access to the group plan, internal documents and conversations."
+msgstr "تتيح العضوية الوصول إلى خطة المجموعة ووثائقها الداخلية ومحادثاتها."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Message"
+msgstr "رسالة"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "No conversations yet."
+msgstr "لا توجد محادثات بعد."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "No execution reports linked yet."
+msgstr "لا توجد تقارير تنفيذ مرتبطة بعد."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "No group manager assigned yet."
+msgstr "لم يُعيّن مسؤول للمجموعة بعد."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "No planned activities yet."
+msgstr "لا توجد أنشطة مخططة بعد."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Original source values"
+msgstr "القيم الأصلية في الملف"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Output / key activity"
+msgstr "المخرج / النشاط الرئيسي"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Output permissions remain unchanged. Assign a group role explicitly after reviewing each membership."
+msgstr "تبقى صلاحيات المخرجات كما هي. عيّن دوراً في المجموعة صراحة بعد مراجعة كل عضوية."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Output workspace"
+msgstr "مساحة عمل المخرج"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Outputs linked to this group"
+msgstr "المخرجات المرتبطة بهذه المجموعة"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Plan activities, coordinate your group and report what was achieved."
+msgstr "خطط للأنشطة ونسق مجموعتك وأبلغ عن النتائج المحققة."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Planned"
+msgstr "مخطط"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Planned activities"
+msgstr "الأنشطة المخططة"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Planned activity"
+msgstr "نشاط مخطط"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Planning"
+msgstr "التخطيط"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Planning steps"
+msgstr "خطوات التخطيط"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Plans are imported as drafts. Contacts do not grant access."
+msgstr "تُستورد الخطط كمسودات. لا تمنح جهات الاتصال صلاحية الوصول."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Post"
+msgstr "نشر الرسالة"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Presentations"
+msgstr "العروض التقديمية"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Preview import"
+msgstr "معاينة الاستيراد"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Private document, up to 20 MB. Earlier versions are kept."
+msgstr "وثيقة خاصة بحجم أقصاه 20 ميغابايت. تُحفظ الإصدارات السابقة."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Progress update"
+msgstr "تحديث التقدم"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Propose activity"
+msgstr "اقتراح نشاط"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Proposed activity"
+msgstr "النشاط المقترح"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Recovered changes from this browser"
+msgstr "تم استعادة التغييرات من هذا المتصفح"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Reference title"
+msgstr "عنوان المرجع"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "References"
+msgstr "المراجع"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Related activity"
+msgstr "النشاط المرتبط"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Related planned activity"
+msgstr "النشاط المخطط المرتبط"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Related document"
+msgstr "الوثيقة المرتبطة"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Related groups"
+msgstr "المجموعات المرتبطة"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Reload saved version"
+msgstr "إعادة تحميل النسخة المحفوظة"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Reply"
+msgstr "رد"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Report execution"
+msgstr "الإبلاغ عن التنفيذ"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Request membership"
+msgstr "طلب العضوية"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Responsible focal point"
+msgstr "جهة التنسيق المسؤولة"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Return for changes"
+msgstr "إعادة للتصحيح"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Returned"
+msgstr "معاد للتصحيح"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Review and correct this row"
+msgstr "مراجعة هذا الصف وتصحيحه"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Review comments"
+msgstr "ملاحظات المراجعة"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Review existing Output memberships"
+msgstr "مراجعة عضويات المخرجات الحالية"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Review proposal"
+msgstr "مراجعة المقترح"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Review status"
+msgstr "حالة المراجعة"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Review the source rows, correct incomplete answers and choose how to handle existing records before confirming."
+msgstr "راجع صفوف المصدر وصحح الإجابات غير المكتملة واختر كيفية التعامل مع السجلات الموجودة قبل التأكيد."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Row"
+msgstr "الصف"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Save changes"
+msgstr "حفظ التغييرات"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Save contact"
+msgstr "حفظ جهة الاتصال"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Save draft"
+msgstr "حفظ المسودة"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Settings"
+msgstr "الإعدادات"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Skip row"
+msgstr "تخطي الصف"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Start a conversation or task"
+msgstr "بدء محادثة أو مهمة"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Strategy"
+msgstr "الاستراتيجية"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Submit proposal"
+msgstr "إرسال المقترح"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Task status"
+msgstr "حالة المهمة"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "The agreed version remains available while these changes are reviewed."
+msgstr "تبقى النسخة المتفق عليها متاحة أثناء مراجعة هذه التغييرات."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "The responsible lead reviews your proposal before it becomes part of the agreed plan."
+msgstr "يراجع المسؤول مقترحك قبل إدراجه في الخطة المتفق عليها."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Thematic working groups"
+msgstr "مجموعات العمل المواضيعية"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "These counts describe the plan. Implementation progress uses published execution reports."
+msgstr "تصف هذه الأعداد الخطة. يعتمد تقدم التنفيذ على تقارير التنفيذ المنشورة."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Tracking and reports"
+msgstr "المتابعة والتقارير"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Update"
+msgstr "تحديث"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Update an existing record after review"
+msgstr "تحديث سجل موجود بعد مراجعته"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Update execution"
+msgstr "تحديث التنفيذ"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Update membership"
+msgstr "تحديث العضوية"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Upload an internal document"
+msgstr "رفع وثيقة داخلية"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Upload new version"
+msgstr "رفع إصدار جديد"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Use the report import workflow for implemented activities. They are reviewed separately from the plan."
+msgstr "استخدم مسار استيراد التقارير للأنشطة المنفذة. تتم مراجعتها بشكل منفصل عن الخطة."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Version history"
+msgstr "سجل الإصدارات"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "View imported records"
+msgstr "عرض السجلات المستوردة"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Workbook contents"
+msgstr "محتويات المصنف"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Your changes have not been saved yet."
+msgstr "لم يتم حفظ تغييراتك بعد."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "records processed"
+msgstr "سجلات تمت معالجتها"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "source rows"
+msgstr "صفوف المصدر"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Select an output of this group"
+msgstr "اختر مخرجاً لهذه المجموعة"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Select a key activity of this output"
+msgstr "اختر نشاطاً رئيسياً لهذا المخرج"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Select a valid output"
+msgstr "اختر مخرجاً صالحاً"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Add a commitment for at least one biennium"
+msgstr "أضف التزاماً لفترة سنتين واحدة على الأقل"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Wait for review before editing"
+msgstr "انتظر المراجعة قبل التعديل"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Add a reason for returning the proposal"
+msgstr "حدد سبب إعادة المقترح"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Approve the plan before reporting execution"
+msgstr "وافق على الخطة قبل الإبلاغ عن تنفيذها"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Historical rows require review. The worksheet year does not prove completion."
+msgstr "تتطلب الصفوف التاريخية مراجعة. لا تثبت سنة الورقة اكتمال النشاط."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "The operation failed. Your changes have not been confirmed."
+msgstr "فشلت العملية. لم يتم تأكيد تغييراتك."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Keep outputs that already have planned activities"
+msgstr "احتفظ بالمخرجات التي تتضمن أنشطة مخططة بالفعل"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Choose an XLSX workbook"
+msgstr "اختر مصنف XLSX"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "No planned activities found"
+msgstr "لم يتم العثور على أنشطة مخططة"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "No contacts found"
+msgstr "لم يتم العثور على جهات اتصال"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "No execution reports found"
+msgstr "لم يتم العثور على تقارير تنفيذ"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Workbook is too large"
+msgstr "المصنف كبير جداً"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Too many rows"
+msgstr "عدد الصفوف كبير جداً"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Invalid request"
+msgstr "طلب غير صالح"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Your recovered draft"
+msgstr "مسودتك المستعادة"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Calendar"
+msgstr "التقويم"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Schedule (optional)"
+msgstr "الجدولة (اختياري)"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Add dates when they are agreed. Activities without dates remain in the biennial plan and the calendar backlog."
+msgstr "أضف التواريخ عند الاتفاق عليها. تبقى الأنشطة بلا تاريخ في الخطة الثنائية وقائمة الأنشطة غير المجدولة."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Planned start"
+msgstr "البداية المخططة"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Planned end / milestone"
+msgstr "النهاية المخططة / الموعد المستهدف"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Original source"
+msgstr "المصدر الأصلي"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "The source values are preserved here. Review missing or inconsistent fields before submitting the plan."
+msgstr "تُحفظ القيم الأصلية هنا. راجع الحقول الناقصة أو غير المتسقة قبل إرسال الخطة."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Planned dates and task deadlines. Open an activity to schedule it or report execution."
+msgstr "التواريخ المخططة ومواعيد المهام. افتح نشاطاً لجدولته أو الإبلاغ عن تنفيذه."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Calendar months"
+msgstr "أشهر التقويم"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Previous month"
+msgstr "الشهر السابق"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Current month"
+msgstr "الشهر الحالي"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Next month"
+msgstr "الشهر التالي"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Go to month"
+msgstr "الانتقال إلى الشهر"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Go"
+msgstr "انتقال"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Monthly calendar"
+msgstr "التقويم الشهري"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Monday"
+msgstr "الاثنين"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Tuesday"
+msgstr "الثلاثاء"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Wednesday"
+msgstr "الأربعاء"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Thursday"
+msgstr "الخميس"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Friday"
+msgstr "الجمعة"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Saturday"
+msgstr "السبت"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Sunday"
+msgstr "الأحد"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Agenda for this month"
+msgstr "جدول هذا الشهر"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "No scheduled activities this month. Choose dates from the activities below when your group agrees them."
+msgstr "لا توجد أنشطة مجدولة هذا الشهر. أضف تواريخ للأنشطة أدناه عندما تتفق عليها المجموعة."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "To schedule"
+msgstr "أنشطة تحتاج إلى جدولة"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Biennial commitments are preserved. A blank date means not scheduled, not cancelled."
+msgstr "تُحفظ الالتزامات الثنائية. التاريخ الفارغ يعني أن الجدولة لم تتم بعد."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "All listed activities have dates."
+msgstr "جميع الأنشطة المعروضة لها تواريخ."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "How this workspace works"
+msgstr "كيف تعمل مساحة العمل"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Plan and schedule"
+msgstr "التخطيط والجدولة"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Describe the activity, keep the commitments for each biennium and add agreed dates. Submit the proposal for review."
+msgstr "صف النشاط واحتفظ بالتزامات كل فترة ثنائية وأضف التواريخ المتفق عليها. أرسل المقترح للمراجعة."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Open calendar"
+msgstr "فتح التقويم"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Report what happened"
+msgstr "الإبلاغ عن التنفيذ"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "From an approved plan, start a linked report. The context is copied; add actual results, evidence and indicators before submitting it for review."
+msgstr "ابدأ تقريراً مرتبطاً من خطة معتمدة. يُنسخ السياق؛ أضف النتائج الفعلية والأدلة والمؤشرات قبل إرساله للمراجعة."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Activity journey"
+msgstr "مراحل النشاط"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "No start date"
+msgstr "بلا تاريخ بداية"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "No end date"
+msgstr "بلا تاريخ نهاية"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Create or resume a draft for the selected biennium. Context is copied from the agreed plan; actual results remain for you to complete."
+msgstr "أنشئ مسودة للفترة الثنائية المحددة أو استأنفها. يُنسخ سياق الخطة المتفق عليها؛ أكمل النتائج الفعلية."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Reporting biennium"
+msgstr "الفترة الثنائية للتقرير"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Continue to execution report"
+msgstr "المتابعة إلى تقرير التنفيذ"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Submit the plan and have it approved to unlock the execution report. Saving a plan does not publish results."
+msgstr "أرسل الخطة واحصل على اعتمادها لفتح تقرير التنفيذ. حفظ الخطة لا ينشر نتائج."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "The activity owner or responsible lead can prepare the execution report."
+msgstr "يمكن لصاحب النشاط أو المسؤول إعداد تقرير التنفيذ."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Stage 2 · Report what happened"
+msgstr "المرحلة 2 · الإبلاغ عن التنفيذ"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "The plan provides context. Complete actual dates, outcomes and indicators below. Changes to this report do not change the plan."
+msgstr "توفر الخطة السياق. أكمل التواريخ الفعلية والنتائج والمؤشرات أدناه. تعديل التقرير لا يغير الخطة."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Consult the agreed commitments"
+msgstr "عرض الالتزامات المتفق عليها"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Planned dates"
+msgstr "التواريخ المخططة"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Source workbooks for review"
+msgstr "ملفات المصدر للمراجعة"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Historical reports remain separate until reconciled. Review source values and matches before creating or linking an execution report."
+msgstr "تبقى التقارير التاريخية منفصلة حتى مطابقتها. راجع القيم الأصلية والتطابقات قبل إنشاء تقرير أو ربطه."
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Review plan"
+msgstr "مراجعة الخطة"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "The end date must be on or after the start date"
+msgstr "يجب ألا يسبق تاريخ النهاية تاريخ البداية"
+
+#: templates/ihpix/groups ihpix_groups.py
+msgid "Choose a biennium from the agreed plan"
+msgstr "اختر فترة ثنائية من الخطة المتفق عليها"

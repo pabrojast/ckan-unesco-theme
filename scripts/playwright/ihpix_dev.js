@@ -12,6 +12,8 @@
 //   IHPIX_PW_OUT    carpeta de capturas/results.json (default ./ihpix-pw-out)
 //   LOCAL_KIT       ruta local de ihpix-forms.js para servirlo sobre la página
 //                   (valida cambios del kit sin reconstruir la imagen)
+//   LOCAL_REPORT_JS / LOCAL_REPORT_CSS  idem para js/ihpix-report.js y
+//                   css/ihpix-report.css (bundles theme/ihpix-report-*)
 // Crea un borrador de reporte y una publicación de prueba ("delete me"):
 // limpiarlos después (ver docs/obsidian-vault/Testing.md).
 const { chromium } = require('playwright');
@@ -32,6 +34,12 @@ async function newPage(browser, token, opts = {}) {
     const url = route.request().url();
     if (process.env.LOCAL_KIT && /\/webassets\/theme\/ihpix-forms\.js/.test(url)) {
       return route.fulfill({ path: process.env.LOCAL_KIT, contentType: 'application/javascript' });
+    }
+    if (process.env.LOCAL_REPORT_JS && /\/webassets\/theme\/ihpix-report\.js/.test(url)) {
+      return route.fulfill({ path: process.env.LOCAL_REPORT_JS, contentType: 'application/javascript' });
+    }
+    if (process.env.LOCAL_REPORT_CSS && /\/webassets\/theme\/ihpix-report\.css/.test(url)) {
+      return route.fulfill({ path: process.env.LOCAL_REPORT_CSS, contentType: 'text/css' });
     }
     if (url.startsWith(BASE)) return route.continue({ headers: { ...route.request().headers(), Authorization: token } });
     return route.continue();
@@ -149,6 +157,8 @@ async function newPage(browser, token, opts = {}) {
     step('report: autosave por usuario restaura tras recargar', restored.title.startsWith('Playwright') && restored.links === 2 && restored.country === 'chile' && restored.ms === 1 && restored.chips === 1, { saveKey, restored });
 
     // Validación en vivo: fechas invertidas
+    // La fecha de inicio está plegada en un <details> desde el rediseño 2026-10
+    await page.evaluate(() => { const d = document.querySelector('.ihpix-optional-details'); if (d) d.open = true; });
     await page.fill('#ihpix-field-start-date', '2026-06-01'); await page.fill('#ihpix-field-end-date', '2026-01-01');
     await page.locator('#ihpix-field-end-date').dispatchEvent('change'); await page.locator('#ihpix-field-end-date').blur();
     const dateErr = await page.locator('#ihpix-error-end-date').isVisible();
@@ -178,7 +188,7 @@ async function newPage(browser, token, opts = {}) {
     await page.goto(BASE + '/ihpix/report?output=1.3', { waitUntil: 'domcontentloaded', timeout: 90000 });
     await page.waitForSelector('#ihpix-report-form', { timeout: 60000 });
     await page.waitForFunction(() => window.IhpixForms && document.querySelectorAll('.ixf-combobox').length > 0, null, { timeout: 60000 }).catch(() => {});
-    const overflow = await page.evaluate(() => ({ scrollWidth: document.documentElement.scrollWidth, innerWidth: window.innerWidth, navScroll: (() => { const n = document.querySelector('.ihpix-section-nav-inner'); return n ? getComputedStyle(n).overflowX : null; })() }));
+    const overflow = await page.evaluate(() => ({ scrollWidth: document.documentElement.scrollWidth, innerWidth: window.innerWidth, navScroll: (() => { const n = document.querySelector('.ihpix-section-nav'); return n ? getComputedStyle(n).overflowX : null; })() }));
     step('móvil 390px: sin desbordamiento horizontal + nav horizontal', overflow.scrollWidth <= overflow.innerWidth + 1 && overflow.navScroll === 'auto', overflow);
     await page.screenshot({ path: OUT + '/report-mobile.png', fullPage: false });
     await ctx.close();

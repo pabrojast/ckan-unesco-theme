@@ -1,0 +1,29 @@
+{#
+  Pestañas del panel de administración IHP-IX. Autocontenido: no depende de
+  `.nav-tabs` de Bootstrap (en CKAN 2.10 / Bootstrap 5 esa clase ya no estiliza
+  `li > a` y las pestañas salían como enlaces sueltos).
+
+  Uso: {% import 'admin/snippets/ihpix_admin_tabs.html' as admin_ui with context %}
+       {{ admin_ui.admin_tabs('institutions') }}
+  `active`: content | activities | reports | overview | workspaces | institutions
+#}
+{% macro admin_tabs(active) %}
+<style>
+  .ihpix-admin-tabs { display: flex; flex-wrap: wrap; gap: 2px; list-style: none; margin: 0 0 1.4rem; padding: 0; border-bottom: 2px solid #E9ECEF; }
+  .ihpix-admin-tabs li { margin: 0 0 -2px; }
+  .ihpix-admin-tabs a { display: inline-flex; align-items: center; gap: .45rem; padding: 10px 18px; border: 2px solid transparent; border-bottom: 0; border-radius: 8px 8px 0 0; color: #6C757D; font-weight: 600; text-decoration: none; line-height: 1.2; }
+  .ihpix-admin-tabs a:hover, .ihpix-admin-tabs a:focus { color: #0072BC; background: #F8F9FA; border-color: #E9ECEF #E9ECEF transparent; text-decoration: none; }
+  .ihpix-admin-tabs a:focus-visible { outline: 2px solid #0072BC; outline-offset: -2px; }
+  .ihpix-admin-tabs li.active a { color: #0072BC; background: #fff; border-color: #0072BC #0072BC transparent; font-weight: 700; }
+  .ihpix-admin-tabs .fa { font-size: .9em; opacity: .85; }
+  @media (max-width: 700px) { .ihpix-admin-tabs a { padding: 8px 12px; font-size: .9rem; } }
+</style>
+<ul class="ihpix-admin-tabs" aria-label="{{ _('Administration') }} IHP-IX">
+  <li{% if active == 'content' %} class="active"{% endif %}><a href="/ckan-admin/ihpix"{% if active == 'content' %} aria-current="page"{% endif %}><i class="fa fa-file-text-o" aria-hidden="true"></i>{{ _('Page Content') }}</a></li>
+  <li{% if active == 'activities' %} class="active"{% endif %}><a href="/ckan-admin/ihpix/activities"{% if active == 'activities' %} aria-current="page"{% endif %}><i class="fa fa-list" aria-hidden="true"></i>{{ _('Activities') }}</a></li>
+  <li{% if active == 'reports' %} class="active"{% endif %}><a href="/ckan-admin/ihpix/reports?status=pending"{% if active == 'reports' %} aria-current="page"{% endif %}><i class="fa fa-inbox" aria-hidden="true"></i>{{ _('Reports') }}</a></li>
+  <li{% if active == 'overview' %} class="active"{% endif %}><a href="{{ h.url_for('theme_ejemplo.ihpix_admin_overview') }}"{% if active == 'overview' %} aria-current="page"{% endif %}><i class="fa fa-bar-chart" aria-hidden="true"></i>{{ _('Overview') }}</a></li>
+  <li{% if active == 'workspaces' %} class="active"{% endif %}><a href="{{ h.url_for('theme_ejemplo.ihpix_workspaces_admin') }}"{% if active == 'workspaces' %} aria-current="page"{% endif %}><i class="fa fa-users" aria-hidden="true"></i>{{ _('Working groups') }}</a></li>
+  <li{% if active == 'institutions' %} class="active"{% endif %}><a href="{{ h.url_for('theme_ejemplo.ihpix_institutions_admin') }}"{% if active == 'institutions' %} aria-current="page"{% endif %}><i class="fa fa-link" aria-hidden="true"></i>{{ _('Institutions') }}</a></li>
+</ul>
+{% endmacro %}

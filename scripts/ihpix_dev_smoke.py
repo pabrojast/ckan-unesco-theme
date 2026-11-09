@@ -28,11 +28,22 @@ PAGES = [
     '/ihpix', '/ihpix/report', '/ihpix/report?output=1.3', '/ihpix/outputs', '/ihpix/outputs/1.3',
     '/ihpix/priority-area/PA1', '/ihpix/contributors', '/ihpix/workspaces', '/ihpix/workspaces/1.3',
     '/ihpix/workspaces/1.3/members', '/ihpix/dashboard', '/ihpix/my-reports',
+    '/ihpix/progress', '/ihpix/progress/pa/PA1', '/ihpix/progress/output/1.3',
+    '/ihpix/progress/flagship/friend', '/ihpix/progress/ctwg/ecohydrology-and-water-quality',
+    '/ihpix/progress?biennium=2024-2025',
+    '/ihpix/outputs?country=chile', '/ihpix/outputs?flagship=friend', '/ihpix/outputs?organization=cazalac',
+    '/ihpix/outputs?organization=cazalac&flagship=friend', '/ihpix/progress?organization=cazalac',
+    '/ihpix/presentation?scope=overall&organization=cazalac',
+    '/ihpix/reports/generate?scope=overall&organization=cazalac',
+    '/group/chile/ihpix', '/group/friend-water/ihpix', '/organization/cazalac/ihpix',
     '/ckan-admin/ihpix', '/ckan-admin/ihpix/activities', '/ckan-admin/ihpix/reports?status=pending',
-    '/ckan-admin/ihpix/workspaces', '/ckan-admin/ihpix/overview',
+    '/ckan-admin/ihpix/workspaces', '/ckan-admin/ihpix/overview', '/ckan-admin/ihpix/institutions',
 ]
 REPORT_MARKERS = ('ihpix-forms-i18n', 'data-ihpix-multipicker', 'data-ihpix-markdown',
-                  'id="ihpix-publication-modal"', '<option value="course">')
+                  'id="ihpix-publication-modal"', '<option value="course">',
+                  'name="key_activity_code"', 'name="training_type_other"', 'value="UWMP"',
+                  'id="section-review"', 'id="ihpix-report-config"')
+PROGRESS_MARKERS = ('id="ihpix-progress-data"', 'id="ihpix-progress-config"', 'ixg-strip')
 
 
 def main():
@@ -66,6 +77,21 @@ def main():
         print('marcadores del reporte ausentes:', missing or 'ninguno')
         if missing:
             failed.append('markers')
+        r = client.get('/ihpix/progress', headers=headers, base_url=BASE_URL)
+        body = r.get_data(as_text=True)
+        missing = [m for m in PROGRESS_MARKERS if m not in body]
+        print('marcadores del progreso ausentes:', missing or 'ninguno')
+        if missing:
+            failed.append('progress-markers')
+        r = client.get('/api/3/action/ihpix_progress_stats?scope=overall', headers=headers, base_url=BASE_URL)
+        try:
+            stats = r.get_json()['result']
+            print('ihpix_progress_stats: %s actividades, %s Member States, KPI2=%s' % (
+                stats['overview']['activities'], stats['overview']['member_states_impacted'],
+                stats['kpi_2']['individuals']))
+        except Exception as e:  # noqa: BLE001
+            print('ihpix_progress_stats: error', r.status_code, e)
+            failed.append('progress-stats')
         r = client.post('/ihpix/markdown-preview', headers=headers, data={'text': '**b**'}, base_url=BASE_URL)
         print('markdown-preview:', r.status_code, r.get_data(as_text=True)[:80])
     finally:

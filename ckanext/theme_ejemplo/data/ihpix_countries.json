@@ -1,0 +1,2761 @@
+{
+  "source": "https://data.unesco.org/explore/dataset/cou001/",
+  "retrieved": "2026-10-21",
+  "countries": [
+    {
+      "country_title_en": "Brunei Darussalam",
+      "country_title_fr": "Brunéi Darussalam",
+      "country_title_es": "Brunei Darussalam",
+      "country_title_ar": "بروني دار السلام",
+      "electoral_group": "Group IV",
+      "regional_group": [
+        "Asia and the Pacific"
+      ],
+      "iso2": "BN",
+      "iso3": "BRN",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Barbados",
+      "country_title_fr": "Barbade",
+      "country_title_es": "Barbados",
+      "country_title_ar": "بربادوس",
+      "electoral_group": "Group III",
+      "regional_group": [
+        "Latin America and the Caribbean"
+      ],
+      "iso2": "BB",
+      "iso3": "BRB",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Australia",
+      "country_title_fr": "Australie",
+      "country_title_es": "Australia",
+      "country_title_ar": "أستراليا",
+      "electoral_group": "Group IV",
+      "regional_group": [
+        "Asia and the Pacific"
+      ],
+      "iso2": "AU",
+      "iso3": "AUS",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Sierra Leone",
+      "country_title_fr": "Sierra Leone",
+      "country_title_es": "Sierra Leona",
+      "country_title_ar": "سيراليون",
+      "electoral_group": "Group Va",
+      "regional_group": [
+        "Africa"
+      ],
+      "iso2": "SL",
+      "iso3": "SLE",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "South Sudan",
+      "country_title_fr": "Soudan du Sud",
+      "country_title_es": "Sudán del Sur",
+      "country_title_ar": "جنوب السودان",
+      "electoral_group": "Group Va",
+      "regional_group": [
+        "Africa"
+      ],
+      "iso2": "SS",
+      "iso3": "SSD",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "United States of America",
+      "country_title_fr": "États-Unis d'Amérique (les)",
+      "country_title_es": "Estados Unidos de América (los)",
+      "country_title_ar": "الولايات المتحدة الأمريكية",
+      "electoral_group": "Group I",
+      "regional_group": [
+        "Europe and North America"
+      ],
+      "iso2": "US",
+      "iso3": "USA",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Palau",
+      "country_title_fr": "Palaos",
+      "country_title_es": "Palau",
+      "country_title_ar": "بالاو",
+      "electoral_group": "Group IV",
+      "regional_group": [
+        "Asia and the Pacific"
+      ],
+      "iso2": "PW",
+      "iso3": "PLW",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Malta",
+      "country_title_fr": "Malte",
+      "country_title_es": "Malta",
+      "country_title_ar": "مالطة",
+      "electoral_group": "Group I",
+      "regional_group": [
+        "Europe and North America",
+        "Arab States"
+      ],
+      "iso2": "MT",
+      "iso3": "MLT",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Philippines",
+      "country_title_fr": "Philippines",
+      "country_title_es": "Filipinas",
+      "country_title_ar": "الفلبين",
+      "electoral_group": "Group IV",
+      "regional_group": [
+        "Asia and the Pacific"
+      ],
+      "iso2": "PH",
+      "iso3": "PHL",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Armenia",
+      "country_title_fr": "Arménie",
+      "country_title_es": "Armenia",
+      "country_title_ar": "أرمينيا",
+      "electoral_group": "Group II",
+      "regional_group": [
+        "Europe and North America"
+      ],
+      "iso2": "AM",
+      "iso3": "ARM",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Solomon Islands",
+      "country_title_fr": "Îles Salomon",
+      "country_title_es": "Islas Salomón",
+      "country_title_ar": "جزر سليمان",
+      "electoral_group": "Group IV",
+      "regional_group": [
+        "Asia and the Pacific"
+      ],
+      "iso2": "SB",
+      "iso3": "SLB",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Finland",
+      "country_title_fr": "Finlande",
+      "country_title_es": "Finlandia",
+      "country_title_ar": "فنلندا",
+      "electoral_group": "Group I",
+      "regional_group": [
+        "Europe and North America"
+      ],
+      "iso2": "FI",
+      "iso3": "FIN",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Benin",
+      "country_title_fr": "Bénin",
+      "country_title_es": "Benin",
+      "country_title_ar": "بنين",
+      "electoral_group": "Group Va",
+      "regional_group": [
+        "Africa"
+      ],
+      "iso2": "BJ",
+      "iso3": "BEN",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Sudan",
+      "country_title_fr": "Soudan",
+      "country_title_es": "Sudán",
+      "country_title_ar": "السودان",
+      "electoral_group": "Group Vb",
+      "regional_group": [
+        "Africa"
+      ],
+      "iso2": "SD",
+      "iso3": "SDN",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "United Kingdom of Great Britain and Northern Ireland",
+      "country_title_fr": "Royaume-Uni de Grande-Bretagne et d'Irlande du Nord",
+      "country_title_es": "Reino Unido de Gran Bretaña e Irlanda del Norte",
+      "country_title_ar": "المملكة المتحدة لبريطانيا العظمى وآيرلندا الشمالية",
+      "electoral_group": "Group I",
+      "regional_group": [
+        "Europe and North America"
+      ],
+      "iso2": "GB",
+      "iso3": "GBR",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Guatemala",
+      "country_title_fr": "Guatemala",
+      "country_title_es": "Guatemala",
+      "country_title_ar": "غواتيمالا",
+      "electoral_group": "Group III",
+      "regional_group": [
+        "Latin America and the Caribbean"
+      ],
+      "iso2": "GT",
+      "iso3": "GTM",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Åland Islands",
+      "country_title_fr": "Îles Åland",
+      "country_title_es": "Islas Åland",
+      "country_title_ar": "جزر أولاند",
+      "electoral_group": null,
+      "regional_group": [
+        "Europe and North America"
+      ],
+      "iso2": "AX",
+      "iso3": "ALA",
+      "membership": "2. Associate Member"
+    },
+    {
+      "country_title_en": "Russian Federation",
+      "country_title_fr": "Fédération de Russie",
+      "country_title_es": "Federación de Rusia",
+      "country_title_ar": "الاتحاد الروسي",
+      "electoral_group": "Group II",
+      "regional_group": [
+        "Europe and North America",
+        "Asia and the Pacific"
+      ],
+      "iso2": "RU",
+      "iso3": "RUS",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Samoa",
+      "country_title_fr": "Samoa",
+      "country_title_es": "Samoa",
+      "country_title_ar": "ساموا",
+      "electoral_group": "Group IV",
+      "regional_group": [
+        "Asia and the Pacific"
+      ],
+      "iso2": "WS",
+      "iso3": "WSM",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Japan",
+      "country_title_fr": "Japon",
+      "country_title_es": "Japón",
+      "country_title_ar": "اليابان",
+      "electoral_group": "Group IV",
+      "regional_group": [
+        "Asia and the Pacific"
+      ],
+      "iso2": "JP",
+      "iso3": "JPN",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Cuba",
+      "country_title_fr": "Cuba",
+      "country_title_es": "Cuba",
+      "country_title_ar": "كوبا",
+      "electoral_group": "Group III",
+      "regional_group": [
+        "Latin America and the Caribbean"
+      ],
+      "iso2": "CU",
+      "iso3": "CUB",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Ukraine",
+      "country_title_fr": "Ukraine",
+      "country_title_es": "Ucrania",
+      "country_title_ar": "أوكرانيا",
+      "electoral_group": "Group II",
+      "regional_group": [
+        "Europe and North America"
+      ],
+      "iso2": "UA",
+      "iso3": "UKR",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Kiribati",
+      "country_title_fr": "Kiribati",
+      "country_title_es": "Kiribati",
+      "country_title_ar": "كيريباتي",
+      "electoral_group": "Group IV",
+      "regional_group": [
+        "Asia and the Pacific"
+      ],
+      "iso2": "KI",
+      "iso3": "KIR",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Tunisia",
+      "country_title_fr": "Tunisie",
+      "country_title_es": "Túnez",
+      "country_title_ar": "تونس",
+      "electoral_group": "Group Vb",
+      "regional_group": [
+        "Arab States",
+        "Africa"
+      ],
+      "iso2": "TN",
+      "iso3": "TUN",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Netherlands (Kingdom of the)",
+      "country_title_fr": "Pays-Bas (Royaume des)",
+      "country_title_es": "Países Bajos (Reino de los)",
+      "country_title_ar": "هولندا (مملكة)",
+      "electoral_group": "Group I",
+      "regional_group": [
+        "Europe and North America"
+      ],
+      "iso2": "NL",
+      "iso3": "NLD",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "State of Palestine",
+      "country_title_fr": "État de Palestine",
+      "country_title_es": "Palestina",
+      "country_title_ar": "فلسطين",
+      "electoral_group": "Group Vb",
+      "regional_group": [
+        "Arab States"
+      ],
+      "iso2": "PS",
+      "iso3": "PSE",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Yemen",
+      "country_title_fr": "Yémen",
+      "country_title_es": "Yemen",
+      "country_title_ar": "اليمن",
+      "electoral_group": "Group Vb",
+      "regional_group": [
+        "Arab States"
+      ],
+      "iso2": "YE",
+      "iso3": "YEM",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Guyana",
+      "country_title_fr": "Guyana",
+      "country_title_es": "Guyana",
+      "country_title_ar": "غيانا",
+      "electoral_group": "Group III",
+      "regional_group": [
+        "Latin America and the Caribbean"
+      ],
+      "iso2": "GY",
+      "iso3": "GUY",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Andorra",
+      "country_title_fr": "Andorre",
+      "country_title_es": "Andorra",
+      "country_title_ar": "أندورا",
+      "electoral_group": "Group I",
+      "regional_group": [
+        "Europe and North America"
+      ],
+      "iso2": "AD",
+      "iso3": "AND",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Uganda",
+      "country_title_fr": "Ouganda",
+      "country_title_es": "Uganda",
+      "country_title_ar": "أوغندا",
+      "electoral_group": "Group Va",
+      "regional_group": [
+        "Africa"
+      ],
+      "iso2": "UG",
+      "iso3": "UGA",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Jamaica",
+      "country_title_fr": "Jamaïque",
+      "country_title_es": "Jamaica",
+      "country_title_ar": "جامايكا",
+      "electoral_group": "Group III",
+      "regional_group": [
+        "Latin America and the Caribbean"
+      ],
+      "iso2": "JM",
+      "iso3": "JAM",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Egypt",
+      "country_title_fr": "Égypte",
+      "country_title_es": "Egipto",
+      "country_title_ar": "مصر",
+      "electoral_group": "Group Vb",
+      "regional_group": [
+        "Arab States",
+        "Africa"
+      ],
+      "iso2": "EG",
+      "iso3": "EGY",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Monaco",
+      "country_title_fr": "Monaco",
+      "country_title_es": "Mónaco",
+      "country_title_ar": "موناكو",
+      "electoral_group": "Group I",
+      "regional_group": [
+        "Europe and North America"
+      ],
+      "iso2": "MC",
+      "iso3": "MCO",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Lithuania",
+      "country_title_fr": "Lituanie",
+      "country_title_es": "Lituania",
+      "country_title_ar": "ليتوانيا",
+      "electoral_group": "Group II",
+      "regional_group": [
+        "Europe and North America"
+      ],
+      "iso2": "LT",
+      "iso3": "LTU",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Chad",
+      "country_title_fr": "Tchad",
+      "country_title_es": "Chad",
+      "country_title_ar": "تشاد",
+      "electoral_group": "Group Va",
+      "regional_group": [
+        "Africa"
+      ],
+      "iso2": "TD",
+      "iso3": "TCD",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Micronesia (Federated States of)",
+      "country_title_fr": "Micronésie (Etats fédérés de)",
+      "country_title_es": "Micronesia (Estados Federados de)",
+      "country_title_ar": "ميكرونيزيا٬ ولايات ــ الموحدة",
+      "electoral_group": "Group IV",
+      "regional_group": [
+        "Asia and the Pacific"
+      ],
+      "iso2": "FM",
+      "iso3": "FSM",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Bulgaria",
+      "country_title_fr": "Bulgarie",
+      "country_title_es": "Bulgaria",
+      "country_title_ar": "بلغاريا",
+      "electoral_group": "Group II",
+      "regional_group": [
+        "Europe and North America"
+      ],
+      "iso2": "BG",
+      "iso3": "BGR",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Timor-Leste",
+      "country_title_fr": "Timor-Leste",
+      "country_title_es": "Timor-Leste",
+      "country_title_ar": "تيمور- ليشتي",
+      "electoral_group": "Group IV",
+      "regional_group": [
+        "Asia and the Pacific"
+      ],
+      "iso2": "TL",
+      "iso3": "TLS",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Niger",
+      "country_title_fr": "Niger",
+      "country_title_es": "Níger",
+      "country_title_ar": "النيجر",
+      "electoral_group": "Group Va",
+      "regional_group": [
+        "Africa"
+      ],
+      "iso2": "NE",
+      "iso3": "NER",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Norway",
+      "country_title_fr": "Norvège",
+      "country_title_es": "Noruega",
+      "country_title_ar": "النرويج",
+      "electoral_group": "Group I",
+      "regional_group": [
+        "Europe and North America"
+      ],
+      "iso2": "NO",
+      "iso3": "NOR",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Canada",
+      "country_title_fr": "Canada",
+      "country_title_es": "Canadá",
+      "country_title_ar": "كندا",
+      "electoral_group": "Group I",
+      "regional_group": [
+        "Europe and North America"
+      ],
+      "iso2": "CA",
+      "iso3": "CAN",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Cameroon",
+      "country_title_fr": "Cameroun",
+      "country_title_es": "Camerún",
+      "country_title_ar": "الكامرون",
+      "electoral_group": "Group Va",
+      "regional_group": [
+        "Africa"
+      ],
+      "iso2": "CM",
+      "iso3": "CMR",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Paraguay",
+      "country_title_fr": "Paraguay",
+      "country_title_es": "Paraguay",
+      "country_title_ar": "باراغواي",
+      "electoral_group": "Group III",
+      "regional_group": [
+        "Latin America and the Caribbean"
+      ],
+      "iso2": "PY",
+      "iso3": "PRY",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Liechtenstein",
+      "country_title_fr": "Liechtenstein",
+      "country_title_es": "Liechtenstein",
+      "country_title_ar": "ليختنشتاين",
+      "electoral_group": null,
+      "regional_group": [
+        "Europe and North America"
+      ],
+      "iso2": "LI",
+      "iso3": "LIE",
+      "membership": null
+    },
+    {
+      "country_title_en": "Slovenia",
+      "country_title_fr": "Slovénie",
+      "country_title_es": "Eslovenia",
+      "country_title_ar": "سلوفينيا",
+      "electoral_group": "Group II",
+      "regional_group": [
+        "Europe and North America"
+      ],
+      "iso2": "SI",
+      "iso3": "SVN",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Ireland",
+      "country_title_fr": "Irlande",
+      "country_title_es": "Irlanda",
+      "country_title_ar": "آيرلندا",
+      "electoral_group": "Group I",
+      "regional_group": [
+        "Europe and North America"
+      ],
+      "iso2": "IE",
+      "iso3": "IRL",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Turkmenistan",
+      "country_title_fr": "Turkménistan",
+      "country_title_es": "Turkmenistán",
+      "country_title_ar": "تركمانستان",
+      "electoral_group": "Group IV",
+      "regional_group": [
+        "Asia and the Pacific"
+      ],
+      "iso2": "TM",
+      "iso3": "TKM",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Aruba",
+      "country_title_fr": "Aruba",
+      "country_title_es": "Aruba",
+      "country_title_ar": "آروبا",
+      "electoral_group": null,
+      "regional_group": [
+        "Latin America and the Caribbean"
+      ],
+      "iso2": "AW",
+      "iso3": "ABW",
+      "membership": "2. Associate Member"
+    },
+    {
+      "country_title_en": "Mongolia",
+      "country_title_fr": "Mongolie",
+      "country_title_es": "Mongolia",
+      "country_title_ar": "منغوليا",
+      "electoral_group": "Group IV",
+      "regional_group": [
+        "Asia and the Pacific"
+      ],
+      "iso2": "MN",
+      "iso3": "MNG",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Costa Rica",
+      "country_title_fr": "Costa Rica",
+      "country_title_es": "Costa Rica",
+      "country_title_ar": "كوستاريكا",
+      "electoral_group": "Group III",
+      "regional_group": [
+        "Latin America and the Caribbean"
+      ],
+      "iso2": "CR",
+      "iso3": "CRI",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Saint Kitts and Nevis",
+      "country_title_fr": "Saint-Kitts-et-Nevis",
+      "country_title_es": "Saint Kitts y Nevis",
+      "country_title_ar": "سانت كيتس ونيفيس",
+      "electoral_group": "Group III",
+      "regional_group": [
+        "Latin America and the Caribbean"
+      ],
+      "iso2": "KN",
+      "iso3": "KNA",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Argentina",
+      "country_title_fr": "Argentine",
+      "country_title_es": "Argentina",
+      "country_title_ar": "الأرجنتين",
+      "electoral_group": "Group III",
+      "regional_group": [
+        "Latin America and the Caribbean"
+      ],
+      "iso2": "AR",
+      "iso3": "ARG",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Tonga",
+      "country_title_fr": "Tonga",
+      "country_title_es": "Tonga",
+      "country_title_ar": "تونغا",
+      "electoral_group": "Group IV",
+      "regional_group": [
+        "Asia and the Pacific"
+      ],
+      "iso2": "TO",
+      "iso3": "TON",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Greece",
+      "country_title_fr": "Grèce",
+      "country_title_es": "Grecia",
+      "country_title_ar": "اليونان",
+      "electoral_group": "Group I",
+      "regional_group": [
+        "Europe and North America"
+      ],
+      "iso2": "GR",
+      "iso3": "GRC",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Holy See",
+      "country_title_fr": "Saint Siège",
+      "country_title_es": "Santa Sede",
+      "country_title_ar": "الكرسي الرسولي",
+      "electoral_group": null,
+      "regional_group": [
+        "Europe and North America"
+      ],
+      "iso2": "VA",
+      "iso3": "VAT",
+      "membership": "3. Observer"
+    },
+    {
+      "country_title_en": "Bhutan",
+      "country_title_fr": "Bhoutan",
+      "country_title_es": "Bhután",
+      "country_title_ar": "بوتان",
+      "electoral_group": "Group IV",
+      "regional_group": [
+        "Asia and the Pacific"
+      ],
+      "iso2": "BT",
+      "iso3": "BTN",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Ethiopia",
+      "country_title_fr": "Éthiopie",
+      "country_title_es": "Etiopía",
+      "country_title_ar": "إثيوبيا",
+      "electoral_group": "Group Va",
+      "regional_group": [
+        "Africa"
+      ],
+      "iso2": "ET",
+      "iso3": "ETH",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Panama",
+      "country_title_fr": "Panama",
+      "country_title_es": "Panamá",
+      "country_title_ar": "بنما",
+      "electoral_group": "Group III",
+      "regional_group": [
+        "Latin America and the Caribbean"
+      ],
+      "iso2": "PA",
+      "iso3": "PAN",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Indonesia",
+      "country_title_fr": "Indonésie",
+      "country_title_es": "Indonesia",
+      "country_title_ar": "إندونيسيا",
+      "electoral_group": "Group IV",
+      "regional_group": [
+        "Asia and the Pacific"
+      ],
+      "iso2": "ID",
+      "iso3": "IDN",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Colombia",
+      "country_title_fr": "Colombie",
+      "country_title_es": "Colombia",
+      "country_title_ar": "كولومبيا",
+      "electoral_group": "Group III",
+      "regional_group": [
+        "Latin America and the Caribbean"
+      ],
+      "iso2": "CO",
+      "iso3": "COL",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Uruguay",
+      "country_title_fr": "Uruguay",
+      "country_title_es": "Uruguay",
+      "country_title_ar": "أوروغواي",
+      "electoral_group": "Group III",
+      "regional_group": [
+        "Latin America and the Caribbean"
+      ],
+      "iso2": "UY",
+      "iso3": "URY",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Eritrea",
+      "country_title_fr": "Érythrée",
+      "country_title_es": "Eritrea",
+      "country_title_ar": "إريتريا",
+      "electoral_group": "Group Va",
+      "regional_group": [
+        "Africa"
+      ],
+      "iso2": "ER",
+      "iso3": "ERI",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Saudi Arabia",
+      "country_title_fr": "Arabie saoudite",
+      "country_title_es": "Arabia Saudita",
+      "country_title_ar": "المملكة العربية السعودية",
+      "electoral_group": "Group Vb",
+      "regional_group": [
+        "Arab States"
+      ],
+      "iso2": "SA",
+      "iso3": "SAU",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Guinea",
+      "country_title_fr": "Guinée",
+      "country_title_es": "Guinea",
+      "country_title_ar": "غينيا",
+      "electoral_group": "Group Va",
+      "regional_group": [
+        "Africa"
+      ],
+      "iso2": "GN",
+      "iso3": "GIN",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Lesotho",
+      "country_title_fr": "Lesotho",
+      "country_title_es": "Lesotho",
+      "country_title_ar": "ليسوتو",
+      "electoral_group": "Group Va",
+      "regional_group": [
+        "Africa"
+      ],
+      "iso2": "LS",
+      "iso3": "LSO",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Brazil",
+      "country_title_fr": "Brésil",
+      "country_title_es": "Brasil",
+      "country_title_ar": "البرازيل",
+      "electoral_group": "Group III",
+      "regional_group": [
+        "Latin America and the Caribbean"
+      ],
+      "iso2": "BR",
+      "iso3": "BRA",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Nepal",
+      "country_title_fr": "Népal",
+      "country_title_es": "Nepal",
+      "country_title_ar": "نيبال",
+      "electoral_group": "Group IV",
+      "regional_group": [
+        "Asia and the Pacific"
+      ],
+      "iso2": "NP",
+      "iso3": "NPL",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Hungary",
+      "country_title_fr": "Hongrie",
+      "country_title_es": "Hungría",
+      "country_title_ar": "المجر",
+      "electoral_group": "Group II",
+      "regional_group": [
+        "Europe and North America"
+      ],
+      "iso2": "HU",
+      "iso3": "HUN",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "United Arab Emirates",
+      "country_title_fr": "Émirats arabes unis",
+      "country_title_es": "Emiratos Árabes Unidos",
+      "country_title_ar": "الإمارات العربية المتحدة",
+      "electoral_group": "Group Vb",
+      "regional_group": [
+        "Arab States"
+      ],
+      "iso2": "AE",
+      "iso3": "ARE",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Kyrgyzstan",
+      "country_title_fr": "Kirghizistan",
+      "country_title_es": "Kirguistán",
+      "country_title_ar": "قيرغيزستان",
+      "electoral_group": "Group IV",
+      "regional_group": [
+        "Asia and the Pacific"
+      ],
+      "iso2": "KG",
+      "iso3": "KGZ",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Rwanda",
+      "country_title_fr": "Rwanda",
+      "country_title_es": "Rwanda",
+      "country_title_ar": "رواندا",
+      "electoral_group": "Group Va",
+      "regional_group": [
+        "Africa"
+      ],
+      "iso2": "RW",
+      "iso3": "RWA",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Djibouti",
+      "country_title_fr": "Djibouti",
+      "country_title_es": "Djibuti",
+      "country_title_ar": "جيبوتي",
+      "electoral_group": "Group Va",
+      "regional_group": [
+        "Africa"
+      ],
+      "iso2": "DJ",
+      "iso3": "DJI",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Austria",
+      "country_title_fr": "Autriche",
+      "country_title_es": "Austria",
+      "country_title_ar": "النمسا",
+      "electoral_group": "Group I",
+      "regional_group": [
+        "Europe and North America"
+      ],
+      "iso2": "AT",
+      "iso3": "AUT",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Papua New Guinea",
+      "country_title_fr": "Papouasie-Nouvelle-Guinée",
+      "country_title_es": "Papua Nueva Guinea",
+      "country_title_ar": "بابوا غينيا الجديدة",
+      "electoral_group": "Group IV",
+      "regional_group": [
+        "Asia and the Pacific"
+      ],
+      "iso2": "PG",
+      "iso3": "PNG",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Suriname",
+      "country_title_fr": "Suriname",
+      "country_title_es": "Suriname",
+      "country_title_ar": "سورينام",
+      "electoral_group": "Group III",
+      "regional_group": [
+        "Latin America and the Caribbean"
+      ],
+      "iso2": "SR",
+      "iso3": "SUR",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Syrian Arab Republic",
+      "country_title_fr": "République arabe syrienne",
+      "country_title_es": "República Árabe Siria",
+      "country_title_ar": "الجمهورية العربية السورية",
+      "electoral_group": "Group Vb",
+      "regional_group": [
+        "Arab States"
+      ],
+      "iso2": "SY",
+      "iso3": "SYR",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Kenya",
+      "country_title_fr": "Kenya",
+      "country_title_es": "Kenya",
+      "country_title_ar": "كينيا",
+      "electoral_group": "Group Va",
+      "regional_group": [
+        "Africa"
+      ],
+      "iso2": "KE",
+      "iso3": "KEN",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "North Macedonia",
+      "country_title_fr": "Macédoine du Nord",
+      "country_title_es": "Macedonia del Norte",
+      "country_title_ar": "مقدونيا الشمالية",
+      "electoral_group": "Group II",
+      "regional_group": [
+        "Europe and North America"
+      ],
+      "iso2": "MK",
+      "iso3": "MKD",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Anguilla",
+      "country_title_fr": "Anguilla",
+      "country_title_es": "Anguila",
+      "country_title_ar": "أنغيلا",
+      "electoral_group": "Group III",
+      "regional_group": [
+        "Latin America and the Caribbean"
+      ],
+      "iso2": "AI",
+      "iso3": "AIA",
+      "membership": "2. Associate Member"
+    },
+    {
+      "country_title_en": "Faroes",
+      "country_title_fr": "îles Féroé",
+      "country_title_es": "Islas Feroe",
+      "country_title_ar": "جزر فارو",
+      "electoral_group": null,
+      "regional_group": [
+        "Europe and North America"
+      ],
+      "iso2": "FO",
+      "iso3": "FRO",
+      "membership": "2. Associate Member"
+    },
+    {
+      "country_title_en": "New Caledonia",
+      "country_title_fr": "Nouvelle-Calédonie",
+      "country_title_es": "Nueva Caledonia",
+      "country_title_ar": "كالي كاليدونيا الجديدة",
+      "electoral_group": null,
+      "regional_group": [
+        "Asia and the Pacific"
+      ],
+      "iso2": "NC",
+      "iso3": "NCL",
+      "membership": "2. Associate Member"
+    },
+    {
+      "country_title_en": "Macao, China",
+      "country_title_fr": "Macao, Chine",
+      "country_title_es": "Macao, China",
+      "country_title_ar": "منطقة ماكاو الإدارية الخاصة",
+      "electoral_group": null,
+      "regional_group": [
+        "Asia and the Pacific"
+      ],
+      "iso2": "MO",
+      "iso3": "MAC",
+      "membership": "2. Associate Member"
+    },
+    {
+      "country_title_en": "European Union",
+      "country_title_fr": "Union européenne",
+      "country_title_es": "Unión Europea",
+      "country_title_ar": "الاتحاد الأوروبي",
+      "electoral_group": null,
+      "regional_group": [
+        "Europe and North America"
+      ],
+      "iso2": "EU",
+      "iso3": "EUE",
+      "membership": null
+    },
+    {
+      "country_title_en": "Eswatini",
+      "country_title_fr": "Eswatini",
+      "country_title_es": "Swazilandia",
+      "country_title_ar": "سوازيلند",
+      "electoral_group": "Group Va",
+      "regional_group": [
+        "Africa"
+      ],
+      "iso2": "SZ",
+      "iso3": "SWZ",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "China",
+      "country_title_fr": "Chine",
+      "country_title_es": "China",
+      "country_title_ar": "الصين",
+      "electoral_group": "Group IV",
+      "regional_group": [
+        "Asia and the Pacific"
+      ],
+      "iso2": "CN",
+      "iso3": "CHN",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "France",
+      "country_title_fr": "France",
+      "country_title_es": "Francia",
+      "country_title_ar": "فرنسا",
+      "electoral_group": "Group I",
+      "regional_group": [
+        "Europe and North America"
+      ],
+      "iso2": "FR",
+      "iso3": "FRA",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Togo",
+      "country_title_fr": "Togo",
+      "country_title_es": "Togo",
+      "country_title_ar": "توغو",
+      "electoral_group": "Group Va",
+      "regional_group": [
+        "Africa"
+      ],
+      "iso2": "TG",
+      "iso3": "TGO",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Sri Lanka",
+      "country_title_fr": "Sri Lanka",
+      "country_title_es": "Sri Lanka",
+      "country_title_ar": "سري لانكا",
+      "electoral_group": "Group IV",
+      "regional_group": [
+        "Asia and the Pacific"
+      ],
+      "iso2": "LK",
+      "iso3": "LKA",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Comoros",
+      "country_title_fr": "Comores",
+      "country_title_es": "Comoras",
+      "country_title_ar": "جزر القمر",
+      "electoral_group": "Group Va",
+      "regional_group": [
+        "Africa"
+      ],
+      "iso2": "KM",
+      "iso3": "COM",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Republic of Korea",
+      "country_title_fr": "République de Corée",
+      "country_title_es": "República de Corea",
+      "country_title_ar": "جمهورية كوريا",
+      "electoral_group": "Group IV",
+      "regional_group": [
+        "Asia and the Pacific"
+      ],
+      "iso2": "KR",
+      "iso3": "KOR",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Liberia",
+      "country_title_fr": "Libéria",
+      "country_title_es": "Liberia",
+      "country_title_ar": "ليبريا",
+      "electoral_group": "Group Va",
+      "regional_group": [
+        "Africa"
+      ],
+      "iso2": "LR",
+      "iso3": "LBR",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Venezuela (Bolivarian Republic of)",
+      "country_title_fr": "Venezuela (République bolivarienne du)",
+      "country_title_es": "Venezuela (República Bolivariana de)",
+      "country_title_ar": "فنزويلا٬ جمهورية - البوليفارية",
+      "electoral_group": "Group III",
+      "regional_group": [
+        "Latin America and the Caribbean"
+      ],
+      "iso2": "VE",
+      "iso3": "VEN",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Pakistan",
+      "country_title_fr": "Pakistan",
+      "country_title_es": "Pakistán",
+      "country_title_ar": "باكستان",
+      "electoral_group": "Group IV",
+      "regional_group": [
+        "Asia and the Pacific"
+      ],
+      "iso2": "PK",
+      "iso3": "PAK",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Iceland",
+      "country_title_fr": "Islande",
+      "country_title_es": "Islandia",
+      "country_title_ar": "آيسلندا",
+      "electoral_group": "Group I",
+      "regional_group": [
+        "Europe and North America"
+      ],
+      "iso2": "IS",
+      "iso3": "ISL",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Spain",
+      "country_title_fr": "Espagne",
+      "country_title_es": "España",
+      "country_title_ar": "إسبانيا",
+      "electoral_group": "Group I",
+      "regional_group": [
+        "Europe and North America"
+      ],
+      "iso2": "ES",
+      "iso3": "ESP",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Germany",
+      "country_title_fr": "Allemagne",
+      "country_title_es": "Alemania",
+      "country_title_ar": "ألمانيا",
+      "electoral_group": "Group I",
+      "regional_group": [
+        "Europe and North America"
+      ],
+      "iso2": "DE",
+      "iso3": "DEU",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Malaysia",
+      "country_title_fr": "Malaisie",
+      "country_title_es": "Malasia",
+      "country_title_ar": "ماليزيا",
+      "electoral_group": "Group IV",
+      "regional_group": [
+        "Asia and the Pacific"
+      ],
+      "iso2": "MY",
+      "iso3": "MYS",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Madagascar",
+      "country_title_fr": "Madagascar",
+      "country_title_es": "Madagascar",
+      "country_title_ar": "مدغشقر",
+      "electoral_group": "Group Va",
+      "regional_group": [
+        "Africa"
+      ],
+      "iso2": "MG",
+      "iso3": "MDG",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Mauritius",
+      "country_title_fr": "Maurice",
+      "country_title_es": "Mauricio",
+      "country_title_ar": "موريشيوس",
+      "electoral_group": "Group Va",
+      "regional_group": [
+        "Africa"
+      ],
+      "iso2": "MU",
+      "iso3": "MUS",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Republic of Moldova",
+      "country_title_fr": "République de Moldova",
+      "country_title_es": "República de Moldova",
+      "country_title_ar": "مولدوفا",
+      "electoral_group": "Group II",
+      "regional_group": [
+        "Europe and North America"
+      ],
+      "iso2": "MD",
+      "iso3": "MDA",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Kuwait",
+      "country_title_fr": "Koweït",
+      "country_title_es": "Kuwait",
+      "country_title_ar": "الكويت",
+      "electoral_group": "Group Vb",
+      "regional_group": [
+        "Arab States"
+      ],
+      "iso2": "KW",
+      "iso3": "KWT",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Gambia",
+      "country_title_fr": "Gambie",
+      "country_title_es": "Gambia",
+      "country_title_ar": "غامبيا",
+      "electoral_group": "Group Va",
+      "regional_group": [
+        "Africa"
+      ],
+      "iso2": "GM",
+      "iso3": "GMB",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Switzerland",
+      "country_title_fr": "Suisse",
+      "country_title_es": "Suiza",
+      "country_title_ar": "سويسرا",
+      "electoral_group": "Group I",
+      "regional_group": [
+        "Europe and North America"
+      ],
+      "iso2": "CH",
+      "iso3": "CHE",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Ghana",
+      "country_title_fr": "Ghana",
+      "country_title_es": "Ghana",
+      "country_title_ar": "غانا",
+      "electoral_group": "Group Va",
+      "regional_group": [
+        "Africa"
+      ],
+      "iso2": "GH",
+      "iso3": "GHA",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Thailand",
+      "country_title_fr": "Thaïlande",
+      "country_title_es": "Tailandia",
+      "country_title_ar": "تايلند",
+      "electoral_group": "Group IV",
+      "regional_group": [
+        "Asia and the Pacific"
+      ],
+      "iso2": "TH",
+      "iso3": "THA",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Antigua and Barbuda",
+      "country_title_fr": "Antigua-et-Barbuda",
+      "country_title_es": "Antigua y Barbuda",
+      "country_title_ar": "أنتيغوا وبربودا",
+      "electoral_group": "Group III",
+      "regional_group": [
+        "Latin America and the Caribbean"
+      ],
+      "iso2": "AG",
+      "iso3": "ATG",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Italy",
+      "country_title_fr": "Italie",
+      "country_title_es": "Italia",
+      "country_title_ar": "إيطاليا",
+      "electoral_group": "Group I",
+      "regional_group": [
+        "Europe and North America"
+      ],
+      "iso2": "IT",
+      "iso3": "ITA",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Oman",
+      "country_title_fr": "Oman",
+      "country_title_es": "Omán",
+      "country_title_ar": "عُمان",
+      "electoral_group": "Group Vb",
+      "regional_group": [
+        "Arab States"
+      ],
+      "iso2": "OM",
+      "iso3": "OMN",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Georgia",
+      "country_title_fr": "Géorgie",
+      "country_title_es": "Georgia",
+      "country_title_ar": "جورجيا",
+      "electoral_group": "Group II",
+      "regional_group": [
+        "Europe and North America"
+      ],
+      "iso2": "GE",
+      "iso3": "GEO",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Denmark",
+      "country_title_fr": "Danemark",
+      "country_title_es": "Dinamarca",
+      "country_title_ar": "الدنمارك",
+      "electoral_group": "Group I",
+      "regional_group": [
+        "Europe and North America"
+      ],
+      "iso2": "DK",
+      "iso3": "DNK",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Iraq",
+      "country_title_fr": "Iraq",
+      "country_title_es": "Iraq",
+      "country_title_ar": "العراق",
+      "electoral_group": "Group Vb",
+      "regional_group": [
+        "Arab States"
+      ],
+      "iso2": "IQ",
+      "iso3": "IRQ",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Burundi",
+      "country_title_fr": "Burundi",
+      "country_title_es": "Burundi",
+      "country_title_ar": "بوروندي",
+      "electoral_group": "Group Va",
+      "regional_group": [
+        "Africa"
+      ],
+      "iso2": "BI",
+      "iso3": "BDI",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Estonia",
+      "country_title_fr": "Estonie",
+      "country_title_es": "Estonia",
+      "country_title_ar": "إستونيا",
+      "electoral_group": "Group II",
+      "regional_group": [
+        "Europe and North America"
+      ],
+      "iso2": "EE",
+      "iso3": "EST",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Somalia",
+      "country_title_fr": "Somalie",
+      "country_title_es": "Somalia",
+      "country_title_ar": "الصومال",
+      "electoral_group": "Group Va",
+      "regional_group": [
+        "Africa"
+      ],
+      "iso2": "SO",
+      "iso3": "SOM",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Albania",
+      "country_title_fr": "Albanie",
+      "country_title_es": "Albania",
+      "country_title_ar": "ألبانيا",
+      "electoral_group": "Group II",
+      "regional_group": [
+        "Europe and North America"
+      ],
+      "iso2": "AL",
+      "iso3": "ALB",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Botswana",
+      "country_title_fr": "Botswana",
+      "country_title_es": "Botswana",
+      "country_title_ar": "بوتسوانا",
+      "electoral_group": "Group Va",
+      "regional_group": [
+        "Africa"
+      ],
+      "iso2": "BW",
+      "iso3": "BWA",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Ecuador",
+      "country_title_fr": "Équateur",
+      "country_title_es": "Ecuador",
+      "country_title_ar": "إكوادور",
+      "electoral_group": "Group III",
+      "regional_group": [
+        "Latin America and the Caribbean"
+      ],
+      "iso2": "EC",
+      "iso3": "ECU",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Serbia",
+      "country_title_fr": "Serbie",
+      "country_title_es": "Serbia",
+      "country_title_ar": "صربيا",
+      "electoral_group": "Group II",
+      "regional_group": [
+        "Europe and North America"
+      ],
+      "iso2": "RS",
+      "iso3": "SRB",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Viet Nam",
+      "country_title_fr": "Viet Nam",
+      "country_title_es": "Viet Nam",
+      "country_title_ar": "فيتنام",
+      "electoral_group": "Group IV",
+      "regional_group": [
+        "Asia and the Pacific"
+      ],
+      "iso2": "VN",
+      "iso3": "VNM",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Portugal",
+      "country_title_fr": "Portugal",
+      "country_title_es": "Portugal",
+      "country_title_ar": "البرتغال",
+      "electoral_group": "Group I",
+      "regional_group": [
+        "Europe and North America"
+      ],
+      "iso2": "PT",
+      "iso3": "PRT",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Malawi",
+      "country_title_fr": "Malawi",
+      "country_title_es": "Malawi",
+      "country_title_ar": "ملاوي",
+      "electoral_group": "Group Va",
+      "regional_group": [
+        "Africa"
+      ],
+      "iso2": "MW",
+      "iso3": "MWI",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Cabo Verde",
+      "country_title_fr": "Cabo Verde",
+      "country_title_es": "Cabo Verde",
+      "country_title_ar": "كابو فيردي",
+      "electoral_group": "Group Va",
+      "regional_group": [
+        "Africa"
+      ],
+      "iso2": "CV",
+      "iso3": "CPV",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Congo",
+      "country_title_fr": "Congo",
+      "country_title_es": "Congo",
+      "country_title_ar": "الكونغو",
+      "electoral_group": "Group Va",
+      "regional_group": [
+        "Africa"
+      ],
+      "iso2": "CG",
+      "iso3": "COG",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Chile",
+      "country_title_fr": "Chili",
+      "country_title_es": "Chile",
+      "country_title_ar": "شيلي",
+      "electoral_group": "Group III",
+      "regional_group": [
+        "Latin America and the Caribbean"
+      ],
+      "iso2": "CL",
+      "iso3": "CHL",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Vanuatu",
+      "country_title_fr": "Vanuatu",
+      "country_title_es": "Vanuatu",
+      "country_title_ar": "فانواتو",
+      "electoral_group": "Group IV",
+      "regional_group": [
+        "Asia and the Pacific"
+      ],
+      "iso2": "VU",
+      "iso3": "VUT",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Mali",
+      "country_title_fr": "Mali",
+      "country_title_es": "Malí",
+      "country_title_ar": "مالي",
+      "electoral_group": "Group Va",
+      "regional_group": [
+        "Africa"
+      ],
+      "iso2": "ML",
+      "iso3": "MLI",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Curaçao",
+      "country_title_fr": "Curaçao",
+      "country_title_es": "Curaçao",
+      "country_title_ar": "كوراساو",
+      "electoral_group": null,
+      "regional_group": [
+        "Latin America and the Caribbean"
+      ],
+      "iso2": "CW",
+      "iso3": "CUW",
+      "membership": "2. Associate Member"
+    },
+    {
+      "country_title_en": "Cyprus",
+      "country_title_fr": "Chypre",
+      "country_title_es": "Chipre",
+      "country_title_ar": "قبرص",
+      "electoral_group": "Group I",
+      "regional_group": [
+        "Europe and North America"
+      ],
+      "iso2": "CY",
+      "iso3": "CYP",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Kazakhstan",
+      "country_title_fr": "Kazakhstan",
+      "country_title_es": "Kazajstán",
+      "country_title_ar": "كازاخستان",
+      "electoral_group": "Group IV",
+      "regional_group": [
+        "Asia and the Pacific",
+        "Europe and North America"
+      ],
+      "iso2": "KZ",
+      "iso3": "KAZ",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Luxembourg",
+      "country_title_fr": "Luxembourg",
+      "country_title_es": "Luxemburgo",
+      "country_title_ar": "لكسمبرغ",
+      "electoral_group": "Group I",
+      "regional_group": [
+        "Europe and North America"
+      ],
+      "iso2": "LU",
+      "iso3": "LUX",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Guinea-Bissau",
+      "country_title_fr": "Guinée-Bissau",
+      "country_title_es": "Guinea-Bissau",
+      "country_title_ar": "غينيا - بيساو",
+      "electoral_group": "Group Va",
+      "regional_group": [
+        "Africa"
+      ],
+      "iso2": "GW",
+      "iso3": "GNB",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Dominican Republic",
+      "country_title_fr": "République dominicaine",
+      "country_title_es": "República Dominicana",
+      "country_title_ar": "الجمهورية الدومينيكية",
+      "electoral_group": "Group III",
+      "regional_group": [
+        "Latin America and the Caribbean"
+      ],
+      "iso2": "DO",
+      "iso3": "DOM",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Cambodia",
+      "country_title_fr": "Cambodge",
+      "country_title_es": "Camboya",
+      "country_title_ar": "كمبوديا",
+      "electoral_group": "Group IV",
+      "regional_group": [
+        "Asia and the Pacific"
+      ],
+      "iso2": "KH",
+      "iso3": "KHM",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Trinidad and Tobago",
+      "country_title_fr": "Trinité-et-Tobago",
+      "country_title_es": "Trinidad y Tobago",
+      "country_title_ar": "ترينيداد وتوباغو",
+      "electoral_group": "Group III",
+      "regional_group": [
+        "Latin America and the Caribbean"
+      ],
+      "iso2": "TT",
+      "iso3": "TTO",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Saint Lucia",
+      "country_title_fr": "Sainte-Lucie",
+      "country_title_es": "Santa Lucía",
+      "country_title_ar": "سانت لوسيا",
+      "electoral_group": "Group III",
+      "regional_group": [
+        "Latin America and the Caribbean"
+      ],
+      "iso2": "LC",
+      "iso3": "LCA",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Democratic People's Republic of Korea",
+      "country_title_fr": "République populaire démocratique de Corée",
+      "country_title_es": "República Popular Democrática de Corea",
+      "country_title_ar": "جمهورية كوريا الشعبية الديمقراطية",
+      "electoral_group": "Group IV",
+      "regional_group": [
+        "Asia and the Pacific"
+      ],
+      "iso2": "KP",
+      "iso3": "PRK",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Namibia",
+      "country_title_fr": "Namibie",
+      "country_title_es": "Namibia",
+      "country_title_ar": "ناميبيا",
+      "electoral_group": "Group Va",
+      "regional_group": [
+        "Africa"
+      ],
+      "iso2": "NA",
+      "iso3": "NAM",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Latvia",
+      "country_title_fr": "Lettonie",
+      "country_title_es": "Letonia",
+      "country_title_ar": "لاتفيا",
+      "electoral_group": "Group II",
+      "regional_group": [
+        "Europe and North America"
+      ],
+      "iso2": "LV",
+      "iso3": "LVA",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Cook Islands",
+      "country_title_fr": "Îles Cook",
+      "country_title_es": "Islas Cook",
+      "country_title_ar": "جزر كوك",
+      "electoral_group": "Group IV",
+      "regional_group": [
+        "Asia and the Pacific"
+      ],
+      "iso2": "CK",
+      "iso3": "COK",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Niue",
+      "country_title_fr": "Nioué",
+      "country_title_es": "Niue",
+      "country_title_ar": "نيوي",
+      "electoral_group": "Group IV",
+      "regional_group": [
+        "Asia and the Pacific"
+      ],
+      "iso2": "NU",
+      "iso3": "NIU",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Sint Maarten",
+      "country_title_fr": "Sint Maarten",
+      "country_title_es": "Sint Maarten",
+      "country_title_ar": "سانت مارتن",
+      "electoral_group": null,
+      "regional_group": [
+        "Latin America and the Caribbean"
+      ],
+      "iso2": "SX",
+      "iso3": "SXM",
+      "membership": "2. Associate Member"
+    },
+    {
+      "country_title_en": "Tokelau",
+      "country_title_fr": "Tokélaou",
+      "country_title_es": "Tokelau",
+      "country_title_ar": "توكيلاو",
+      "electoral_group": null,
+      "regional_group": [
+        "Asia and the Pacific"
+      ],
+      "iso2": "TK",
+      "iso3": "TKL",
+      "membership": "2. Associate Member"
+    },
+    {
+      "country_title_en": "Equatorial Guinea",
+      "country_title_fr": "Guinée équatoriale",
+      "country_title_es": "Guinea Ecuatorial",
+      "country_title_ar": "غينيا الاستوائية",
+      "electoral_group": "Group Va",
+      "regional_group": [
+        "Africa"
+      ],
+      "iso2": "GQ",
+      "iso3": "GNQ",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Côte d'Ivoire",
+      "country_title_fr": "Côte d'Ivoire",
+      "country_title_es": "Côte d'Ivoire",
+      "country_title_ar": "كوت ديفوار",
+      "electoral_group": "Group Va",
+      "regional_group": [
+        "Africa"
+      ],
+      "iso2": "CI",
+      "iso3": "CIV",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Mauritania",
+      "country_title_fr": "Mauritanie",
+      "country_title_es": "Mauritania",
+      "country_title_ar": "موريتانيا",
+      "electoral_group": "Group Vb",
+      "regional_group": [
+        "Arab States",
+        "Africa"
+      ],
+      "iso2": "MR",
+      "iso3": "MRT",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Tuvalu",
+      "country_title_fr": "Tuvalu",
+      "country_title_es": "Tuvalu",
+      "country_title_ar": "توفالو",
+      "electoral_group": "Group IV",
+      "regional_group": [
+        "Asia and the Pacific"
+      ],
+      "iso2": "TV",
+      "iso3": "TUV",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Angola",
+      "country_title_fr": "Angola",
+      "country_title_es": "Angola",
+      "country_title_ar": "أنغولا",
+      "electoral_group": "Group Va",
+      "regional_group": [
+        "Africa"
+      ],
+      "iso2": "AO",
+      "iso3": "AGO",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Singapore",
+      "country_title_fr": "Singapour",
+      "country_title_es": "Singapur",
+      "country_title_ar": "سنغافورة",
+      "electoral_group": "Group IV",
+      "regional_group": [
+        "Asia and the Pacific"
+      ],
+      "iso2": "SG",
+      "iso3": "SGP",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Naoero",
+      "country_title_fr": "Naoero",
+      "country_title_es": "Naoero",
+      "country_title_ar": "ناورو",
+      "electoral_group": "Group IV",
+      "regional_group": [
+        "Asia and the Pacific"
+      ],
+      "iso2": "NR",
+      "iso3": "NRU",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Bahamas",
+      "country_title_fr": "Bahamas",
+      "country_title_es": "Bahamas",
+      "country_title_ar": "البهاما",
+      "electoral_group": "Group III",
+      "regional_group": [
+        "Latin America and the Caribbean"
+      ],
+      "iso2": "BS",
+      "iso3": "BHS",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Romania",
+      "country_title_fr": "Roumanie",
+      "country_title_es": "Rumania",
+      "country_title_ar": "رومانيا",
+      "electoral_group": "Group II",
+      "regional_group": [
+        "Europe and North America"
+      ],
+      "iso2": "RO",
+      "iso3": "ROU",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "South Africa",
+      "country_title_fr": "Afrique du Sud",
+      "country_title_es": "Sudáfrica",
+      "country_title_ar": "جنوب أفريقيا",
+      "electoral_group": "Group Va",
+      "regional_group": [
+        "Africa"
+      ],
+      "iso2": "ZA",
+      "iso3": "ZAF",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Czechia",
+      "country_title_fr": "Tchéquie",
+      "country_title_es": "Chequia",
+      "country_title_ar": "تشيكيا",
+      "electoral_group": "Group II",
+      "regional_group": [
+        "Europe and North America"
+      ],
+      "iso2": "CZ",
+      "iso3": "CZE",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Nigeria",
+      "country_title_fr": "Nigéria",
+      "country_title_es": "Nigeria",
+      "country_title_ar": "نيجيريا",
+      "electoral_group": "Group Va",
+      "regional_group": [
+        "Africa"
+      ],
+      "iso2": "NG",
+      "iso3": "NGA",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Nicaragua",
+      "country_title_fr": "Nicaragua",
+      "country_title_es": "Nicaragua",
+      "country_title_ar": "نيكاراغوا",
+      "electoral_group": "Group III",
+      "regional_group": [
+        "Latin America and the Caribbean"
+      ],
+      "iso2": "NI",
+      "iso3": "NIC",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Montenegro",
+      "country_title_fr": "Monténégro",
+      "country_title_es": "Montenegro",
+      "country_title_ar": "الجبل الأسود",
+      "electoral_group": "Group II",
+      "regional_group": [
+        "Europe and North America"
+      ],
+      "iso2": "ME",
+      "iso3": "MNE",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "El Salvador",
+      "country_title_fr": "El Salvador",
+      "country_title_es": "El Salvador",
+      "country_title_ar": "السلفادور",
+      "electoral_group": "Group III",
+      "regional_group": [
+        "Latin America and the Caribbean"
+      ],
+      "iso2": "SV",
+      "iso3": "SLV",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Burkina Faso",
+      "country_title_fr": "Burkina Faso",
+      "country_title_es": "Burkina Faso",
+      "country_title_ar": "بوركينا فاسو",
+      "electoral_group": "Group Va",
+      "regional_group": [
+        "Africa"
+      ],
+      "iso2": "BF",
+      "iso3": "BFA",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Central African Republic",
+      "country_title_fr": "République centrafricaine",
+      "country_title_es": "República Centroafricana",
+      "country_title_ar": "جمهورية أفريقيا الوسطى",
+      "electoral_group": "Group Va",
+      "regional_group": [
+        "Africa"
+      ],
+      "iso2": "CF",
+      "iso3": "CAF",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Fiji",
+      "country_title_fr": "Fidji",
+      "country_title_es": "Fiji",
+      "country_title_ar": "فيجي",
+      "electoral_group": "Group IV",
+      "regional_group": [
+        "Asia and the Pacific"
+      ],
+      "iso2": "FJ",
+      "iso3": "FJI",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "India",
+      "country_title_fr": "Inde",
+      "country_title_es": "India",
+      "country_title_ar": "الهند",
+      "electoral_group": "Group IV",
+      "regional_group": [
+        "Asia and the Pacific"
+      ],
+      "iso2": "IN",
+      "iso3": "IND",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Lebanon",
+      "country_title_fr": "Liban",
+      "country_title_es": "Líbano",
+      "country_title_ar": "لبنان",
+      "electoral_group": "Group Vb",
+      "regional_group": [
+        "Arab States",
+        "Arab States"
+      ],
+      "iso2": "LB",
+      "iso3": "LBN",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Sweden",
+      "country_title_fr": "Suède",
+      "country_title_es": "Suecia",
+      "country_title_ar": "السويد",
+      "electoral_group": "Group I",
+      "regional_group": [
+        "Europe and North America"
+      ],
+      "iso2": "SE",
+      "iso3": "SWE",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "New Zealand",
+      "country_title_fr": "Nouvelle-Zélande",
+      "country_title_es": "Nueva Zelandia",
+      "country_title_ar": "نيوزيلندا",
+      "electoral_group": "Group IV",
+      "regional_group": [
+        "Asia and the Pacific"
+      ],
+      "iso2": "NZ",
+      "iso3": "NZL",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Algeria",
+      "country_title_fr": "Algérie",
+      "country_title_es": "Argelia",
+      "country_title_ar": "الجزائر",
+      "electoral_group": "Group Vb",
+      "regional_group": [
+        "Arab States",
+        "Africa"
+      ],
+      "iso2": "DZ",
+      "iso3": "DZA",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Belize",
+      "country_title_fr": "Belize",
+      "country_title_es": "Belice",
+      "country_title_ar": "بليز",
+      "electoral_group": "Group III",
+      "regional_group": [
+        "Latin America and the Caribbean"
+      ],
+      "iso2": "BZ",
+      "iso3": "BLZ",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Azerbaijan",
+      "country_title_fr": "Azerbaïdjan",
+      "country_title_es": "Azerbaiyán",
+      "country_title_ar": "أذربيجان",
+      "electoral_group": "Group II",
+      "regional_group": [
+        "Europe and North America"
+      ],
+      "iso2": "AZ",
+      "iso3": "AZE",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Croatia",
+      "country_title_fr": "Croatie",
+      "country_title_es": "Croacia",
+      "country_title_ar": "كرواتيا",
+      "electoral_group": "Group II",
+      "regional_group": [
+        "Europe and North America"
+      ],
+      "iso2": "HR",
+      "iso3": "HRV",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Maldives",
+      "country_title_fr": "Maldives",
+      "country_title_es": "Maldivas",
+      "country_title_ar": "الملديف",
+      "electoral_group": "Group IV",
+      "regional_group": [
+        "Asia and the Pacific"
+      ],
+      "iso2": "MV",
+      "iso3": "MDV",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Democratic Republic of the Congo",
+      "country_title_fr": "République démocratique du Congo",
+      "country_title_es": "República Democrática del Congo",
+      "country_title_ar": "جمهورية الكونغو الديمقراطية",
+      "electoral_group": "Group Va",
+      "regional_group": [
+        "Africa"
+      ],
+      "iso2": "CD",
+      "iso3": "COD",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Zambia",
+      "country_title_fr": "Zambie",
+      "country_title_es": "Zambia",
+      "country_title_ar": "زامبيا",
+      "electoral_group": "Group Va",
+      "regional_group": [
+        "Africa"
+      ],
+      "iso2": "ZM",
+      "iso3": "ZMB",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Seychelles",
+      "country_title_fr": "Seychelles",
+      "country_title_es": "Seychelles",
+      "country_title_ar": "سيشيل",
+      "electoral_group": "Group Va",
+      "regional_group": [
+        "Africa"
+      ],
+      "iso2": "SC",
+      "iso3": "SYC",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Haiti",
+      "country_title_fr": "Haïti",
+      "country_title_es": "Haití",
+      "country_title_ar": "هاييتي",
+      "electoral_group": "Group III",
+      "regional_group": [
+        "Latin America and the Caribbean"
+      ],
+      "iso2": "HT",
+      "iso3": "HTI",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "San Marino",
+      "country_title_fr": "Saint-Marin",
+      "country_title_es": "San Marino",
+      "country_title_ar": "سان مارينو",
+      "electoral_group": "Group I",
+      "regional_group": [
+        "Europe and North America"
+      ],
+      "iso2": "SM",
+      "iso3": "SMR",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Jordan",
+      "country_title_fr": "Jordanie",
+      "country_title_es": "Jordania",
+      "country_title_ar": "الأردن",
+      "electoral_group": "Group Vb",
+      "regional_group": [
+        "Arab States"
+      ],
+      "iso2": "JO",
+      "iso3": "JOR",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Belarus",
+      "country_title_fr": "Bélarus",
+      "country_title_es": "Belarrús",
+      "country_title_ar": "بيلاروس",
+      "electoral_group": "Group II",
+      "regional_group": [
+        "Europe and North America"
+      ],
+      "iso2": "BY",
+      "iso3": "BLR",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Bosnia and Herzegovina",
+      "country_title_fr": "Bosnie-Herzégovine",
+      "country_title_es": "Bosnia y Herzegovina",
+      "country_title_ar": "البوسنة والهرسك",
+      "electoral_group": "Group II",
+      "regional_group": [
+        "Europe and North America"
+      ],
+      "iso2": "BA",
+      "iso3": "BIH",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Grenada",
+      "country_title_fr": "Grenade",
+      "country_title_es": "Granada",
+      "country_title_ar": "غرينادا",
+      "electoral_group": "Group III",
+      "regional_group": [
+        "Latin America and the Caribbean"
+      ],
+      "iso2": "GD",
+      "iso3": "GRD",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Zimbabwe",
+      "country_title_fr": "Zimbabwe",
+      "country_title_es": "Zimbabwe",
+      "country_title_ar": "زمبابوي",
+      "electoral_group": "Group Va",
+      "regional_group": [
+        "Africa"
+      ],
+      "iso2": "ZW",
+      "iso3": "ZWE",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Tajikistan",
+      "country_title_fr": "Tadjikistan",
+      "country_title_es": "Tayikistán",
+      "country_title_ar": "طاجيكستان",
+      "electoral_group": "Group II",
+      "regional_group": [
+        "Asia and the Pacific",
+        "Europe and North America"
+      ],
+      "iso2": "TJ",
+      "iso3": "TJK",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Iran (Islamic Republic of)",
+      "country_title_fr": "Iran (République islamique d')",
+      "country_title_es": "Irán (República Islámica del)",
+      "country_title_ar": "إيران٬ جمهورية - الإسلامية",
+      "electoral_group": "Group IV",
+      "regional_group": [
+        "Asia and the Pacific"
+      ],
+      "iso2": "IR",
+      "iso3": "IRN",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Slovakia",
+      "country_title_fr": "Slovaquie",
+      "country_title_es": "Eslovaquia",
+      "country_title_ar": "سلوفاكيا",
+      "electoral_group": "Group II",
+      "regional_group": [
+        "Europe and North America"
+      ],
+      "iso2": "SK",
+      "iso3": "SVK",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "United Republic of Tanzania",
+      "country_title_fr": "République-Unie de Tanzanie",
+      "country_title_es": "República Unida de Tanzania",
+      "country_title_ar": "جمهورية تنزانيا المتحدة",
+      "electoral_group": "Group Va",
+      "regional_group": [
+        "Africa"
+      ],
+      "iso2": "TZ",
+      "iso3": "TZA",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Poland",
+      "country_title_fr": "Pologne",
+      "country_title_es": "Polonia",
+      "country_title_ar": "بولندا",
+      "electoral_group": "Group II",
+      "regional_group": [
+        "Europe and North America"
+      ],
+      "iso2": "PL",
+      "iso3": "POL",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Saint Vincent and the Grenadines",
+      "country_title_fr": "Saint-Vincent-et-les Grenadines",
+      "country_title_es": "San Vicente y las Granadinas",
+      "country_title_ar": "سانت فنسنت وغرينادين",
+      "electoral_group": "Group III",
+      "regional_group": [
+        "Latin America and the Caribbean"
+      ],
+      "iso2": "VC",
+      "iso3": "VCT",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Senegal",
+      "country_title_fr": "Sénégal",
+      "country_title_es": "Senegal",
+      "country_title_ar": "السنغال",
+      "electoral_group": "Group Va",
+      "regional_group": [
+        "Africa"
+      ],
+      "iso2": "SN",
+      "iso3": "SEN",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Myanmar",
+      "country_title_fr": "Myanmar",
+      "country_title_es": "Myanmar",
+      "country_title_ar": "ميانمار",
+      "electoral_group": "Group IV",
+      "regional_group": [
+        "Asia and the Pacific"
+      ],
+      "iso2": "MM",
+      "iso3": "MMR",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Lao People's Democratic Republic",
+      "country_title_fr": "République démocratique populaire lao",
+      "country_title_es": "República Democrática Popular Lao",
+      "country_title_ar": "جمهورية لاو الديمقراطية الشعبية",
+      "electoral_group": "Group IV",
+      "regional_group": [
+        "Asia and the Pacific"
+      ],
+      "iso2": "LA",
+      "iso3": "LAO",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Dominica",
+      "country_title_fr": "Dominique",
+      "country_title_es": "Dominica",
+      "country_title_ar": "دومينيكا",
+      "electoral_group": "Group III",
+      "regional_group": [
+        "Latin America and the Caribbean"
+      ],
+      "iso2": "DM",
+      "iso3": "DMA",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Morocco",
+      "country_title_fr": "Maroc",
+      "country_title_es": "Marruecos",
+      "country_title_ar": "المغرب",
+      "electoral_group": "Group Vb",
+      "regional_group": [
+        "Arab States",
+        "Africa"
+      ],
+      "iso2": "MA",
+      "iso3": "MAR",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Bahrain",
+      "country_title_fr": "Bahreïn",
+      "country_title_es": "Bahrein",
+      "country_title_ar": "البحرين",
+      "electoral_group": "Group Vb",
+      "regional_group": [
+        "Arab States"
+      ],
+      "iso2": "BH",
+      "iso3": "BHR",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Qatar",
+      "country_title_fr": "Qatar",
+      "country_title_es": "Qatar",
+      "country_title_ar": "قطر",
+      "electoral_group": "Group Vb",
+      "regional_group": [
+        "Arab States"
+      ],
+      "iso2": "QA",
+      "iso3": "QAT",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Bangladesh",
+      "country_title_fr": "Bangladesh",
+      "country_title_es": "Bangladesh",
+      "country_title_ar": "بنغلاديش",
+      "electoral_group": "Group IV",
+      "regional_group": [
+        "Asia and the Pacific"
+      ],
+      "iso2": "BD",
+      "iso3": "BGD",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Sao Tome and Principe",
+      "country_title_fr": "Sao Tomé-et-Principe",
+      "country_title_es": "Santo Tomé y Príncipe",
+      "country_title_ar": "ساو تومي وبرنسيبي",
+      "electoral_group": "Group Va",
+      "regional_group": [
+        "Africa"
+      ],
+      "iso2": "ST",
+      "iso3": "STP",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Bolivia (Plurinational State of)",
+      "country_title_fr": "Bolivie (État plurinational de)",
+      "country_title_es": "Bolivia (Estado Plurinacional de)",
+      "country_title_ar": "بوليفيا٬ دولة - المتعددة القوميات",
+      "electoral_group": "Group III",
+      "regional_group": [
+        "Latin America and the Caribbean"
+      ],
+      "iso2": "BO",
+      "iso3": "BOL",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Mozambique",
+      "country_title_fr": "Mozambique",
+      "country_title_es": "Mozambique",
+      "country_title_ar": "موزمبيق",
+      "electoral_group": "Group Va",
+      "regional_group": [
+        "Africa"
+      ],
+      "iso2": "MZ",
+      "iso3": "MOZ",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Marshall Islands",
+      "country_title_fr": "Îles Marshall",
+      "country_title_es": "Islas Marshall",
+      "country_title_ar": "جزر مارشال",
+      "electoral_group": "Group IV",
+      "regional_group": [
+        "Asia and the Pacific"
+      ],
+      "iso2": "MH",
+      "iso3": "MHL",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Libya",
+      "country_title_fr": "Libye",
+      "country_title_es": "Libia",
+      "country_title_ar": "ليبيا",
+      "electoral_group": "Group Vb",
+      "regional_group": [
+        "Arab States",
+        "Africa"
+      ],
+      "iso2": "LY",
+      "iso3": "LBY",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Mexico",
+      "country_title_fr": "Mexique",
+      "country_title_es": "México",
+      "country_title_ar": "المكسيك",
+      "electoral_group": "Group III",
+      "regional_group": [
+        "Latin America and the Caribbean"
+      ],
+      "iso2": "MX",
+      "iso3": "MEX",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Türkiye",
+      "country_title_fr": "Türkiye",
+      "country_title_es": "Türkiye",
+      "country_title_ar": "تركيا",
+      "electoral_group": "Group I",
+      "regional_group": [
+        "Europe and North America",
+        "Asia and the Pacific"
+      ],
+      "iso2": "TR",
+      "iso3": "TUR",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Belgium",
+      "country_title_fr": "Belgique",
+      "country_title_es": "Bélgica",
+      "country_title_ar": "بلجيكا",
+      "electoral_group": "Group I",
+      "regional_group": [
+        "Europe and North America"
+      ],
+      "iso2": "BE",
+      "iso3": "BEL",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Honduras",
+      "country_title_fr": "Honduras",
+      "country_title_es": "Honduras",
+      "country_title_ar": "هندوراس",
+      "electoral_group": "Group III",
+      "regional_group": [
+        "Latin America and the Caribbean"
+      ],
+      "iso2": "HN",
+      "iso3": "HND",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Israel",
+      "country_title_fr": "Israël",
+      "country_title_es": "Israel",
+      "country_title_ar": "إسرائيل",
+      "electoral_group": "Group I",
+      "regional_group": [
+        "Europe and North America"
+      ],
+      "iso2": "IL",
+      "iso3": "ISR",
+      "membership": "5. Non-Member"
+    },
+    {
+      "country_title_en": "Uzbekistan",
+      "country_title_fr": "Ouzbékistan",
+      "country_title_es": "Uzbekistán",
+      "country_title_ar": "أوزبكستان",
+      "electoral_group": "Group II",
+      "regional_group": [
+        "Asia and the Pacific"
+      ],
+      "iso2": "UZ",
+      "iso3": "UZB",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Peru",
+      "country_title_fr": "Pérou",
+      "country_title_es": "Perú",
+      "country_title_ar": "بيرو",
+      "electoral_group": "Group III",
+      "regional_group": [
+        "Latin America and the Caribbean"
+      ],
+      "iso2": "PE",
+      "iso3": "PER",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Gabon",
+      "country_title_fr": "Gabon",
+      "country_title_es": "Gabón",
+      "country_title_ar": "غابون",
+      "electoral_group": "Group Va",
+      "regional_group": [
+        "Africa"
+      ],
+      "iso2": "GA",
+      "iso3": "GAB",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Afghanistan",
+      "country_title_fr": "Afghanistan",
+      "country_title_es": "Afganistán",
+      "country_title_ar": "أفغانستان",
+      "electoral_group": "Group IV",
+      "regional_group": [
+        "Asia and the Pacific"
+      ],
+      "iso2": "AF",
+      "iso3": "AFG",
+      "membership": "1. Member State"
+    },
+    {
+      "country_title_en": "Cayman Islands",
+      "country_title_fr": "Îles Caïmanes",
+      "country_title_es": "Islas Caimán",
+      "country_title_ar": "جزر كايمان",
+      "electoral_group": null,
+      "regional_group": [
+        "Latin America and the Caribbean"
+      ],
+      "iso2": "KY",
+      "iso3": "CYM",
+      "membership": "2. Associate Member"
+    },
+    {
+      "country_title_en": "Montserrat",
+      "country_title_fr": "Montserrat",
+      "country_title_es": "Montserrat",
+      "country_title_ar": "مونتيسيرات",
+      "electoral_group": null,
+      "regional_group": [
+        "Latin America and the Caribbean"
+      ],
+      "iso2": "MS",
+      "iso3": "MSR",
+      "membership": "2. Associate Member"
+    },
+    {
+      "country_title_en": "British Virgin Islands",
+      "country_title_fr": "Îles Vierges britanniques",
+      "country_title_es": "Islas Vírgenes Británicas",
+      "country_title_ar": "جزر فيرجين البريطانية",
+      "electoral_group": null,
+      "regional_group": [
+        "Latin America and the Caribbean"
+      ],
+      "iso2": "VG",
+      "iso3": "VGB",
+      "membership": "2. Associate Member"
+    },
+    {
+      "country_title_en": "Yugoslavia",
+      "country_title_fr": "Yougoslavie",
+      "country_title_es": "Yugoslavia",
+      "country_title_ar": "يوغوسلافيا",
+      "electoral_group": null,
+      "regional_group": [
+        "Europe and North America"
+      ],
+      "iso2": "YU",
+      "iso3": "YUG",
+      "membership": null
+    }
+  ]
+}

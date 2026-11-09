@@ -9,7 +9,7 @@
     --ix-primary: #0069B4; --ix-primary-dark: #004E8C; --ix-primary-light: #E8F4FD;
     --ix-border: #E2E8F0; --ix-text: #0F172A; --ix-text-sec: #64748B; --ix-text-muted: #94A3B8;
     --ix-radius: 12px; --ix-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06);
-    --ix-pa1: #0069B4; --ix-pa2: #0891B2; --ix-pa3: #059669; --ix-pa4: #D97706; --ix-pa5: #DC2626;
+    --ix-pa1: {{ h.get_ihpix_taxonomies().pa_colors['PA1'] }}; --ix-pa2: {{ h.get_ihpix_taxonomies().pa_colors['PA2'] }}; --ix-pa3: {{ h.get_ihpix_taxonomies().pa_colors['PA3'] }}; --ix-pa4: {{ h.get_ihpix_taxonomies().pa_colors['PA4'] }}; --ix-pa5: {{ h.get_ihpix_taxonomies().pa_colors['PA5'] }};
   }
   .ixp { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; color: var(--ix-text); }
   .ixp *, .ixp *::before, .ixp *::after { box-sizing: border-box; }
@@ -17,13 +17,13 @@
     background: linear-gradient(135deg, var(--ix-primary) 0%, var(--ix-primary-dark) 100%);
     color: #fff; border-radius: var(--ix-radius); padding: 28px 32px; margin-bottom: 24px; position: relative; overflow: hidden;
   }
-  .ixp-header[data-pa="PA1"] { background: linear-gradient(135deg, var(--ix-pa1), #004E8C); }
-  .ixp-header[data-pa="PA2"] { background: linear-gradient(135deg, var(--ix-pa2), #0E7490); }
-  .ixp-header[data-pa="PA3"] { background: linear-gradient(135deg, var(--ix-pa3), #047857); }
-  .ixp-header[data-pa="PA4"] { background: linear-gradient(135deg, var(--ix-pa4), #B45309); }
-  .ixp-header[data-pa="PA5"] { background: linear-gradient(135deg, var(--ix-pa5), #B91C1C); }
+  .ixp-header[data-pa="PA1"] { background: {{ h.get_ihpix_taxonomies().pa_dark_colors['PA1'] }}; }
+  .ixp-header[data-pa="PA2"] { background: {{ h.get_ihpix_taxonomies().pa_dark_colors['PA2'] }}; }
+  .ixp-header[data-pa="PA3"] { background: {{ h.get_ihpix_taxonomies().pa_dark_colors['PA3'] }}; }
+  .ixp-header[data-pa="PA4"] { background: {{ h.get_ihpix_taxonomies().pa_dark_colors['PA4'] }}; }
+  .ixp-header[data-pa="PA5"] { background: {{ h.get_ihpix_taxonomies().pa_dark_colors['PA5'] }}; }
   .ixp-header h1 { color: #fff; font-size: 1.7rem; font-weight: 800; margin: 0 0 0.35rem; letter-spacing: -0.01em; }
-  .ixp-header p { color: rgba(255,255,255,0.88); margin: 0; max-width: 780px; line-height: 1.5; }
+  .ixp .ixp-header p { color: #fff !important; margin: 0; max-width: 780px; line-height: 1.5; }
   .ixp-kicker { display: inline-block; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; background: rgba(255,255,255,0.18); padding: 0.2rem 0.6rem; border-radius: 999px; margin-bottom: 0.6rem; }
   .ixp-header-actions { margin-top: 1rem; display: flex; flex-wrap: wrap; gap: 0.5rem; }
   .ixp-btn { display: inline-flex; align-items: center; gap: 0.4rem; padding: 0.5rem 0.95rem; border-radius: 8px; font-weight: 600; font-size: 0.86rem; text-decoration: none; border: 1px solid transparent; }
@@ -50,9 +50,9 @@
   .ixp-activity-desc { font-size: 0.88rem; color: #334155; margin: 0.35rem 0 0; }
   .ixp-tag { display: inline-block; font-size: 0.7rem; font-weight: 700; padding: 0.1rem 0.5rem; border-radius: 999px; background: var(--ix-primary-light); color: var(--ix-primary); text-decoration: none; }
   .ixp-tag--pa { color: #fff; }
-  .ixp-tag--pa[data-pa="PA1"] { background: var(--ix-pa1); } .ixp-tag--pa[data-pa="PA2"] { background: var(--ix-pa2); }
-  .ixp-tag--pa[data-pa="PA3"] { background: var(--ix-pa3); } .ixp-tag--pa[data-pa="PA4"] { background: var(--ix-pa4); }
-  .ixp-tag--pa[data-pa="PA5"] { background: var(--ix-pa5); }
+  .ixp-tag--pa[data-pa="PA1"] { background: {{ h.get_ihpix_taxonomies().pa_dark_colors['PA1'] }}; } .ixp-tag--pa[data-pa="PA2"] { background: {{ h.get_ihpix_taxonomies().pa_dark_colors['PA2'] }}; }
+  .ixp-tag--pa[data-pa="PA3"] { background: {{ h.get_ihpix_taxonomies().pa_dark_colors['PA3'] }}; } .ixp-tag--pa[data-pa="PA4"] { background: {{ h.get_ihpix_taxonomies().pa_dark_colors['PA4'] }}; }
+  .ixp-tag--pa[data-pa="PA5"] { background: {{ h.get_ihpix_taxonomies().pa_dark_colors['PA5'] }}; }
   .ixp-people { display: grid; gap: 0.6rem; }
   .ixp-person { display: flex; align-items: center; gap: 0.7rem; }
   .ixp-avatar { width: 38px; height: 38px; border-radius: 50%; background: var(--ix-primary-light); color: var(--ix-primary-dark); display: flex; align-items: center; justify-content: center; font-weight: 700; flex: 0 0 38px; overflow: hidden; }
@@ -60,12 +60,12 @@
   .ixp-person-body { min-width: 0; flex: 1; }
   .ixp-person-name { font-weight: 600; color: var(--ix-text); display: block; text-decoration: none; }
   .ixp-person-meta { font-size: 0.78rem; color: var(--ix-text-sec); }
-  .ixp-outputs { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 10px; }
+  .ixp-outputs { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; }
   .ixp-output { display: block; background: #fff; border: 1px solid var(--ix-border); border-radius: 10px; padding: 12px 14px; text-decoration: none; color: var(--ix-text); box-shadow: var(--ix-shadow); transition: transform .12s ease, box-shadow .12s ease; }
   .ixp-output:hover { transform: translateY(-2px); box-shadow: 0 4px 12px rgba(0,0,0,0.08); text-decoration: none; }
   .ixp-output.is-current { border-color: var(--ix-primary); background: var(--ix-primary-light); }
   .ixp-output-code { font-weight: 800; color: var(--ix-primary-dark); font-size: 1.05rem; }
-  .ixp-output-title { font-size: 0.78rem; color: var(--ix-text-sec); margin-top: 0.15rem; min-height: 1.2em; }
+  .ixp-output-title { font-size: 0.9rem; line-height: 1.55; color: #475569; margin-top: 0.5rem; min-height: 1.2em; }
   .ixp-output-count { font-size: 0.74rem; color: var(--ix-text-sec); margin-top: 0.4rem; }
   .ixp-output-count strong { color: var(--ix-text); }
   .ixp-empty { color: var(--ix-text-sec); font-size: 0.9rem; padding: 0.5rem 0; }
@@ -81,6 +81,22 @@
   .ixp-timeline { display: flex; align-items: flex-end; gap: 3px; height: 70px; margin-top: 0.5rem; }
   .ixp-timeline span { flex: 1; background: var(--ix-primary); border-radius: 3px 3px 0 0; min-width: 4px; opacity: 0.85; }
   .ixp-timeline-labels { display: flex; justify-content: space-between; font-size: 0.7rem; color: var(--ix-text-muted); margin-top: 0.2rem; }
+  .ixp {line-height: 1.55;}
+  .ixp .ixp-activity {padding: 24px 0; display: grid; gap: 12px;}
+  .ixp .ixp-activity:first-child {padding-top: 8px;}
+  .ixp .ixp-activity-title {font-size: 1.1rem; line-height: 1.45; margin: 0;}
+  .ixp .ixp-activity-title a {color: var(--ix-primary-dark);}
+  .ixp .ixp-activity-desc {font-size: 1rem !important; color: #475569 !important; margin: 0; display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden;}
+  .ixp-activity-meta {gap: 8px 16px; line-height: 1.6; align-items: baseline;}
+  .ixp-detail-link {font-weight: 600; justify-self: start; min-height: 32px;}
+  .ixp-output {display: flex; flex-direction: column; padding: 20px;}
+  .ixp-output-count {margin-top: auto; padding-top: 14px;}
+  .ixp .ixp-card > ul > li:not(.ixp-activity) {padding-block: 10px !important; gap: 18px !important;}
+  .ixp .ixp-card h2 {line-height: 1.4;}
+  .ixp-header .ixp-breadcrumb a {color: #fff;}
+  @media (max-width: 1100px) {.ixp-outputs {grid-template-columns: repeat(2, minmax(0, 1fr));}}
+  @media (max-width: 600px) {.ixp-outputs {grid-template-columns: minmax(0, 1fr);} .ixp-header {padding: 24px 20px;} .ixp-card {padding: 18px 16px;} .ixp-grid {min-width: 0;}}
+[dir="rtl"] .account-masthead .text {position: absolute !important; width: 1px !important; height: 1px !important; margin: -1px !important; overflow: hidden !important; clip: rect(0,0,0,0) !important; clip-path: inset(50%) !important; white-space: nowrap !important; left: auto !important; right: auto !important;}
 </style>
 {% endmacro %}
 
@@ -91,7 +107,7 @@
 
 {% macro activity_row(activity, links_ui, links) %}
   <li class="ixp-activity">
-    <p class="ixp-activity-title">{{ activity.title }}</p>
+    <h3 class="ixp-activity-title"><a href="{{ h.url_for('theme_ejemplo.ihpix_activity_detail', id=activity.id) }}">{{ activity.title }}</a></h3>
     <div class="ixp-activity-meta">
       {% if activity.priority_area %}
         <a class="ixp-tag ixp-tag--pa" data-pa="{{ activity.priority_area }}" href="{{ h.url_for('theme_ejemplo.ihpix_priority_area', pa=activity.priority_area) }}">{{ activity.priority_area }}</a>
@@ -106,6 +122,7 @@
       {% if reporter and reporter.url %}<span><i class="fa fa-user"></i> <a href="{{ reporter.url }}">{{ reporter.display_name }}</a></span>{% endif %}
     </div>
     {% if activity.description %}<p class="ixp-activity-desc">{{ activity.description }}</p>{% endif %}
+    <a class="ixp-detail-link" href="{{ h.url_for('theme_ejemplo.ihpix_activity_detail', id=activity.id) }}">{{ _('View activity') }} <span aria-hidden="true">→</span></a>
     {{ links_ui.render_links(links, compact=True, heading=False) }}
   </li>
 {% endmacro %}

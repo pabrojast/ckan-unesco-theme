@@ -1,0 +1,5 @@
+{% extends 'ihpix/tools_base.html' %}
+{% block tools_content %}
+<h1>{{ _('Notifications') }}</h1>
+{% for item in result.results %}<article class="ix-tools-card"><a href="{{ item.url }}">{{ _(item.message) }}</a><p>{{ item.created_at }}</p>{% if not item.is_read %}<form method="post">{{ h.csrf_input() }}<input name="id" type="hidden" value="{{ item.id }}"><button class="btn">{{ _('Mark as read') }}</button></form>{% endif %}</article>{% else %}<p>{{ _('No notifications yet.') }}</p>{% endfor %}
+{% endblock %}

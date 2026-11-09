@@ -1,0 +1,15 @@
+{% extends 'ihpix/tools_base.html' %}
+{% block tools_content %}
+<h1>{{ _('Report collaboration') }} · {{ activity.title }}</h1>
+<p><a href="{{ h.url_for('theme_ejemplo.ihpix_report_edit', id=activity.id) }}">{{ _('Open report') }}</a></p>
+<p>{{ _('Collaborators can save draft changes. The author submits the report for review. Membership changes immediately affect editing access.') }}</p>
+{% if result.can_invite and activity.status in ['draft', 'rejected'] %}
+<form method="post" class="ix-tools-card">{{ h.csrf_input() }}<label for="collaborator">{{ _('Invite an active workspace contributor') }}</label>
+  <select id="collaborator" name="user_id" required><option value="">—</option>{% for person in result.candidates %}<option value="{{ person.id }}">{{ person.name }}</option>{% endfor %}</select>
+  <button class="btn btn-primary">{{ _('Invite') }}</button>
+</form>{% endif %}
+<ul>{% for person in result.collaborators %}<li>{{ h.get_ihpix_reporter(person.user_id).display_name }} · {{ _('Active') if person.active else _('Revoked') }}
+{% if result.can_invite and person.active %}<form method="post">{{ h.csrf_input() }}<input type="hidden" name="user_id" value="{{ person.user_id }}"><button class="btn" name="revoke" value="1">{{ _('Revoke access') }}</button></form>{% endif %}</li>{% endfor %}</ul>
+<h2>{{ _('Saved versions') }}</h2>
+{% for revision in result.history %}<details class="ix-tools-card"><summary>{{ _('Version') }} {{ revision.revision }} · {{ revision.created_at }} · {{ h.get_ihpix_reporter(revision.user_id).display_name }}</summary><dl>{% for field, value in revision.snapshot.items() %}{% if value is not none and value != '' %}<dt>{{ h.ihpix_t(field.replace('_', ' ').capitalize()) }}</dt><dd class="ix-preserve">{{ value }}</dd>{% endif %}{% endfor %}</dl></details>{% else %}<p>{{ _('The next save will record the first version.') }}</p>{% endfor %}
+{% endblock %}

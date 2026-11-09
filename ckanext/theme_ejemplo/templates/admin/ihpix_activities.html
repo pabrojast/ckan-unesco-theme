@@ -226,6 +226,11 @@
     </button>
     <div class="ihpact-accordion-body" id="{{ p }}-section-details">
       <div class="form-group">
+        <label for="{{ p }}-key-activity-code">{{ _('Key Activity code') }}</label>
+        <input type="text" id="{{ p }}-key-activity-code" class="form-control ihpact-input" maxlength="16"
+               placeholder="{{ _('e.g. 1.3.2 (Operational Implementation Plan)') }}" />
+      </div>
+      <div class="form-group">
         <label for="{{ p }}-key-activity">{{ _('Key Activity') }}</label>
         <textarea id="{{ p }}-key-activity" class="form-control ihpact-input" rows="3" maxlength="1000" data-ihpix-markdown data-ihpix-counter
                   placeholder="{{ _('Describe the key activity...') }}"></textarea>
@@ -447,6 +452,11 @@
             <input type="number" id="{{ p }}-num-training-materials" class="form-control ihpact-input"
                    min="0" value="0" />
           </div>
+          <div class="form-group" id="{{ p }}-training-type-other-wrapper" style="display:none;">
+            <label for="{{ p }}-training-type-other">{{ _('Other (specify)') }}</label>
+            <input type="text" id="{{ p }}-training-type-other" class="form-control ihpact-input"
+                   placeholder="{{ _('Specify type') }}" />
+          </div>
         </div>
       </div>
       <div class="row">
@@ -604,6 +614,7 @@
           <ul class="nav nav-tabs ihpact-nav-tabs">
             <li><a href="/ckan-admin/ihpix">{{ _('Page Content') }}</a></li>
             <li class="active"><a href="/ckan-admin/ihpix/activities">{{ _('Activities') }}</a></li>
+            <li><a href="/ckan-admin/ihpix/institutions">{{ _('Institutions') }}</a></li>
           </ul>
 
           <div class="row">
@@ -626,27 +637,66 @@
                 </section>
               </div>
 
+              {% if deleted %}
+              <div class="alert alert-success ihpact-alert" role="status">
+                <i class="fa fa-check-circle"></i>
+                {% if deleted == 1 %}{{ _('1 activity deleted.') }}{% else %}{{ _('%(n)s activities deleted.', n=deleted) }}{% endif %}
+              </div>
+              {% endif %}
+
               <!-- Filter Bar -->
               <div class="ihpact-filter-bar">
                 <div class="row">
-                  <div class="col-md-8">
+                  <div class="col-md-4">
                     <h2 class="ihpact-section-title">
                       <i class="fa fa-flag"></i> {{ _('Activities') }}
                       <span class="ihpact-count-badge" id="ihpact-count">{{ total }}</span>
                     </h2>
                   </div>
-                  <div class="col-md-4 text-right">
-                    <form method="get" action="" class="form-inline" style="display:inline-block;">
-                      <select name="pa_filter" class="form-control ihpact-input" onchange="this.form.submit()" style="width:auto; display:inline-block;">
+                  <div class="col-md-8">
+                    <form method="get" action="" class="ihpact-filter-form" role="search" aria-label="{{ _('Filter activities') }}">
+                      <input type="search" name="q" value="{{ q_filter or '' }}" class="form-control ihpact-input ihpact-filter-q"
+                             placeholder="{{ _('Search by title, institution or country') }}" aria-label="{{ _('Search') }}" />
+                      <select name="status" class="form-control ihpact-input" aria-label="{{ _('Status') }}" onchange="this.form.submit()">
+                        <option value="">{{ _('All statuses') }}</option>
+                        {% for value, label in [('draft', _('Draft')), ('pending', _('Pending')), ('published', _('Published')), ('rejected', _('Rejected'))] %}
+                        <option value="{{ value }}" {{ 'selected' if status_filter == value else '' }}>{{ label }}</option>
+                        {% endfor %}
+                      </select>
+                      <select name="pa_filter" class="form-control ihpact-input" aria-label="{{ _('Priority Area') }}" onchange="this.form.submit()">
                         <option value="">{{ _('All Priority Areas') }}</option>
                         {% for pa in ['PA1', 'PA2', 'PA3', 'PA4', 'PA5'] %}
                         <option value="{{ pa }}" {{ 'selected' if pa_filter == pa else '' }}>{{ pa }}</option>
                         {% endfor %}
                       </select>
+                      <button type="submit" class="btn btn-default"><i class="fa fa-search"></i> {{ _('Search') }}</button>
+                      {% if filter_query %}
+                      <a class="btn btn-link ihpact-filter-clear" href="{{ h.url_for('theme_ejemplo.ihpix_activities_admin') }}">{{ _('Clear filters') }}</a>
+                      {% endif %}
                     </form>
                   </div>
                 </div>
               </div>
+
+              <!-- Bulk actions -->
+              {% if activities %}
+              <div class="ihpact-bulk-bar" id="ihpact-bulk-bar">
+                <label class="ihpact-bulk-select">
+                  <input type="checkbox" id="ihpact-select-page" />
+                  <span>{{ _('Select all on this page') }}</span>
+                </label>
+                <span class="ihpact-bulk-count" id="ihpact-selected-count" aria-live="polite">{{ _('%(n)s selected', n=0) }}</span>
+                <div class="ihpact-bulk-actions">
+                  <button type="button" class="btn btn-danger btn-sm" id="ihpact-bulk-delete" disabled>
+                    <i class="fa fa-trash"></i> {{ _('Delete selected') }}
+                  </button>
+                  <button type="button" class="btn btn-default btn-sm ihpact-bulk-all" id="ihpact-bulk-delete-all">
+                    <i class="fa fa-trash-o"></i> {{ _('Delete all matching activities') }} (<span id="ihpact-all-count">{{ total }}</span>)
+                  </button>
+                </div>
+                <p class="ihpact-bulk-hint">{{ _('Deleting removes the activity, its attachments and its workspace ledger entries. This cannot be undone.') }}</p>
+              </div>
+              {% endif %}
 
               <!-- Activities List -->
               <div id="ihpact-list" class="ihpact-list">
@@ -657,6 +707,10 @@
                       <div class="module-content" style="padding: 1.5rem 2rem;">
                         <div class="row">
                           <div class="col-md-2 col-sm-3">
+                            <label class="ihpact-select-wrap">
+                              <input type="checkbox" class="ihpact-select" value="{{ activity.id }}"
+                                     aria-label="{{ _('Select %(title)s', title=activity.title) }}" />
+                            </label>
                             {% if activity.image_url %}
                             <img src="{{ activity.image_url }}" class="ihpact-card-img" alt="{{ activity.title }}" />
                             {% else %}
@@ -764,7 +818,7 @@
               <div class="ihpact-pagination">
                 <ul class="pagination">
                   {% if page > 1 %}
-                  <li><a href="?page={{ page - 1 }}{% if pa_filter %}&pa_filter={{ pa_filter }}{% endif %}">&laquo;</a></li>
+                  <li><a href="?page={{ page - 1 }}{% if filter_query %}&{{ filter_query }}{% endif %}">&laquo;</a></li>
                   {% else %}
                   <li class="disabled"><span>&laquo;</span></li>
                   {% endif %}
@@ -773,14 +827,14 @@
                     {% if p == page %}
                     <li class="active"><span>{{ p }}</span></li>
                     {% elif p == 1 or p == total_pages or (p >= page - 2 and p <= page + 2) %}
-                    <li><a href="?page={{ p }}{% if pa_filter %}&pa_filter={{ pa_filter }}{% endif %}">{{ p }}</a></li>
+                    <li><a href="?page={{ p }}{% if filter_query %}&{{ filter_query }}{% endif %}">{{ p }}</a></li>
                     {% elif p == page - 3 or p == page + 3 %}
                     <li class="disabled"><span>&hellip;</span></li>
                     {% endif %}
                   {% endfor %}
 
                   {% if page < total_pages %}
-                  <li><a href="?page={{ page + 1 }}{% if pa_filter %}&pa_filter={{ pa_filter }}{% endif %}">&raquo;</a></li>
+                  <li><a href="?page={{ page + 1 }}{% if filter_query %}&{{ filter_query }}{% endif %}">&raquo;</a></li>
                   {% else %}
                   <li class="disabled"><span>&raquo;</span></li>
                   {% endif %}
@@ -809,7 +863,7 @@
         <button type="button" class="ihpact-modal-close" id="ihpact-modal-close" aria-label="{{ _('Close') }}">&times;</button>
       </div>
       <div class="ihpact-modal-body">
-        <input type="hidden" id="ihpact-edit-id" />
+        <input type="hidden" id="ihpact-edit-id" /><input type="hidden" id="ihpact-edit-revision" />
         <div id="ihpact-edit-loading" class="text-center" style="padding:40px; display:none;">
           <i class="fa fa-spinner fa-spin fa-3x"></i>
           <p style="margin-top:12px;">{{ _('Loading activity data...') }}</p>
@@ -1033,6 +1087,28 @@ fieldset.ixf-fieldset legend.ihpact-group-label { font-size: inherit; border: 0;
 
 /* ── Filter Bar ── */
 .ihpact-filter-bar { margin-bottom: 1.5rem; padding: 0 0.5rem; }
+.ihpact-filter-form { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; align-items: center; }
+.ihpact-filter-form .form-control { width: auto; display: inline-block; }
+.ihpact-filter-form .ihpact-filter-q { min-width: 220px; flex: 1 1 220px; }
+.ihpact-filter-clear { padding-left: 4px; padding-right: 4px; }
+.ihpact-alert { border-radius: 12px; margin-bottom: 1.5rem; }
+
+/* ── Borrado masivo ── */
+.ihpact-bulk-bar { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; padding: 10px 16px; margin: 0 0.5rem 1rem; border: 1px dashed #cfd8e3; border-radius: 12px; background: #f8fafc; }
+.ihpact-bulk-select { display: inline-flex; align-items: center; gap: 8px; margin: 0; font-weight: 600; cursor: pointer; }
+.ihpact-bulk-select input, .ihpact-select { width: 18px; height: 18px; margin: 0; cursor: pointer; accent-color: #0072BC; }
+.ihpact-bulk-count { color: #475569; font-size: 0.9rem; min-width: 90px; }
+.ihpact-bulk-actions { display: flex; gap: 8px; flex-wrap: wrap; margin-left: auto; }
+.ihpact-bulk-actions .btn { border-radius: 20px; font-weight: 600; }
+.ihpact-bulk-all { border-color: #dc3545; color: #c82333; background: #fff; }
+.ihpact-bulk-all:hover, .ihpact-bulk-all:focus { background: #fdf2f2; color: #a71d2a; border-color: #c82333; }
+.ihpact-bulk-hint { flex-basis: 100%; margin: 0; font-size: 0.8rem; color: #64748b; }
+.ihpact-select-wrap { display: flex; align-items: center; margin: 0 0 8px; cursor: pointer; }
+.ihpact-card.is-selected .module { border-color: #dc3545; box-shadow: 0 0 0 2px rgba(220, 53, 69, 0.15); }
+@media (max-width: 767px) {
+  .ihpact-filter-form { justify-content: flex-start; }
+  .ihpact-bulk-actions { margin-left: 0; }
+}
 .ihpact-list { margin-bottom: 3rem; }
 
 /* ── Cards ── */
@@ -1248,6 +1324,7 @@ fieldset.ixf-fieldset legend.ihpact-group-label { font-size: inherit; border: 0;
     create: '/ckan-admin/ihpix/activities/create',
     update: '/ckan-admin/ihpix/activities/update',
     'delete': '/ckan-admin/ihpix/activities/delete',
+    bulkDelete: '/ckan-admin/ihpix/activities/bulk-delete',
     upload: '/ckan-admin/ihpix/activities/upload-image',
     show: '/ckan-admin/ihpix/activities/show'
   };
@@ -1263,10 +1340,11 @@ fieldset.ixf-fieldset legend.ihpact-group-label { font-size: inherit; border: 0;
   var TEXT_FIELDS = [
     'title', 'description', 'priority-area', 'output', 'biennium',
     'status', 'link', 'country', 'institution', 'institution-type',
-    'supporting-member-state', 'key-activity', 'outcomes', 'partners',
+    'supporting-member-state', 'key-activity', 'key-activity-code', 'outcomes', 'partners',
     'unesco-participation', 'synergies', 'contact-name', 'contact-email',
     'reported-by', 'reported-date', 'start-date', 'end-date',
     'knowledge-product-type-other', 'knowledge-activity-type-other',
+    'training-type-other',
     'additional-notes', 'notes'
   ];
   /* Radios Sí/No (booleanos del PDF 2026): name = prefijo + '-' + campo */
@@ -1296,7 +1374,21 @@ fieldset.ixf-fieldset legend.ihpact-group-label { font-size: inherit; border: 0;
     loadError: {{ _("Error loading activity")|tojson }},
     saved: {{ _("Activity saved.")|tojson }},
     created: {{ _("Activity created.")|tojson }},
-    deleted: {{ _("Activity deleted.")|tojson }}
+    deleted: {{ _("Activity deleted.")|tojson }},
+    selected: {{ _("%(n)s selected", n="__N__")|tojson }},
+    nothingSelected: {{ _("No activities selected.")|tojson }},
+    bulkTitle: {{ _("Delete %(n)s selected activities?", n="__N__")|tojson }},
+    bulkMessage: {{ _("The selected activities will be deleted permanently.")|tojson }},
+    bulkAllTitle: {{ _("Delete all matching activities?")|tojson }},
+    bulkAllMessage: {{ _("All %(n)s activities matching the current filters will be deleted permanently, including those on other pages.", n="__N__")|tojson }},
+    bulkAllTitle2: {{ _("Final confirmation")|tojson }},
+    bulkAllMessage2: {{ _("This cannot be undone: %(n)s activities will be deleted.", n="__N__")|tojson }},
+    bulkConfirm: {{ _("Yes, delete %(n)s", n="__N__")|tojson }}
+  };
+  /* Estado del borrado masivo: total de la lista filtrada y filtros activos (mismos nombres que la acción) */
+  var BULK = {
+    total: {{ total|int }},
+    filters: {{ {'status': status_filter or '', 'priority_area': pa_filter or '', 'q': q_filter or ''}|tojson }}
   };
   function notify(msg, type) {
     if (window.ihpixToast) { window.ihpixToast(msg, type || 'error'); }
@@ -1429,6 +1521,8 @@ fieldset.ixf-fieldset legend.ihpact-group-label { font-size: inherit; border: 0;
   /* ── Collect FormData from all fields ── */
   function collectFormData(prefix) {
     var fd = new FormData();
+    var revision = document.getElementById(prefix + '-revision');
+    if (revision) fd.append('expected_revision', revision.value);
     TEXT_FIELDS.forEach(function(f) {
       var el = document.getElementById(prefix + '-' + f);
       if (el) fd.append(idToName(f), el.value || '');
@@ -1459,6 +1553,7 @@ fieldset.ixf-fieldset legend.ihpact-group-label { font-size: inherit; border: 0;
   function populateEditForm(data) {
     var p = 'ihpact-edit';
     document.getElementById(p + '-id').value = data.id || '';
+    document.getElementById(p + '-revision').value = data.revision || 0;
 
     TEXT_FIELDS.forEach(function(f) {
       var el = document.getElementById(p + '-' + f);
@@ -1500,6 +1595,7 @@ fieldset.ixf-fieldset legend.ihpact-group-label { font-size: inherit; border: 0;
     /* Conditional "Other" fields */
     toggleOtherField(p, 'knowledge-product-type', 'knowledge-product-type-other');
     toggleOtherField(p, 'knowledge-activity-type', 'knowledge-activity-type-other');
+    toggleOtherField(p, 'training-type', 'training-type-other');
   }
 
   /* ── Image Upload / Drop Zone (Add Form) ── */
@@ -1601,7 +1697,7 @@ fieldset.ixf-fieldset legend.ihpact-group-label { font-size: inherit; border: 0;
     initCheckboxGroup('ihpact-edit', f);
   });
   /* "Other" en los grids de tipo: mostrar/ocultar el campo de texto */
-  ['knowledge-product-type', 'knowledge-activity-type'].forEach(function(f) {
+  ['knowledge-product-type', 'knowledge-activity-type', 'training-type'].forEach(function(f) {
     ['ihpact', 'ihpact-edit'].forEach(function(prefix) {
       var group = document.getElementById(prefix + '-' + f + '-group');
       if (group) group.addEventListener('change', function() { toggleOtherField(prefix, f, f + '-other'); });
@@ -1680,7 +1776,11 @@ fieldset.ixf-fieldset legend.ihpact-group-label { font-size: inherit; border: 0;
             card.style.transition = 'opacity 0.3s ease, transform 0.3s ease';
             card.style.opacity = '0';
             card.style.transform = 'translateX(20px)';
-            setTimeout(function() { card.remove(); updateCount(-1); checkEmpty(); }, 300);
+            setTimeout(function() {
+              card.remove(); updateCount(-1);
+              BULK.total = Math.max(0, BULK.total - 1); refreshAllCount(); updateBulkBar();
+              checkEmpty();
+            }, 300);
           }
         } else {
           btn.innerHTML = '<i class="fa fa-trash"></i> {{ _("Delete") }}';
@@ -1769,6 +1869,113 @@ fieldset.ixf-fieldset legend.ihpact-group-label { font-size: inherit; border: 0;
         btn.innerHTML = '<i class="fa fa-save"></i> {{ _("Save Changes") }}';
       });
   });
+
+  /* ── Borrado masivo (selección en la página o todo lo filtrado) ── */
+  /* Los textos llegan ya traducidos con el marcador __N__ (gettext de CKAN exige kwargs para %(n)s) */
+  function fmt(template, n) { return String(template).replace('__N__', n); }
+  function allBoxes() { return Array.prototype.slice.call(document.querySelectorAll('.ihpact-select')); }
+  function selectedIds() {
+    return allBoxes().filter(function(cb) { return cb.checked; }).map(function(cb) { return cb.value; });
+  }
+  function refreshAllCount() {
+    var el = document.getElementById('ihpact-all-count');
+    if (el) el.textContent = BULK.total;
+    var allBtn = document.getElementById('ihpact-bulk-delete-all');
+    if (allBtn) allBtn.disabled = BULK.total === 0;
+  }
+  function updateBulkBar() {
+    var boxes = allBoxes();
+    var n = selectedIds().length;
+    var countEl = document.getElementById('ihpact-selected-count');
+    if (countEl) countEl.textContent = fmt(MSG.selected, n);
+    var btn = document.getElementById('ihpact-bulk-delete');
+    if (btn) btn.disabled = n === 0;
+    var pageBox = document.getElementById('ihpact-select-page');
+    if (pageBox) {
+      pageBox.checked = boxes.length > 0 && n === boxes.length;
+      pageBox.indeterminate = n > 0 && n < boxes.length;
+    }
+    boxes.forEach(function(cb) {
+      var card = cb.closest('.ihpact-card');
+      if (card) card.classList.toggle('is-selected', cb.checked);
+    });
+  }
+  function askDanger(title, message, label) {
+    if (window.IhpixForms && window.IhpixForms.confirm) {
+      return window.IhpixForms.confirm({ title: title, message: message, danger: true, confirmLabel: label });
+    }
+    return Promise.resolve(window.confirm(title + '\n\n' + message));
+  }
+  function afterBulkDelete(n) {
+    /* Recargar desde la primera página: la paginación y los contadores cambian */
+    var url = new URL(window.location.href);
+    url.searchParams.set('page', '1');
+    url.searchParams.set('deleted', String(n));
+    window.location.href = url.toString();
+  }
+  function runBulkDelete(fd, n, btn) {
+    var original = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i>';
+    postForm(URLS.bulkDelete, fd)
+      .then(function(data) {
+        if (data && data.success) { afterBulkDelete(data.deleted || n); return; }
+        btn.disabled = false;
+        btn.innerHTML = original;
+        notify(MSG.error + ': ' + errorText(data && data.error));
+      })
+      .catch(function(e) {
+        btn.disabled = false;
+        btn.innerHTML = original;
+        notify(MSG.error + ': ' + e);
+      });
+  }
+  document.addEventListener('change', function(e) {
+    if (e.target && e.target.classList && e.target.classList.contains('ihpact-select')) updateBulkBar();
+  });
+  var selectPage = document.getElementById('ihpact-select-page');
+  if (selectPage) {
+    selectPage.addEventListener('change', function() {
+      allBoxes().forEach(function(cb) { cb.checked = selectPage.checked; });
+      updateBulkBar();
+    });
+  }
+  var bulkBtn = document.getElementById('ihpact-bulk-delete');
+  if (bulkBtn) {
+    bulkBtn.addEventListener('click', function() {
+      var ids = selectedIds();
+      if (!ids.length) { notify(MSG.nothingSelected); return; }
+      askDanger(fmt(MSG.bulkTitle, ids.length), MSG.bulkMessage, fmt(MSG.bulkConfirm, ids.length)).then(function(yes) {
+        if (!yes) return;
+        var fd = new FormData();
+        ids.forEach(function(id) { fd.append('ids', id); });
+        runBulkDelete(fd, ids.length, bulkBtn);
+      });
+    });
+  }
+  var bulkAllBtn = document.getElementById('ihpact-bulk-delete-all');
+  if (bulkAllBtn) {
+    bulkAllBtn.addEventListener('click', function() {
+      var n = BULK.total;
+      if (!n) return;
+      askDanger(MSG.bulkAllTitle, fmt(MSG.bulkAllMessage, n), fmt(MSG.bulkConfirm, n)).then(function(yes) {
+        if (!yes) return;
+        /* Segunda confirmación: afecta también a las páginas que no se ven */
+        askDanger(MSG.bulkAllTitle2, fmt(MSG.bulkAllMessage2, n), fmt(MSG.bulkConfirm, n)).then(function(sure) {
+          if (!sure) return;
+          var fd = new FormData();
+          fd.append('all_matching', '1');
+          fd.append('expected_count', String(n));
+          Object.keys(BULK.filters).forEach(function(key) {
+            if (BULK.filters[key]) fd.append(key, BULK.filters[key]);
+          });
+          runBulkDelete(fd, n, bulkAllBtn);
+        });
+      });
+    });
+  }
+  refreshAllCount();
+  updateBulkBar();
 
   /* ── Helpers ── */
   function updateCount(delta) {

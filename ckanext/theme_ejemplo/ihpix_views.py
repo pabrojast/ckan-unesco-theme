@@ -1,0 +1,343 @@
+# -*- coding: utf-8 -*-
+"""Rutas de colaboración, importación e informes sobre los mismos servicios API."""
+import base64
+from functools import wraps
+
+from flask import render_template, request, redirect, Response, abort, session, jsonify
+from ckan.common import c
+import ckan.model as model
+import ckan.plugins.toolkit as tk
+from ckanext.theme_ejemplo import ihpix_collaboration as C, ihpix_reporting as R
+from ckanext.theme_ejemplo import ihpix_bulk as B, ihpix_constants as K
+from ckanext.theme_ejemplo.model import IhpixActivity, IhpixActivityLink, IhpixWorkingGroupMember
+
+
+def context():
+    return {'user': c.user, 'auth_user_obj': c.userobj, 'model': model}
+
+
+def signed_in(view):
+    @wraps(view)
+    def wrapped(*args, **kwargs):
+        if not c.userobj or getattr(c.userobj,'state',None)!='active':
+            return redirect(tk.url_for('user.login', came_from=request.full_path))
+        try:
+            return view(*args, **kwargs)
+        except tk.NotAuthorized as exc:
+            model.Session.rollback()
+            abort(403, str(exc))
+        except tk.ObjectNotFound as exc:
+            model.Session.rollback()
+            abort(404, str(exc))
+        except tk.ValidationError as exc:
+            model.Session.rollback()
+            return render_template('ihpix/tool_error.html', errors=exc.error_dict,
+                                   back=request.path), 400
+    return wrapped
+
+
+@signed_in
+def workspace(code):
+    actor, wg, member, lead = C.workspace_access(context(), code)
+    if request.method == 'POST':
+        C.ihpix_workspace_item_save(context(), dict(request.form, working_group_id=wg.id))
+        return redirect(request.path)
+    result = C.ihpix_workspace_item_list(context(), {'working_group_id': wg.id})
+    people = []
+    for member in IhpixWorkingGroupMember.get_for_group(wg.id, 'active'):
+        person = model.User.get(member.user_id)
+        if person:
+            people.append({'id': person.id, 'name': person.display_name, 'role': member.role})
+    from ckanext.theme_ejemplo import ihpix_service as service
+    from ckanext.theme_ejemplo.ihpix_resource_access import visible
+    rows, _ = IhpixActivity.get_filtered(output=wg.output_code, limit=None)
+    activities = [row.as_dict() for row in rows if service.can_read(row, actor)]
+    ids = [row['id'] for row in activities]
+    resources = [link.as_dict() for link in model.Session.query(IhpixActivityLink).filter(
+        IhpixActivityLink.activity_id.in_(ids)).all() if visible(link.as_dict(), actor)]
+    return render_template('ihpix/collaboration.html', workspace=wg.as_dict(),
+                           result=result, people=people, activities=activities, resources=resources)
+
+
+@signed_in
+def report_collaboration(id):
+    if request.method == 'POST':
+        C.ihpix_report_collaborator_update(context(), dict(request.form, id=id))
+        return redirect(request.path)
+    actor, activity = C.report_access(context(), id)
+    return render_template('ihpix/report_collaboration.html', activity=activity.as_dict(),
+                           result=C.ihpix_report_collaboration_show(context(), {'id': id}))
+
+
+@signed_in
+def notifications():
+    if request.method == 'POST':
+        C.ihpix_notification_read(context(), dict(request.form))
+        return redirect(request.path)
+    return render_template('ihpix/notifications.html', result=C.ihpix_notification_list(context(), {}))
+
+
+def _import_download(example=False):
+    from ckan.lib.helpers import lang
+    organizations = tk.get_action('organization_list')(context(), {'all_fields': True, 'limit': 1000})
+    defaults=R.defaults_for(c.userobj)
+    org_id=defaults.get('institution_org_id')
+    if org_id and org_id not in {org['id'] for org in organizations}:
+        org=model.Group.get(org_id)
+        if org:
+            organizations.append({'id':org.id,'name':org.name,'title':org.display_name})
+    raw = B.template(organizations, defaults=defaults, locale=lang(), example=example)
+    filename = 'ihpix-example-v3.xlsx' if example else 'ihpix-import-v3.xlsx'
+    return Response(raw, mimetype='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                    headers={'Content-Disposition': 'attachment; filename=' + filename, 'Cache-Control':'private, no-store'})
+
+
+@signed_in
+def import_template():
+    return _import_download()
+
+
+@signed_in
+def import_example():
+    return _import_download(example=True)
+
+
+@signed_in
+def bulk_import():
+    from ckan.lib.helpers import lang
+    from ckanext.theme_ejemplo.ihpix_bulk_display import present
+    batch, upload_error, status = None, None, 200
+    confirm_error = False
+    if request.method == 'POST':
+        try:
+            if request.form.get('confirm'):
+                R.ihpix_import_create(context(), dict(request.form))
+                return redirect(tk.url_for('theme_ejemplo.ihpix_import', id=request.form['id']))
+            upload = request.files.get('workbook')
+            if not upload or not upload.filename:
+                raise tk.ValidationError({'workbook': 'Choose an XLSX workbook'})
+            raw = upload.read(5 * 1024 * 1024 + 1)
+            batch = R.ihpix_import_preview(context(), {'workbook': base64.b64encode(raw).decode('ascii')})
+            return redirect(tk.url_for('theme_ejemplo.ihpix_import', id=batch['id']))
+        except (tk.ValidationError, tk.NotAuthorized, tk.ObjectNotFound) as exc:
+            model.Session.rollback()
+            confirming = bool(request.form.get('confirm') and request.form.get('id'))
+            if not isinstance(exc, tk.ValidationError) and not confirming:
+                raise
+            if confirming:
+                # Volver a autorizar el lote antes de mostrar su contenido tras un fallo.
+                batch = R.ihpix_import_show(context(), {'id': request.form['id']})
+                confirm_error = True
+            def readable(message):
+                message=str(message)
+                if ': ' in message:
+                    prefix,value=message.split(': ',1)
+                    return tk._(prefix+': ')+value
+                return tk._(message)
+            if isinstance(exc, tk.ValidationError):
+                upload_error = [readable(message) for value in exc.error_dict.values()
+                                for message in (value if isinstance(value, list) else [value])]
+                status = 400
+            else:
+                upload_error = [readable(exc)]
+                status = 403 if isinstance(exc, tk.NotAuthorized) else 404
+    if request.method == 'GET' and request.args.get('id'):
+        batch = R.ihpix_import_show(context(), {'id': request.args['id']})
+    display = None
+    if batch:
+        organizations = tk.get_action('organization_list')(context(), {'all_fields': True, 'limit': 1000})
+        ids={item['data'].get('institution_org_id') for item in batch['preview']['rows']}
+        ids.update(org for item in batch['preview']['rows'] for org in item['data'].get('partner_org_ids', []))
+        known={org['id'] for org in organizations}
+        for org_id in ids-known-{None,''}:
+            org=model.Group.get(org_id)
+            if org and org.is_organization and org.state=='active':
+                organizations.append({'id':org.id,'name':org.name,'title':org.display_name})
+        display = present(batch, lang(), organizations, request.args.get('page', '1'))
+    return render_template('ihpix/import.html', batch=batch, preview=display, upload_error=upload_error, confirm_error=confirm_error,
+        drafts_url=tk.url_for('theme_ejemplo.user_ihpix', id=c.userobj.name, status='draft')), status
+
+
+# El anexo de fuentes va marcado por defecto (informe verificable); el detalle
+# (descripción y resultados de cada actividad) sólo si se pide.
+DEFAULT_SOURCES = True
+
+
+def _number_formatter():
+    try:
+        return tk.h.localised_number
+    except AttributeError:  # pragma: no cover - helpers sin registrar en tests
+        return None
+
+
+@signed_in
+def narrative():
+    from ckanext.theme_ejemplo import ihpix_report_sections as SEC
+    args = request.args
+    # `dict(request.args)` aplana los multivalor: las secciones se leen aparte.
+    given = 'sections_given' in args
+    requested = args.getlist('sections') if given else None
+    include_sources = (args.get('sources') == '1') if given else DEFAULT_SOURCES
+    sources_detail = args.get('sources_detail') == '1'
+    data, sections = None, []
+    if args.get('scope') or args.get('value'):
+        params = dict(args, include_sources=include_sources, sources_detail=sources_detail)
+        data = R.ihpix_narrative_data(context(), params)
+        options = {'sections': requested, 'layout': 'document', 'include_sources': include_sources,
+                   'sources_detail': sources_detail, 'format_number': _number_formatter()}
+        sections = SEC.build_sections(data['stats'], tk._, options, sources=data['sources'])
+        SEC.render_figures(sections, 'document', tk._, _number_formatter())
+    organizations = tk.get_action('organization_list')(context(), {'all_fields': True, 'limit': 1000})
+    return render_template('ihpix/narrative.html', report=data, sections=sections,
+                           selected=SEC.selected_ids(requested), section_choices=SEC.section_choices(tk._),
+                           include_sources=include_sources, sources_detail=sources_detail,
+                           appendix=next((s for s in sections if s['appendix']), None),
+                           organizations=organizations, priority_areas=K.PRIORITY_AREAS,
+                           outputs=K.load_output_titles(), biennia=K.BIENNIA)
+
+
+def activity(id):
+    row = IhpixActivity.get(id)
+    if not row or row.status != 'published':
+        abort(404)
+    from ckanext.theme_ejemplo import ihpix_relations as relations, ihpix_stats as stats
+    from ckanext.theme_ejemplo.actions import _ihpix_country_index, _ihpix_links_for
+    from ckanext.theme_ejemplo.ihpix_resource_access import filtered
+    data = row.as_dict()
+    return render_template('ihpix/activity_detail.html', activity=data,
+        contributions=relations.associations(data),
+        prepared=stats.prepare_row(data, _ihpix_country_index()),
+        stats=stats.compute_progress_stats([data], country_index=_ihpix_country_index()),
+        resources=filtered(_ihpix_links_for(row.id), c.userobj))
+
+
+@signed_in
+def presentation():
+    from ckanext.theme_ejemplo.ihpix_presentation import slides, scope_title
+    data = dict(request.args)
+    requested = request.args.getlist('sections') or None
+    stats = tk.get_action('ihpix_progress_stats')(context(), data)
+    filters = {key: data[key] for key in ('biennium', 'region', 'country', 'institution_type', 'organization')
+               if data.get(key)}
+    # La acción resuelve name/id; el enlace de vuelta y la cabecera usan name y título.
+    organization = stats.get('organization') or {}
+    organization_title = organization.get('title') or filters.get('organization', '')
+    if filters.get('organization') and organization.get('name'):
+        filters['organization'] = organization['name']
+    scope = stats['scope']['kind']
+    value = stats['scope'].get('value') or ''
+    if scope == 'overall':
+        back = tk.url_for('theme_ejemplo.ihpix_progress', **filters)
+    else:
+        back = tk.url_for('theme_ejemplo.ihpix_progress_' + scope,
+            value=K.slugify(value) if scope in ('flagship', 'ctwg') else value, **filters)
+    filter_labels = {'biennium': tk._('Biennium'), 'region': tk._('Region'),
+                     'country': tk._('Country'), 'institution_type': tk._('Institution type'),
+                     'organization': tk._('Organization')}
+    return render_template('ihpix/presentation.html', stats=stats,
+                           slides=slides(stats, tk._, sections=requested, formatter=_number_formatter()),
+                           scope_title=scope_title(stats, tk._), filters=filters,
+                           filter_labels=filter_labels, organization_title=organization_title,
+                           back=back, source_url=request.url)
+
+
+def pending_resource():
+    pending = session.get('ihpix_resource_return')
+    return pending if pending and c.userobj and pending['user_id'] == c.userobj.id else None
+
+
+@signed_in
+def resource_start(id):
+    actor, activity = C.report_access(context(), id)
+    if activity.status not in ('draft', 'rejected'):
+        raise tk.ValidationError({'id': 'Save the report as a draft before creating a resource'})
+    kind = request.form.get('kind')
+    if kind not in ('dataset', 'event'):
+        raise tk.ValidationError({'kind': 'Choose dataset or event'})
+    session['ihpix_resource_return'] = {'report_id': id, 'user_id': actor.id, 'kind': kind}
+    if kind == 'dataset':
+        url = tk.url_for('dataset.new')
+    else:
+        url = tk.h.ihpix_pages_url('pages.water_events_new', '/water-events_edit')
+    return jsonify({'url': url})
+
+
+@signed_in
+def resource_attach():
+    pending = pending_resource()
+    if not pending:
+        raise tk.ValidationError({'id': 'No report is waiting for an attachment'})
+    actor, activity = C.report_access(context(), pending['report_id'])
+    from ckanext.theme_ejemplo import actions as A, ihpix_service as V, ihpix_forms as F
+    target = request.form.get('target_id', '')
+    if pending['kind'] == 'dataset':
+        pkg = tk.get_action('package_show')(context(), {'id': target})
+        link = {'link_type': 'dataset', 'target_kind': 'package', 'target_id': pkg['id'],
+                'title': pkg.get('title') or pkg['name'], 'url': tk.url_for('dataset.read', id=pkg['name'], qualified=True)}
+    else:
+        from ckanext.pages.db import Page
+        page = model.Session.query(Page).filter_by(name=target, page_type='water-events').first()
+        if not page:
+            raise tk.ObjectNotFound('Event not found')
+        link = {'link_type': 'event', 'target_kind': 'page', 'target_id': page.name,
+                'title': page.title, 'url': tk.config.get('ckan.site_url', '') + '/water-events/' + page.name}
+    values = F.activity_to_form_dict(activity.as_dict())
+    from ckanext.theme_ejemplo.ihpix_resource_access import filtered
+    values.update(expected_revision=activity.revision, save_as_draft='1',
+                  links_json=filtered(A._ihpix_links_for(activity.id), actor) + [link])
+    V.save(context(), values, activity)
+    model.Session.commit()
+    session.pop('ihpix_resource_return', None)
+    return redirect(tk.url_for('theme_ejemplo.ihpix_report_edit', id=activity.id) + '#section-7')
+
+
+def report_autosave():
+    from ckanext.theme_ejemplo.controller import MyLogica
+    return MyLogica._ihpix_handle_report_post('ihpix_report_autosave', {
+        'id': request.form.get('id') or None,
+        'client_draft_id': request.form.get('client_draft_id'),
+        'save_as_draft': '1',
+    })
+
+
+def resource_create():
+    from ckanext.theme_ejemplo.controller import MyLogica
+    if not c.userobj:
+        return jsonify(success=False, error=tk._('You must be logged in')), 403
+    data = dict(request.form)
+    upload = request.files.get('file')
+    if upload is not None and upload.filename:
+        data['upload'] = upload
+    try:
+        result = tk.get_action('ihpix_resource_create')(context(), data)
+        return jsonify(dict(result, success=True))
+    except tk.ValidationError as exc:
+        model.Session.rollback()
+        return MyLogica._ihpix_error_response(exc, 400)
+    except tk.NotAuthorized:
+        model.Session.rollback()
+        return jsonify(success=False, error=tk._('Not authorized')), 403
+    except Exception:
+        model.Session.rollback()
+        import logging
+        logging.getLogger(__name__).exception('IHP-IX: error al crear un recurso inline')
+        return jsonify(success=False, error=tk._('The resource could not be created. Please try again.')), 500
+
+
+def register(blueprint):
+    for path, endpoint, view, methods in [
+        ('/ihpix/resources', 'ihpix_resource_create', resource_create, ['POST']),
+        ('/ihpix/report/autosave', 'ihpix_report_autosave', report_autosave, ['POST']),
+        ('/ihpix/report/<id>/resource-start', 'ihpix_resource_start', resource_start, ['POST']),
+        ('/ihpix/resource-return/attach', 'ihpix_resource_attach', resource_attach, ['POST']),
+        ('/ihpix/presentation', 'ihpix_presentation', presentation, ['GET']),
+        ('/ihpix/workspaces/<code>/collaboration', 'ihpix_workspace_collaboration', workspace, ['GET', 'POST']),
+        ('/ihpix/report/<id>/collaboration', 'ihpix_report_collaboration', report_collaboration, ['GET', 'POST']),
+        ('/ihpix/notifications', 'ihpix_notifications', notifications, ['GET', 'POST']),
+        ('/ihpix/import/template.xlsx', 'ihpix_import_template', import_template, ['GET']),
+        ('/ihpix/import/example.xlsx', 'ihpix_import_example', import_example, ['GET']),
+        ('/ihpix/import', 'ihpix_import', bulk_import, ['GET', 'POST']),
+        ('/ihpix/reports/generate', 'ihpix_narrative', narrative, ['GET']),
+        ('/ihpix/activities/<id>', 'ihpix_activity_detail', activity, ['GET']),
+    ]:
+        blueprint.add_url_rule(path, endpoint, view, methods=methods)

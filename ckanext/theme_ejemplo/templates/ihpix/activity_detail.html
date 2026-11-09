@@ -1,0 +1,18 @@
+{% extends 'ihpix/tools_base.html' %}
+{% block tools_content %}
+<article>
+<h1>{{ activity.title }}</h1><p>{{ activity.biennium }} · {{ activity.institution }}</p>
+<h2>{{ _('Description') }}</h2><p class="ix-preserve">{{ activity.description }}</p>
+<h2>{{ _('Key outputs and outcomes') }}</h2><p class="ix-preserve">{{ activity.outcomes }}</p>
+<h2>{{ _('Priority area and output') }}</h2>
+<ul>{% for item in contributions %}<li>{{ item.priority_area }} · {{ _('Output') }} {{ item.output }}{% if item.key_activity_code %} · {{ _('Key activity') }} {{ item.key_activity_code }}{% endif %}</li>{% else %}<li>{{ activity.priority_area }}</li>{% endfor %}</ul>
+<h2>{{ _('Key performance indicators') }}</h2>
+<table class="table"><thead><tr><th>{{ _('Indicator') }}</th><th>{{ _('Reported total') }}</th></tr></thead><tbody>
+{% for label, value in [(_('Knowledge products'),stats.kpi_1.knowledge_products),(_('Scientific products'),stats.kpi_1.scientific_products),(_('Stakeholders reached through knowledge exchange'),stats.kpi_2.individuals),(_('Of which youth (18–35 years old)'),stats.kpi_2.youth),(_('Of which female participants'),stats.kpi_2.female),(_('Training materials and courses'),stats.kpi_3.materials),(_('Curricula'),stats.kpi_4.curricula),(_('Stakeholders reached through awareness activities'),stats.kpi_5.individuals),(_('Of which youth (18–35 years old)'),stats.kpi_5.youth),(_('Of which female participants'),stats.kpi_5.female),(_('Member States supported in transboundary water management, as reported'),stats.kpi_6.member_states_reported),(_('Stakeholder groups with strengthened capacity'),stats.kpi_8.stakeholder_groups)] %}<tr><td>{{ label }}</td><td>{{ value }}</td></tr>{% endfor %}
+</tbody></table>
+<h2>{{ _('Countries recorded in reporting, support or beneficiary roles') }}</h2>
+<dl><dt>{{ _('Country of the institution') }}</dt><dd>{{ prepared.country or '—' }}</dd><dt>{{ _('Supporting country') }}</dt><dd>{% for country, roles in prepared.impacted_roles.items() if 'supporter' in roles %}{{ country }}{% if not loop.last %}, {% endif %}{% else %}—{% endfor %}</dd><dt>{{ _('Which Member States benefited from the implemented activity?') }}</dt><dd>{{ prepared.member_states|join(', ') or '—' }}</dd></dl>
+{% if resources %}<h2>{{ _('Publications, events and data') }}</h2><ul>{% for resource in resources %}<li><a href="{{ resource.url }}" rel="noopener">{{ resource.title }}</a></li>{% endfor %}</ul>{% endif %}
+<p>{{ _('Reported') }}: {{ activity.reported_date or activity.created_at }} · {{ _('Version') }} {{ activity.revision }}</p>
+</article>
+{% endblock %}

@@ -45,6 +45,12 @@ En ficheros existentes solo se añaden líneas, marcadas con `AI for Water Manag
 
 Para dar este tratamiento a otro grupo basta con añadirlo a `GROUP_LANDINGS` con sus plantillas. No necesita variables de configuración ni migraciones.
 
+## Plantilla común
+
+[[Initiative pages]] generaliza este diseño para otras iniciativas. `ai_water.group_landing` busca primero en `GROUP_LANDINGS` y, si el grupo no está, usa `initiative.landing_conf`: un grupo de `GROUP_LANDINGS` nunca usa la plantilla común.
+
+`group_frame.html` acepta por configuración la clase (`root_class`), los colores (`root_style`) y los créditos (`credit`), y `snippets/head.html` añade `initiative.css` solo a las iniciativas con página completa. `ai-water.css` no cambia.
+
 ## Ilustraciones
 
 De la publicación *Applications of AI for water management*, de Ana Carolina Landi / Diecut is Design. Solo se recortan, sin modificarlas, y se cita la autoría al pie de cada página (`snippets/credit.html`).

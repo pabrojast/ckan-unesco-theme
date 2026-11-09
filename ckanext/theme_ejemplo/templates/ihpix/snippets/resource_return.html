@@ -1,0 +1,9 @@
+{% set pending = h.ihpix_pending_resource() %}
+{% if pending %}
+<aside class="container alert alert-info ix-resource-return" role="status" data-kind="{{ pending.kind }}">
+  <p>{{ _('Your IHP-IX draft is saved. Finish creating the resource, then attach it and return to your report.') }}</p>
+  <a href="{{ h.url_for('theme_ejemplo.ihpix_report_edit', id=pending.report_id) }}#section-7">{{ _('Return to report') }}</a>
+  <form method="post" action="{{ h.url_for('theme_ejemplo.ihpix_resource_attach') }}" hidden id="ihpix-resource-attach">{{ h.csrf_input() }}<input type="hidden" name="target_id"><button class="btn btn-primary">{{ _('Attach this resource and return') }}</button></form>
+</aside>
+<script>(function(){var box=document.querySelector('.ix-resource-return'),form=document.getElementById('ihpix-resource-attach');var path=location.pathname.replace(/^\/[a-z]{2}(?=\/)/,'');var match=path.match(box.dataset.kind==='dataset'?/^\/dataset\/([^/]+)$/:/^\/water-events\/([^/]+)$/);if(match&&!['new','edit'].includes(match[1])){form.hidden=false;form.elements.target_id.value=decodeURIComponent(match[1]);}}());</script>
+{% endif %}

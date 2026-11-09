@@ -89,6 +89,8 @@ def _load_tracking(monkeypatch, config=None):
     sys.modules.pop('ckanext.theme_ejemplo.pageview_tracking', None)
 
     mod = importlib.import_module('ckanext.theme_ejemplo.pageview_tracking')
+    # La política de metadatos se prueba con PostgreSQL en la suite integrada.
+    monkeypatch.setattr(mod, '_excluded_download', lambda rid: False)
     return mod, fake_request
 
 
@@ -251,3 +253,28 @@ def test_record_server_side_ua_filtered(monkeypatch):
     mod._record()
     assert redis.hincr_calls == []
     assert redis.pipeline_ops == []
+
+
+def test_sld_manual_download_never_counts(monkeypatch):
+    mod, req = _load_tracking(monkeypatch, config={
+        'ckanext.theme_ejemplo.pageviews_downloads_navigation_only': False})
+    redis = _with_redis(mod)
+    for suffix in ('style.SLD', 'style%2Esld', 'style.sld'):
+        req.path = DOWNLOAD_PATH.rsplit('/', 1)[0] + '/' + suffix
+        req.headers = {'User-Agent': CHROME_UA, 'Sec-Fetch-Mode': 'navigate',
+                       'Sec-Fetch-Dest': 'document', 'Sec-Fetch-User': '?1'}
+        mod._record()
+    assert redis.hincr_calls == []
+    assert redis.seen == set()
+
+
+def test_extensionless_sld_is_excluded_by_metadata(monkeypatch):
+    mod, req = _load_tracking(monkeypatch)
+    monkeypatch.setattr(mod, '_excluded_download', lambda rid: True)
+    redis = _with_redis(mod)
+    req.path = DOWNLOAD_PATH.rsplit('/', 1)[0]
+    req.headers = {'User-Agent': CHROME_UA, 'Sec-Fetch-Mode': 'navigate',
+                   'Sec-Fetch-Dest': 'document'}
+    mod._record()
+    assert redis.hincr_calls == []
+    assert redis.seen == set()

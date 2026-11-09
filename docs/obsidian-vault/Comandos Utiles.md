@@ -118,6 +118,19 @@ ckan ihpix recompute-summary --country france
 
 # Crear los workspaces (working groups) que falten, uno por Output
 ckan ihpix seed-workspaces
+
+# Normalizar los datos heredados del Excel (alias de valores, puertas KPI
+# derivadas de los conteos, key_activity_code). Ensayo por defecto; con
+# --apply escribe, recalcula el resumen por país e invalida la caché de stats.
+# Se ejecuta solo al arrancar cuando la migración añade columnas nuevas.
+ckan ihpix normalize-legacy
+ckan ihpix normalize-legacy --apply
+ckan ihpix normalize-legacy --apply --status published --all   # también las ya marcadas
+
+# Regenerar títulos de Output y key activities desde el seed (JSON derivados
+# del Excel; --check solo comprueba que están al día, para CI)
+python3 -I scripts/build_ihpix_taxonomy_data.py
+python3 -I scripts/build_ihpix_taxonomy_data.py --check
 ```
 
 > [!warning] Sin `--append`, el comando elimina actividades con `original_id` y todos los country summaries antes de cargar.
@@ -158,6 +171,18 @@ kubectl -n ckan create job pv-flush-test --from=cronjob/pageviews-flush
 ```
 
 Requiere `ckanext.theme_ejemplo.pageviews_enabled = true` y `ckan.tracking_enabled = false`. Ver [[Flujos Importantes#Conteo liviano de vistas]] y [[Variables de Entorno#Conteo liviano de vistas (pageviews)]].
+
+> [!tip] Pods `pageviews-flush-*` en `Failed` (revisado en dev el 2026-10-31)
+> El CronJob conserva los últimos tres Jobs fallidos (`failedJobsHistoryLimit: 3`), así que pods en `Error` de hace semanas siguen listados aunque el volcado ya funcione. Diagnóstico rápido:
+>
+> ```bash
+> kubectl -n ckan get jobs | grep pageviews-flush          # los recientes deben estar Complete 1/1
+> kubectl -n ckan logs <pod-fallido> | tail -n 5             # causa real al final del traceback
+> kubectl -n ckan exec deploy/ckan -c ckan -- ckan -c /srv/app/production.ini pageviews status
+> kubectl -n ckan delete job <job-fallido> ...               # sólo limpieza; no afecta a los conteos
+> ```
+>
+> Caso visto en dev: `connection refused` a `postgres` y timeouts a `solr-headless` durante el arranque de CKAN mientras el nodo que aloja `postgres-0` y `solr-0` se reiniciaba (2026-10-07 y 2026-10-20). Como el fallo ocurre antes de `flush_to_db()`, los contadores quedan en Redis y los vuelca la corrida siguiente; y si Postgres cae a mitad del volcado, `flush_to_db` reintegra los deltas en Redis antes de propagar el error. Para consultas ad hoc desde el pod: `tracking_dataset_daily(dataset_name, day, views)`, `tracking_dataset_stats(dataset_name, total_views, recent_views, updated)`, `tracking_resource_stats(resource_id, total_downloads, updated)`, `tracking_site_totals(id, total_page_views, total_downloads, updated)`; el diario conserva `pageviews_recent_days` (14) días.
 
 ---
 
@@ -206,3 +231,43 @@ ckan -c /app/production.ini learning sync --due
 
 El comando anterior `openlearning sync --force` sigue funcionando cuando
 el plugin está habilitado y delega a su fuente IHP.
+
+## IHP-IX: taxonomía y aceptación de revisión
+
+`python3 scripts/build_ihpix_taxonomy_data.py --check` comprueba que los JSON generados coinciden con el snapshot oficial (34 Outputs/151 KA). Sin `--check` los regenera; `--seed` es la opción explícita para datos legados.
+
+`scripts/ihpix_review_acceptance.py` ejecuta aceptación HTTP solo en un CKAN local aislado: requisitos y variables en [[Testing#Aceptación IHP-IX de septiembre (2026-10-21)]].
+
+## Reconciliar descargas excluyendo SLD
+
+```bash
+ckan -c /srv/app/production.ini pageviews reconcile-downloads
+ckan -c /srv/app/production.ini pageviews reconcile-downloads --apply --backup /ruta/privada/sld-before.json
+```
+
+Por defecto sólo informa total anterior/resultante y recursos excluidos. Aplicar
+requiere Redis disponible, el bloqueo compartido con `pageviews flush` y un
+archivo de respaldo nuevo (0600, no sobrescribe). La transacción modifica sólo
+`tracking_site_totals.total_downloads`, conservando visitas e histórico por
+recurso. El respaldo incluye los contadores originales y pendientes en Redis;
+`applied=false`/`snapshot_phase=before` identifica que es la captura previa.
+Repetir recalcula el mismo agregado; no resta dos veces. Los incrementos nuevos
+en Redis permanecen pendientes para el siguiente flush.
+
+Para revertir la política, restaurar la imagen anterior y recalcular la suma
+completa de `tracking_resource_stats`, conservando las visitas y las nuevas
+descargas; no restaurar valores viejos encima de incrementos posteriores.
+
+### Comprobar grupos y planificación en QA desechable
+
+Con el entorno local de pruebas preparado (`/qa/app.ini`, base `ihpix-form-db/ihpix_form` y usuarios `qa-form-*`):
+
+```bash
+docker exec ihpix-groups-app python3 /app/src/ckanext-theme-ejemplo/scripts/ihpix_groups_check.py
+```
+
+El script verifica el destino antes de escribir y crea únicamente fixtures de QA. Los tests puros se ejecutan con `pytest -q ckanext/theme_ejemplo/tests/test_ihpix_planning.py ckanext/theme_ejemplo/tests/test_ihpix_navigation.py`.
+
+### Demo autorizada de los workspaces IHP-IX
+
+Dentro del contenedor CKAN, `python3 scripts/ihpix_workspace_demo.py --ini /app/production.ini --sources /ruta/privada --summary /ruta/privada/manifest.json` valida los siete archivos. Agregar `--apply` carga planes/contactos, adjunta originales privados y deja ejecución en vista previa. `--user` exige un administrador activo (por defecto `ckan_admin`). El comando rechaza sitios distintos de `data.dev-wins.com` y la QA aislada. Hacer backup IHP-IX antes de aplicarlo. Es idempotente por lote/archivo y conserva hashes e identificadores en el manifiesto; no aprueba planes, publica reportes ni crea cuentas.

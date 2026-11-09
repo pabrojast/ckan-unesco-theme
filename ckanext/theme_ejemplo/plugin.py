@@ -24,6 +24,8 @@ from . import completeness
 from . import db_fork_safety
 from . import pageview_tracking
 from . import ranking
+from . import home_v2  # Home page v2 (added by Jorgen Van Der Biest)
+from . import initiative  # Initiative pages (added by Jorgen Van Der Biest)
 from . import search as theme_search
 from .utils import normalize_user_image_url
 import logging
@@ -476,6 +478,10 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
             membership_model.init_ihpix_working_groups_db()
             # Create ihpix_country_summary table if needed
             membership_model.init_ihpix_country_summary_db()
+            from ckanext.theme_ejemplo import ihpix_store
+            ihpix_store.init_db()
+            from ckanext.theme_ejemplo import ihpix_group_store
+            ihpix_group_store.init_db()
             # Create initiative_request table if needed
             membership_model.init_initiative_requests_db()
             # Create open_learning_course table if needed
@@ -642,6 +648,43 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 u'ihpix_dashboard',
                 MyLogica.ihpix_dashboard,
                 methods=['GET']
+            )
+
+            # Dashboards de progreso IHP-IX (una vista, cinco ámbitos)
+            blueprint.add_url_rule(
+                u'/ihpix/progress',
+                u'ihpix_progress',
+                MyLogica.ihpix_progress,
+                methods=['GET'],
+                defaults={'scope': 'overall', 'value': None}
+            )
+            blueprint.add_url_rule(
+                u'/ihpix/progress/pa/<value>',
+                u'ihpix_progress_pa',
+                MyLogica.ihpix_progress,
+                methods=['GET'],
+                defaults={'scope': 'pa'}
+            )
+            blueprint.add_url_rule(
+                u'/ihpix/progress/output/<value>',
+                u'ihpix_progress_output',
+                MyLogica.ihpix_progress,
+                methods=['GET'],
+                defaults={'scope': 'output'}
+            )
+            blueprint.add_url_rule(
+                u'/ihpix/progress/flagship/<value>',
+                u'ihpix_progress_flagship',
+                MyLogica.ihpix_progress,
+                methods=['GET'],
+                defaults={'scope': 'flagship'}
+            )
+            blueprint.add_url_rule(
+                u'/ihpix/progress/ctwg/<value>',
+                u'ihpix_progress_ctwg',
+                MyLogica.ihpix_progress,
+                methods=['GET'],
+                defaults={'scope': 'ctwg'}
             )
 
             blueprint.add_url_rule(
@@ -1147,6 +1190,12 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 methods=['POST']
             )
             blueprint.add_url_rule(
+                u'/ckan-admin/ihpix/activities/bulk-delete',
+                u'ihpix_activities_bulk_delete',
+                MyLogica.ihpix_activities_bulk_delete,
+                methods=['POST']
+            )
+            blueprint.add_url_rule(
                 u'/ckan-admin/ihpix/activities/show',
                 u'ihpix_activities_show',
                 MyLogica.ihpix_activities_show,
@@ -1172,6 +1221,12 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 MyLogica.ihpix_report_review_admin,
                 methods=['POST']
             )
+            blueprint.add_url_rule(
+                u'/ckan-admin/ihpix/reports/delete',
+                u'ihpix_report_delete_admin',
+                MyLogica.ihpix_report_delete_admin,
+                methods=['POST']
+            )
 
             # IHP-IX admin overview dashboard (sysadmin) — PDF 2026 spec
             blueprint.add_url_rule(
@@ -1185,6 +1240,20 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 u'ihpix_admin_overview',
                 MyLogica.ihpix_admin_overview,
                 methods=['GET']
+            )
+
+            # IHP-IX: vincular instituciones heredadas con organizaciones (sysadmin)
+            blueprint.add_url_rule(
+                u'/ckan-admin/ihpix/institutions',
+                u'ihpix_institutions_admin',
+                MyLogica.ihpix_institutions_admin,
+                methods=['GET']
+            )
+            blueprint.add_url_rule(
+                u'/ckan-admin/ihpix/institutions/link',
+                u'ihpix_institutions_link',
+                MyLogica.ihpix_institutions_link,
+                methods=['POST']
             )
 
             # Bug ticket system
@@ -1296,10 +1365,19 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 methods=['GET']
             )
 
+            from ckanext.theme_ejemplo import ihpix_views
+            ihpix_views.register(blueprint)
+            from ckanext.theme_ejemplo import ihpix_group_views
+            ihpix_group_views.register(blueprint)
+            initiative.add_url_rules(blueprint)  # Initiative pages (added by Jorgen Van Der Biest)
             return blueprint
         
         def get_helpers(self):
+            from ckanext.theme_ejemplo import ihpix_views
+            from ckanext.theme_ejemplo.ihpix_navigation import navigation
             helpers_map = {
+                 'ihpix_navigation': navigation,
+                 'ihpix_pending_resource': ihpix_views.pending_resource,
                  'get_latest_courses': self.get_latest_courses,
                  'get_featured_datasets': self.get_featured_datasets,
                  'get_organization_image_by_name': self.get_organization_image_by_name,
@@ -1307,6 +1385,8 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                  'theme_ejemplo_get_featured_viewers': helpers.get_featured_viewers,
                  'theme_ejemplo_featured_viewers_available': helpers.featured_viewers_available,
                  'theme_ejemplo_get_paged_resources': helpers.get_paged_resources,
+                 'theme_ejemplo_resource_presentation': helpers.resource_presentation,
+                 'theme_ejemplo_is_sld': helpers.is_sld_resource,
                  'theme_ejemplo_markdown_excerpt': helpers.markdown_excerpt,
                  'theme_ejemplo_site_statistics': self.get_site_statistics_cached,
                  'get_member_states_groups_list': self.get_member_states_groups_list,
@@ -1341,6 +1421,7 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                  'ihpix_priority_area_for_output': helpers.ihpix_priority_area_for_output,
                  'ihpix_t': helpers.ihpix_t,
                  'ihpix_basemap': helpers.ihpix_basemap,
+                 'ihpix_flagship_label': helpers.ihpix_flagship_label,
                  'ihpix_pages_url': helpers.ihpix_pages_url,
                  'ihpix_markdown': helpers.ihpix_markdown,
                  'ihpix_link_type_icon': helpers.ihpix_link_type_icon,
@@ -1373,11 +1454,17 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
             # error page) on 2026-10-05. Default to "disabled" instead.
             if not plugins.plugin_loaded('learning'):
                 helpers_map['learning_enabled'] = lambda: False
+            helpers_map.update(home_v2.get_helpers())  # Home page v2 (added by Jorgen Van Der Biest)
+            helpers_map.update(initiative.get_helpers())  # Initiative pages (added by Jorgen Van Der Biest)
             return helpers_map
 
         # IActions
         def get_actions(self):
+            from ckanext.theme_ejemplo import ihpix_collaboration, ihpix_reporting, ihpix_resources, ihpix_groups
             return {
+                **ihpix_groups.ACTIONS,
+                **ihpix_collaboration.ACTIONS,
+                **ihpix_reporting.ACTIONS,
                 'user_show': custom_actions.user_show,
                 'user_update': custom_actions.user_update,
                 'people_list': custom_actions.people_list,
@@ -1421,8 +1508,10 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 'ihpix_activity_create': custom_actions.ihpix_activity_create,
                 'ihpix_activity_update': custom_actions.ihpix_activity_update,
                 'ihpix_activity_delete': custom_actions.ihpix_activity_delete,
+                'ihpix_activity_bulk_delete': custom_actions.ihpix_activity_bulk_delete,
                 # IHP-IX reporting & dashboard
                 'ihpix_report_submit': custom_actions.ihpix_report_submit,
+                'ihpix_report_autosave': custom_actions.ihpix_report_autosave,
                 'ihpix_report_update': custom_actions.ihpix_report_update,
                 'ihpix_report_show': custom_actions.ihpix_report_show,
                 'ihpix_report_delete': custom_actions.ihpix_report_delete,
@@ -1434,6 +1523,7 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 'ihpix_activity_link_delete': custom_actions.ihpix_activity_link_delete,
                 'ihpix_link_search': custom_actions.ihpix_link_search,
                 'ihpix_publication_create': custom_actions.ihpix_publication_create,
+                'ihpix_resource_create': ihpix_resources.create,
                 'ihpix_course_propose': custom_actions.ihpix_course_propose,
                 # IHP-IX descubribilidad / analítica
                 'ihpix_contributor_list': custom_actions.ihpix_contributor_list,
@@ -1448,11 +1538,15 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 'ihpix_working_group_member_list': custom_actions.ihpix_working_group_member_list,
                 'ihpix_contribution_list': custom_actions.ihpix_contribution_list,
                 'ihpix_dashboard_stats': custom_actions.ihpix_dashboard_stats,
+                'ihpix_progress_stats': custom_actions.ihpix_progress_stats,
                 'ihpix_admin_overview_stats': custom_actions.ihpix_admin_overview_stats,
                 # IHP-IX GeoJSON & country summary
                 'ihpix_geojson': custom_actions.ihpix_geojson,
                 'ihpix_activity_geojson': custom_actions.ihpix_activity_geojson,
                 'ihpix_country_summary_list': custom_actions.ihpix_country_summary_list,
+                # IHP-IX: instituciones heredadas ↔ organizaciones (admin)
+                'ihpix_institution_link_list': custom_actions.ihpix_institution_link_list,
+                'ihpix_institution_link': custom_actions.ihpix_institution_link,
                 # Initiative requests
                 'initiative_request_create': custom_actions.initiative_request_create,
                 'initiative_request_list': custom_actions.initiative_request_list,
@@ -1469,7 +1563,11 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
 
         # IAuthFunctions
         def get_auth_functions(self):
+            from ckanext.theme_ejemplo import ihpix_collaboration, ihpix_reporting
+            from ckanext.theme_ejemplo import ihpix_groups
             return {
+                **{name: custom_auth._logged_in_only for name in ihpix_groups.ACTIONS},
+                **{name: custom_auth._logged_in_only for name in dict(ihpix_collaboration.ACTIONS, **ihpix_reporting.ACTIONS)},
                 'membership_request_create': custom_auth.membership_request_create,
                 'membership_request_list': custom_auth.membership_request_list,
                 'membership_request_process': custom_auth.membership_request_process,
@@ -1509,9 +1607,12 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 'ihpix_activity_create': custom_auth.ihpix_activity_create,
                 'ihpix_activity_update': custom_auth.ihpix_activity_update,
                 'ihpix_activity_delete': custom_auth.ihpix_activity_delete,
+                'ihpix_activity_bulk_delete': custom_auth.ihpix_activity_bulk_delete,
                 # IHP-IX reporting & dashboard
                 'ihpix_admin_overview_stats': custom_auth.ihpix_admin_overview_stats,
                 'ihpix_report_submit': custom_auth.ihpix_report_submit,
+                'ihpix_report_autosave': custom_auth._logged_in_only,
+                'ihpix_resource_create': custom_auth._logged_in_only,
                 'ihpix_report_update': custom_auth.ihpix_report_update,
                 'ihpix_report_show': custom_auth.ihpix_report_show,
                 'ihpix_report_delete': custom_auth.ihpix_report_delete,
@@ -1536,10 +1637,13 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 'ihpix_working_group_member_list': custom_auth.ihpix_working_group_member_list,
                 'ihpix_contribution_list': custom_auth.ihpix_contribution_list,
                 'ihpix_dashboard_stats': custom_auth.ihpix_dashboard_stats,
+                'ihpix_progress_stats': custom_auth.ihpix_progress_stats,
                 # IHP-IX GeoJSON & country summary
                 'ihpix_geojson': custom_auth.ihpix_geojson,
                 'ihpix_activity_geojson': custom_auth.ihpix_activity_geojson,
                 'ihpix_country_summary_list': custom_auth.ihpix_country_summary_list,
+                'ihpix_institution_link_list': custom_auth.ihpix_institution_link_list,
+                'ihpix_institution_link': custom_auth.ihpix_institution_link,
                 # Initiative requests
                 'initiative_request_create': custom_auth.initiative_request_create,
                 'initiative_request_list': custom_auth.initiative_request_list,

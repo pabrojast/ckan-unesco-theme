@@ -47,6 +47,10 @@ La ruta legacy `/group/request` hace **301** permanente a `/initiatives/request`
 > [!warning] El orden de registro de rutas importa en este deployment
 > En este deployment la precedencia estático-vs-dinámico de Werkzeug no es confiable: las reglas comparten `match_compare_key`, así que el empate lo decide el **ORDEN DE REGISTRO** en `plugin.py:get_blueprint()`. Por eso `/initiatives/request` **debe registrarse ANTES** que la ruta dinámica `/initiatives/<name>`. Si se invierte el orden, la dinámica captura `request`, redirige a `/group/request`, que a su vez redirige a `/initiatives/request`, y se cierra el bucle **ERR_TOO_MANY_REDIRECTS**.
 
+### Página completa (opcional)
+
+`/initiatives/request` ofrece dos opciones: la solicitud estándar de este flujo o **Full initiative page** (`/initiatives/request/full`), un cuestionario de 7 pasos que crea la solicitud con la misma vista y guarda las respuestas en la tabla `initiative_page`. Sus rutas se registran en `initiative.add_url_rules`. `/initiatives/request/full` no compite con `/initiatives/<name>` porque tiene un segmento más. Ver [[Initiative pages]].
+
 ### Templates
 - `templates/initiatives/request.html` — formulario usuario (multipart/form-data)
 - `templates/admin/initiative_requests.html` — panel admin con tabs pending/history

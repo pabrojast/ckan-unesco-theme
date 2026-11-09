@@ -158,8 +158,8 @@ Todos bajo `/ckan-admin/*`, requieren rol sysadmin. Ver rutas completas en [[Flu
 | Tickets de errores | `/ckan-admin/bug-tickets` | Ver y gestionar tickets |
 | Usuarios | `/ckan-admin/users` | Gestión completa de usuarios |
 | Contenido IHP-IX | `/ckan-admin/ihpix/content` | Editar secciones IHP-IX |
-| Actividades IHP-IX | `/ckan-admin/ihpix/activities` | CRUD actividades |
-| Reportes IHP-IX | `/ckan-admin/ihpix/reports` | Cola de revisión (pending / rejected / published / draft), approve/reject con email al reportante, enlace al formulario completo |
+| Actividades IHP-IX | `/ckan-admin/ihpix/activities` | CRUD actividades; filtros por búsqueda/estado/PA, selección múltiple y borrado masivo con doble confirmación (2026-10-31) |
+| Reportes IHP-IX | `/ckan-admin/ihpix/reports` | Cola de revisión (pending / rejected / published / draft), approve/reject con email al reportante, enlace al formulario completo, borrado por sysadmin (2026-10-31) |
 | Overview IHP-IX | `/ckan-admin/ihpix/overview` | KPIs, distribuciones, geografía, completeness, adjuntos; export CSV completo (`?export=csv`) y botón "Recompute map counts" |
 | Working groups IHP-IX | `/ckan-admin/ihpix/workspaces` | Título, descripción, lead (username) y estado de los 34 workspaces; acceso a la gestión de miembros |
 
@@ -203,7 +203,7 @@ scripts/generate_seed.py → JSON seed (744 actividades, 205 países)
 CLI: ckan ihpix seed-data → DB (IhpixActivity + IhpixCountrySummary)
     │
     ▼
-API actions (ihpix_geojson, ihpix_activity_geojson, ihpix_dashboard_stats)
+API actions (ihpix_geojson, ihpix_activity_geojson, ihpix_dashboard_stats, ihpix_progress_stats)
     │
     ▼
 Frontend: Leaflet maps + dashboards + exportación CSV
@@ -251,3 +251,21 @@ revisión, conectores y relaciones. El tema conserva adaptadores de compatibilid
 con Open Learning y sus vistas usan los paquetes publicados. La tabla antigua
 permanece intacta. El catálogo dataset y las pestañas de organizaciones/grupos
 excluyen documentos y formación según su contexto. Ver [[Open Learning]].
+
+## Modelo de revisión IHP-IX (2026-10-21)
+
+Migración aditiva de `ihpix_activity`: `contributions_json`, `synergies_json`, `supporters_json`, `institution_org_id`, `partner_org_ids`, `revision`. Los campos escalares históricos se conservan para compatibilidad. Cinco tablas nuevas en `ihpix_store.py`: `ihpix_report_revision` (actividad/versión únicos), `ihpix_report_collaborator` (actividad/usuario únicos), `ihpix_workspace_item`, `ihpix_notification`, `ihpix_import_batch` (usuario/digest únicos). No se reescriben filas históricas al agregar estas columnas.
+
+`ihpix_service.py` concentra validación, autorización, bloqueo de fila y snapshot dentro de la misma transacción. Los nuevos servicios usan SQLAlchemy Core sobre la Session CKAN. El bootstrap de tablas se serializa mediante advisory lock; no se ejecuta DDL dentro del guardado del reporte. La caché de estadísticas incorpora conteo, fecha máxima y suma de revisiones para invalidar también entre workers. Ver [[IHP-IX Review September 2026]].
+
+## Persistencia de planificación IHP-IX
+
+`ihpix_group_store.init_db()` crea exclusivamente nueve tablas nuevas bajo un bloqueo advisory transaccional: `ihpix_group`, `ihpix_group_member`, `ihpix_planned_activity`, `ihpix_plan_version`, `ihpix_plan_report`, `ihpix_group_contact`, `ihpix_group_document`, `ihpix_group_item`, `ihpix_group_import`. Inserta ocho grupos únicamente si faltan. No transforma ni elimina las tablas históricas de reportes o espacios por Output.
+
+Los planes guardan payload actual, snapshot aprobado, revisión optimista, estados de revisión/ejecución separados e historial inmutable de cada guardado/transición. La aprobación fija los identificadores de documentos visibles; los archivos de una revisión nueva no aparecen a lectores del plan acordado. Creación de planes y reportes desde plan, confirmaciones de importación y subidas repetidas emplean identidades/bloqueos para reintentos. Los recursos de catálogo se filtran según sus permisos nativos.
+
+Los archivos internos se almacenan como `bytea` en `ihpix_group_document`, limitados a 20 MB por archivo, con hash y cadena de versiones. Esto evita URLs públicas y reutiliza backup/transacciones de PostgreSQL sin otra credencial o dependencia. Implica crecimiento de la base y sus backups por cada versión; no existe deduplicación global ni borrado automático. Una futura migración a almacenamiento privado de objetos deberá mantener esta autorización y las versiones, sin convertirlos en recursos públicos.
+
+Las asociaciones CTWG se inicializan desde la matriz de la diapositiva 6 de `OETWG 4 IWRM_23Feb.pptx`, con identidades por nombre; sólo administradores pueden modificarlas. No se eliminan Outputs que ya contienen planes. Membresías e identidades del directorio de contactos son independientes.
+
+El calendario agrega `planned_start` y `planned_end` al JSON versionado de planes y snapshots aprobados; no requiere DDL ni nuevas tablas. La visibilidad usa el mismo payload autorizado (snapshot aprobado para lectores durante una revisión). Las fuentes duplicadas se conservan en `origin.sources`. Crear/retomar reportes se serializa con el bloqueo de la actividad planificada; sólo se reutilizan borradores/rechazados editables del mismo autor del vínculo y bienio.

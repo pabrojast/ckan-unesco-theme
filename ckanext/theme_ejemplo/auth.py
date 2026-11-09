@@ -244,6 +244,10 @@ def ihpix_activity_delete(context, data_dict):
     return _sysadmin_only(context, data_dict)
 
 
+def ihpix_activity_bulk_delete(context, data_dict):
+    return _sysadmin_only(context, data_dict)
+
+
 # ── IHP-IX Reporting & Dashboard Auth ──────────────────────────────────────
 
 def ihpix_report_submit(context, data_dict):
@@ -280,11 +284,19 @@ def _ihpix_report_owner_or_sysadmin(context, data_dict):
 
 
 def ihpix_report_show(context, data_dict):
-    return _ihpix_report_owner_or_sysadmin(context, data_dict)
+    result = _ihpix_report_owner_or_sysadmin(context, data_dict)
+    if result['success']:
+        return result
+    from ckanext.theme_ejemplo.ihpix_service import can_collaborate
+    from ckanext.theme_ejemplo.model import IhpixActivity
+    activity = IhpixActivity.get((data_dict or {}).get('id'))
+    person = context.get('auth_user_obj') or model.User.get(context.get('user', ''))
+    return {'success': bool(activity and can_collaborate(activity, person))}
+
 
 
 def ihpix_report_update(context, data_dict):
-    return _ihpix_report_owner_or_sysadmin(context, data_dict)
+    return ihpix_report_show(context, data_dict)
 
 
 def ihpix_report_delete(context, data_dict):
@@ -305,11 +317,11 @@ def ihpix_activity_link_list(context, data_dict):
     activity = IhpixActivity.get(activity_id) if activity_id else None
     if activity is None or activity.status == IhpixActivity.STATUS_PUBLISHED:
         return {'success': True}
-    return _ihpix_report_owner_or_sysadmin(context, {'id': activity_id})
+    return ihpix_report_show(context, {'id': activity_id})
 
 
 def ihpix_activity_link_create(context, data_dict):
-    return _ihpix_report_owner_or_sysadmin(
+    return ihpix_report_update(
         context, {'id': (data_dict or {}).get('activity_id')})
 
 
@@ -319,7 +331,7 @@ def ihpix_activity_link_delete(context, data_dict):
     link = IhpixActivityLink.get(link_id) if link_id else None
     if link is None:
         return _logged_in_only(context, data_dict)
-    return _ihpix_report_owner_or_sysadmin(context, {'id': link.activity_id})
+    return ihpix_report_update(context, {'id': link.activity_id})
 
 
 def ihpix_link_search(context, data_dict):
@@ -410,6 +422,12 @@ def ihpix_dashboard_stats(context, data_dict):
     return _logged_in_only(context, data_dict)
 
 
+def ihpix_progress_stats(context, data_dict):
+    """Dashboard de progreso (réplica Power BI): usuarios autenticados,
+    misma política que `ihpix_dashboard_stats`."""
+    return _logged_in_only(context, data_dict)
+
+
 def ihpix_admin_overview_stats(context, data_dict):
     """Sysadmin-only access to the extended admin overview statistics."""
     return _sysadmin_only(context, data_dict)
@@ -430,6 +448,16 @@ def ihpix_country_summary_list(context, data_dict):
 
 
 def ihpix_country_summary_recompute(context, data_dict):
+    return _sysadmin_only(context, data_dict)
+
+
+def ihpix_institution_link_list(context, data_dict):
+    """Instituciones heredadas y sugerencias de organización: sysadmin."""
+    return _sysadmin_only(context, data_dict)
+
+
+def ihpix_institution_link(context, data_dict):
+    """Vincular/desvincular instituciones con organizaciones: sysadmin."""
     return _sysadmin_only(context, data_dict)
 
 

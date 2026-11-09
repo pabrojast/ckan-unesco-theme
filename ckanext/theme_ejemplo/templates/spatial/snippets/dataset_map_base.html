@@ -1,0 +1,14 @@
+{# Mapa de extensión del dataset, compartido por spatial y schemingdcat. #}
+{% set map_config = h.get_common_map_config() %}
+{% if map_config.get('type') == 'USGS.USImagery' %}
+  {# USGS no ofrece imágenes desde zoom 9 en zonas como el Tana River.
+     Copiamos la configuración para no limitar el buscador espacial. #}
+  {% set max_zoom = [8, map_config.get('maxZoom', 8)|int(8)]|min %}
+  {% set map_config = dict(map_config, maxZoom=max_zoom) %}
+{% endif %}
+<div class="dataset-map" data-module="dataset-map" data-extent="{{ extent }}" data-module-site_url="{{ h.dump_json(h.url_for('/', locale='default', qualified=true)) }}" data-module-map_config="{{ h.dump_json(map_config) }}">
+  <div id="dataset-map-container"></div>
+</div>
+
+{% set type = 'asset' if h.ckan_version().split('.')[1] | int >= 9 else 'resource' %}
+{% include 'spatial/snippets/dataset_map_' ~ type ~ '.html' %}

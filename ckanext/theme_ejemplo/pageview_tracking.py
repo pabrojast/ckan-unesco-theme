@@ -30,12 +30,18 @@ import datetime
 import hashlib
 import logging
 import re
+import json
+import os
+import time
+import uuid
+from collections import OrderedDict
 from urllib.parse import urlsplit
 
 from flask import request
 import ckan.plugins.toolkit as toolkit
 import ckan.model as model
 from sqlalchemy import text
+from .resource_styles import is_sld_url, sld_sql
 
 log = logging.getLogger(__name__)
 
@@ -74,6 +80,24 @@ _referrer_cache = {'raw': None, 'parsed': ()}
 _redis_client = None
 _redis_init_attempted = False
 _hooks_registered = False
+_resource_policy_cache = OrderedDict()
+
+
+def _excluded_download(resource_id):
+    """Consulta acotada con TTL; el flush verifica de nuevo sin caché."""
+    now = time.monotonic()
+    cached = _resource_policy_cache.get(resource_id)
+    if cached and cached[0] > now:
+        return cached[1]
+    with model.meta.engine.connect() as conn:
+        row = conn.execute(text('SELECT {sld} FROM resource r WHERE r.id = :id'.format(
+            sld=sld_sql())), {'id': resource_id}).fetchone()
+    excluded = row is None or bool(row[0])
+    _resource_policy_cache[resource_id] = (now + 300, excluded)
+    _resource_policy_cache.move_to_end(resource_id)
+    while len(_resource_policy_cache) > 2048:
+        _resource_policy_cache.popitem(last=False)
+    return excluded
 
 
 # ─── Redis (patrón lazy idéntico a cache.py) ──────────────────────────────
@@ -290,12 +314,18 @@ def _record():
         if _bot_filter_enabled() and _is_bot(request.headers.get('User-Agent', '')):
             return None
 
+        if kind == 'download' and is_sld_url(norm_path):
+            return None
+
         # Descargas: sólo navegaciones de usuario. Va ANTES del dedup para que
         # un fetch de visor no queme la ventana del clic real del mismo IP+URL.
         if kind == 'download' and _downloads_navigation_only() \
                 and not _is_user_download(request.headers):
             log.debug('pageviews: download descartado (no-navegacion) path=%s',
                       norm_path)
+            return None
+
+        if kind == 'download' and _excluded_download(ident):
             return None
 
         redis = _get_redis()
@@ -383,9 +413,14 @@ def _apply_to_db(views, downloads, daily):
     prune_cutoff = today - datetime.timedelta(days=recent_days)
 
     views_added = sum(views.values())
-    downloads_added = sum(downloads.values())
 
     with engine.begin() as conn:
+        if downloads:
+            excluded = {row[0] for row in conn.execute(text(
+                'SELECT r.id::text FROM resource r WHERE r.id::text = ANY(:ids) AND ' + sld_sql()
+            ), {'ids': list(downloads)})}
+            downloads = {rid: delta for rid, delta in downloads.items() if rid not in excluded}
+        downloads_added = sum(downloads.values())
         if views:
             conn.execute(text("""
                 INSERT INTO tracking_dataset_stats
@@ -419,16 +454,15 @@ def _apply_to_db(views, downloads, daily):
                     updated = now()
             """), [{'rid': r, 'delta': d} for r, d in downloads.items()])
 
-        if views_added or downloads_added:
-            conn.execute(text("""
-                INSERT INTO tracking_site_totals
-                    (id, total_page_views, total_downloads, updated)
-                VALUES (1, :v, :d, now())
-                ON CONFLICT (id) DO UPDATE SET
-                    total_page_views = tracking_site_totals.total_page_views + :v,
-                    total_downloads = tracking_site_totals.total_downloads + :d,
-                    updated = now()
-            """), {'v': views_added, 'd': downloads_added})
+        total_downloads = _eligible_download_total(conn)
+        conn.execute(text("""
+            INSERT INTO tracking_site_totals
+                (id, total_page_views, total_downloads, updated)
+            VALUES (1, :v, :d, now())
+            ON CONFLICT (id) DO UPDATE SET
+                total_page_views = tracking_site_totals.total_page_views + :v,
+                total_downloads = :d, updated = now()
+        """), {'v': views_added, 'd': total_downloads})
 
         # Poda de buckets diarios fuera de la ventana ``recent``.
         conn.execute(text(
@@ -478,10 +512,11 @@ def flush_to_db():
         return {'status': 'no-redis'}
 
     try:
-        got_lock = redis.set(LOCK_KEY, 1, nx=True, ex=600)
+        token = uuid.uuid4().hex
+        got_lock = redis.set(LOCK_KEY, token, nx=True, ex=600)
     except Exception as e:
         log.warning('pageviews flush: no se pudo tomar el lock: %s', e)
-        got_lock = True
+        return {'status': 'redis-error'}
     if not got_lock:
         return {'status': 'locked'}
 
@@ -504,14 +539,82 @@ def flush_to_db():
             except Exception:
                 pass
 
-        result = _apply_to_db(views, downloads, daily)
+        try:
+            result = _apply_to_db(views, downloads, daily)
+        except Exception:
+            # Recuperar los deltas si PostgreSQL abortó; no pisar nuevos eventos.
+            pipe = redis.pipeline(transaction=True)
+            for key, counts in [(VIEWS_KEY, views), (DOWNLOADS_KEY, downloads)]:
+                for ident, delta in counts.items():
+                    pipe.hincrby(key, ident, delta)
+            for day, counts in daily.items():
+                for ident, delta in counts.items():
+                    pipe.hincrby(DAILY_KEY_FMT % day, ident, delta)
+                pipe.sadd(DAILY_INDEX, day)
+            pipe.execute()
+            raise
         result['status'] = 'ok'
         return result
     finally:
         try:
-            redis.delete(LOCK_KEY)
+            _release_lock(redis, token)
         except Exception:
             pass
+
+
+def _release_lock(redis, token):
+    redis.eval("if redis.call('get', KEYS[1]) == ARGV[1] then return redis.call('del', KEYS[1]) else return 0 end", 1, LOCK_KEY, token)
+
+
+def _eligible_download_total(conn):
+    return int(conn.execute(text(
+        'SELECT COALESCE(SUM(s.total_downloads), 0) FROM tracking_resource_stats s '
+        'LEFT JOIN resource r ON r.id::text = s.resource_id WHERE NOT ' + sld_sql()
+    )).scalar() or 0)
+
+
+def reconcile_downloads(apply=False, backup=None):
+    """Recalcula sólo el agregado; conserva los contadores históricos por recurso."""
+    redis, token = None, None
+    if apply:
+        if not backup:
+            raise ValueError('Se requiere --backup para aplicar la reconciliación')
+        redis = _get_redis()
+        token = uuid.uuid4().hex
+        if redis is None or not redis.set(LOCK_KEY, token, nx=True, ex=600):
+            raise RuntimeError('No se pudo adquirir el bloqueo de consolidación')
+    try:
+        with model.meta.engine.begin() as conn:
+            if apply:
+                conn.execute(text("SET LOCAL statement_timeout = '30s'"))
+                conn.execute(text('LOCK TABLE tracking_resource_stats IN SHARE MODE'))
+            row = conn.execute(text('SELECT total_page_views, total_downloads FROM tracking_site_totals WHERE id = 1' + (' FOR UPDATE' if apply else ''))).fetchone()
+            if row is None:
+                raise RuntimeError('No existe el agregado de tracking; no se modificó nada')
+            resources = conn.execute(text(
+                'SELECT s.resource_id, s.total_downloads, s.updated, ' + sld_sql() +
+                ' AS excluded FROM tracking_resource_stats s LEFT JOIN resource r ON r.id::text = s.resource_id ORDER BY s.resource_id'
+            )).fetchall()
+            after = sum(int(r[1]) for r in resources if not r[3])
+            report = {'site_url': toolkit.config.get('ckan.site_url'),
+                      'created_at': datetime.datetime.utcnow().isoformat() + 'Z',
+                      'page_views': int(row[0]), 'before': int(row[1]), 'after': after,
+                      'excluded_downloads': sum(int(r[1]) for r in resources if r[3]),
+                      'excluded_resources': [r[0] for r in resources if r[3]],
+                      'applied': apply}
+            if apply:
+                snapshot = dict(report, applied=False, snapshot_phase='before', resources=[list(r) for r in resources],
+                                pending_downloads={_to_str(k): int(v) for k, v in redis.hgetall(DOWNLOADS_KEY).items()})
+                fd = os.open(backup, os.O_WRONLY | os.O_CREAT | os.O_EXCL, 0o600)
+                with os.fdopen(fd, 'w') as stream:
+                    json.dump(snapshot, stream, default=str, indent=2)
+                    stream.flush()
+                    os.fsync(stream.fileno())
+                conn.execute(text('UPDATE tracking_site_totals SET total_downloads = :total, updated = now() WHERE id = 1'), {'total': after})
+            return report
+    finally:
+        if redis is not None and token:
+            _release_lock(redis, token)
 
 
 def get_status():

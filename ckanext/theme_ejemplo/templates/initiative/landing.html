@@ -1,0 +1,235 @@
+{#
+  Initiative pages (added by Jorgen Van Der Biest). New file.
+  Portada común de las iniciativas con página completa. Misma estructura y
+  clases que la portada de AI for Water Management (ai_water_portal/landing.html),
+  con el contenido del cuestionario (h.theme_ejemplo_initiative_data) y los
+  colores de la iniciativa (variables CSS en el contenedor .aiw.ini).
+  Se incluye desde group/read.html cuando la URL no lleva parámetros.
+  Las secciones sin contenido no se muestran.
+#}
+{% set ini = h.theme_ejemplo_initiative_data(group_dict) %}
+{% set d = ini.details %}
+{% set aiw_conf = h.theme_ejemplo_group_landing(group_dict) %}
+{% set ld = h.theme_ejemplo_group_landing_data(group_dict) %}
+{% set news = ld.news %}
+{% set events = ld.events %}
+{% set stories = ld.stories %}
+{% set documents = ld.documents %}
+{% set arrow = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"></path></svg>' %}
+
+<div class="aiw ini" data-group="{{ group_dict.name }}" style="{{ aiw_conf.root_style }}">
+  {% include "initiative/snippets/header.html" %}
+
+<section class="aiw-hero ini-hero--{{ d.hero_layout }}" aria-labelledby="aiw-hero-title">
+  <div class="aiw-wrap">
+    <div class="aiw-hero-text">
+      {% if ini.eyebrow %}<span class="aiw-eyebrow">{{ ini.eyebrow }}</span>{% endif %}
+      <h1 id="aiw-hero-title">
+        <span class="aiw-t1">{{ ini.title1 }}</span>
+        {% if ini.title2 %}<span class="aiw-t2">{{ ini.title2 }}</span>{% endif %}
+      </h1>
+      {% if d.tagline %}<p>{{ d.tagline }}</p>{% endif %}
+      {% if d.cta.url or d.cta2.url %}
+      <div class="aiw-hero-actions">
+        {% if d.cta.url %}<a class="aiw-btn aiw-btn--light" href="{{ d.cta.url }}">{{ d.cta.label or _('Find out more') }} <span class="ini-arrow">{{ arrow | safe }}</span></a>{% endif %}
+        {% if d.cta2.url %}<a class="aiw-btn aiw-btn--outline" href="{{ d.cta2.url }}">{{ d.cta2.label or _('Learn more') }}</a>{% endif %}
+      </div>
+      {% endif %}
+    </div>
+    {% if d.hero_layout != 'title' and ini.images.hero.url %}
+    <div class="aiw-hero-art">
+      <img src="{{ ini.images.hero.url }}" alt="{{ ini.images.hero.alt }}" />
+    </div>
+    {% endif %}
+  </div>
+</section>
+{% if ini.images.band.url %}
+<div class="aiw-pattern ini-band" role="presentation" style="background-image: url('{{ ini.images.band.url }}');"></div>
+{% endif %}
+
+{% if ini.show.figures and ini.figures %}
+<section class="aiw-figures" aria-label="{{ _('Key figures') }}">
+  <div class="aiw-wrap">
+    {% for f in ini.figures %}
+    <div class="aiw-figure"><strong>{{ f.value }}</strong><span>{{ f.label }}</span></div>
+    {% endfor %}
+  </div>
+</section>
+{% endif %}
+
+{% set show_why = ini.show.why and (d.why_title or d.why_text) %}
+{% set show_toc = ini.show.toc and (d.toc['if'] or d.toc.then or d.toc.so_that) %}
+{% if show_why or show_toc %}
+<section class="aiw-section" aria-labelledby="aiw-why-title">
+  <div class="aiw-wrap">
+    <div class="aiw-why{% if not (show_why and show_toc) %} ini-why--single{% endif %}">
+      {% if show_why %}
+      <div class="aiw-why-text">
+        <span class="aiw-eyebrow">{{ _('Why it matters') }}</span>
+        <h2 id="aiw-why-title" class="aiw-h2">{{ d.why_title or _('Why it matters') }}</h2>
+        <span class="aiw-rule"></span>
+        {% for para in (d.why_text or '').split('\n') if para.strip() %}
+        <p class="aiw-lead">{{ para }}</p>
+        {% endfor %}
+      </div>
+      {% endif %}
+      {% if show_toc %}
+      <div class="aiw-toc">
+        <div class="aiw-toc-title"{% if not show_why %} id="aiw-why-title"{% endif %}>{{ _('Theory of change') }}</div>
+        <dl>
+          {% if d.toc['if'] %}<div><dt>{{ _('IF') }}</dt><dd>{{ d.toc['if'] }}</dd></div>{% endif %}
+          {% if d.toc.then %}<div><dt>{{ _('THEN') }}</dt><dd>{{ d.toc.then }}</dd></div>{% endif %}
+          {% if d.toc.so_that %}<div><dt>{{ _('SO THAT') }}</dt><dd>{{ d.toc.so_that }}</dd></div>{% endif %}
+        </dl>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% if ini.show.objectives and ini.objectives %}
+<section id="objectives" class="aiw-section" aria-labelledby="aiw-pillars-title">
+  <div class="aiw-wrap">
+    <div class="aiw-head">
+      <span class="aiw-eyebrow">{{ _('Objectives') }}</span>
+      <h2 id="aiw-pillars-title" class="aiw-h2">{{ d.objectives_heading or _('What we work on') }}</h2>
+      <span class="aiw-rule"></span>
+      {% if d.objectives_intro %}<p class="aiw-lead">{{ d.objectives_intro }}</p>{% endif %}
+    </div>
+    {% set any_art = ini.objectives | selectattr('image') | list | length > 0 %}
+    <div class="aiw-grid4">
+      {% for p in ini.objectives %}
+      <article class="aiw-pillar">
+        {% if p.image %}<div class="aiw-pillar-art"><img src="{{ p.image }}" alt="" loading="lazy" /></div>
+        {% elif any_art %}<div class="aiw-pillar-art ini-pillar-art--empty" role="presentation"></div>{% endif %}
+        <div class="aiw-pillar-body">
+          <div class="aiw-pillar-top"><span class="aiw-num">{{ loop.index }}</span>{% if p.tag %}<span class="aiw-tag">{{ p.tag }}</span>{% endif %}</div>
+          <h3>{{ p.title }}</h3>
+          {% if p.text %}<p>{{ p.text }}</p>{% endif %}
+          {% if p['items'] %}<ul>{% for it in p['items'] %}<li>{{ it }}</li>{% endfor %}</ul>{% endif %}
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% if ini.show.latest %}
+{# ---------- Contenido del grupo (como en AI for Water) ---------- #}
+<section class="aiw-section" aria-label="{{ _('Latest from the initiative') }}">
+  <div class="aiw-wrap">
+    <div class="aiw-cols">
+
+      <div>
+        <div class="aiw-list-head">
+          <h2>{{ _('Latest news') }}</h2>
+          <a href="{{ h.url_for('theme_ejemplo.group_news', name=group_dict.name) }}">{{ _('All news') }} ({{ ld.news_count }}) →</a>
+        </div>
+        {% for item in news %}
+        <article class="aiw-item">
+          {% set dt = item.publish_date or item.created %}
+          {% if dt %}<span class="aiw-meta">{{ h.render_datetime(dt, '%B %Y') }}</span>{% endif %}
+          <h3><a href="/water-news/{{ item.name }}">{{ item.title }}</a></h3>
+          {% if item.excerpt %}<p>{{ h.markdown_extract(item.excerpt, 180) }}</p>
+          {% elif item.content %}<p>{{ h.markdown_extract(item.content, 180) }}</p>{% endif %}
+        </article>
+        {% else %}
+        <p class="aiw-empty">{{ _('No news linked to this initiative yet.') }}</p>
+        {% endfor %}
+      </div>
+
+      <div>
+        <div class="aiw-list-head">
+          <h2>{{ _('Events') }}</h2>
+          <a href="{{ h.url_for('theme_ejemplo.group_events', name=group_dict.name) }}">{{ _('All events') }} ({{ ld.events_count }}) →</a>
+        </div>
+        {% for item in events %}
+        {% set dt = item.publish_date or item.created %}
+        <article class="aiw-event">
+          <div class="aiw-date">
+            {% if dt %}<small>{{ h.render_datetime(dt, '%b') }}</small><b>{{ h.render_datetime(dt, '%d') }}</b>{% endif %}
+          </div>
+          <div class="aiw-item" style="padding: 0; border: 0;">
+            {% if item.location or item.event_format %}<span class="aiw-meta">{{ item.location }}{% if item.location and item.event_format %} · {% endif %}{{ item.event_format }}</span>{% endif %}
+            <h3><a href="/water-events/{{ item.name }}">{{ item.title }}</a></h3>
+            {% if item.excerpt %}<p>{{ h.markdown_extract(item.excerpt, 140) }}</p>{% endif %}
+          </div>
+        </article>
+        {% else %}
+        <p class="aiw-empty">{{ _('No events linked to this initiative yet.') }}</p>
+        {% endfor %}
+      </div>
+
+      <div>
+        <div class="aiw-list-head">
+          <h2>{% if ini.datasets_mode == 'chosen' %}{{ _('Featured datasets') }}{% elif ini.datasets_mode == 'most_viewed' %}{{ _('Most viewed datasets') }}{% else %}{{ _('Datasets') }}{% endif %}</h2>
+          <a href="{{ h.url_for('group.read', id=group_dict.name) }}?q=">{{ _('All datasets') }} ({{ ld.datasets_count }}) →</a>
+        </div>
+        {% for pkg in ini.datasets %}
+        <article class="aiw-item">
+          <h3><a href="{{ h.url_for(pkg.type ~ '.read', id=pkg.name) }}">{{ pkg.title or pkg.name }}</a></h3>
+          {% if pkg.organization %}<p>{{ pkg.organization.title }}</p>{% endif %}
+          {% set formats = h.dict_list_reduce(pkg.resources, 'format') %}
+          {% if formats %}<div class="aiw-chips">{% for f in formats[:4] %}<span class="aiw-chip">{{ f }}</span>{% endfor %}</div>{% endif %}
+        </article>
+        {% else %}
+        <p class="aiw-empty">{{ _('No datasets in this initiative yet.') }}</p>
+        {% endfor %}
+      </div>
+
+      <div>
+        <div class="aiw-list-head">
+          <h2>{{ _('Data stories') }}</h2>
+          <a href="{{ h.url_for('theme_ejemplo.group_data_stories', name=group_dict.name) }}">{{ _('All data stories') }} →</a>
+        </div>
+        {% for story in stories %}
+        <article class="aiw-item">
+          {% set dt = story.published_at or story.created_at %}
+          {% if dt %}<span class="aiw-meta">{{ h.render_datetime(dt, '%B %Y') }}</span>{% endif %}
+          <h3><a href="/data-stories/{{ story.slug or story.id }}">{{ story.title }}</a></h3>
+          {% if story.abstract %}<p>{{ h.markdown_extract(story.abstract, 160) }}</p>{% endif %}
+        </article>
+        {% else %}
+        <p class="aiw-empty">{{ _('No data stories linked to this initiative yet.') }}</p>
+        {% endfor %}
+      </div>
+
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% if ini.show.documents and documents %}
+<section class="aiw-section" aria-labelledby="aiw-docs-title">
+  <div class="aiw-wrap">
+    <div class="aiw-list-head">
+      <h2 id="aiw-docs-title">{{ _('Documents') }}</h2>
+      <a href="{{ h.url_for('theme_ejemplo.group_publications', name=group_dict.name) }}">{{ _('All documents') }} ({{ ld.documents_count }}) →</a>
+    </div>
+    <div>
+      {% for pkg in documents %}
+      <article class="aiw-item">
+        <h3><a href="{{ h.url_for('dataset.read', id=pkg.name) }}">{{ pkg.title or pkg.name }}</a></h3>
+        {% if pkg.notes %}<p>{{ h.markdown_extract(pkg.notes, 160) }}</p>{% endif %}
+      </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% if ini.show.cta and d.cta_heading and d.cta.url %}
+<section class="aiw-cta" aria-labelledby="aiw-join-title">
+  <div class="aiw-cta-art{% if not ini.images.band.url %} ini-cta-art--plain{% endif %}" role="presentation"{% if ini.images.band.url %} style="background-image: url('{{ ini.images.band.url }}');"{% endif %}></div>
+  <div class="aiw-cta-text">
+    <h2 id="aiw-join-title">{{ d.cta_heading }}</h2>
+    {% if d.cta_text %}<p>{{ d.cta_text }}</p>{% endif %}
+    <a class="aiw-btn aiw-btn--light" href="{{ d.cta.url }}">{{ d.cta.label or _('Find out more') }} <span class="ini-arrow">{{ arrow | safe }}</span></a>
+  </div>
+</section>
+{% endif %}
+
+  {% include "initiative/snippets/credit.html" %}
+</div>

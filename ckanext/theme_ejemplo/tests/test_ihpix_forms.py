@@ -10,7 +10,8 @@ from ckanext.theme_ejemplo import ihpix_forms as F
 
 
 def _full_payload(**overrides):
-    """Payload mínimo válido para un envío a revisión."""
+    """Payload mínimo válido para un envío a revisión (todas las preguntas
+    Sí/No respondidas, como exige el formulario oficial)."""
     data = {
         'title': 'Water education workshop',
         'priority_area': 'PA2',
@@ -23,6 +24,8 @@ def _full_payload(**overrides):
         'description': 'Short description',
         'outcomes': 'Some outcomes',
     }
+    for gate in F.GATE_FIELDS_REQUIRED:
+        data[gate] = 'no'
     data.update(overrides)
     return data
 
@@ -48,6 +51,68 @@ def test_submission_requires_all_mandatory_fields_at_once():
     for field in F.REQUIRED_FOR_SUBMISSION:
         assert field in errors
     assert 'priority_area' in errors
+    assert exc.value.details['description'][0] == 'description_required'
+    assert exc.value.details['output'][0] == 'output_required'
+    # Las 12 preguntas Sí/No deben venir respondidas
+    for gate in F.GATE_FIELDS_REQUIRED:
+        assert exc.value.details[gate][0] == 'gate_required'
+
+
+def test_unanswered_gate_blocks_submission_but_not_draft():
+    with pytest.raises(F.ReportValidationError) as exc:
+        F.validate_report_payload(_full_payload(kpi_4_active=''), is_draft=False)
+    assert set(exc.value.errors) == {'kpi_4_active'}
+    values = F.validate_report_payload({'title': 'x', 'kpi_4_active': ''}, is_draft=True)
+    assert values['kpi_4_active'] is None
+    # Cualquier forma de 'yes'/'no' cuenta como respuesta
+    values = F.validate_report_payload(_full_payload(kpi_4_active='yes', num_curricula='2'),
+                                       is_draft=False)
+    assert values['kpi_4_active'] is True and values['num_curricula'] == 2
+
+
+def test_key_activity_code_validated_against_output():
+    values = F.validate_report_payload(_full_payload(output='2.1', key_activity_code='2.1.1'),
+                                       is_draft=False)
+    assert values['key_activity_code'] == '2.1.1'
+    with pytest.raises(F.ReportValidationError) as exc:
+        F.validate_report_payload(_full_payload(output='2.1', key_activity_code='1.3.2'),
+                                  is_draft=False)
+    assert exc.value.details['key_activity_code'][0] == 'key_activity_invalid'
+    # Sin código elegido se deriva del texto heredado "x.y.z. …" si cuadra
+    values = F.validate_report_payload(
+        _full_payload(output='2.1', key_activity='2.1.2. Capacity building of educators'),
+        is_draft=False)
+    assert values['key_activity_code'] == '2.1.2'
+    values = F.validate_report_payload(
+        _full_payload(output='2.1', key_activity='1.3.2. Not this output'), is_draft=False)
+    assert values['key_activity_code'] == ''
+
+
+def test_legacy_aliases_are_accepted_and_stored_canonically():
+    values = F.validate_report_payload(
+        _full_payload(kpi_1a_active='yes', knowledge_product_type=['Report', 'Website'],
+                      num_knowledge_products='2', kpi_3_active='yes',
+                      training_type='Online Course, Lecture', num_training_materials='1',
+                      biennium='2024 - 2025', institution_type='NGO',
+                      has_flagship='yes', flagships=['FRIEND-Water', 'UWMP']),
+        is_draft=False)
+    assert json.loads(values['knowledge_product_type']) == ['Report or paper', 'Website']
+    assert json.loads(values['training_type']) == ['Online training course', 'Lecture']
+    assert values['biennium'] == '2024-2025'
+    assert values['institution_type'] == 'Non-Governmental Organization'
+    assert json.loads(values['flagships']) == ['FRIEND', 'UWMP']
+
+
+def test_training_type_other_reset_when_gate_off():
+    values = F.validate_report_payload(
+        _full_payload(kpi_3_active='no', training_type=['Other'], training_type_other='Podcast'),
+        is_draft=False)
+    assert values['training_type'] == '' and values['training_type_other'] == ''
+    values = F.validate_report_payload(
+        _full_payload(kpi_3_active='yes', training_type=['Other'], training_type_other='Podcast',
+                      num_training_materials='1'),
+        is_draft=False)
+    assert values['training_type_other'] == 'Podcast'
 
 
 def test_submission_valid_payload_returns_column_values():
@@ -96,7 +161,7 @@ def test_short_text_cap_is_enforced():
     assert 'description' in exc.value.errors
 
 
-def test_multi_selects_are_filtered_and_stored_as_json():
+def test_multi_selects_reject_unknown_values_without_silent_loss():
     payload = _full_payload(
         has_flagship='yes',
         flagships=['FRIEND', 'NOT-A-FLAGSHIP', 'G-WADI'],
@@ -104,6 +169,10 @@ def test_multi_selects_are_filtered_and_stored_as_json():
         regions='Africa,Mars',
         member_states=['fr', 'es'],
     )
+    with pytest.raises(F.ReportValidationError) as error:
+        F.validate_report_payload(payload, is_draft=False)
+    assert {'flagships', 'regions'} <= set(error.value.errors)
+    payload.update(flagships=['FRIEND', 'G-WADI'], regions=['Africa'])
     values = F.validate_report_payload(payload, is_draft=False)
     assert json.loads(values['flagships']) == ['FRIEND', 'G-WADI']
     assert json.loads(values['regions']) == ['Africa']
@@ -130,13 +199,23 @@ def test_gate_off_resets_children():
     assert values['synergies'] == ''
 
 
-def test_ints_are_clamped_and_tolerant():
-    values = F.validate_report_payload(
-        _full_payload(kpi_4_active='yes', num_curricula='-3',
-                      kpi_6_active='yes', num_transboundary_ms='abc'),
-        is_draft=False)
-    assert values['num_curricula'] == 0
-    assert values['num_transboundary_ms'] == 0
+@pytest.mark.parametrize('value', ['-3', 'abc', '1.8', '1e3', '2147483648', True, 3.1])
+@pytest.mark.parametrize('draft', [True, False])
+def test_invalid_integers_are_reported_without_silent_coercion(value, draft):
+    with pytest.raises(F.ReportValidationError) as exc:
+        F.validate_report_payload(_full_payload(kpi_4_active='yes', num_curricula=value), is_draft=draft)
+    assert 'num_curricula' in exc.value.errors
+
+
+def test_unanswered_roundtrip_still_blocks_submission():
+    original = _full_payload(kpi_4_active='', num_curricula='3')
+    draft = F.validate_report_payload(original, is_draft=True)
+    restored = F.activity_to_form_dict(draft)
+    assert restored['kpi_4_active'] == ''
+    assert restored['num_curricula'] == 3
+    with pytest.raises(F.ReportValidationError) as exc:
+        F.validate_report_payload(restored, is_draft=False)
+    assert 'kpi_4_active' in exc.value.errors
 
 
 def test_dates_parsed_only_when_present():
@@ -169,6 +248,8 @@ def test_activity_to_form_dict_round_trip():
     form = F.activity_to_form_dict(activity)
     assert form['has_flagship'] == 'yes'
     assert form['kpi_1a_active'] == 'no'
+    # Pregunta sin responder (None) → '' para que el form no preseleccione
+    assert F.activity_to_form_dict({'kpi_2_active': None})['kpi_2_active'] == ''
     assert form['flagships'] == ['FRIEND']
     assert form['regions'] == []
     assert form['end_date'] == ''

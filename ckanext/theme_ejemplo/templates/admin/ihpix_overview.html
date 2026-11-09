@@ -543,6 +543,10 @@
      class="ihpix-ov-btn ihpix-ov-btn-secondary">
     <i class="fa fa-list"></i> {{ _('Manage activities') }}
   </a>
+  <a href="{{ h.url_for('theme_ejemplo.ihpix_institutions_admin') }}"
+     class="ihpix-ov-btn ihpix-ov-btn-secondary">
+    <i class="fa fa-link"></i> {{ _('Link institutions') }}
+  </a>
   <form method="post" action="{{ h.url_for('theme_ejemplo.ihpix_recompute_summary_view') }}" style="display:inline-block;"
         onsubmit="return confirm({{ _('Recompute the country summary (map counts) from published activities?')|tojson }});">
     {{ h.csrf_input() }}

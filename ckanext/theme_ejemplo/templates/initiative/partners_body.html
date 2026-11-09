@@ -1,0 +1,55 @@
+{#
+  Initiative pages (added by Jorgen Van Der Biest). New file.
+  Partners & people de una iniciativa con página completa, encima de la lista
+  de miembros de /group/<name>/members (como ai_water_portal/partners_body.html):
+  personas de contacto públicas y organizaciones de IHP-WINS (líder y socios),
+  cada una enlazada a su página de organización.
+#}
+{% set ini = h.theme_ejemplo_initiative_data(group_dict) %}
+
+{% if ini.contacts %}
+<section class="aiw-section" aria-labelledby="aiw-people-title">
+  <div class="aiw-wrap">
+    <div class="aiw-head">
+      <span class="aiw-eyebrow">{{ _('Coordination') }}</span>
+      <h2 id="aiw-people-title" class="aiw-h2">{{ _('Who to contact') }}</h2>
+      <span class="aiw-rule"></span>
+    </div>
+    <div class="aiw-people">
+      {% for c in ini.contacts %}
+      {% set initials = c.name.split() | map('first') | join('') %}
+      <article class="aiw-person{% if loop.index > 1 %} aiw-person--accent{% endif %}">
+        <div class="aiw-avatar" aria-hidden="true">{{ initials[:1] }}{{ initials[-1:] if initials | length > 1 else '' }}</div>
+        <div><h3>{{ c.name }}</h3>{% if c.role %}<span class="aiw-role">{{ c.role }}</span>{% endif %}</div>
+        {% if c.email %}<p><a href="mailto:{{ c.email }}">{{ c.email }}</a></p>{% endif %}
+      </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+{% if ini.lead or ini.partners %}
+<section class="aiw-section" aria-labelledby="aiw-partners-title">
+  <div class="aiw-wrap">
+    <div class="aiw-head">
+      <span class="aiw-eyebrow">{{ _('Network') }}</span>
+      <h2 id="aiw-partners-title" class="aiw-h2">{{ _('Partner institutions') }}</h2>
+      <span class="aiw-rule"></span>
+    </div>
+    <div class="aiw-partners">
+      {% for org in ([ini.lead] if ini.lead else []) + ini.partners %}
+      {% set is_lead = ini.lead and org.name == ini.lead.name %}
+      <article class="aiw-partner ini-partner">
+        <div class="aiw-partner-top">
+          {% if org.image %}<img class="ini-partner-logo" src="{{ org.image }}" alt="" loading="lazy" />{% else %}<span class="aiw-partner-type">{{ _('Organisation') }}</span>{% endif %}
+          <span class="aiw-status aiw-status--{{ 'lead' if is_lead else 'partner' }}">{{ _('Lead organisation') if is_lead else _('Partner') }}</span>
+        </div>
+        <h4><a href="{{ org.url }}">{{ org.title }}</a></h4>
+        {% if org.description %}<p>{{ h.markdown_extract(org.description, 180) }}</p>{% endif %}
+      </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}

@@ -28,6 +28,22 @@ apilan. Se mantienen las opciones de orden y el envío de búsqueda existentes.
 
 ---
 
+## Mapa de extensión del dataset
+
+“Dataset extent” usa la plantilla compartida del tema para las vistas de
+`spatial` y `schemingdcat`. Con el proveedor `USGS.USImagery`, la configuración
+enviada a Leaflet limita `maxZoom` a 8, o conserva un límite configurado inferior.
+El límite se aplica antes del encuadre inicial, también para puntos y polígonos
+pequeños; al alcanzarlo se deshabilita el control de acercamiento.
+
+El 2026-10-23 se comprobó en el dataset `tana-river-time-series-satellite-altimetry`
+que las imágenes de USGS cargaban en zoom 8 y devolvían HTTP 404 desde zoom 9.
+El límite es una medida conservadora para ese proveedor, no una garantía de
+cobertura mundial. Los demás proveedores y el buscador espacial conservan su
+configuración. Ver [[Modulos#Plantillas de Dataset extent]].
+
+---
+
 ## 1. Indexación de datasets (Pipeline espacial)
 
 **Trigger**: CKAN indexa un dataset en Solr
@@ -230,9 +246,9 @@ Patrón LRU con buster:
 
 ## 7. Portal IHP-IX
 
-**Rutas**: `/ihpix` (pública), `/ihpix/outputs`, `/ihpix/outputs/<code>`, `/ihpix/priority-area/<pa>`, `/ihpix/contributors`, `/ihpix/workspaces`, `/ihpix/workspaces/<code>` (+ `/join`, `/leave`, `/members`, `/members/process`), `/ihpix/report`, `/ihpix/report/<id>/edit`, `/ihpix/my-reports`, `/user/<id>/ihpix`, `/ihpix/dashboard` (todas las demás: **usuarios logueados**), `/ckan-admin/ihpix/overview`, `/ckan-admin/ihpix/workspaces`
+**Rutas**: `/ihpix` (pública), `/ihpix/outputs`, `/ihpix/outputs/<code>`, `/ihpix/priority-area/<pa>`, `/ihpix/contributors`, `/ihpix/workspaces`, `/ihpix/workspaces/<code>` (+ `/join`, `/leave`, `/members`, `/members/process`), `/ihpix/report`, `/ihpix/report/<id>/edit`, `/ihpix/my-reports`, `/user/<id>/ihpix`, `/ihpix/progress` (+ `/pa/<pa>`, `/output/<code>`, `/flagship/<slug>`, `/ctwg/<slug>`; `/ihpix/dashboard` redirige ahí desde 2026-10) (todas las demás: **usuarios logueados**), `/ckan-admin/ihpix/overview`, `/ckan-admin/ihpix/workspaces`, `/ckan-admin/ihpix/institutions`
 
-**Taxonomías oficiales**: ver [[Modulos]] → `ihpix_constants.py` (5 Priority Areas, 34 Outputs, 15 Flagships, 7 Regions, 3 CTWGs, 12 Institution Types, 8 KPIs, 195 Member States, 4 Biennia 2022-2029).
+**Taxonomías oficiales**: ver [[Modulos]] → `ihpix_constants.py` (5 Priority Areas, 34 Outputs con título, 128 key activities derivadas del Excel, 18 Flagships, 7 Regions, 3 CTWGs, 12 Institution Types, 8 KPIs con 9 tipos de producto de conocimiento y 12 de material de formación, 195 Member States, 4 Biennia 2022-2029).
 
 ```
 1. Página principal (/ihpix):
@@ -244,10 +260,21 @@ Patrón LRU con buster:
    → Métricas de impacto con contadores animados
 2. Outputs (/ihpix/outputs) — usuarios logueados:
    → Lista actividades publicadas de IhpixActivity
-   → Filtros: biennium, region, country, organization, priority_area, output
-     (listas desde h.get_ihpix_taxonomies(), ya no hardcodeadas)
+   → Filtros: biennium, region, country, organization, priority_area, output,
+     flagship, ctwg (listas desde h.get_ihpix_taxonomies(), ya no hardcodeadas).
+     `organization` admite nombre o id; `flagship`/`ctwg` código o slug. Los chips
+     muestran etiquetas legibles y conservan el resto de filtros (macro `explorer_url`)
+   → Selector de organización visible (2026-10-30): combobox con sólo las
+     organizaciones que tienen actividades publicadas vinculadas, líder o socia
+     (`actions._ihpix_linked_organizations`, `ihpix/snippets/organization_options.html`,
+     valor = `name`, etiqueta con conteo); vacío → deshabilitado con pista y enlace
+     al panel de vinculación para sysadmin. El formulario conserva `organization`,
+     `flagship` y `ctwg` al pulsar Apply (antes se perdían)
    → Vistas expandibles con detalle (incl. adjuntos), exportación CSV
    → Los chips PA / Output enlazan a las páginas por PA y por Output
+   → Institución, país sede, Member States (beneficiarios y de apoyo), flagships
+     y CTWG enlazan a la pestaña IHP-IX de la organización o del grupo
+     (`ihpix/snippets/entity_chips.html` + `controller._ihpix_entity_links`, 2026-10-23)
 2b. Páginas navegables (fase iii, usuarios logueados):
    → /ihpix/outputs/<code>: stats del Output, actividades paginadas,
      contribuidores, adjuntos agrupados por tipo, instituciones líderes,
@@ -257,10 +284,34 @@ Patrón LRU con buster:
      Outputs con conteos, stats, actividades recientes, top contribuidores
    → /ihpix/contributors: directorio de reportantes (GROUP BY reported_by,
      usuario resuelto + perfil) con filtros nombre / PA / Output / bienio
-3. Reporte (/ihpix/report) — alineado al PDF UNESCO 2026:
+3. Reporte (/ihpix/report) — alineado al PDF UNESCO 2026 y al Microsoft
+   Form oficial (rediseño 2026-10-11, ver [[IHP-IX]]):
    → 7 secciones (I General, II Priority Areas, III CTWGs, IV Region,
-     V KPIs, VI Notes, VII Attachments), ~50 campos con lógica
-     condicional Y/N
+     V KPIs, VI Notes, VII Attachments) + bloque "Review and submit";
+     preguntas numeradas 1…28 como en el formulario oficial, carril
+     lateral pegajoso con estado por sección (barra horizontal en móvil),
+     cabecera plana con progreso y autoguardado, barra de acciones
+     pegajosa abajo
+   → 23 obligatorios para enviar: focal point, email, categoría y nombre
+     de institución, título, descripción, outputs/outcomes, bienio,
+     priority area, output + las 13 preguntas Sí/No (5 generales y 8
+     KPI), que ya NO vienen con "No" por defecto (ihpix_forms.
+     GATE_FIELDS_REQUIRED; el borrador sigue exigiendo solo el título)
+   → Sí/No como control segmentado; la subpregunta abre con una regla
+     izquierda azul (eco de las cajas anidadas de la guía)
+   → Sección II: select de key activity dependiente del Output
+     (`key_activity_code`, lista de data/ihpix_key_activities.json;
+     si el Output no tiene lista se muestra un aviso "pendiente") y
+     texto opcional "How does the activity contribute" (`key_activity`)
+   → "Date of completion" = `end_date` (la guía pide una sola fecha);
+     `start_date` queda opcional plegado en <details>
+   → 18 flagships con etiqueta (h.ihpix_flagship_label: FRIEND-Water,
+     LaSII); KPI 1a con 9 tipos; KPI 3 con 12 tipos agrupados
+     (TRAINING_TYPE_GROUPS) y `training_type_other`
+   → CSS/JS en ficheros propios: public/css/ihpix-report.css y
+     public/js/ihpix-report.js (bundles theme/ihpix-report-css|js;
+     config en <script id="ihpix-report-config"> con las cadenas
+     traducidas y las key activities)
    → Char counters 250 chars (description, outcomes); límites largos
      con contador en partners 500 / key_activity 1000 / synergies 1500 /
      additional_notes 3000 (los tres últimos con editor Markdown + preview)
@@ -273,9 +324,10 @@ Patrón LRU con buster:
    → Sticky section nav con barra de progreso (7 campos obligatorios),
      indicadores por sección (✓ completa, ! error, ✓ tenue = opcional con
      respuestas); en móvil la barra es horizontal con scroll-snap
-   → Autoguardado en localStorage (clave `ihpix-report-draft-v1:<user_id>`,
-     migra la clave global anterior) solo en reporte nuevo; en modo
-     edición la BD es la única fuente de verdad
+   → Autoguardado en localStorage (clave `ihpix-report-draft-v2:<user_id>`;
+     los borradores v1 se descartan porque marcaban "No" por defecto en
+     las puertas) solo en reporte nuevo; en modo edición la BD es la
+     única fuente de verdad
    → Acepta ?pa=PA1&output=1.1 para prellenar (páginas por Output)
    → CSRF: {{ h.csrf_input() }} dentro del form (viaja en el FormData)
    → Validación inline al salir de cada campo + resumen de errores
@@ -297,14 +349,38 @@ Patrón LRU con buster:
    → Propietario edita solo draft/rejected; pending/published se abren en
      solo lectura (READ_ONLY deshabilita los inputs)
    → Eliminar (POST /ihpix/report/<id>/delete): solo borradores propios
-4. Dashboard (/ihpix/dashboard) — usuarios logueados:
-   → ihpix_dashboard_stats() genera estadísticas expandidas (+ contributors_total,
-     top_institutions, output_biennium_matrix, links_by_type)
-   → Mapa interactivo Leaflet con GeoJSON de países; PA/bienio se aplican en
-     servidor (conteos en vivo), el país en cliente
-   → Tablas "Top Lead Institutions" y "Activities by Output and Biennium"
-     que se refrescan con los filtros (AJAX)
-   → Gráficas por biennium, paneles de región e impacto
+4. Dashboards de progreso (/ihpix/progress…) — usuarios logueados
+   (2026-10-11; sustituyen al antiguo /ihpix/dashboard, que redirige):
+   → Réplica web de los Power BI oficiales "IHP-IX Implementation
+     Progress": una plantilla (ihpix/progress.html) para cinco ámbitos
+     — overall, pa/<PA>, output/<code>, flagship/<slug>, ctwg/<slug> —
+     con selector de ámbito (pestañas + <select> que navega), filtros de
+     bienio, región, país y organización (fetch a ihpix_progress_stats +
+     pushState; `FILTERS` en ihpix-progress.js). El filtro de organización
+     (2026-10-30) aplica la misma regla que la pestaña de la organización
+     (institución líder o socia por id), se conserva en pestañas, descarga,
+     presentación y narrativa, y su selector sólo lista organizaciones con
+     actividades vinculadas (`stats.options.organizations`)
+   → Secciones (una por página Power BI): "Who is benefiting" (tiles,
+     donut por PA/output/key activity, barras de Member States por
+     región, mapa Leaflet, bienio, instituciones), KPI 1 (productos de
+     conocimiento y científicos, por dimensión y por tipo), KPI 2
+     (individuos, % mujeres y % jóvenes en gauges, por dimensión y tipo
+     de actividad), KPI 3 y 4, KPI 5, KPI 6 y 8; en ámbito output
+     además "What was produced" y "Stakeholders reached" por key activity
+   → En overall, franja de los 34 outputs proporcional (navega al output)
+   → Cada gráfico tiene "Show as table" (misma información, accesible);
+     los gráficos se pintan al entrar en pantalla; sin animación con
+     prefers-reduced-motion
+   → Datos: acción ihpix_progress_stats (ihpix_stats.compute_progress_stats
+     sobre las actividades publicadas; "activo" en un KPI = puerta o
+     conteo > 0 o tipo no vacío; Member States impactados = unión de
+     member_states, country y supporting_member_state normalizados con
+     IhpixCountrySummary; "por tipo" suma los productos de cada
+     actividad bajo cada tipo que declaró, como Power BI); caché en
+     proceso 120 s (ihpix_stats_cache_ttl), invalidada al aprobar/editar
+   → Assets: public/js/ihpix-progress.js + css/ihpix-progress.css
+     (bundles theme/ihpix-progress-js|css), Chart.js y Leaflet locales
 5. Admin Overview (/ckan-admin/ihpix/overview) — sysadmin:
    → ihpix_admin_overview_stats() expone métricas extendidas
    → 5 tabs: KPI Targets, Distributions, Geography, Completeness, Pending queue
@@ -321,6 +397,20 @@ Patrón LRU con buster:
 7. Admin Content/Activities (/ckan-admin/ihpix, /activities):
    → Edición de hero, CTA cards, priority areas
    → CRUD completo de actividades, importación bulk Excel
+8. Admin Institutions (/ckan-admin/ihpix/institutions) — sysadmin (2026-10-24):
+   → ihpix_institution_link_list() agrupa las instituciones heredadas (texto)
+     sin institution_org_id por clave normalizada y propone organizaciones
+     (ihpix_org_match: exacto / acrónimo / contenido / tramo / iniciales /
+     palabra clave / similar; ≥ 90 % se preselecciona)
+   → Formulario único: casilla + selector por institución (las 134 opciones
+     se cargan por JS al abrir), "Select all confident", filtro `q`
+   → POST /ckan-admin/ihpix/institutions/link → ihpix_institution_link():
+     rellena institution_org_id en todas las filas con esa clave y sin
+     organización (bloqueo + ensure_baseline + snapshot = una revisión por
+     actividad), invalida cachés y recalcula el resumen por país; el texto
+     de la institución no cambia. "Unlink" vacía el id en las filas que
+     apuntan a esa organización. Atajo desde la pestaña vacía de la
+     organización (sólo sysadmin) y botón "Link institutions" en Overview
 ```
 
 ### Modelo de gates condicionales (PDF 2026)
@@ -462,6 +552,39 @@ reporte público: tipos KPI como listas JSON, `member_states` JSON,
 > nunca HTML) y se renderizan con `h.ihpix_markdown()` → `render_markdown`
 > de CKAN (sanitiza). Los emails los envían como texto plano.
 
+#### 7.1.e Borrado de datos desde el panel admin (2026-10-31)
+
+`/ckan-admin/ihpix/activities` permite al sysadmin limpiar datos sin pasar
+por la base de datos:
+
+- **Filtros** en la cabecera de la lista: búsqueda (`q`, mismo criterio que
+  `ihpix_activity_list`), estado (`status`) y Priority Area (`pa_filter`).
+  La paginación los conserva (`filter_query`).
+- **Selección múltiple**: casilla por tarjeta, "Select all on this page" y
+  botón "Delete selected" (`POST /ckan-admin/ihpix/activities/bulk-delete`
+  con `ids`).
+- **"Delete all matching activities (N)"**: borra todo lo que coincide con
+  los filtros, también las páginas que no se ven. Pide **dos**
+  confirmaciones y envía `all_matching=1` + `expected_count=N` + filtros; si
+  en el servidor el total ya no es N (otro admin cambió la lista) la acción
+  rechaza con error y no borra nada.
+- Tras el borrado la página recarga en la primera página con
+  `?deleted=N` y muestra el aviso "N activities deleted.".
+- Cada borrado elimina la actividad, sus adjuntos y sus entradas del ledger
+  de workspaces, y recalcula caché de stats y resumen por país una vez
+  (`_ihpix_purge_activities`). Las imágenes subidas no se borran del
+  almacenamiento.
+- La cola `/ckan-admin/ihpix/reports` tiene botón "Delete" en cada tarjeta
+  (`POST /ckan-admin/ihpix/reports/delete` → `ihpix_report_delete`), con
+  confirmación, para informes pendientes, rechazados, borradores o
+  publicados.
+
+> [!warning] Irreversible
+> No hay papelera: el borrado es definitivo. Para datos heredados
+> (`original_id`) la alternativa sigue siendo el comando de importación con
+> o sin `--append` (ver [[Flujos Importantes#7. Portal IHP-IX]]) y el backup de la base
+> de datos.
+
 ### 7.2 Visibilidad (2026-09)
 
 - La landing `/ihpix` sigue siendo **pública**; sus contadores se calculan
@@ -471,10 +594,20 @@ reporte público: tipos KPI como listas JSON, `member_states` JSON,
   pestañas IHP-IX de org/grupo) exige sesión: `controller._require_login()`
   redirige a `/user/login?came_from=…`. Las acciones de lectura pasan a
   `_logged_in_only`.
+- Pestañas IHP-IX (`/group/<name>/ihpix`, `/organization/<name>/ihpix`, revisadas
+  el 2026-10-23): `ihpix_entities.group_scope` clasifica el grupo. Un Member State
+  (hijo de `member-states` o con título de país oficial) filtra por país con los
+  mismos roles que Progress (sede, apoyo, beneficiario); una iniciativa reconocida
+  como flagship o CTWG filtra por ese ámbito (`IhpixActivity._scope_ids`, misma
+  normalización que el panel en vez de `ILIKE`); una iniciativa sin equivalente
+  muestra un aviso y no lista nada. Antes toda pestaña de grupo filtraba por
+  país y en las iniciativas salía vacía. La organización sigue filtrando por id
+  (`institution_org_id` / `partner_org_ids`), nunca por texto; su enlace al
+  explorador pasa ahora el `name` (antes el título, que no resolvía).
 - `cache.py` excluye `/ihpix/report`, `/ihpix/outputs`, `/ihpix/dashboard`,
-  `/ihpix/priority-area`, `/ihpix/contributors`, `/ihpix/workspaces`,
-  `/ihpix/my-reports`, `/ihpix/markdown-preview`, `/ihpix/publications` de la
-  caché anónima (la landing sí se cachea).
+  `/ihpix/progress`, `/ihpix/priority-area`, `/ihpix/contributors`,
+  `/ihpix/workspaces`, `/ihpix/my-reports`, `/ihpix/markdown-preview`,
+  `/ihpix/publications` de la caché anónima (la landing sí se cachea).
 - `POST /ihpix/markdown-preview` (login): `{text}` → `{html}` con
   `h.render_markdown` (CKAN 2.10 no expone `/api/util/markdown`). Lo usa el
   editor Markdown del kit de formularios ([[Modulos#Kit de formularios IHP-IX]]).
@@ -560,6 +693,37 @@ reporte público: tipos KPI como listas JSON, `member_states` JSON,
 > asigna manualmente (sysadmin); no hay auto-asignación al primer reportante.
 > Pendiente por confirmar con UNESCO si los observers deben ver los borradores
 > ajenos (hoy solo cada autor ve sus reportes en curso).
+
+### 7.5 Normalización de los datos heredados (2026-10)
+
+Las 744 filas del Excel de Microsoft Forms traían valores fuera de las listas
+(`Report` / `Report or paper`, `Online Course`, `Asia and the  Pacific`,
+`2022 - 2023`, stakeholder groups con la descripción entre paréntesis, multis
+unidos por comas, flagship `No`, países `Turkey`/`State of Palestine`…) y todas
+las puertas `kpi_*_active` en `false` aunque hubiera conteos, así que la
+agregación por KPI salía vacía.
+
+```
+1. ihpix_normalize.py (puro): LEGACY_VALUE_ALIASES, COUNTRY_NAME_ALIASES,
+   split_legacy_multi, normalize_multi (desconocidos → Other + *_other),
+   normalize_stakeholder_group_types, normalize_date, derive_gates
+   (puerta = puerta or conteo > 0 or tipo no vacío; has_flagship,
+   regions_benefit, has_member_state_support, has_synergies,
+   unesco_secretariat_participation ← unesco_participation),
+   normalize_activity_row(row) → solo las claves que cambian; idempotente
+2. Al arrancar: _migrate_ihpix_activities() añade las columnas nuevas
+   (key_activity_code, training_type_other, legacy_normalized_at) y, solo
+   cuando acaba de añadirlas, _normalize_ihpix_legacy_values() recorre las
+   filas con legacy_normalized_at IS NULL en lotes de 200 y las marca.
+   Nunca rompe el arranque (log de resumen por campo).
+3. A demanda: ckan ihpix normalize-legacy (ensayo) / --apply; seed-data
+   normaliza cada fila al cargar.
+4. Lectura tolerante: ihpix_stats.prepare_row vuelve a aplicar los alias,
+   así los dashboards son correctos aunque una fila escape a la migración.
+```
+
+Aplicado en dev el 2026-10-11 (745 filas revisadas, 744 normalizadas;
+respaldo previo en `~/backups/ckan-dev-ihpix-20261011/`).
 
 ---
 
@@ -698,6 +862,11 @@ Request /dataset/<name> (GET)  ──┐
 > [!tip] Resiliencia
 > Redis caído → el registro es no-op y el serving sigue intacto. Postgres es la fuente durable; una caída de Redis sólo pierde los deltas aún no volcados (aceptable para conteos de vistas; el flush frecuente lo minimiza). El `RENAME` atómico evita perder incrementos durante el volcado.
 
+> [!warning] Limitación medida en dev (2026-10-31): el identificador contado es el segmento crudo de la URL
+> `_match` guarda tal cual lo que sigue a `/dataset/`, y `/dataset/<id>` acepta tanto el `name` como el UUID, además de las exportaciones DCAT `/dataset/<id>.rdf|.ttl|.n3|.jsonld|.xml`. En `tracking_dataset_stats` de dev había 3 281 filas: 413 nombres reales (18 863 vistas), 663 UUIDs de datasets existentes (7 554 vistas), 2 054 exportaciones DCAT (25 421 vistas, casi todas de rastreadores) y 151 identificadores sin dataset (355 vistas; datasets borrados o 404, porque el hook corre en `before_request` y no conoce el código de respuesta). Consecuencias: el badge (`dataset_name = :name`) y "más vistos" (`JOIN package ON p.name`) ignoran las vistas registradas bajo UUID, mientras que `total_page_views` del sitio sí las suma todas, incluidas las exportaciones DCAT. Además, en dev el 85–90 % de los datasets contados cada día tienen exactamente una vista (patrón de rastreador con User-Agent no listado en `_BOT_RE`), así que las cifras de dev describen sobre todo tráfico automático.
+>
+> Pendiente de decisión: ignorar las extensiones DCAT en `_match`, resolver UUID → `name` en el volcado (o en el registro) y un comando de reconciliación tipo `pageviews reconcile-downloads` que consolide las filas existentes y recalcule `tracking_site_totals`. No se ha cambiado código.
+
 ---
 
 ## 13. Completitud de metadatos y orden por defecto en /dataset
@@ -752,3 +921,91 @@ mantienen el login CKAN. Fuera de Citizen Science se mantiene el login general.
 El fallback conserva compatibilidad con versiones anteriores de csunesco o
 instancias sin ese plugin. La URL de app procede de la configuración de
 csunesco, sin crear una segunda configuración del tema.
+
+## News y Events de iniciativas
+
+`controller._get_pages_by_initiative` delega en `ckanext.pages.plugin.get_pages_by_initiative`. La selección se hace en los formularios Water Family junto a organización y puede incluir varias iniciativas. Las pestañas muestran únicamente entradas públicas aprobadas; el lector admite asociaciones antiguas serializadas como JSON y conserva el orden descendente de creación. No se cambian rutas ni permisos de edición. Las vistas News y Events también fijan `c.group_dict`: el menú de Pages lo necesita cuando `ckanext.pages.group` está activo; sin él, las pestañas fallan con 500 aunque la asociación esté guardada.
+
+## IHP-IX: colaboración, importación y salida (2026-10-21)
+
+| Ruta nueva | Flujo |
+|---|---|
+| `/ihpix/workspaces/<code>/collaboration` | Miembro activo lee comentarios/tareas; contributor/lead escribe |
+| `/ihpix/report/<id>/collaboration` | Autor invita/revoca; autor/colaborador consulta versiones autorizadas |
+| `/ihpix/notifications` | Notificaciones privadas del usuario y marcar leídas |
+| `/ihpix/import/template.xlsx`, `/ihpix/import` | Descargar → cargar → validar/preview → confirmar → borradores |
+| `/ihpix/reports/generate` | Ámbito (overall/flagship/ctwg/PA/Output/organización) + bienio/región/país → documento A4 con fichas, gráficos SVG por sección y anexo de fuentes. Parámetros desde 2026-10-23: `sections` (multivalor, todas por defecto), `sections_given=1` (marca que el formulario envió la selección), `sources=1` (anexo, marcado por defecto) y `sources_detail=1` (descripción y resultados). Ver [[IHP-IX Reports UX October 2026]] |
+| `/ihpix/presentation` | Mismos filtros del dashboard (+ `sections`) → una diapositiva 16:9 por figura, construida sobre el mismo registro de secciones → PDF |
+| `/ihpix/activities/<id>` | Detalle verificable de una actividad publicada y adjuntos visibles |
+| `/ihpix/report/<id>/resource-start` | POST tras guardar borrador; destino dataset/evento nativo |
+| `/ihpix/resource-return/attach` | POST desde recurso: autoriza, adjunta y vuelve a VII |
+
+El banner de retorno se asocia en sesión al usuario y reporte. Los editores nativos conservan su flujo; no necesitan `came_from`. Al guardar en el modal de publicación se crea el documento; guardar el reporte conserva la asociación. Ver [[IHP-IX Review September 2026]].
+
+## Filtro geográfico IHP-IX y acceso a borradores
+
+Mapa, tabla o buscador → país seleccionado → gráficos y enlaces sincronizados → JSON/presentación/narrativa con el mismo ámbito y filtros. My drafts guarda primero los cambios pendientes en el navegador y abre el perfil filtrado a borradores. Detalles: [[IHP-IX Progress UX October 2026]].
+
+## Recursos y estilos de visualización
+
+La lista pública agrupa los SLD usados por las vistas Terria debajo del recurso
+principal. Un estilo aparece en cada recurso que lo usa, sin duplicar el archivo.
+Varios estilos se presentan en un desplegable con los nombres de las vistas;
+los no asociados siguen como archivos independientes «Estilo cartográfico».
+«Mostrar todos los archivos» recupera la lista plana; edición e histórico
+conservan todos los recursos. Buscar un estilo o filtrar SLD muestra su padre
+como contexto y expande los estilos coincidentes. Se agrupa antes de paginar.
+
+Los enlaces conservan UUID, URL y permisos del recurso SLD, incluidos permisos
+de descarga propios. La asociación sólo afecta la presentación, no el estilo
+aplicado por Terria ni las respuestas de `package_show`.
+
+Todos los SLD, manuales o automáticos, asociados o independientes, quedan fuera
+de totales y rankings de descargas. No muestran insignias de descarga. El
+histórico original por recurso queda conservado; el total del sitio se
+reconcilia por suma de recursos elegibles, sin descontar repetidamente.
+
+## Importación Excel IHP-IX: preparar, revisar y crear (2026-10-23)
+
+`/ihpix/import` ofrece la plantilla v2 en `/ihpix/import/template.xlsx` y un ejemplo completo separado en `/ihpix/import/example.xlsx`; ambas rutas requieren autenticación. Los datos compartidos se completan una vez, Actividades tiene 11 columnas y los detalles se distribuyen en hojas opcionales. El servidor acepta también v1. La vista previa distingue errores de valores y respuestas pendientes para envío; conserva todos los campos y permite crear borradores tras confirmación explícita. Un fallo transaccional mantiene el lote sin crear y permite reintentar. Ver [[IHP-IX Bulk Import UX October 2026]].
+
+## Excel IHP-IX: una actividad completa por fila
+
+La plantilla predeterminada IHP-IX/3 abre Actividades: datos generales, alcance e indicadores se completan en la misma fila. Las hojas adicionales vinculan recursos y relaciones por título, sin copiar identificadores. El ejemplo separado demuestra el formato plano; se siguen aceptando las versiones anteriores. Ver [[IHP-IX Bulk Import UX October 2026]].
+
+## Regreso entre páginas IHP-IX (2026-11-06)
+
+Todas las páginas HTML de IHP-IX muestran «Volver» y la jerarquía de enlaces bajo la cabecera. Un acceso directo vuelve al nivel superior (Progress → IHP IX; ámbito de Progress → Progress; miembros/colaboración → workspace; edición → mis reportes). Si se llegó desde otra página IHP-IX del mismo sitio, «Volver» usa el historial del navegador. Los enlaces de jerarquía permiten subir directamente sin recorrer los cambios de filtros del historial. Los informes y las presentaciones conservan ámbito, país, región, bienio y organización al regresar a Progress; sus enlaces se generan con `url_for` para respetar el idioma. Al usar la nueva barra desde el formulario, primero se guarda el borrador local; si falla, se bloquea la salida y se muestra el aviso existente.
+
+### Formulario IHP-IX en tres pasos y guardado automático (2026-11-06)
+
+1. **Datos de la actividad**: secciones I–VI, con guardado automático tras escribir un título válido.
+2. **Archivos y recursos**: sección VII, opcional; los editores externos regresan a `#section-7`.
+3. **Revisar y enviar**: resumen, enlaces para corregir respuestas y envío explícito a revisión.
+
+Los controles Anterior/Continuar y el indicador superior cambian el paso sin vaciar campos. Validar el envío comprueba también los pasos ocultos. Los enlaces a errores abren el paso correspondiente y enfocan el campo.
+
+POST `/ihpix/report/autosave` guarda en la cuenta después de una pausa al editar. El primer guardado cambia la URL al borrador de servidor. Antes de tener título, sin conexión o con respuestas inválidas, la copia se conserva localmente por usuario/reporte y el estado explica que todavía no está sincronizada. Si fallan ambos almacenamientos, se avisa y se protege la salida. Tras recargar se recuperan los cambios locales pendientes; una copia ya confirmada no reemplaza una versión más reciente del servidor. Los conflictos entre editores se resuelven explícitamente. Descartar cambios pendientes en un reporte existente vuelve a cargar su versión actual del servidor.
+
+### Crear todos los adjuntos dentro del paso 2 (2026-11-06)
+
+Las cinco opciones del reporte (dataset, material de formación, publicación científica, publicación general y evento) abren modales sin salir de la página. Las tres publicaciones conservan su endpoint; dataset/evento usan POST `/ihpix/resources` y se adjuntan al recibir confirmación. El reporte sigue autoguardándose. Cancelar/cerrar conserva lo escrito y el archivo seleccionado mientras la página siga abierta; un error permite corregir o reintentar. El servidor reconoce un reintento cuya respuesta se perdió y devuelve el recurso ya creado.
+
+Los datasets se crean con la visibilidad elegida; los eventos se envían a revisión. El envío del reporte sigue siendo explícito en el paso 3. Las rutas anteriores `/ihpix/report/<id>/resource-start` y `/ihpix/resource-return/attach` se conservan por compatibilidad, pero los botones del reporte ya no abren editores externos.
+
+## IHP-IX: grupo → propuesta → reporte de ejecución
+
+1. `/ihpix/workspaces` abre los ocho grupos; sus Outputs enlazan el plan y el espacio histórico correspondiente. Breadcrumbs y regreso determinista cubren grupo, plan, importación y vistas históricas.
+2. Un miembro colaborador crea `/ihpix/workspaces/groups/<slug>/plans/new`. Guarda por revisión y UUID estable; el navegador conserva cambios pendientes. Los conflictos no sobrescriben el guardado ajeno.
+3. El paso 2 adjunta documentos internos privados o crea recursos del catálogo mediante modales. El paso 3 envía la propuesta a revisión. El lead del Output o responsable del grupo aprueba o devuelve con motivo.
+4. El plan acordado se conserva durante nuevas revisiones. Cambiar estado de ejecución no publica un reporte ni modifica Progress.
+5. **Report execution** crea un borrador del formulario existente y un vínculo bidireccional; exige completar resultados reales antes de su revisión/publicación habitual.
+6. `/import` muestra planes, contactos o reportes históricos antes de confirmar. La conciliación decide omitir, crear, actualizar un plan/contacto por revisión o vincular un reporte existente. Las fuentes reales no se importan automáticamente durante despliegue.
+7. `/documents/<id>` verifica permisos de grupo/plan y de versión acordada antes de servir el archivo. Contactos, conversaciones y tareas permanecen dentro del grupo autorizado.
+
+### Calendario del workspace → reporte vinculado
+
+1. `/ihpix/workspaces/groups/<slug>?tab=calendar&month=YYYY-MM` muestra fechas acordadas, tareas y actividades pendientes de programar. En móvil usa agenda.
+2. Abrir un plan, añadir inicio/fin opcionales y guardar automáticamente; enviar y aprobar conserva el flujo de revisión existente.
+3. En «Reportar la ejecución», seleccionar el bienio: se abre un borrador vinculado y se retoma si ya existe uno propio. Las fechas/compromisos del plan no se convierten en resultados reales.
+4. Los libros históricos cargados para la demo se revisan desde Seguimiento, antes de confirmar decisiones de conciliación. Los documentos fuente originales siguen privados.

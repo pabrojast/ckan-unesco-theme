@@ -63,7 +63,7 @@
       <form id="ihpix-publication-form" class="ixf-form" novalidate enctype="multipart/form-data" method="post" action="{{ ctx.post_url }}">
         {{ h.csrf_input() }}
         <input type="hidden" name="output_code" value="{{ ctx.output_code }}">
-        {% if mode == 'report' %}<input type="hidden" name="activity_id" value="{{ ctx.activity_id }}">{% endif %}
+        {# El formulario adjunta junto con las respuestas y su revisión al guardar. #}
         <div class="ixf-modal-body">
           <div class="ixf-alert is-error" id="ihpix-pub-error" role="alert" hidden></div>
 
@@ -325,7 +325,7 @@
         link_type: link.link_type || 'publication', target_kind: 'package', target_id: link.target_id,
         title: link.title || pkg.title, url: link.url || pkg.url || '', event_date: '', description: link.description || ''
       });
-      attachedText = MSG.attached;
+      attachedText = {{ _('Publication created. Save the report to keep this attachment.')|tojson }};
     }
     if (window.ihpixToast) window.ihpixToast(attachedText, 'success');
     (data.warnings || []).forEach(function(w) { if (window.ihpixToast) window.ihpixToast(w, 'warning'); });

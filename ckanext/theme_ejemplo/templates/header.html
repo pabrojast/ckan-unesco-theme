@@ -1,3 +1,4 @@
+{% set ihpix_trail = h.ihpix_navigation() %}
 {% block header_wrapper %} {% block header_account %}
 {% if c.userobj %}
 <div class="account-masthead">
@@ -176,7 +177,7 @@
 {% else %}
 {% set is_index = False %}
 {% endif %}
-<header class="navbar navbar-static-top masthead{% if h.learning_enabled is defined and h.learning_enabled() %} masthead-learning{% endif %}" {{ '' if is_index else 'style="background-color: #0077d4 !important;"' | safe }} >
+<header class="navbar navbar-static-top masthead{% if ihpix_trail %} ix-navigation-masthead{% endif %}{% if h.learning_enabled is defined and h.learning_enabled() %} masthead-learning{% endif %}" {{ '' if is_index else 'style="background-color: #0077d4 !important;"' | safe }} >
   {% block header_debug %} {% if g.debug and not g.debug_supress_header %}
   <div class="debug">Controller : {{ c.controller }}<br/>Action : {{ c.action }}</div>
   {% endif %} {% endblock %}
@@ -298,3 +299,6 @@
   </div>
 </header>
 {% endblock %}
+
+{# También cubre las páginas IHP-IX que reemplazan el bloque content. #}
+{% if ihpix_trail %}{% snippet 'ihpix/snippets/navigation.html', trail=ihpix_trail %}{% endif %}
