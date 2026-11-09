@@ -246,18 +246,40 @@
   .aiw-opener--compact .aiw-opener-text { padding: 32px 24px; }
 }
 
-/* ---- Cabecera del sitio que se oculta al bajar (ver public/js/ai-water.js) ----
-   Solo en las páginas con diseño propio: el script añade .aiw-autohide al body. */
-body.aiw-autohide header.masthead { position: fixed !important; top: 0; left: 0; right: 0; transition: transform .28s ease, background-color .3s; will-change: transform; }
-body.aiw-autohide.aiw-header-hidden header.masthead { transform: translateY(-100%); }
+/* ---- Cabecera del sitio plegable (ver public/js/ai-water.js) ----
+   Esta hoja solo se carga en las páginas con diseño propio. La cabecera de
+   IHP-WINS está plegada desde el primer pintado: sale de la pantalla, deja de
+   recibir el foco y el contenido sube a ocupar su sitio (Pablo reserva
+   .main { padding-top: 9rem }). El botón "IHP-WINS menu", a la derecha del
+   menú de la iniciativa, añade .aiw-ribbons-open al body y la despliega.
+   Sin JavaScript, el <noscript> de snippets/head.html la deja visible. */
+body:has(.aiw-subnav) header.masthead { position: fixed !important; top: 0; left: 0; right: 0; transform: translateY(-100%); visibility: hidden; transition: transform .28s ease, visibility 0s linear .28s, background-color .3s; will-change: transform; }
+body.aiw-ribbons-open:has(.aiw-subnav) header.masthead { transform: none; visibility: visible; transition: transform .28s ease, visibility 0s linear 0s, background-color .3s; }
+body:has(.aiw-subnav) > .main { padding-top: 0 !important; transition: padding-top .28s ease; }
+body.aiw-ribbons-open:has(.aiw-subnav) > .main { padding-top: 9rem !important; }
 .aiw-subnav { position: sticky; top: 0; z-index: 990; transition: top .28s ease; }
-body.aiw-autohide:not(.aiw-header-hidden) .aiw-subnav { top: var(--aiw-header-h, 0px); }
-.aiw-reveal-zone { position: fixed; top: 0; left: 0; right: 0; height: 16px; z-index: 1001; }
-body.aiw-autohide:not(.aiw-header-hidden) .aiw-reveal-zone { display: none; }
+body.aiw-ribbons-open .aiw-subnav { top: var(--aiw-header-h, 0px); }
+body.aiw-ribbons-instant > .main, body.aiw-ribbons-instant .aiw-subnav { transition: none !important; }
+.aiw-subnav .aiw-wrap { display: flex; align-items: center; gap: 4px 16px; }
+.aiw-subnav ul { flex: 1 1 auto; min-width: 0; }
+.aiw-ribbon-toggle { flex: none; margin-left: auto; display: inline-flex; align-items: center; gap: 8px; min-height: 44px; padding: 8px 14px; color: #FFFFFF; background: transparent; border: 1px solid rgba(255,255,255,0.45); border-radius: 3px; font: inherit; font-size: 15px; font-weight: 500; line-height: 1.2; cursor: pointer; }
+.aiw-ribbon-toggle:hover { background: rgba(255,255,255,0.14); }
+.aiw-ribbon-toggle:focus-visible { outline: 2px solid #FFFFFF; outline-offset: 2px; }
+.aiw-ribbon-toggle svg { transition: transform .2s ease; }
+.aiw-ribbon-toggle[aria-expanded="true"] svg { transform: rotate(180deg); }
+@media (max-width: 640px) {
+  /* En el móvil, el menú de la iniciativa ocupa una sola fila que se desliza */
+  .aiw-subnav .aiw-wrap { padding-right: 12px; }
+  .aiw-subnav ul { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; }
+  .aiw-subnav ul::-webkit-scrollbar { display: none; }
+  .aiw-subnav li { flex: none; }
+  .aiw-ribbon-toggle { padding: 8px 10px; }
+  .aiw-ribbon-toggle-more { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+}
 /* Al saltar a un ancla, que el título no quede bajo el menú fijo */
 .aiw [id] { scroll-margin-top: 80px; }
 @media (prefers-reduced-motion: reduce) {
-  body.aiw-autohide header.masthead, .aiw-subnav { transition: none; }
+  body:has(.aiw-subnav) header.masthead, body:has(.aiw-subnav) > .main, .aiw-subnav, .aiw-ribbon-toggle svg { transition: none !important; }
 }
 
 /* ---- Filtros de la lista de socios ---- */
