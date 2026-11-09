@@ -3,10 +3,10 @@
 <link rel="preconnect" href="https://fonts.googleapis.com" />
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 <link href="https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&display=swap" rel="stylesheet" />
-<link rel="stylesheet" href="{{ h.url_for_static('/css/ai-water.css') }}?v=20261109-2" />
-<script src="{{ h.url_for_static('/js/ai-water.js') }}?v=20261109-2" defer></script>
-{# Sin JavaScript no hay botón para desplegar la cabecera: se deja visible #}
-<noscript><style>body:has(.aiw-subnav) header.masthead { transform: none; visibility: visible; } body:has(.aiw-subnav) > .main { padding-top: 9rem !important; }</style></noscript>
+<link rel="stylesheet" href="{{ h.url_for_static('/css/ai-water.css') }}?v=20261109-3" />
+<script src="{{ h.url_for_static('/js/ai-water.js') }}?v=20261109-3" defer></script>
+{# Sin JavaScript no hay botón para desplegar las franjas de IHP-WINS: se dejan visibles #}
+<noscript><style>body:has(.aiw-subnav) :is(.account-masthead, header.masthead) { transform: none; visibility: visible; } body:has(.aiw-subnav) .aiw > .container:has(> .toolbar) { display: block; } body:has(.aiw-subnav) > .main { padding-top: 9rem !important; }</style></noscript>
 {# Initiative pages (added by Jorgen Van Der Biest): colores y elementos de la plantilla común #}
 {% set ini_head = h.theme_ejemplo_group_landing(group_dict) %}
 {% if ini_head and ini_head.initiative %}<link rel="stylesheet" href="{{ h.url_for_static('/css/initiative.css') }}?v=20261015-1" />{% endif %}
