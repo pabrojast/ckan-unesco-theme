@@ -66,6 +66,7 @@
       <li><a href="{{ h.url_for('theme_ejemplo.group_ihpix', name=gname) }}" {% if section == 'ihpix' %}aria-current="page"{% endif %}>{{ _('IHP-IX') }}</a></li>
       {% endif %}
     </ul>
+    {% include "ai_water_portal/snippets/add_menu.html" %}
   </div>
 </nav>
 
