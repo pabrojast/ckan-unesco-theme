@@ -322,7 +322,7 @@ def _limited_actor_scope(context, group_id):
     return model.Session.execute(sa.select(scopes).where(scopes.c.member_id == member.id)).mappings().first()
 
 
-def _protect_delegation(original, context, data_dict):
+def _protect_delegation(original, context, data_dict, partial_update=False):
     # Un Admin limitado tampoco puede delegar un Admin heredable por las
     # pantallas/API nativas de CKAN. Se conserva el alcance al añadir miembros.
     scope = _limited_actor_scope(context, data_dict.get('id'))
@@ -343,7 +343,11 @@ def _protect_delegation(original, context, data_dict):
             table_name='user', state='active', capacity='admin').all()
     previous = {m.id for m in admins()}
     try:
-        result = original(dict(context, defer_commit=True), data_dict)
+        delegated_context = dict(context, defer_commit=True)
+        if partial_update:
+            # El formulario normal omite los padres; conservarlos al editar contenido.
+            delegated_context['allow_partial_update'] = True
+        result = original(delegated_context, data_dict)
         model.Session.flush()
         if parents() != previous_parents:
             raise tk.NotAuthorized(hierarchy_error)
@@ -370,7 +374,16 @@ def scoped_member_create(original, context, data_dict):
 
 @tk.chained_action
 def scoped_group_update(original, context, data_dict):
-    return _protect_delegation(original, context, data_dict)
+    return _protect_delegation(original, context, data_dict, partial_update=True)
+
+
+@tk.chained_action
+def scoped_organization_update(original, context, data_dict):
+    # CKAN acepta group IDs en organization_update directo. No permitir que
+    # ese alias evite las protecciones de miembros y jerarquía de iniciativas.
+    if _limited_actor_scope(context, data_dict.get('id')):
+        raise tk.NotAuthorized(tk._('Use initiative actions to update this initiative.'))
+    return original(context, data_dict)
 
 
 ACTIONS = {f.__name__: f for f in (
@@ -378,4 +391,5 @@ ACTIONS = {f.__name__: f for f in (
     initiative_membership_request_process, initiative_membership_request_count)}
 AUTH = {name: (review_auth if name.endswith(('_list', '_process')) else access_auth)
         for name in ACTIONS}
-ACTIONS.update(member_create=scoped_member_create, group_update=scoped_group_update)
+ACTIONS.update(member_create=scoped_member_create, group_update=scoped_group_update,
+               organization_update=scoped_organization_update)
