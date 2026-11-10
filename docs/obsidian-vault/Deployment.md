@@ -432,3 +432,22 @@ Activar después en DEV y Azure. Nunca volver a una imagen sin la protección
 si existen concesiones limitadas: desactivar la funcionalidad conservando el
 parche y ambas tablas. No cambia la herencia de organizaciones ni los permisos
 anteriores de iniciativas.
+
+## AI for Water, DCAT e historias en Azure (2026-11-10)
+
+Desplegado en producción el 2026-11-10, entre 18:27 y 18:44 UTC. La imagen fue `ai-water-dcat-20261110-39a5d69@sha256:e9c54776…` y se usó `scripts/manual-deploy.sh` con contexto `ckan`, namespace `ckan` y Helm revisión 140.
+
+**Fuentes:**
+- tema `2f4144a`: AI for Water y PR #9;
+- `ckanext-dcat` `37fa812`: un `dct:spatial` por país, con lo que `/catalog.ttl` pasa de 500 a 200;
+- `ckanext-pages` `b6a595b`: las historias destacadas se ven sin sesión.
+
+La imagen mantiene la base y el parche de [[Administración limitada de iniciativas|administración limitada]].
+
+**Verificación:** sin sesión, en vivo, con 30 minutos de observación sin errores nuevos. Detalle y rollback: `ckan-unesco-docker/docs/releases/ai-water-dcat-20261110.md`.
+
+> [!warning] Las ramas `production` no bastan
+> La imagen de Azure instala los SHA `target` de `ckan-unesco-docker/deploy/docker/release-20261109.json`. Mover `production` en el tema o en una extensión no cambia la imagen hasta que se actualiza ese manifiesto.
+
+> [!note] Pendiente por confirmar
+> Faltan las pruebas con sesión: botones "Add" de AI for Water, "Request administrator access" y la lista de expertos con "Not public yet".
