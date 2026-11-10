@@ -250,6 +250,18 @@ class InitiativeMembershipTest(unittest.TestCase):
         self.assertEqual(service.scoped_organization_update(lambda *args: 'existing admin action',
                 self.ctx(self.reviewer), {'id': self.a.id}), 'existing admin action')
 
+    def test_scope_lookup_serializes_with_a_concurrent_new_grant(self):
+        group_id = self.a.id
+        # Incluso quien todavía no tiene Admin conserva el cerrojo hasta que
+        # termine la autorización/mutación nativa; una aprobación no se intercala.
+        self.assertIsNone(service._limited_actor_scope(self.ctx(self.applicant), group_id))
+        statement = sa.text('SELECT pg_try_advisory_xact_lock(hashtextextended(:key, 0))')
+        with model.meta.engine.begin() as conn:
+            key = {'key': 'initiative-admin-group:' + group_id}
+            self.assertFalse(conn.execute(statement, key).scalar())
+            model.Session.rollback()
+            self.assertTrue(conn.execute(statement, key).scalar())
+
     def test_disabling_requests_keeps_existing_scope_and_delegation_guard(self):
         self.process(self.request())
         tk.config[service.CONFIG] = False
