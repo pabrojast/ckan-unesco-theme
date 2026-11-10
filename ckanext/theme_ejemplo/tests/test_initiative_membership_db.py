@@ -213,6 +213,8 @@ class InitiativeMembershipTest(unittest.TestCase):
             user = self.user('delegate-'+uuid.uuid4().hex[:5]); model.Session.commit()
             def original(context, data):
                 self.assertTrue(context['defer_commit'])
+                if wrapper == service.scoped_group_update:
+                    self.assertTrue(context['allow_partial_update'])
                 self.add_member(user, self.a, 'admin')
                 return {'success': True}
             wrapper(original, self.ctx(self.applicant), {'id': self.a.id})
@@ -237,6 +239,16 @@ class InitiativeMembershipTest(unittest.TestCase):
         self.assertFalse(authz.has_user_permission_for_group_or_org(self.child.id, self.applicant.name, 'update'))
         self.assertFalse(model.Session.query(model.Member).filter_by(
             group_id=self.a.id, table_id=self.b.id, table_name='group', state='active').first())
+
+    def test_organization_update_alias_cannot_bypass_initiative_scope(self):
+        self.process(self.request())
+        with self.assertRaises(tk.NotAuthorized):
+            service.scoped_organization_update(lambda *args: self.fail('Must not delegate alias'),
+                self.ctx(self.applicant), {'id': self.a.id})
+        self.assertEqual(service.scoped_organization_update(lambda *args: 'normal organization action',
+                self.ctx(self.applicant), {'id': self.org.id}), 'normal organization action')
+        self.assertEqual(service.scoped_organization_update(lambda *args: 'existing admin action',
+                self.ctx(self.reviewer), {'id': self.a.id}), 'existing admin action')
 
     def test_disabling_requests_keeps_existing_scope_and_delegation_guard(self):
         self.process(self.request())
