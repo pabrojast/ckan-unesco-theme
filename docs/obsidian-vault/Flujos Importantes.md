@@ -1009,3 +1009,12 @@ Los datasets se crean con la visibilidad elegida; los eventos se envían a revis
 2. Abrir un plan, añadir inicio/fin opcionales y guardar automáticamente; enviar y aprobar conserva el flujo de revisión existente.
 3. En «Reportar la ejecución», seleccionar el bienio: se abre un borrador vinculado y se retoma si ya existe uno propio. Las fechas/compromisos del plan no se convierten en resultados reales.
 4. Los libros históricos cargados para la demo se revisan desde Seguimiento, antes de confirmar decisiones de conciliación. Los documentos fuente originales siguen privados.
+
+## Solicitar administración de una iniciativa existente
+
+`/group/<name>/request-membership` permite solicitar Admin;
+`/group/<name>/membership-requests` permite aprobar o rechazar y consultar historial.
+`/initiative-membership-requests` agrupa las iniciativas revisables con pendientes.
+Una aprobación concede Admin solo al grupo de la solicitud; no es una solicitud
+de creación de iniciativa. Miembros y editores pueden solicitar el ascenso.
+Ver [[Administración limitada de iniciativas]].

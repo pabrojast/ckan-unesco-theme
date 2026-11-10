@@ -686,6 +686,14 @@ Con learning activo, la navegación usa una distribución adaptable: una fila en
 escritorio amplio, dos en tablet y menú desplegable con desplazamiento en móvil.
 Los enlaces no se ocultan para hacer espacio y el buscador conserva su ancho disponible.
 
+## Carga de imágenes de la portada
+
+`templates/home/snippets/slideshow.html` carga inicialmente solo el primer fondo.
+Los demás fondos se solicitan al mostrar su diapositiva. La rotación automática
+espera al evento `load` y se pausa cuando el carrusel sale de la pantalla o
+la pestaña queda oculta. Conserva los controles manuales, la pausa por foco/hover
+y la preferencia de movimiento reducido. El primer fondo funciona sin JavaScript.
+
 ## Lector de contenido de iniciativas
 
 El helper `_get_pages_by_initiative` de `controller.py` reutiliza el lector público de `ckanext-pages`, evitando una segunda implementación de comparación JSON y visibilidad. Se conserva el resultado esperado por las pestañas de grupo y el portal AI Water. Si Pages no está disponible, devuelve la lista vacía y registra el error. Ver [[Flujos Importantes]].
@@ -798,3 +806,12 @@ Las rutas de grupo están bajo `/ihpix/workspaces/groups/<slug>`; planes en `/pl
 ### Calendario y continuidad del reporte
 
 `ihpix_calendar.py` valida fechas ISO y arma un mes/agenda/lista sin fecha usando únicamente objetos ya autorizados por el servicio. `ihpix_group_views.detail` admite `tab=calendar` y `month=YYYY-MM`; no añade endpoints ni dependencias. Las plantillas `calendar.html`, `journey.html` y `plan_journey.html` exponen programación y paso al reporte. `ihpix_plan_report_create` recibe `biennium`, copia contexto del plan aprobado y reanuda el borrador propio bajo bloqueo del plan. La importación consolida filas idénticas conservando `origin.sources` y una versión de auditoría.
+
+## Administración solicitada de iniciativas
+
+`initiative_membership.py` mantiene solicitudes y concesiones Admin limitadas;
+`initiative_membership_views.py` registra formularios, revisión e historial.
+Acciones: `initiative_membership_request_create/list/process/count`. El usuario
+se toma de la sesión; el rol es siempre Admin. Revisan administradores directos
+de la iniciativa y sysadmins. Organizaciones y Estados miembros quedan excluidos.
+Ver [[Administración limitada de iniciativas]].

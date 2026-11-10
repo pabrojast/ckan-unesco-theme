@@ -192,3 +192,15 @@ Añadir `learning` a `ckan.plugins` después de los plugins del portal,
 se editan en el administrador. Los secretos de socios se referencian mediante
 `CKAN_LEARNING_TOKEN_<PARTNER>`, nunca por valores dentro del mapeo JSON.
 Con learning activo las opciones de TTL lazy del tema dejan de disparar imports.
+
+## Solicitudes de administración de iniciativas
+
+`ckanext.theme_ejemplo.initiative_membership_requests_enabled` (booleano, `false`
+por defecto) activa el flujo únicamente si CKAN tiene instalada la protección
+`INITIATIVE_ADMIN_SCOPE_GUARD`. Desactivar el flujo no elimina los límites de
+las concesiones existentes. La imagen y el esquema deben estar actualizados en
+todas las réplicas antes de activar esta opción.
+
+En Kubernetes, `CKANEXT__THEME_EJEMPLO__INITIATIVE_MEMBERSHIP_REQUESTS_ENABLED`
+tiene precedencia sobre el INI para activar y desactivar el flujo de forma
+explícita en cada rollout.

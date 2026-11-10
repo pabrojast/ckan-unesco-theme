@@ -11967,3 +11967,79 @@ msgstr "يجب ألا يسبق تاريخ النهاية تاريخ البداي
 #: templates/ihpix/groups ihpix_groups.py
 msgid "Choose a biennium from the agreed plan"
 msgstr "اختر فترة ثنائية من الخطة المتفق عليها"
+
+#: initiative_membership
+msgid "Request administrator access"
+msgstr "طلب صلاحية مسؤول"
+
+#: initiative_membership
+msgid "Administrator access pending"
+msgstr "صلاحية المسؤول قيد الانتظار"
+
+#: initiative_membership
+msgid "Access requests"
+msgstr "طلبات الوصول"
+
+#: initiative_membership
+msgid "Initiative access requests"
+msgstr "طلبات الوصول إلى المبادرات"
+
+#: initiative_membership
+msgid "Initiative administrator access requests"
+msgstr "طلبات إدارة المبادرة"
+
+#: initiative_membership
+msgid "Approval will let you edit this initiative and manage its members. It grants no administrator access to other initiatives, subgroups, organizations or the platform."
+msgstr "تتيح الموافقة تعديل هذه المبادرة وإدارة أعضائها، ولا تمنح صلاحيات مسؤول على مبادرات أو مجموعات فرعية أو مؤسسات أخرى أو على المنصة."
+
+#: initiative_membership
+msgid "The current administrators of this initiative or a platform administrator will review your request."
+msgstr "سيراجع طلبك مسؤولو هذه المبادرة الحاليون أو مسؤول المنصة."
+
+#: initiative_membership
+msgid "Explain why you need to administer this initiative"
+msgstr "اشرح سبب حاجتك إلى إدارة هذه المبادرة"
+
+#: initiative_membership
+msgid "Approval grants Admin only for this initiative, including editing it and managing its members."
+msgstr "تمنح الموافقة دور المسؤول لهذه المبادرة فقط، بما يشمل تعديلها وإدارة أعضائها."
+
+#: initiative_membership
+msgid "Approve as initiative Admin"
+msgstr "الموافقة كمسؤول عن المبادرة"
+
+#: initiative_membership
+msgid "Review note"
+msgstr "ملاحظة المراجعة"
+
+#: initiative_membership
+msgid "Requested role"
+msgstr "الدور المطلوب"
+
+#: initiative_membership
+msgid "No pending requests for initiatives you administer."
+msgstr "لا توجد طلبات معلّقة للمبادرات التي تديرها."
+
+#: initiative_membership
+msgid "Your administrator access request has been sent for review."
+msgstr "أُرسل طلب صلاحية المسؤول للمراجعة."
+
+#: initiative_membership
+msgid "Your request is awaiting review."
+msgstr "طلبك قيد المراجعة."
+
+#: initiative_membership
+msgid "You already administer this initiative."
+msgstr "أنت تدير هذه المبادرة بالفعل."
+
+#: initiative_membership
+msgid "Only administrators of this initiative can review requests."
+msgstr "يمكن لمسؤولي هذه المبادرة فقط مراجعة الطلبات."
+
+#: initiative_membership
+msgid "No processed requests."
+msgstr "لا توجد طلبات تمت معالجتها."
+
+#: initiative_membership
+msgid "Request processed."
+msgstr "تمت معالجة الطلب."

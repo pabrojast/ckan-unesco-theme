@@ -269,3 +269,13 @@ Los archivos internos se almacenan como `bytea` en `ihpix_group_document`, limit
 Las asociaciones CTWG se inicializan desde la matriz de la diapositiva 6 de `OETWG 4 IWRM_23Feb.pptx`, con identidades por nombre; sólo administradores pueden modificarlas. No se eliminan Outputs que ya contienen planes. Membresías e identidades del directorio de contactos son independientes.
 
 El calendario agrega `planned_start` y `planned_end` al JSON versionado de planes y snapshots aprobados; no requiere DDL ni nuevas tablas. La visibilidad usa el mismo payload autorizado (snapshot aprobado para lectores durante una revisión). Las fuentes duplicadas se conservan en `origin.sources`. Crear/retomar reportes se serializa con el bloqueo de la actividad planificada; sólo se reutilizan borradores/rechazados editables del mismo autor del vínculo y bienio.
+
+## Acceso Admin limitado por iniciativa
+
+Tablas aditivas `initiative_membership_request` e `initiative_admin_scope`. La
+primera conserva solicitud y decisión; un índice parcial impide dos pendientes
+por usuario/iniciativa. La segunda identifica por `member_id` las concesiones
+que no deben heredarse. Aprobación, membresía y marcador se confirman juntos.
+El parche de imagen de CKAN excluye los marcadores exclusivamente de la consulta
+de permisos heredados; las membresías anteriores permanecen iguales.
+Ver [[Administración limitada de iniciativas]].

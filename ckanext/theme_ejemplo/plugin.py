@@ -26,6 +26,7 @@ from . import pageview_tracking
 from . import ranking
 from . import home_v2  # Home page v2 (added by Jorgen Van Der Biest)
 from . import initiative  # Initiative pages (added by Jorgen Van Der Biest)
+from . import initiative_membership, initiative_membership_views
 from . import search as theme_search
 from .utils import normalize_user_image_url
 import logging
@@ -462,6 +463,7 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
 
             # Create membership_request table if needed
             membership_model.init_db()
+            initiative_membership.init_db()
             # Create featured_publication table if needed
             membership_model.init_featured_publications_db()
             # Create bug_ticket table if needed
@@ -1370,6 +1372,7 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
             from ckanext.theme_ejemplo import ihpix_group_views
             ihpix_group_views.register(blueprint)
             initiative.add_url_rules(blueprint)  # Initiative pages (added by Jorgen Van Der Biest)
+            initiative_membership_views.register(blueprint)
             return blueprint
         
         def get_helpers(self):
@@ -1456,6 +1459,7 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 helpers_map['learning_enabled'] = lambda: False
             helpers_map.update(home_v2.get_helpers())  # Home page v2 (added by Jorgen Van Der Biest)
             helpers_map.update(initiative.get_helpers())  # Initiative pages (added by Jorgen Van Der Biest)
+            helpers_map.update(initiative_membership_views.HELPERS)
             return helpers_map
 
         # IActions
@@ -1463,6 +1467,7 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
             from ckanext.theme_ejemplo import ihpix_collaboration, ihpix_reporting, ihpix_resources, ihpix_groups
             return {
                 **ihpix_groups.ACTIONS,
+                **initiative_membership.ACTIONS,
                 **ihpix_collaboration.ACTIONS,
                 **ihpix_reporting.ACTIONS,
                 'user_show': custom_actions.user_show,
@@ -1567,6 +1572,7 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
             from ckanext.theme_ejemplo import ihpix_groups
             return {
                 **{name: custom_auth._logged_in_only for name in ihpix_groups.ACTIONS},
+                **initiative_membership.AUTH,
                 **{name: custom_auth._logged_in_only for name in dict(ihpix_collaboration.ACTIONS, **ihpix_reporting.ACTIONS)},
                 'membership_request_create': custom_auth.membership_request_create,
                 'membership_request_list': custom_auth.membership_request_list,
