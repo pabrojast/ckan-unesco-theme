@@ -1,0 +1,16 @@
+{% extends "group/read_base.html" %}
+{% block subtitle %}{{ _('Request administrator access') }}{% endblock %}
+{% block primary_content_inner %}
+<h1>{{ _('Request administrator access') }}</h1>
+<p>{{ _('Approval will let you edit this initiative and manage its members. It grants no administrator access to other initiatives, subgroups, organizations or the platform.') }}</p>
+<p>{{ _('The current administrators of this initiative or a platform administrator will review your request.') }}</p>
+<form method="post">
+  {{ h.csrf_input() }}
+  <div class="form-group">
+    <label for="initiative-access-message">{{ _('Explain why you need to administer this initiative') }}</label>
+    <textarea class="form-control" id="initiative-access-message" name="message" rows="5" maxlength="4000">{{ message }}</textarea>
+  </div>
+  <button class="btn btn-primary" type="submit">{{ _('Send request') }}</button>
+  <a class="btn btn-default" href="{{ h.url_for('group.read', id=group_dict.name) }}">{{ _('Cancel') }}</a>
+</form>
+{% endblock %}

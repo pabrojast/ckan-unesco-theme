@@ -31,6 +31,9 @@ REDIS_PREFIX = 'theme_ejemplo:approvals:'
 # cache entry: 'sysadmin' entries are shared, 'user' entries are per-user.
 # 'route' is resolved with url_for at render time; 'url' is a literal.
 QUEUE_DEFS = [
+    {'id': 'initiative_access', 'icon': 'fa-user-plus', 'scope': 'user',
+     'helper': 'get_pending_initiative_membership_requests_count',
+     'route': 'theme_ejemplo.initiative_membership_requests_overview'},
     {'id': 'water', 'icon': 'fa-tint', 'scope': 'sysadmin',
      'helper': 'get_pending_water_count',
      'route': 'pages.water_admin_dashboard'},
@@ -77,6 +80,7 @@ def _labels():
     """id -> translated label, evaluated per request so the locale applies."""
     _ = toolkit._
     return {
+        'initiative_access': _('Initiative access requests'),
         'water': _('Water Family submissions'),
         'oss': _('Open-source tools'),
         'stories': _('Data stories'),

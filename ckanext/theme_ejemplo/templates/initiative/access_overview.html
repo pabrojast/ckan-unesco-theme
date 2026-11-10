@@ -1,0 +1,8 @@
+{% extends "page.html" %}
+{% block subtitle %}{{ _('Initiative access requests') }}{% endblock %}
+{% block primary_content_inner %}
+<h1>{{ _('Initiative access requests') }}</h1>
+{% for initiative in initiatives %}
+<p><a href="{{ h.url_for('theme_ejemplo.initiative_membership_requests', name=initiative.name) }}">{{ initiative.title }}</a> <span class="badge">{{ initiative.count }}</span></p>
+{% else %}<p>{{ _('No pending requests for initiatives you administer.') }}</p>{% endfor %}
+{% endblock %}

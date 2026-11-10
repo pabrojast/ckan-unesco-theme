@@ -423,3 +423,12 @@ Se preparó `release/azure-20261109` integrando `production` con `dev210` (`6eee
 La imagen se construye desde el digest vigente de Azure y fija cada extensión en `ckan-unesco-docker/deploy/docker/release-20261109.json`. Learning y dashboards nativos requieren las migraciones aditivas y sus colas dedicadas; Terria usa un digest fijo y conserva sus valores Helm de Azure. MapLibre, Graphic Walker, Chart.js y ChartsCha no se habilitan como extensiones CKAN.
 
 La publicación de esta rama no acredita un despliegue. La ejecución y la evidencia corresponden al procedimiento `deploy/releases/20261109.md` del repositorio Docker, mediante `scripts/manual-deploy.sh` con contexto `ckan`, namespace `ckan`, más el despliegue Helm de Terria. El rollback conserva las tablas nuevas y restaura las imágenes/configuraciones previas; no borra datos recibidos después de la migración.
+
+## Admin limitado de iniciativas
+
+Instalar el parche `patches/initiative-admin-scope/apply.py` de Docker junto al
+tema, aplicar tablas aditivas y completar el rollout con el flujo desactivado.
+Activar después en DEV y Azure. Nunca volver a una imagen sin la protección
+si existen concesiones limitadas: desactivar la funcionalidad conservando el
+parche y ambas tablas. No cambia la herencia de organizaciones ni los permisos
+anteriores de iniciativas.
