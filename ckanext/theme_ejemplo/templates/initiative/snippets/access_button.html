@@ -1,0 +1,10 @@
+{% set access = h.initiative_access_state(group_dict) %}
+{% if access %}
+  {% if access.status == 'available' %}
+    <a class="btn btn-default" href="{{ h.url_for('theme_ejemplo.request_initiative_membership', name=access.name) }}"><i class="fa fa-user-plus" aria-hidden="true"></i> {{ _('Request administrator access') }}</a>
+  {% elif access.status == 'pending' %}
+    <span class="btn btn-default disabled" aria-disabled="true"><i class="fa fa-clock-o" aria-hidden="true"></i> {{ _('Administrator access pending') }}</span>
+  {% else %}
+    <a class="btn btn-default" href="{{ h.url_for('theme_ejemplo.initiative_membership_requests', name=access.name) }}"><i class="fa fa-users" aria-hidden="true"></i> {{ _('Access requests') }}</a>
+  {% endif %}
+{% endif %}

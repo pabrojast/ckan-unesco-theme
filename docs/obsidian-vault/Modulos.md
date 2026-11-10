@@ -798,3 +798,12 @@ Las rutas de grupo están bajo `/ihpix/workspaces/groups/<slug>`; planes en `/pl
 ### Calendario y continuidad del reporte
 
 `ihpix_calendar.py` valida fechas ISO y arma un mes/agenda/lista sin fecha usando únicamente objetos ya autorizados por el servicio. `ihpix_group_views.detail` admite `tab=calendar` y `month=YYYY-MM`; no añade endpoints ni dependencias. Las plantillas `calendar.html`, `journey.html` y `plan_journey.html` exponen programación y paso al reporte. `ihpix_plan_report_create` recibe `biennium`, copia contexto del plan aprobado y reanuda el borrador propio bajo bloqueo del plan. La importación consolida filas idénticas conservando `origin.sources` y una versión de auditoría.
+
+## Administración solicitada de iniciativas
+
+`initiative_membership.py` mantiene solicitudes y concesiones Admin limitadas;
+`initiative_membership_views.py` registra formularios, revisión e historial.
+Acciones: `initiative_membership_request_create/list/process/count`. El usuario
+se toma de la sesión; el rol es siempre Admin. Revisan administradores directos
+de la iniciativa y sysadmins. Organizaciones y Estados miembros quedan excluidos.
+Ver [[Administración limitada de iniciativas]].

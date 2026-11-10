@@ -439,3 +439,12 @@ Resultado del 6 de noviembre de 2026: **300 tests puros**, **39 comprobaciones d
 - `test_ihpix_calendar.py`: fechas inválidas/invertidas, año bisiesto, intervalos entre meses, hitos sin inicio, tareas, falta de fechas y exportación con fechas.
 - `scripts/ihpix_calendar_check.py`: sólo base QA aislada; permisos de calendario, snapshot aprobado durante revisión, selección de bienio, reanudación sin duplicados, resultados reales vacíos y fuentes duplicadas conservadas.
 - La carga de demo se ensaya en QA y se repite para comprobar idempotencia. Comparar fingerprints históricos antes/después en DEV. Navegador: recorrido completo, calendario/agenda, fuentes, enlaces, ES/FR/AR y ancho móvil.
+
+## Admin limitado de iniciativas
+
+`tests/test_initiative_membership_db.py` usa PostgreSQL aislado, el modelo real
+de CKAN y el parche de permisos. Ejecutar con `INITIATIVE_TEST_DATABASE_URL`
+contra una restauración de prueba, nunca contra producción. Cubre herencia,
+permisos anteriores, rechazo, ascenso, revocación, manipulación de destino,
+concurrencia y rollback si no se puede guardar el límite. Completar con HTTP
+y navegador usando las acciones reales; el test de DB aísla el envío de correo.

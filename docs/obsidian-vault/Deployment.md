@@ -415,3 +415,12 @@ Verificado el 6 de noviembre de 2026 (hora de Santiago): DEV quedó en `pabrojas
 - Los archivos CSS/JS de grupos usan `v=20261107-1` para renovar la caché de clientes existentes. No hay DDL, nueva configuración ni dependencias.
 
 La comparación final tras la imagen combinada mantuvo idénticos los fingerprints de las 21 tablas respecto de la carga verificada. Se revocó el token temporal (HTTP 403 comprobado), se cerró el navegador y se retiraron los cuatro contenedores y la red de QA creados para esta tarea. Evidencia y manifiesto: `/tmp/ihpix-calendar-20261107/result.json`.
+
+## Admin limitado de iniciativas
+
+Instalar el parche `patches/initiative-admin-scope/apply.py` de Docker junto al
+tema, aplicar tablas aditivas y completar el rollout con el flujo desactivado.
+Activar después en DEV y Azure. Nunca volver a una imagen sin la protección
+si existen concesiones limitadas: desactivar la funcionalidad conservando el
+parche y ambas tablas. No cambia la herencia de organizaciones ni los permisos
+anteriores de iniciativas.

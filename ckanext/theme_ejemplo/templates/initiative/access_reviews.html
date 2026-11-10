@@ -1,0 +1,28 @@
+{% extends "group/read_base.html" %}
+{% block subtitle %}{{ _('Access requests') }}{% endblock %}
+{% block primary_content_inner %}
+<h1>{{ _('Initiative administrator access requests') }}</h1>
+<p>{{ _('Approval grants Admin only for this initiative, including editing it and managing its members.') }}</p>
+<h2>{{ _('Pending requests') }}</h2>
+{% for item in pending %}
+<section class="well" style="overflow-wrap:anywhere">
+  <h3><a href="{{ h.url_for('user.read', id=item.user_name) }}">{{ item.user_fullname }}</a></h3>
+  <p>{{ item.message }}</p>
+  <p>{{ _('Requested role') }}: <strong>Admin</strong> — {{ group_dict.display_name }}</p>
+  <form method="post">
+    {{ h.csrf_input() }}
+    <input type="hidden" name="request_id" value="{{ item.id }}">
+    <div class="form-group">
+      <label for="note-{{ item.id }}">{{ _('Review note') }}</label>
+      <textarea class="form-control" id="note-{{ item.id }}" name="admin_note" rows="2" maxlength="4000"></textarea>
+    </div>
+    <button class="btn btn-primary" name="action" value="approve">{{ _('Approve as initiative Admin') }}</button>
+    <button class="btn btn-default" name="action" value="reject">{{ _('Reject') }}</button>
+  </form>
+</section>
+{% else %}<p>{{ _('No pending requests.') }}</p>{% endfor %}
+<h2>{{ _('History') }}</h2>
+{% for item in history %}
+<section class="well" style="overflow-wrap:anywhere"><strong>{{ item.user_fullname }}</strong> — {{ _('Approved') if item.status == 'approved' else _('Rejected') }}<p>{{ item.admin_note }}</p></section>
+{% else %}<p>{{ _('No processed requests.') }}</p>{% endfor %}
+{% endblock %}

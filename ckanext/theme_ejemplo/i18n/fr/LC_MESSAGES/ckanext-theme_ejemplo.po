@@ -12329,3 +12329,79 @@ msgstr "La date de fin doit être égale ou postérieure à la date de début"
 #: templates/ihpix/groups ihpix_groups.py
 msgid "Choose a biennium from the agreed plan"
 msgstr "Choisissez un biennium du plan convenu"
+
+#: initiative_membership
+msgid "Request administrator access"
+msgstr "Demander un accès administrateur"
+
+#: initiative_membership
+msgid "Administrator access pending"
+msgstr "Accès administrateur en attente"
+
+#: initiative_membership
+msgid "Access requests"
+msgstr "Demandes d’accès"
+
+#: initiative_membership
+msgid "Initiative access requests"
+msgstr "Demandes d’accès aux initiatives"
+
+#: initiative_membership
+msgid "Initiative administrator access requests"
+msgstr "Demandes d’administration de l’initiative"
+
+#: initiative_membership
+msgid "Approval will let you edit this initiative and manage its members. It grants no administrator access to other initiatives, subgroups, organizations or the platform."
+msgstr "L’approbation permet de modifier cette initiative et de gérer ses membres. Elle ne donne aucun accès administrateur à d’autres initiatives, sous-groupes, organisations ou à la plateforme."
+
+#: initiative_membership
+msgid "The current administrators of this initiative or a platform administrator will review your request."
+msgstr "Les administrateurs actuels de cette initiative ou un administrateur de la plateforme examineront votre demande."
+
+#: initiative_membership
+msgid "Explain why you need to administer this initiative"
+msgstr "Expliquez pourquoi vous souhaitez administrer cette initiative"
+
+#: initiative_membership
+msgid "Approval grants Admin only for this initiative, including editing it and managing its members."
+msgstr "L’approbation accorde le rôle Admin uniquement pour cette initiative, y compris sa modification et la gestion de ses membres."
+
+#: initiative_membership
+msgid "Approve as initiative Admin"
+msgstr "Approuver comme Admin de l’initiative"
+
+#: initiative_membership
+msgid "Review note"
+msgstr "Note de révision"
+
+#: initiative_membership
+msgid "Requested role"
+msgstr "Rôle demandé"
+
+#: initiative_membership
+msgid "No pending requests for initiatives you administer."
+msgstr "Aucune demande en attente pour les initiatives que vous administrez."
+
+#: initiative_membership
+msgid "Your administrator access request has been sent for review."
+msgstr "Votre demande d’accès administrateur a été envoyée pour examen."
+
+#: initiative_membership
+msgid "Your request is awaiting review."
+msgstr "Votre demande est en attente d’examen."
+
+#: initiative_membership
+msgid "You already administer this initiative."
+msgstr "Vous administrez déjà cette initiative."
+
+#: initiative_membership
+msgid "Only administrators of this initiative can review requests."
+msgstr "Seuls les administrateurs de cette initiative peuvent examiner les demandes."
+
+#: initiative_membership
+msgid "No processed requests."
+msgstr "Aucune demande traitée."
+
+#: initiative_membership
+msgid "Request processed."
+msgstr "Demande traitée."
