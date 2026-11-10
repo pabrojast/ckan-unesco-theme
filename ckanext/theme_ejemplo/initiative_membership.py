@@ -329,6 +329,15 @@ def _protect_delegation(original, context, data_dict):
     if not scope:
         return original(context, data_dict)
     group_id = scope['group_id']
+    # Cambiar padres permitiría heredar a través de otra iniciativa donde el
+    # solicitante ya es Admin. Esa relación modifica el alcance de terceros.
+    hierarchy_error = tk._('Changing initiative hierarchy requires an unrestricted administrator.')
+    if data_dict.get('object_type') == 'group':
+        raise tk.NotAuthorized(hierarchy_error)
+    def parents():
+        return {(m.table_id, m.capacity) for m in model.Session.query(model.Member).filter_by(
+            group_id=group_id, table_name='group', state='active').all()}
+    previous_parents = parents()
     def admins():
         return model.Session.query(model.Member).filter_by(group_id=group_id,
             table_name='user', state='active', capacity='admin').all()
@@ -336,6 +345,8 @@ def _protect_delegation(original, context, data_dict):
     try:
         result = original(dict(context, defer_commit=True), data_dict)
         model.Session.flush()
+        if parents() != previous_parents:
+            raise tk.NotAuthorized(hierarchy_error)
         for member in admins():
             if member.id in previous:
                 continue
