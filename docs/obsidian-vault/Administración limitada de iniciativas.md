@@ -44,10 +44,12 @@ previos no se restringen; la concesión derivada se confirma con su marcador.
 
 ## Validación de esta entrega
 
-- 21 pruebas con PostgreSQL real: aprobación atómica, concurrencia, duplicados, revocación, aislamiento y conservación de permisos existentes.
+- 22 pruebas con PostgreSQL real: aprobación atómica, concurrencia, duplicados, revocación, aislamiento y conservación de permisos existentes.
 - 342 regresiones del tema y 6 de la campana de aprobaciones aprobadas.
 - Navegador con solicitante y revisor: solicitud, aprobación, acceso a edición, texto escapado y vista móvil en español.
 - API real: edición de la iniciativa autorizada; edición de otra iniciativa y de una hija denegada (403), también después de delegar Admin por la API nativa.
 - Formularios sin token CSRF o con token inválido rechazados (400).
 
 Las peticiones anónimas o con tokens revocados se rechazan también cuando CKAN entrega un objeto AnonymousUser sin atributo state.
+
+Un Admin limitado no puede cambiar la jerarquía de iniciativas: se rechazan enlaces de padres por member_create y se revierte cualquier cambio de padres por group_update/group_patch. Así no puede recuperar herencia mediante otra iniciativa que ya administra. Editar contenido y gestionar miembros sigue permitido.

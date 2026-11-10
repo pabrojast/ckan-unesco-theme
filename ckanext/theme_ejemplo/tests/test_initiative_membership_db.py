@@ -219,6 +219,25 @@ class InitiativeMembershipTest(unittest.TestCase):
             self.assertTrue(authz.has_user_permission_for_group_or_org(self.a.id, user.name, 'update'))
             self.assertFalse(authz.has_user_permission_for_group_or_org(self.child.id, user.name, 'update'))
 
+    def test_limited_admin_cannot_gain_inheritance_by_changing_hierarchy(self):
+        self.add_member(self.applicant, self.b, 'admin'); model.Session.commit()
+        self.process(self.request())
+        context = self.ctx(self.applicant)
+        with self.assertRaises(tk.NotAuthorized):
+            service.scoped_member_create(lambda *args: self.fail('Must reject before mutation'),
+                context, {'id': self.a.id, 'object': self.b.id,
+                          'object_type': 'group', 'capacity': 'public'})
+        def change_parents(ctx, data):
+            self.assertTrue(ctx['defer_commit'])
+            model.Session.add(model.Member(group=self.a, table_id=self.b.id,
+                table_name='group', capacity='public', state='active'))
+            return {}
+        with self.assertRaises(tk.NotAuthorized):
+            service.scoped_group_update(change_parents, context, {'id': self.a.id})
+        self.assertFalse(authz.has_user_permission_for_group_or_org(self.child.id, self.applicant.name, 'update'))
+        self.assertFalse(model.Session.query(model.Member).filter_by(
+            group_id=self.a.id, table_id=self.b.id, table_name='group', state='active').first())
+
     def test_disabling_requests_keeps_existing_scope_and_delegation_guard(self):
         self.process(self.request())
         tk.config[service.CONFIG] = False
