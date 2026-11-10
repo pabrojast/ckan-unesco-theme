@@ -60,7 +60,7 @@ def _require_enabled():
 
 def _actor(context):
     user = context.get('auth_user_obj') or model.User.get(context.get('user'))
-    if not user or user.state != 'active':
+    if not user or getattr(user, 'state', None) != 'active':
         raise tk.NotAuthorized(tk._('An active account is required.'))
     return user
 
@@ -86,7 +86,7 @@ def _membership(user_id, group_id):
 
 
 def can_review(user, group):
-    if not user or user.state != 'active':
+    if not user or getattr(user, 'state', None) != 'active':
         return False
     member = _membership(user.id, group.id)
     return bool(user.sysadmin or (member and member.capacity == 'admin'))
@@ -310,7 +310,8 @@ def review_auth(context, data_dict):
 
 def _limited_actor_scope(context, group_id):
     user = context.get('auth_user_obj') or model.User.get(context.get('user'))
-    if not user or user.sysadmin or context.get('ignore_auth'):
+    if (not user or getattr(user, 'state', None) != 'active'
+            or user.sysadmin or context.get('ignore_auth')):
         return None
     group = model.Group.get(group_id)
     if not group or group.is_organization:

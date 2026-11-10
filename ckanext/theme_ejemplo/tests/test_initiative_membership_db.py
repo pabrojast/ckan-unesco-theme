@@ -183,6 +183,18 @@ class InitiativeMembershipTest(unittest.TestCase):
                 with self.assertRaises(tk.NotAuthorized): self.request(self.global_admin)
         tk.config[service.CONFIG] = True
 
+    def test_anonymous_and_revoked_tokens_are_denied_without_server_error(self):
+        from flask_login import AnonymousUserMixin
+        anonymous = AnonymousUserMixin()
+        context = {'auth_user_obj': anonymous, 'user': None}
+        with self.assertRaises(tk.NotAuthorized):
+            service.initiative_membership_request_count(context, {})
+        with self.assertRaises(tk.NotAuthorized):
+            service.initiative_membership_request_create(context, {'group_id': self.a.id})
+        self.assertFalse(service.can_review(anonymous, self.a))
+        self.assertIsNone(service._limited_actor_scope(context, self.a.id))
+        self.assertFalse(service.access_auth(context, {})['success'])
+
     def test_existing_admin_is_not_restricted_by_pending_request(self):
         row = self.request(); self.add_member(self.applicant, self.a, 'admin'); model.Session.commit()
         self.process(row)
