@@ -44,7 +44,7 @@ previos no se restringen; la concesión derivada se confirma con su marcador.
 
 ## Validación de esta entrega
 
-- 23 pruebas con PostgreSQL real: aprobación atómica, concurrencia, duplicados, revocación, aislamiento y conservación de permisos existentes.
+- 24 pruebas con PostgreSQL real: aprobación atómica, concurrencia, duplicados, revocación, aislamiento y conservación de permisos existentes.
 - 342 regresiones del tema y 6 de la campana de aprobaciones aprobadas.
 - Navegador con solicitante y revisor: solicitud, aprobación, acceso a edición, texto escapado y vista móvil en español.
 - API real: edición de la iniciativa autorizada; edición de otra iniciativa y de una hija denegada (403), también después de delegar Admin por la API nativa.
@@ -57,3 +57,5 @@ Un Admin limitado no puede cambiar la jerarquía de iniciativas: se rechazan enl
 También se rechaza organization_update cuando un Admin limitado lo usa sobre su iniciativa. CKAN acepta ese alias directamente; las organizaciones reales y los administradores previos mantienen sus acciones normales.
 
 Los formularios de edición conservan padres y campos no enviados: los updates de un Admin limitado usan allow_partial_update. Los cambios explícitos de padres se rechazan y revierten.
+
+Aprobaciones y mutaciones nativas usan un cerrojo transaccional por iniciativa. Así una aprobación concurrente no puede cambiar el rol entre la comprobación del alcance y la autorización de la acción nativa. La protección también se conserva al delegar nuevos administradores.

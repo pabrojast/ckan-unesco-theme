@@ -80,6 +80,13 @@ def _group(value):
     return group
 
 
+def _lock_group(group_id):
+    # La aprobación y cualquier mutación nativa deben observar membresía y
+    # alcance en el mismo orden, incluso si el usuario recibe Admin en paralelo.
+    model.Session.execute(sa.text('SELECT pg_advisory_xact_lock(hashtextextended(:key, 0))'),
+                          {'key': 'initiative-admin-group:' + group_id})
+
+
 def _membership(user_id, group_id):
     return model.Session.query(model.Member).filter_by(
         group_id=group_id, table_id=user_id, table_name='user', state='active').first()
@@ -224,8 +231,7 @@ def initiative_membership_request_process(context, data_dict):
                        handled_at=dt.datetime.utcnow(), admin_note=note)
         if decision == 'approve':
             # Serializar membresías y solicitudes del mismo grupo/usuario.
-            model.Session.execute(sa.text('SELECT pg_advisory_xact_lock(hashtextextended(:key, 0))'),
-                                  {'key': 'initiative-admin:' + group.id + ':' + applicant.id})
+            _lock_group(group.id)
             member = _membership(applicant.id, group.id)
             previous = member.capacity if member else None
             changes['prior_capacity'] = previous
@@ -310,12 +316,13 @@ def review_auth(context, data_dict):
 
 def _limited_actor_scope(context, group_id):
     user = context.get('auth_user_obj') or model.User.get(context.get('user'))
-    if (not user or getattr(user, 'state', None) != 'active'
+    if (not user or not getattr(user, 'id', None)
             or user.sysadmin or context.get('ignore_auth')):
         return None
     group = model.Group.get(group_id)
     if not group or group.is_organization:
         return None
+    _lock_group(group.id)
     member = _membership(user.id, group.id)
     if not member or member.capacity != 'admin':
         return None
