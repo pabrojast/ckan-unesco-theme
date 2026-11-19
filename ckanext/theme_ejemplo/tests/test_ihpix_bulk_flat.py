@@ -161,3 +161,45 @@ def test_native_validations_and_title_dropdowns_need_no_formulas_in_input_cells(
 def test_main_group_heading_is_localized(locale,heading):
     book=load_workbook(io.BytesIO(workbook(locale,True)))
     assert book.active["A2"].value==heading
+
+
+def _sheet_views(raw):
+    """Paneles y selecciones tal como quedan en el XML que abre Excel."""
+    import re
+    import zipfile
+    from xml.etree import ElementTree as ET
+    ns = "{http://schemas.openxmlformats.org/spreadsheetml/2006/main}"
+    with zipfile.ZipFile(io.BytesIO(raw)) as archive:
+        for name in archive.namelist():
+            if re.fullmatch(r"xl/worksheets/sheet[0-9]+\.xml", name):
+                view = ET.fromstring(archive.read(name)).find(ns + "sheetViews/" + ns + "sheetView")
+                pane = view.find(ns + "pane")
+                yield name, pane, [s.get("pane") for s in view.findall(ns + "selection")]
+
+
+@pytest.mark.parametrize("example", [False, True])
+@pytest.mark.parametrize("locale", ["en", "es", "fr", "ar"])
+def test_sheet_views_open_in_excel_without_repair(locale, example):
+    # Excel para Windows pide reparar el libro si un panel se repite o si una
+    # selección apunta a un panel que no existe.
+    for name, pane, selections in _sheet_views(workbook(locale, example)):
+        assert len(selections) == len(set(selections)), name
+        if pane is None:
+            assert selections == [None], name
+        else:
+            assert pane.get("activePane") in selections, name
+
+
+def test_blank_worksheet_is_a_validation_error_not_a_crash():
+    book = load_workbook(io.BytesIO(workbook()))
+    book.create_sheet("My notes")
+    with pytest.raises(ValueError, match="Unrecognized worksheet"):
+        B.parse(save(book))
+
+
+def test_emptied_template_sheet_is_a_validation_error_not_a_crash():
+    book = load_workbook(io.BytesIO(workbook()))
+    sheet = book[names(book)["Partners"]]
+    sheet.delete_rows(1, sheet.max_row)
+    with pytest.raises(ValueError, match="Column structure changed"):
+        B.parse(save(book))

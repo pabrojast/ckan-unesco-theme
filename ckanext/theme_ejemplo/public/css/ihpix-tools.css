@@ -16,6 +16,7 @@
 .ix-sections-grid {display:grid;gap:4px 16px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin-bottom:10px;}
 .ix-tools .ix-check {display:flex;gap:8px;align-items:flex-start;font-weight:400;margin:4px 0;}
 .ix-tools .ix-check input {width:auto;margin:4px 0 0;flex:none;}
+.ix-tools .ix-check::after {content:none;} /* CKAN añade ":" a todos los label */
 .ix-check--sub {margin-inline-start:24px;}
 .ix-linkbtn {background:none;border:0;padding:0;color:#0069B4;cursor:pointer;font:inherit;text-decoration:underline;}
 

@@ -15,7 +15,8 @@ from ckanext.theme_ejemplo.model import (IhpixActivity, IhpixActivityLink,
 
 def user(context):
     obj = context.get('auth_user_obj') or model.User.get(context.get('user', ''))
-    if not obj or obj.state != 'active':
+    # El anónimo de Flask-Login no tiene `state`.
+    if not obj or getattr(obj, 'state', None) != 'active':
         raise tk.NotAuthorized('Sign in to continue')
     return obj
 

@@ -10,6 +10,7 @@ from openpyxl.comments import Comment
 from openpyxl.styles import Alignment, Font, PatternFill
 from openpyxl.utils import get_column_letter, quote_sheetname
 from openpyxl.worksheet.datavalidation import DataValidation
+from openpyxl.worksheet.views import Selection
 from openpyxl.workbook.defined_name import DefinedName
 from ckanext.theme_ejemplo import ihpix_bulk_schema as S
 from ckanext.theme_ejemplo import (
@@ -22,6 +23,18 @@ from ckanext.theme_ejemplo import (
 
 def _(text):
     return text
+
+
+def _freeze(sheet, cell):
+    """Congelar paneles partiendo de una sola selección.
+
+    openpyxl no limpia las selecciones previas: congelar dos veces duplica
+    los paneles y descongelar deja selecciones sin panel. Excel para Windows
+    considera ese XML dañado y ofrece reparar el libro al abrirlo.
+    """
+    sheet.sheet_view.pane = None
+    sheet.sheet_view.selection = [Selection(activeCell="A1", sqref="A1")]
+    sheet.freeze_panes = cell
 
 
 GUIDE = _(
@@ -446,7 +459,7 @@ def build(organizations=(), defaults=None, locale="en", example=False, schema=S)
         row += 1
     for col, width in [("A", 39), ("B", 48), ("C", 43), ("D", 5)]:
         start.column_dimensions[col].width = width
-    start.freeze_panes = "B7"
+    _freeze(start, "B7")
     for row in (5, 17):
         start.cell(row, 1).font = Font(name="Calibri", bold=True, size=13, color=blue)
         start.row_dimensions[row].height = 32
@@ -486,7 +499,7 @@ def build(organizations=(), defaults=None, locale="en", example=False, schema=S)
         )
         sheet.cell(3, 1).alignment = Alignment(wrap_text=True, vertical="center")
         sheet.row_dimensions[3].height = 42
-        sheet.freeze_panes = "B5"
+        _freeze(sheet, "B5")
         limit = MAX_ROWS * 8 if key == "Indicators" else MAX_ROWS
         for col, field in enumerate(fields, 1):
             visible_field = (
@@ -605,7 +618,7 @@ def build(organizations=(), defaults=None, locale="en", example=False, schema=S)
     reference.column_dimensions["A"].width = 38
     reference.column_dimensions["B"].width = 65
     reference.column_dimensions["C"].width = 110
-    reference.freeze_panes = "B2"
+    _freeze(reference, "B2")
     reference.auto_filter.ref = reference.dimensions
     start["A34"] = tr(
         "Official classification titles are kept in their original language when no translation is available."
@@ -765,7 +778,7 @@ def parse_v2(book, schema=S):
             raise ValueError(
                 "Worksheet dimensions exceed template limits: " + names[key]
             )
-        if [c.value for c in next(sheet.iter_rows(max_row=1))] != list(fields):
+        if [c.value for c in next(sheet.iter_rows(max_row=1), ())] != list(fields):
             raise ValueError("Column structure changed: " + names[key])
         raw[key] = []
         for row, cells in enumerate(
@@ -1044,7 +1057,7 @@ def _format_flat(book, names, schema, tr):
     main.row_dimensions[2].height = 40
     main.row_dimensions[3].height = 36
     main.row_dimensions[4].height = 66
-    main.freeze_panes = "B5"
+    _freeze(main, "B5")
     main.sheet_view.zoomScale = 85
     for col, field in enumerate(schema.SHEETS["Activities"], 1):
         if field in F.INT_FIELDS or field in F.BOOL_FIELDS:
@@ -1055,7 +1068,7 @@ def _format_flat(book, names, schema, tr):
     main.print_title_rows = "2:4"
     main.print_title_cols = "A:A"
     guide = book[names["Start"]]
-    guide.freeze_panes = None
+    _freeze(guide, None)
     for area in list(guide.merged_cells.ranges):
         guide.unmerge_cells(str(area))
     guide.delete_rows(1, guide.max_row)

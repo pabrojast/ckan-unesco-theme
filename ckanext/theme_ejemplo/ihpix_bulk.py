@@ -134,7 +134,11 @@ def _parse(raw, defaults=None):
         workbook = load_workbook(io.BytesIO(raw), read_only=True, data_only=False, keep_links=False)
         for sheet in workbook:
             sheet.reset_dimensions()
-            sheet.calculate_dimension(force=True)
+            try:
+                sheet.calculate_dimension(force=True)
+            except UnboundLocalError:
+                # openpyxl falla al medir una hoja sin filas; para nosotros mide 0x0.
+                sheet._max_row = sheet._max_column = 0
     except (zipfile.BadZipFile, KeyError, OSError, ParseError, SyntaxError,
             RuntimeError, NotImplementedError) as exc:
         raise ValueError('Upload a valid XLSX workbook') from exc
