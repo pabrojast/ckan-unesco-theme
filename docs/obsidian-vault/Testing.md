@@ -448,3 +448,6 @@ contra una restauración de prueba, nunca contra producción. Cubre herencia,
 permisos anteriores, rechazo, ascenso, revocación, manipulación de destino,
 concurrencia y rollback si no se puede guardar el límite. Completar con HTTP
 y navegador usando las acciones reales; el test de DB aísla el envío de correo.
+
+La CI `Theme checks` ejecuta también `test_home_stats_render.py`: verifica que
+los seis contadores de portada coinciden con los datos desde el HTML, sin JavaScript.
