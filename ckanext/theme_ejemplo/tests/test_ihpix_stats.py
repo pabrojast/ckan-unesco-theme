@@ -365,3 +365,19 @@ def test_organization_options_list_every_org_linked_first_and_hide_demo():
         ('alpha', 2), ('qa-demo', 1), ('zeta', 1), ('beta', 0)]
     assert S.organization_options([], orgs) == [
         dict(orgs[1], count=0), dict(orgs[2], count=0), dict(orgs[0], count=0)]
+
+
+def test_institution_total_and_ranking_share_normalized_names(index):
+    from ckanext.theme_ejemplo.ihpix_normalize import institution_counts
+    rows = [_row(id=str(i), institution=name) for i, name in enumerate([
+        'Water Institute', ' water  institute ', 'Water Institute',
+        "People’s Lab", "People's Lab", '', '   ', None,
+    ])]
+    rows.append(_row(id='pending', institution='Hidden institution', status='pending'))
+    result = S.compute_progress_stats(rows, country_index=index)
+    overview = result['overview']
+    assert overview['institutions'] == 2
+    assert [item['count'] for item in overview['top_institutions']] == [3, 2]
+    published = [r for r in rows if r['status'] == 'published']
+    assert overview['top_institutions'] == institution_counts(published)
+    assert institution_counts(published) == institution_counts(reversed(published))

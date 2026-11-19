@@ -1263,15 +1263,10 @@ class IhpixActivity(model.DomainObject):
     @classmethod
     def get_top_institutions(cls, filters=None, limit=10):
         """Instituciones líderes con más actividades publicadas."""
-        from sqlalchemy import func
-        q = meta.Session.query(cls.institution, func.count(cls.id)).filter(
-            cls.status == cls.STATUS_PUBLISHED,
-            cls.institution != u'',
-            cls.institution != None  # noqa: E711
-        )
-        q = cls._apply_stat_filters(q, filters).group_by(cls.institution)
-        q = q.order_by(func.count(cls.id).desc()).limit(limit)
-        return [{'name': name, 'count': n} for name, n in q.all()]
+        from ckanext.theme_ejemplo.ihpix_normalize import institution_counts
+        q = cls._apply_stat_filters(meta.Session.query(cls).filter(
+            cls.status == cls.STATUS_PUBLISHED), filters)
+        return institution_counts(a.as_dict() for a in q.all())[:limit]
 
     @classmethod
     def get_output_biennium_matrix(cls, filters=None):
@@ -1492,15 +1487,6 @@ class IhpixActivity(model.DomainObject):
         ))
         total = base.count()
 
-        institutions_q = _apply(meta.Session.query(
-            func.count(distinct(cls.institution))
-        ).filter(
-            cls.status == cls.STATUS_PUBLISHED,
-            cls.institution != u'',
-            cls.institution != None  # noqa: E711
-        ))
-        institutions = institutions_q.scalar() or 0
-
         pending = meta.Session.query(cls).filter(
             cls.status == cls.STATUS_PENDING
         ).count()
@@ -1508,6 +1494,8 @@ class IhpixActivity(model.DomainObject):
         from collections import Counter
         from ckanext.theme_ejemplo import ihpix_relations as R
         scoped_rows = [a.as_dict() for a in base.all()]
+        from ckanext.theme_ejemplo.ihpix_normalize import institution_counts
+        institutions = len(institution_counts(scoped_rows))
         countries = len(cls.get_country_counts(filters))
         pa_counts = Counter(v for row in scoped_rows for v in R.dimension_values(row, 'priority_area')).items()
         output_counts = Counter(v for row in scoped_rows for v in R.dimension_values(row, 'output')).items()

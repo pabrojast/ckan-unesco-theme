@@ -1,5 +1,5 @@
 {# Tablero de estadísticas del sitio para la home.
-   Muestra contadores animados con datos clave de la plataforma. #}
+   Muestra cifras reales desde el HTML con datos clave de la plataforma. #}
 {% set stats = h.theme_ejemplo_site_statistics() %}
 {% set tracking_totals = h.get_tracking_totals() %}
 
@@ -26,7 +26,7 @@
         <i class="fa fa-users"></i>
       </div>
       <div class="site-stat-body">
-        <span class="site-stat-value" data-count-to="{{ organization_count }}">0</span>
+        <span class="site-stat-value" data-count-to="{{ organization_count }}">{{ h.localised_number(organization_count) }}</span>
         <span class="site-stat-label">{% trans %}Organizations{% endtrans %}</span>
         <span class="site-stat-meta">{% trans %}Contributing partners{% endtrans %}</span>
       </div>
@@ -37,7 +37,7 @@
         <i class="fa fa-flag"></i>
       </div>
       <div class="site-stat-body">
-        <span class="site-stat-value" data-count-to="{{ initiative_count }}">0</span>
+        <span class="site-stat-value" data-count-to="{{ initiative_count }}">{{ h.localised_number(initiative_count) }}</span>
         <span class="site-stat-label">{% trans %}Initiatives{% endtrans %}</span>
         <span class="site-stat-meta">{% trans %}Collaborative programmes{% endtrans %}</span>
       </div>
@@ -48,7 +48,7 @@
         <i class="fa fa-globe"></i>
       </div>
       <div class="site-stat-body">
-        <span class="site-stat-value" data-count-to="{{ member_state_count }}">0</span>
+        <span class="site-stat-value" data-count-to="{{ member_state_count }}">{{ h.localised_number(member_state_count) }}</span>
         <span class="site-stat-label">{% trans %}Member States{% endtrans %}</span>
         <span class="site-stat-meta">{% trans %}Countries on the network{% endtrans %}</span>
       </div>
@@ -59,7 +59,7 @@
         <i class="fa fa-database"></i>
       </div>
       <div class="site-stat-body">
-        <span class="site-stat-value" data-count-to="{{ dataset_count }}">0</span>
+        <span class="site-stat-value" data-count-to="{{ dataset_count }}">{{ h.localised_number(dataset_count) }}</span>
         <span class="site-stat-label">{% trans %}Datasets{% endtrans %}</span>
         <span class="site-stat-meta">{% trans %}Open water data{% endtrans %}</span>
       </div>
@@ -70,7 +70,7 @@
         <i class="fa fa-file-text"></i>
       </div>
       <div class="site-stat-body">
-        <span class="site-stat-value" data-count-to="{{ document_count }}">0</span>
+        <span class="site-stat-value" data-count-to="{{ document_count }}">{{ h.localised_number(document_count) }}</span>
         <span class="site-stat-label">{% trans %}Documents{% endtrans %}</span>
         <span class="site-stat-meta">{% trans %}Reports & publications{% endtrans %}</span>
       </div>
@@ -82,7 +82,7 @@
         <i class="fa fa-eye"></i>
       </div>
       <div class="site-stat-body">
-        <span class="site-stat-value" data-count-to="{{ page_views }}">0</span>
+        <span class="site-stat-value" data-count-to="{{ page_views }}">{{ h.localised_number(page_views) }}</span>
         <span class="site-stat-label">{% trans %}Page views{% endtrans %}</span>
         <span class="site-stat-meta">{% trans %}Community engagement{% endtrans %}</span>
       </div>
@@ -93,7 +93,7 @@
         <i class="fa fa-download"></i>
       </div>
       <div class="site-stat-body">
-        <span class="site-stat-value" data-count-to="{{ downloads }}">0</span>
+        <span class="site-stat-value" data-count-to="{{ downloads }}">{{ h.localised_number(downloads) }}</span>
         <span class="site-stat-label">{% trans %}Downloads{% endtrans %}</span>
         <span class="site-stat-meta">{% trans %}Data put to work{% endtrans %}</span>
       </div>
@@ -106,75 +106,17 @@
 <script>
   (function () {
     'use strict';
-
-    function formatNumber(value) {
-      try {
-        return Number(value).toLocaleString();
-      } catch (err) {
-        return String(value);
-      }
-    }
-
-    function easeOutCubic(t) {
-      return 1 - Math.pow(1 - t, 3);
-    }
-
-    function animateCounter(el) {
-      var target = parseInt(el.getAttribute('data-count-to'), 10) || 0;
-      if (target <= 0) {
-        el.textContent = '0';
-        return;
-      }
-
-      var prefersReducedMotion = window.matchMedia &&
-        window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-
-      if (prefersReducedMotion) {
-        el.textContent = formatNumber(target);
-        return;
-      }
-
-      var duration = Math.min(1600, 600 + target * 4);
-      var start = null;
-
-      function tick(timestamp) {
-        if (start === null) start = timestamp;
-        var progress = Math.min(1, (timestamp - start) / duration);
-        var current = Math.round(easeOutCubic(progress) * target);
-        el.textContent = formatNumber(current);
-        if (progress < 1) {
-          window.requestAnimationFrame(tick);
-        } else {
-          el.textContent = formatNumber(target);
-        }
-      }
-
-      window.requestAnimationFrame(tick);
-    }
-
+    // El HTML ya contiene el valor real, incluso sin JavaScript.
+    // Sólo adaptar el formato; nunca sustituir cifras por ceros animados.
     function init() {
       var counters = document.querySelectorAll('.site-stats-hero [data-count-to]');
-      if (!counters.length) return;
-
-      if (!('IntersectionObserver' in window)) {
-        Array.prototype.forEach.call(counters, animateCounter);
-        return;
-      }
-
-      var observer = new IntersectionObserver(function (entries) {
-        entries.forEach(function (entry) {
-          if (entry.isIntersecting) {
-            animateCounter(entry.target);
-            observer.unobserve(entry.target);
-          }
-        });
-      }, { threshold: 0.25 });
-
       Array.prototype.forEach.call(counters, function (el) {
-        observer.observe(el);
+        var value = Number(el.getAttribute('data-count-to'));
+        if (Number.isFinite(value)) {
+          el.textContent = value.toLocaleString(document.documentElement.lang || undefined);
+        }
       });
     }
-
     if (document.readyState === 'loading') {
       document.addEventListener('DOMContentLoaded', init);
     } else {

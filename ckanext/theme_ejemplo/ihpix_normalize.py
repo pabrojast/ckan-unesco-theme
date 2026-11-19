@@ -215,6 +215,21 @@ def clean_text(value):
     return WS_RE.sub(' ', str(value)).strip()
 
 
+def institution_counts(rows):
+    u"""Agrupar variantes de escritura sin modificar los registros originales."""
+    groups = {}
+    for row in rows:
+        name = clean_text(row.get('institution'))
+        key = _key(name)
+        if not key:
+            continue
+        entry = groups.setdefault(key, {'name': name, 'count': 0})
+        # Etiqueta estable aunque cambie el orden de las filas.
+        entry['name'] = min(entry['name'], name)
+        entry['count'] += 1
+    return sorted(groups.values(), key=lambda item: (-item['count'], item['name']))
+
+
 def _alias_lookup(field):
     u"""{clave normalizada: canónico} con los alias del campo y los propios
     valores permitidos (para igualar sin distinguir mayúsculas)."""

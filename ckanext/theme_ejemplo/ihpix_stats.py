@@ -562,16 +562,10 @@ def compute_progress_stats(rows, scope='overall', value=None, filters=None,
                 impacted.append(name)
         unresolved.update(row['unresolved_member_states'])
 
-    institutions = set(_key(r['institution']) for r in scoped if r['institution'])
+    institutions = N.institution_counts(scoped)
     contributors = set(N.clean_text(r.get('reported_by')) for r in scoped
                        if N.clean_text(r.get('reported_by')))
-
-    top_inst = OrderedDict()
-    for row in scoped:
-        if row['institution']:
-            top_inst[row['institution']] = top_inst.get(row['institution'], 0) + 1
-    top_institutions = [{'name': k, 'count': v} for k, v in
-                        sorted(top_inst.items(), key=lambda x: (-x[1], x[0]))[:10]]
+    top_institutions = institutions[:10]
 
     overview = {
         'activities': len(scoped),

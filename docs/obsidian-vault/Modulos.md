@@ -815,3 +815,11 @@ Acciones: `initiative_membership_request_create/list/process/count`. El usuario
 se toma de la sesión; el rol es siempre Admin. Revisan administradores directos
 de la iniciativa y sysadmins. Organizaciones y Estados miembros quedan excluidos.
 Ver [[Administración limitada de iniciativas]].
+
+## Consistencia de contadores (2026-11-19)
+
+IHP-IX y Progress comparten `ihpix_normalize.institution_counts`: agrupa espacios,
+mayúsculas y variantes de apóstrofes, tanto en el total como en el ranking,
+respetando filtros y estado publicado. No cambia los nombres guardados.
+La portada incluye las cifras reales en el HTML; JavaScript sólo adapta el formato
+al idioma y ya no anima desde cero.
