@@ -12,8 +12,12 @@
 ### Trigger
 `workflow_dispatch` — ejecución manual solamente.
 
-> [!note] Pendiente por confirmar
-> No hay triggers automáticos (push, pull_request). El CI se ejecuta solo manualmente.
+> [!note] Verificado el 2026-11-19
+> La suite CKAN 2.9 descrita aquí es manual. Además, `.github/workflows/theme-checks.yml`
+> ejecuta automáticamente las regresiones IHP-IX, portada sin JavaScript y estilos/seguimiento
+> con cada push a `dev210` y en pull requests; también admite `workflow_dispatch`.
+> La regresión de portada comprueba que el HTML ya contiene los seis contadores reales.
+> Ver [[Testing]] para la cobertura de cada suite.
 
 ### Entorno
 
