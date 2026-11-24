@@ -205,6 +205,17 @@ pip install -r dev-requirements.txt
 
 ## Desbordamiento del buscador del encabezado
 
-El menú sin salto de línea y el buscador con ancho rígido pueden superar el viewport entre tablet y escritorio. El ajuste de 2026-10-01 permite repartir navegación y buscador en varias líneas, limita el campo al espacio disponible incluso al enfocarlo y mantiene la ocultación prevista del buscador entre 768 y 991 px con la especificidad correcta. No se oculta el desbordamiento del documento para disimularlo. La URL de `theme_ejemplo.css` incorpora la versión `20261001-header-1`.
+El menú sin salto de línea y el buscador con ancho rígido pueden superar el viewport entre tablet y escritorio. El ajuste de 2026-10-01 permite repartir navegación y buscador en varias líneas, limita el campo al espacio disponible incluso al enfocarlo y mantiene la ocultación prevista del buscador entre 768 y 991 px con la especificidad correcta. No se oculta el desbordamiento del documento para disimularlo. La URL de `theme_ejemplo.css` incorporó entonces la versión `20261001-header-1`; la vigente está en la sección siguiente.
 
 Ver [[Testing]]; después del despliegue, comprobar la URL CSS versionada y las páginas sin parámetros de consulta.
+
+## Desplazamiento lateral de la portada en móvil
+
+Las tres bandas claras de la portada (`.homepage-section-alt::before`) se extendían con `left`/`right` en `-50vw`, y el documento medía 1,5 veces el viewport: `scrollWidth` 2088 con 1440 px de ancho y 618 con 412 px. `html` lleva `overflow-x: hidden`, que en escritorio frena la rueda y el teclado, pero en móvil la página se podía arrastrar de lado (`visualViewport.pageLeft` 206 tras deslizar en un Pixel 7).
+
+Desde 2026-11-24 el pseudo-elemento mide lo que su sección y el sangrado lateral son dos copias suyas desplazadas ±50vw con `box-shadow`, que es solo tinta y no crea overflow desplazable. A partir de 3840 px de viewport la sección ya no alcanza 50vw y se usa una sombra expandida recortada con `clip-path`. No se añadió `overflow: hidden`. La URL de `theme_ejemplo.css` incorpora la versión `20261124-home-overflow-1`.
+
+Comprobación en la portada: `document.documentElement.scrollWidth === document.documentElement.clientWidth`; con un perfil móvil, `innerWidth === clientWidth` y un deslizamiento horizontal deja `visualViewport.pageLeft` en 0.
+
+> [!warning] No pintar este sangrado con `border-image`
+> Reproduce la banda píxel a píxel, pero el modo oscuro automático de Chrome y el modo de colores forzados no lo tratan como fondo: el texto se aclara y queda sobre una banda casi blanca.

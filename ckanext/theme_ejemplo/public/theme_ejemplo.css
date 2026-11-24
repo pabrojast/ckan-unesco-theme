@@ -6681,15 +6681,35 @@ p.slide-subtitle {
   position: relative;
 }
 
+/* Banda a todo el ancho del viewport SIN ensanchar el documento. El
+   pseudo-elemento mide lo que su seccion; el sangrado lateral son dos
+   copias suyas desplazadas con box-shadow, que es solo tinta y no crea
+   overflow desplazable (con left/right en -50vw la pagina media 1.5x el
+   viewport y en movil se podia arrastrar de lado). Pinta el mismo tramo
+   que antes, de -50vw a +50vw, y necesita que la seccion mida al menos
+   50vw: se cumple hasta 3840px de viewport (.container: 90vw, tope
+   1920px). El color va en background y box-shadow, no en border-image:
+   los modos oscuro y de alto contraste solo reconocen los primeros. */
 .homepage-section-alt::before {
   content: '';
   position: absolute;
   top: -0.5rem;
-  left: -50vw;
-  right: -50vw;
+  left: 0;
+  right: 0;
   bottom: -0.5rem;
   background: #f5f8fa;
+  box-shadow: -50vw 0 #f5f8fa, 50vw 0 #f5f8fa;
   z-index: -1;
+}
+
+/* Desde 3840px la seccion ya no llega a 50vw y las copias dejarian
+   huecos: la sombra crece en todas direcciones y clip-path recorta lo
+   que sobra arriba y abajo. */
+@media (min-width: 3840px) {
+  .homepage-section-alt::before {
+    box-shadow: 0 0 0 100vmax #f5f8fa;
+    clip-path: inset(0 -100vmax);
+  }
 }
 
 /* --- Split Layout for Feature Sections --- */
