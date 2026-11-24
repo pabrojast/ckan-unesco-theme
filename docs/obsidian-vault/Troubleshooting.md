@@ -213,9 +213,23 @@ Ver [[Testing]]; después del despliegue, comprobar la URL CSS versionada y las 
 
 Las tres bandas claras de la portada (`.homepage-section-alt::before`) se extendían con `left`/`right` en `-50vw`, y el documento medía 1,5 veces el viewport: `scrollWidth` 2088 con 1440 px de ancho y 618 con 412 px. `html` lleva `overflow-x: hidden`, que en escritorio frena la rueda y el teclado, pero en móvil la página se podía arrastrar de lado (`visualViewport.pageLeft` 206 tras deslizar en un Pixel 7).
 
-Desde 2026-11-24 el pseudo-elemento mide lo que su sección y el sangrado lateral son dos copias suyas desplazadas ±50vw con `box-shadow`, que es solo tinta y no crea overflow desplazable. A partir de 3840 px de viewport la sección ya no alcanza 50vw y se usa una sombra expandida recortada con `clip-path`. No se añadió `overflow: hidden`. La URL de `theme_ejemplo.css` incorpora la versión `20261124-home-overflow-1`.
+Desde 2026-11-24 el pseudo-elemento mide lo que su sección y el sangrado lateral son dos copias suyas desplazadas ±50vw con `box-shadow`, que es solo tinta y no crea overflow desplazable. A partir de 3840 px de viewport la sección ya no alcanza 50vw y se usa una sombra expandida recortada con `clip-path`. No se añadió `overflow: hidden`. La URL de `theme_ejemplo.css` incorporó entonces la versión `20261124-home-overflow-1`; la vigente está en la sección siguiente.
 
 Comprobación en la portada: `document.documentElement.scrollWidth === document.documentElement.clientWidth`; con un perfil móvil, `innerWidth === clientWidth` y un deslizamiento horizontal deja `visualViewport.pageLeft` en 0.
 
 > [!warning] No pintar este sangrado con `border-image`
 > Reproduce la banda píxel a píxel, pero el modo oscuro automático de Chrome y el modo de colores forzados no lo tratan como fondo: el texto se aclara y queda sobre una banda casi blanca.
+
+## Desborde de 5 px de la página de dataset en móvil
+
+El campo URIRef del módulo Social (`input.permalink-input`, snippet `permanent_url.html` de schemingdcat) ensanchaba el documento en las páginas de dataset: `scrollWidth` 395 con 390 px de viewport (iPhone 13) y 418 con 412 px (Pixel 7). schemingdcat le da `margin-left: 5px` con `width: calc(100% - 10px)`; el tema imponía `width: 100% !important` y el margen se conservaba, así que la caja salía 5 px por la derecha de su tarjeta. En móvil el aside ocupa todo el ancho y esos 5 px pasaban del viewport. En escritorio el campo también sobresalía de la tarjeta, sin ensanchar el documento.
+
+Desde 2026-11-24 `.module .permanav input.permalink-input` vuelve a `width: calc(100% - 10px) !important`. No se añadió `overflow: hidden`. La URL de `theme_ejemplo.css` incorpora la versión `20261124-dataset-mobile-1`.
+
+Comprobación en una página de dataset: `document.documentElement.scrollWidth === document.documentElement.clientWidth` con 390, 412 y 1440 px.
+
+> [!note] `a.info_text` no ensancha el documento
+> El enlace del tema DCAT-AP del aside (`schemingdcat/snippets/schemingdcat_info.html`) también pasa del viewport en móvil por su margen negativo, pero lo recorta `ul.scrollable-list` (`overflow-x: hidden`).
+
+> [!warning] Pendiente: descripciones de recursos en móvil
+> Con 390 px, la descripción de cada recurso (`li.resource-item > div.description-wrapper`) queda en una columna muy estrecha junto al título (7 px en el peor caso medido) y el texto se parte casi letra a letra: `/dataset/boreholes-kenya-rural-focus` mide 28 284 px de alto en producción. Visible también en dev el 2026-11-24. Sin corregir.

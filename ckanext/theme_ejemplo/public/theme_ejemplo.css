@@ -3965,6 +3965,18 @@ nav.nav-facet li,
   font-size: 12px !important;
 }
 
+/* schemingdcat da a este input margin-left: 5px con
+   width: calc(100% - 10px). Las dos reglas de arriba le imponen
+   width: 100% y el margen se conserva, asi que la caja salia 5px por la
+   derecha de su tarjeta. En movil el aside ocupa todo el ancho y el
+   documento media mas que el viewport (scrollWidth 395 con 390px, 418
+   con 412px). Se devuelve el ancho que descuenta el margen. La
+   especificidad iguala a la de .module .permanav input[type="url"] y
+   gana por ir despues. */
+.module .permanav input.permalink-input {
+  width: calc(100% - 10px) !important;
+}
+
 /* Fix followers section */
 .followers {
   text-align: center !important;
