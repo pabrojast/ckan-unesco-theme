@@ -7,6 +7,7 @@ import logging
 import time
 from sqlalchemy import text
 from .resource_styles import is_sld_resource, present_resources, sld_sql, raw_download_sql
+from .crawl_policy import listing_noindex
 
 log = logging.getLogger(__name__)
 

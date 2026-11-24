@@ -1,4 +1,14 @@
 {% ckan_extends %}
+{% block meta %}
+  {{ super() }}
+  {# Listados con dos o mas filtros, con el orden de una faceta o mas alla
+     de la pagina 50: los buscadores siguen los enlaces sin indexar la
+     pagina. La regla esta en crawl_policy.listing_noindex y solo aplica a
+     /dataset, /documents, /learning, /group/<id> y /organization/<id>. #}
+  {%- if h.theme_ejemplo_listing_noindex(request.args, request.path) %}
+  <meta name="robots" content="noindex, follow" />
+  {%- endif %}
+{% endblock %}
 {% block styles %}
   {# Marca html.js ANTES del CSS: los tabs del home solo colapsan sus
      paneles cuando hay JS (sin JS se apilan visibles y la botonera de

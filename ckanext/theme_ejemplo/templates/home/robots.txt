@@ -1,0 +1,44 @@
+{% ckan_extends %}
+
+{#
+Desde CKAN 2.10, /robots.txt lo sirve la vista home.robots_txt del core
+renderizando esta plantilla (home/robots.txt). La ruta explicita gana a los
+archivos estaticos, asi que public/robots.txt ya no se sirve (CKAN 2.9 no
+tenia la ruta y servia el estatico). Las reglas del core
+(super()) se conservan. Solo se usan * y $, que es lo que entienden Google y
+Bing. Sin lineas en blanco dentro del grupo: hay parsers que cierran el grupo
+en la primera. La regla equivalente para la etiqueta meta robots esta en
+crawl_policy.listing_noindex.
+#}
+{% block all_user_agents -%}
+{{ super() }}
+# Sort order of one facet inside a listing, as the first query parameter
+# (/dataset/?_groups_sort=name). Every value is another URL for the same
+# results.
+Disallow: /*?_*_sort=
+# The same parameter after other parameters
+# (/documents/?groups=x&_groups_sort=name).
+Disallow: /*&_*_sort=
+# Catalogue listings with two or more query parameters: combinations of
+# filters, or a filter plus a page number or a sort order. One parameter
+# stays crawlable (/dataset/?groups=x, /dataset/?page=2), and so does every
+# dataset page (/dataset/<name>).
+Disallow: /dataset?*&
+Disallow: /dataset/?*&
+Disallow: /documents?*&
+Disallow: /documents/?*&
+Disallow: /learning?*&
+Disallow: /learning/?*&
+# The page of one group or organization is also a listing with filters.
+Disallow: /group/*?*&
+Disallow: /organization/*?*&
+# The same listings under a language prefix (/es/dataset/, /fr/group/<name>).
+Disallow: /*/dataset?*&
+Disallow: /*/dataset/?*&
+Disallow: /*/documents?*&
+Disallow: /*/documents/?*&
+Disallow: /*/learning?*&
+Disallow: /*/learning/?*&
+Disallow: /*/group/*?*&
+Disallow: /*/organization/*?*&
+{%- endblock %}

@@ -451,3 +451,8 @@ y navegador usando las acciones reales; el test de DB aísla el envío de correo
 
 La CI `Theme checks` ejecuta también `test_home_stats_render.py`: verifica que
 los seis contadores de portada coinciden con los datos desde el HTML, sin JavaScript.
+
+También ejecuta `test_crawl_policy.py`: la regla de `noindex` de los listados
+(`crawl_policy.listing_noindex`), el bloque `meta` de `base.html` renderizado con
+Jinja a secas y las reglas de `templates/home/robots.txt` contra URL de ejemplo.
+Ver [[Modulos#crawl_policy.py]].

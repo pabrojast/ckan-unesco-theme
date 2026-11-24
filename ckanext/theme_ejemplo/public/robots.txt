@@ -1,3 +1,9 @@
+# NOT SERVED on CKAN 2.10. Since 2.10 CKAN answers /robots.txt from a route
+# that renders the template home/robots.txt, and a route wins over static
+# files. The live rules are in
+# ckanext/theme_ejemplo/templates/home/robots.txt. CKAN 2.9 had no such route
+# and served this file.
+#
 # IHP-WINS robots.txt
 # Block faceted search abuse and protect backend resources
 

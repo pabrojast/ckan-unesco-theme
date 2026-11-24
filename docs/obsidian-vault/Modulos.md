@@ -553,6 +553,39 @@ Cada modelo tiene `init_*_db()` y `define_*_table()`. Son idempotentes (verifica
 
 ---
 
+## crawl_policy.py
+
+**Rol**: decide qué listados con facetas no deben indexar los buscadores. Sin CKAN ni Flask. Complementa a [[Modulos#cache.py]]: aquel abarata las respuestas, este pide a los crawlers que no recorran las combinaciones.
+
+Listados: `/dataset`, `/documents`, `/learning`, `/group/<id>` y `/organization/<id>`, con o sin barra final y con o sin prefijo de idioma.
+
+### `listing_noindex(args, path=None)`
+
+Helper `h.theme_ejemplo_listing_noindex`. `templates/base.html` lo llama en el bloque `meta` con `request.args` y `request.path`, y emite `<meta name="robots" content="noindex, follow" />` cuando devuelve `True`:
+
+- la query trae el orden de una faceta (`_<faceta>_sort`);
+- `page` es mayor que 50 (`MAX_INDEXED_PAGE`);
+- hay dos o más filtros. Cuenta cada par nombre=valor con valor no vacío (`groups=a&groups=b` son dos). No cuentan `q`, `sort`, `page` ni los que empiezan por `_` o `ext_`, igual que en la búsqueda del core.
+
+Fuera de un listado devuelve `False`: las páginas de dataset nunca llevan la etiqueta. Un listado sin filtros o con uno solo tampoco.
+
+### `templates/home/robots.txt`
+
+Desde CKAN 2.10 el core sirve `/robots.txt` con la vista `home.robots_txt`, que renderiza la plantilla `home/robots.txt`. La ruta explícita gana a los archivos estáticos, así que `public/robots.txt` dejó de servirse al pasar a 2.10 (CKAN 2.9 no tenía la ruta y servía el estático). Comprobado el 2026-11-24: producción devolvía byte a byte la plantilla del core. La plantilla del tema extiende la del core con `{% ckan_extends %}` y añade al grupo `User-agent: *`:
+
+- `Disallow: /*?_*_sort=` y `Disallow: /*&_*_sort=`: orden de una faceta, en cualquier ruta e idioma.
+- `Disallow: <listado>?*&`: listados con dos o más parámetros, para cada listado y su variante con prefijo de idioma (`/*/dataset?*&`…).
+
+> [!warning] robots.txt es más grueso que la etiqueta meta
+> robots.txt no distingue un filtro de `page` o `q`: veta cualquier listado con dos parámetros, también `/dataset/?groups=x&page=2`. Siguen rastreables el listado sin parámetros, el de un solo parámetro (`?groups=x`, `?page=2`) y todas las páginas de dataset.
+
+> [!note] Solo `*` y `$`
+> Son los únicos comodines que entienden Google y Bing. No dejar líneas en blanco dentro del grupo: hay parsers que lo cierran en la primera.
+
+Tests: `tests/test_crawl_policy.py` (puro, en la CI `Theme checks`).
+
+---
+
 ## pageview_tracking.py
 
 **Rol**: Conteo liviano de vistas/descargas — reemplazo de `ckan.tracking_enabled`, que colapsaba la CPU bajo alto tráfico. Se registra vía `IMiddleware` (un `before_request` Flask, espejo de [[Modulos#cache.py]]). Ver el flujo completo en [[Flujos Importantes#Conteo liviano de vistas]].

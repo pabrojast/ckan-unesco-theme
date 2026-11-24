@@ -60,6 +60,7 @@ ckan-unesco-theme/
 | `email/` | Templates de correo electrónico |
 | `flood_drought_portal/` | Portal de inundaciones y sequías |
 | `group/` | Vistas de grupos/iniciativas (miembros, noticias, eventos, publicaciones) |
+| `home/robots.txt` | El `/robots.txt` que se sirve: reglas del core más las de listados con facetas |
 | `home/` | Homepage con snippets UNESCO. `custom_layout.html` orquesta: buscador → slideshow → stats (`site_stats_hero.html`, 6 tarjetas uniformes) → About compacto (`promoted.html`, banda con 3 highlights) → Featured Viewers (`featuredviewers.html` + `featuredviewerssnip.html`, datos de [[Glosario#Featured Viewer|ckanext-pages]] con fallback a los publicados más recientes) → hub "Explore Data" (tabs Recientes/Trending, `explore_tabs.html`) → hub "Tools and Resources" (`tools_hub.html`) → hub "Community and Knowledge" (`community_grid.html`, grid panorámico de 4 columnas con mini-cards `community_mini_card.html`, sin tabs). Solo Explore Data conserva el patrón de tabs server-side con progressive enhancement (`html.js`); sin JS los paneles se apilan visibles. Los snippets huérfanos del refactor de tabs fueron eliminados |
 | `ihpix/` | Portal IHP-IX (página principal, outputs, dashboard, reportes) |
 | `initiatives/` | Portal de iniciativas |
@@ -86,7 +87,7 @@ ckan-unesco-theme/
 | `theme_ejemplo_enhanced.js` | 21 KB | JavaScript mejorado del tema |
 | `topmenu-responsive.js` | 1.6 KB | Menú responsive |
 | `tracking-display.js` | 3.3 KB | Visualización de estadísticas de tracking |
-| `robots.txt` | — | Configuración SEO |
+| `robots.txt` | — | No se sirve en CKAN 2.10: `/robots.txt` sale de `templates/home/robots.txt` (ver [[Modulos#crawl_policy.py]]) |
 | `favicon.ico` | 72 KB | Favicon del sitio |
 | Logos (`logo.svg`, `unesco.svg`, etc.) | — | Logos UNESCO e IHP |
 | Fuentes (`unesco.ttf`, `unesco.woff`) | — | Tipografía UNESCO |
