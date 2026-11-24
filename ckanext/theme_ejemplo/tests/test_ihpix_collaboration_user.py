@@ -1,5 +1,10 @@
 """El actor de las acciones IHP-IX: un anónimo recibe 403, no un error 500."""
 import pytest
+
+# ihpix_collaboration importa ckan.model y toolkit: sin CKAN (suite pura de
+# Theme checks) el módulo se salta en vez de romper la recolección.
+pytest.importorskip('ckan')
+
 import ckan.plugins.toolkit as tk
 from ckanext.theme_ejemplo import ihpix_collaboration as C
 
