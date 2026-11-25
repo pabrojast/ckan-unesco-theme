@@ -226,7 +226,8 @@ def _match(norm_path):
     m = view_re.match(norm_path)
     if m:
         name = m.group(1)
-        if name in _RESERVED_NAMES:
+        # Un nombre con NUL no puede ser un dataset: PostgreSQL no lo almacena.
+        if name in _RESERVED_NAMES or '\x00' in name:
             return None
         return ('view', name)
     return None
@@ -396,11 +397,20 @@ def _rotate_hash(redis, key):
     finally:
         redis.delete(tmp)
     out = {}
+    dropped = 0
     for k, v in raw.items():
+        ident = _to_str(k)
+        if '\x00' in ident:
+            # PostgreSQL rechaza el NUL y un solo campo así aborta todo el volcado.
+            dropped += 1
+            continue
         try:
-            out[_to_str(k)] = int(v)
+            out[ident] = int(v)
         except (TypeError, ValueError):
             continue
+    if dropped:
+        log.warning('pageviews flush: %d contadores descartados por NUL en %s',
+                    dropped, key)
     return out
 
 
