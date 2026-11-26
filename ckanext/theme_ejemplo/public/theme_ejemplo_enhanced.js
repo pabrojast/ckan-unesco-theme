@@ -440,6 +440,10 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!el.hasAttribute('data-bs-toggle')) {
             el.setAttribute('data-bs-toggle', 'modal');
         }
+        // Bootstrap 5 necesita tambien el destino del modal heredado.
+        if (!el.hasAttribute('data-bs-target') && el.hasAttribute('data-target')) {
+            el.setAttribute('data-bs-target', el.getAttribute('data-target'));
+        }
     });
     
     // Fix tab toggles
