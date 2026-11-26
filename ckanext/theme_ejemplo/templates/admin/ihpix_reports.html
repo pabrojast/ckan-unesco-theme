@@ -960,7 +960,7 @@
   // ── POST Helper ──
   function postReview(reportId, action, notes, btn, originalHtml) {
     var formData = new FormData();
-    formData.append('report_id', reportId);
+    formData.append('id', reportId);
     formData.append('action', action);
     if (notes) { formData.append('review_notes', notes); }
 

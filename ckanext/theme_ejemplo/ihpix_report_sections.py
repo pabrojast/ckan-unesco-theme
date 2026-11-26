@@ -565,7 +565,7 @@ def build_sections(stats, translate=identity, options=None, sources=None):
     wanted = selected_ids(options.get('sections'))
     sections = []
     for sid in SECTION_IDS:
-        if sid not in wanted:
+        if sid not in wanted and sid not in APPENDIX_IDS:
             continue
         if sid in APPENDIX_IDS:
             if options.get('include_sources') and sources is not None:
