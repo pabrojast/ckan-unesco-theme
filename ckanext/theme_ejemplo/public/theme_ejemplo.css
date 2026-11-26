@@ -1353,6 +1353,30 @@ img {
 .site-footer a:hover{
     text-decoration: none !important;
 }
+/* Footer: enlaces al ecosistema IHP-WINS, sobre las columnas de UNESCO. */
+.footer-ecosystem {
+    margin-bottom: 1.25rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #d4dfe5;
+}
+.footer-ecosystem-title {
+    display: block;
+    margin-bottom: 0.4rem;
+    color: #212121;
+    font-weight: 700;
+}
+.footer-ecosystem-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.15rem 1.5rem;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+.footer-ecosystem-list .nav-link {
+    display: inline-block;
+    padding: 0.25rem 0;
+}
 .icon2,.social-sharing-buttons>a,.icon2::before,.social-sharing-buttons>a::before {
     font-family: "unesco" !important;
     font-style: normal;

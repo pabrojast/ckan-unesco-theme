@@ -34,8 +34,13 @@
 #dataset-resources .resource-item .resource-title-row .heading { overflow-wrap: anywhere; min-width: 0; }
 #dataset-resources .resource-item > .btn-group { grid-row: 1 !important; align-self: start !important; }
 #dataset-resources .resource-styles, #dataset-resources .resource-style-kind { grid-column: 2 / -1 !important; grid-row: 3 !important; min-width: 0; }
-@media (max-width: 600px) {
+/* Hasta 768 px el tema apila la fila (ckan210-fixes.css). El título va junto
+   al icono de formato y la descripción ocupa el ancho completo debajo: en la
+   misma fila que el título quedaba en una columna de 0 a 82 px. */
+@media (max-width: 768px) {
   #dataset-resources #resources-list > .resource-item { grid-template-columns: auto minmax(0, 1fr) !important; }
+  #dataset-resources .resource-item .resource-title-row .heading { grid-column: 2 !important; grid-row: 1 !important; }
+  #dataset-resources .resource-item > .description-wrapper { grid-column: 1 / -1 !important; grid-row: 2 !important; min-width: 0; }
   #dataset-resources .resource-item > .btn-group { grid-column: 1 / -1 !important; grid-row: 3 !important; justify-self: start !important; }
   #dataset-resources .resource-styles, #dataset-resources .resource-style-kind { grid-column: 1 / -1 !important; grid-row: 4 !important; }
 }

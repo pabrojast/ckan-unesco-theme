@@ -2412,9 +2412,13 @@ class IhpixContribution(model.DomainObject):
     @classmethod
     def counts_for_user(cls, user_id):
         from sqlalchemy import func
-        rows = meta.Session.query(cls.kind, func.count(cls.id)).filter(
-            cls.user_id == user_id).group_by(cls.kind).all()
-        return {kind: n for kind, n in rows}
+        rows = meta.Session.query(
+            cls.kind, func.count(cls.id), func.count(func.distinct(cls.link_id))
+        ).filter(cls.user_id == user_id).group_by(cls.kind).all()
+        # A link is recorded once per workspace of its activity. For the
+        # user it is one attachment, so count the links, not the rows.
+        return {kind: (links if kind == 'link_added' else n)
+                for kind, n, links in rows}
 
     @classmethod
     def counts_for_group(cls, working_group_id):

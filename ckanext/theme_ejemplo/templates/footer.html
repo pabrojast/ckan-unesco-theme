@@ -1,6 +1,21 @@
 <footer class="site-footer">
   <div class="container">
     {% block footer_content %}
+    <nav class="footer-ecosystem" aria-labelledby="footer-ecosystem-title">
+      <span id="footer-ecosystem-title" class="footer-ecosystem-title">{{ _('IHP-WINS ecosystem') }}</span>
+      <ul class="footer-ecosystem-list">
+        <li><a class="nav-link" href="{{ h.url_for('dataset.search') }}">{{ _('Data catalogue') }}</a></li>
+        <li><a class="nav-link" href="/terria/">{{ _('Geospatial viewer') }}</a></li>
+        <li><a class="nav-link" href="{{ h.url_for('/citizens4water/') }}">{{ _('Citizens4Water') }}</a></li>
+        <li><a class="nav-link" href="{{ h.url_for('/citizen-science/') }}">{{ _('Citizen Science') }}</a></li>
+        <li><a class="nav-link" href="{{ h.url_for('/data-stories/list') }}">{{ _('Data stories') }}</a></li>
+        {% if h.learning_enabled is defined and h.learning_enabled() %}
+        <li><a class="nav-link" href="{{ h.url_for('learning.search') }}">{{ _('Learning') }}</a></li>
+        {% endif %}
+        <li><a class="nav-link" href="{{ h.url_for('/ihpix') }}">{{ _('IHP-IX') }}</a></li>
+        <li><a class="nav-link" href="{{ h.url_for('/rapid-response') }}">{{ _('Rapid Response and Recovery') }}</a></li>
+      </ul>
+    </nav>
     <div class="row">
       <div class="col-md-3 footer-links">
         <a href="#" class="nav-link dropdown-toggle active-item" data-once="initReportMenu initHorizontalMenu">UNESCO</a>

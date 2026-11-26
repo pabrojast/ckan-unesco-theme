@@ -1358,6 +1358,38 @@ class ThemeEjemploPlugin(plugins.SingletonPlugin, DefaultTranslation):
                 defaults={u'package_type': u'dataset'},
             )
 
+            # CKAN gives every extension rule the same sort key, so rules
+            # are tried in plugin order and /dataset/<id> below answers
+            # single-segment paths that belong to plugins loaded after this
+            # one: the version comparison of ``activity`` and the per-dataset
+            # exports of ``dcat``. Register them first and hand them over.
+            def dataset_changes_multiple():
+                if not plugins.plugin_loaded('activity'):
+                    return toolkit.abort(404, toolkit._('Dataset not found'))
+                from ckanext.activity.views import package_changes_multiple
+                return package_changes_multiple()
+
+            def dataset_dcat_export(_id, _format):
+                if not plugins.plugin_loaded('dcat'):
+                    return toolkit.abort(404, toolkit._('Dataset not found'))
+                from ckanext.dcat.utils import read_dataset_page
+                return read_dataset_page(_id, _format)
+
+            blueprint.add_url_rule(
+                u'/dataset/changes_multiple',
+                u'dataset_changes_multiple',
+                dataset_changes_multiple,
+                methods=['GET']
+            )
+            # A dataset name cannot contain a dot, so a known suffix is
+            # always a format.
+            blueprint.add_url_rule(
+                u'/dataset/<_id>.<any(xml, rdf, n3, ttl, jsonld):_format>',
+                u'dataset_dcat_export',
+                dataset_dcat_export,
+                methods=['GET']
+            )
+
             # Override CKAN core dataset read view with optimized version
             # that uses batch SQL for resource views instead of N+1 queries
             blueprint.add_url_rule(
