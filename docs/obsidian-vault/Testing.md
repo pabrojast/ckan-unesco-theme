@@ -474,3 +474,5 @@ in browser automation and must not be reported as passing based on admin-created
 accounts. Only records prefixed `QA IHP-IX 20261126` belong to this audit.
 
 La misma ronda detectó importaciones de grupos que finalizaban con cero registros: `input[name=id]` oculta la propiedad `form.id` en el DOM. La identificación del formulario usa ahora `getAttribute('id')`. `test_ihpix_group_import_contract.py` ejecuta el manejador JavaScript con Node y comprueba que las decisiones y las correcciones de filas llegan a la API; falla con el código anterior. La aceptación en DEV exige IDs persistidos y reenvío idempotente, no sólo el mensaje de éxito.
+
+La generación real del PDF también detectó que el anexo desaparecía al enviar el formulario, aun con su casilla marcada. `include_sources` controla el anexo independientemente de los checkboxes de secciones principales. La regresión usa la selección exacta del formulario y verifica tanto inclusión como exclusión explícita.
