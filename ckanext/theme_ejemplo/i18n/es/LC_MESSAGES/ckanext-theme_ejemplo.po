@@ -950,7 +950,7 @@ msgstr "Alternar Navegación"
 
 #: ckanext/theme_ejemplo/templates/admin/featured_datasets.html:32
 msgid "Manage which datasets appear in the featured section on the homepage."
-msgstr ""
+msgstr "Gestiona qué conjuntos de datos aparecen en la sección destacada de la portada."
 
 #: ckanext/theme_ejemplo/templates/admin/featured_datasets.html:48
 #: ckanext/theme_ejemplo/templates/organization/read.html:9
@@ -961,11 +961,11 @@ msgstr "Añadir dataset"
 
 #: ckanext/theme_ejemplo/templates/admin/featured_datasets.html:49
 msgid "Search and select datasets to feature on the homepage"
-msgstr ""
+msgstr "Busca y selecciona conjuntos de datos para destacar en la portada"
 
 #: ckanext/theme_ejemplo/templates/admin/featured_datasets.html:54
 msgid "Type to search datasets..."
-msgstr ""
+msgstr "Escribe para buscar conjuntos de datos..."
 
 #: ckanext/theme_ejemplo/templates/admin/featured_datasets.html:71
 #: ckanext/theme_ejemplo/templates/admin/featured_viewers.html:87
@@ -994,42 +994,42 @@ msgstr "Eliminar"
 #: ckanext/theme_ejemplo/templates/admin/featured_datasets.html:133
 #: ckanext/theme_ejemplo/templates/admin/featured_datasets.html:720
 msgid "No Featured Datasets"
-msgstr ""
+msgstr "No hay conjuntos de datos destacados"
 
 #: ckanext/theme_ejemplo/templates/admin/featured_datasets.html:134
 #: ckanext/theme_ejemplo/templates/admin/featured_datasets.html:721
 msgid "Use the search above to find and add datasets to the featured section."
-msgstr ""
+msgstr "Usa la búsqueda de arriba para encontrar y agregar conjuntos de datos a la sección destacada."
 
 #: ckanext/theme_ejemplo/templates/admin/featured_datasets.html:572
 msgid "No datasets found"
-msgstr ""
+msgstr "No se encontraron conjuntos de datos"
 
 #: ckanext/theme_ejemplo/templates/admin/featured_datasets.html:579
 msgid "Already featured"
-msgstr ""
+msgstr "Ya está destacado"
 
 #: ckanext/theme_ejemplo/templates/admin/featured_datasets.html:579
 msgid "Add"
-msgstr ""
+msgstr "Agregar"
 
 #: ckanext/theme_ejemplo/templates/admin/featured_datasets.html:629
 #: ckanext/theme_ejemplo/templates/admin/open_learning.html:549
 msgid "Added"
-msgstr ""
+msgstr "Agregado"
 
 #: ckanext/theme_ejemplo/templates/admin/featured_datasets.html:680
 msgid "from featured datasets?"
-msgstr ""
+msgstr "de los conjuntos de datos destacados?"
 
 #: ckanext/theme_ejemplo/templates/admin/featured_publications.html:31
 msgid ""
 "Manage UNESDOC and Water Family publications displayed on the homepage."
-msgstr ""
+msgstr "Gestiona las publicaciones de UNESDOC y de la Familia del Agua que se muestran en la portada."
 
 #: ckanext/theme_ejemplo/templates/admin/featured_publications.html:45
 msgid "Add New Publication"
-msgstr ""
+msgstr "Agregar nueva publicación"
 
 #: ckanext/theme_ejemplo/templates/admin/featured_publications.html:52
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:73
@@ -1066,7 +1066,7 @@ msgstr "Título"
 
 #: ckanext/theme_ejemplo/templates/admin/featured_publications.html:69
 msgid "Publication title"
-msgstr ""
+msgstr "Título de la publicación"
 
 #: ckanext/theme_ejemplo/templates/admin/featured_publications.html:72
 #: ckanext/theme_ejemplo/templates/admin/featured_publications.html:231
@@ -1097,32 +1097,32 @@ msgstr "Descripción"
 
 #: ckanext/theme_ejemplo/templates/admin/featured_publications.html:79
 msgid "Brief description of the publication..."
-msgstr ""
+msgstr "Breve descripción de la publicación..."
 
 #: ckanext/theme_ejemplo/templates/admin/featured_publications.html:83
 #: ckanext/theme_ejemplo/templates/admin/featured_publications.html:717
 #: ckanext/theme_ejemplo/templates/admin/featured_publications.html:722
 msgid "Add Publication"
-msgstr ""
+msgstr "Agregar publicación"
 
 #: ckanext/theme_ejemplo/templates/admin/featured_publications.html:105
 msgid "Legacy Publications Detected"
-msgstr ""
+msgstr "Se detectaron publicaciones antiguas"
 
 #: ckanext/theme_ejemplo/templates/admin/featured_publications.html:108
 #, python-format
 msgid ""
 "Found %(count)s publication(s) added using the old tag-based system (UNESDOC"
 " datasets). Import them here to manage from this panel."
-msgstr ""
+msgstr "Se encontraron %(count)s publicaciones agregadas con el sistema anterior de etiquetas (conjuntos de datos UNESDOC). Impórtalas aquí para gestionarlas desde este panel."
 
 #: ckanext/theme_ejemplo/templates/admin/featured_publications.html:113
 msgid "Import Legacy Publications"
-msgstr ""
+msgstr "Importar publicaciones antiguas"
 
 #: ckanext/theme_ejemplo/templates/admin/featured_publications.html:127
 msgid "Current Publications"
-msgstr ""
+msgstr "Publicaciones actuales"
 
 #: ckanext/theme_ejemplo/templates/admin/featured_publications.html:133
 #: ckanext/theme_ejemplo/templates/admin/featured_publications.html:948
@@ -1174,16 +1174,16 @@ msgstr "Eliminar"
 #: ckanext/theme_ejemplo/templates/admin/featured_publications.html:199
 #: ckanext/theme_ejemplo/templates/admin/featured_publications.html:972
 msgid "No Featured Publications"
-msgstr ""
+msgstr "No hay publicaciones destacadas"
 
 #: ckanext/theme_ejemplo/templates/admin/featured_publications.html:200
 #: ckanext/theme_ejemplo/templates/admin/featured_publications.html:973
 msgid "Use the form above to add publications to the homepage."
-msgstr ""
+msgstr "Usa el formulario de arriba para agregar publicaciones a la portada."
 
 #: ckanext/theme_ejemplo/templates/admin/featured_publications.html:221
 msgid "Edit Publication"
-msgstr ""
+msgstr "Editar publicación"
 
 #: ckanext/theme_ejemplo/templates/admin/featured_publications.html:239
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:155
@@ -1236,7 +1236,7 @@ msgstr "Sube un archivo de imagen"
 #: ckanext/theme_ejemplo/templates/admin/featured_publications.html:686
 #: ckanext/theme_ejemplo/templates/admin/portal_cards.html:645
 msgid "Title and link are required"
-msgstr ""
+msgstr "El título y el enlace son obligatorios"
 
 #: ckanext/theme_ejemplo/templates/admin/featured_publications.html:692
 #: ckanext/theme_ejemplo/templates/admin/ihpix_activities.html:1636
@@ -1262,19 +1262,19 @@ msgstr "¡Guardado!"
 msgid ""
 "Import all legacy UNESDOC publications into this panel? Duplicates will be "
 "skipped."
-msgstr ""
+msgstr "¿Importar todas las publicaciones antiguas de UNESDOC a este panel? Las duplicadas se omitirán."
 
 #: ckanext/theme_ejemplo/templates/admin/featured_publications.html:993
 msgid "Importing..."
-msgstr ""
+msgstr "Importando..."
 
 #: ckanext/theme_ejemplo/templates/admin/featured_publications.html:999
 msgid "Imported"
-msgstr ""
+msgstr "Importadas"
 
 #: ckanext/theme_ejemplo/templates/admin/featured_publications.html:999
 msgid "Skipped (duplicates)"
-msgstr ""
+msgstr "Omitidas (duplicadas)"
 
 #: ckanext/theme_ejemplo/templates/admin/featured_viewers.html:32
 msgid "Choose and order the map viewers shown on the homepage."
@@ -2358,13 +2358,13 @@ msgstr "Rechazando..."
 #: ckanext/theme_ejemplo/templates/admin/initiative_requests.html:18
 #: ckanext/theme_ejemplo/templates/admin/initiative_requests.html:31
 msgid "Initiative Requests"
-msgstr ""
+msgstr "Solicitudes de iniciativas"
 
 #: ckanext/theme_ejemplo/templates/admin/initiative_requests.html:32
 msgid ""
 "Review user-submitted requests to create new initiatives. Approving a "
 "request creates the CKAN group and assigns the requester as administrator."
-msgstr ""
+msgstr "Revisa las solicitudes de los usuarios para crear iniciativas nuevas. Al aprobar una solicitud se crea el grupo de CKAN y el solicitante queda como administrador."
 
 #: ckanext/theme_ejemplo/templates/admin/initiative_requests.html:46
 #: ckanext/theme_ejemplo/templates/organization/membership_requests.html:30
@@ -2373,19 +2373,19 @@ msgstr "Historial"
 
 #: ckanext/theme_ejemplo/templates/admin/initiative_requests.html:70
 msgid "by"
-msgstr ""
+msgstr "por"
 
 #: ckanext/theme_ejemplo/templates/admin/initiative_requests.html:97
 msgid "Slug"
-msgstr ""
+msgstr "Slug"
 
 #: ckanext/theme_ejemplo/templates/admin/initiative_requests.html:104
 msgid "group slug"
-msgstr ""
+msgstr "slug del grupo"
 
 #: ckanext/theme_ejemplo/templates/admin/initiative_requests.html:106
 msgid "Approve & create group"
-msgstr ""
+msgstr "Aprobar y crear el grupo"
 
 #: ckanext/theme_ejemplo/templates/admin/initiative_requests.html:123
 #: ckanext/theme_ejemplo/templates/organization/membership_requests.html:100
@@ -2404,7 +2404,7 @@ msgstr "¡Todo en orden!"
 
 #: ckanext/theme_ejemplo/templates/admin/initiative_requests.html:143
 msgid "No pending initiative requests."
-msgstr ""
+msgstr "No hay solicitudes de iniciativas pendientes."
 
 #: ckanext/theme_ejemplo/templates/admin/initiative_requests.html:174
 #: ckanext/theme_ejemplo/templates/admin/open_learning.html:81
@@ -2415,11 +2415,11 @@ msgstr "Aprobado"
 
 #: ckanext/theme_ejemplo/templates/admin/initiative_requests.html:181
 msgid "requested by"
-msgstr ""
+msgstr "solicitado por"
 
 #: ckanext/theme_ejemplo/templates/admin/initiative_requests.html:185
 msgid "processed by"
-msgstr ""
+msgstr "procesado por"
 
 #: ckanext/theme_ejemplo/templates/admin/initiative_requests.html:202
 #: ckanext/theme_ejemplo/templates/organization/membership_requests.html:172
@@ -2433,71 +2433,71 @@ msgstr "Las solicitudes procesadas aparecerán aquí."
 
 #: ckanext/theme_ejemplo/templates/admin/open_learning.html:4
 msgid "Curation"
-msgstr ""
+msgstr "Curación"
 
 #: ckanext/theme_ejemplo/templates/admin/open_learning.html:32
 msgid ""
 "Curate which courses from the UNESCO Open Learning platform are shown on the"
 " site. New courses arrive as pending and are only published once approved."
-msgstr ""
+msgstr "Selecciona qué cursos de la plataforma UNESCO Open Learning se muestran en el sitio. Los cursos nuevos llegan como pendientes y solo se publican una vez aprobados."
 
 #: ckanext/theme_ejemplo/templates/admin/open_learning.html:34
 msgid "View public page"
-msgstr ""
+msgstr "Ver la página pública"
 
 #: ckanext/theme_ejemplo/templates/admin/open_learning.html:42
 msgid "Search API & Add Courses"
-msgstr ""
+msgstr "Buscar en la API y agregar cursos"
 
 #: ckanext/theme_ejemplo/templates/admin/open_learning.html:43
 msgid ""
 "Search the UNESCO Open Learning API for courses not yet in the database, or "
 "add a course directly by its Open edX course_id."
-msgstr ""
+msgstr "Busca en la API de UNESCO Open Learning cursos que aún no están en la base de datos, o agrega un curso directamente con su course_id de Open edX."
 
 #: ckanext/theme_ejemplo/templates/admin/open_learning.html:47
 msgid "Search by keyword (e.g. groundwater, climate...)"
-msgstr ""
+msgstr "Buscar por palabra clave (p. ej. groundwater, climate...)"
 
 #: ckanext/theme_ejemplo/templates/admin/open_learning.html:49
 #: ckanext/theme_ejemplo/templates/admin/open_learning.html:516
 #: ckanext/theme_ejemplo/templates/admin/open_learning.html:525
 msgid "Search API"
-msgstr ""
+msgstr "Buscar en la API"
 
 #: ckanext/theme_ejemplo/templates/admin/open_learning.html:52
 msgid "or"
-msgstr ""
+msgstr "o"
 
 #: ckanext/theme_ejemplo/templates/admin/open_learning.html:55
 msgid "Paste course_id (e.g. course-v1:UNESCO+WA1+2024)"
-msgstr ""
+msgstr "Pega el course_id (p. ej. course-v1:UNESCO+WA1+2024)"
 
 #: ckanext/theme_ejemplo/templates/admin/open_learning.html:57
 #: ckanext/theme_ejemplo/templates/admin/open_learning.html:580
 #: ckanext/theme_ejemplo/templates/admin/open_learning.html:591
 msgid "Add by ID"
-msgstr ""
+msgstr "Agregar por ID"
 
 #: ckanext/theme_ejemplo/templates/admin/open_learning.html:84
 #: ckanext/theme_ejemplo/templates/admin/open_learning.html:133
 msgid "Hidden"
-msgstr ""
+msgstr "Oculto"
 
 #: ckanext/theme_ejemplo/templates/admin/open_learning.html:87
 #: ckanext/theme_ejemplo/templates/admin/open_learning.html:136
 msgid "No longer in API"
-msgstr ""
+msgstr "Ya no está en la API"
 
 #: ckanext/theme_ejemplo/templates/admin/open_learning.html:94
 msgid "Last sync:"
-msgstr ""
+msgstr "Última sincronización:"
 
 #: ckanext/theme_ejemplo/templates/admin/open_learning.html:98
 #: ckanext/theme_ejemplo/templates/admin/open_learning.html:445
 #: ckanext/theme_ejemplo/templates/admin/open_learning.html:451
 msgid "Sync now"
-msgstr ""
+msgstr "Sincronizar ahora"
 
 #: ckanext/theme_ejemplo/templates/admin/open_learning.html:140
 #: ckanext/theme_ejemplo/templates/home/snippets/community_grid.html:117
@@ -2519,11 +2519,11 @@ msgstr "A tu propio ritmo"
 #: ckanext/theme_ejemplo/templates/admin/open_learning.html:154
 #: ckanext/theme_ejemplo/templates/admin/open_learning.html:481
 msgid "Scheduled"
-msgstr ""
+msgstr "Programado"
 
 #: ckanext/theme_ejemplo/templates/admin/open_learning.html:157
 msgid "Type set manually; sync will not change it"
-msgstr ""
+msgstr "Tipo definido a mano; la sincronización no lo cambiará"
 
 #: ckanext/theme_ejemplo/templates/admin/open_learning.html:157
 msgid "Manual"
@@ -2531,100 +2531,100 @@ msgstr "Manual"
 
 #: ckanext/theme_ejemplo/templates/admin/open_learning.html:168
 msgid "Hide"
-msgstr ""
+msgstr "Ocultar"
 
 #: ckanext/theme_ejemplo/templates/admin/open_learning.html:173
 msgid "Mark pending"
-msgstr ""
+msgstr "Marcar como pendiente"
 
 #: ckanext/theme_ejemplo/templates/admin/open_learning.html:189
 msgid "No courses yet"
-msgstr ""
+msgstr "Aún no hay cursos"
 
 #: ckanext/theme_ejemplo/templates/admin/open_learning.html:190
 msgid "Click \"Sync now\" to fetch courses from the Open Learning API."
-msgstr ""
+msgstr "Haz clic en «Sincronizar ahora» para traer los cursos de la API de Open Learning."
 
 #: ckanext/theme_ejemplo/templates/admin/open_learning.html:432
 msgid "Syncing..."
-msgstr ""
+msgstr "Sincronizando..."
 
 #: ckanext/theme_ejemplo/templates/admin/open_learning.html:437
 msgid "Sync complete:"
-msgstr ""
+msgstr "Sincronización completa:"
 
 #: ckanext/theme_ejemplo/templates/admin/open_learning.html:438
 msgid "new"
-msgstr ""
+msgstr "nuevos"
 
 #: ckanext/theme_ejemplo/templates/admin/open_learning.html:439
 msgid "updated"
-msgstr ""
+msgstr "actualizados"
 
 #: ckanext/theme_ejemplo/templates/admin/open_learning.html:440
 msgid "no longer available"
-msgstr ""
+msgstr "ya no disponibles"
 
 #: ckanext/theme_ejemplo/templates/admin/open_learning.html:441
 msgid "Warning: partial fetch; nothing was marked unavailable."
-msgstr ""
+msgstr "Aviso: descarga parcial; no se marcó nada como no disponible."
 
 #: ckanext/theme_ejemplo/templates/admin/open_learning.html:472
 msgid "No courses found in the API for that search term."
-msgstr ""
+msgstr "No se encontraron cursos en la API para ese término de búsqueda."
 
 #: ckanext/theme_ejemplo/templates/admin/open_learning.html:485
 msgid "Already in DB"
-msgstr ""
+msgstr "Ya está en la base de datos"
 
 #: ckanext/theme_ejemplo/templates/admin/open_learning.html:488
 #: ckanext/theme_ejemplo/templates/admin/open_learning.html:554
 #: ckanext/theme_ejemplo/templates/admin/open_learning.html:560
 msgid "Add course"
-msgstr ""
+msgstr "Agregar curso"
 
 #: ckanext/theme_ejemplo/templates/admin/open_learning.html:509
 msgid "Searching API..."
-msgstr ""
+msgstr "Buscando en la API..."
 
 #: ckanext/theme_ejemplo/templates/admin/open_learning.html:583
 msgid "Course added:"
-msgstr ""
+msgstr "Curso agregado:"
 
 #: ckanext/theme_ejemplo/templates/admin/portal_cards.html:4
 msgid "Manage Cards"
-msgstr ""
+msgstr "Gestionar tarjetas"
 
 #: ckanext/theme_ejemplo/templates/admin/portal_cards.html:21
 msgid "Cards"
-msgstr ""
+msgstr "Tarjetas"
 
 #: ckanext/theme_ejemplo/templates/admin/portal_cards.html:34
 msgid "Manage cards displayed on this portal page."
-msgstr ""
+msgstr "Gestiona las tarjetas que se muestran en esta página del portal."
 
 #: ckanext/theme_ejemplo/templates/admin/portal_cards.html:36
 msgid "View Portal"
-msgstr ""
+msgstr "Ver el portal"
 
 #: ckanext/theme_ejemplo/templates/admin/portal_cards.html:51
 msgid "Add New Card"
-msgstr ""
+msgstr "Agregar nueva tarjeta"
 
 #: ckanext/theme_ejemplo/templates/admin/portal_cards.html:90
 #: ckanext/theme_ejemplo/templates/admin/portal_cards.html:250
 msgid "Coming Soon badge"
-msgstr ""
+msgstr "Distintivo «Próximamente»"
 
 #: ckanext/theme_ejemplo/templates/admin/portal_cards.html:95
 #: ckanext/theme_ejemplo/templates/admin/portal_cards.html:667
 #: ckanext/theme_ejemplo/templates/admin/portal_cards.html:673
 msgid "Add Card"
-msgstr ""
+msgstr "Agregar tarjeta"
 
 #: ckanext/theme_ejemplo/templates/admin/portal_cards.html:110
 msgid "Current Cards"
-msgstr ""
+msgstr "Tarjetas actuales"
 
 #: ckanext/theme_ejemplo/templates/admin/portal_cards.html:145
 msgid "Archived"
@@ -2641,41 +2641,41 @@ msgstr "Próximamente"
 #: ckanext/theme_ejemplo/templates/admin/portal_cards.html:167
 #: ckanext/theme_ejemplo/templates/admin/portal_cards.html:707
 msgid "Unarchive"
-msgstr ""
+msgstr "Desarchivar"
 
 #: ckanext/theme_ejemplo/templates/admin/portal_cards.html:166
 #: ckanext/theme_ejemplo/templates/admin/portal_cards.html:167
 #: ckanext/theme_ejemplo/templates/admin/portal_cards.html:708
 msgid "Archive"
-msgstr ""
+msgstr "Archivar"
 
 #: ckanext/theme_ejemplo/templates/admin/portal_cards.html:198
 #: ckanext/theme_ejemplo/templates/admin/portal_cards.html:889
 msgid "No Cards Yet"
-msgstr ""
+msgstr "Aún no hay tarjetas"
 
 #: ckanext/theme_ejemplo/templates/admin/portal_cards.html:199
 #: ckanext/theme_ejemplo/templates/admin/portal_cards.html:890
 msgid "Use the form above to add cards to this portal."
-msgstr ""
+msgstr "Usa el formulario de arriba para agregar tarjetas a este portal."
 
 #: ckanext/theme_ejemplo/templates/admin/portal_cards.html:220
 msgid "Edit Card"
-msgstr ""
+msgstr "Editar tarjeta"
 
 #: ckanext/theme_ejemplo/templates/admin/portal_cards.html:255
 msgid "Archived (hidden from public portal)"
-msgstr ""
+msgstr "Archivada (oculta en el portal público)"
 
 #: ckanext/theme_ejemplo/templates/admin/stats.html:28
 msgid ""
 "Views and downloads are flushed from Redis to the database every five "
 "minutes."
-msgstr ""
+msgstr "Las vistas y las descargas se vuelcan de Redis a la base de datos cada cinco minutos."
 
 #: ckanext/theme_ejemplo/templates/admin/stats.html:29
 msgid "The contribution ranking is recomputed nightly."
-msgstr ""
+msgstr "El ranking de contribución se recalcula cada noche."
 
 #: ckanext/theme_ejemplo/templates/admin/stats.html:35
 #: ckanext/theme_ejemplo/templates/home/snippets/site_stats_hero.html:86
@@ -2690,35 +2690,35 @@ msgstr "Descargas"
 
 #: ckanext/theme_ejemplo/templates/admin/stats.html:43
 msgid "Indexed records"
-msgstr ""
+msgstr "Registros indexados"
 
 #: ckanext/theme_ejemplo/templates/admin/stats.html:51
 msgid "Band"
-msgstr ""
+msgstr "Banda"
 
 #: ckanext/theme_ejemplo/templates/admin/stats.html:51
 msgid "Share"
-msgstr ""
+msgstr "Proporción"
 
 #: ckanext/theme_ejemplo/templates/admin/stats.html:64
 msgid "No completeness data. Rebuild the search index."
-msgstr ""
+msgstr "No hay datos de completitud. Reconstruye el índice de búsqueda."
 
 #: ckanext/theme_ejemplo/templates/admin/stats.html:69
 msgid "Most viewed datasets"
-msgstr ""
+msgstr "Conjuntos de datos más vistos"
 
 #: ckanext/theme_ejemplo/templates/admin/stats.html:80
 msgid "No views recorded yet"
-msgstr ""
+msgstr "Aún no hay vistas registradas"
 
 #: ckanext/theme_ejemplo/templates/admin/stats.html:84
 msgid "Most downloaded resources"
-msgstr ""
+msgstr "Recursos más descargados"
 
 #: ckanext/theme_ejemplo/templates/admin/stats.html:97
 msgid "No downloads recorded yet"
-msgstr ""
+msgstr "Aún no hay descargas registradas"
 
 #: ckanext/theme_ejemplo/templates/admin/stats.html:102
 msgid "Top contributors"
@@ -2732,23 +2732,23 @@ msgstr "Puntuación"
 
 #: ckanext/theme_ejemplo/templates/admin/stats.html:121
 msgid "Run"
-msgstr ""
+msgstr "Ejecuta"
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:32
 msgid "Manage users, reset passwords, control access and permissions."
-msgstr ""
+msgstr "Gestiona usuarios, restablece contraseñas y controla accesos y permisos."
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:33
 msgid "users total"
-msgstr ""
+msgstr "usuarios en total"
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:49
 msgid "Search by name, email or username..."
-msgstr ""
+msgstr "Buscar por nombre, correo o nombre de usuario..."
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:54
 msgid "All States"
-msgstr ""
+msgstr "Todos los estados"
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:56
 #: ckanext/theme_ejemplo/templates/admin/users.html:123
@@ -2761,31 +2761,31 @@ msgstr "Eliminado"
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:59
 msgid "All Roles"
-msgstr ""
+msgstr "Todos los roles"
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:60
 msgid "Sysadmins"
-msgstr ""
+msgstr "Administradores del sistema"
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:61
 msgid "Regular Users"
-msgstr ""
+msgstr "Usuarios normales"
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:64
 msgid "Newest First"
-msgstr ""
+msgstr "Más recientes primero"
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:65
 msgid "Oldest First"
-msgstr ""
+msgstr "Más antiguos primero"
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:66
 msgid "Name A-Z"
-msgstr ""
+msgstr "Nombre A-Z"
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:67
 msgid "Name Z-A"
-msgstr ""
+msgstr "Nombre Z-A"
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:72
 #: ckanext/theme_ejemplo/templates/group/ihpix.html:575
@@ -2797,12 +2797,12 @@ msgstr "Limpiar"
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:74
 msgid "New User"
-msgstr ""
+msgstr "Nuevo usuario"
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:85
 #: ckanext/theme_ejemplo/templates/admin/users.html:132
 msgid "User"
-msgstr ""
+msgstr "Usuario"
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:86
 #: ckanext/theme_ejemplo/templates/admin/users.html:286
@@ -2829,62 +2829,62 @@ msgstr "Acciones"
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:130
 msgid "Sysadmin"
-msgstr ""
+msgstr "Administrador del sistema"
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:161
 msgid "Edit Profile"
-msgstr ""
+msgstr "Editar perfil"
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:166
 #: ckanext/theme_ejemplo/templates/admin/users.html:316
 #: ckanext/theme_ejemplo/templates/admin/users.html:341
 msgid "Reset Password"
-msgstr ""
+msgstr "Restablecer contraseña"
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:171
 #: ckanext/theme_ejemplo/templates/admin/users.html:370
 #: ckanext/theme_ejemplo/templates/admin/users.html:831
 #: ckanext/theme_ejemplo/templates/admin/users.html:837
 msgid "Send Reset Email"
-msgstr ""
+msgstr "Enviar correo de restablecimiento"
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:178
 #: ckanext/theme_ejemplo/templates/admin/users.html:987
 msgid "Remove Sysadmin"
-msgstr ""
+msgstr "Quitar administrador del sistema"
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:184
 msgid "Make Sysadmin"
-msgstr ""
+msgstr "Hacer administrador del sistema"
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:192
 #: ckanext/theme_ejemplo/templates/admin/users.html:382
 #: ckanext/theme_ejemplo/templates/admin/users.html:395
 msgid "Delete User"
-msgstr ""
+msgstr "Eliminar usuario"
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:198
 #: ckanext/theme_ejemplo/templates/admin/users.html:417
 msgid "Reactivate"
-msgstr ""
+msgstr "Reactivar"
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:203
 #: ckanext/theme_ejemplo/templates/admin/users.html:450
 msgid "Purge Permanently"
-msgstr ""
+msgstr "Purgar definitivamente"
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:215
 msgid "No users found matching your criteria."
-msgstr ""
+msgstr "No se encontraron usuarios que cumplan tus criterios."
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:250
 #, python-format
 msgid "Showing %(start)s–%(end)s of %(total)s users"
-msgstr ""
+msgstr "Mostrando %(start)s–%(end)s de %(total)s usuarios"
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:270
 msgid "Create New User"
-msgstr ""
+msgstr "Crear nuevo usuario"
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:276
 #: ckanext/theme_ejemplo/templates/user/edit_user_form.html:11
@@ -2894,23 +2894,23 @@ msgstr "Nombre de usuario"
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:278
 msgid "lowercase-no-spaces"
-msgstr ""
+msgstr "minusculas-sin-espacios"
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:279
 msgid "Lowercase letters, numbers, hyphens and underscores only."
-msgstr ""
+msgstr "Solo letras minúsculas, números, guiones y guiones bajos."
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:282
 msgid "Full Name"
-msgstr ""
+msgstr "Nombre completo"
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:283
 msgid "John Doe"
-msgstr ""
+msgstr "Juan Pérez"
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:287
 msgid "user@example.com"
-msgstr ""
+msgstr "usuario@example.com"
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:290
 #: ckanext/theme_ejemplo/templates/user/edit_user_form.html:546
@@ -2921,23 +2921,23 @@ msgstr "Contraseña"
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:292
 msgid "Minimum 8 characters."
-msgstr ""
+msgstr "Mínimo 8 caracteres."
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:297
 msgid "Make this user a Sysadmin"
-msgstr ""
+msgstr "Hacer a este usuario administrador del sistema"
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:304
 msgid "Create User"
-msgstr ""
+msgstr "Crear usuario"
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:320
 msgid "Change password for"
-msgstr ""
+msgstr "Cambiar la contraseña de"
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:324
 msgid "New Password"
-msgstr ""
+msgstr "Nueva contraseña"
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:328
 #: ckanext/theme_ejemplo/templates/user/edit_user_form.html:547
@@ -2948,36 +2948,36 @@ msgstr "Confirmar contraseña"
 #: ckanext/theme_ejemplo/templates/admin/users.html:333
 #: ckanext/theme_ejemplo/templates/admin/users.html:442
 msgid "Your Sysadmin Password"
-msgstr ""
+msgstr "Tu contraseña de administrador del sistema"
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:335
 #: ckanext/theme_ejemplo/templates/admin/users.html:444
 msgid "Required for security verification."
-msgstr ""
+msgstr "Obligatoria para la verificación de seguridad."
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:353
 msgid "Send Password Reset Email"
-msgstr ""
+msgstr "Enviar correo de restablecimiento de contraseña"
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:360
 msgid "Send a password reset email to"
-msgstr ""
+msgstr "¿Enviar un correo de restablecimiento de contraseña a"
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:363
 msgid "The user will receive an email at"
-msgstr ""
+msgstr "El usuario recibirá un correo en"
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:364
 msgid "with a link to set a new password."
-msgstr ""
+msgstr "con un enlace para definir una nueva contraseña."
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:388
 msgid "Are you sure you want to delete user"
-msgstr ""
+msgstr "¿Seguro que quieres eliminar al usuario"
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:389
 msgid "The user will be soft-deleted and can be reactivated later."
-msgstr ""
+msgstr "El usuario quedará desactivado y se podrá reactivar más adelante."
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:407
 #: ckanext/theme_ejemplo/templates/user/edit_user_form.html:535
@@ -2986,31 +2986,31 @@ msgstr "Reactivar usuario"
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:411
 msgid "Reactivate user"
-msgstr ""
+msgstr "¿Reactivar al usuario"
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:412
 msgid "The user will be immediately restored to active status."
-msgstr ""
+msgstr "El usuario volverá de inmediato al estado activo."
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:429
 msgid "Purge User Permanently"
-msgstr ""
+msgstr "Purgar al usuario definitivamente"
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:435
 msgid "WARNING: This action is IRREVERSIBLE!"
-msgstr ""
+msgstr "ADVERTENCIA: ¡esta acción es IRREVERSIBLE!"
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:436
 msgid "Permanently remove user"
-msgstr ""
+msgstr "¿Eliminar definitivamente al usuario"
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:436
 msgid "from the database?"
-msgstr ""
+msgstr "de la base de datos?"
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:437
 msgid "All user data will be permanently deleted. This cannot be undone."
-msgstr ""
+msgstr "Todos los datos del usuario se eliminarán de forma permanente. Esto no se puede deshacer."
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:472
 msgid "Confirm"
@@ -3018,56 +3018,56 @@ msgstr "Confirmar"
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:755
 msgid "Please fill in all required fields."
-msgstr ""
+msgstr "Completa todos los campos obligatorios."
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:759
 #: ckanext/theme_ejemplo/templates/admin/users.html:796
 msgid "Password must be at least 8 characters."
-msgstr ""
+msgstr "La contraseña debe tener al menos 8 caracteres."
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:788
 msgid "Please fill in all fields."
-msgstr ""
+msgstr "Completa todos los campos."
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:792
 msgid "Passwords do not match."
-msgstr ""
+msgstr "Las contraseñas no coinciden."
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:821
 msgid "No user selected."
-msgstr ""
+msgstr "No hay ningún usuario seleccionado."
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:825
 msgid "Sending..."
-msgstr ""
+msgstr "Enviando..."
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:895
 msgid "Please enter your sysadmin password."
-msgstr ""
+msgstr "Ingresa tu contraseña de administrador del sistema."
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:973
 msgid "Promote to Sysadmin"
-msgstr ""
+msgstr "Promover a administrador del sistema"
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:976
 msgid "Promote"
-msgstr ""
+msgstr "¿Promover a"
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:980
 msgid "to sysadmin?"
-msgstr ""
+msgstr "a administrador del sistema?"
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:984
 msgid "This user will have full administrative access."
-msgstr ""
+msgstr "Este usuario tendrá acceso administrativo completo."
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:990
 msgid "Remove sysadmin privileges from"
-msgstr ""
+msgstr "¿Quitar los privilegios de administrador del sistema a"
 
 #: ckanext/theme_ejemplo/templates/admin/users.html:998
 msgid "This user will become a regular user."
-msgstr ""
+msgstr "Este usuario pasará a ser un usuario normal."
 
 #: ckanext/theme_ejemplo/templates/bug_tickets/list.html:24
 msgid "Report issues and track their resolution."
@@ -8788,6 +8788,46 @@ msgstr "Recursos de aprendizaje"
 #~ msgstr[0] "Panel de Control (%(num)d nuevo elemento)"
 #~ msgstr[1] "Panel de Control (%(num)d nuevos elementos)"
 
+#: ckanext/theme_ejemplo/templates/home/snippets/tools_hub.html
+msgid "Viewers, AI tools, data stories, citizen science and open source software from the water community"
+msgstr "Visores, herramientas de IA, historias de datos, ciencia ciudadana y software de código abierto de la comunidad del agua"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/tools_hub.html
+msgid "Citizens4Water"
+msgstr "Citizens4Water"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/tools_hub.html
+msgid "Rapid Response and Recovery"
+msgstr "Respuesta rápida y recuperación"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/site_stats_hero.html
+msgid "Browse users"
+msgstr "Explorar usuarios"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/site_stats_hero.html
+msgid "Registered members"
+msgstr "Miembros registrados"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/site_stats_hero.html
+msgid "Read the news"
+msgstr "Leer las noticias"
+
+#: ckanext/theme_ejemplo/templates/home/snippets/site_stats_hero.html
+msgid "From the water community"
+msgstr "De la comunidad del agua"
+
+#: ckanext/theme_ejemplo/templates/footer.html
+msgid "IHP-WINS ecosystem"
+msgstr "Ecosistema IHP-WINS"
+
+#: ckanext/theme_ejemplo/templates/footer.html
+msgid "Data catalogue"
+msgstr "Catálogo de datos"
+
+#: ckanext/theme_ejemplo/templates/footer.html
+msgid "Geospatial viewer"
+msgstr "Visor geoespacial"
+
 #~ msgid "Enroll as a Data Contributor for Your Organization"
 #~ msgstr "Inscríbete como Contribuyente de Datos para Tu Organización"
 
@@ -8931,12 +8971,6 @@ msgstr "Recursos de aprendizaje"
 #~ " ofrecen ideas sobre varios aspectos de los recursos hídricos, desde "
 #~ "conjuntos de datos históricos hasta los últimos avances en ciencia "
 #~ "hidrológica."
-
-#~ msgid "Language"
-#~ msgstr "Idioma"
-
-#~ msgid "Go"
-#~ msgstr "Ir"
 
 #~ msgid ""
 #~ "<p>The <strong>Intergovernmental Hydrological Programme's Water Information "

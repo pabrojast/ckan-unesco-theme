@@ -8,6 +8,8 @@
 {% set initiative_count = stats.initiative_count if stats.initiative_count is defined else 0 %}
 {% set member_state_count = stats.member_state_count if stats.member_state_count is defined else 0 %}
 {% set organization_count = stats.organization_count if stats.organization_count is defined else 0 %}
+{% set user_count = stats.user_count if stats.user_count is defined else 0 %}
+{% set news_count = stats.news_count if stats.news_count is defined else 0 %}
 {% set page_views = tracking_totals.page_views if tracking_totals and tracking_totals.page_views is defined else 0 %}
 {% set downloads = tracking_totals.downloads if tracking_totals and tracking_totals.downloads is defined else 0 %}
 
@@ -75,6 +77,32 @@
         <span class="site-stat-meta">{% trans %}Reports & publications{% endtrans %}</span>
       </div>
     </a>
+
+    {% if user_count and user_count > 0 %}
+    <a class="site-stat-card" href="{{ h.url_for('/people') }}" aria-label="{{ _('Browse users') }}">
+      <div class="site-stat-icon" aria-hidden="true">
+        <i class="fa fa-user"></i>
+      </div>
+      <div class="site-stat-body">
+        <span class="site-stat-value" data-count-to="{{ user_count }}">{{ h.localised_number(user_count) }}</span>
+        <span class="site-stat-label">{% trans %}Users{% endtrans %}</span>
+        <span class="site-stat-meta">{% trans %}Registered members{% endtrans %}</span>
+      </div>
+    </a>
+    {% endif %}
+
+    {% if news_count and news_count > 0 %}
+    <a class="site-stat-card" href="{{ h.url_for('/water-news') }}" aria-label="{{ _('Read the news') }}">
+      <div class="site-stat-icon" aria-hidden="true">
+        <i class="fa fa-newspaper"></i>
+      </div>
+      <div class="site-stat-body">
+        <span class="site-stat-value" data-count-to="{{ news_count }}">{{ h.localised_number(news_count) }}</span>
+        <span class="site-stat-label">{% trans %}News{% endtrans %}</span>
+        <span class="site-stat-meta">{% trans %}From the water community{% endtrans %}</span>
+      </div>
+    </a>
+    {% endif %}
 
     {% if page_views and page_views > 0 %}
     <div class="site-stat-card site-stat-card--static" aria-label="{{ _('Total page views') }}">

@@ -178,6 +178,51 @@ def test_match_paths(monkeypatch):
     assert mod._match('/dataset/x/resource/no-es-uuid/download/f.csv') is None
 
 
+def test_match_refuses_name_with_nul(monkeypatch):
+    mod, _ = _load_tracking(monkeypatch)
+    assert mod._match('/dataset/a\x00b') is None
+    assert mod._match('/dataset/\x00') is None
+    assert mod._match('/dataset/mi-dataset') == ('view', 'mi-dataset')
+
+
+def test_record_name_with_nul_does_not_count(monkeypatch):
+    mod, req = _load_tracking(monkeypatch)
+    redis = _with_redis(mod)
+    req.path = '/es/dataset/a\x00b'
+    req.headers = {'User-Agent': CHROME_UA}
+    mod._record()
+    assert redis.pipeline_ops == []
+    assert redis.hincr_calls == []
+
+
+class FakeHashRedis(object):
+    def __init__(self, hashes):
+        self.hashes = hashes
+
+    def rename(self, src, dst):
+        self.hashes[dst] = self.hashes.pop(src)
+
+    def hgetall(self, key):
+        return dict(self.hashes.get(key, {}))
+
+    def delete(self, key):
+        self.hashes.pop(key, None)
+
+
+def test_rotate_hash_drops_fields_with_nul(monkeypatch):
+    # Un campo con NUL ya guardado abortaba cada volcado y volvía a Redis.
+    mod, _ = _load_tracking(monkeypatch)
+    redis = FakeHashRedis({mod.VIEWS_KEY: {
+        b'mi-dataset': b'3', b'a\x00b': b'1', 'otro': '2', b'roto': b'x'}})
+    assert mod._rotate_hash(redis, mod.VIEWS_KEY) == {'mi-dataset': 3, 'otro': 2}
+    assert redis.hashes == {}
+
+
+def test_rotate_hash_missing_key(monkeypatch):
+    mod, _ = _load_tracking(monkeypatch)
+    assert mod._rotate_hash(FakeHashRedis({}), mod.VIEWS_KEY) == {}
+
+
 # ─── _record: integracion ─────────────────────────────────────────────────
 
 

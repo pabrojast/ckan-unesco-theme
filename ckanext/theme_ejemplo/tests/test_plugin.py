@@ -299,3 +299,20 @@ def test_ihpix_report_form_has_publication_modal_and_course_type(app):
     assert b'id="ihpix-publication-modal"' in resp.data
     assert b'data-ihpix-publication-open' in resp.data
     assert b'<option value="course">' in resp.data
+
+
+@pytest.mark.ckan_config('ckan.plugins', 'theme_ejemplo activity dcat')
+@pytest.mark.usefixtures('with_plugins')
+@pytest.mark.parametrize('path, endpoint', [
+    ('/dataset/changes_multiple', 'theme_ejemplo.dataset_changes_multiple'),
+    ('/dataset/some-dataset.rdf', 'theme_ejemplo.dataset_dcat_export'),
+    ('/dataset/some-dataset.jsonld', 'theme_ejemplo.dataset_dcat_export'),
+    ('/dataset/some-dataset', 'theme_ejemplo.dataset_read'),
+    ('/dataset/some-dataset.zip', 'theme_ejemplo.dataset_read'),
+    ('/dataset/new', 'theme_ejemplo.dataset_new'),
+])
+def test_dataset_page_does_not_answer_paths_of_plugins_loaded_later(app, path, endpoint):
+    """With the theme loaded first (the production order) /dataset/<id> used
+    to answer the version comparison of activity and the exports of dcat."""
+    adapter = app.flask_app.url_map.bind('test.ckan.net')
+    assert adapter.match(path, method='GET')[0] == endpoint

@@ -3,7 +3,7 @@
 {% set presentation = h.theme_ejemplo_resource_presentation(pkg, resources=resources, mode='all' if flat_only else 'grouped') %}
 {% set show_controls = not flat_only and (resources|length > 20 or presentation.style_count > 0) %}
 {% set can_edit = can_edit or h.check_access('package_update', {'id':pkg.id}) %}
-<link rel="stylesheet" href="{{ h.url_for_static('/resource-styles.css') }}">
+<link rel="stylesheet" href="{{ h.url_for_static('/resource-styles.css') }}?v=20261126-1">
 <section id="dataset-resources" class="resources"
          data-url="{{ h.url_for('theme_ejemplo.dataset_resources_ajax', id=pkg.name or pkg.id) }}"
          data-total="{{ presentation.total }}" data-per-page="{{ presentation.items_per_page }}">

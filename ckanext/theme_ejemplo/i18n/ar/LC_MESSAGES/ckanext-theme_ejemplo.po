@@ -8683,12 +8683,6 @@ msgstr "موارد التعلّم"
 #~ "التابعة لليونسكو. توفر هذه المجموعات رؤى حول مختلف جوانب الموارد المائية، من"
 #~ " مجموعات البيانات التاريخية إلى أحدث التطورات في علم الهيدرولوجيا."
 
-#~ msgid "Language"
-#~ msgstr "اللغة"
-
-#~ msgid "Go"
-#~ msgstr "اذهب"
-
 #~ msgid ""
 #~ "<p>The <strong>Intergovernmental Hydrological Programme's Water Information "
 #~ "Network System (IHP-WINS)</strong> is designed to promote the <i>sharing and"
