@@ -82,7 +82,7 @@
    const body=new FormData(form);if(event.submitter&&event.submitter.name)body.set(event.submitter.name,event.submitter.value);
    if(form.elements.outputs){const outputs=Array.from(form.querySelectorAll('[name=outputs]')).flatMap(el=>el.tagName==='SELECT'?Array.from(el.selectedOptions).map(o=>o.value):(el.checked?[el.value]:[]));body.set('outputs',JSON.stringify(outputs));}
    if(form.hasAttribute('data-contact-form')){const payload={};['name','email','institution','job_title','country','region','language','role'].forEach(k=>payload[k]=form.elements[k].value);body.set('payload',JSON.stringify(payload));}
-   if(form.id==='ixg-import-apply'){
+   if(form.getAttribute('id')==='ixg-import-apply'){
     const rows=Array.from(form.querySelectorAll('[data-index]')).map(row=>{const decision=row.querySelector('[name=decision]').value,payload={},periods={};row.querySelectorAll('[data-import-fields] [name]').forEach(el=>{if(el.name.startsWith('period_'))periods[el.name.slice(7)]=el.value;else payload[el.name]=el.value;});if(Object.keys(periods).length)payload.periods=periods;const target=row.querySelector('[name=target_id]');return {index:Number(row.dataset.index),decision,payload,target_id:target?target.value:'',expected_revision:target?Number(target.selectedOptions[0].dataset.revision):0};});body.set('rows',JSON.stringify(rows));
    }
    const result=await post(form.dataset.operation,body);if(editor&&result.plan_revision)editor.setRevision(result.plan_revision);notice(S.done);

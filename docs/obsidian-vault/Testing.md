@@ -472,3 +472,5 @@ well as the toggle). The live audit artifacts are in the Docker checkout under
 include test-account and administrator screenshots. Registration CAPTCHA failed
 in browser automation and must not be reported as passing based on admin-created
 accounts. Only records prefixed `QA IHP-IX 20261126` belong to this audit.
+
+La misma ronda detectó importaciones de grupos que finalizaban con cero registros: `input[name=id]` oculta la propiedad `form.id` en el DOM. La identificación del formulario usa ahora `getAttribute('id')`. `test_ihpix_group_import_contract.py` ejecuta el manejador JavaScript con Node y comprueba que las decisiones y las correcciones de filas llegan a la API; falla con el código anterior. La aceptación en DEV exige IDs persistidos y reenvío idempotente, no sólo el mensaje de éxito.
