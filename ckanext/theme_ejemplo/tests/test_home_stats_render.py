@@ -37,4 +37,4 @@ def test_users_and_news_cards_are_left_out_when_their_count_is_unknown():
     )
     html = env.from_string(template.read_text()).render(h=helpers, _=lambda text: text)
     assert len(re.findall(r'data-count-to="(\d+)"', html)) == 6
-    assert 'fa-newspaper-o' not in html and 'fa-user"' not in html
+    assert 'fa-newspaper' not in html and 'fa-user"' not in html

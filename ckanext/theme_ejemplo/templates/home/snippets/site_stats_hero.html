@@ -94,7 +94,7 @@
     {% if news_count and news_count > 0 %}
     <a class="site-stat-card" href="{{ h.url_for('/water-news') }}" aria-label="{{ _('Read the news') }}">
       <div class="site-stat-icon" aria-hidden="true">
-        <i class="fa fa-newspaper-o"></i>
+        <i class="fa fa-newspaper"></i>
       </div>
       <div class="site-stat-body">
         <span class="site-stat-value" data-count-to="{{ news_count }}">{{ h.localised_number(news_count) }}</span>

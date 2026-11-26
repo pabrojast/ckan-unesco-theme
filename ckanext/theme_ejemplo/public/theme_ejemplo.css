@@ -1356,7 +1356,7 @@ img {
 /* Footer: enlaces al ecosistema IHP-WINS, sobre las columnas de UNESCO. */
 .footer-ecosystem {
     margin-bottom: 1.25rem;
-    padding-bottom: 1rem;
+    padding: 0 1rem 1rem;
     border-bottom: 1px solid #d4dfe5;
 }
 .footer-ecosystem-title {
@@ -7322,7 +7322,9 @@ html.js .home-tabs .home-tab-panel:not(.is-active) {
 
 .site-stats-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  /* Ocho tarjetas: cuatro por fila en escritorio. Con 180 px cabían seis y
+     las etiquetas largas se partían ("Organizaci ones"). */
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
   gap: 1rem;
   position: relative;
 }
