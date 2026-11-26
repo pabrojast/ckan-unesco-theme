@@ -206,3 +206,16 @@ def test_every_translated_key_is_registered_for_babel(index):
     known.update(C.KNOWLEDGE_PRODUCT_TYPES + C.SCIENTIFIC_PRODUCT_TYPES + C.KNOWLEDGE_ACTIVITY_TYPES
                  + C.TRAINING_TYPES + C.STAKEHOLDER_GROUP_TYPE_VALUES + C.CROSS_CUTTING_WGS)
     assert seen - known - {''} == set()
+
+
+def test_sources_checkbox_is_independent_of_main_section_checkboxes():
+    # El formulario excluye sources de los checkboxes de secciones y envía
+    # include_sources por separado. El anexo debe conservarse al generar.
+    choices = [sid for sid, _ in SEC.section_choices()]
+    sections = SEC.build_sections(_stats(), options={
+        'sections': choices, 'include_sources': True}, sources=SOURCES)
+    assert sections[-1]['id'] == 'sources'
+    assert sections[-1]['count'] == len(SOURCES)
+    without = SEC.build_sections(_stats(), options={
+        'sections': choices, 'include_sources': False}, sources=SOURCES)
+    assert all(s['id'] != 'sources' for s in without)
