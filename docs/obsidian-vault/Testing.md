@@ -456,3 +456,23 @@ También ejecuta `test_crawl_policy.py`: la regla de `noindex` de los listados
 (`crawl_policy.listing_noindex`), el bloque `meta` de `base.html` renderizado con
 Jinja a secas y las reglas de `templates/home/robots.txt` contra URL de ejemplo.
 Ver [[Modulos#crawl_policy.py]].
+
+## IHP-IX acceptance testing (2026-11-26)
+
+The DEV browser audit found a broken report-review request: the review screen
+sent `report_id`, while the controller requires `id`. Approving an existing
+pending report therefore returned 404. The screen now sends the canonical field
+for both approval and rejection; deletion already used it.
+
+Also verify the Contributors filters with long Output labels at 1440 and 390 px
+(the flex child and select must stay within the viewport), and the admin New User
+modal (the Bootstrap 5 compatibility layer must translate the modal target as
+well as the toggle). The live audit artifacts are in the Docker checkout under
+`output/playwright/ihpix-e2e-20261126/`; they are not committed because they
+include test-account and administrator screenshots. Registration CAPTCHA failed
+in browser automation and must not be reported as passing based on admin-created
+accounts. Only records prefixed `QA IHP-IX 20261126` belong to this audit.
+
+La misma ronda detectó importaciones de grupos que finalizaban con cero registros: `input[name=id]` oculta la propiedad `form.id` en el DOM. La identificación del formulario usa ahora `getAttribute('id')`. `test_ihpix_group_import_contract.py` ejecuta el manejador JavaScript con Node y comprueba que las decisiones y las correcciones de filas llegan a la API; falla con el código anterior. La aceptación en DEV exige IDs persistidos y reenvío idempotente, no sólo el mensaje de éxito.
+
+La generación real del PDF también detectó que el anexo desaparecía al enviar el formulario, aun con su casilla marcada. `include_sources` controla el anexo independientemente de los checkboxes de secciones principales. La regresión usa la selección exacta del formulario y verifica tanto inclusión como exclusión explícita.
